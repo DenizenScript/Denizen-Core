@@ -26,6 +26,11 @@
             <id>comphenix-repo</id>
             <url>http://repo.comphenix.net/content/groups/public</url>
         </repository>
+		<repository>
+			<id>Sonatype-public</id>
+			<name>SnakeYAML repository</name>
+			<url>http://oss.sonatype.org/content/groups/public/</url>
+		</repository>
     </repositories>
 
     <!-- Dependencies -->
@@ -60,6 +65,11 @@
             <artifactId>org.json</artifactId>
             <version>chargebee-1.0</version>
         </dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.15-SNAPSHOT</version>
+		</dependency>
     </dependencies>
 
     <ciManagement>
