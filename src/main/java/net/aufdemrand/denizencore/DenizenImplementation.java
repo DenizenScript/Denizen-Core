@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Abstract class representing all the information that an implementation must provide to the engine.
+ * Interface representing all the information that an implementation must provide to the engine.
  */
-public abstract class DenizenImplementation {
+public interface DenizenImplementation {
 
     /**
      * Return a list of all folders that the implementation has scripts within.
