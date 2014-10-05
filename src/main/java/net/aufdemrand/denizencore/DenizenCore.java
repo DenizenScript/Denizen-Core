@@ -23,6 +23,12 @@ public class DenizenCore {
     }
 
     public static void LoadScripts() {
-        List<File> folders = implementation.getScriptFolders();
+        try {
+            List<File> folders = implementation.getScriptFolders();
+        }
+        catch (Exception ex) {
+            implementation.debugMessage("Error loading scripts:");
+            implementation.debugException(ex);
+        }
     }
 }

@@ -18,4 +18,14 @@ public abstract class DenizenImplementation {
      * EG, "Gamey Game 1.0 Denizen 0.9"
      */
     public abstract String getImplementationVersion();
+
+    /**
+     * Output a debug message to console.
+     */
+    public abstract void debugMessage(String message);
+
+    /**
+     * Output an exception to console.
+     */
+    public abstract void debugException(Exception ex);
 }
