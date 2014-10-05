@@ -1,5 +1,7 @@
 package net.aufdemrand.denizencore;
 
+import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+
 import java.io.File;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface DenizenImplementation {
     /**
      * Return a list of all folders that the implementation has scripts within.
      */
-    public abstract List<File> getScriptFolders();
+    public abstract File getScriptFolder();
 
     /**
      * Return the current version of the implementation.
@@ -35,8 +37,32 @@ public interface DenizenImplementation {
     public abstract void debugError(String error);
 
     /**
+     * Output an 'Okay!' message.
+     */
+    public abstract void debugApproval(String message);
+
+    /**
      * Return the name of the implementation.
      * EG, "Gamey Game".
      */
     public abstract String getImplementationName();
+
+    /**
+     * Run any code that fires before a script reload goes through,
+     * EG, clearing custom data.
+     */
+    public abstract void preScriptReload();
+
+    /**
+     * Run any code that fires after a script reload goes through,
+     * EG, running a public Reload event.
+     */
+    public abstract void onScriptReload();
+
+    /**
+     * Temporary.
+     */
+    public abstract void buildCoreContainers(YamlConfiguration yamlScripts);
+
+    public abstract List<YamlConfiguration> getOutsideScripts();
 }
