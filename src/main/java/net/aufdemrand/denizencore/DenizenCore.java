@@ -20,14 +20,14 @@ public class DenizenCore {
      * Must be called first: prepares the engine!
      * @param implementation your Denizen implementation.
      */
-    public static void Init(DenizenImplementation implementation) {
+    public static void init(DenizenImplementation implementation) {
         DenizenCore.implementation = implementation;
         implementation.debugMessage("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
     }
 
-    public static void LoadScripts() {
+    public static void loadScripts() {
         try {
             List<File> folders = implementation.getScriptFolders();
         }
