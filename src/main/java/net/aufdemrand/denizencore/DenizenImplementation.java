@@ -28,4 +28,15 @@ public abstract class DenizenImplementation {
      * Output an exception to console.
      */
     public abstract void debugException(Exception ex);
+
+    /**
+     * Output an error to console.
+     */
+    public abstract void debugError(String error);
+
+    /**
+     * Return the name of the implementation.
+     * EG, "Gamey Game".
+     */
+    public abstract String getImplementationName();
 }

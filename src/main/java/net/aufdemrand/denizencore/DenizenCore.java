@@ -8,6 +8,8 @@ import java.util.List;
  */
 public class DenizenCore {
 
+    public final static String VERSION = "1.0";
+
     static DenizenImplementation implementation;
 
     public static DenizenImplementation getImplementation() {
@@ -20,6 +22,9 @@ public class DenizenCore {
      */
     public static void Init(DenizenImplementation implementation) {
         DenizenCore.implementation = implementation;
+        implementation.debugMessage("Initializing Denizen Core v" + VERSION +
+                ", implementation for " + implementation.getImplementationName()
+                + " version " + implementation.getImplementationVersion());
     }
 
     public static void LoadScripts() {
