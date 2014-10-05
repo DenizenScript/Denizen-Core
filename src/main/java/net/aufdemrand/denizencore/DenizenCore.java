@@ -3,9 +3,6 @@ package net.aufdemrand.denizencore;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-import java.io.File;
-import java.util.List;
-
 /**
  * The entry point of the core Denizen engine.
  */

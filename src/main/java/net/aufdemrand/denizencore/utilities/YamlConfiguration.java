@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.utilities;
 
-import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;

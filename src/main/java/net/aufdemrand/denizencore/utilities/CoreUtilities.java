@@ -4,11 +4,16 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CoreUtilities {
+    
+    static Random random = new Random();
 
-    // TODO: Javadocs, comments
-    //
+    public static Random getRandom() {
+        return random;
+    }
+
     protected static FilenameFilter scriptsFilter;
 
     static {
