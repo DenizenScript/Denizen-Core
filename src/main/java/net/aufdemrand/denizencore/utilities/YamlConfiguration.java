@@ -4,10 +4,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a YAML file.
@@ -41,10 +38,28 @@ public class YamlConfiguration {
             dB.echoError("Invalid YAML object type: " + obj.toString() + " is " + obj.getClass().getSimpleName());
             return null;
         }
+        patchNonsense(config.contents);
         return config;
     }
 
     Map<String, Object> contents = null;
+
+    /**
+     * Don't ask why, I can't explain this Java BS.
+     */
+    private static void patchNonsense(Map<String, Object> objs) {
+        for (Object o: new HashSet<Object>(objs.keySet())) {
+            if (!(o instanceof String)) {
+                objs.put(o.toString(), objs.get(o));
+                objs.remove(o);
+            }
+        }
+        for (Map.Entry<String, Object> str: objs.entrySet()) {
+            if (str.getValue() instanceof Map) {
+                patchNonsense((Map<String, Object>)str.getValue());
+            }
+        }
+    }
 
     public Set<String> getKeys(boolean deep) {
         if (!deep) {
@@ -95,7 +110,29 @@ public class YamlConfiguration {
     }
 
     public void set(String path, Object o) {
-        // TODO
+        List<String> parts = CoreUtilities.Split(path, '.');
+        Map<String, Object> portion = contents;
+        for (int i = 0; i < parts.size(); i++) {
+            Object oPortion = portion.get(parts.get(i));
+            if (parts.size() == i + 1) {
+                portion.put(parts.get(i), o);
+                return;
+            }
+            else if (oPortion == null) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                portion.put(parts.get(i), map);
+                portion = map;
+            }
+            else if (oPortion instanceof Map) {
+                portion = (Map<String, Object>) oPortion;
+            }
+            else {
+                Map<String, Object> map = new HashMap<String, Object>();
+                portion.put(parts.get(i), map);
+                portion = map;
+            }
+        }
+        dB.echoError("Failed to set somehow?");
     }
 
     public boolean contains(String path) {
