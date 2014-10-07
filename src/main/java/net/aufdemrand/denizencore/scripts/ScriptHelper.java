@@ -111,8 +111,12 @@ public class ScriptHelper {
     }
 
     public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
-
-        return YamlConfiguration.load(ClearComments(filename, convertStreamToString(resource)));
+        try {
+            return YamlConfiguration.load(ClearComments(filename, convertStreamToString(resource)));
+        }
+        finally {
+            resource.close();
+        }
     }
 
     private static String _concatenateCoreScripts() {
