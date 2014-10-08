@@ -63,7 +63,7 @@ public class YamlConfiguration {
 
     public Set<String> getKeys(boolean deep) {
         if (!deep) {
-            return contents.keySet();
+            return new HashSet<String>(contents.keySet());
         }
         else {
             return getKeysDeep(contents);
@@ -71,7 +71,7 @@ public class YamlConfiguration {
     }
 
     private Set<String> getKeysDeep(Map<String, Object> objs) {
-        Set<String> strings = objs.keySet();
+        Set<String> strings = new HashSet<String>(objs.keySet());
         for (Map.Entry<String, Object> str: objs.entrySet()) {
             if (str.getValue() instanceof Map) {
                 strings.addAll(getKeysDeep((Map<String, Object>)str.getValue()));
