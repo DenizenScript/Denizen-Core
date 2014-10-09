@@ -14,6 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <json.version>20090211</json.version>
+        <build.number>Unknown</build.number>
     </properties>
 
     <!-- Repositories -->
@@ -87,19 +88,8 @@
         <defaultGoal>clean package install</defaultGoal>
         <resources>
             <resource>
-                <filtering>false</filtering>
-                <directory>${basedir}/src/main/resources</directory>
-                <includes>
-                    <include>*.mid</include>
-                </includes>
-            </resource>
-            <resource>
                 <filtering>true</filtering>
                 <directory>${basedir}/src/main/resources</directory>
-                <includes>
-                    <include>*.yml</include>
-                    <include>*.dscript</include>
-                </includes>
             </resource>
         </resources>
         <plugins>

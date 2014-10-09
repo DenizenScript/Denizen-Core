@@ -3,12 +3,34 @@ package net.aufdemrand.denizencore;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * The entry point of the core Denizen engine.
  */
 public class DenizenCore {
 
-    public final static String VERSION = "1.0";
+    public final static String VERSION;
+    static {
+        String version = "UNKNOWN";
+        try {
+            InputStream is = DenizenCore.class.getClassLoader().getResourceAsStream("denizencore.properties");
+            if (is == null) {
+                throw new FileNotFoundException("denizencore.properties not found in jar file");
+            }
+            else {
+                Properties properties = new Properties();
+                properties.load(is);
+                version = properties.getProperty("version") + " (Build " + properties.getProperty("build") + ")";
+                is.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        VERSION = version;
+    }
 
     static DenizenImplementation implementation;
 
