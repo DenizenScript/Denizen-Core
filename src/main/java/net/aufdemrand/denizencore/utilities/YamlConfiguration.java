@@ -64,7 +64,10 @@ public class YamlConfiguration {
     private static List<String> patchListNonsense(List<Object> objs) {
         List<String> list = new ArrayList<String>();
         for (Object o: objs) {
-            list.add(o.toString());
+            if (o == null)
+                list.add("null");
+            else
+                list.add(o.toString());
         }
         return list;
     }
