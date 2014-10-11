@@ -61,6 +61,14 @@ public class YamlConfiguration {
         }
     }
 
+    private static List<String> patchListNonsense(List<Object> objs) {
+        List<String> list = new ArrayList<String>();
+        for (Object o: objs) {
+            list.add(o.toString());
+        }
+        return list;
+    }
+
     public Set<String> getKeys(boolean deep) {
         if (!deep) {
             return new HashSet<String>(contents.keySet());
@@ -157,7 +165,9 @@ public class YamlConfiguration {
         Object o = get(path);
         if (o == null)
             return null;
-        return (List<String>)o;
+        if (!(o instanceof List))
+            return null;
+        return patchListNonsense((List<Object>) o);
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
