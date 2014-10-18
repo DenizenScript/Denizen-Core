@@ -174,24 +174,31 @@ public class YamlConfiguration {
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
-        List<String> parts = CoreUtilities.Split(path, '.');
-        Map<String, Object> portion = contents;
-        for (int i = 0; i < parts.size(); i++) {
-            Object oPortion = portion.get(parts.get(i));
-            if (oPortion == null) {
-                return null;
+        try {
+            List<String> parts = CoreUtilities.Split(path, '.');
+            Map<String, Object> portion = contents;
+            for (int i = 0; i < parts.size(); i++) {
+                Object oPortion = portion.get(parts.get(i));
+                if (oPortion == null) {
+                    return null;
+                }
+                else if (parts.size() == i + 1) {
+                    YamlConfiguration configuration = new YamlConfiguration();
+                    if (!(oPortion instanceof Map))
+                        return null;
+                    configuration.contents = (Map<String, Object>) oPortion;
+                    return configuration;
+                }
+                else if (oPortion instanceof Map) {
+                    portion = (Map<String, Object>) oPortion;
+                }
+                else {
+                    return null;
+                }
             }
-            else if (parts.size() == i + 1) {
-                YamlConfiguration configuration = new YamlConfiguration();
-                configuration.contents = (Map<String, Object>) oPortion;
-                return configuration;
-            }
-            else if (oPortion instanceof Map) {
-                portion = (Map<String, Object>) oPortion;
-            }
-            else {
-                return null;
-            }
+        }
+        catch (Exception e) {
+            dB.echoError(e);
         }
         return null;
     }
