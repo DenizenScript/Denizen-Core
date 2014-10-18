@@ -28,9 +28,10 @@ public class ScriptHelper {
             hadError = true;
             DenizenCore.getImplementation().debugError("Could not load scripts!");
             DenizenCore.getImplementation().debugException(e);
+            _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: yaml data\n");
         }
 
-        DenizenCore.getImplementation().buildCoreContainers(getScripts());
+        DenizenCore.getImplementation().buildCoreContainers(_yamlScripts);
     }
 
     public static YamlConfiguration _gs() {
@@ -89,13 +90,14 @@ public class ScriptHelper {
                 scriptSources.put(line.substring(0, line.length() - 1).toUpperCase().replace('\"', '\'').replace("'", ""), filename);
             }
             if (!line.startsWith("#")) {
-                if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":"))
-                {
+                if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":")) {
                     result.append(' ').append(lines[i].replace('\0', ' ')).append("\n");
                 }
-                else
-                {
-                    result.append(lines[i].replace('\0', ' ')).append("\n");
+                else {
+                    String liner = lines[i];
+                    if (!line.endsWith(":") && line.startsWith("-"))
+                        liner = liner.replace(": ", "<&co> ");
+                    result.append(liner.replace('\0', ' ')).append("\n");
                 }
             }
             else {
@@ -112,7 +114,8 @@ public class ScriptHelper {
 
     public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
         try {
-            return YamlConfiguration.load(ClearComments(filename, convertStreamToString(resource)));
+            String script = ClearComments(filename, convertStreamToString(resource));
+            return YamlConfiguration.load(script);
         }
         finally {
             resource.close();
