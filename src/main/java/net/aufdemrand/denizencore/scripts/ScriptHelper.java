@@ -174,7 +174,7 @@ public class ScriptHelper {
                             hadError = true;
                         }
 
-                    } catch (RuntimeException e) {
+                    } catch (Exception e) {
                         dB.echoError("Woah! Error parsing " + fileName + "!");
                         hadError = true;
                         dB.echoError(e);
