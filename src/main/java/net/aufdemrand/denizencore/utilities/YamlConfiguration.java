@@ -168,6 +168,15 @@ public class YamlConfiguration {
         return o.toString();
     }
 
+    public boolean isList(String path) {
+        Object o = get(path);
+        if (o == null)
+            return false;
+        if (!(o instanceof List))
+            return false;
+        return true;
+    }
+
     public List<String> getStringList(String path) {
         Object o = get(path);
         if (o == null)

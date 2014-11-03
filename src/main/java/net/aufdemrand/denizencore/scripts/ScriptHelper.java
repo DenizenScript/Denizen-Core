@@ -107,7 +107,7 @@ public class ScriptHelper {
         result.append("\n");
         return result.toString();
     }
-    static String convertStreamToString(InputStream is) {
+    public static String convertStreamToString(InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
