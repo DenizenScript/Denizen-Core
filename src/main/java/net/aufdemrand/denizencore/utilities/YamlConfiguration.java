@@ -72,6 +72,10 @@ public class YamlConfiguration {
         return list;
     }
 
+    public YamlConfiguration() {
+        contents = new HashMap<String, Object>();
+    }
+
     public Set<String> getKeys(boolean deep) {
         if (!deep) {
             return new HashSet<String>(contents.keySet());
