@@ -81,6 +81,10 @@ public class YamlConfiguration {
         }
     }
 
+    public Map<String, Object> getMap() {
+        return new HashMap<String, Object>(contents);
+    }
+
     private Set<String> getKeysDeep(Map<String, Object> objs) {
         Set<String> strings = new HashSet<String>(objs.keySet());
         for (Map.Entry<String, Object> str: objs.entrySet()) {
