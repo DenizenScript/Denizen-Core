@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
+import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.io.FileNotFoundException;
@@ -13,6 +14,16 @@ import java.util.Properties;
 public class DenizenCore {
 
     public final static String VERSION;
+    static CommandRegistry commandRegistry;
+
+    public static CommandRegistry getCommandRegistry() {
+        return commandRegistry;
+    }
+
+    public static void setCommandRegistry(CommandRegistry registry) {
+        commandRegistry = registry;
+    }
+
     static {
         String version = "UNKNOWN";
         try {

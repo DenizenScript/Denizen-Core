@@ -29,7 +29,7 @@ public interface DenizenImplementation {
     /**
      * Output an exception to console.
      */
-    public abstract void debugException(Exception ex);
+    public abstract void debugException(Throwable ex);
 
     /**
      * Output an error to console.

@@ -8,7 +8,7 @@ public class dB {
         DenizenCore.getImplementation().debugError(error);
     }
 
-    public static void echoError(Exception ex) {
+    public static void echoError(Throwable ex) {
         DenizenCore.getImplementation().debugException(ex);
     }
 

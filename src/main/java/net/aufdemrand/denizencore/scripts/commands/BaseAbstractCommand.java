@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.interfaces.RegistrationableInstance;
 
 public abstract class BaseAbstractCommand implements RegistrationableInstance {
@@ -29,6 +30,19 @@ public abstract class BaseAbstractCommand implements RegistrationableInstance {
         return braced;
     }
 
+    @Override
+    public BaseAbstractCommand activate() {
+        return this;
+    }
+
+    @Override
+    public BaseAbstractCommand as(String commandName) {
+        // Register command with Registry with a Name
+        name = commandName.toUpperCase();
+        DenizenCore.getCommandRegistry().register(this.name, this);
+        onEnable();
+        return this;
+    }
     protected String name;
 
     public CommandOptions commandOptions;
