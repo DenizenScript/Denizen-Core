@@ -134,7 +134,13 @@ public class YamlConfiguration {
         for (int i = 0; i < parts.size(); i++) {
             Object oPortion = portion.get(parts.get(i));
             if (parts.size() == i + 1) {
-                portion.put(parts.get(i), o);
+                if (o == null) {
+                    portion.remove(parts.get(i));
+                    emptyEmptyMaps(parts);
+                }
+                else {
+                    portion.put(parts.get(i), o);
+                }
                 return;
             }
             else if (oPortion == null) {
@@ -152,6 +158,27 @@ public class YamlConfiguration {
             }
         }
         dB.echoError("Failed to set somehow?");
+    }
+
+    void emptyEmptyMaps(List<String> parts) {
+        Map<String, Object> portion = contents;
+        for (int i = 0; i < parts.size(); i++) {
+            Object oPortion = portion.get(parts.get(i));
+            if (oPortion == null) {
+                return;
+            }
+            else if (oPortion instanceof Map) {
+                if (((Map<String, Object>)oPortion).size() == 0) {
+                    portion.remove(parts.get(i));
+                    emptyEmptyMaps(parts);
+                    return;
+                }
+                portion = (Map<String, Object>) oPortion;
+            }
+            else {
+                return;
+            }
+        }
     }
 
     public boolean contains(String path) {
