@@ -43,6 +43,7 @@ public abstract class BaseAbstractCommand implements RegistrationableInstance {
         onEnable();
         return this;
     }
+
     protected String name;
 
     public CommandOptions commandOptions;
