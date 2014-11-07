@@ -129,6 +129,8 @@ public class YamlConfiguration {
     }
 
     public void set(String path, Object o) {
+        if (o instanceof YamlConfiguration)
+            o = new HashMap<String,Object>(((YamlConfiguration)o).contents);
         List<String> parts = CoreUtilities.Split(path, '.');
         Map<String, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
