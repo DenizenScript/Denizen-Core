@@ -63,4 +63,41 @@ public class CoreUtilities {
         strings.add(str.substring(start, str.length()));
         return strings;
     }
+
+    public static String toLowerCase(String input) {
+        char[] data = input.toCharArray();
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] >= 'A' && data[i] <= 'Z') {
+                switch (data[i]) {
+                    case 'A': data[i] = 'a'; break;
+                    case 'B': data[i] = 'b'; break;
+                    case 'C': data[i] = 'c'; break;
+                    case 'D': data[i] = 'd'; break;
+                    case 'E': data[i] = 'e'; break;
+                    case 'F': data[i] = 'f'; break;
+                    case 'G': data[i] = 'g'; break;
+                    case 'H': data[i] = 'h'; break;
+                    case 'I': data[i] = 'i'; break;
+                    case 'J': data[i] = 'j'; break;
+                    case 'K': data[i] = 'k'; break;
+                    case 'L': data[i] = 'l'; break;
+                    case 'M': data[i] = 'm'; break;
+                    case 'N': data[i] = 'n'; break;
+                    case 'O': data[i] = 'o'; break;
+                    case 'P': data[i] = 'p'; break;
+                    case 'Q': data[i] = 'q'; break;
+                    case 'R': data[i] = 'r'; break;
+                    case 'S': data[i] = 's'; break;
+                    case 'T': data[i] = 't'; break;
+                    case 'U': data[i] = 'u'; break;
+                    case 'V': data[i] = 'v'; break;
+                    case 'W': data[i] = 'w'; break;
+                    case 'X': data[i] = 'x'; break;
+                    case 'Y': data[i] = 'y'; break;
+                    case 'Z': data[i] = 'z'; break;
+                }
+            }
+        }
+        return new String(data);
+    }
 }
