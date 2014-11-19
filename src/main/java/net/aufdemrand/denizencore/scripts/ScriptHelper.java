@@ -85,25 +85,30 @@ public class ScriptHelper {
         return scriptOriginalNames.get(script.toUpperCase());
     }
 
-    private static String ClearComments(String filename, String input) {
+    public static String ClearComments(String filename, String input, boolean trackSources) {
         StringBuilder result = new StringBuilder(input.length());
         String[] lines = input.replace("\t", "    ").replace("\r", "").split("\n");
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
             String trimStart = lines[i].replaceAll("^[\\s\\t]+", "");
-            if (trimStart.length() == lines[i].length() && line.endsWith(":") && line.length() > 1) {
-                String name = line.substring(0, line.length() - 1).replace('\"', '\'').replace("'", "");
-                scriptSources.put(name.toUpperCase(), filename);
-                scriptOriginalNames.put(name.toUpperCase(), name);
+            if (trackSources) {
+                if (trimStart.length() == lines[i].length() && line.endsWith(":") && line.length() > 1) {
+                    String name = line.substring(0, line.length() - 1).replace('\"', '\'').replace("'", "");
+                    scriptSources.put(name.toUpperCase(), filename);
+                    scriptOriginalNames.put(name.toUpperCase(), name);
+                }
             }
             if (!line.startsWith("#")) {
                 if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":")) {
-                    result.append(' ').append(lines[i].replace('\0', ' ')).append("\n");
+                    result.append(' ').append(lines[i].replace('\0', ' ')
+                    .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
                 }
                 else {
-                    String liner = lines[i];
-                    if (!line.endsWith(":") && line.startsWith("-"))
+                    String liner = lines[i].replace('\0', ' ');
+                    if (!line.endsWith(":") && line.startsWith("-")) {
                         liner = liner.replace(": ", "<&co> ");
+                        liner = liner.replace("#", "<&ns>");
+                    }
                     result.append(liner.replace('\0', ' ')).append("\n");
                 }
             }
@@ -121,7 +126,7 @@ public class ScriptHelper {
 
     public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
         try {
-            String script = ClearComments(filename, convertStreamToString(resource));
+            String script = ClearComments(filename, convertStreamToString(resource), true);
             return YamlConfiguration.load(script);
         }
         finally {
