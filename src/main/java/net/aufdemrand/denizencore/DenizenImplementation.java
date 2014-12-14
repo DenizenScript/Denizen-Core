@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore;
 
+import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 
 import java.io.File;
@@ -58,6 +59,12 @@ public interface DenizenImplementation {
      * EG, running a public Reload event.
      */
     public abstract void onScriptReload();
+
+    /**
+     * Return an empty ScriptEntryData object of the implementation's variety.
+     * This is to avoid casting issues when ScriptEntry's use generic data objects.
+     */
+    public abstract ScriptEntryData getEmptyScriptEntryData();
 
     /**
      * Temporary.
