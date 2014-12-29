@@ -176,8 +176,8 @@ public class ScriptHelper {
 
                     try {
                         yaml = loadConfig(f.getAbsolutePath(), new FileInputStream(f));
-                        String saved = yaml.saveToString();
-                        if (yaml != null && saved.length() > 0) {
+                        String saved = yaml != null ? yaml.saveToString() : null;
+                        if (saved != null && saved.length() > 0) {
                             handleListing(yaml, scriptNames);
                             sb.append(saved).append("\r\n");
                         }

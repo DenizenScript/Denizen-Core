@@ -19,12 +19,6 @@ public class YamlConfiguration {
         Object obj = yaml.load(data);
         YamlConfiguration config = new YamlConfiguration();
         if (obj == null) {
-            try {
-                throw new Exception("Null YAML container - failed to load or empty?: '" + data + "'");
-            }
-            catch (Exception e) {
-                dB.echoError(e);
-            }
             return null;
         }
         else if (obj instanceof String) {
