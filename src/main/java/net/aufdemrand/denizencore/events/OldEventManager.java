@@ -1,43 +1,28 @@
 package net.aufdemrand.denizencore.events;
 
-import net.aufdemrand.denizen.BukkitScriptEntryData;
-import net.aufdemrand.denizen.events.bukkit.ScriptReloadEvent;
-import net.aufdemrand.denizen.events.core.*;
-import net.aufdemrand.denizen.objects.aH;
-import net.aufdemrand.denizen.objects.dNPC;
-import net.aufdemrand.denizen.objects.dObject;
-import net.aufdemrand.denizen.objects.dPlayer;
-import net.aufdemrand.denizen.scripts.ScriptBuilder;
-import net.aufdemrand.denizen.scripts.ScriptEntry;
-import net.aufdemrand.denizen.scripts.commands.core.DetermineCommand;
-import net.aufdemrand.denizen.scripts.containers.core.WorldScriptContainer;
-import net.aufdemrand.denizen.scripts.queues.ScriptQueue;
-import net.aufdemrand.denizen.scripts.queues.core.InstantQueue;
-import net.aufdemrand.denizen.utilities.DenizenAPI;
-import net.aufdemrand.denizen.utilities.debugging.dB;
+import net.aufdemrand.denizencore.BukkitScriptEntryData;
+import net.aufdemrand.denizencore.events.bukkit.ScriptReloadEvent;
+import net.aufdemrand.denizencore.events.core.*;
+import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dNPC;
+import net.aufdemrand.denizencore.objects.dObject;
+import net.aufdemrand.denizencore.objects.dPlayer;
+import net.aufdemrand.denizencore.scripts.ScriptBuilder;
+import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
+import net.aufdemrand.denizencore.scripts.containers.core.WorldScriptContainer;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OldEventManager implements Listener {
-
-
-    public EventManager() {
-        DenizenAPI.getCurrentInstance().getServer().getPluginManager()
-                .registerEvents(this, DenizenAPI.getCurrentInstance());
-    }
-
+public class OldEventManager {
 
     ///////////////////
     //  MAPS
@@ -53,15 +38,14 @@ public class OldEventManager implements Listener {
             new HashMap<String, List<WorldScriptContainer>>();
 
     // Map for keeping track of registered smart_events
-    public static Set<SmartEvent> smart_events = new HashSet<SmartEvent>();
+    public static Set<OldSmartEvent> smart_events = new HashSet<OldSmartEvent>();
 
     //////////////////
     // PERFORMANCE
     ///////////
 
 
-    @EventHandler
-    public void scanWorldEvents(ScriptReloadEvent event) {
+    public static void scanWorldEvents() {
         try {
             // Build a Map of scripts keyed by 'world events name'.
 
@@ -102,11 +86,11 @@ public class OldEventManager implements Listener {
             // dB.echoApproval("Built events map: " + events);
 
             // Breakdown all SmartEvents (if still being used, they will reinitialize next)
-            for (SmartEvent smartEvent : smart_events)
+            for (OldSmartEvent smartEvent : smart_events)
                 smartEvent.breakDown();
 
             // Pass these along to each SmartEvent so they can determine whether they can be enabled or not
-            for (SmartEvent smartEvent : smart_events) {
+            for (OldSmartEvent smartEvent : smart_events) {
                 // If it should initialize, run _initialize!
                 if (smartEvent.shouldInitialize(events.keySet()))
                     smartEvent._initialize();
@@ -116,58 +100,6 @@ public class OldEventManager implements Listener {
             dB.echoError(e);
         }
     }
-
-
-    private Plugin plugin = DenizenAPI.getCurrentInstance();
-
-
-    public void registerCommand(String... aliases) {
-        PluginCommand command = getCommand(aliases[0], plugin);
-
-        command.setAliases(Arrays.asList(aliases));
-        getCommandMap().register(plugin.getDescription().getName(), command);
-    }
-
-
-    private static PluginCommand getCommand(String name, Plugin plugin) {
-        PluginCommand command = null;
-
-        try {
-            Constructor<PluginCommand> c = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-            c.setAccessible(true);
-
-            command = c.newInstance(name, plugin);
-        } catch (Exception e) {
-            dB.echoError(e);
-        }
-
-        return command;
-    }
-
-
-    private static CommandMap getCommandMap() {
-        CommandMap commandMap = null;
-
-        try {
-            if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
-                Field f = SimplePluginManager.class.getDeclaredField("commandMap");
-                f.setAccessible(true);
-
-                commandMap = (CommandMap) f.get(Bukkit.getPluginManager());
-            }
-        } catch (NoSuchFieldException e) {
-            dB.echoError(e);
-        } catch (SecurityException e) {
-            dB.echoError(e);
-        } catch (IllegalArgumentException e) {
-            dB.echoError(e);
-        } catch (IllegalAccessException e) {
-            dB.echoError(e);
-        }
-
-        return commandMap;
-    }
-
 
     public static List<String> trimEvents(List<String> original) {
         List<String> event = new ArrayList<String>();
@@ -198,47 +130,6 @@ public class OldEventManager implements Listener {
 
     public static boolean eventExists(String original) {
         return events.containsKey("ON " + original.toUpperCase());
-    }
-
-    ///////////////////
-    //  COMPATIBILITY
-    //////////////
-
-
-    /**
-     *
-     * @deprecated this was just a temporary place holder and will be removed soon.
-     */
-    @Deprecated
-    public static String doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context,
-                                  boolean usesIdentifiers, int Use_dPlayer) {
-
-        // If a list of events uses identifiers, also add those events to the list
-        // with their identifiers stripped
-        return doEvents(usesIdentifiers ? addAlternates(eventNames)
-                        : eventNames,
-                npc, player, context);
-    }
-
-    @Deprecated
-    public static String doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context,
-                                  boolean usesIdentifiers) {
-
-        // If a list of events uses identifiers, also add those events to the list
-        // with their identifiers stripped
-        return doEvents(usesIdentifiers ? addAlternates(eventNames)
-                        : eventNames,
-                npc, player, context);
-    }
-
-    public static List<String> doEvents1(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context,
-                                         boolean usesIdentifiers) {
-
-        // If a list of events uses identifiers, also add those events to the list
-        // with their identifiers stripped
-        return doEvents1(usesIdentifiers ? addAlternates(eventNames)
-                        : eventNames,
-                npc, player, context);
     }
 
 
@@ -291,25 +182,8 @@ public class OldEventManager implements Listener {
     ///////////////
 
 
-    /**
-     *
-     * @deprecated this was just a temporary place holder and will be removed soon.
-     */
-    @Deprecated
-    public static String doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context, int Use_dPlayer) {
-        return doEvents(eventNames, npc, player, context);
-    }
-
-    @Deprecated
-    public static String doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context) {
-        List<String> strs = doEvents1(eventNames, npc, player, context);
-        if (strs.isEmpty())
-            return DetermineCommand.DETERMINE_NONE;
-        else
-            return strs.get(0);
-    }
-
-    public static List<String> doEvents1(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context) {
+    // TODO: EventContext? Or reuse an existing context object.
+    public static List<String> doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context) {
 
         try {
             List<String> determinations = new ArrayList<String>();

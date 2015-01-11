@@ -1,9 +1,5 @@
 package net.aufdemrand.denizencore.scripts.containers.core;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
-import net.aufdemrand.denizencore.Settings;
-import net.aufdemrand.denizencore.objects.dNPC;
-import net.aufdemrand.denizencore.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -34,6 +30,7 @@ public class TaskScriptContainer extends ScriptContainer {
                 speed = Duration.valueOf(getString("SPEED", "0t"));
 
         } else
+        // TODO: Settings = read dImplementation
             speed = new Duration(Duration.valueOf(Settings.scriptQueueSpeed()).getSeconds());
 
         return speed;
@@ -45,6 +42,7 @@ public class TaskScriptContainer extends ScriptContainer {
         return this;
     }
 
+    // TODO: use a context object
     public ScriptQueue runTaskScript(dPlayer player, dNPC npc, Map<String, String> context) {
         return runTaskScript(ScriptQueue.getNextId(getName()), player, npc, context);
     }

@@ -1,6 +1,6 @@
 package net.aufdemrand.denizencore.scripts;
 
-import net.aufdemrand.denizencore.events.EventManager;
+import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.containers.core.*;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -57,9 +57,9 @@ public class ScriptRegistry {
 
     public static void _buildCoreYamlScriptContainers(YamlConfiguration yamlScripts) {
         scriptContainers.clear();
-        EventManager.world_scripts.clear();
-        EventManager.events.clear();
-        ItemScriptHelper.item_scripts.clear();
+        OldEventManager.world_scripts.clear();
+        OldEventManager.events.clear();
+        ItemScriptHelper.item_scripts.clear(); // TODO: De-corify this non-core crap
         ItemScriptHelper.item_scripts_by_hash_id.clear();
         InventoryScriptHelper.inventory_scripts.clear();
         // Get a set of key names in concatenated Denizen Scripts
@@ -93,7 +93,7 @@ public class ScriptRegistry {
         }
     }
 
-    public static List<net.aufdemrand.denizencore.utilities.YamlConfiguration> outside_scripts = new ArrayList<net.aufdemrand.denizencore.utilities.YamlConfiguration>();
+    public static List<YamlConfiguration> outside_scripts = new ArrayList<net.aufdemrand.denizencore.utilities.YamlConfiguration>();
 
     /**
      * Adds a YAML FileConfiguration to the list of scripts to be loaded. Adding a new
@@ -102,7 +102,7 @@ public class ScriptRegistry {
      * @param yaml_script  the FileConfiguration containing the script
      *
      */
-    public static void addYamlScriptContainer(net.aufdemrand.denizencore.utilities.YamlConfiguration yaml_script) {
+    public static void addYamlScriptContainer(YamlConfiguration yaml_script) {
         outside_scripts.add(yaml_script);
     }
 

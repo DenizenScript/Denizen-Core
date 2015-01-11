@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
 import net.aufdemrand.denizencore.objects.aH;
-import net.aufdemrand.denizencore.objects.dNPC;
-import net.aufdemrand.denizencore.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -35,7 +32,8 @@ public class ScriptBuilder {
      * Builds ScriptEntry(ies) of items read from a script
      */
 
-    public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent, dPlayer player, dNPC npc) {
+    // TODO: use a context object
+    public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent) {
         List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
 
         if (contents == null || contents.isEmpty()) {

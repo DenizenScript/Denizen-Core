@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore;
 
+import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -92,6 +93,7 @@ public class DenizenCore {
      */
     public static void reloadScripts() {
         loadScripts();
+        OldEventManager.scanWorldEvents();
     }
 
     public static List<Schedulable> scheduled = new ArrayList<Schedulable>();
