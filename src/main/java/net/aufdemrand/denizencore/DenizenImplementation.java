@@ -1,7 +1,11 @@
 package net.aufdemrand.denizencore;
 
+import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
+import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
 
 import java.io.File;
 import java.util.List;
@@ -38,9 +42,39 @@ public interface DenizenImplementation {
     public abstract void debugError(String error);
 
     /**
+     * Output an error to console, specific to a script queue.
+     */
+    public abstract void debugError(ScriptQueue queue, String error);
+
+    /**
+     * Output a command information report.
+     */
+    public abstract void debugReport(Debuggable caller, String name, String message);
+
+    /**
      * Output an 'Okay!' message.
      */
     public abstract void debugApproval(String message);
+
+    /**
+     * Outputs a message specific to a script entry.
+     */
+    public abstract void debugEntry(ScriptEntry entry, String message);
+
+    /**
+     * Outputs a message specific to a script entry.
+     */
+    public abstract void debugEntry(ScriptEntry entry, DebugElement element, String message);
+
+    /**
+     * Outputs a message specific to a script entry.
+     */
+    public abstract void debugEntry(ScriptEntry entry, DebugElement element);
+
+    /**
+     * Outputs a message specific to a script queue.
+     */
+    public abstract void debugQueue(ScriptQueue entry, String message);
 
     /**
      * Return the name of the implementation.

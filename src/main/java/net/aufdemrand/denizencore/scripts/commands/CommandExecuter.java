@@ -5,20 +5,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
-import net.aufdemrand.denizencore.tags.BukkitTagContext;
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
-import net.aufdemrand.denizencore.objects.dNPC;
-import net.aufdemrand.denizencore.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.tags.TagManager;
-import net.aufdemrand.denizencore.utilities.DenizenAPI;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
 
 import net.aufdemrand.denizencore.scripts.commands.BaseAbstractCommand;
-import org.bukkit.ChatColor;
 
 public class CommandExecuter {
 
@@ -66,7 +61,7 @@ public class CommandExecuter {
         // Get the command instance ready for the execution of the scriptEntry
         BaseAbstractCommand command = scriptEntry.getCommand();
         if (command == null) {
-            command = DenizenAPI.getCurrentInstance().getCommandRegistry().get(scriptEntry.getCommandName());
+            command = DenizenCore.getCommandRegistry().get(scriptEntry.getCommandName());
         }
 
         if (command == null) {
@@ -76,18 +71,21 @@ public class CommandExecuter {
             return false;
         }
 
-        if (((BukkitScriptEntryData)scriptEntry.entryData).hasNPC() && ((BukkitScriptEntryData)scriptEntry.entryData).getNPC().getCitizen() == null)
-            ((BukkitScriptEntryData)scriptEntry.entryData).setNPC(null);
+        if ((criptEntry.entryData).hasNPC() && (scriptEntry.entryData).getNPC().getCitizen() == null)
+            (scriptEntry.entryData).setNPC(null);
 
         // Debugger information
         if (scriptEntry.getOriginalArguments() == null ||
                 scriptEntry.getOriginalArguments().size() == 0 ||
                 !scriptEntry.getOriginalArguments().get(0).equals("\0CALLBACK")) {
-            if (((BukkitScriptEntryData)scriptEntry.entryData).getPlayer() != null)
-                dB.echoDebug(scriptEntry, DebugElement.Header, "Executing dCommand: " + scriptEntry.getCommandName() + "/p@" + ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer().getName());
+            if ((scriptEntry.entryData).getPlayer() != null)
+                dB.echoDebug(scriptEntry, DebugElement.Header,
+                        "Executing dCommand: " + scriptEntry.getCommandName() + "/p@" +
+                                (scriptEntry.entryData).getPlayer().getName());
             else
                 dB.echoDebug(scriptEntry, DebugElement.Header, "Executing dCommand: " +
-                        scriptEntry.getCommandName() + (((BukkitScriptEntryData)scriptEntry.entryData).getNPC() != null ? "/n@" + ((BukkitScriptEntryData)scriptEntry.entryData).getNPC().getName() : ""));
+                        scriptEntry.getCommandName() + ((scriptEntry.entryData).getNPC() != null ?
+                        "/n@" + (scriptEntry.entryData).getNPC().getName() : ""));
         }
 
         // Don't execute() if problems arise in parseArgs()

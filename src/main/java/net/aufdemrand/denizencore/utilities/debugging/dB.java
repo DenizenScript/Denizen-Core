@@ -1,6 +1,8 @@
 package net.aufdemrand.denizencore.utilities.debugging;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 
 public class dB {
 
@@ -22,6 +24,10 @@ public class dB {
         DenizenCore.getImplementation().debugError(error);
     }
 
+    public static void echoError(ScriptQueue queue, String error) {
+        DenizenCore.getImplementation().debugError(queue, error);
+    }
+
     public static void echoError(Throwable ex) {
         DenizenCore.getImplementation().debugException(ex);
     }
@@ -32,5 +38,25 @@ public class dB {
 
     public static void echoApproval(String message) {
         DenizenCore.getImplementation().debugApproval(message);
+    }
+
+    public static void echoDebug(ScriptEntry entry, String message) {
+        DenizenCore.getImplementation().debugEntry(entry, message);
+    }
+
+    public static void echoDebug(ScriptEntry entry, DebugElement element, String message) {
+        DenizenCore.getImplementation().debugEntry(entry, element, message);
+    }
+
+    public static void echoDebug(ScriptEntry entry, DebugElement element) {
+        DenizenCore.getImplementation().debugEntry(entry, element);
+    }
+
+    public static void echoDebug(ScriptQueue queue, String message) {
+        DenizenCore.getImplementation().debugQueue(queue, message);
+    }
+
+    public static void report(Debuggable caller, String name, String message) {
+        DenizenCore.getImplementation().debugReport(caller, name, message);
     }
 }

@@ -2,7 +2,6 @@ package net.aufdemrand.denizencore.scripts.commands;
 
 import java.util.*;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -125,10 +124,10 @@ public abstract class BracedCommand extends AbstractCommand {
                             bracesSection.add(new ScriptEntry(cmd,
                                     args,
                                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-                            ((BukkitScriptEntryData)bracesSection.get(bracesSection.size() - 1).entryData)
-                                    .setPlayer(((BukkitScriptEntryData) scriptEntry.entryData).getPlayer());
-                            ((BukkitScriptEntryData)bracesSection.get(bracesSection.size() - 1).entryData)
-                                    .setNPC(((BukkitScriptEntryData) scriptEntry.entryData).getNPC());
+                            (bracesSection.get(bracesSection.size() - 1).entryData)
+                                    .setPlayer((scriptEntry.entryData).getPlayer());
+                            (bracesSection.get(bracesSection.size() - 1).entryData)
+                                    .setNPC((scriptEntry.entryData).getNPC());
                             if (hyperdebug) dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
                         } catch (ScriptEntryCreationException e) {
                             if (hyperdebug) dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
