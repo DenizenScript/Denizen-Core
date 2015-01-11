@@ -71,5 +71,8 @@ public interface DenizenImplementation {
      */
     public abstract void buildCoreContainers(YamlConfiguration yamlScripts);
 
+    /**
+     * Temporary.
+     */
     public abstract List<YamlConfiguration> getOutsideScripts();
 }

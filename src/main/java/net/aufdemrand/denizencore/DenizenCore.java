@@ -3,9 +3,12 @@ package net.aufdemrand.denizencore;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -89,5 +92,27 @@ public class DenizenCore {
      */
     public static void reloadScripts() {
         loadScripts();
+    }
+
+    public static List<Schedulable> scheduled = new ArrayList<Schedulable>();
+
+    /**
+     * Schedule an item to be run automatically after a given period of time, optionally repeating.
+     */
+    public static void schedule(Schedulable sched) {
+        scheduled.add(sched);
+    }
+
+    /**
+     * Call every 'tick' in the engine. (1/20th of a second on a standard engine.)
+     *
+     * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
+     */
+    public static void tick(int ms_elapsed) {
+        for (int i = 0; i < scheduled.size(); i++) {
+            if (!scheduled.get(i).tick((float)ms_elapsed / 1000)) {
+                scheduled.remove(i--);
+            }
+        }
     }
 }
