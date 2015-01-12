@@ -33,7 +33,7 @@ public class ScriptBuilder {
      */
 
     // TODO: use a context object
-    public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent) {
+    public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent, ScriptEntryData data) {
         List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
 
         if (contents == null || contents.isEmpty()) {
@@ -64,8 +64,7 @@ public class ScriptBuilder {
                 if (dB.showScriptBuilder)
                     dB.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent);
-                ((BukkitScriptEntryData)newEntry.entryData).setPlayer(player);
-                ((BukkitScriptEntryData)newEntry.entryData).setNPC(npc);
+                newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);
             } catch (Exception e) {
                 dB.echoError(e);

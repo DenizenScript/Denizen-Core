@@ -7,6 +7,11 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 public class dB {
 
     /**
+     * TODO: TRANSFER FROM Bukkit#dB
+     */
+    public static boolean showScriptBuilder = false;
+
+    /**
      * Can be used with echoDebug(...) to output a header, footer,
      * or a spacer.
      *
@@ -44,20 +49,16 @@ public class dB {
         DenizenCore.getImplementation().debugApproval(message);
     }
 
-    public static void echoDebug(ScriptEntry entry, String message) {
+    public static void echoDebug(Debuggable entry, String message) {
         DenizenCore.getImplementation().debugEntry(entry, message);
     }
 
-    public static void echoDebug(ScriptEntry entry, DebugElement element, String message) {
+    public static void echoDebug(Debuggable entry, DebugElement element, String message) {
         DenizenCore.getImplementation().debugEntry(entry, element, message);
     }
 
-    public static void echoDebug(ScriptEntry entry, DebugElement element) {
+    public static void echoDebug(Debuggable entry, DebugElement element) {
         DenizenCore.getImplementation().debugEntry(entry, element);
-    }
-
-    public static void echoDebug(ScriptQueue queue, String message) {
-        DenizenCore.getImplementation().debugQueue(queue, message);
     }
 
     public static void report(Debuggable caller, String name, String message) {

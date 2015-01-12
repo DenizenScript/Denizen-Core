@@ -64,24 +64,19 @@ public interface DenizenImplementation {
     public abstract void debugApproval(String message);
 
     /**
-     * Outputs a message specific to a script entry.
+     * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(ScriptEntry entry, String message);
+    public abstract void debugEntry(Debuggable entry, String message);
 
     /**
-     * Outputs a message specific to a script entry.
+     * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(ScriptEntry entry, DebugElement element, String message);
+    public abstract void debugEntry(Debuggable entry, DebugElement element, String message);
 
     /**
-     * Outputs a message specific to a script entry.
+     * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(ScriptEntry entry, DebugElement element);
-
-    /**
-     * Outputs a message specific to a script queue.
-     */
-    public abstract void debugQueue(ScriptQueue entry, String message);
+    public abstract void debugEntry(Debuggable entry, DebugElement element);
 
     /**
      * Return the name of the implementation.
