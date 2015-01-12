@@ -4,13 +4,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.aufdemrand.denizen.scripts.ScriptRegistry;
-import net.aufdemrand.denizen.utilities.debugging.dB;
+import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.EntityType;
 
 
 /**
@@ -95,7 +92,7 @@ public class aH {
             }
             else {
                 has_prefix = true;
-                String[] split = StringUtils.split(string, ":", 2);
+                String[] split = (String[]) CoreUtilities.split(string, ':', 2).toArray();
                 prefix = split[0];
                 lower_prefix = CoreUtilities.toLowerCase(prefix);
                 if (split.length == 2)
@@ -132,7 +129,7 @@ public class aH {
 
         // TODO: REMOVE IN 1.0
         public boolean matches(String values) {
-            for (String value : StringUtils.split(values, ',')) {
+            for (String value : CoreUtilities.split(values, ',')) {
                 if (CoreUtilities.toLowerCase(value.trim()).equals(lower_value))
                     return true;
             }
@@ -185,7 +182,7 @@ public class aH {
         // TODO: REMOVE IN 1.0
         public boolean matchesPrefix(String values) {
             if (!hasPrefix()) return false;
-            for (String value : StringUtils.split(values, ',')) {
+            for (String value : CoreUtilities.split(values, ',')) {
                 if (CoreUtilities.toLowerCase(value.trim()).equals(lower_prefix))
                     return true;
             }
@@ -332,7 +329,7 @@ public class aH {
         }
 
         if (dB.showScriptBuilder)
-            dB.log(ChatColor.GRAY + "Constructed args: " + Arrays.toString(matchList.toArray()));
+            dB.log("Constructed args: " + Arrays.toString(matchList.toArray()));
 
         return matchList.toArray(new String[matchList.size()]);
     }
@@ -498,12 +495,13 @@ public class aH {
             case Boolean:
                 return booleanPrimitive.matcher(string_arg).matches();
 
-            case Location:
-                return dLocation.matches(string_arg);
-
             case Script:
                 // return dScript.matches(string_arg);
                 return true;
+
+            /** TODO: MOVE OUT OF CORE:
+            case Location:
+                return dLocation.matches(string_arg);
 
             case Item:
                 return dItem.matches(string_arg);
@@ -513,12 +511,15 @@ public class aH {
 
             case Duration:
                 return Duration.matches(string_arg);
-
+*/
             case String:
                 return true;
 
             case Custom:
                 return true;
+
+            default:
+                dB.echoError("Invalid or temporarily unavailable matches value!");
 
         }
 
@@ -541,22 +542,6 @@ public class aH {
         }
     }
 
-    @Deprecated
-    public static EntityType getEntityTypeFrom(String arg) {
-        for (EntityType validEntity : EntityType.values())
-            if (getStringFrom(arg).equalsIgnoreCase(validEntity.name()))
-                return validEntity;
-
-        // No match
-        return null;
-    }
-
-    @Deprecated
-    public static dEntity getEntityFrom(String arg) {
-        arg = arg.toLowerCase().replace("entity:", "");
-        return dEntity.valueOf(arg);
-    }
-
     public static float getFloatFrom(String arg) {
         try {
             return Float.valueOf(getStringFrom(arg));
@@ -574,20 +559,8 @@ public class aH {
     }
 
     @Deprecated
-    public static dItem getItemFrom(String arg) {
-        arg = arg.toLowerCase().replace("item:", "");
-        return dItem.valueOf(arg);
-    }
-
-    @Deprecated
     public static dList getListFrom(String arg) {
         return dList.valueOf(aH.getStringFrom(arg));
-    }
-
-    @Deprecated
-    public static dLocation getLocationFrom(String arg) {
-        arg = arg.toLowerCase().replace("location:", "");
-        return dLocation.valueOf(arg);
     }
 
     public static long getLongFrom(String arg) {
@@ -602,16 +575,6 @@ public class aH {
     public static dScript getScriptFrom(String arg) {
         arg = arg.toLowerCase().replace("script:", "");
         return dScript.valueOf(arg);
-    }
-
-    @Deprecated
-    public static dPlayer getPlayerFrom(String arg) {
-        return dPlayer.valueOf(aH.getStringFrom(arg));
-    }
-
-    @Deprecated
-    public static dNPC getNPCFrom(String arg) {
-        return dNPC.valueOf(aH.getStringFrom(arg));
     }
 
     public static String getStringFrom(String arg) {
@@ -633,16 +596,6 @@ public class aH {
     public static boolean matchesDuration(String arg) {
         arg = arg.toLowerCase().replace("duration:", "").replace("delay:", "");
         return Duration.matches(arg);
-    }
-
-    public static boolean matchesEntityType(String arg) {
-        arg = arg.toLowerCase().replace("entity:", "");
-
-        // Check against valid EntityTypes using Bukkit's EntityType enum
-        for (EntityType validEntity : EntityType.values())
-            if (arg.equalsIgnoreCase(validEntity.name()))
-                return true;
-        return false;
     }
 
     public static boolean matchesInteger(String arg) {
