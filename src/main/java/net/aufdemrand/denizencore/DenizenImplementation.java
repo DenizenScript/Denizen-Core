@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -182,4 +183,68 @@ public interface DenizenImplementation {
      * Settings.scriptQueueSpeed()
      */
     public abstract String scriptQueueSpeed();
+
+    /**
+     *
+     if (string.startsWith("fl")) {
+     FlagManager flag_manager = DenizenAPI.getCurrentInstance().flagManager();
+     if (string.indexOf('[') == 2) {
+     int cb = string.indexOf(']');
+     if (cb > 4 && string.indexOf('@') == (cb + 1)) {
+     String owner = string.substring(3, cb);
+     String flag = string.substring(cb + 2);
+     if (dPlayer.matches(owner)) {
+     dPlayer player = dPlayer.valueOf(owner);
+     if (FlagManager.playerHasFlag(player, flag))
+     return new dList(flag_manager.getPlayerFlag(player, flag));
+     else
+     dB.echoError("Player '" + owner + "' flag '" + flag + "' not found.");
+     }
+     else if (Depends.citizens != null && dNPC.matches(owner)) {
+     dNPC npc = dNPC.valueOf(owner);
+     if (FlagManager.npcHasFlag(npc, flag))
+     return new dList(flag_manager.getNPCFlag(npc.getId(), flag));
+     else
+     dB.echoError("NPC '" + owner + "' flag '" + flag + "' not found.");
+     }
+     }
+     else
+     dB.echoError("Invalid dFlag format: " + string);
+     }
+     else if (string.indexOf('@') == 2) {
+     String flag = string.substring(3);
+     if (FlagManager.serverHasFlag(flag))
+     return new dList(flag_manager.getGlobalFlag(flag));
+     else
+     dB.echoError("Global flag '" + flag + "' not found.");
+     }
+     else {
+     return new dList(string);
+     }
+     }
+     return null;
+     */
+    public abstract dList valueOfFlagdList(String input);
+
+    /**
+     if (arg.startsWith("fl")) {
+     if (arg.indexOf('[') == 2) {
+     int cb = arg.indexOf(']');
+     if (cb > 4 && arg.indexOf('@') == (cb + 1)) {
+     String owner = arg.substring(3, cb);
+     flag = arg.substring(cb + 2).length() > 0 && (dPlayer.matches(owner)
+     || (Depends.citizens != null && dNPC.matches(owner)));
+     }
+     }
+     else if (arg.indexOf('@') == 2) {
+     flag = arg.substring(3).length() > 0;
+     }
+     }
+     */
+    public abstract boolean matchesFlagdList(String input);
+
+    /**
+     * flag.getLast().asString()
+     */
+    public abstract String getLastEntryFromFlag(String flag);
 }

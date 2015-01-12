@@ -1,7 +1,6 @@
 package net.aufdemrand.denizencore.objects;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
-import net.aufdemrand.denizencore.flags.FlagManager;
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
@@ -13,12 +12,9 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
-import net.aufdemrand.denizencore.utilities.DenizenAPI;
 import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
-import net.aufdemrand.denizencore.utilities.depends.Depends;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
-import org.bukkit.ChatColor;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -35,41 +31,10 @@ public class dList extends ArrayList<String> implements dObject {
         ///////
         // Match @object format
 
-        if (string.startsWith("fl")) {
-            FlagManager flag_manager = DenizenAPI.getCurrentInstance().flagManager();
-            if (string.indexOf('[') == 2) {
-                int cb = string.indexOf(']');
-                if (cb > 4 && string.indexOf('@') == (cb + 1)) {
-                    String owner = string.substring(3, cb);
-                    String flag = string.substring(cb + 2);
-                    if (dPlayer.matches(owner)) {
-                        dPlayer player = dPlayer.valueOf(owner);
-                        if (FlagManager.playerHasFlag(player, flag))
-                            return new dList(flag_manager.getPlayerFlag(player, flag));
-                        else
-                            dB.echoError("Player '" + owner + "' flag '" + flag + "' not found.");
-                    }
-                    else if (Depends.citizens != null && dNPC.matches(owner)) {
-                        dNPC npc = dNPC.valueOf(owner);
-                        if (FlagManager.npcHasFlag(npc, flag))
-                            return new dList(flag_manager.getNPCFlag(npc.getId(), flag));
-                        else
-                            dB.echoError("NPC '" + owner + "' flag '" + flag + "' not found.");
-                    }
-                }
-                else
-                    dB.echoError("Invalid dFlag format: " + string);
-            }
-            else if (string.indexOf('@') == 2) {
-                String flag = string.substring(3);
-                if (FlagManager.serverHasFlag(flag))
-                    return new dList(flag_manager.getGlobalFlag(flag));
-                else
-                    dB.echoError("Global flag '" + flag + "' not found.");
-            }
-            else {
-                return new dList(string);
-            }
+        dList list = DenizenCore.getImplementation().valueOfFlagdList(string);
+
+        if (list != null) {
+            return list;
         }
 
         // Use value of string, which will separate values by the use of a pipe '|'
@@ -79,21 +44,7 @@ public class dList extends ArrayList<String> implements dObject {
 
     public static boolean matches(String arg) {
 
-        boolean flag = false;
-
-        if (arg.startsWith("fl")) {
-            if (arg.indexOf('[') == 2) {
-                int cb = arg.indexOf(']');
-                if (cb > 4 && arg.indexOf('@') == (cb + 1)) {
-                    String owner = arg.substring(3, cb);
-                    flag = arg.substring(cb + 2).length() > 0 && (dPlayer.matches(owner)
-                            || (Depends.citizens != null && dNPC.matches(owner)));
-                }
-            }
-            else if (arg.indexOf('@') == 2) {
-                flag = arg.substring(3).length() > 0;
-            }
-        }
+        boolean flag = DenizenCore.getImplementation().matchesFlagdList(arg);
 
         return flag || arg.contains("|") || arg.contains(internal_escape) || arg.startsWith("li@");
     }
@@ -159,19 +110,9 @@ public class dList extends ArrayList<String> implements dObject {
         }
     }
 
-    // A Flag
-    public dList(FlagManager.Flag flag) {
-        this.flag = flag;
-        addAll(flag.values());
-    }
-
-
     /////////////
     //   Instance Fields/Methods
     //////////
-
-    private FlagManager.Flag flag = null;
-
 
     /**
      * Adds a list of dObjects to a dList by forcing each to 'identify()'.
@@ -262,9 +203,7 @@ public class dList extends ArrayList<String> implements dObject {
             try {
                 if (ObjectFetcher.checkMatch(dClass, element)) {
 
-                    T object = ObjectFetcher.getObjectFrom(dClass, element,
-                            (entry != null ? ((BukkitScriptEntryData)entry.entryData).getPlayer(): null),
-                            (entry != null ? ((BukkitScriptEntryData)entry.entryData).getNPC(): null));
+                    T object = ObjectFetcher.getObjectFrom(dClass, element, entry.entryData.getTagContext());
 
                     // Only add the object if it is not null, thus filtering useless
                     // list items
@@ -311,6 +250,8 @@ public class dList extends ArrayList<String> implements dObject {
         return "<G>" + prefix + "='<Y>" + identify() + "<G>'  ";
     }
 
+    public String flag = null;
+
     @Override
     public boolean isUnique() {
         return flag != null;
@@ -323,8 +264,9 @@ public class dList extends ArrayList<String> implements dObject {
 
     @Override
     public String identify() {
-        if (flag != null)
-            return flag.toString();
+        if (flag != null) {
+            return flag;
+        }
 
         if (isEmpty()) return "li@";
 
@@ -494,52 +436,6 @@ public class dList extends ArrayList<String> implements dObject {
                 dScriptArg.append(item);
             }
             return new Element(dScriptArg.toString())
-                    .getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <li@list.formatted>
-        // @returns Element
-        // @description
-        // returns the list in a human-readable format.
-        // EG, a list of "n@3|p@bob|potato" will return "GuardNPC, bob, and potato".
-        // -->
-        if (attribute.startsWith("formatted")) {
-            if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
-            StringBuilder dScriptArg = new StringBuilder();
-
-            for (int n = 0; n < this.size(); n++) {
-                if (get(n).startsWith("p@")) {
-                    dPlayer gotten = dPlayer.valueOf(get(n));
-                    if (gotten != null) {
-                        dScriptArg.append(gotten.getName());
-                    }
-                    else {
-                        dScriptArg.append(get(n).replaceAll("\\w+@", ""));
-                    }
-                }
-                else if (get(n).startsWith("e@") || get(n).startsWith("n@")) {
-                    dEntity gotten = dEntity.valueOf(get(n));
-                    if (gotten != null) {
-                        dScriptArg.append(gotten.getName());
-                    }
-                    else {
-                        dScriptArg.append(get(n).replaceAll("\\w+@", ""));
-                    }
-                }
-                else {
-                    dScriptArg.append(get(n).replaceAll("\\w+@", ""));
-                }
-
-                if (n == this.size() - 2) {
-                    dScriptArg.append(n == 0 ? " and ": ", and ");
-                }
-                else {
-                    dScriptArg.append(", ");
-                }
-            }
-
-            return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 2))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -1245,11 +1141,6 @@ public class dList extends ArrayList<String> implements dObject {
                     .getAttribute(attribute.fulfill(2));
         }
 
-        if (attribute.startsWith("debug.no_color")) {
-            return new Element(ChatColor.stripColor(debug()))
-                    .getAttribute(attribute.fulfill(2));
-        }
-
         if (attribute.startsWith("debug")) {
             return new Element(debug())
                     .getAttribute(attribute.fulfill(1));
@@ -1319,18 +1210,6 @@ public class dList extends ArrayList<String> implements dObject {
         // -->
         // NOTE: Defined in UtilTags.java
 
-        // <--[tag]
-        // @attribute <fl@flag_name.expiration>
-        // @returns Duration
-        // @description
-        // returns a Duration of the time remaining on the flag, if it
-        // has an expiration.
-        // -->
-        if (flag != null && attribute.startsWith("expiration")) {
-            return flag.expiration()
-                    .getAttribute(attribute.fulfill(1));
-        }
-
         // Need this attribute (for flags) since they return the last
         // element of the list, unless '.as_list' is specified.
 
@@ -1357,7 +1236,7 @@ public class dList extends ArrayList<String> implements dObject {
         }
 
         return (flag != null
-                ? new Element(flag.getLast().asString()).getAttribute(attribute)
+                ? new Element(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getAttribute(attribute)
                 : new Element(identify()).getAttribute(attribute));
     }
 }

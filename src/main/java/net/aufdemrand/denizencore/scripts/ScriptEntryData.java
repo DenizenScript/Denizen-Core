@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts;
 
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public abstract class ScriptEntryData implements Cloneable {
@@ -21,4 +22,6 @@ public abstract class ScriptEntryData implements Cloneable {
      * // TODO: DELETE THIS NOTE
      */
     public abstract void transferDataFrom(ScriptEntryData data);
+
+    public abstract TagContext getTagContext();
 }

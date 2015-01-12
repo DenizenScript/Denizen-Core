@@ -4,7 +4,7 @@ import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 
-public class TagContext {
+public class TagContext { // TODO: make abstract?
     public final boolean instant;
     public final boolean debug;
     public final ScriptEntry entry;
