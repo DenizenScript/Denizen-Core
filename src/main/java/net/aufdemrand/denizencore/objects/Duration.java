@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.aufdemrand.denizen.objects.properties.Property;
-import net.aufdemrand.denizen.objects.properties.PropertyParser;
-import net.aufdemrand.denizen.tags.Attribute;
-import net.aufdemrand.denizen.utilities.debugging.dB;
+import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.objects.properties.PropertyParser;
+import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
-import org.bukkit.ChatColor;
 
 import com.google.common.primitives.Ints;
 
@@ -286,9 +285,7 @@ public class Duration implements dObject {
 
     @Override
     public String debug() {
-        return ChatColor.DARK_GRAY +  prefix + "='"
-                + ChatColor.YELLOW + identify()
-                + ChatColor.DARK_GRAY + "'  ";
+        return (prefix + "='<A>" + identify() + "<G>'  ");
     }
 
     @Override
@@ -533,11 +530,6 @@ public class Duration implements dObject {
         if (attribute.startsWith("debug.log")) {
             dB.log(debug());
             return new Element(Boolean.TRUE.toString())
-                    .getAttribute(attribute.fulfill(2));
-        }
-
-        if (attribute.startsWith("debug.no_color")) {
-            return new Element(ChatColor.stripColor(debug()))
                     .getAttribute(attribute.fulfill(2));
         }
 
