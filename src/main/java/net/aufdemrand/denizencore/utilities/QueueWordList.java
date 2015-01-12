@@ -92,8 +92,8 @@ public class QueueWordList {
 
     public static final List<String> FinalWordList;
     static {
-        FinalWordList = CoreUtilities.Split(WordList, ' ');
-        FinalWordList.addAll(CoreUtilities.Split(WordList2, ' '));
+        FinalWordList = CoreUtilities.split(WordList, ' ');
+        FinalWordList.addAll(CoreUtilities.split(WordList2, ' '));
         // Weight the chances a bit heavily
         FinalWordList.addAll(repeat("Minecraft", 50));
         FinalWordList.addAll(repeat("Citizens", 50));

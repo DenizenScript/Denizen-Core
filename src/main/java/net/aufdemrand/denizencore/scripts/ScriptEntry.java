@@ -8,8 +8,8 @@ import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.objects.dScript;
+import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
-import net.aufdemrand.denizencore.scripts.commands.BaseAbstractCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -25,7 +25,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     // The name of the command that will be executed
     private String command;
-    private BaseAbstractCommand actualCommand;
+    private AbstractCommand actualCommand;
 
     // Command Arguments
     private List<String> args;
@@ -215,7 +215,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return command;
     }
 
-    public BaseAbstractCommand getCommand() {
+    public AbstractCommand getCommand() {
         return actualCommand;
     }
 

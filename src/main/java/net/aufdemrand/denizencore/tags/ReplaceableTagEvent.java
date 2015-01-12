@@ -133,7 +133,7 @@ public class ReplaceableTagEvent {
 
     // TODO: Remove in 1.0!
     public boolean matches(String tagName) {
-        List<String> tagNames = CoreUtilities.Split(tagName, ',');
+        List<String> tagNames = CoreUtilities.split(tagName, ',');
         String name = getName();
         for (String string: tagNames)
             if (name.equalsIgnoreCase(string.trim())) return true;

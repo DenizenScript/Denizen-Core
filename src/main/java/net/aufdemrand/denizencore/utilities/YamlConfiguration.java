@@ -102,7 +102,7 @@ public class YamlConfiguration {
     }
 
     public Object get(String path) {
-        List<String> parts = CoreUtilities.Split(path, '.');
+        List<String> parts = CoreUtilities.split(path, '.');
         Map<String, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
             Object oPortion = portion.get(parts.get(i));
@@ -125,7 +125,7 @@ public class YamlConfiguration {
     public void set(String path, Object o) {
         if (o instanceof YamlConfiguration)
             o = new HashMap<String,Object>(((YamlConfiguration)o).contents);
-        List<String> parts = CoreUtilities.Split(path, '.');
+        List<String> parts = CoreUtilities.split(path, '.');
         Map<String, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
             Object oPortion = portion.get(parts.get(i));
@@ -215,7 +215,7 @@ public class YamlConfiguration {
 
     public YamlConfiguration getConfigurationSection(String path) {
         try {
-            List<String> parts = CoreUtilities.Split(path, '.');
+            List<String> parts = CoreUtilities.split(path, '.');
             Map<String, Object> portion = contents;
             for (int i = 0; i < parts.size(); i++) {
                 Object oPortion = portion.get(parts.get(i));

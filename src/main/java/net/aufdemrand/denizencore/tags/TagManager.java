@@ -213,7 +213,7 @@ public class TagManager {
     public void fetchObject(ReplaceableTagEvent event) {
         if (!event.getName().contains("@")) return;
 
-        String object_type = CoreUtilities.toLowerCase(CoreUtilities.Split(event.getName(), '@').get(0));
+        String object_type = CoreUtilities.toLowerCase(CoreUtilities.split(event.getName(), '@').get(0));
         Class object_class = ObjectFetcher.getObjectClass(object_type);
 
         if (object_class == null) {

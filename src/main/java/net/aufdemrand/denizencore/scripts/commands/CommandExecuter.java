@@ -58,7 +58,7 @@ public class CommandExecuter {
         }
 
         // Get the command instance ready for the execution of the scriptEntry
-        BaseAbstractCommand command = scriptEntry.getCommand();
+        AbstractCommand command = scriptEntry.getCommand();
         if (command == null) {
             command = DenizenCore.getCommandRegistry().get(scriptEntry.getCommandName());
         }
