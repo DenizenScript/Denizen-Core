@@ -14,7 +14,6 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.utilities.DenizenAPI;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.QueueWordList;
@@ -529,7 +528,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
                 // Don't let the system try to 'hold' this entry.
                 getEntry(0).setFinished(true);
                 // Execute the ScriptEntry properly through the Script Engine.
-                DenizenAPI.getCurrentInstance().getScriptEngine().revolve(this);
+                DenizenCore.getScriptEngine().revolve(this);
             }
         }
         if (breakMe != null && breakMe.startsWith(type)) {
@@ -643,7 +642,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
         // Criteria met for a successful 'revolution' of this queue,
         // so send the next script entry to the ScriptEngine.
-        DenizenAPI.getCurrentInstance().getScriptEngine().revolve(this);
+        DenizenCore.getScriptEngine().revolve(this);
 
         if (script_entries.isEmpty()) {
             stop();

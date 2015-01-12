@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore;
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
+import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
@@ -18,7 +19,9 @@ import java.util.Properties;
 public class DenizenCore {
 
     public final static String VERSION;
+
     static CommandRegistry commandRegistry;
+    static ScriptEngine scriptEngine;
 
     public static CommandRegistry getCommandRegistry() {
         return commandRegistry;
@@ -26,6 +29,10 @@ public class DenizenCore {
 
     public static void setCommandRegistry(CommandRegistry registry) {
         commandRegistry = registry;
+    }
+
+    public static ScriptEngine getScriptEngine() {
+        return scriptEngine;
     }
 
     static {
@@ -62,6 +69,7 @@ public class DenizenCore {
         dB.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
+        scriptEngine = new ScriptEngine();
     }
 
     /**
