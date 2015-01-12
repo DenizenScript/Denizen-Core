@@ -24,4 +24,9 @@ public abstract class ScriptEntryData implements Cloneable {
     public abstract void transferDataFrom(ScriptEntryData data);
 
     public abstract TagContext getTagContext();
+
+    @Override
+    public String toString() {
+        return "{{ Unimplemented toString method in ScriptEntryData! }}";
+    }
 }

@@ -12,6 +12,11 @@ public class dB {
     public static boolean showScriptBuilder = false;
 
     /**
+     * TODO: TRANSFER FROM Bukkit#dB
+     */
+    public static boolean showEventsTrimming = false;
+
+    /**
      * Can be used with echoDebug(...) to output a header, footer,
      * or a spacer.
      *

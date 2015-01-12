@@ -1,18 +1,15 @@
 package net.aufdemrand.denizencore.events;
 
-import net.aufdemrand.denizencore.BukkitScriptEntryData;
-import net.aufdemrand.denizencore.events.bukkit.ScriptReloadEvent;
-import net.aufdemrand.denizencore.events.core.*;
 import net.aufdemrand.denizencore.objects.aH;
-import net.aufdemrand.denizencore.objects.dNPC;
 import net.aufdemrand.denizencore.objects.dObject;
-import net.aufdemrand.denizencore.objects.dPlayer;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.WorldScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
@@ -183,7 +180,7 @@ public class OldEventManager {
 
 
     // TODO: EventContext? Or reuse an existing context object.
-    public static List<String> doEvents(List<String> eventNames, dNPC npc, dPlayer player, Map<String, dObject> context) {
+    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context) {
 
         try {
             List<String> determinations = new ArrayList<String>();
@@ -200,15 +197,14 @@ public class OldEventManager {
                         if (script == null) continue;
 
                         // Fetch script from Event
-                        List<ScriptEntry> entries = script.getEntries(new BukkitScriptEntryData(player, npc), "events.on " + eventName);
+                        List<ScriptEntry> entries = script.getEntries(data, "events.on " + eventName);
 
                         if (entries.isEmpty()) continue;
 
                         dB.report(script, "Event",
                                 aH.debugObj("Type", "on " + eventName)
                                         + script.getAsScriptArg().debug()
-                                        + (npc != null ? aH.debugObj("NPC", npc.toString()) : "")
-                                        + (player != null ? aH.debugObj("Player", player.getName()) : "")
+                                        + data.toString()
                                         + (context != null ? aH.debugObj("Context", context.toString()) : ""));
 
                         dB.echoDebug(script, DebugElement.Header, "Building event 'ON " + eventName.toUpperCase()
@@ -252,6 +248,7 @@ public class OldEventManager {
 
 
     public void registerCoreMembers() {
+        /** TODO: BUKKIT
         // Register all the 'Core' SmartEvents. This is called by Denizen's onEnable().
         registerSmartEvent(new AsyncChatSmartEvent());
         registerSmartEvent(new BiomeEnterExitSmartEvent());
@@ -278,6 +275,7 @@ public class OldEventManager {
         registerSmartEvent(new RedstoneSmartEvent());
         registerSmartEvent(new SyncChatSmartEvent());
         registerSmartEvent(new VehicleCollisionSmartEvent());
+        */
     }
 
 
