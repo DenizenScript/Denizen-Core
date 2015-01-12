@@ -1,7 +1,9 @@
 package net.aufdemrand.denizencore.scripts.containers.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.objects.Duration;
@@ -31,7 +33,7 @@ public class TaskScriptContainer extends ScriptContainer {
 
         } else
         // TODO: Settings = read dImplementation
-            speed = new Duration(Duration.valueOf(Settings.scriptQueueSpeed()).getSeconds());
+            speed = new Duration(Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()).getSeconds());
 
         return speed;
     }
@@ -43,17 +45,17 @@ public class TaskScriptContainer extends ScriptContainer {
     }
 
     // TODO: use a context object
-    public ScriptQueue runTaskScript(dPlayer player, dNPC npc, Map<String, String> context) {
-        return runTaskScript(ScriptQueue.getNextId(getName()), player, npc, context);
+    public ScriptQueue runTaskScript(ScriptEntryData data, Map<String, String> context) {
+        return runTaskScript(ScriptQueue.getNextId(getName()), data, context);
     }
 
-    public ScriptQueue runTaskScript(String queueId, dPlayer player, dNPC npc, Map<String, String> context) {
+    public ScriptQueue runTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
         ScriptQueue queue;
         if (getSpeed().getSeconds() == 0)
             queue = InstantQueue.getQueue(queueId);
         else queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
 
-        List<ScriptEntry> listOfEntries = getBaseEntries(new BukkitScriptEntryData(player, npc));
+        List<ScriptEntry> listOfEntries = getBaseEntries(data);
         if (context != null)
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
         queue.addEntries(listOfEntries);
@@ -74,13 +76,13 @@ public class TaskScriptContainer extends ScriptContainer {
         return Collections.emptyMap();
     }
 
-    public ScriptQueue runTaskScriptWithDelay(String queueId, dPlayer player, dNPC npc, Map<String, String> context, Duration delay) {
+    public ScriptQueue runTaskScriptWithDelay(String queueId, ScriptEntryData data, Map<String, String> context, Duration delay) {
         ScriptQueue queue;
         if (getSpeed().getSeconds() == 0)
             queue = InstantQueue.getQueue(queueId);
         else queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
 
-        List<ScriptEntry> listOfEntries = getBaseEntries(new BukkitScriptEntryData(player, npc));
+        List<ScriptEntry> listOfEntries = getBaseEntries(data);
         if (context != null)
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
         queue.addEntries(listOfEntries);
@@ -89,9 +91,9 @@ public class TaskScriptContainer extends ScriptContainer {
         return queue;
     }
 
-    public ScriptQueue injectTaskScript(String queueId, dPlayer player, dNPC npc, Map<String, String> context) {
+    public ScriptQueue injectTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
         ScriptQueue queue = ScriptQueue._getExistingQueue(queueId);
-        List<ScriptEntry> listOfEntries = getBaseEntries(new BukkitScriptEntryData(player, npc));
+        List<ScriptEntry> listOfEntries = getBaseEntries(data);
         if (context != null)
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
         queue.injectEntries(listOfEntries, 0);
