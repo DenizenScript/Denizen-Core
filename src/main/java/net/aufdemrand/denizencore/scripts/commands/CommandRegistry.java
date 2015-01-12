@@ -11,23 +11,23 @@ public abstract class CommandRegistry implements dRegistry {
     public CommandRegistry() {
     }
 
-    public final Map<String, BaseAbstractCommand> instances = new HashMap<String, BaseAbstractCommand>();
-    public final Map<Class<? extends BaseAbstractCommand>, String> classes = new HashMap<Class<? extends BaseAbstractCommand>, String>();
+    public final Map<String, AbstractCommand> instances = new HashMap<String, AbstractCommand>();
+    public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<Class<? extends AbstractCommand>, String>();
 
     @Override
     public boolean register(String commandName, RegistrationableInstance commandInstance) {
-        this.instances.put(commandName.toUpperCase(), (BaseAbstractCommand) commandInstance);
-        this.classes.put(((BaseAbstractCommand) commandInstance).getClass(), commandName.toUpperCase());
+        this.instances.put(commandName.toUpperCase(), (AbstractCommand) commandInstance);
+        this.classes.put(((AbstractCommand) commandInstance).getClass(), commandName.toUpperCase());
         return true;
     }
 
     @Override
-    public Map<String, BaseAbstractCommand> list() {
+    public Map<String, AbstractCommand> list() {
         return instances;
     }
 
     @Override
-    public BaseAbstractCommand get(String commandName) {
+    public AbstractCommand get(String commandName) {
         return instances.get(commandName.toUpperCase());
     }
 
@@ -85,7 +85,7 @@ public abstract class CommandRegistry implements dRegistry {
         // TODO: Register Core commands
     }
 
-    public <T extends BaseAbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {
+    public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {
         for (String name : names.split(", ")) {
 
             try {
