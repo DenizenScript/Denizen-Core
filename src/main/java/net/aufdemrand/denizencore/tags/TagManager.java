@@ -28,24 +28,6 @@ public class TagManager {
         new EscapeTags();
         new DefinitionTags();
 
-        /** TODO: BUKKIT:
-        new CuboidTags(denizen);
-        new EntityTags(denizen);
-        new LocationTags(denizen);
-        if (Depends.citizens != null)
-            new NPCTags(denizen);
-        new PlayerTags(denizen);
-        new UtilTags(denizen);
-        new TextTags(denizen);
-        new ParseTags(denizen);
-        if (Depends.citizens != null) {
-            new AnchorTags(denizen);
-            new ConstantTags(denizen);
-        }
-        new FlagTags(denizen);
-        new NotableLocationTags(denizen);
-         */
-
         registerTagEvents(this);
     }
 
