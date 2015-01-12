@@ -148,7 +148,9 @@ public class CommandExecuter {
                         && DenizenCore.getCommandRegistry().get(arg.getValue()) != null)
                     if_ignore = true;
 
-                DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg);
+                if (!DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, if_ignore)) {
+                    return false;
+                }
 
                 // Save the scriptentry if needed later for fetching scriptentry context
                 if (arg.matchesPrefix("save") && !if_ignore) {

@@ -93,6 +93,12 @@ public class dList extends ArrayList<String> implements dObject {
         }
     }
 
+    public dList(String flag, boolean is_flag) {
+        if (is_flag) {
+            this.flag = flag;
+        }
+    }
+
     // A List<String> of items
     public dList(List<String> items) {
         if (items != null) addAll(items);

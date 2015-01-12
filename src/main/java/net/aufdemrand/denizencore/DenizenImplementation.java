@@ -113,143 +113,23 @@ public interface DenizenImplementation {
      */
     public abstract List<YamlConfiguration> getOutsideScripts();
 
-    /**
-     if ((scriptEntry.entryData).hasNPC() && (scriptEntry.entryData).getNPC().getCitizen() == null)
-     (scriptEntry.entryData).setNPC(null);
-     */
     public abstract void handleCommandSpecialCases(ScriptEntry entry);
 
-    /**
-     if (scriptEntry.getOriginalArguments() == null ||
-     scriptEntry.getOriginalArguments().size() == 0 ||
-     !scriptEntry.getOriginalArguments().get(0).equals("\0CALLBACK")) {
-     if ((scriptEntry.entryData).getPlayer() != null)
-     dB.echoDebug(scriptEntry, DebugElement.Header,
-     "Executing dCommand: " + scriptEntry.getCommandName() + "/p@" +
-     (scriptEntry.entryData).getPlayer().getName());
-     else
-     dB.echoDebug(scriptEntry, DebugElement.Header, "Executing dCommand: " +
-     scriptEntry.getCommandName() + ((scriptEntry.entryData).getNPC() != null ?
-     "/n@" + (scriptEntry.entryData).getNPC().getName() : ""));
-     }
-     */
     public abstract void debugCommandHeader(ScriptEntry entry);
 
-    /**
-     * new BukkitTagContext(scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(): null,
-     scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getNPC(): null,
-     true, scriptEntry, scriptEntry != null ? scriptEntry.shouldDebug(): true,
-     scriptEntry != null ? scriptEntry.getScript(): null
-     )
-     */
     public abstract TagContext getTagContextFor(ScriptEntry entry, boolean instant);
 
-    /**
-     *
-     // Fill player/off-line player
-     if (arg.matchesPrefix("player") && !if_ignore) {
-     dB.echoDebug(scriptEntry, "...replacing the linked player with " + arg.getValue());
-     String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
-     dPlayer player = dPlayer.valueOf(value);
-     if (player == null || !player.isValid()) {
-     dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid player!");
-     return false;
-     }
-     ((BukkitScriptEntryData)scriptEntry.entryData).setPlayer(player);
-     }
+    public abstract boolean handleCustomArgs(ScriptEntry entry, aH.Argument arg, boolean if_ignore);
 
-     // Fill NPCID/NPC argument
-     else if (arg.matchesPrefix("npc, npcid") && !if_ignore) {
-     dB.echoDebug(scriptEntry, "...replacing the linked NPC with " + arg.getValue());
-     String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
-     dNPC npc = dNPC.valueOf(value);
-     if (npc == null || !npc.isValid()) {
-     dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid NPC!");
-     return false;
-     }
-     ((BukkitScriptEntryData)scriptEntry.entryData).setNPC(npc);
-     }
-     */
-    public abstract void handleCustomArgs(ScriptEntry entry, aH.Argument arg);
-
-    /**
-     ItemScriptHelper.item_scripts.clear();
-     ItemScriptHelper.item_scripts_by_hash_id.clear();
-     InventoryScriptHelper.inventory_scripts.clear();
-     */
     public abstract void refreshScriptContainers();
 
-    /**
-     * Settings.scriptQueueSpeed()
-     */
     public abstract String scriptQueueSpeed();
 
-    /**
-     *
-     if (string.startsWith("fl")) {
-     FlagManager flag_manager = DenizenAPI.getCurrentInstance().flagManager();
-     if (string.indexOf('[') == 2) {
-     int cb = string.indexOf(']');
-     if (cb > 4 && string.indexOf('@') == (cb + 1)) {
-     String owner = string.substring(3, cb);
-     String flag = string.substring(cb + 2);
-     if (dPlayer.matches(owner)) {
-     dPlayer player = dPlayer.valueOf(owner);
-     if (FlagManager.playerHasFlag(player, flag))
-     return new dList(flag_manager.getPlayerFlag(player, flag));
-     else
-     dB.echoError("Player '" + owner + "' flag '" + flag + "' not found.");
-     }
-     else if (Depends.citizens != null && dNPC.matches(owner)) {
-     dNPC npc = dNPC.valueOf(owner);
-     if (FlagManager.npcHasFlag(npc, flag))
-     return new dList(flag_manager.getNPCFlag(npc.getId(), flag));
-     else
-     dB.echoError("NPC '" + owner + "' flag '" + flag + "' not found.");
-     }
-     }
-     else
-     dB.echoError("Invalid dFlag format: " + string);
-     }
-     else if (string.indexOf('@') == 2) {
-     String flag = string.substring(3);
-     if (FlagManager.serverHasFlag(flag))
-     return new dList(flag_manager.getGlobalFlag(flag));
-     else
-     dB.echoError("Global flag '" + flag + "' not found.");
-     }
-     else {
-     return new dList(string);
-     }
-     }
-     return null;
-     */
     public abstract dList valueOfFlagdList(String input);
 
-    /**
-     if (arg.startsWith("fl")) {
-     if (arg.indexOf('[') == 2) {
-     int cb = arg.indexOf(']');
-     if (cb > 4 && arg.indexOf('@') == (cb + 1)) {
-     String owner = arg.substring(3, cb);
-     flag = arg.substring(cb + 2).length() > 0 && (dPlayer.matches(owner)
-     || (Depends.citizens != null && dNPC.matches(owner)));
-     }
-     }
-     else if (arg.indexOf('@') == 2) {
-     flag = arg.substring(3).length() > 0;
-     }
-     }
-     */
     public abstract boolean matchesFlagdList(String input);
 
-    /**
-     * flag.getLast().asString()
-     */
     public abstract String getLastEntryFromFlag(String flag);
 
-    /**
-     * Return a valid tag context object based on the given ScriptEntry object.
-     */
     public TagContext getTagContext(ScriptEntry entry);
 }
