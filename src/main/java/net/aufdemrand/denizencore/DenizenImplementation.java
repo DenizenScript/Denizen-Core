@@ -1,8 +1,10 @@
 package net.aufdemrand.denizencore;
 
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
@@ -45,6 +47,11 @@ public interface DenizenImplementation {
      * Output an error to console, specific to a script queue.
      */
     public abstract void debugError(ScriptQueue queue, String error);
+
+    /**
+     * Output an error to console, specific to a script queue.
+     */
+    public abstract void debugError(ScriptQueue queue, Throwable error);
 
     /**
      * Output a command information report.
@@ -109,4 +116,63 @@ public interface DenizenImplementation {
      * Temporary.
      */
     public abstract List<YamlConfiguration> getOutsideScripts();
+
+    /**
+     if ((scriptEntry.entryData).hasNPC() && (scriptEntry.entryData).getNPC().getCitizen() == null)
+     (scriptEntry.entryData).setNPC(null);
+     */
+    public abstract void handleCommandSpecialCases(ScriptEntry entry);
+
+    /**
+     if (scriptEntry.getOriginalArguments() == null ||
+     scriptEntry.getOriginalArguments().size() == 0 ||
+     !scriptEntry.getOriginalArguments().get(0).equals("\0CALLBACK")) {
+     if ((scriptEntry.entryData).getPlayer() != null)
+     dB.echoDebug(scriptEntry, DebugElement.Header,
+     "Executing dCommand: " + scriptEntry.getCommandName() + "/p@" +
+     (scriptEntry.entryData).getPlayer().getName());
+     else
+     dB.echoDebug(scriptEntry, DebugElement.Header, "Executing dCommand: " +
+     scriptEntry.getCommandName() + ((scriptEntry.entryData).getNPC() != null ?
+     "/n@" + (scriptEntry.entryData).getNPC().getName() : ""));
+     }
+     */
+    public abstract void debugCommandHeader(ScriptEntry entry);
+
+    /**
+     * new BukkitTagContext(scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(): null,
+     scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getNPC(): null,
+     true, scriptEntry, scriptEntry != null ? scriptEntry.shouldDebug(): true,
+     scriptEntry != null ? scriptEntry.getScript(): null
+     )
+     */
+    public abstract TagContext getTagContextFor(ScriptEntry entry, boolean instant);
+
+    /**
+     *
+     // Fill player/off-line player
+     if (arg.matchesPrefix("player") && !if_ignore) {
+     dB.echoDebug(scriptEntry, "...replacing the linked player with " + arg.getValue());
+     String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
+     dPlayer player = dPlayer.valueOf(value);
+     if (player == null || !player.isValid()) {
+     dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid player!");
+     return false;
+     }
+     ((BukkitScriptEntryData)scriptEntry.entryData).setPlayer(player);
+     }
+
+     // Fill NPCID/NPC argument
+     else if (arg.matchesPrefix("npc, npcid") && !if_ignore) {
+     dB.echoDebug(scriptEntry, "...replacing the linked NPC with " + arg.getValue());
+     String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
+     dNPC npc = dNPC.valueOf(value);
+     if (npc == null || !npc.isValid()) {
+     dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid NPC!");
+     return false;
+     }
+     ((BukkitScriptEntryData)scriptEntry.entryData).setNPC(npc);
+     }
+     */
+    public abstract void handleCustomArgs(ScriptEntry entry, aH.Argument arg);
 }

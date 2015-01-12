@@ -28,6 +28,10 @@ public class dB {
         DenizenCore.getImplementation().debugError(queue, error);
     }
 
+    public static void echoError(ScriptQueue queue, Throwable error) {
+        DenizenCore.getImplementation().debugError(queue, error);
+    }
+
     public static void echoError(Throwable ex) {
         DenizenCore.getImplementation().debugException(ex);
     }

@@ -9,11 +9,10 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
-
-import net.aufdemrand.denizencore.scripts.commands.BaseAbstractCommand;
 
 public class CommandExecuter {
 
@@ -71,22 +70,10 @@ public class CommandExecuter {
             return false;
         }
 
-        if ((criptEntry.entryData).hasNPC() && (scriptEntry.entryData).getNPC().getCitizen() == null)
-            (scriptEntry.entryData).setNPC(null);
+        DenizenCore.getImplementation().handleCommandSpecialCases(scriptEntry);
 
         // Debugger information
-        if (scriptEntry.getOriginalArguments() == null ||
-                scriptEntry.getOriginalArguments().size() == 0 ||
-                !scriptEntry.getOriginalArguments().get(0).equals("\0CALLBACK")) {
-            if ((scriptEntry.entryData).getPlayer() != null)
-                dB.echoDebug(scriptEntry, DebugElement.Header,
-                        "Executing dCommand: " + scriptEntry.getCommandName() + "/p@" +
-                                (scriptEntry.entryData).getPlayer().getName());
-            else
-                dB.echoDebug(scriptEntry, DebugElement.Header, "Executing dCommand: " +
-                        scriptEntry.getCommandName() + ((scriptEntry.entryData).getNPC() != null ?
-                        "/n@" + (scriptEntry.entryData).getNPC().getName() : ""));
-        }
+        DenizenCore.getImplementation().debugCommandHeader(scriptEntry);
 
         // Don't execute() if problems arise in parseArgs()
         boolean keepGoing = true;
@@ -98,11 +85,7 @@ public class CommandExecuter {
 
             if (scriptEntry.has_tags) {
                 scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
-                        new BukkitTagContext(scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(): null,
-                                scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getNPC(): null,
-                                true, scriptEntry, scriptEntry != null ? scriptEntry.shouldDebug(): true,
-                                scriptEntry != null ? scriptEntry.getScript(): null
-                        ))); // Replace tags
+                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, true))); // Replace tags
             }
 
             /*  If using NPC:# or PLAYER:Name arguments, these need to be changed out immediately because...
@@ -162,36 +145,14 @@ public class CommandExecuter {
                 // If using IF, check if we've reached the command + args
                 // so that we don't fill player: or npc: prematurely
                 if (command.getName().equalsIgnoreCase("if")
-                        && DenizenAPI.getCurrentInstance().getCommandRegistry().get(arg.getValue()) != null)
+                        && DenizenCore.getCommandRegistry().get(arg.getValue()) != null)
                     if_ignore = true;
 
-                // Fill player/off-line player
-                if (arg.matchesPrefix("player") && !if_ignore) {
-                    dB.echoDebug(scriptEntry, "...replacing the linked player with " + arg.getValue());
-                    String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
-                    dPlayer player = dPlayer.valueOf(value);
-                    if (player == null || !player.isValid()) {
-                        dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid player!");
-                        return false;
-                    }
-                    ((BukkitScriptEntryData)scriptEntry.entryData).setPlayer(player);
-                }
-
-                // Fill NPCID/NPC argument
-                else if (arg.matchesPrefix("npc, npcid") && !if_ignore) {
-                    dB.echoDebug(scriptEntry, "...replacing the linked NPC with " + arg.getValue());
-                    String value = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
-                    dNPC npc = dNPC.valueOf(value);
-                    if (npc == null || !npc.isValid()) {
-                        dB.echoError(scriptEntry.getResidingQueue(), value + " is an invalid NPC!");
-                        return false;
-                    }
-                    ((BukkitScriptEntryData)scriptEntry.entryData).setNPC(npc);
-                }
+                DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg);
 
                 // Save the scriptentry if needed later for fetching scriptentry context
-                else if (arg.matchesPrefix("save") && !if_ignore) {
-                    String saveName = TagManager.tag(arg.getValue(), new BukkitTagContext(scriptEntry, false));
+                if (arg.matchesPrefix("save") && !if_ignore) {
+                    String saveName = TagManager.tag(arg.getValue(), new TagContext(false, scriptEntry.shouldDebug(), scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
                 }
@@ -204,11 +165,7 @@ public class CommandExecuter {
 
             // Now process non-instant tags.
             scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
-                    new BukkitTagContext(scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(): null,
-                            scriptEntry != null ? ((BukkitScriptEntryData)scriptEntry.entryData).getNPC(): null,
-                            false, scriptEntry, scriptEntry != null ? scriptEntry.shouldDebug(): true,
-                            scriptEntry != null ? scriptEntry.getScript(): null
-                    ))); // Replace tags
+                    DenizenCore.getImplementation().getTagContextFor(scriptEntry, false))); // Replace tags
 
             // Parse the rest of the arguments for execution.
             ((AbstractCommand)command).parseArgs(scriptEntry);
@@ -219,7 +176,7 @@ public class CommandExecuter {
             // Give usage hint if InvalidArgumentsException was called.
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0)
-                dB.log(ChatColor.YELLOW + "+> MESSAGE follows: " + ChatColor.WHITE + "'" + e.getMessage() + "'");
+                dB.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             dB.log("Usage: " + command.getUsageHint());
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
