@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -121,7 +122,7 @@ public class ObjectFetcher {
 
     @Deprecated
     public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value) {
-        return getObjectFrom(dClass, value, new TagContext(false, false, null));
+        return getObjectFrom(dClass, value, DenizenCore.getImplementation().getTagContext(null));
     }
 
     public static List<String> separateProperties(String input) {

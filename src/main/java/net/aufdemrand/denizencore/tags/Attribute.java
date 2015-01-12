@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.tags;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
@@ -143,7 +144,7 @@ public class Attribute {
             if (contextMatcher.find()) {
                 String tagged = TagManager.cleanOutputFully(TagManager.tag(
                         text.substring(contextMatcher.start() + 1, contextMatcher.end() - 1),
-                        new TagContext(false, scriptEntry == null || scriptEntry.shouldDebug(), scriptEntry)));
+                        DenizenCore.getImplementation().getTagContext(scriptEntry)));
                 contexts.set(attribute - 1, tagged);
                 original_contexts.set(attribute - 1 + fulfilled, tagged);
                 return tagged;

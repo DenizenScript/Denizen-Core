@@ -302,14 +302,14 @@ public class dScript implements dObject {
                         each = "null";
                     }
                     // TODO
-                    list.add(TagManager.tag(each.toString(), new TagContext(false, true, attribute.getScriptEntry())));
+                    list.add(TagManager.tag(each.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
             // TODO
             else {
-                return new Element(TagManager.tag(obj.toString(), new TagContext(false, true, attribute.getScriptEntry())))
+                return new Element(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
                         .getAttribute(attribute.fulfill(1));
             }
         }
@@ -342,14 +342,14 @@ public class dScript implements dObject {
                         each = "null";
                     }
                     // TODO
-                    list.add(TagManager.tag(each.toString(), new TagContext(false, false, attribute.getScriptEntry())));
+                    list.add(TagManager.tag(each.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
             // TODO
             else {
-                return new Element(TagManager.tag(obj.toString(), new TagContext(false, false, attribute.getScriptEntry())))
+                return new Element(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
                         .getAttribute(attribute.fulfill(1));
             }
         }

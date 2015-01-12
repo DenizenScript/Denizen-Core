@@ -152,7 +152,7 @@ public class CommandExecuter {
 
                 // Save the scriptentry if needed later for fetching scriptentry context
                 if (arg.matchesPrefix("save") && !if_ignore) {
-                    String saveName = TagManager.tag(arg.getValue(), new TagContext(false, scriptEntry.shouldDebug(), scriptEntry));
+                    String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
                 }

@@ -247,4 +247,9 @@ public interface DenizenImplementation {
      * flag.getLast().asString()
      */
     public abstract String getLastEntryFromFlag(String flag);
+
+    /**
+     * Return a valid tag context object based on the given ScriptEntry object.
+     */
+    public TagContext getTagContext(ScriptEntry entry);
 }
