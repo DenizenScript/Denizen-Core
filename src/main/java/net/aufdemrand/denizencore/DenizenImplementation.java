@@ -170,4 +170,11 @@ public interface DenizenImplementation {
      }
      */
     public abstract void handleCustomArgs(ScriptEntry entry, aH.Argument arg);
+
+    /**
+     ItemScriptHelper.item_scripts.clear();
+     ItemScriptHelper.item_scripts_by_hash_id.clear();
+     InventoryScriptHelper.inventory_scripts.clear();
+     */
+    public abstract void refreshScriptContainers();
 }

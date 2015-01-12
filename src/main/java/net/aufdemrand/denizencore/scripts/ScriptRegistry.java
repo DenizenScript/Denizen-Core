@@ -24,20 +24,22 @@ public class ScriptRegistry {
     }
 
     public static void _registerCoreTypes() {
+        _registerType("task", TaskScriptContainer.class);
+        _registerType("procedure", ProcedureScriptContainer.class);
+        _registerType("world", WorldScriptContainer.class);
+        _registerType("yaml data", YamlDataScriptContainer.class);
+        /** TODO: BUKKIT:
         _registerType("interact", InteractScriptContainer.class);
         _registerType("book", BookScriptContainer.class);
         _registerType("item", ItemScriptContainer.class);
         _registerType("entity", EntityScriptContainer.class);
-        _registerType("task", TaskScriptContainer.class);
         _registerType("assignment", AssignmentScriptContainer.class);
-        _registerType("procedure", ProcedureScriptContainer.class);
-        _registerType("world", WorldScriptContainer.class);
         _registerType("format", FormatScriptContainer.class);
         _registerType("inventory", InventoryScriptContainer.class);
         _registerType("player listener", PlayerListenerScriptContainer.class);
         _registerType("command", CommandScriptContainer.class);
-        _registerType("yaml data", YamlDataScriptContainer.class);
         _registerType("map", MapScriptContainer.class);
+         */
     }
 
     public static boolean containsScript(String id) {
@@ -59,9 +61,7 @@ public class ScriptRegistry {
         scriptContainers.clear();
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
-        ItemScriptHelper.item_scripts.clear(); // TODO: De-corify this non-core crap
-        ItemScriptHelper.item_scripts_by_hash_id.clear();
-        InventoryScriptHelper.inventory_scripts.clear();
+        DenizenCore.getImplementation().refreshScriptContainers();
         // Get a set of key names in concatenated Denizen Scripts
         Set<String> scripts = yamlScripts.getKeys(false);
         // Iterate through set
