@@ -15,4 +15,10 @@ public abstract class ScriptEntryData implements Cloneable {
             return null;
         }
     }
+
+    /**
+     * Transfer player, npc.
+     * // TODO: DELETE THIS NOTE
+     */
+    public abstract void transferDataFrom(ScriptEntryData data);
 }

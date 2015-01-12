@@ -29,12 +29,11 @@ public abstract class BracedCommand extends AbstractCommand {
         if (entryBracedSet != null) {
             try {
                 for (Map.Entry<String, ArrayList<ScriptEntry>> entry: entryBracedSet.entrySet()) {
-                    ArrayList array = new ArrayList(entry.getValue().size());
+                    ArrayList<ScriptEntry> array = new ArrayList<ScriptEntry>(entry.getValue().size());
                     for (ScriptEntry sEntry: entry.getValue()) {
                         ScriptEntry newEntry = sEntry.clone();
                         // TODO: should this be cloning entryData?
-                        ((BukkitScriptEntryData)newEntry.entryData).setPlayer(((BukkitScriptEntryData)scriptEntry.entryData).getPlayer());
-                        ((BukkitScriptEntryData)newEntry.entryData).setNPC(((BukkitScriptEntryData)scriptEntry.entryData).getNPC());
+                        newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         array.add(newEntry);
                     }
                     bracedSections.put(entry.getKey(), array);
@@ -124,10 +123,7 @@ public abstract class BracedCommand extends AbstractCommand {
                             bracesSection.add(new ScriptEntry(cmd,
                                     args,
                                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-                            (bracesSection.get(bracesSection.size() - 1).entryData)
-                                    .setPlayer((scriptEntry.entryData).getPlayer());
-                            (bracesSection.get(bracesSection.size() - 1).entryData)
-                                    .setNPC((scriptEntry.entryData).getNPC());
+                            bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
                             if (hyperdebug) dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
                         } catch (ScriptEntryCreationException e) {
                             if (hyperdebug) dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
