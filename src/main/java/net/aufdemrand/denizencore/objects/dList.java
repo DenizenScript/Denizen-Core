@@ -11,6 +11,7 @@ import net.aufdemrand.denizencore.scripts.containers.core.ProcedureScriptContain
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
 import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -24,8 +25,12 @@ public class dList extends ArrayList<String> implements dObject {
     public final static char internal_escape_char = (char)0x05;
     public final static String internal_escape = String.valueOf(internal_escape_char);
 
-    @Fetchable("li, fl")
     public static dList valueOf(String string) {
+        return valueOf(string, null);
+    }
+
+    @Fetchable("li, fl")
+    public static dList valueOf(String string, TagContext context) {
         if (string == null) return null;
 
         ///////

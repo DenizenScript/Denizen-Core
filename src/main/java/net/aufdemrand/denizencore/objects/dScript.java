@@ -65,6 +65,10 @@ public class dScript implements dObject {
     // -->
 
 
+    public static dScript valueOf(String string) {
+        return valueOf(string, null);
+    }
+
     /**
      * Gets a dContainer Object from a dScript argument.
      *
@@ -72,7 +76,7 @@ public class dScript implements dObject {
      * @return  a Script, or null if incorrectly formatted
      */
     @Fetchable("s")
-    public static dScript valueOf(String string) {
+    public static dScript valueOf(String string, TagContext context) {
 
         if (string.startsWith("s@"))
             string = string.substring(2);

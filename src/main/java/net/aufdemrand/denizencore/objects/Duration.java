@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -79,6 +80,10 @@ public class Duration implements dObject {
     // See also 'Duration'
     // -->
 
+    public static Duration valueOf(String string) {
+        return valueOf(string, null);
+    }
+
     /**
      * Gets a Duration Object from a dScript argument. Durations must be a positive
      * number. Can specify the unit of time by using one of the following: T=ticks, M=minutes,
@@ -88,7 +93,7 @@ public class Duration implements dObject {
      * @return  a Duration, or null if incorrectly formatted.
      */
     @Fetchable("d")
-    public static Duration valueOf(String string) {
+    public static Duration valueOf(String string, TagContext context) {
         if (string == null) return null;
 
         string = string.replace("d@", "");

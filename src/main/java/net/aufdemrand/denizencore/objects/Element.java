@@ -11,6 +11,7 @@ import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
 import net.aufdemrand.denizencore.utilities.SQLEscaper;
@@ -56,6 +57,11 @@ public class Element implements dObject {
             Pattern.compile("el@val(?:ue)?\\[([^\\[\\]]+)\\].*",
                     Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
+
+    public static Element valueOf(String string) {
+        return valueOf(string, null);
+    }
+
     /**
      *
      * @param string  the string or dScript argument String
@@ -63,7 +69,7 @@ public class Element implements dObject {
      *
      */
     @Fetchable("el")
-    public static Element valueOf(String string) {
+    public static Element valueOf(String string, TagContext context) {
         if (string == null) return null;
 
         Matcher m = VALUE_PATTERN.matcher(string);

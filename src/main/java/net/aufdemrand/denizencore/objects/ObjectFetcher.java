@@ -82,7 +82,7 @@ public class ObjectFetcher {
         try {
             fetchable_objects.add(dObject);
             matches.put(dObject, dObject.getMethod("matches", String.class));
-            valueof.put(dObject, dObject.getMethod("valueOf", String.class));
+            valueof.put(dObject, dObject.getMethod("valueOf", String.class, TagContext.class));
         }
         catch (Throwable e) {
             dB.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");
