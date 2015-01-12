@@ -1,14 +1,11 @@
 package net.aufdemrand.denizencore.scripts.queues.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.Settings;
 import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.utilities.DenizenAPI;
 import net.aufdemrand.denizencore.utilities.scheduling.RepeatingSchedulable;
-import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
 public class TimedQueue extends ScriptQueue implements Delayable {
 
@@ -40,7 +37,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
             // If not, create a new one.
         else {
             scriptQueue = new TimedQueue(id,
-                    Duration.valueOf(Settings.scriptQueueSpeed()));
+                    Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
         }
         // Return the queue
         return scriptQueue;

@@ -177,4 +177,9 @@ public interface DenizenImplementation {
      InventoryScriptHelper.inventory_scripts.clear();
      */
     public abstract void refreshScriptContainers();
+
+    /**
+     * Settings.scriptQueueSpeed()
+     */
+    public abstract String scriptQueueSpeed();
 }
