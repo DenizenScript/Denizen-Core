@@ -1,11 +1,6 @@
 package net.aufdemrand.denizencore.objects.properties;
 
 import net.aufdemrand.denizencore.objects.*;
-import net.aufdemrand.denizencore.objects.properties.bukkit.BukkitScriptProperties;
-import net.aufdemrand.denizencore.objects.properties.entity.*;
-import net.aufdemrand.denizencore.objects.properties.inventory.*;
-import net.aufdemrand.denizencore.objects.properties.item.*;
-import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +23,7 @@ public class PropertyParser {
         describes.clear();
         getFrom.clear();
 
+        /** TODO: BUKKIT
         // register properties that add Bukkit code to core objects
         registerProperty(BukkitScriptProperties.class, dScript.class);
         registerProperty(BukkitQueueProperties.class, ScriptQueue.class);
@@ -75,6 +71,7 @@ public class PropertyParser {
         registerProperty(ItemQuantity.class, dItem.class);
         registerProperty(ItemSkullskin.class, dItem.class);
         registerProperty(ItemSpawnEgg.class, dItem.class);
+         */
 
     }
 
