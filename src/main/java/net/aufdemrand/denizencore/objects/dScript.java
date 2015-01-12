@@ -2,14 +2,14 @@ package net.aufdemrand.denizencore.objects;
 
 import java.util.List;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.tags.BukkitTagContext;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
-import net.aufdemrand.denizencore.utilities.DenizenAPI;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import org.json.JSONObject;
@@ -250,8 +250,13 @@ public class dScript implements dObject {
         // Returns the filename that contains the script, relative to the denizen/ folder.
         // -->
         if (attribute.startsWith("relative_filename")) {
-            return new Element(container.getFileName().replace(DenizenAPI.getCurrentInstance().getDataFolder().getAbsolutePath(), "").replace("\\", "/"))
-                    .getAttribute(attribute.fulfill(1));
+            try {
+                return new Element(container.getFileName().replace(DenizenCore.getImplementation().getScriptFolder().getCanonicalPath(), "").replace("\\", "/"))
+                        .getAttribute(attribute.fulfill(1));
+            }
+            catch (Exception e) {
+                dB.echoError(e);
+            }
         }
 
         // <--[tag]
@@ -296,13 +301,17 @@ public class dScript implements dObject {
                     if (each == null) {
                         each = "null";
                     }
-                    list.add(TagManager.tag(each.toString(), new BukkitTagContext(attribute.getScriptEntry(), false)));
+                    // TODO
+                    list.add(TagManager.tag(each.toString(), new TagContext(false, true, attribute.getScriptEntry())));
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
-            else return new Element(TagManager.tag(obj.toString(), new BukkitTagContext(attribute.getScriptEntry(), false)))
-                    .getAttribute(attribute.fulfill(1));
+            // TODO
+            else {
+                return new Element(TagManager.tag(obj.toString(), new TagContext(false, true, attribute.getScriptEntry())))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
@@ -332,13 +341,17 @@ public class dScript implements dObject {
                     if (each == null) {
                         each = "null";
                     }
-                    list.add(TagManager.tag(each.toString(), new BukkitTagContext(attribute.getScriptEntry(), false)));
+                    // TODO
+                    list.add(TagManager.tag(each.toString(), new TagContext(false, false, attribute.getScriptEntry())));
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
-            else return new Element(TagManager.tag(obj.toString(), new BukkitTagContext(attribute.getScriptEntry(), false)))
-                    .getAttribute(attribute.fulfill(1));
+            // TODO
+            else {
+                return new Element(TagManager.tag(obj.toString(), new TagContext(false, false, attribute.getScriptEntry())))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
