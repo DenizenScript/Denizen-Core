@@ -1,11 +1,8 @@
 package net.aufdemrand.denizencore.tags;
 
-import net.aufdemrand.denizencore.Denizen;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.tags.core.*;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
-import net.aufdemrand.denizencore.utilities.depends.Depends;
-import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 import java.lang.annotation.*;
@@ -21,32 +18,33 @@ public class TagManager {
 
     public void registerCoreTags() {
         // Objects
-        new CuboidTags(denizen);
-        new EntityTags(denizen);
         new ListTags();
-        new LocationTags(denizen);
-        if (Depends.citizens != null)
-            new NPCTags(denizen);
-        new PlayerTags(denizen);
         new QueueTags();
         new ScriptTags();
 
         // Utilities
-        new UtilTags(denizen);
-        new ProcedureScriptTag(denizen);
+        new ProcedureScriptTags();
         new ContextTags();
-        new TextTags(denizen);
         new EscapeTags();
         new DefinitionTags();
-        new ParseTags(denizen);
 
-        // For compatibility
+        /** TODO: BUKKIT:
+        new CuboidTags(denizen);
+        new EntityTags(denizen);
+        new LocationTags(denizen);
+        if (Depends.citizens != null)
+            new NPCTags(denizen);
+        new PlayerTags(denizen);
+        new UtilTags(denizen);
+        new TextTags(denizen);
+        new ParseTags(denizen);
         if (Depends.citizens != null) {
             new AnchorTags(denizen);
             new ConstantTags(denizen);
         }
         new FlagTags(denizen);
         new NotableLocationTags(denizen);
+         */
 
         registerTagEvents(this);
     }
@@ -266,7 +264,7 @@ public class TagManager {
                 dB.echoDebug(context.entry, "Filled tag <" + event.toString() + "> with '" +
                         event.getReplaced() + "'.");
             if (!event.replaced())
-                dB.echoError(context.entry != null ? context.entry.getResidingQueue(): null,
+                dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
                         "Tag <" + event.toString() + "> is invalid!");
             return escapeOutput(event.getReplaced());
         }
