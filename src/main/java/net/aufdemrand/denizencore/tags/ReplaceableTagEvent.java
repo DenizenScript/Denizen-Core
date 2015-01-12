@@ -34,8 +34,8 @@ public class ReplaceableTagEvent {
     public ReplaceableTagEvent(String tag, TagContext context) {
 
         // Reference ScriptEntry if available
-        this.scriptEntry = ((BukkitTagContext)context).entry;
-        this.script = ((BukkitTagContext)context).script;
+        this.scriptEntry = context.entry;
+        this.script = context.script;
 
         // Reference context
         this.context = context;
