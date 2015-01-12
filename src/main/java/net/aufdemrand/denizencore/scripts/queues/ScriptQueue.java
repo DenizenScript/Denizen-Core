@@ -15,6 +15,7 @@ import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.QueueWordList;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
@@ -727,6 +728,10 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     // dOBJECT
     //
 
+    public static ScriptQueue valueOf(String string) {
+        return valueOf(string, null);
+    }
+
     /**
      * Gets a Queue Object from a string form of q@queue_name.
      *
@@ -735,7 +740,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      *
      */
     @Fetchable("q")
-    public static ScriptQueue valueOf(String string) {
+    public static ScriptQueue valueOf(String string, TagContext context) {
         if (string == null) return null;
 
         if (string.startsWith("q@") && string.length() > 2)
