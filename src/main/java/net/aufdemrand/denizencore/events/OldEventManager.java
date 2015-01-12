@@ -178,8 +178,10 @@ public class OldEventManager {
     //  MECHANICS
     ///////////////
 
+    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context, boolean strip_ids) {
+        return doEvents(addAlternates(eventNames), data, context);
+    }
 
-    // TODO: EventContext? Or reuse an existing context object.
     public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context) {
 
         try {
