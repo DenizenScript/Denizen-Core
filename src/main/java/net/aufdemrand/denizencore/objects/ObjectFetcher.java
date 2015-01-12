@@ -6,10 +6,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.aufdemrand.denizen.scripts.queues.ScriptQueue;
-import net.aufdemrand.denizen.utilities.debugging.dB;
-import net.aufdemrand.denizen.utilities.depends.Depends;
-import org.apache.commons.lang3.StringUtils;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class ObjectFetcher {
 
@@ -49,25 +49,27 @@ public class ObjectFetcher {
     public static void _registerCoreObjects() throws NoSuchMethodException, ClassNotFoundException, IOException {
 
         // Initialize the ObjectFetcher
+        registerWithObjectFetcher(dList.class);      // li@/fl@
+        registerWithObjectFetcher(dScript.class);    // s@
+        registerWithObjectFetcher(Element.class);    // el@
+        registerWithObjectFetcher(Duration.class);   // d@
+        registerWithObjectFetcher(ScriptQueue.class);// q@
+        /** TODO: BUKKIT:
         registerWithObjectFetcher(dItem.class);      // i@
         registerWithObjectFetcher(dCuboid.class);    // cu@
         registerWithObjectFetcher(dEntity.class);    // e@
         registerWithObjectFetcher(dInventory.class); // in@
         registerWithObjectFetcher(dColor.class);     // co@
-        registerWithObjectFetcher(dList.class);      // li@/fl@
         registerWithObjectFetcher(dLocation.class);  // l@
         registerWithObjectFetcher(dMaterial.class);  // m@
         if (Depends.citizens != null)
             registerWithObjectFetcher(dNPC.class);   // n@
         registerWithObjectFetcher(dPlayer.class);    // p@
-        registerWithObjectFetcher(dScript.class);    // s@
         registerWithObjectFetcher(dWorld.class);     // w@
-        registerWithObjectFetcher(Element.class);    // el@
-        registerWithObjectFetcher(Duration.class);   // d@
         registerWithObjectFetcher(dChunk.class);     // ch@
         registerWithObjectFetcher(dPlugin.class);    // pl@
-        registerWithObjectFetcher(ScriptQueue.class);// q@
         registerWithObjectFetcher(dEllipsoid.class); // ellipsoid@
+         */
 
         _initialize();
 
@@ -117,8 +119,9 @@ public class ObjectFetcher {
 
     }
 
+    @Deprecated
     public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value) {
-        return getObjectFrom(dClass, value, null, null);
+        return getObjectFrom(dClass, value, new TagContext(false, false, null));
     }
 
     public static List<String> separateProperties(String input) {
@@ -148,15 +151,14 @@ public class ObjectFetcher {
         return output;
     }
 
-    public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value, dPlayer player, dNPC npc) {
+    public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value, TagContext context) {
         try {
             List<String> matches = separateProperties(value);
             boolean matched = matches != null && Adjustable.class.isAssignableFrom(dClass);
-            T gotten = (T) ((dClass.equals(dItem.class)) ? dItem.valueOf(matched ? matches.get(0): value, player, npc):
-                    valueof.get(dClass).invoke(null, matched ? matches.get(0): value));
+            T gotten = (T) valueof.get(dClass).invoke(null, matched ? matches.get(0): value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {
-                    String[] data = StringUtils.split(matches.get(i), "=", 2);
+                    String[] data = (String[]) CoreUtilities.split(matches.get(i), '=', 2).toArray();
                     if (data.length != 2) {
                         dB.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
