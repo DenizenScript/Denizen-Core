@@ -143,7 +143,7 @@ public class Attribute {
             if (contextMatcher.find()) {
                 String tagged = TagManager.cleanOutputFully(TagManager.tag(
                         text.substring(contextMatcher.start() + 1, contextMatcher.end() - 1),
-                        new BukkitTagContext(scriptEntry, false)));
+                        new TagContext(false, scriptEntry == null || scriptEntry.shouldDebug(), scriptEntry)));
                 contexts.set(attribute - 1, tagged);
                 original_contexts.set(attribute - 1 + fulfilled, tagged);
                 return tagged;
