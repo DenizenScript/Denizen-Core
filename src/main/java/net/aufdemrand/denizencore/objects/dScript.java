@@ -255,7 +255,8 @@ public class dScript implements dObject {
         // -->
         if (attribute.startsWith("relative_filename")) {
             try {
-                return new Element(container.getFileName().replace(DenizenCore.getImplementation().getScriptFolder().getCanonicalPath(), "").replace("\\", "/"))
+                return new Element(container.getFileName().replace(DenizenCore.getImplementation()
+                        .getScriptFolder().getParentFile().getCanonicalPath(), "").replace("\\", "/"))
                         .getAttribute(attribute.fulfill(1));
             }
             catch (Exception e) {
