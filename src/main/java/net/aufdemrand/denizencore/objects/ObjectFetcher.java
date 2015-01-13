@@ -29,11 +29,13 @@ public class ObjectFetcher {
         Map<String, Class> adding = new HashMap<String, Class>();
         for (Class dClass : fetchable_objects) {
             try {
-                Method method = dClass.getMethod("valueOf", String.class);
+                Method method = dClass.getMethod("valueOf", String.class, TagContext.class);
                 if (method.isAnnotationPresent(Fetchable.class)) {
                     String[] identifiers = method.getAnnotation(Fetchable.class).value().split(",");
-                    for (String identifier : identifiers)
+                    for (String identifier : identifiers) {
                         adding.put(identifier.trim().toLowerCase(), dClass);
+                        dB.log("Registered: " + dClass.getSimpleName() + " as " + identifier);
+                    }
                 }
             }
             catch (Throwable e) {
@@ -55,23 +57,6 @@ public class ObjectFetcher {
         registerWithObjectFetcher(Element.class);    // el@
         registerWithObjectFetcher(Duration.class);   // d@
         registerWithObjectFetcher(ScriptQueue.class);// q@
-        /** TODO: BUKKIT:
-        registerWithObjectFetcher(dItem.class);      // i@
-        registerWithObjectFetcher(dCuboid.class);    // cu@
-        registerWithObjectFetcher(dEntity.class);    // e@
-        registerWithObjectFetcher(dInventory.class); // in@
-        registerWithObjectFetcher(dColor.class);     // co@
-        registerWithObjectFetcher(dLocation.class);  // l@
-        registerWithObjectFetcher(dMaterial.class);  // m@
-        if (Depends.citizens != null)
-            registerWithObjectFetcher(dNPC.class);   // n@
-        registerWithObjectFetcher(dPlayer.class);    // p@
-        registerWithObjectFetcher(dWorld.class);     // w@
-        registerWithObjectFetcher(dChunk.class);     // ch@
-        registerWithObjectFetcher(dPlugin.class);    // pl@
-        registerWithObjectFetcher(dEllipsoid.class); // ellipsoid@
-         */
-
         _initialize();
 
     }
@@ -91,14 +76,16 @@ public class ObjectFetcher {
     }
 
     public static boolean canFetch(String id) {
-        return objects.containsKey(id.toLowerCase());
+        return objects.containsKey(CoreUtilities.toLowerCase(id));
     }
 
     public static Class getObjectClass(String id) {
-        if (canFetch(id))
-            return objects.get(id.toLowerCase());
-        else
+        if (canFetch(id)) {
+            return objects.get(CoreUtilities.toLowerCase(id));
+        }
+        else {
             return null;
+        }
     }
 
     final static Pattern PROPERTIES_PATTERN = Pattern.compile("([^\\[]+)\\[(.+=.+)\\]", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
