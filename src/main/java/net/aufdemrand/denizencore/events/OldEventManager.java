@@ -250,34 +250,6 @@ public class OldEventManager {
 
 
     public void registerCoreMembers() {
-        /** TODO: BUKKIT
-        // Register all the 'Core' SmartEvents. This is called by Denizen's onEnable().
-        registerSmartEvent(new AsyncChatSmartEvent());
-        registerSmartEvent(new BiomeEnterExitSmartEvent());
-        registerSmartEvent(new BlockFallsSmartEvent());
-        registerSmartEvent(new BlockPhysicsSmartEvent());
-        registerSmartEvent(new ChunkLoadSmartEvent());
-        registerSmartEvent(new ChunkUnloadSmartEvent());
-        registerSmartEvent(new CommandSmartEvent());
-        registerSmartEvent(new CuboidEnterExitSmartEvent());
-        registerSmartEvent(new EntityCombustSmartEvent());
-        registerSmartEvent(new EntityDamageSmartEvent());
-        registerSmartEvent(new EntityDeathSmartEvent());
-        registerSmartEvent(new EntityInteractSmartEvent());
-        registerSmartEvent(new EntitySpawnSmartEvent());
-        registerSmartEvent(new FlagSmartEvent());
-        registerSmartEvent(new ItemMoveSmartEvent());
-        registerSmartEvent(new ItemScrollSmartEvent());
-        registerSmartEvent(new ListPingSmartEvent());
-        registerSmartEvent(new NPCNavigationSmartEvent());
-        registerSmartEvent(new PlayerEquipsArmorSmartEvent());
-        registerSmartEvent(new PlayerJumpSmartEvent());
-        registerSmartEvent(new PlayerStepsOnSmartEvent());
-        registerSmartEvent(new PlayerWalkSmartEvent());
-        registerSmartEvent(new RedstoneSmartEvent());
-        registerSmartEvent(new SyncChatSmartEvent());
-        registerSmartEvent(new VehicleCollisionSmartEvent());
-        */
     }
 
 

@@ -89,6 +89,7 @@ public class DenizenCore {
             ScriptHelper.resetError();
             ScriptHelper.reloadScripts();
             implementation.onScriptReload();
+            OldEventManager.scanWorldEvents();
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");
@@ -101,7 +102,6 @@ public class DenizenCore {
      */
     public static void reloadScripts() {
         loadScripts();
-        OldEventManager.scanWorldEvents();
     }
 
     public static List<Schedulable> scheduled = new ArrayList<Schedulable>();
