@@ -604,13 +604,14 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // 1) Remove the id from active queue list
         // 2) Cancel the corresponding task_id
         else {
-            if (_queues.get(id) == this)
+            if (_queues.get(id) == this) {
                 _queues.remove(id);
-            dB.echoDebug(this, "Re-completing queue '" + id + "' in " + (System.currentTimeMillis() - startTime) + "ms.");
-            if (callback != null)
-                callback.run();
-            is_started = false;
-            onStop();
+                dB.echoDebug(this, "Re-completing queue '" + id + "' in " + (System.currentTimeMillis() - startTime) + "ms.");
+                if (callback != null)
+                    callback.run();
+                is_started = false;
+                onStop();
+            }
         }
     }
 

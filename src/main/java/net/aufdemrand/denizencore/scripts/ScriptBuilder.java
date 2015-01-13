@@ -32,7 +32,6 @@ public class ScriptBuilder {
      * Builds ScriptEntry(ies) of items read from a script
      */
 
-    // TODO: use a context object
     public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent, ScriptEntryData data) {
         List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
 

@@ -22,57 +22,6 @@ public class PropertyParser {
         properties.clear();
         describes.clear();
         getFrom.clear();
-
-        /** TODO: BUKKIT
-        // register properties that add Bukkit code to core objects
-        registerProperty(BukkitScriptProperties.class, dScript.class);
-        registerProperty(BukkitQueueProperties.class, ScriptQueue.class);
-        registerProperty(BukkitElementProperties.class, Element.class);
-
-        // register core dEntity properties
-        registerProperty(EntityAge.class, dEntity.class);
-        registerProperty(EntityAngry.class, dEntity.class);
-        registerProperty(EntityColor.class, dEntity.class);
-        registerProperty(EntityCritical.class, dEntity.class);
-        registerProperty(EntityFirework.class, dEntity.class);
-        registerProperty(EntityFramed.class, dEntity.class);
-        registerProperty(EntityInfected.class, dEntity.class);
-        registerProperty(EntityItem.class, dEntity.class);
-        registerProperty(EntityJumpStrength.class, dEntity.class);
-        registerProperty(EntityKnockback.class, dEntity.class);
-        registerProperty(EntityPainting.class, dEntity.class);
-        registerProperty(EntityPotion.class, dEntity.class);
-        registerProperty(EntityPowered.class, dEntity.class);
-        registerProperty(EntityProfession.class, dEntity.class);
-        registerProperty(EntityRotation.class, dEntity.class);
-        registerProperty(EntitySitting.class, dEntity.class);
-        registerProperty(EntitySize.class, dEntity.class);
-        registerProperty(EntitySkeleton.class, dEntity.class);
-        registerProperty(EntityTame.class, dEntity.class);
-
-        // register core dInventory properties
-        registerProperty(InventoryHolder.class, dInventory.class); // Holder must be loaded first to initiate correctly
-        registerProperty(InventorySize.class, dInventory.class); // Same with size...(Too small for contents)
-        registerProperty(InventoryContents.class, dInventory.class);
-        registerProperty(InventoryTitle.class, dInventory.class);
-
-        // register core dItem properties
-        registerProperty(ItemApple.class, dItem.class);
-        registerProperty(ItemBook.class, dItem.class);
-        registerProperty(ItemDisplayname.class, dItem.class);
-        registerProperty(ItemDurability.class, dItem.class);
-        registerProperty(ItemDye.class, dItem.class);
-        registerProperty(ItemEnchantments.class, dItem.class);
-        registerProperty(ItemFirework.class, dItem.class);
-        registerProperty(ItemLore.class, dItem.class);
-        registerProperty(ItemMap.class, dItem.class);
-        registerProperty(ItemPlantgrowth.class, dItem.class);
-        registerProperty(ItemPotion.class, dItem.class);
-        registerProperty(ItemQuantity.class, dItem.class);
-        registerProperty(ItemSkullskin.class, dItem.class);
-        registerProperty(ItemSpawnEgg.class, dItem.class);
-         */
-
     }
 
     public void registerProperty(Class property, Class<? extends dObject> object) {

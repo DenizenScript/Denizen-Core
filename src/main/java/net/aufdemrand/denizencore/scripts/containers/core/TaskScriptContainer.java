@@ -32,7 +32,6 @@ public class TaskScriptContainer extends ScriptContainer {
                 speed = Duration.valueOf(getString("SPEED", "0t"));
 
         } else
-        // TODO: Settings = read dImplementation
             speed = new Duration(Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()).getSeconds());
 
         return speed;
@@ -44,7 +43,6 @@ public class TaskScriptContainer extends ScriptContainer {
         return this;
     }
 
-    // TODO: use a context object
     public ScriptQueue runTaskScript(ScriptEntryData data, Map<String, String> context) {
         return runTaskScript(ScriptQueue.getNextId(getName()), data, context);
     }

@@ -144,7 +144,9 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         // ...and schedule the rest for later.
         RepeatingSchedulable sched = new RepeatingSchedulable(
                 new Runnable() {
-                    @Override public void run() { revolve(); }
+                    @Override public void run() {
+                        revolve();
+                    }
                 }, (ticks == 0 ? 1 : ticks) / 20f);
         DenizenCore.schedule(sched);
     }
