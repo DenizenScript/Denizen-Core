@@ -152,7 +152,9 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     @Override
     protected void onStop() {
-        schedulable.cancelled = true;
+        if (schedulable != null) {
+            schedulable.cancelled = true;
+        }
     }
 
 
