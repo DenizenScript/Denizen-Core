@@ -92,11 +92,11 @@ public class aH {
             }
             else {
                 has_prefix = true;
-                String[] split = (String[]) CoreUtilities.split(string, ':', 2).toArray();
-                prefix = split[0];
+                Object[] split = CoreUtilities.split(string, ':', 2).toArray();
+                prefix = (String)split[0];
                 lower_prefix = CoreUtilities.toLowerCase(prefix);
                 if (split.length == 2)
-                    value = split[1];
+                    value = (String)split[1];
                 else
                     value = "";
                 lower_value = CoreUtilities.toLowerCase(value);
