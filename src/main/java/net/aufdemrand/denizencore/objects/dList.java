@@ -214,7 +214,9 @@ public class dList extends ArrayList<String> implements dObject {
             try {
                 if (ObjectFetcher.checkMatch(dClass, element)) {
 
-                    T object = ObjectFetcher.getObjectFrom(dClass, element, entry.entryData.getTagContext());
+                    T object = ObjectFetcher.getObjectFrom(dClass, element,
+                            (entry == null ? DenizenCore.getImplementation().getTagContext(null):
+                                    entry.entryData.getTagContext()));
 
                     // Only add the object if it is not null, thus filtering useless
                     // list items

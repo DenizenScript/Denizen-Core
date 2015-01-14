@@ -6,15 +6,13 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 
 public class dB {
 
-    /**
-     * TODO: TRANSFER FROM Bukkit#dB
-     */
     public static boolean showScriptBuilder = false;
 
-    /**
-     * TODO: TRANSFER FROM Bukkit#dB
-     */
     public static boolean showEventsTrimming = false;
+
+    public static boolean verbose = false;
+
+
 
     /**
      * Can be used with echoDebug(...) to output a header, footer,
