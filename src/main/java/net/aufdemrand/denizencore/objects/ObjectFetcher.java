@@ -146,13 +146,13 @@ public class ObjectFetcher {
             T gotten = (T) valueof.get(dClass).invoke(null, matched ? matches.get(0): value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {
-                    Object[] data = CoreUtilities.split(matches.get(i), '=', 2).toArray();
-                    if (data.length != 2) {
+                    List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
+                    if (data.size() != 2) {
                         dB.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
                     }
-                    ((Adjustable) gotten).applyProperty(new Mechanism(new Element((String)data[0]),
-                            new Element(((String)data[1]).replace((char)0x2011, ';'))));
+                    ((Adjustable) gotten).applyProperty(new Mechanism(new Element(data.get(0)),
+                            new Element((data.get(1)).replace((char)0x2011, ';'))));
                 }
             }
             return gotten;

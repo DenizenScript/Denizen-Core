@@ -1,5 +1,7 @@
 package net.aufdemrand.denizencore.utilities;
 
+import net.aufdemrand.denizencore.utilities.debugging.dB;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -64,6 +66,17 @@ public class CoreUtilities {
         return strings;
     }
 
+    public static String concat(List<String> str, String split) {
+        StringBuilder sb = new StringBuilder();
+        if (str.size() > 0) {
+            sb.append(str.get(0));
+        }
+        for (int i = 1; i < str.size(); i++) {
+            sb.append(split).append(str.get(i));
+        }
+        return sb.toString();
+    }
+
     public static List<String> split(String str, char c, int max) {
         List<String> strings = new ArrayList<String>();
         int start = 0;
@@ -71,9 +84,13 @@ public class CoreUtilities {
             if (str.charAt(i) == c) {
                 strings.add(str.substring(start, i));
                 start = i + 1;
+                if (strings.size() + 1 == max) {
+                    break;
+                }
             }
         }
         strings.add(str.substring(start, str.length()));
+        if (dB.verbose) dB.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
         return strings;
     }
 
