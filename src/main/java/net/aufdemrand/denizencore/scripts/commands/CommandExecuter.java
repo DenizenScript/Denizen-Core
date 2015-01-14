@@ -145,15 +145,16 @@ public class CommandExecuter {
                 // If using IF, check if we've reached the command + args
                 // so that we don't fill player: or npc: prematurely
                 if (command.getName().equalsIgnoreCase("if")
-                        && DenizenCore.getCommandRegistry().get(arg.getValue()) != null)
+                        && DenizenCore.getCommandRegistry().get(arg.getValue()) != null) {
                     if_ignore = true;
+                }
 
-                if (!DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, if_ignore)) {
-                    return false;
+                if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, if_ignore)) {
+                    // Do nothing
                 }
 
                 // Save the scriptentry if needed later for fetching scriptentry context
-                if (arg.matchesPrefix("save") && !if_ignore) {
+                else if (arg.matchesPrefix("save") && !if_ignore) {
                     String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
