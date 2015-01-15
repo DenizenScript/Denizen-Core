@@ -130,8 +130,6 @@ public interface DenizenImplementation {
 
     public abstract boolean matchesFlagdList(String input);
 
-    public abstract Duration flagExpiration(String input);
-
     public abstract String getLastEntryFromFlag(String flag);
 
     public TagContext getTagContext(ScriptEntry entry);

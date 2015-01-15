@@ -1224,18 +1224,6 @@ public class dList extends ArrayList<String> implements dObject {
         // -->
         // NOTE: Defined in UtilTags.java
 
-        // <--[tag]
-        // @attribute <fl@flag_name.expiration>
-        // @returns Duration
-        // @description
-        // returns a Duration of the time remaining on the flag, if it
-        // has an expiration.
-        // -->
-        if (flag != null && attribute.startsWith("expiration")) {
-            return DenizenCore.getImplementation().flagExpiration(flag)
-                    .getAttribute(attribute.fulfill(1));
-        }
-
         // Need this attribute (for flags) since they return the last
         // element of the list, unless '.as_list' is specified.
 
