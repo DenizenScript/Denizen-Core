@@ -1,6 +1,8 @@
 package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.events.OldEventManager;
+import net.aufdemrand.denizencore.events.ScriptEvent;
+import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
@@ -70,6 +72,7 @@ public class DenizenCore {
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
         scriptEngine = new ScriptEngine();
+        ScriptEvent.registerCoreEvents();
     }
 
     /**
@@ -85,11 +88,14 @@ public class DenizenCore {
      */
     public static void loadScripts() {
         try {
+            ScriptEvent.worldContainers.clear();
             implementation.preScriptReload();
             ScriptHelper.resetError();
             ScriptHelper.reloadScripts();
-            implementation.onScriptReload();
             OldEventManager.scanWorldEvents();
+            ScriptEvent.reload();
+            implementation.onScriptReload();
+
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");
