@@ -23,9 +23,9 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // @Triggers when Denizen scripts are reloaded.
     //
     // @Context
-    // <context.sender> returns the name of the sender who triggered the reload.
-    // <context.all> returns whether 'reload -a' was used.
-    // <context.haderror> returns whether there was an error.
+    // <context.sender> returns an Element of the name of the sender who triggered the reload.
+    // <context.all> returns an Element(Boolean) of whether 'reload -a' was used.
+    // <context.haderror> returns an Element(Boolean) whether there was an error.
     //
     // -->
 
