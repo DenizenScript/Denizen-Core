@@ -321,7 +321,7 @@ public class dScript implements dObject {
 
         // <--[tag]
         // @attribute <s@script.yaml_key[<constant_name>]>
-        // @returns Element or dList
+        // @returns dObject
         // @description
         // Returns the value of the script's YAML as either an Element or dList.
         // -->
