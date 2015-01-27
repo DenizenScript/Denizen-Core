@@ -48,15 +48,21 @@ public abstract class ScriptEvent {
     public static void reload() {
         dB.log("Reloading script events...");
         for (ScriptEvent event: events) {
+            event.destroy();
             event.eventPaths.clear();
+            boolean matched = false;
             for (ScriptContainer container: worldContainers) {
                 for (String evt: container.getConfigurationSection("events").getKeys(false)) {
                     evt = evt.substring(3);
                     if (couldMatchScript(event, container, evt)) {
                         event.eventPaths.add(new ScriptPath(container, evt));
                         dB.log("Event match, " + event.getName() + " matched for '" + evt + "'!");
+                        matched = true;
                     }
                 }
+            }
+            if (matched) {
+                event.init();
             }
         }
     }
@@ -96,6 +102,12 @@ public abstract class ScriptEvent {
     public ArrayList<ScriptPath> eventPaths = new ArrayList<ScriptPath>();
 
     public boolean cancelled = false;
+
+    public void init() {
+    }
+
+    public void destroy() {
+    }
 
     public boolean checkSwitch(String event, String switcher, String value) {
         for (String possible: CoreUtilities.split(event, ' ')) {
