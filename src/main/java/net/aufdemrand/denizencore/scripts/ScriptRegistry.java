@@ -50,6 +50,8 @@ public class ScriptRegistry {
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
         DenizenCore.getImplementation().refreshScriptContainers();
+        if (yamlScripts == null)
+            return;
         // Get a set of key names in concatenated Denizen Scripts
         Set<String> scripts = yamlScripts.getKeys(false);
         // Iterate through set
