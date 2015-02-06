@@ -47,6 +47,14 @@ public abstract class ScriptEvent {
 
     public static void reload() {
         dB.log("Reloading script events...");
+        for (ScriptContainer container: worldContainers) {
+            for (String evt : container.getConfigurationSection("events").getKeys(false)) {
+                if (evt.contains("@")) {
+                    dB.echoError("Script '" + container.getName() + "' has event '" + evt.replace("@", "<R>@<W>")
+                            + "' which contains object notation, which is deprecated for use in world events. Please remove it.");
+                }
+            }
+        }
         for (ScriptEvent event: events) {
             event.destroy();
             event.eventPaths.clear();
