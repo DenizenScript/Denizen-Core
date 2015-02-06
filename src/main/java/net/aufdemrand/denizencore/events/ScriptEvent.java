@@ -72,13 +72,13 @@ public abstract class ScriptEvent {
             if (sEvent.cancelled) {
                 return false;
             }
-            event = event.substring(0, event.length() - "cancelled:false".length());
+            event = event.substring(0, event.length() - " cancelled:false".length());
         }
         if (event.endsWith(" cancelled:true")) {
             if (!sEvent.cancelled) {
                 return false;
             }
-            event = event.substring(0, event.length() - "cancelled:true".length());
+            event = event.substring(0, event.length() - " cancelled:true".length());
         }
         return sEvent.matches(script, event);
     }
@@ -121,14 +121,17 @@ public abstract class ScriptEvent {
         return true;
     }
 
-    public boolean applyDetermination(String determination) {
+    public boolean applyDetermination(ScriptContainer container, String determination) {
         if (determination.equalsIgnoreCase("CANCELLED")) {
+            dB.echoDebug(container, "Event cancelled!");
             cancelled = true;
         }
         else if (determination.equalsIgnoreCase("CANCELLED:FALSE")) {
+            dB.echoDebug(container, "Event uncancelled!");
             cancelled = false;
         }
         else {
+            dB.echoError("Unknown determination '" + determination + "'");
             return false;
         }
         return true;
@@ -185,7 +188,7 @@ public abstract class ScriptEvent {
         List<String> determinations = DetermineCommand.getOutcome(id);
         if (determinations != null) {
             for (String determination : determinations) {
-                applyDetermination(determination);
+                applyDetermination(script, determination);
             }
         }
     }
