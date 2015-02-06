@@ -23,8 +23,6 @@ public class QueueTags {
 
         if (!event.matches("queue", "q")) return;
 
-        Attribute attribute = event.getAttributes().fulfill(1);
-
         // Handle <queue[id]. ...> tags
 
         if (event.hasNameContext()) {
@@ -32,9 +30,11 @@ public class QueueTags {
                 return;
             else
                 event.setReplaced(ScriptQueue._getExistingQueue(event.getNameContext())
-                        .getAttribute(attribute.fulfill(1)));
+                        .getAttribute(event.getAttributes().fulfill(1)));
             return;
         }
+
+        Attribute attribute = event.getAttributes().fulfill(1);
 
 
         // Otherwise, try to use queue in a static manner.
