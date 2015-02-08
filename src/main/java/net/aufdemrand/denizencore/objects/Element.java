@@ -156,8 +156,13 @@ public class Element implements dObject {
         this.element = TagManager.cleanOutputFully(string);
     }
 
+    static final BigDecimal max = new BigDecimal("10E1000");
+
     private BigDecimal getBD(String text) {
-        return new BigDecimal(text);
+        BigDecimal bd = new BigDecimal(text);
+        if (bd.compareTo(max) >= 1) {
+            return null;
+        }
     }
 
     public BigDecimal asBigDecimal() {
