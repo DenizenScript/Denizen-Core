@@ -157,10 +157,11 @@ public class Element implements dObject {
     }
 
     static final BigDecimal max = new BigDecimal("10E1000");
+    static final BigDecimal min = new BigDecimal("10E-1000");
 
     private BigDecimal getBD(String text) {
         BigDecimal bd = new BigDecimal(text);
-        if (bd.compareTo(max) >= 1) {
+        if (bd.compareTo(max) >= 1 || bd.compareTo(min) <= -1) {
             return null;
         }
     }
