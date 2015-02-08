@@ -164,6 +164,7 @@ public class Element implements dObject {
         if (bd.compareTo(max) >= 1 || bd.compareTo(min) <= -1) {
             return null;
         }
+        return bd;
     }
 
     public BigDecimal asBigDecimal() {
