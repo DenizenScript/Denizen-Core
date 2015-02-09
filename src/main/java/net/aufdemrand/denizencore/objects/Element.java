@@ -157,12 +157,12 @@ public class Element implements dObject {
     }
 
     static final BigDecimal max = new BigDecimal("10E1000");
-    static final BigDecimal min = new BigDecimal("10E-1000");
 
     private BigDecimal getBD(String text) {
         BigDecimal bd = new BigDecimal(text);
-        if (bd.compareTo(max) >= 1 || bd.compareTo(min) <= -1) {
-            return null;
+        if (bd.compareTo(max) >= 1) {
+            dB.echoError("Unreasonably large number detected!");
+            return max;
         }
         return bd;
     }
