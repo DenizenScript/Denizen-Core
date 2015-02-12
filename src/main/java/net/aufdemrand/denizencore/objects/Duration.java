@@ -13,8 +13,6 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-import com.google.common.primitives.Ints;
-
 
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
@@ -230,7 +228,7 @@ public class Duration implements dObject {
      * @return  the number of ticks.
      */
     public int getTicksAsInt() {
-        return Ints.checkedCast((long) (seconds * 20));
+        return (int)(seconds * 20);
     }
 
 
