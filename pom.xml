@@ -47,9 +47,9 @@
         <url>http://ci.citizensnpcs.co</url>
     </ciManagement>
     <scm>
-        <connection>scm:git:git://github.com/aufdemrand/Denizen.git</connection>
-        <developerConnection>scm:git:git:@github.com:aufdemrand/Denizen.git</developerConnection>
-        <url>https://github.com/aufdemrand/Denizen/tree/master/</url>
+        <connection>scm:git:git://github.com/DenizenScript/Denizen-Core.git</connection>
+        <developerConnection>scm:git:git:@github.com:DenizenScript/Denizen-Core.git</developerConnection>
+        <url>https://github.com/DenizenScript/Denizen-Core/tree/master/</url>
     </scm>
 
     <build>
@@ -61,60 +61,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.abstractmeta</include>
-                                    <include>org.json</include>
-                                </includes>
-                            </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.abstractmeta</pattern>
-                                    <shadedPattern>org.shade.abstractmeta</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.json</pattern>
-                                    <shadedPattern>org.shade.json</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>Denizen/lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                    <!-- put your configurations here -->
-                </configuration>
-            </plugin>
 			<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
