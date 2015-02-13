@@ -458,6 +458,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     private long startTime = 0;
 
+    private long startTimeMilli = 0;
+
 
     /**
      * Starts the script queue.
@@ -491,7 +493,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
                     new Runnable() {
                         @Override
                         public void run() {
-                            startTime = System.currentTimeMillis();
+                            startTime = System.nanoTime();
+                            startTimeMilli = System.currentTimeMillis();
                             onStart(); /* Start the engine */
                         }
 
@@ -502,7 +505,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
         } else {
             // If it's not, start the engine now!
-            startTime = System.currentTimeMillis();
+            startTime = System.nanoTime();
+            startTimeMilli = System.currentTimeMillis();
             onStart();
         }
     }
@@ -592,7 +596,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
             } else /* if empty, just stop the queue like normal */ {
                 if (_queues.get(id) == this)
                     _queues.remove(id);
-                dB.echoDebug(this, "Completing queue '" + id + "' in " + (System.currentTimeMillis() - startTime) + "ms.");
+                dB.echoDebug(this, "Completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null)
                     callback.run();
                 is_started = false;
@@ -606,7 +610,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         else {
             if (_queues.get(id) == this) {
                 _queues.remove(id);
-                dB.echoDebug(this, "Re-completing queue '" + id + "' in " + (System.currentTimeMillis() - startTime) + "ms.");
+                dB.echoDebug(this, "Re-completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null)
                     callback.run();
                 is_started = false;
@@ -837,7 +841,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // Returns the time this queue started as a duration.
         // -->
         if (attribute.startsWith("start_time")) {
-            return new Duration(startTime / 50).getAttribute(attribute.fulfill(1));
+            return new Duration(startTimeMilli / 50).getAttribute(attribute.fulfill(1));
         }
 
         // <--[tag]
