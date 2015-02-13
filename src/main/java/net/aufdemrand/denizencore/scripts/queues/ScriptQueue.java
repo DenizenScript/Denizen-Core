@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
@@ -40,10 +41,18 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @return stats
      */
     public static String _getStats() {
+        StringBuilder stats = new StringBuilder();
+        for (ScriptEvent event: ScriptEvent.events) {
+            stats.append("Event '" + event.getName() + "' ran "
+                    + event.fires + " times (" + event.scriptFires + " script fires)"
+                    + ", totalling " + ((float)event.nanoTimes / 1000000f) + "ms, averaging "
+                    + ((float)event.nanoTimes / 1000000f / (float)event.fires) + "ms per event or " +
+                    + ((float)event.nanoTimes / 1000000f / (float)event.scriptFires) + "ms per script.\n");
+        }
         return "Total number of queues created: "
                 + total_queues
                 + ", currently active queues: "
-                + _queues.size() +  ".";
+                + _queues.size() +  ",\n" + stats.toString();
     }
 
 
@@ -456,7 +465,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     private Class<? extends ScriptQueue> cachedClass;
 
-    private long startTime = 0;
+    public long startTime = 0;
 
     private long startTimeMilli = 0;
 

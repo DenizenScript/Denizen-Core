@@ -30,6 +30,10 @@ public abstract class ScriptEvent {
         events.add(event);
     }
 
+    public long fires = 0;
+    public long scriptFires = 0;
+    public long nanoTimes = 0;
+
     public static class ScriptPath {
 
         ScriptContainer container;
@@ -166,6 +170,7 @@ public abstract class ScriptEvent {
     }
 
     public void fire() {
+        fires++;
         for (ScriptPath path: eventPaths) {
             if (matchesScript(this, path.container, path.event)) {
                 try {
@@ -179,6 +184,7 @@ public abstract class ScriptEvent {
     }
 
     public void run(ScriptContainer script, String event) {
+        scriptFires++;
         HashMap<String, dObject> context = getContext();
         dB.echoDebug(script, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + event + "<Y>'"
                 + " for script '<A>" + script.getName() + "<Y>'");
@@ -193,6 +199,7 @@ public abstract class ScriptEvent {
             queue.addContext(entry.getKey(), entry.getValue());
         }
         queue.start();
+        nanoTimes += System.nanoTime() - queue.startTime;
         List<String> determinations = DetermineCommand.getOutcome(id);
         if (determinations != null) {
             for (String determination : determinations) {
