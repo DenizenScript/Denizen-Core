@@ -103,4 +103,22 @@ public class CoreUtilities {
         }
         return new String(data);
     }
+
+    public static boolean xthArgEquals(int argc, String args, String input) {
+        char[] data = args.toCharArray();
+        char[] data2 = input.toCharArray();
+        int arg = 0;
+        int x = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == ' ') {
+                arg++;
+            }
+            else if (arg == argc) {
+                if (data2[x++] != data[i]) {
+                    return false;
+                }
+            }
+        }
+        return x == data2.length;
+    }
 }
