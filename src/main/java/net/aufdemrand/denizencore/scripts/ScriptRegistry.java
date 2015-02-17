@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.scripts.containers.core.*;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
 
@@ -53,9 +54,10 @@ public class ScriptRegistry {
         if (yamlScripts == null)
             return;
         // Get a set of key names in concatenated Denizen Scripts
-        Set<String> scripts = yamlScripts.getKeys(false);
+        Set<StringHolder> scripts = yamlScripts.getKeys(false);
         // Iterate through set
-        for (String scriptName : scripts) {
+        for (StringHolder scriptName1 : scripts) {
+            String scriptName = scriptName1.str;
             // Make sure the script has a type
             if (yamlScripts.contains(scriptName + ".TYPE")) {
                 String type = yamlScripts.getString(scriptName + ".TYPE");

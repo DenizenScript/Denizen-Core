@@ -17,10 +17,6 @@ public abstract class ScriptEntryData implements Cloneable {
         }
     }
 
-    /**
-     * Transfer player, npc.
-     * // TODO: DELETE THIS NOTE
-     */
     public abstract void transferDataFrom(ScriptEntryData data);
 
     public abstract TagContext getTagContext();

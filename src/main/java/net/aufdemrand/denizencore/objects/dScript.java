@@ -354,7 +354,8 @@ public class dScript implements dObject {
             }
             // TODO
             else {
-                return new Element(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
+                return new Element(TagManager.tag(obj.toString(),
+                        DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
                         .getAttribute(attribute.fulfill(1));
             }
         }
@@ -366,7 +367,8 @@ public class dScript implements dObject {
         // Returns a list of all keys within a script.
         // -->
         if (attribute.startsWith("list_keys")) {
-            return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1): "").getKeys(false))
+            return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ?
+                    attribute.getContext(1): "").getKeys(false))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -377,7 +379,8 @@ public class dScript implements dObject {
         // Returns a list of all keys within a script, searching recursively.
         // -->
         if (attribute.startsWith("list_deep_keys")) {
-            return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1): "").getKeys(true))
+            return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ?
+                    attribute.getContext(1): "").getKeys(true))
                     .getAttribute(attribute.fulfill(1));
         }
 

@@ -13,6 +13,7 @@ import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
+import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -61,12 +62,13 @@ public class OldEventManager {
                         dB.echoError("Script '" + script.getName() + "' has an invalid events block!");
                         break;
                     }
-                    Set<String> keys = configSection.getKeys(false);
+                    Set<StringHolder> keys = configSection.getKeys(false);
                     if (keys == null) {
                         dB.echoError("Script '" + script.getName() + "' has an empty events block!");
                         break;
                     }
-                    for (String eventName : keys) {
+                    for (StringHolder eventName1 : keys) {
+                        String eventName = eventName1.str;
                         List<WorldScriptContainer> list;
                         if (events.containsKey(eventName))
                             list = events.get(eventName);

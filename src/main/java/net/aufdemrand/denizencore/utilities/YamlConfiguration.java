@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.utilities;
 
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -22,37 +23,52 @@ public class YamlConfiguration {
             return null;
         }
         else if (obj instanceof String) {
-            config.contents = new HashMap<String, Object>();
+            config.contents = new HashMap<StringHolder, Object>();
             config.contents.put(null, obj);
         }
         else if (obj instanceof Map) {
-            config.contents = (Map<String, Object>)obj;
+            config.contents = (Map<StringHolder, Object>) obj;
         }
         else {
             dB.echoError("Invalid YAML object type: " + obj.toString() + " is " + obj.getClass().getSimpleName());
             return null;
         }
-        patchNonsense(config.contents);
+        switchKeys(config.contents);
         return config;
     }
 
-    Map<String, Object> contents = null;
+    Map<StringHolder, Object> contents = null;
 
     /**
-     * Don't ask why, I can't explain this Java BS.
+     * Use StringHolders instead of strings.
      */
-    private static void patchNonsense(Map<String, Object> objs) {
+    private static void switchKeys(Map<StringHolder, Object> objs) {
         for (Object o: new HashSet<Object>(objs.keySet())) {
-            if (!(o instanceof String)) {
-                objs.put(o.toString(), objs.get(o));
-                objs.remove(o);
-            }
+            Object got = objs.get(o);
+            objs.remove(o);
+            objs.put(new StringHolder(o.toString()), got);
         }
-        for (Map.Entry<String, Object> str: objs.entrySet()) {
+        for (Map.Entry<StringHolder, Object> str: objs.entrySet()) {
             if (str.getValue() instanceof Map) {
-                patchNonsense((Map<String, Object>)str.getValue());
+                Map map = (Map<StringHolder, Object>) str.getValue();
+                switchKeys(map);
+                objs.remove(map);
+                objs.put(str.getKey(), map);
             }
         }
+    }
+
+    private static Map<String, Object> reverse(Map<StringHolder, Object> objs) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        for (Map.Entry<StringHolder, Object> obj: objs.entrySet()) {
+            if (obj.getValue() instanceof Map) {
+                map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue()));
+            }
+            else {
+                map.put(obj.getKey().str, obj.getValue());
+            }
+        }
+        return map;
     }
 
     private static List<String> patchListNonsense(List<Object> objs) {
@@ -67,27 +83,27 @@ public class YamlConfiguration {
     }
 
     public YamlConfiguration() {
-        contents = new HashMap<String, Object>();
+        contents = new HashMap<StringHolder, Object>();
     }
 
-    public Set<String> getKeys(boolean deep) {
+    public Set<StringHolder> getKeys(boolean deep) {
         if (!deep) {
-            return new HashSet<String>(contents.keySet());
+            return new HashSet<StringHolder>(contents.keySet());
         }
         else {
             return getKeysDeep(contents);
         }
     }
 
-    public Map<String, Object> getMap() {
-        return new HashMap<String, Object>(contents);
+    public Map<StringHolder, Object> getMap() {
+        return new HashMap<StringHolder, Object>(contents);
     }
 
-    private Set<String> getKeysDeep(Map<String, Object> objs) {
-        Set<String> strings = new HashSet<String>(objs.keySet());
-        for (Map.Entry<String, Object> str: objs.entrySet()) {
+    private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs) {
+        Set<StringHolder> strings = new HashSet<StringHolder>(objs.keySet());
+        for (Map.Entry<StringHolder, Object> str: objs.entrySet()) {
             if (str.getValue() instanceof Map) {
-                strings.addAll(getKeysDeep((Map<String, Object>)str.getValue()));
+                strings.addAll(getKeysDeep((Map<StringHolder, Object>) str.getValue()));
             }
         }
         return strings;
@@ -98,14 +114,16 @@ public class YamlConfiguration {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         Yaml yaml = new Yaml(options);
-        return yaml.dump(contents);
+        String dumped = yaml.dump(reverse(contents));
+        dB.log("Outputting " + dumped);
+        return dumped;
     }
 
     public Object get(String path) {
         List<String> parts = CoreUtilities.split(path, '.');
-        Map<String, Object> portion = contents;
+        Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
-            Object oPortion = portion.get(parts.get(i));
+            Object oPortion = portion.get(new StringHolder(parts.get(i)));
             if (oPortion == null) {
                 return null;
             }
@@ -113,7 +131,7 @@ public class YamlConfiguration {
                 return oPortion;
             }
             else if (oPortion instanceof Map) {
-                portion = (Map<String, Object>) oPortion;
+                portion = (Map<StringHolder, Object>) oPortion;
             }
             else {
                 return null;
@@ -124,32 +142,32 @@ public class YamlConfiguration {
 
     public void set(String path, Object o) {
         if (o instanceof YamlConfiguration)
-            o = new HashMap<String,Object>(((YamlConfiguration)o).contents);
+            o = new HashMap<StringHolder,Object>(((YamlConfiguration)o).contents);
         List<String> parts = CoreUtilities.split(path, '.');
-        Map<String, Object> portion = contents;
+        Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
-            Object oPortion = portion.get(parts.get(i));
+            Object oPortion = portion.get(new StringHolder(parts.get(i)));
             if (parts.size() == i + 1) {
                 if (o == null) {
-                    portion.remove(parts.get(i));
+                    portion.remove(new StringHolder(parts.get(i)));
                     emptyEmptyMaps(parts);
                 }
                 else {
-                    portion.put(parts.get(i), o);
+                    portion.put(new StringHolder(parts.get(i)), o);
                 }
                 return;
             }
             else if (oPortion == null) {
-                Map<String, Object> map = new HashMap<String, Object>();
-                portion.put(parts.get(i), map);
+                Map<StringHolder, Object> map = new HashMap<StringHolder, Object>();
+                portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }
             else if (oPortion instanceof Map) {
-                portion = (Map<String, Object>) oPortion;
+                portion = (Map<StringHolder, Object>) oPortion;
             }
             else {
-                Map<String, Object> map = new HashMap<String, Object>();
-                portion.put(parts.get(i), map);
+                Map<StringHolder, Object> map = new HashMap<StringHolder, Object>();
+                portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }
         }
@@ -157,19 +175,19 @@ public class YamlConfiguration {
     }
 
     void emptyEmptyMaps(List<String> parts) {
-        Map<String, Object> portion = contents;
+        Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
-            Object oPortion = portion.get(parts.get(i));
+            Object oPortion = portion.get(new StringHolder(parts.get(i)));
             if (oPortion == null) {
                 return;
             }
             else if (oPortion instanceof Map) {
-                if (((Map<String, Object>)oPortion).size() == 0) {
-                    portion.remove(parts.get(i));
+                if (((Map<StringHolder, Object>)oPortion).size() == 0) {
+                    portion.remove(new StringHolder(parts.get(i)));
                     emptyEmptyMaps(parts);
                     return;
                 }
-                portion = (Map<String, Object>) oPortion;
+                portion = (Map<StringHolder, Object>) oPortion;
             }
             else {
                 return;
@@ -216,9 +234,9 @@ public class YamlConfiguration {
     public YamlConfiguration getConfigurationSection(String path) {
         try {
             List<String> parts = CoreUtilities.split(path, '.');
-            Map<String, Object> portion = contents;
+            Map<StringHolder, Object> portion = contents;
             for (int i = 0; i < parts.size(); i++) {
-                Object oPortion = portion.get(parts.get(i));
+                Object oPortion = portion.get(new StringHolder(parts.get(i)));
                 if (oPortion == null) {
                     return null;
                 }
@@ -226,11 +244,11 @@ public class YamlConfiguration {
                     YamlConfiguration configuration = new YamlConfiguration();
                     if (!(oPortion instanceof Map))
                         return null;
-                    configuration.contents = (Map<String, Object>) oPortion;
+                    configuration.contents = (Map<StringHolder, Object>) oPortion;
                     return configuration;
                 }
                 else if (oPortion instanceof Map) {
-                    portion = (Map<String, Object>) oPortion;
+                    portion = (Map<StringHolder, Object>) oPortion;
                 }
                 else {
                     return null;

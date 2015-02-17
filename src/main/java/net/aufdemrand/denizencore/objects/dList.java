@@ -17,6 +17,7 @@ import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
+import java.lang.Object;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -110,9 +111,13 @@ public class dList extends ArrayList<String> implements dObject {
         if (items != null) addAll(items);
     }
 
-    // A Set<String> of items
-    public dList(Set<String> items) {
-        if (items != null) addAll(items);
+    // A Set<Object> of items
+    public dList(Set<? extends Object> items) {
+        if (items != null) {
+            for (Object o : items) {
+                add(o.toString());
+            }
+        }
     }
 
     // A List<String> of items, with a prefix

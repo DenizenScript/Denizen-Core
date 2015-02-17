@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -62,8 +63,8 @@ public class ScriptHelper {
     }
 
     static void handleListing(YamlConfiguration config, List<String> list) {
-        for (String str: config.getKeys(false)) {
-            String up = str.toUpperCase();
+        for (StringHolder str: config.getKeys(false)) {
+            String up = str.str.toUpperCase();
             if (list.contains(up)) {
                 hadError = true;
                 DenizenCore.getImplementation().debugError("There is more than one script named '" + up + "'!");

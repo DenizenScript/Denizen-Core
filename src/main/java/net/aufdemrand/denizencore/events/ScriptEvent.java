@@ -13,6 +13,7 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,9 +53,9 @@ public abstract class ScriptEvent {
     public static void reload() {
         dB.log("Reloading script events...");
         for (ScriptContainer container: worldContainers) {
-            for (String evt : container.getConfigurationSection("events").getKeys(false)) {
-                if (evt.contains("@")) {
-                    dB.echoError("Script '" + container.getName() + "' has event '" + evt.replace("@", "<R>@<W>")
+            for (StringHolder evt : container.getConfigurationSection("events").getKeys(false)) {
+                if (evt.str.contains("@")) {
+                    dB.echoError("Script '" + container.getName() + "' has event '" + evt.str.replace("@", "<R>@<W>")
                             + "' which contains object notation, which is deprecated for use in world events. Please remove it.");
                 }
             }
@@ -64,8 +65,8 @@ public abstract class ScriptEvent {
             event.eventPaths.clear();
             boolean matched = false;
             for (ScriptContainer container: worldContainers) {
-                for (String evt: container.getConfigurationSection("events").getKeys(false)) {
-                    evt = evt.substring(3);
+                for (StringHolder evt1: container.getConfigurationSection("events").getKeys(false)) {
+                    String evt = evt1.str.substring(3);
                     if (couldMatchScript(event, container, evt)) {
                         event.eventPaths.add(new ScriptPath(container, evt));
                         dB.log("Event match, " + event.getName() + " matched for '" + evt + "'!");

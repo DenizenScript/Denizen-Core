@@ -9,6 +9,7 @@ import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +58,9 @@ public class ScriptContainer implements Debuggable {
 
 
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
+        if (configurationSection == null) {
+            dB.echoError("Null configuration section while generating a ScriptContainer?!");
+        }
         contents = configurationSection;
         this.name = scriptContainerName.toUpperCase();
     }
