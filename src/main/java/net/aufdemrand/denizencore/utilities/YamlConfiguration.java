@@ -115,7 +115,8 @@ public class YamlConfiguration {
         options.setAllowUnicode(true);
         Yaml yaml = new Yaml(options);
         String dumped = yaml.dump(reverse(contents));
-        dB.log("Outputting " + dumped);
+        if (dB.verbose)
+            dB.log("Outputting " + dumped);
         return dumped;
     }
 
