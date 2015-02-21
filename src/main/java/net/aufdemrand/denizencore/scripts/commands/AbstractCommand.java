@@ -35,6 +35,16 @@ public abstract class AbstractCommand implements RegistrationableInstance {
         return braced;
     }
 
+    private boolean preparseArgs = true;
+
+    public void setParseArgs(boolean parse) {
+        preparseArgs = parse;
+    }
+
+    public boolean shouldPreParse() {
+        return preparseArgs;
+    }
+
     @Override
     public AbstractCommand activate() {
         return this;

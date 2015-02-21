@@ -142,14 +142,14 @@ public class ForeachCommand extends BracedCommand {
         else if (callback != null && callback.asBoolean()) {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equalsIgnoreCase("foreach") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().size() == 0 ||
-                    scriptEntry.getBracedSet().get("REPEAT").get(scriptEntry.getBracedSet().get("FOREACH").size() - 1) != scriptEntry)) {
+                    scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
                 ForeachData data = (ForeachData)scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.list.size()) {
                     dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     scriptEntry.getResidingQueue().addDefinition("value", String.valueOf(data.list.get(data.index - 1)));
-                    ArrayList<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get("FOREACH");
+                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = null;
                     try {
                         callbackEntry = new ScriptEntry("FOREACH", new String[] { "\0CALLBACK" },
@@ -176,8 +176,8 @@ public class ForeachCommand extends BracedCommand {
         else {
 
             // Get objects
-            ArrayList<ScriptEntry> bracedCommandsList =
-                    ((LinkedHashMap<String, ArrayList<ScriptEntry>>) scriptEntry.getObject("braces")).get("FOREACH");
+            List<ScriptEntry> bracedCommandsList =
+                    ((List<BracedData>) scriptEntry.getObject("braces")).get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
                 dB.echoError(scriptEntry.getResidingQueue(), "Empty braces!");

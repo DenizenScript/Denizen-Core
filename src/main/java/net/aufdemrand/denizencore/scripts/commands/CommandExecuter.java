@@ -101,9 +101,6 @@ public class CommandExecuter {
             // Don't fill in tags if there were brackets detected..
             // This means we're probably in a nested if.
             int nested_depth = 0;
-            // Watch for IF command to avoid filling player and npc arguments
-            // prematurely
-            boolean if_ignore = false;
 
             for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
                 if (arg.getValue().equals("{")) nested_depth++;
@@ -144,17 +141,16 @@ public class CommandExecuter {
 
                 // If using IF, check if we've reached the command + args
                 // so that we don't fill player: or npc: prematurely
-                if (command.getName().equalsIgnoreCase("if")
-                        && DenizenCore.getCommandRegistry().get(arg.getValue()) != null) {
-                    if_ignore = true;
+                if (!command.shouldPreParse()) {
+                    // Do nothing
                 }
 
-                if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, if_ignore)) {
+                else if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
 
                 // Save the scriptentry if needed later for fetching scriptentry context
-                else if (arg.matchesPrefix("save") && !if_ignore) {
+                else if (arg.matchesPrefix("save")) {
                     String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
@@ -171,7 +167,7 @@ public class CommandExecuter {
                     DenizenCore.getImplementation().getTagContextFor(scriptEntry, false))); // Replace tags
 
             // Parse the rest of the arguments for execution.
-            ((AbstractCommand)command).parseArgs(scriptEntry);
+            (command).parseArgs(scriptEntry);
 
         } catch (InvalidArgumentsException e) {
 

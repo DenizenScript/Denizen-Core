@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.scripts.commands;
 
 import net.aufdemrand.denizencore.interfaces.RegistrationableInstance;
 import net.aufdemrand.denizencore.interfaces.dRegistry;
+import net.aufdemrand.denizencore.scripts.commands.core.IfCommand;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public abstract class CommandRegistry implements dRegistry {
     // -->
 
     public void registerCoreCommands() {
-        // TODO: Register Core commands
+        registerCoreMember(IfCommand.class, "NEOIF", "Compares values and executes a code block.", 0);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {

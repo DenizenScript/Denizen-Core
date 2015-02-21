@@ -40,13 +40,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
     private dScript script = null;
     private ScriptQueue queue = null;
 
-    private LinkedHashMap<String, ArrayList<ScriptEntry>> bracedSet = null;
+    private List<BracedCommand.BracedData> bracedSet = null;
 
-    public LinkedHashMap<String, ArrayList<ScriptEntry>> getBracedSet() {
+    public List<BracedCommand.BracedData> getBracedSet() {
         return bracedSet;
     }
 
-    public void setBracedSet(LinkedHashMap<String, ArrayList<ScriptEntry>> set) {
+    public void setBracedSet(List<BracedCommand.BracedData> set) {
         bracedSet = set;
     }
 
