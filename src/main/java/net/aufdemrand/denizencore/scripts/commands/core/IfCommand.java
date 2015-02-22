@@ -95,8 +95,6 @@ public class IfCommand extends BracedCommand {
         }
         if (braces != null) {
             if (first_set) {
-                BracedData bd = new BracedData();
-                bd.key = "NEOIF";
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
@@ -155,7 +153,8 @@ public class IfCommand extends BracedCommand {
             if (argstemp_parsed[arg] != null) {
                 return argstemp_parsed[arg];
             }
-            String parsed = TagManager.tag(argstemp.get(arg), scriptEntry.entryData.getTagContext());
+            String parsed = TagManager.tag(argstemp.get(arg),
+                    DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
             argstemp_parsed[arg] = parsed;
             return parsed;
 
@@ -164,15 +163,23 @@ public class IfCommand extends BracedCommand {
         public boolean compare(List<String> args, ScriptEntry scriptEntry) {
             argstemp = args;
             argstemp_parsed = new String[args.size()];
-            dB.log("Comparing " + args);
+            if (dB.verbose) dB.log("Comparing " + args);
             if (args.size() == 0) {
                 if (dB.verbose) dB.log("Args.size == 0, return false");
                 return false;
             }
             else if (args.size() == 1) {
-                boolean comparison = tagme(0, scriptEntry).equalsIgnoreCase("true");
-                if (dB.verbose) dB.log("Args.size == 1, return comparison=" + (comparison ? "true": "false"));
-                return comparison;
+                String arg = tagme(0, scriptEntry);
+                boolean negative = false;
+                if (arg.startsWith("!")) {
+                    arg = arg.substring(1);
+                    negative = true;
+                }
+                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
+                if (negative) {
+                    return !arg.equalsIgnoreCase("true");
+                }
+                return arg.equalsIgnoreCase("true");
             }
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
@@ -205,14 +212,17 @@ public class IfCommand extends BracedCommand {
                         }
                     }
                     if (!found) {
+                        if (dB.verbose) dB.log("Returning false: strange ()");
                         return false;
                     }
                 }
                 else if (arg.equalsIgnoreCase(")")) {
+                    if (dB.verbose) dB.log("Returning false: strange ()");
                     return false;
                 }
             }
             if (args.size() == 1) {
+                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
                 return args.get(0).equalsIgnoreCase("true");
             }
             for (int i = 0; i < args.size(); i++) {
@@ -225,6 +235,7 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (before) {
+                        if (dB.verbose) dB.log("Returning true because true || irrel");
                         return true;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
@@ -232,7 +243,9 @@ public class IfCommand extends BracedCommand {
                     {
                         afterargs.add(args.get(x));
                     }
-                    return new ArgComparer().compare(afterargs, scriptEntry);
+                    boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
+                    if (dB.verbose) dB.log("Returning comparison: " + comp);
+                    return comp;
                 }
                 else if (arg.equalsIgnoreCase("&&")) {
                     List<String> beforeargs = new ArrayList<String>(i);
@@ -242,6 +255,7 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (!before) {
+                        if (dB.verbose) dB.log("Returning false because false && irrel");
                         return false;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
@@ -249,19 +263,37 @@ public class IfCommand extends BracedCommand {
                     {
                         afterargs.add(args.get(x));
                     }
-                    return new ArgComparer().compare(afterargs, scriptEntry);
+                    boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
+                    if (dB.verbose) dB.log("Returning comparison: " + comp);
+                    return comp;
                 }
             }
             if (args.size() == 1)
             {
-                return args.get(0).equalsIgnoreCase("true");
+                String arg = args.get(0);
+                boolean negative = false;
+                if (arg.startsWith("!")) {
+                    arg = arg.substring(1);
+                    negative = true;
+                }
+                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
+                if (negative) {
+                    return !arg.equalsIgnoreCase("true");
+                }
+                return arg.equalsIgnoreCase("true");
             }
             if (args.size() == 2)
             {
+                if (dB.verbose) dB.log("Returning false because two args only");
                 return false;
             }
             String arg = args.get(1);
-            if (arg.equals("==")) arg = "EQUALS";
+            boolean negative = false;
+            if (arg.startsWith("!")) {
+                arg = arg.substring(1);
+                negative = true;
+            }
+            if (arg.equals("==") || arg.equals("=")) arg = "EQUALS";
             else if (arg.equals(">=")) arg = "OR_MORE";
             else if (arg.equals("<=")) arg = "OR_LESS";
             else if (arg.equals("<")) arg = "LESS";
@@ -269,6 +301,9 @@ public class IfCommand extends BracedCommand {
             else if (arg.equals("||")) arg = "OR";
             else if (arg.equals("&&")) arg = "AND";
             Comparable comparable = new Comparable();
+            if (negative) {
+                comparable.logic = Comparable.Logic.NEGATIVE;
+            }
             comparable.operator = Comparable.Operator.valueOf(arg.toUpperCase());
             comparable.setComparable(tagme(0, scriptEntry));
             comparable.setComparedto(tagme(2, scriptEntry));
