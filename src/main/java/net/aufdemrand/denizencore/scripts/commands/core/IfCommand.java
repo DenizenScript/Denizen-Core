@@ -45,7 +45,7 @@ public class IfCommand extends BracedCommand {
         }
 
         // Interpret arguments
-        for (String arg : scriptEntry.getOriginalArguments()) {
+        for (String arg : scriptEntry.modifiedArguments()) {
             if (arg.equalsIgnoreCase("{")) {
                 break;
             }

@@ -101,8 +101,10 @@ public class CommandExecuter {
             // Don't fill in tags if there were brackets detected..
             // This means we're probably in a nested if.
             int nested_depth = 0;
+            int argn = 0;
 
             for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
+                argn++;
                 if (arg.getValue().equals("{")) nested_depth++;
                 if (arg.getValue().equals("}")) nested_depth--;
 
@@ -137,6 +139,7 @@ public class CommandExecuter {
                     }
                     m.appendTail(sb);
                     arg = aH.Argument.valueOf(sb.toString());
+                    scriptEntry.modifiedArguments().set(argn - 1, sb.toString());
                 }
 
                 // If using IF, check if we've reached the command + args
