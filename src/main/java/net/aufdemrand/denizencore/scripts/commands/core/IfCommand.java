@@ -35,6 +35,7 @@ public class IfCommand extends BracedCommand {
         boolean has_brace = false;
         for (String arg : scriptEntry.getOriginalArguments()) {
             if (arg.equalsIgnoreCase("{")) {
+                if (dB.verbose) dB.log("Has_brace = true");
                 has_brace = true;
                 break;
             }
@@ -52,22 +53,22 @@ public class IfCommand extends BracedCommand {
             if (!has_brace && !in_elsecommand && DenizenCore.getCommandRegistry().get(arg.toUpperCase()) != null) {
                 in_subcommand = true;
                 subcommand.add(arg);
-            } else if (in_subcommand && arg.equalsIgnoreCase("else")) {
+            } else if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
                 in_elsecommand = true;
                 in_subcommand = false;
-            } else if (in_subcommand) {
+            } else if (!has_brace && in_subcommand) {
                 subcommand.add(arg);
-            } else if (in_elsecommand) {
+            } else if (!has_brace && in_elsecommand) {
                 elsecommand.add(arg);
             } else {
                 comparisons.add(arg);
             }
         }
 
-        if (in_elsecommand) {
+        if (!has_brace && in_elsecommand) {
             scriptEntry.addObject("elsecommand", elsecommand);
         }
-        if (in_subcommand || in_elsecommand) {
+        if (!has_brace && (in_subcommand || in_elsecommand)) {
             scriptEntry.addObject("subcommand", subcommand);
         }
         scriptEntry.addObject("comparisons", comparisons);
@@ -95,20 +96,27 @@ public class IfCommand extends BracedCommand {
         }
         if (braces != null) {
             if (first_set) {
+                if (dB.verbose) dB.log("Running the first set");
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
                     bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqId"));
                 }
                 scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
-            } else {
-                for (BracedData braceSet : braces) {
-                    if (dB.verbose) dB.log(braceSet.key);
+            }
+            else {
+                for (int z = 1; z < braces.size(); z++) {
+                    BracedData braceSet = braces.get(z);
+                    if (dB.verbose) dB.log("Trying: " + braceSet.key);
                     List<String> key = braceSet.args;
                     boolean should_fire = false;
+                    if (key.size() > 0 && key.get(0).equalsIgnoreCase("else")) {
+                        key.remove(0);
+                    }
                     if (key.size() > 0 && key.get(0).equalsIgnoreCase("if")) {
                         key.remove(0);
-                    } else {
+                    }
+                    else {
                         should_fire = true;
                     }
                     if (!should_fire) {

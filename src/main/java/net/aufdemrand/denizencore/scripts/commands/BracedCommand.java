@@ -162,6 +162,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     bracedSections.add(bd);
                     bracesName = "";
                     bracesArgs = new ArrayList<String>();
+                    commandList = new TreeMap<Integer, ArrayList<String>>();
                 }
             }
 
