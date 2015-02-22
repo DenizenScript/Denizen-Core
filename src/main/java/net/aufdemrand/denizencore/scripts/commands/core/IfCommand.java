@@ -197,7 +197,7 @@ public class IfCommand extends BracedCommand {
                             count--;
                             if (count == -1) {
                                 boolean cfound = new ArgComparer().compare(subargs, scriptEntry);
-                                for (int c = 0; c < (x - i) + 1;) {
+                                for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
                                 }
                                 args.add(i, cfound ? "true": "false");
