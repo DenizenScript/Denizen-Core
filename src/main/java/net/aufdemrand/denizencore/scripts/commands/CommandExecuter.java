@@ -108,7 +108,7 @@ public class CommandExecuter {
 
                 // If nested, continue.
                 if (nested_depth > 0) {
-                    newArgs.add(arg.raw_value);
+                    newArgs.add(arg.raw_value); // ????
                     continue;
                 }
 
@@ -141,7 +141,7 @@ public class CommandExecuter {
 
                 // If using IF, check if we've reached the command + args
                 // so that we don't fill player: or npc: prematurely
-                if (!command.shouldPreParse()) {
+                if (!command.shouldPreParse() || nested_depth > 0) {
                     // Do nothing
                 }
 
@@ -167,10 +167,9 @@ public class CommandExecuter {
                     DenizenCore.getImplementation().getTagContextFor(scriptEntry, false))); // Replace tags
 
             // Parse the rest of the arguments for execution.
-            (command).parseArgs(scriptEntry);
-
-        } catch (InvalidArgumentsException e) {
-
+            command.parseArgs(scriptEntry);
+        }
+        catch (InvalidArgumentsException e) {
             keepGoing = false;
             // Give usage hint if InvalidArgumentsException was called.
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
@@ -179,21 +178,21 @@ public class CommandExecuter {
             dB.log("Usage: " + command.getUsageHint());
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             keepGoing = false;
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             dB.echoError(scriptEntry.getResidingQueue(), e);
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
-
-        } finally {
+        }
+        finally {
 
             if (keepGoing)
                 try {
                     // Run the execute method in the command
-                    ((AbstractCommand)command).execute(scriptEntry);
+                    command.execute(scriptEntry);
                 } catch (Exception e) {
                     dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");
                     dB.echoError(scriptEntry.getResidingQueue(), e);

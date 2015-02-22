@@ -51,12 +51,13 @@ public abstract class BracedCommand extends AbstractCommand {
                     ArrayList<ScriptEntry> array = new ArrayList<ScriptEntry>(entry.value.size());
                     for (ScriptEntry sEntry: entry.value) {
                         ScriptEntry newEntry = sEntry.clone();
-                        // TODO: should this be cloning entryData?
-                        newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         array.add(newEntry);
                     }
-                    entry.value = array;
-                    bracedSections.add(entry);
+                    BracedData data = new BracedData();
+                    data.key = entry.key;
+                    data.args = new ArrayList<String>(entry.args);
+                    data.value = array;
+                    bracedSections.add(data);
                 }
                 return bracedSections;
             }

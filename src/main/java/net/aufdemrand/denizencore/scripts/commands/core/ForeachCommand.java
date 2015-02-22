@@ -108,7 +108,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
@@ -135,7 +135,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
