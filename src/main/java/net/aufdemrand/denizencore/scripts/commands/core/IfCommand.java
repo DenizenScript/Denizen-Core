@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
+import net.aufdemrand.denizencore.scripts.commands.CommandExecuter;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -120,7 +121,7 @@ public class IfCommand extends BracedCommand {
                         should_fire = true;
                     }
                     if (!should_fire) {
-                        if (new ArgComparer().compare(key, scriptEntry)) {
+                        if (new ArgComparer().compare(CommandExecuter.parseDefs(key, scriptEntry), scriptEntry)) {
                             should_fire = true;
                         }
                     }

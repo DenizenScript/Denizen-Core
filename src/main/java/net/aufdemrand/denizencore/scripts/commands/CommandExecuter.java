@@ -9,7 +9,6 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
@@ -18,6 +17,41 @@ public class CommandExecuter {
 
     private static final Pattern definition_pattern = Pattern.compile("%(.+?)%");
 
+    public static List<String> parseDefs(List<String> args, ScriptEntry scriptEntry) {
+        Matcher m;
+        StringBuffer sb;
+        List<String> newArgs = new ArrayList<String>(args.size());
+        for (String arg: args) {
+            if (arg.indexOf('%') != -1) {
+                m = definition_pattern.matcher(arg);
+                sb = new StringBuffer();
+                while (m.find()) {
+                    String def = m.group(1);
+                    boolean dynamic = false;
+                    if (def.startsWith("|")) {
+                        def = def.substring(1, def.length() - 1);
+                        dynamic = true;
+                    }
+                    String definition;
+                    String defval = scriptEntry.getResidingQueue().getDefinition(def);
+                    if (dynamic)
+                        definition = scriptEntry.getResidingQueue().getDefinition(def);
+                    else
+                        definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+                    if (defval == null) {
+                        dB.echoError("Unknown definition %" + m.group(1) + "%.");
+                        definition = "null";
+                    }
+                    dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
+                    m.appendReplacement(sb, Matcher.quoteReplacement(definition));
+                }
+                m.appendTail(sb);
+                arg = sb.toString();
+            }
+            newArgs.add(arg);
+        }
+        return newArgs;
+    }
 
     public CommandExecuter() {
     }
