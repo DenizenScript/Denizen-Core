@@ -51,6 +51,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     ArrayList<ScriptEntry> array = new ArrayList<ScriptEntry>(entry.value.size());
                     for (ScriptEntry sEntry: entry.value) {
                         ScriptEntry newEntry = sEntry.clone();
+                        newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         array.add(newEntry);
                     }
                     BracedData data = new BracedData();
