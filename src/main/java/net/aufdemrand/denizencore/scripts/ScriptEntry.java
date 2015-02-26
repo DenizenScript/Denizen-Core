@@ -30,6 +30,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // Command Arguments
     private List<String> args;
     private List<String> pre_tagged_args;
+    private List<String> modified_arguments;
 
     // TimedQueue features
     private boolean instant = false;
@@ -40,13 +41,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
     private dScript script = null;
     private ScriptQueue queue = null;
 
-    private LinkedHashMap<String, ArrayList<ScriptEntry>> bracedSet = null;
+    private List<BracedCommand.BracedData> bracedSet = null;
 
-    public LinkedHashMap<String, ArrayList<ScriptEntry>> getBracedSet() {
+    public List<BracedCommand.BracedData> getBracedSet() {
         return bracedSet;
     }
 
-    public void setBracedSet(LinkedHashMap<String, ArrayList<ScriptEntry>> set) {
+    public void setBracedSet(List<BracedCommand.BracedData> set) {
         bracedSet = set;
     }
 
@@ -59,6 +60,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
         se.objects = new HashMap<String, Object>();
+        se.modified_arguments = new ArrayList<String>(modified_arguments);
         se.entryData = entryData.clone();
         return se;
     }
@@ -119,9 +121,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
             // Keep seperate list for 'un-tagged' copy of the arguments.
             // This will be useful if cloning the script entry for use in a loop, etc.
             this.pre_tagged_args = Arrays.asList(arguments);
+            this.modified_arguments = Arrays.asList(arguments);
         } else {
             this.args = new ArrayList<String>();
             this.pre_tagged_args = new ArrayList<String>();
+            this.modified_arguments = new ArrayList<String>();
         }
 
         // Check for replaceable tags. We'll try not to make a habit of checking for tags/doing
@@ -141,7 +145,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             }
         }
 
-        if (actualCommand != null && actualCommand.isBraced() && actualCommand instanceof BracedCommand) {
+        if (actualCommand != null && actualCommand instanceof BracedCommand) {
             BracedCommand.getBracedCommands(this);
         }
     }
@@ -208,6 +212,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
      */
     public List<String> getOriginalArguments() {
         return pre_tagged_args;
+    }
+
+    public List<String> modifiedArguments() {
+        return modified_arguments;
     }
 
 

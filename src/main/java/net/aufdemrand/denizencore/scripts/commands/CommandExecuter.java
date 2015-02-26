@@ -9,7 +9,6 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
@@ -18,6 +17,41 @@ public class CommandExecuter {
 
     private static final Pattern definition_pattern = Pattern.compile("%(.+?)%");
 
+    public static List<String> parseDefs(List<String> args, ScriptEntry scriptEntry) {
+        Matcher m;
+        StringBuffer sb;
+        List<String> newArgs = new ArrayList<String>(args.size());
+        for (String arg: args) {
+            if (arg.indexOf('%') != -1) {
+                m = definition_pattern.matcher(arg);
+                sb = new StringBuffer();
+                while (m.find()) {
+                    String def = m.group(1);
+                    boolean dynamic = false;
+                    if (def.startsWith("|")) {
+                        def = def.substring(1, def.length() - 1);
+                        dynamic = true;
+                    }
+                    String definition;
+                    String defval = scriptEntry.getResidingQueue().getDefinition(def);
+                    if (dynamic)
+                        definition = scriptEntry.getResidingQueue().getDefinition(def);
+                    else
+                        definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+                    if (defval == null) {
+                        dB.echoError("Unknown definition %" + m.group(1) + "%.");
+                        definition = "null";
+                    }
+                    dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
+                    m.appendReplacement(sb, Matcher.quoteReplacement(definition));
+                }
+                m.appendTail(sb);
+                arg = sb.toString();
+            }
+            newArgs.add(arg);
+        }
+        return newArgs;
+    }
 
     public CommandExecuter() {
     }
@@ -101,17 +135,16 @@ public class CommandExecuter {
             // Don't fill in tags if there were brackets detected..
             // This means we're probably in a nested if.
             int nested_depth = 0;
-            // Watch for IF command to avoid filling player and npc arguments
-            // prematurely
-            boolean if_ignore = false;
+            int argn = 0;
 
             for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
+                argn++;
                 if (arg.getValue().equals("{")) nested_depth++;
                 if (arg.getValue().equals("}")) nested_depth--;
 
                 // If nested, continue.
                 if (nested_depth > 0) {
-                    newArgs.add(arg.raw_value);
+                    newArgs.add(arg.raw_value); // ????
                     continue;
                 }
 
@@ -140,21 +173,21 @@ public class CommandExecuter {
                     }
                     m.appendTail(sb);
                     arg = aH.Argument.valueOf(sb.toString());
+                    scriptEntry.modifiedArguments().set(argn - 1, sb.toString());
                 }
 
                 // If using IF, check if we've reached the command + args
                 // so that we don't fill player: or npc: prematurely
-                if (command.getName().equalsIgnoreCase("if")
-                        && DenizenCore.getCommandRegistry().get(arg.getValue()) != null) {
-                    if_ignore = true;
+                if (!command.shouldPreParse() || nested_depth > 0) {
+                    // Do nothing
                 }
 
-                if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, if_ignore)) {
+                else if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
 
                 // Save the scriptentry if needed later for fetching scriptentry context
-                else if (arg.matchesPrefix("save") && !if_ignore) {
+                else if (arg.matchesPrefix("save")) {
                     String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
@@ -171,10 +204,9 @@ public class CommandExecuter {
                     DenizenCore.getImplementation().getTagContextFor(scriptEntry, false))); // Replace tags
 
             // Parse the rest of the arguments for execution.
-            ((AbstractCommand)command).parseArgs(scriptEntry);
-
-        } catch (InvalidArgumentsException e) {
-
+            command.parseArgs(scriptEntry);
+        }
+        catch (InvalidArgumentsException e) {
             keepGoing = false;
             // Give usage hint if InvalidArgumentsException was called.
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
@@ -183,21 +215,21 @@ public class CommandExecuter {
             dB.log("Usage: " + command.getUsageHint());
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             keepGoing = false;
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             dB.echoError(scriptEntry.getResidingQueue(), e);
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
-
-        } finally {
+        }
+        finally {
 
             if (keepGoing)
                 try {
                     // Run the execute method in the command
-                    ((AbstractCommand)command).execute(scriptEntry);
+                    command.execute(scriptEntry);
                 } catch (Exception e) {
                     dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");
                     dB.echoError(scriptEntry.getResidingQueue(), e);
