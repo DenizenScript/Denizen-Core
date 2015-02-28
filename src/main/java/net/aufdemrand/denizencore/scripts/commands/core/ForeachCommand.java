@@ -54,8 +54,7 @@ public class ForeachCommand extends BracedCommand {
                 break;
             }
 
-            else if (!scriptEntry.hasObject("list")
-                    && arg.matchesArgumentType(dList.class)) {
+            else if (!scriptEntry.hasObject("list")) {
                 scriptEntry.addObject("list", dList.valueOf(arg.raw_value));
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 break;
