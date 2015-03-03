@@ -313,12 +313,18 @@ public class IfCommand extends BracedCommand {
             if (negative) {
                 comparable.logic = Comparable.Logic.NEGATIVE;
             }
-            comparable.operator = Comparable.Operator.valueOf(arg.toUpperCase());
-            comparable.setComparable(tagme(0, scriptEntry));
-            comparable.setComparedto(tagme(2, scriptEntry));
-            boolean outcome = comparable.determineOutcome();
-            dB.echoDebug(scriptEntry, comparable.toString());
-            return outcome;
+            try {
+                comparable.operator = Comparable.Operator.valueOf(arg.toUpperCase());
+                comparable.setComparable(tagme(0, scriptEntry));
+                comparable.setComparedto(tagme(2, scriptEntry));
+                boolean outcome = comparable.determineOutcome();
+                dB.echoDebug(scriptEntry, comparable.toString());
+                return outcome;
+            }
+            catch (IllegalArgumentException ex) {
+                dB.echoError(ex.getMessage());
+                return false;
+            }
         }
     }
 }
