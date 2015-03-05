@@ -295,7 +295,7 @@ public class dScript implements dObject {
         if (attribute.startsWith("cons")) {
             if (!attribute.hasContext(1)) return null;
 
-            YamlConfiguration section = getContainer().getConfigurationSection("constants");
+            YamlConfiguration section = getContainer().getConfigurationSection("default constants");
             if (section == null) return null;
             Object obj = section.get(attribute.getContext(1).toUpperCase());
             if (obj == null) return null;
