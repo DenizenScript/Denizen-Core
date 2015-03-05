@@ -291,6 +291,12 @@ public class dScript implements dObject {
         // @returns Element or dList
         // @description
         // Returns the value of the constant as either an Element or dList.
+        // A constant is a script key under the 'default constants' node.
+        // EG:
+        // myscript:
+        //   type: task
+        //   default constants:
+        //     myconstant: myvalue
         // -->
         if (attribute.startsWith("cons")) {
             if (!attribute.hasContext(1)) return null;
