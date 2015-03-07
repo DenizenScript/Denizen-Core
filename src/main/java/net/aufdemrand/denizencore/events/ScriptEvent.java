@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.events;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -15,10 +16,7 @@ import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ScriptEvent {
 
@@ -39,6 +37,7 @@ public abstract class ScriptEvent {
 
         ScriptContainer container;
         String event;
+        int priority = 0;
 
         public ScriptPath(ScriptContainer container, String event) {
             this.container = container;
@@ -75,6 +74,7 @@ public abstract class ScriptEvent {
                 }
             }
             if (matched) {
+                event.sort();
                 event.init();
             }
         }
@@ -116,6 +116,30 @@ public abstract class ScriptEvent {
 
     public boolean cancelled = false;
 
+    // <--[language]
+    // @name script event priority
+    // @description
+    // Any modern ScriptEvent can take a "priority:#" argument.
+    // EG, "on object does something priority:3:"
+    // The priority indicates which order the events will fire in.
+    // Lower numbers fire earlier. EG, -1 fires before 0 fires before 1.
+    // Any integer number, within reason, is valid. (IE, -1 is fine, 100000 is fine,
+    // but 200000000000 is not, and 1.5 is not as well)
+    // -->
+    public void sort() {
+        for (ScriptPath path: eventPaths) {
+            String gotten = getSwitch(path.event, "priority");
+            path.priority = gotten == null ? 10: aH.getIntegerFrom(gotten);
+        }
+        Collections.sort(eventPaths, new Comparator<ScriptPath>() {
+            @Override
+            public int compare(ScriptPath scriptPath, ScriptPath t1) {
+                int rel = scriptPath.priority - t1.priority;
+                return rel < 0 ? -1: (rel > 0 ? 1: 0);
+            }
+        });
+    }
+
     public void init() {
     }
 
@@ -132,6 +156,16 @@ public abstract class ScriptEvent {
             }
         }
         return true;
+    }
+
+    public String getSwitch(String event, String switcher) {
+        for (String possible: CoreUtilities.split(event, ' ')) {
+            List<String> split = CoreUtilities.split(possible, ':', 2);
+            if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1) {
+                return split.get(1);
+            }
+        }
+        return null;
     }
 
     public boolean applyDetermination(ScriptContainer container, String determination) {
