@@ -125,11 +125,12 @@ public abstract class ScriptEvent {
     // Lower numbers fire earlier. EG, -1 fires before 0 fires before 1.
     // Any integer number, within reason, is valid. (IE, -1 is fine, 100000 is fine,
     // but 200000000000 is not, and 1.5 is not as well)
+    // The default priority is 0.
     // -->
     public void sort() {
         for (ScriptPath path: eventPaths) {
             String gotten = getSwitch(path.event, "priority");
-            path.priority = gotten == null ? 10: aH.getIntegerFrom(gotten);
+            path.priority = gotten == null ? 0: aH.getIntegerFrom(gotten);
         }
         Collections.sort(eventPaths, new Comparator<ScriptPath>() {
             @Override
