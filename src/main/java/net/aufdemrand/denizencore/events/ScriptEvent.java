@@ -53,7 +53,10 @@ public abstract class ScriptEvent {
         dB.log("Reloading script events...");
         for (ScriptContainer container: worldContainers) {
             for (StringHolder evt : container.getConfigurationSection("events").getKeys(false)) {
-                if (evt.str.contains("@")) {
+                if (evt == null || evt.str == null) {
+                    dB.echoError("Missing or invalid events block for " + container.getName());
+                }
+                else if (evt.str.contains("@")) {
                     dB.echoError("Script '" + container.getName() + "' has event '" + evt.str.replace("@", "<R>@<W>")
                             + "' which contains object notation, which is deprecated for use in world events. Please remove it.");
                 }
