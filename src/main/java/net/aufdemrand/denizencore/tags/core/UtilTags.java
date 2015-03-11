@@ -25,15 +25,11 @@ public class UtilTags {
     public void utilTag(ReplaceableTagEvent event) {
         if (!event.matches("util", "u")) return;
 
-        String type = event.getType() != null ? event.getType() : "";
-        String typeContext = event.getTypeContext() != null ? event.getTypeContext() : "";
-        String subType = event.getSubType() != null ? event.getSubType() : "";
-        String subTypeContext = event.getSubTypeContext() != null ? event.getSubTypeContext().toUpperCase() : "";
-        String specifier = event.getSpecifier() != null ? event.getSpecifier() : "";
-        String specifierContext = event.getSpecifierContext() != null ? event.getSpecifierContext().toUpperCase() : "";
         Attribute attribute = event.getAttributes().fulfill(1);
 
-        if (type.equalsIgnoreCase("RANDOM")) {
+        if (attribute.startsWith("random")) {
+
+            attribute = attribute.fulfill(1);
 
             // <--[tag]
             // @attribute <util.random.int[<#>].to[<#>]>
@@ -42,11 +38,13 @@ public class UtilTags {
             // Returns a random number between the 2 specified numbers, inclusive.
             // EG, random.int[1].to[3] could return 1, 2, or 3.
             // -->
-            if (subType.equalsIgnoreCase("INT")) {
-                if (specifier.equalsIgnoreCase("TO")) {
-                    if (aH.matchesInteger(subTypeContext) && aH.matchesInteger(specifierContext)) {
-                        int min = aH.getIntegerFrom(subTypeContext);
-                        int max = aH.getIntegerFrom(specifierContext);
+            if (attribute.startsWith("int")) {
+                String stc = attribute.getContext(1);
+                attribute = attribute.fulfill(1);
+                if (attribute.startsWith("to")) {
+                    if (aH.matchesInteger(stc) && aH.matchesInteger(attribute.getContext(1))) {
+                        int min = aH.getIntegerFrom(stc);
+                        int max = aH.getIntegerFrom(attribute.getContext(1));
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -57,7 +55,7 @@ public class UtilTags {
 
                         event.setReplaced(new Element(
                                 String.valueOf(CoreUtilities.getRandom().nextInt(max - min + 1) + min))
-                                .getAttribute(attribute.fulfill(3)));
+                                .getAttribute(attribute.fulfill(1)));
                     }
                 }
             }
@@ -68,9 +66,10 @@ public class UtilTags {
             // @description
             // Returns a random decimal number from 0 to 1
             // -->
-            else if (subType.equalsIgnoreCase("DECIMAL"))
+            else if (attribute.startsWith("decimal")) {
                 event.setReplaced(new Element(CoreUtilities.getRandom().nextDouble())
-                        .getAttribute(attribute.fulfill(2)));
+                        .getAttribute(attribute.fulfill(1)));
+            }
 
                 // <--[tag]
                 // @attribute <util.random.gauss>
@@ -79,9 +78,10 @@ public class UtilTags {
                 // Returns a random decimal number with a gaussian distribution.
                 // 70% of all results will be within the range of -1 to 1.
                 // -->
-            else if (subType.equalsIgnoreCase("GAUSS"))
+            else if (attribute.startsWith("gauss")) {
                 event.setReplaced(new Element(CoreUtilities.getRandom().nextGaussian())
-                        .getAttribute(attribute.fulfill(2)));
+                        .getAttribute(attribute.fulfill(1)));
+            }
 
                 // <--[tag]
                 // @attribute <util.random.uuid>
@@ -89,9 +89,10 @@ public class UtilTags {
                 // @description
                 // Returns a random unique ID.
                 // -->
-            else if (subType.equalsIgnoreCase("UUID"))
+            else if (attribute.startsWith("uuid")) {
                 event.setReplaced(new Element(UUID.randomUUID().toString())
-                        .getAttribute(attribute.fulfill(2)));
+                        .getAttribute(attribute.fulfill(1)));
+            }
 
                 // <--[tag]
                 // @attribute <util.random.duuid>
@@ -99,10 +100,11 @@ public class UtilTags {
                 // @description
                 // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
                 // -->
-            else if (subType.equalsIgnoreCase("DUUID"))
+            else if (attribute.startsWith("duuid")) {
                 event.setReplaced(new Element(ScriptQueue
-                        .getNextId(event.hasSubTypeContext() ? event.getSubTypeContext() : "DUUID"))
-                        .getAttribute(attribute.fulfill(2)));
+                        .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID"))
+                        .getAttribute(attribute.fulfill(1)));
+            }
         }
 
         // <--[tag]
@@ -111,7 +113,7 @@ public class UtilTags {
         // @description
         // Returns PI: 3.141592653589793
         // -->
-        else if (type.equalsIgnoreCase("pi")) {
+        else if (attribute.startsWith("pi")) {
             event.setReplaced(new Element(Math.PI)
                     .getAttribute(attribute.fulfill(1)));
         }
@@ -122,7 +124,7 @@ public class UtilTags {
         // @description
         // Returns Tau: 6.283185307179586
         // -->
-        else if (type.equalsIgnoreCase("tau")) {
+        else if (attribute.startsWith("tau")) {
             event.setReplaced(new Element(Math.PI * 2)
                     .getAttribute(attribute.fulfill(1)));
         }
@@ -133,10 +135,12 @@ public class UtilTags {
         // @description
         // Returns the current system date.
         // -->
-        else if (type.equalsIgnoreCase("DATE")) {
+        else if (attribute.startsWith("date")) {
             Calendar calendar = Calendar.getInstance();
             Date currentDate = new Date();
             SimpleDateFormat format = new SimpleDateFormat();
+
+            attribute = attribute.fulfill(1);
 
             // <--[tag]
             // @attribute <util.date.time>
@@ -144,7 +148,9 @@ public class UtilTags {
             // @description
             // Returns the current system time.
             // -->
-            if (subType.equalsIgnoreCase("TIME")) {
+            if (attribute.startsWith("time")) {
+
+                attribute = attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <util.date.time.twentyfour_hour>
@@ -152,10 +158,10 @@ public class UtilTags {
                 // @description
                 // Returns the current system time in 24-hour format.
                 // -->
-                if (specifier.equalsIgnoreCase("TWENTYFOUR_HOUR")) {
+                if (attribute.startsWith("twentyfour_hour")) {
                     format.applyPattern("k:mm");
                     event.setReplaced(new Element(format.format(currentDate))
-                            .getAttribute(attribute.fulfill(3)));
+                            .getAttribute(attribute.fulfill(1)));
                 }
                 // <--[tag]
                 // @attribute <util.date.time.year>
@@ -163,48 +169,66 @@ public class UtilTags {
                 // @description
                 // Returns the current year of the system time.
                 // -->
-                else if (specifier.equalsIgnoreCase("year"))
-                    event.setReplaced(new Element(calendar.get(Calendar.YEAR)).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("year")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.YEAR))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.month>
                     // @returns Element(Number)
                     // @description
                     // Returns the current month of the system time.
                     // -->
-                else if (specifier.equalsIgnoreCase("month"))
-                    event.setReplaced(new Element(calendar.get(Calendar.MONTH) + 1).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("month")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.MONTH) + 1)
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.day>
                     // @returns Element(Number)
                     // @description
                     // Returns the current day of the system time.
                     // -->
-                else if (specifier.equalsIgnoreCase("day"))
-                    event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_MONTH)).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("day")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_MONTH))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.hour>
                     // @returns Element(Number)
                     // @description
                     // Returns the current hour of the system time.
                     // -->
-                else if (specifier.equalsIgnoreCase("hour"))
-                    event.setReplaced(new Element(calendar.get(Calendar.HOUR_OF_DAY)).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("hour")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.HOUR_OF_DAY))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.minute>
                     // @returns Element(Number)
                     // @description
                     // Returns the current minute of the system time.
                     // -->
-                else if (specifier.equalsIgnoreCase("minute"))
-                    event.setReplaced(new Element(calendar.get(Calendar.MINUTE)).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("minute")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.MINUTE))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.second>
                     // @returns Element(Number)
                     // @description
                     // Returns the current second of the system time.
                     // -->
-                else if (specifier.equalsIgnoreCase("second"))
-                    event.setReplaced(new Element(calendar.get(Calendar.SECOND)).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("second")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.SECOND))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                     // <--[tag]
                     // @attribute <util.date.time.duration>
                     // @returns Duration
@@ -212,11 +236,15 @@ public class UtilTags {
                     // Returns the current system time as a duration.
                     // To get the exact millisecond count, use <@link tag server.current_time_millis>.
                     // -->
-                else if (specifier.equalsIgnoreCase("duration"))
-                    event.setReplaced(new Duration(System.currentTimeMillis() / 50).getAttribute(attribute.fulfill(3)));
+                else if (attribute.startsWith("duration")) {
+                    event.setReplaced(new Duration(System.currentTimeMillis() / 50)
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
                 else {
                     format.applyPattern("K:mm a");
-                    event.setReplaced(format.format(currentDate));
+                    event.setReplaced(new Element(format.format(currentDate))
+                            .getAttribute(attribute));
                 }
 
             }
@@ -225,27 +253,22 @@ public class UtilTags {
             // Returns the current system time, formatted as specified
             // Example format: [EEE, MMM d, yyyy K:mm a] will become "Mon, Jan 1, 2112 0:01 AM"
             // -->
-            else if (subType.equalsIgnoreCase("FORMAT") && !subTypeContext.equalsIgnoreCase("")) {
+            else if (attribute.startsWith("format")
+                    && attribute.hasContext(1)) {
                 try {
-                    format.applyPattern(subTypeContext);
+                    format.applyPattern(attribute.getContext(1));
                     event.setReplaced(format.format(currentDate));
                 }
                 catch (Exception ex) {
-                    dB.echoError("Error: invalid pattern '" + subTypeContext + "'");
+                    dB.echoError("Error: invalid pattern '" + attribute.getContext(1) + "'");
                     dB.echoError(ex);
                 }
             }
             else {
                 format.applyPattern("EEE, MMM d, yyyy");
-                event.setReplaced(format.format(currentDate));
+                event.setReplaced(new Element(format.format(currentDate))
+                        .getAttribute(attribute));
             }
-
         }
-
-        // Deprecated
-        else if (type.equalsIgnoreCase("AS_ELEMENT")) {
-            event.setReplaced(new Element(typeContext).getAttribute(attribute.fulfill(1)));
-        }
-
     }
 }
