@@ -546,7 +546,7 @@ public class Element implements dObject {
         // @description
         // Returns a standard debug representation of the Element.
         // -->
-        registerTag("unescaped", new TagRunnable() {
+        registerTag("debug", new TagRunnable() {
                     @Override
                     public String run(Attribute attribute, dObject object) {
                         return new Element(object.debug())
@@ -561,7 +561,7 @@ public class Element implements dObject {
         // @description
         // Returns the prefix of the element.
         // -->
-        registerTag("unescaped", new TagRunnable() {
+        registerTag("prefix", new TagRunnable() {
                 @Override
                 public String run(Attribute attribute, dObject object) {
                     return new Element(object.getPrefix())
@@ -569,6 +569,136 @@ public class Element implements dObject {
                 }
             });
 
+        /////////////////////
+        //   STRING CHECKING ATTRIBUTES
+        /////////////////
+
+        // <--[tag]
+        // @attribute <el@element.contains_any_case_sensitive_text[<element>|...]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains any of a list of specified strings, case sensitive.
+        // -->
+        // <--[tag]
+        // @attribute <el@element.contains_any_case_sensitive[<element>|...]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains any of a list of specified strings, case sensitive.
+        // -->
+        registerTag("prefix", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dList list = dList.valueOf(attribute.getContext(1));
+                for (String list_element : list) {
+                    if (element.contains(list_element)) {
+                        return Element.TRUE.getAttribute(attribute.fulfill(1));
+                    }
+                }
+                return Element.FALSE.getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.contains_any_text[<element>|...]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains any of a list of specified strings, case insensitive.
+        // -->
+
+        // <--[tag]
+        // @attribute <el@element.contains_any[<element>|...]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains any of a list of specified strings, case insensitive.
+        // -->
+        registerTag("contains_any", new TagRunnable() {
+                    @Override
+                    public String run(Attribute attribute, dObject object) {
+                        String element = ((Element) object).element;
+                        dList list = dList.valueOf(attribute.getContext(1));
+                        String ellow = element.toLowerCase();
+                        for (String list_element : list) {
+                            if (ellow.contains(list_element.toLowerCase())) {
+                                return Element.TRUE.getAttribute(attribute.fulfill(1));
+                            }
+                        }
+                        return Element.FALSE.getAttribute(attribute.fulfill(1));
+                    }
+                });
+        TagRunnable r = registeredTags.get("contains_any").clone();
+        r.name = null;
+        registerTag("contains_any_text", r);
+
+        // <--[tag]
+        // @attribute <el@element.contains_case_sensitive_text[<element>]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains a specified string, case sensitive.
+        // -->
+
+        // <--[tag]
+        // @attribute <el@element.contains_case_sensitive[<element>]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains a specified string, case sensitive.
+        // -->
+        registerTag("contains_case_sensitive", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                String contains = attribute.getContext(1);
+                if (element.contains(contains))
+                    return new Element("true").getAttribute(attribute.fulfill(1));
+                else return new Element("false").getAttribute(attribute.fulfill(1));
+            }
+        });
+        r = registeredTags.get("contains_case_sensitive").clone();
+        r.name = null;
+        registerTag("contains_case_sensitive_text", r);
+
+        // <--[tag]
+        // @attribute <el@element.contains_text[<element>]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains a specified string, case insensitive. Can use
+        // regular expression by prefixing the string with regex:
+        // -->
+
+        // <--[tag]
+        // @attribute <el@element.contains[<element>]>
+        // @returns Element(Boolean)
+        // @group string checking
+        // @description
+        // Returns whether the element contains a specified string, case insensitive. Can use
+        // regular expression by prefixing the string with regex:
+        // -->
+        registerTag("contains", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                String contains = attribute.getContext(1);
+
+                if (contains.toLowerCase().startsWith("regex:")) {
+
+                    if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
+                        return new Element("true").getAttribute(attribute.fulfill(1));
+                    else return new Element("false").getAttribute(attribute.fulfill(1));
+                } else if (element.toLowerCase().contains(contains.toLowerCase()))
+                    return new Element("true").getAttribute(attribute.fulfill(1));
+                else return new Element("false").getAttribute(attribute.fulfill(1));
+            }
+        });
+        r = registeredTags.get("contains").clone();
+        r.name = null;
+        registerTag("contains_text", r);
     }
 
     public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
@@ -593,114 +723,6 @@ public class Element implements dObject {
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);
-        }
-
-        /////////////////////
-        //   STRING CHECKING ATTRIBUTES
-        /////////////////
-
-        // <--[tag]
-        // @attribute <el@element.contains_any_case_sensitive_text[<element>|...]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains any of a list of specified strings, case sensitive.
-        // -->
-        // <--[tag]
-        // @attribute <el@element.contains_any_case_sensitive[<element>|...]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains any of a list of specified strings, case sensitive.
-        // -->
-        if (attribute.startsWith("contains_any_case_sensitive")) {
-            dList list = dList.valueOf(attribute.getContext(1));
-            for (String list_element: list) {
-                if (element.contains(list_element)) {
-                    return Element.TRUE.getAttribute(attribute.fulfill(1));
-                }
-            }
-            return Element.FALSE.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.contains_any_text[<element>|...]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains any of a list of specified strings, case insensitive.
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains_any[<element>|...]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains any of a list of specified strings, case insensitive.
-        // -->
-        if (attribute.startsWith("contains_any")) {
-            dList list = dList.valueOf(attribute.getContext(1));
-            String ellow = element.toLowerCase();
-            for (String list_element: list) {
-                if (ellow.contains(list_element.toLowerCase())) {
-                    return Element.TRUE.getAttribute(attribute.fulfill(1));
-                }
-            }
-            return Element.FALSE.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.contains_case_sensitive_text[<element>]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains a specified string, case sensitive.
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains_case_sensitive[<element>]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains a specified string, case sensitive.
-        // -->
-        if (attribute.startsWith("contains_case_sensitive")) {
-            String contains = attribute.getContext(1);
-            if (element.contains(contains))
-                return new Element("true").getAttribute(attribute.fulfill(1));
-            else return new Element("false").getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.contains_text[<element>]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains a specified string, case insensitive. Can use
-        // regular expression by prefixing the string with regex:
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains[<element>]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the element contains a specified string, case insensitive. Can use
-        // regular expression by prefixing the string with regex:
-        // -->
-        if (attribute.startsWith("contains")) {
-            String contains = attribute.getContext(1);
-
-            if (contains.toLowerCase().startsWith("regex:")) {
-
-                if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
-                    return new Element("true").getAttribute(attribute.fulfill(1));
-                else return new Element("false").getAttribute(attribute.fulfill(1));
-            }
-
-            else if (element.toLowerCase().contains(contains.toLowerCase()))
-                return new Element("true").getAttribute(attribute.fulfill(1));
-            else return new Element("false").getAttribute(attribute.fulfill(1));
         }
 
         // <--[tag]

@@ -1,8 +1,20 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-public abstract class TagRunnable {
+public abstract class TagRunnable implements Cloneable {
+
+    @Override
+    public TagRunnable clone() {
+        try {
+            return (TagRunnable) super.clone();
+        }
+        catch (Exception ex) {
+            dB.echoError(ex);
+            return null;
+        }
+    }
 
     public String name = null;
 
