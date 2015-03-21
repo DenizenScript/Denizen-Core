@@ -431,7 +431,7 @@ public class Element implements dObject {
         // Returns the element as a dScript.
         // Note: the value must be a valid script.
         // -->
-        registerTag("as_list", new TagRunnable() {
+        registerTag("as_script", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element)object).element;
@@ -442,7 +442,7 @@ public class Element implements dObject {
                 return null;
             }
         });
-        registerTag("aslist", registeredTags.get("as_list"));
+        registerTag("asscript", registeredTags.get("as_script"));
 
         // <--[tag]
         // @attribute <el@element.as_queue>
@@ -534,6 +534,41 @@ public class Element implements dObject {
                 return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
             }
         });
+
+        /////////////////////
+        //   DEBUG ATTRIBUTES
+        /////////////////
+
+        // <--[tag]
+        // @attribute <el@element.debug>
+        // @returns Element
+        // @group debug
+        // @description
+        // Returns a standard debug representation of the Element.
+        // -->
+        registerTag("unescaped", new TagRunnable() {
+                    @Override
+                    public String run(Attribute attribute, dObject object) {
+                        return new Element(object.debug())
+                                .getAttribute(attribute.fulfill(1));
+                    }
+                });
+
+        // <--[tag]
+        // @attribute <el@element.prefix>
+        // @returns Element
+        // @group debug
+        // @description
+        // Returns the prefix of the element.
+        // -->
+        registerTag("unescaped", new TagRunnable() {
+                @Override
+                public String run(Attribute attribute, dObject object) {
+                    return new Element(object.getPrefix())
+                            .getAttribute(attribute.fulfill(1));
+                }
+            });
+
     }
 
     public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
@@ -559,47 +594,6 @@ public class Element implements dObject {
             }
             return tr.run(attribute, this);
         }
-
-        /////////////////////
-        //   DEBUG ATTRIBUTES
-        /////////////////
-
-        // <--[tag]
-        // @attribute <el@element.debug.log>
-        // @returns Element
-        // @group debug
-        // @description
-        // Prints the Element's debug representation in the console and returns true.
-        // -->
-        if (attribute.startsWith("debug.log")) {
-            dB.log(debug());
-            return new Element(Boolean.TRUE)
-                    .getAttribute(attribute.fulfill(2));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.debug>
-        // @returns Element
-        // @group debug
-        // @description
-        // Returns a standard debug representation of the Element.
-        // -->
-        if (attribute.startsWith("debug")) {
-            return new Element(debug())
-                    .getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.prefix>
-        // @returns Element
-        // @group debug
-        // @description
-        // Returns the prefix of the element.
-        // -->
-        if (attribute.startsWith("prefix"))
-            return new Element(prefix)
-                    .getAttribute(attribute.fulfill(1));
-
 
         /////////////////////
         //   STRING CHECKING ATTRIBUTES
