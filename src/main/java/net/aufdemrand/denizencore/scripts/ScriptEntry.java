@@ -382,4 +382,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public boolean shouldFilter(String criteria) throws Exception {
         return script.getName().equalsIgnoreCase(criteria.replace("s@", ""));
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String str: getOriginalArguments()) {
+            sb.append(" \"" + str + "\"");
+        }
+        return command + sb.toString();
+    }
 }

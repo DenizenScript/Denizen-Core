@@ -64,7 +64,7 @@ public class CommandExecuter {
         StringBuilder output = new StringBuilder();
         output.append(scriptEntry.getCommandName());
         if (scriptEntry.getOriginalArguments() == null) {
-            dB.echoError("Original Arguments null for " + scriptEntry.getCommandName());
+            dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
         }
         else {
             for (String arg: scriptEntry.getOriginalArguments())
@@ -213,6 +213,7 @@ public class CommandExecuter {
             if (e.getMessage() != null && e.getMessage().length() > 0)
                 dB.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             dB.log("Usage: " + command.getUsageHint());
+            dB.log("(Attempted: " + scriptEntry.toString()+ ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
         }
@@ -221,6 +222,7 @@ public class CommandExecuter {
             keepGoing = false;
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             dB.echoError(scriptEntry.getResidingQueue(), e);
+            dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
         }
@@ -233,6 +235,8 @@ public class CommandExecuter {
                 } catch (Exception e) {
                     dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");
                     dB.echoError(scriptEntry.getResidingQueue(), e);
+                    dB.log("(Attempted: " + scriptEntry.toString() + ")");
+                    dB.echoDebug(scriptEntry, DebugElement.Footer);
                     scriptEntry.setFinished(true);
                 }
 
