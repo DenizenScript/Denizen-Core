@@ -165,7 +165,8 @@ public class CommandExecuter {
                         else
                             definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
                         if (defval == null) {
-                            dB.echoError("Unknown definition %" + m.group(1) + "%.");
+                            dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
+                            dB.log("(Attempted: " + scriptEntry.toString() + ")");
                             definition = "null";
                         }
                         dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
