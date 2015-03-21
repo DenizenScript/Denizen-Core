@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.objects;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -298,16 +299,7 @@ public class Element implements dObject {
         return false;
     }
 
-    @Override
-    public String getAttribute(Attribute attribute) {
-
-        if (attribute == null) return null;
-
-
-        ////////////////////
-        //   COMPARABLE ATTRIBUTES
-        ////////////////
-
+    public static void registerTags() {
 
         /////////////////////
         //   CONVERSION ATTRIBUTES
@@ -320,21 +312,43 @@ public class Element implements dObject {
         // @description
         // Returns the element as true/false.
         // -->
-        if (attribute.startsWith("asboolean")
-                || attribute.startsWith("as_boolean"))
-            return new Element(element.equalsIgnoreCase("true") ||
-                    element.equalsIgnoreCase("t") || element.equalsIgnoreCase("1"))
-                    .getAttribute(attribute.fulfill(1));
-
-        // TODO: Why does this exist? It just throws an error or makes no changes.
-        if (attribute.startsWith("asdouble")
-                || attribute.startsWith("as_double"))
-            try { return new Element(Double.valueOf(element))
-                    .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid Double.");
+        registerTag("as_boolean", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(element.equalsIgnoreCase("true")
+                        || element.equalsIgnoreCase("t")
+                        || element.equalsIgnoreCase("1"))
+                        .getAttribute(attribute.fulfill(1));
             }
+        });
+        registerTag("asboolean", registeredTags.get("as_boolean"));
+
+        // <--[tag]
+        // @attribute <el@element.as_double>
+        // @returns Element(Decimal)
+        // @group conversion
+        // @description
+        // Returns the element as a decimal number, or shows an error.
+        // -->
+        registerTag("as_decimal", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    return new Element(Double.valueOf(element))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative()) {
+                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                    }
+                    return null;
+                }
+            }
+        });
+        registerTag("as_double", registeredTags.get("as_decimal"));
+        registerTag("asdouble", registeredTags.get("as_decimal"));
 
         // <--[tag]
         // @attribute <el@element.as_int>
@@ -343,18 +357,51 @@ public class Element implements dObject {
         // @description
         // Returns the element as a number without a decimal. Rounds decimal values.
         // -->
-        if (attribute.startsWith("asint")
-                || attribute.startsWith("as_int"))
-            try {
-                // Round the Double instead of just getting its
-                // value as an Integer (which would incorrectly
-                // turn 2.9 into 2)
-                return new Element(Math.round(Double.valueOf(element)))
-                        .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid Integer.");
+        registerTag("as_int", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    // Round the Double instead of just getting its
+                    // value as an Integer (which would incorrectly
+                    // turn 2.9 into 2)
+                    return new Element(Math.round(Double.valueOf(element)))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative()) {
+                        dB.echoError("'" + element + "' is not a valid number.");
+                    }
+                    return null;
+                }
             }
+        });
+        registerTag("asint", registeredTags.get("as_int"));
+    }
+
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+
+    public static void registerTag(String name, TagRunnable runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registeredTags.put(name, runnable);
+    }
+
+    @Override
+    public String getAttribute(Attribute attribute) {
+
+        if (attribute == null) return null;
+
+        String attrLow = CoreUtilities.toLowerCase(attribute.getAttribute(1));
+        TagRunnable tr = registeredTags.get(attrLow);
+        if (tr != null) {
+            if (!tr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue(): null,
+                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
+            }
+            return tr.run(attribute, this);
+        }
 
         // <--[tag]
         // @attribute <el@element.as_money>
