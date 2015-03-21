@@ -190,6 +190,21 @@ public class Attribute {
         }
     }
 
+    public String getAttributeWithoutContext(int num) {
+        if (attributes.size() < num || num <= 0)
+            return "";
+        else {
+            String str = attributes.get(num - 1);
+            int brack = str.indexOf('[');
+            if (brack >= 0) {
+                return str.substring(0, brack);
+            }
+            else {
+                return str;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -620,10 +620,10 @@ public class Element implements dObject {
                     @Override
                     public String run(Attribute attribute, dObject object) {
                         String element = ((Element) object).element;
-                        dList list = dList.valueOf(attribute.getContext(1));
-                        String ellow = element.toLowerCase();
+                        dList list = dList.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
+                        String ellow = CoreUtilities.toLowerCase(element);
                         for (String list_element : list) {
-                            if (ellow.contains(list_element.toLowerCase())) {
+                            if (ellow.contains(list_element)) {
                                 return Element.TRUE.getAttribute(attribute.fulfill(1));
                             }
                         }
@@ -715,7 +715,7 @@ public class Element implements dObject {
 
         if (attribute == null) return null;
 
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttribute(1));
+        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
