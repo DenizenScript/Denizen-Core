@@ -95,7 +95,6 @@ public class Attribute {
     }
 
     public boolean startsWith(String string) {
-        string = CoreUtilities.toLowerCase(string);
         if (attributes.isEmpty()) return false;
         return CoreUtilities.toLowerCase(raw_tag).startsWith(string);
     }
