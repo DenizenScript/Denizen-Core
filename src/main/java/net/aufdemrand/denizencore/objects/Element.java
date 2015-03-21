@@ -325,7 +325,7 @@ public class Element implements dObject {
         registerTag("asboolean", registeredTags.get("as_boolean"));
 
         // <--[tag]
-        // @attribute <el@element.as_double>
+        // @attribute <el@element.as_decimal>
         // @returns Element(Decimal)
         // @group conversion
         // @description
@@ -377,6 +377,31 @@ public class Element implements dObject {
             }
         });
         registerTag("asint", registeredTags.get("as_int"));
+
+        // <--[tag]
+        // @attribute <el@element.as_money>
+        // @returns Element(Decimal)
+        // @group conversion
+        // @description
+        // Returns the element as a number with two decimal places.
+        // -->
+        registerTag("as_money", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    DecimalFormat d = new DecimalFormat("0.00");
+                    return new Element(d.format(Double.valueOf(element)))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative())
+                        dB.echoError("'" + element + "' is not a valid number.");
+                    return null;
+                }
+            }
+        });
+        registerTag("asmoney", registeredTags.get("as_money"));
     }
 
     public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
@@ -401,25 +426,6 @@ public class Element implements dObject {
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);
-        }
-
-        // <--[tag]
-        // @attribute <el@element.as_money>
-        // @returns Element(Decimal)
-        // @group conversion
-        // @description
-        // Returns the element as a number with two decimal places.
-        // -->
-        if (attribute.startsWith("asmoney")
-                || attribute.startsWith("as_money")) {
-            try {
-                DecimalFormat d = new DecimalFormat("0.00");
-                return new Element(d.format(Double.valueOf(element)))
-                        .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid number.");
-            }
         }
 
         // <--[tag]
