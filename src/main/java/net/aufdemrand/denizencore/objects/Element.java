@@ -396,12 +396,144 @@ public class Element implements dObject {
                 }
                 catch (NumberFormatException e) {
                     if (!attribute.hasAlternative())
-                        dB.echoError("'" + element + "' is not a valid number.");
+                        dB.echoError("'" + element + "' is not a valid decimal number.");
                     return null;
                 }
             }
         });
         registerTag("asmoney", registeredTags.get("as_money"));
+
+        // <--[tag]
+        // @attribute <el@element.as_list>
+        // @returns dList
+        // @group conversion
+        // @description
+        // Returns the element as a dList.
+        // -->
+        registerTag("as_list", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, dList.valueOf(element), "dList", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("aslist", registeredTags.get("as_list"));
+
+        // <--[tag]
+        // @attribute <el@element.as_script>
+        // @returns dScript
+        // @group conversion
+        // @description
+        // Returns the element as a dScript.
+        // Note: the value must be a valid script.
+        // -->
+        registerTag("as_list", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, dScript.valueOf(element), "dScript", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("aslist", registeredTags.get("as_list"));
+
+        // <--[tag]
+        // @attribute <el@element.as_queue>
+        // @returns ScriptQueue
+        // @group conversion
+        // @description
+        // Returns the element as a ScriptQueue.
+        // Note: the value must be a valid ScriptQueue.
+        // -->
+        registerTag("as_queue", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                dObject obj = handleNull(element, ScriptQueue.valueOf(element), "ScriptQueue", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("asqueue", registeredTags.get("as_queue"));
+
+        // <--[tag]
+        // @attribute <el@element.as_duration>
+        // @returns Duration
+        // @group conversion
+        // @description
+        // Returns the element as a Duration.
+        // Note: the value must be a valid Duration.
+        // -->
+        registerTag("as_duration", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, Duration.valueOf(element), "Duration", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("asduration", registeredTags.get("as_duration"));
+
+        // <--[tag]
+        // @attribute <el@element.escaped>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Returns the element, escaped for safe reuse.
+        // Inverts <@link tag el@element.unescaped>
+        // See <@link language property escaping>
+        // -->
+        registerTag("escaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(EscapeTags.Escape(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.sql_escaped>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Returns the element, escaped for safe use in SQL.
+        // -->
+        registerTag("sql_escaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(SQLEscaper.escapeSQL(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.unescaped>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Returns the element, unescaped.
+        // Inverts <@link tag el@element.escaped>
+        // See <@link language property escaping>
+        // -->
+        registerTag("unescaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
     }
 
     public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
@@ -427,97 +559,6 @@ public class Element implements dObject {
             }
             return tr.run(attribute, this);
         }
-
-        // <--[tag]
-        // @attribute <el@element.as_list>
-        // @returns dList
-        // @group conversion
-        // @description
-        // Returns the element as a list.
-        // -->
-        if (attribute.startsWith("aslist")
-                || attribute.startsWith("as_list")) {
-            dObject object = handleNull(element, dList.valueOf(element), "dList", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.as_script>
-        // @returns dScript
-        // @group conversion
-        // @description
-        // Returns the element as a script. Note: the value must be a valid script.
-        // -->
-        if (attribute.startsWith("asscript")
-                || attribute.startsWith("as_script")) {
-            dObject object = handleNull(element, dScript.valueOf(element), "dScript", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.as_duration>
-        // @returns Duration
-        // @group conversion
-        // @description
-        // Returns the element as a duration.
-        // -->
-        if (attribute.startsWith("asduration")
-                || attribute.startsWith("as_duration")) {
-            dObject object = handleNull(element, Duration.valueOf(element), "Duration", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.as_queue>
-        // @returns dQueue
-        // @group conversion
-        // @description
-        // Returns the element as a queue.
-        // -->
-        if (attribute.startsWith("asqueue")
-                || attribute.startsWith("as_queue")) {
-            dObject object = handleNull(element, ScriptQueue.valueOf(element), "dQueue", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.escaped>
-        // @returns Element
-        // @group conversion
-        // @description
-        // Returns the element, escaped for safe reuse.
-        // Inverts <@link tag el@element.unescaped>
-        // See <@link language property escaping>
-        // -->
-        if (attribute.startsWith("escaped"))
-            return new Element(EscapeTags.Escape(element)).getAttribute(attribute.fulfill(1));
-
-        // <--[tag]
-        // @attribute <el@element.sql_escaped>
-        // @returns Element
-        // @group conversion
-        // @description
-        // Returns the element, escaped for safe use in SQL.
-        // -->
-        if (attribute.startsWith("sql_escaped"))
-            return new Element(SQLEscaper.escapeSQL(element)).getAttribute(attribute.fulfill(1));
-
-        // <--[tag]
-        // @attribute <el@element.unescaped>
-        // @returns Element
-        // @group conversion
-        // @description
-        // Returns the element, unescaped.
-        // Inverts <@link tag el@element.escaped>
-        // See <@link language property escaping>
-        // -->
-        if (attribute.startsWith("unescaped"))
-            return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
-
 
         /////////////////////
         //   DEBUG ATTRIBUTES
