@@ -58,6 +58,7 @@ public class Attribute {
     ScriptEntry scriptEntry;
 
     public String raw_tag;
+    public String raw_tag_low;
     String origin;
 
     public ScriptEntry getScriptEntry() {
@@ -70,6 +71,7 @@ public class Attribute {
 
     public Attribute(String attributes, ScriptEntry scriptEntry) {
         raw_tag = attributes;
+        raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
         origin = attributes;
         this.scriptEntry = scriptEntry;
 
@@ -95,9 +97,8 @@ public class Attribute {
     }
 
     public boolean startsWith(String string) {
-        string = CoreUtilities.toLowerCase(string);
         if (attributes.isEmpty()) return false;
-        return CoreUtilities.toLowerCase(raw_tag).startsWith(string);
+        return raw_tag.startsWith(string);
     }
 
     public boolean startsWith(String string, int attribute) {
@@ -124,6 +125,7 @@ public class Attribute {
         raw_tag = sb.toString();
         if (raw_tag.length() > 1)
             raw_tag = raw_tag.substring(0, raw_tag.length() - 1);
+        raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
     }
 
     public static Pattern CONTEXT_PATTERN = Pattern.compile("\\[.+\\]$", Pattern.DOTALL | Pattern.MULTILINE);
@@ -185,6 +187,21 @@ public class Attribute {
             return "";
         else {
             return attributes.get(num - 1);
+        }
+    }
+
+    public String getAttributeWithoutContext(int num) {
+        if (attributes.size() < num || num <= 0)
+            return "";
+        else {
+            String str = attributes.get(num - 1);
+            int brack = str.indexOf('[');
+            if (brack >= 0) {
+                return str.substring(0, brack);
+            }
+            else {
+                return str;
+            }
         }
     }
 

@@ -530,12 +530,6 @@ public class Duration implements dObject {
             return new Element(prefix)
                     .getAttribute(attribute.fulfill(1));
 
-        if (attribute.startsWith("debug.log")) {
-            dB.log(debug());
-            return new Element(Boolean.TRUE.toString())
-                    .getAttribute(attribute.fulfill(2));
-        }
-
         if (attribute.startsWith("debug")) {
             return new Element(debug())
                     .getAttribute(attribute.fulfill(1));

@@ -23,10 +23,11 @@ public class TagManager {
         new ScriptTags();
 
         // Utilities
-        new ProcedureScriptTags();
         new ContextTags();
-        new EscapeTags();
         new DefinitionTags();
+        new EscapeTags();
+        new ProcedureScriptTags();
+        new UtilTags();
 
         registerTagEvents(this);
     }

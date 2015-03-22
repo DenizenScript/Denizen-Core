@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.objects;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -298,16 +299,7 @@ public class Element implements dObject {
         return false;
     }
 
-    @Override
-    public String getAttribute(Attribute attribute) {
-
-        if (attribute == null) return null;
-
-
-        ////////////////////
-        //   COMPARABLE ATTRIBUTES
-        ////////////////
-
+    public static void registerTags() {
 
         /////////////////////
         //   CONVERSION ATTRIBUTES
@@ -320,21 +312,43 @@ public class Element implements dObject {
         // @description
         // Returns the element as true/false.
         // -->
-        if (attribute.startsWith("asboolean")
-                || attribute.startsWith("as_boolean"))
-            return new Element(element.equalsIgnoreCase("true") ||
-                    element.equalsIgnoreCase("t") || element.equalsIgnoreCase("1"))
-                    .getAttribute(attribute.fulfill(1));
-
-        // TODO: Why does this exist? It just throws an error or makes no changes.
-        if (attribute.startsWith("asdouble")
-                || attribute.startsWith("as_double"))
-            try { return new Element(Double.valueOf(element))
-                    .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid Double.");
+        registerTag("as_boolean", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(element.equalsIgnoreCase("true")
+                        || element.equalsIgnoreCase("t")
+                        || element.equalsIgnoreCase("1"))
+                        .getAttribute(attribute.fulfill(1));
             }
+        });
+        registerTag("asboolean", registeredTags.get("as_boolean"));
+
+        // <--[tag]
+        // @attribute <el@element.as_decimal>
+        // @returns Element(Decimal)
+        // @group conversion
+        // @description
+        // Returns the element as a decimal number, or shows an error.
+        // -->
+        registerTag("as_decimal", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    return new Element(Double.valueOf(element))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative()) {
+                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                    }
+                    return null;
+                }
+            }
+        });
+        registerTag("as_double", registeredTags.get("as_decimal"));
+        registerTag("asdouble", registeredTags.get("as_decimal"));
 
         // <--[tag]
         // @attribute <el@element.as_int>
@@ -343,18 +357,26 @@ public class Element implements dObject {
         // @description
         // Returns the element as a number without a decimal. Rounds decimal values.
         // -->
-        if (attribute.startsWith("asint")
-                || attribute.startsWith("as_int"))
-            try {
-                // Round the Double instead of just getting its
-                // value as an Integer (which would incorrectly
-                // turn 2.9 into 2)
-                return new Element(Math.round(Double.valueOf(element)))
-                        .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid Integer.");
+        registerTag("as_int", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    // Round the Double instead of just getting its
+                    // value as an Integer (which would incorrectly
+                    // turn 2.9 into 2)
+                    return new Element(Math.round(Double.valueOf(element)))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative()) {
+                        dB.echoError("'" + element + "' is not a valid number.");
+                    }
+                    return null;
+                }
             }
+        });
+        registerTag("asint", registeredTags.get("as_int"));
 
         // <--[tag]
         // @attribute <el@element.as_money>
@@ -363,73 +385,106 @@ public class Element implements dObject {
         // @description
         // Returns the element as a number with two decimal places.
         // -->
-        if (attribute.startsWith("asmoney")
-                || attribute.startsWith("as_money")) {
-            try {
-                DecimalFormat d = new DecimalFormat("0.00");
-                return new Element(d.format(Double.valueOf(element)))
-                        .getAttribute(attribute.fulfill(1)); }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative())
-                    dB.echoError("'" + element + "' is not a valid number.");
+        registerTag("as_money", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                try {
+                    DecimalFormat d = new DecimalFormat("0.00");
+                    return new Element(d.format(Double.valueOf(element)))
+                            .getAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative())
+                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                    return null;
+                }
             }
-        }
+        });
+        registerTag("asmoney", registeredTags.get("as_money"));
 
         // <--[tag]
         // @attribute <el@element.as_list>
         // @returns dList
         // @group conversion
         // @description
-        // Returns the element as a list.
+        // Returns the element as a dList.
         // -->
-        if (attribute.startsWith("aslist")
-                || attribute.startsWith("as_list")) {
-            dObject object = handleNull(element, dList.valueOf(element), "dList", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
+        registerTag("as_list", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, dList.valueOf(element), "dList", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("aslist", registeredTags.get("as_list"));
 
         // <--[tag]
         // @attribute <el@element.as_script>
         // @returns dScript
         // @group conversion
         // @description
-        // Returns the element as a script. Note: the value must be a valid script.
+        // Returns the element as a dScript.
+        // Note: the value must be a valid script.
         // -->
-        if (attribute.startsWith("asscript")
-                || attribute.startsWith("as_script")) {
-            dObject object = handleNull(element, dScript.valueOf(element), "dScript", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
+        registerTag("as_script", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, dScript.valueOf(element), "dScript", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("asscript", registeredTags.get("as_script"));
+
+        // <--[tag]
+        // @attribute <el@element.as_queue>
+        // @returns ScriptQueue
+        // @group conversion
+        // @description
+        // Returns the element as a ScriptQueue.
+        // Note: the value must be a valid ScriptQueue.
+        // -->
+        registerTag("as_queue", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                dObject obj = handleNull(element, ScriptQueue.valueOf(element), "ScriptQueue", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("asqueue", registeredTags.get("as_queue"));
 
         // <--[tag]
         // @attribute <el@element.as_duration>
         // @returns Duration
         // @group conversion
         // @description
-        // Returns the element as a duration.
+        // Returns the element as a Duration.
+        // Note: the value must be a valid Duration.
         // -->
-        if (attribute.startsWith("asduration")
-                || attribute.startsWith("as_duration")) {
-            dObject object = handleNull(element, Duration.valueOf(element), "Duration", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <el@element.as_queue>
-        // @returns dQueue
-        // @group conversion
-        // @description
-        // Returns the element as a queue.
-        // -->
-        if (attribute.startsWith("asqueue")
-                || attribute.startsWith("as_queue")) {
-            dObject object = handleNull(element, ScriptQueue.valueOf(element), "dQueue", attribute.hasAlternative());
-            if (object != null)
-                return object.getAttribute(attribute.fulfill(1));
-        }
+        registerTag("as_duration", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, Duration.valueOf(element), "Duration", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("asduration", registeredTags.get("as_duration"));
 
         // <--[tag]
         // @attribute <el@element.escaped>
@@ -440,8 +495,13 @@ public class Element implements dObject {
         // Inverts <@link tag el@element.unescaped>
         // See <@link language property escaping>
         // -->
-        if (attribute.startsWith("escaped"))
-            return new Element(EscapeTags.Escape(element)).getAttribute(attribute.fulfill(1));
+        registerTag("escaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(EscapeTags.Escape(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <el@element.sql_escaped>
@@ -450,8 +510,13 @@ public class Element implements dObject {
         // @description
         // Returns the element, escaped for safe use in SQL.
         // -->
-        if (attribute.startsWith("sql_escaped"))
-            return new Element(SQLEscaper.escapeSQL(element)).getAttribute(attribute.fulfill(1));
+        registerTag("sql_escaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(SQLEscaper.escapeSQL(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <el@element.unescaped>
@@ -462,26 +527,17 @@ public class Element implements dObject {
         // Inverts <@link tag el@element.escaped>
         // See <@link language property escaping>
         // -->
-        if (attribute.startsWith("unescaped"))
-            return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
-
+        registerTag("unescaped", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         /////////////////////
         //   DEBUG ATTRIBUTES
         /////////////////
-
-        // <--[tag]
-        // @attribute <el@element.debug.log>
-        // @returns Element
-        // @group debug
-        // @description
-        // Prints the Element's debug representation in the console and returns true.
-        // -->
-        if (attribute.startsWith("debug.log")) {
-            dB.log(debug());
-            return new Element(Boolean.TRUE)
-                    .getAttribute(attribute.fulfill(2));
-        }
 
         // <--[tag]
         // @attribute <el@element.debug>
@@ -490,10 +546,13 @@ public class Element implements dObject {
         // @description
         // Returns a standard debug representation of the Element.
         // -->
-        if (attribute.startsWith("debug")) {
-            return new Element(debug())
-                    .getAttribute(attribute.fulfill(1));
-        }
+        registerTag("debug", new TagRunnable() {
+                    @Override
+                    public String run(Attribute attribute, dObject object) {
+                        return new Element(object.debug())
+                                .getAttribute(attribute.fulfill(1));
+                    }
+                });
 
         // <--[tag]
         // @attribute <el@element.prefix>
@@ -502,10 +561,13 @@ public class Element implements dObject {
         // @description
         // Returns the prefix of the element.
         // -->
-        if (attribute.startsWith("prefix"))
-            return new Element(prefix)
-                    .getAttribute(attribute.fulfill(1));
-
+        registerTag("prefix", new TagRunnable() {
+                @Override
+                public String run(Attribute attribute, dObject object) {
+                    return new Element(object.getPrefix())
+                            .getAttribute(attribute.fulfill(1));
+                }
+            });
 
         /////////////////////
         //   STRING CHECKING ATTRIBUTES
@@ -525,15 +587,19 @@ public class Element implements dObject {
         // @description
         // Returns whether the element contains any of a list of specified strings, case sensitive.
         // -->
-        if (attribute.startsWith("contains_any_case_sensitive")) {
-            dList list = dList.valueOf(attribute.getContext(1));
-            for (String list_element: list) {
-                if (element.contains(list_element)) {
-                    return Element.TRUE.getAttribute(attribute.fulfill(1));
+        registerTag("prefix", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dList list = dList.valueOf(attribute.getContext(1));
+                for (String list_element : list) {
+                    if (element.contains(list_element)) {
+                        return Element.TRUE.getAttribute(attribute.fulfill(1));
+                    }
                 }
+                return Element.FALSE.getAttribute(attribute.fulfill(1));
             }
-            return Element.FALSE.getAttribute(attribute.fulfill(1));
-        }
+        });
 
         // <--[tag]
         // @attribute <el@element.contains_any_text[<element>|...]>
@@ -550,16 +616,23 @@ public class Element implements dObject {
         // @description
         // Returns whether the element contains any of a list of specified strings, case insensitive.
         // -->
-        if (attribute.startsWith("contains_any")) {
-            dList list = dList.valueOf(attribute.getContext(1));
-            String ellow = element.toLowerCase();
-            for (String list_element: list) {
-                if (ellow.contains(list_element.toLowerCase())) {
-                    return Element.TRUE.getAttribute(attribute.fulfill(1));
-                }
-            }
-            return Element.FALSE.getAttribute(attribute.fulfill(1));
-        }
+        registerTag("contains_any", new TagRunnable() {
+                    @Override
+                    public String run(Attribute attribute, dObject object) {
+                        String element = ((Element) object).element;
+                        dList list = dList.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
+                        String ellow = CoreUtilities.toLowerCase(element);
+                        for (String list_element : list) {
+                            if (ellow.contains(list_element)) {
+                                return Element.TRUE.getAttribute(attribute.fulfill(1));
+                            }
+                        }
+                        return Element.FALSE.getAttribute(attribute.fulfill(1));
+                    }
+                });
+        TagRunnable r = registeredTags.get("contains_any").clone();
+        r.name = null;
+        registerTag("contains_any_text", r);
 
         // <--[tag]
         // @attribute <el@element.contains_case_sensitive_text[<element>]>
@@ -576,12 +649,19 @@ public class Element implements dObject {
         // @description
         // Returns whether the element contains a specified string, case sensitive.
         // -->
-        if (attribute.startsWith("contains_case_sensitive")) {
-            String contains = attribute.getContext(1);
-            if (element.contains(contains))
-                return new Element("true").getAttribute(attribute.fulfill(1));
-            else return new Element("false").getAttribute(attribute.fulfill(1));
-        }
+        registerTag("contains_case_sensitive", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                String contains = attribute.getContext(1);
+                if (element.contains(contains))
+                    return new Element("true").getAttribute(attribute.fulfill(1));
+                else return new Element("false").getAttribute(attribute.fulfill(1));
+            }
+        });
+        r = registeredTags.get("contains_case_sensitive").clone();
+        r.name = null;
+        registerTag("contains_case_sensitive_text", r);
 
         // <--[tag]
         // @attribute <el@element.contains_text[<element>]>
@@ -600,19 +680,49 @@ public class Element implements dObject {
         // Returns whether the element contains a specified string, case insensitive. Can use
         // regular expression by prefixing the string with regex:
         // -->
-        if (attribute.startsWith("contains")) {
-            String contains = attribute.getContext(1);
+        registerTag("contains", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                String contains = attribute.getContext(1);
 
-            if (contains.toLowerCase().startsWith("regex:")) {
+                if (contains.toLowerCase().startsWith("regex:")) {
 
-                if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
+                    if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
+                        return new Element("true").getAttribute(attribute.fulfill(1));
+                    else return new Element("false").getAttribute(attribute.fulfill(1));
+                } else if (element.toLowerCase().contains(contains.toLowerCase()))
                     return new Element("true").getAttribute(attribute.fulfill(1));
                 else return new Element("false").getAttribute(attribute.fulfill(1));
             }
+        });
+        r = registeredTags.get("contains").clone();
+        r.name = null;
+        registerTag("contains_text", r);
+    }
 
-            else if (element.toLowerCase().contains(contains.toLowerCase()))
-                return new Element("true").getAttribute(attribute.fulfill(1));
-            else return new Element("false").getAttribute(attribute.fulfill(1));
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+
+    public static void registerTag(String name, TagRunnable runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registeredTags.put(name, runnable);
+    }
+
+    @Override
+    public String getAttribute(Attribute attribute) {
+
+        if (attribute == null) return null;
+
+        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
+        TagRunnable tr = registeredTags.get(attrLow);
+        if (tr != null) {
+            if (!tr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue(): null,
+                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
+            }
+            return tr.run(attribute, this);
         }
 
         // <--[tag]
