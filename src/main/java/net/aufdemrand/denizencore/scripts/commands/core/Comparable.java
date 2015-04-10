@@ -278,7 +278,8 @@ public class Comparable {
 
             case EQUALS:
                 if (comparedto instanceof dList)
-                    outcome = ((dList) comparedto).containsAll(comparable);
+                    outcome = ((dList) comparedto).containsAll(comparable)
+                            && comparable.containsAll((dList) comparedto);
                 break;
         }
 
