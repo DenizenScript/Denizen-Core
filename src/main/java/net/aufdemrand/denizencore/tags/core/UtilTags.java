@@ -61,6 +61,36 @@ public class UtilTags {
             }
 
             // <--[tag]
+            // @attribute <util.random.decimal[<#>].to[<#>]>
+            // @returns Element(Decimal)
+            // @description
+            // Returns a random number between the 2 specified numbers, inclusive.
+            // EG, random.int[1].to[3] could return 1, 2, or 3.
+            // -->
+            if (attribute.startsWith("decimal")
+                    && attribute.hasContext(1)) {
+                String stc = attribute.getContext(1);
+                attribute = attribute.fulfill(1);
+                if (attribute.startsWith("to")) {
+                    if (aH.matchesDouble(stc) && aH.matchesDouble(attribute.getContext(1))) {
+                        double min = aH.getDoubleFrom(stc);
+                        double max = aH.getDoubleFrom(attribute.getContext(1));
+
+                        // in case the first number is larger than the second, reverse them
+                        if (min > max) {
+                            double store = min;
+                            min = max;
+                            max = store;
+                        }
+
+                        event.setReplaced(new Element(
+                                String.valueOf(CoreUtilities.getRandom().nextDouble() * (max - min) + min))
+                                .getAttribute(attribute.fulfill(1)));
+                    }
+                }
+            }
+
+            // <--[tag]
             // @attribute <util.random.decimal>
             // @returns Element
             // @description
