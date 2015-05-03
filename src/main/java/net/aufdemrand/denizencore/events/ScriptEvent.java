@@ -73,7 +73,12 @@ public abstract class ScriptEvent {
             event.eventPaths.clear();
             boolean matched = false;
             for (ScriptContainer container: worldContainers) {
-                for (StringHolder evt1: container.getConfigurationSection("events").getKeys(false)) {
+                YamlConfiguration config = container.getConfigurationSection("events");
+                if (config == null) {
+                    dB.echoError("Missing or invalid events block for " + container.getName());
+                    continue;
+                }
+                for (StringHolder evt1 : config.getKeys(false)) {
                     String evt = evt1.str.substring(3);
                     if (couldMatchScript(event, container, evt)) {
                         event.eventPaths.add(new ScriptPath(container, evt));
