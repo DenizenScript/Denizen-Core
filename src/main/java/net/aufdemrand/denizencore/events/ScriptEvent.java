@@ -13,6 +13,7 @@ import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
@@ -52,7 +53,12 @@ public abstract class ScriptEvent {
     public static void reload() {
         dB.log("Reloading script events...");
         for (ScriptContainer container: worldContainers) {
-            for (StringHolder evt : container.getConfigurationSection("events").getKeys(false)) {
+            YamlConfiguration config = container.getConfigurationSection("events");
+            if (config == null) {
+                dB.echoError("Missing or invalid events block for " + container.getName());
+                continue;
+            }
+            for (StringHolder evt : config.getKeys(false)) {
                 if (evt == null || evt.str == null) {
                     dB.echoError("Missing or invalid events block for " + container.getName());
                 }
