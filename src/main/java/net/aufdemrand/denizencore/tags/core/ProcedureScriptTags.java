@@ -28,7 +28,7 @@ public class ProcedureScriptTags {
     // in multiple scripts.
     //
     // @Code
-    // # +--------------------
+    // # +------------------------
     // # | Using Procedure Scripts
     // # |
     // # | Sometimes you need a huge chunk of scriptwork just to decide
@@ -46,12 +46,12 @@ public class ProcedureScriptTags {
     //   # You can have as many as you want - anywhere from none to several thousand.
     //   # Note: If you don't name the definitions but they are given anyway, they will be added as
     //   # %1%, %2%, and so on.
-    //   definitions: price|moneysign
-    //   # (For the purposes of this example, assume price = 3 dollars, and moneysign holds the '&' symbol)
+    //   definitions: price
+    //   # (For the purposes of this example, assume price = 3 dollars)
     //
     //   script:
-    //   # The procedure script is much like a task script
-    //   # Except it must contain a Determine command
+    //   # The procedure script is much like a task script,
+    //   # Except it cannot execute functional code and it must contain a Determine command
     //
     //   # In this example, we're checking if the player can buy a heal
     //   # So first check if the player has at least $3
@@ -59,17 +59,8 @@ public class ProcedureScriptTags {
     //   - if <player.money> < %price% determine false
     //   # The determine above will immediately end the procedure and return false
     //
-    //   # If the player has more than 80% health, he doesn't need a heal so determine false
+    //   # If the player has more than 80% health, they don't need a heal so determine false
     //   - if <player.health.percentage> > 80 determine false
-    //
-    //   # This example shouldn't get too complex, so
-    //   # If it passed the money and health requirements:
-    //   # First, take the $3
-    //   - take money qty:%price%
-    //
-    //   # Tell the player they paid, to be nice
-    //   - narrate "You lost %moneysign%%price%!"
-    //   # Remember that due to the definitions this script requres, %moneysign% becomes '&' and price becomes '3'
     //
     //   # And, finally, determine true, to inform the calling script that it passed
     //   - determine true
@@ -86,9 +77,12 @@ public class ProcedureScriptTags {
     //     # Depending on the determine command. Remember not to return different types of things in one procedure script
     //     # If one determine returns "true", the other shouldn't return "3"
     //
-    //     # the .context[3|$] adds the two definitions: 'price' as '3', and 'moneysign' as '&'
+    //     # the .context[3|$] adds the definition: 'price' as '3'
     //     # Remember that if you don't need context, you can just entirely remove the '.context[]' portion
-    //     - if <proc[ProcedureTutorial].context[3|&]> {
+    //     - if <proc[ProcedureTutorial].context[3]> {
+    //       # At this point only now can you execute functional code: healing and taking the money
+    //       - take money qty:3
+    //       - narrate "You lost 3 coins!"
     //       - heal
     //       - chat "All patched up!"
     //       }
