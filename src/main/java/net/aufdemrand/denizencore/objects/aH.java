@@ -38,7 +38,7 @@ public class aH {
     // Denizen uses the regular expression pattern -?(?:\d+)?(\.\d+)? for number matching.
     // -->
     final static Pattern doublePrimitive =
-            Pattern.compile("-?(?:\\d+)?(\\.\\d+)?");
+            Pattern.compile("-?(?:\\d+)?(\\.\\d+)?([Ee]\\d+)?");
 
     // <--[language]
     // @name percentage
