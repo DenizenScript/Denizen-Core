@@ -1413,8 +1413,14 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element(asBigDecimal().add(getBD(attribute.getContext(1))).toString())
-                    .getAttribute(attribute.fulfill(1));
+            try {
+                return new Element(asBigDecimal().add(getBD(attribute.getContext(1))).toString())
+                        .getAttribute(attribute.fulfill(1));
+            }
+            catch (Throwable e) {
+                return new Element(asDouble() + (aH.getDoubleFrom(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
@@ -1474,7 +1480,7 @@ public class Element implements dObject {
                 return new Element(asBigDecimal().multiply(getBD(attribute.getContext(1))).toString())
                         .getAttribute(attribute.fulfill(1));
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 return new Element(asDouble() * (aH.getDoubleFrom(attribute.getContext(1))))
                         .getAttribute(attribute.fulfill(1));
             }
@@ -1493,8 +1499,14 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element(asBigDecimal().subtract(getBD(attribute.getContext(1))).toString())
-                    .getAttribute(attribute.fulfill(1));
+            try {
+                return new Element(asBigDecimal().subtract(getBD(attribute.getContext(1))).toString())
+                        .getAttribute(attribute.fulfill(1));
+            }
+            catch (Throwable e) {
+                return new Element(asDouble() - (aH.getDoubleFrom(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
