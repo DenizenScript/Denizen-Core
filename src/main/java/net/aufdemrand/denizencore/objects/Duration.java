@@ -360,7 +360,7 @@ public class Duration implements dObject {
         // @attribute <d@duration.in_weeks>
         // @returns Element(Decimal)
         // @description
-        // returns the number of years in the Duration.
+        // returns the number of weeks in the Duration.
         // -->
         if (attribute.startsWith("in_weeks") || attribute.startsWith("weeks"))
             return new Element(seconds / 604800)
