@@ -98,7 +98,7 @@ public class Attribute {
 
     public boolean startsWith(String string) {
         if (attributes.isEmpty()) return false;
-        return raw_tag.startsWith(string);
+        return raw_tag_low.startsWith(string);
     }
 
     public boolean startsWith(String string, int attribute) {

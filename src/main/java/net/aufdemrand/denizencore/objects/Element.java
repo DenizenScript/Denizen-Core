@@ -1299,8 +1299,42 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.add_int[<#>]>
+        // @attribute <el@element.max[<#.#>]>
         // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Returns the higher number: this element or the specified one.
+        // -->
+        if (attribute.startsWith("max")
+                && attribute.hasContext(1)) {
+            if (!isDouble()) {
+                dB.echoError("Element '" + element + "' is not a valid number!");
+                return null;
+            }
+            return new Element(Math.max(asDouble(), new Element(attribute.getContext(1)).asDouble()))
+                    .getAttribute(attribute.fulfill(1));
+        }
+
+        // <--[tag]
+        // @attribute <el@element.min[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Returns the lower number: this element or the specified one.
+        // -->
+        if (attribute.startsWith("min")
+                && attribute.hasContext(1)) {
+            if (!isDouble()) {
+                dB.echoError("Element '" + element + "' is not a valid number!");
+                return null;
+            }
+            return new Element(Math.min(asDouble(), new Element(attribute.getContext(1)).asDouble()))
+                    .getAttribute(attribute.fulfill(1));
+        }
+
+        // <--[tag]
+        // @attribute <el@element.add_int[<#>]>
+        // @returns Element(Number)
         // @group math
         // @description
         // Returns the element plus a number, using integer math.
@@ -1317,7 +1351,7 @@ public class Element implements dObject {
 
         // <--[tag]
         // @attribute <el@element.div[<#>]>
-        // @returns Element(Decimal)
+        // @returns Element(Number)
         // @group math
         // @description
         // Returns the element divided by a number.
@@ -1334,7 +1368,7 @@ public class Element implements dObject {
 
         // <--[tag]
         // @attribute <el@element.mul_int[<#>]>
-        // @returns Element(Decimal)
+        // @returns Element(Number)
         // @group math
         // @description
         // Returns the element multiplied by a number.
@@ -1351,7 +1385,7 @@ public class Element implements dObject {
 
         // <--[tag]
         // @attribute <el@element.sub_int[<#>]>
-        // @returns Element(Decimal)
+        // @returns Element(Number)
         // @group math
         // @description
         // Returns the element minus a number.
@@ -1379,8 +1413,14 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element(asBigDecimal().add(getBD(attribute.getContext(1))).toString())
-                    .getAttribute(attribute.fulfill(1));
+            try {
+                return new Element(asBigDecimal().add(getBD(attribute.getContext(1))).toString())
+                        .getAttribute(attribute.fulfill(1));
+            }
+            catch (Throwable e) {
+                return new Element(asDouble() + (aH.getDoubleFrom(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
@@ -1440,7 +1480,7 @@ public class Element implements dObject {
                 return new Element(asBigDecimal().multiply(getBD(attribute.getContext(1))).toString())
                         .getAttribute(attribute.fulfill(1));
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 return new Element(asDouble() * (aH.getDoubleFrom(attribute.getContext(1))))
                         .getAttribute(attribute.fulfill(1));
             }
@@ -1459,8 +1499,14 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element(asBigDecimal().subtract(getBD(attribute.getContext(1))).toString())
-                    .getAttribute(attribute.fulfill(1));
+            try {
+                return new Element(asBigDecimal().subtract(getBD(attribute.getContext(1))).toString())
+                        .getAttribute(attribute.fulfill(1));
+            }
+            catch (Throwable e) {
+                return new Element(asDouble() - (aH.getDoubleFrom(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // <--[tag]
