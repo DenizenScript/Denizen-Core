@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.scripts.commands.core.DefineCommand;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.commands.core.ForeachCommand;
 import net.aufdemrand.denizencore.scripts.commands.core.IfCommand;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public abstract class CommandRegistry implements dRegistry {
 
     @Override
     public boolean register(String commandName, RegistrationableInstance commandInstance) {
-        this.instances.put(commandName.toUpperCase(), (AbstractCommand) commandInstance);
+        this.instances.put(CoreUtilities.toLowerCase(commandName), (AbstractCommand) commandInstance);
         this.classes.put(((AbstractCommand) commandInstance).getClass(), commandName.toUpperCase());
         return true;
     }
@@ -32,7 +33,7 @@ public abstract class CommandRegistry implements dRegistry {
 
     @Override
     public AbstractCommand get(String commandName) {
-        return instances.get(commandName.toUpperCase());
+        return instances.get(CoreUtilities.toLowerCase(commandName));
     }
 
     @Override

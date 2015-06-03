@@ -928,7 +928,7 @@ public class Element implements dObject {
         // @group string manipulation
         // @description
         // Returns the portion of an element after the last occurrence of a specified string.
-        // EG, abcabc .after[b] returns c.
+        // EG, abcabc .after_last[b] returns c.
         // -->
         if (attribute.startsWith("after_last")
                 && attribute.hasContext(1)) {
@@ -968,7 +968,7 @@ public class Element implements dObject {
         // @group string manipulation
         // @description
         // Returns the portion of an element before the last occurrence of a specified string.
-        // EG, abcabc .before[b] returns abca.
+        // EG, abcabc .before_last[b] returns abca.
         // -->
         if (attribute.startsWith("before_last")
                 && attribute.hasContext(1)) {
