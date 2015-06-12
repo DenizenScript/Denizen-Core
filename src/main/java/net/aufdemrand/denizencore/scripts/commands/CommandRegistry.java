@@ -141,7 +141,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(DefineCommand.class,
-                "DEFINE", "define [<id>] [<value>]", 1);
+                "define", "define [<id>] [<value>]", 1);
 
 
         // <--[command]
@@ -164,7 +164,7 @@ public abstract class CommandRegistry implements dRegistry {
         // - determine passively cancelled
         // -->
         registerCoreMember(DetermineCommand.class,
-                "DETERMINE", "determine (passively) [<value>]", 1);
+                "determine", "determine (passively) [<value>]", 1);
 
 
         // <--[command]
@@ -204,7 +204,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(ForeachCommand.class,
-                "FOREACH", "foreach [stop/next/<object>|...] [<commands>]", 1);
+                "foreach", "foreach [stop/next/<object>|...] [<commands>]", 1);
 
 
         // <--[command]
