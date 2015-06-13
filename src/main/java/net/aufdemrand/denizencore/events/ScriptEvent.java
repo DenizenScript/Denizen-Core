@@ -222,13 +222,14 @@ public abstract class ScriptEvent {
     public void fire() {
         fires++;
         for (ScriptPath path: eventPaths) {
+            try {
             if (matchesScript(this, path.container, path.event)) {
-                try {
                     run(path.container, path.event);
                 }
-                catch (Exception e) {
-                    dB.echoError(e);
-                }
+            }
+            catch (Exception e) {
+                dB.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
+                dB.echoError(e);
             }
         }
     }
