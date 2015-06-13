@@ -25,6 +25,7 @@ public class ScriptRegistry {
     }
 
     public static void _registerCoreTypes() {
+        _registerType("custom", CustomScriptContainer.class);
         _registerType("task", TaskScriptContainer.class);
         _registerType("procedure", ProcedureScriptContainer.class);
         _registerType("world", WorldScriptContainer.class);

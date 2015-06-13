@@ -424,6 +424,26 @@ public class Element implements dObject {
         registerTag("aslist", registeredTags.get("as_list"));
 
         // <--[tag]
+        // @attribute <el@element.as_custom>
+        // @returns dList
+        // @group conversion
+        // @description
+        // Returns the element as a custom object.
+        // -->
+        registerTag("as_custom", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element)object).element;
+                dObject obj = handleNull(element, CustomObject.valueOf(element, null), "Custom", attribute.hasAlternative());
+                if (obj != null) {
+                    return obj.getAttribute(attribute.fulfill(1));
+                }
+                return null;
+            }
+        });
+        registerTag("ascustom", registeredTags.get("as_custom"));
+
+        // <--[tag]
         // @attribute <el@element.as_script>
         // @returns dScript
         // @group conversion
