@@ -2,10 +2,8 @@ package net.aufdemrand.denizencore.scripts.commands;
 
 import net.aufdemrand.denizencore.interfaces.RegistrationableInstance;
 import net.aufdemrand.denizencore.interfaces.dRegistry;
-import net.aufdemrand.denizencore.scripts.commands.core.DefineCommand;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
-import net.aufdemrand.denizencore.scripts.commands.core.ForeachCommand;
-import net.aufdemrand.denizencore.scripts.commands.core.IfCommand;
+import net.aufdemrand.denizencore.scripts.commands.core.*;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.HashMap;
@@ -20,7 +18,7 @@ public abstract class CommandRegistry implements dRegistry {
 
     @Override
     public boolean register(String commandName, RegistrationableInstance commandInstance) {
-        this.instances.put(commandName.toUpperCase(), (AbstractCommand) commandInstance);
+        this.instances.put(CoreUtilities.toLowerCase(commandName), (AbstractCommand) commandInstance);
         this.classes.put(((AbstractCommand) commandInstance).getClass(), commandName.toUpperCase());
         return true;
     }
@@ -32,7 +30,7 @@ public abstract class CommandRegistry implements dRegistry {
 
     @Override
     public AbstractCommand get(String commandName) {
-        return instances.get(commandName.toUpperCase());
+        return instances.get(CoreUtilities.toLowerCase(commandName));
     }
 
     @Override
@@ -140,7 +138,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(DefineCommand.class,
-                "DEFINE", "define [<id>] [<value>]", 1);
+                "define", "define [<id>] [<value>]", 1);
 
 
         // <--[command]
@@ -163,7 +161,7 @@ public abstract class CommandRegistry implements dRegistry {
         // - determine passively cancelled
         // -->
         registerCoreMember(DetermineCommand.class,
-                "DETERMINE", "determine (passively) [<value>]", 1);
+                "determine", "determine (passively) [<value>]", 1);
 
 
         // <--[command]
@@ -203,7 +201,32 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(ForeachCommand.class,
-                "FOREACH", "foreach [stop/next/<object>|...] [<commands>]", 1);
+                "foreach", "foreach [stop/next/<object>|...] [<commands>]", 1);
+
+
+        // <--[command]
+        // @Name Goto
+        // @Syntax goto [<name>]
+        // @Required 1
+        // @Stable stable
+        // @Short Jump forward to a location marked by <@link command mark>.
+        // @Author mcmonkey
+        // @Group core
+        // @Description
+        // Jumps forward to a marked location in the script.
+        // For example:
+        // <code>
+        // - goto potato
+        // - narrate "This will never show"
+        // - mark potato
+        // </code>
+        // @Tags
+        // None
+        // @Usage
+        // Use to jump forward to a location.
+        // - goto potato
+        // -->
+        registerCoreMember(GotoCommand.class, "GOTO", "goto [<name>]", 1);
 
 
         // <--[command]
@@ -222,7 +245,26 @@ public abstract class CommandRegistry implements dRegistry {
         // @Usage
         // TODO: Document Command Details
         // -->
-        registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 0);
+        registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 1);
+
+
+        // <--[command]
+        // @Name Mark
+        // @Syntax mark [<name>]
+        // @Required 1
+        // @Stable stable
+        // @Short Marks a location for <@link command goto>.
+        // @Author mcmonkey
+        // @Group core
+        // @Description
+        // Marks a location for the goto command. See <@link command goto> for details.
+        // @Tags
+        // None
+        // @Usage
+        // Use to mark a location.
+        // - mark potato
+        // -->
+        registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {

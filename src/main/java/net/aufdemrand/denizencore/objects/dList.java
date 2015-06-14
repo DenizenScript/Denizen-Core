@@ -928,6 +928,19 @@ public class dList extends ArrayList<String> implements dObject {
                 return getAttribute(attribute.fulfill(1));
             }
             final ScriptEntry entry = attribute.getScriptEntry();
+            attribute = attribute.fulfill(1);
+            // <--[tag]
+            // @attribute <li@list.sort[<procedure>].context[<context>]>
+            // @returns Element
+            // @description
+            // Sort a list, with context. See <@link tag li@list.sort[<procedure>]> for general sort details.
+            // -->
+            dList context = new dList();
+            if (attribute.startsWith("context")) {
+                context = dList.valueOf(attribute.getContext(1));
+                attribute = attribute.fulfill(1);
+            }
+            final dList context_send = context;
             List<String> list = new ArrayList<String>(this);
             try {
                 Collections.sort(list, new Comparator<String>() {
@@ -946,6 +959,7 @@ public class dList extends ArrayList<String> implements dObject {
                         dList definitions = new dList();
                         definitions.add(o1);
                         definitions.add(o2);
+                        definitions.addAll(context_send);
                         String[] definition_names = null;
                         try { definition_names = script.getString("definitions").split("\\|"); } catch (Exception e) { /* IGNORE */ }
                         for (String definition : definitions) {
@@ -971,7 +985,7 @@ public class dList extends ArrayList<String> implements dObject {
             catch (Exception e) {
                 dB.echoError("list.sort[...] tag failed - procedure returned unreasonable valid - internal error: " + e.getMessage());
             }
-            return new dList(list).getAttribute(attribute.fulfill(1));
+            return new dList(list).getAttribute(attribute);
         }
 
         // <--[tag]

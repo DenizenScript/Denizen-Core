@@ -77,7 +77,7 @@ public class ProcedureScriptTags {
     //     # Depending on the determine command. Remember not to return different types of things in one procedure script
     //     # If one determine returns "true", the other shouldn't return "3"
     //
-    //     # the .context[3|$] adds the definition: 'price' as '3'
+    //     # the .context[3] adds the definition: 'price' as '3'
     //     # Remember that if you don't need context, you can just entirely remove the '.context[]' portion
     //     - if <proc[ProcedureTutorial].context[3]> {
     //       # At this point only now can you execute functional code: healing and taking the money

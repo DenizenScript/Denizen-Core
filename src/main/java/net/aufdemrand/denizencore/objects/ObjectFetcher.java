@@ -52,12 +52,13 @@ public class ObjectFetcher {
     public static void _registerCoreObjects() throws NoSuchMethodException, ClassNotFoundException, IOException {
 
         // Initialize the ObjectFetcher
-        registerWithObjectFetcher(dList.class);      // li@/fl@
-        registerWithObjectFetcher(dScript.class);    // s@
-        registerWithObjectFetcher(Element.class);    // el@
+        registerWithObjectFetcher(CustomObject.class); // custom@
+        registerWithObjectFetcher(dList.class);        // li@/fl@
+        registerWithObjectFetcher(dScript.class);      // s@
+        registerWithObjectFetcher(Element.class);      // el@
         Element.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(Duration.class);   // d@
-        registerWithObjectFetcher(ScriptQueue.class);// q@
+        registerWithObjectFetcher(Duration.class);     // d@
+        registerWithObjectFetcher(ScriptQueue.class);  // q@
         _initialize();
 
     }

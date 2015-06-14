@@ -104,6 +104,25 @@ public class CoreUtilities {
         return new String(data);
     }
 
+    public static String getXthArg(int argc, String args) {
+        char[] data = args.toCharArray();
+        StringBuilder nArg = new StringBuilder();
+        int arg = 0;
+        int x = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == ' ') {
+                arg++;
+                if (arg > argc) {
+                    return nArg.toString();
+                }
+            }
+            else if (arg == argc) {
+                nArg.append(data[i]);
+            }
+        }
+        return nArg.toString();
+    }
+
     public static boolean xthArgEquals(int argc, String args, String input) {
         char[] data = args.toCharArray();
         char[] data2 = input.toCharArray();
