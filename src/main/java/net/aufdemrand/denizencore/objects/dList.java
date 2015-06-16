@@ -731,7 +731,7 @@ public class dList extends ArrayList<String> implements dObject {
                 attribute.hasContext(1)) {
             dList positions = new dList();
             for (int i = 0; i < size(); i++) {
-                if (get(i).toUpperCase().contains(attribute.getContext(1).toUpperCase()))
+                if (get(i).toUpperCase().contains(attribute.getContext(1).toUpperCase())) // TODO: Efficiency
                     positions.add(String.valueOf(i + 1));
             }
             return positions.getAttribute(attribute.fulfill(1));
