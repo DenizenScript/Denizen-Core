@@ -173,6 +173,9 @@ public class ObjectFetcher {
      * @return the most-valid dObject available.
      */
     public static dObject pickObjectFor(String value) {
+        return pickObjectFor(value, DenizenCore.getImplementation().getEmptyScriptEntryData().getTagContext());
+    }
+    public static dObject pickObjectFor(String value, TagContext context) {
         // While many inputs are valid as various object types
         // (EG, 'bob' could be a player or NPC's name)
         // Only use specific objects for input with @ notation
@@ -181,7 +184,7 @@ public class ObjectFetcher {
             // Of course, ensure the @ notation is valid first
             if (canFetch(type)) {
                 Class toFetch = getObjectClass(type);
-                dObject fetched = getObjectFrom(toFetch, value);
+                dObject fetched = getObjectFrom(toFetch, value, context);
                 // Only return if a valid object is born... otherwise, use an element.
                 if (fetched != null) {
                     return fetched;
