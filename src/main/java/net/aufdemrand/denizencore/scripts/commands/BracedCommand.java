@@ -152,7 +152,7 @@ public abstract class BracedCommand extends AbstractCommand {
                             bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
                             if (hyperdebug) dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
                         } catch (ScriptEntryCreationException e) {
-                            if (hyperdebug) dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
+                            dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
                         }
                     }
                     if (hyperdebug) dB.echoDebug(scriptEntry, "Adding section " + bracesName);
