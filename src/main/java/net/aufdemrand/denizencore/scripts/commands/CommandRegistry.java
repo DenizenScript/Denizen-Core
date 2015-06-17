@@ -104,6 +104,7 @@ public abstract class CommandRegistry implements dRegistry {
         // APPROVAL: "Okay!" output, non-hideable.
         // ERROR: "Error!" output, non-hideable.
         // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
+        // EXCEPTION: outputs a full java stacktrace.
         // @Tags
         // None
         // @Usage

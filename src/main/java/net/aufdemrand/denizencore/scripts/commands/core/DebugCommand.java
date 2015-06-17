@@ -18,7 +18,8 @@ public class DebugCommand extends AbstractCommand {
         LOG,
         APPROVAL,
         ERROR,
-        REPORT
+        REPORT,
+        EXCEPTION
     }
 
     @Override
@@ -84,6 +85,8 @@ public class DebugCommand extends AbstractCommand {
             case REPORT:
                 dB.report(scriptEntry, name.asString(), debug.asString());
                 break;
+            case EXCEPTION:
+                dB.echoError(scriptEntry.getResidingQueue(), new RuntimeException(debug.asString()));
         }
     }
 }
