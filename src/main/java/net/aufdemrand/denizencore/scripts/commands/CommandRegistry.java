@@ -86,6 +86,39 @@ public abstract class CommandRegistry implements dRegistry {
     public void registerCoreCommands() {
 
         // <--[command]
+        // @Name Debug
+        // @Syntax debug [<type>] [<message>] (name:<name>)
+        // @Required 2
+        // @Stable stable
+        // @Short Shows a debug message.
+        // @Author mcmonkey
+        // @Group core
+        // @Description
+        // Use to quickly output debug information to console.
+        // Valid types include:
+        // DEBUG: standard hideable debug.
+        // HEADER: standard hideable debug inside a header line.
+        // FOOTER: a footer line.
+        // SPACER: a spacer line.
+        // LOG: global output, non-hideable.
+        // APPROVAL: "Okay!" output, non-hideable.
+        // ERROR: "Error!" output, non-hideable.
+        // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
+        // EXCEPTION: outputs a full java stacktrace.
+        // @Tags
+        // None
+        // @Usage
+        // Use to show an error
+        // - debug error "Something went wrong!"
+        // @Usage
+        // Use to add some information to help your own ability to read debug output from you script
+        // - debug debug "Time is currently <def[milliseconds].div[1000].round> seconds!"
+        // -->
+        registerCoreMember(DebugCommand.class,
+                "debug", "debug [<type>] [<message>] (name:<name>)", 2);
+
+
+        // <--[command]
         // @Name Define
         // @Syntax define [<id>] [<value>]
         // @Required 1
@@ -113,7 +146,7 @@ public abstract class CommandRegistry implements dRegistry {
         // <def[<ID>]> to get the value assigned to an ID
 
         // @Usage
-        // Use to make complex tags look less complex, and scripts more readable.
+        // Use to make complex tags look less complex, and scripts more readable
         // - narrate 'You invoke your power of notice...'
         // - define range '<player.flag[range_level].mul[3]>'
         // - define blocks '<player.flag[noticeable_blocks]>'
@@ -122,13 +155,13 @@ public abstract class CommandRegistry implements dRegistry {
 
         // @Usage
         // Use to keep the value of a replaceable tag that you might use many times within a single script. Definitions
-        // can be faster and cleaner than reusing a replaceable tag over and over.
+        // can be faster and cleaner than reusing a replaceable tag over and over
         // - define arg1 <c.args.get[1]>
         // - if <def[arg1]> == hello narrate 'Hello!'
         // - if <def[arg1]> == goodbye narrate 'Goodbye!'
 
         // @Usage
-        // Use to pass some important information (arguments) on to another queue.
+        // Use to pass some important information (arguments) on to another queue
         // - run 'new_task' d:hello|world
         // 'new_task' now has some definitions, <def[1]> and <def[2]>, that contains the contents specified, 'hello' and 'world'.
 

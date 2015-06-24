@@ -868,13 +868,7 @@ public class Element implements dObject {
                     .getAttribute(attribute.fulfill(1));
         }
 
-        // <--[tag]
-        // @attribute <el@element.equals_with_case[<element>]>
-        // @returns Element(Boolean)
-        // @group string checking
-        // @description
-        // Returns whether the two elements exactly match, counting casing.
-        // -->
+        // Deprecated
         if (attribute.startsWith("equals_with_case")
                 && attribute.hasContext(1)) {
             return new Element(element.equals(attribute.getContext(1)))
