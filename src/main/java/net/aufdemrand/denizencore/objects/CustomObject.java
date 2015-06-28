@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.objects;
 
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
@@ -70,10 +69,10 @@ public class CustomObject implements dObject, Adjustable {
     @Override
     public String identify() {
         StringBuilder outp = new StringBuilder();
-        for (Map.Entry<String, String> var: vars.entrySet()) {
-            outp.append(var.getKey() + "=" + var.getValue().replace(';', (char)0x2011) + ";");
+        for (Map.Entry<String, String> var : vars.entrySet()) {
+            outp.append(var.getKey() + "=" + var.getValue().replace(';', (char) 0x2011) + ";");
         }
-        return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1): "") + "]";
+        return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1) : "") + "]";
     }
 
     @Override

@@ -1,10 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
@@ -12,6 +7,11 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandExecuter {
 
@@ -21,7 +21,7 @@ public class CommandExecuter {
         Matcher m;
         StringBuffer sb;
         List<String> newArgs = new ArrayList<String>(args.size());
-        for (String arg: args) {
+        for (String arg : args) {
             if (arg.indexOf('%') != -1) {
                 m = definition_pattern.matcher(arg);
                 sb = new StringBuffer();
@@ -67,7 +67,7 @@ public class CommandExecuter {
             dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
         }
         else {
-            for (String arg: scriptEntry.getOriginalArguments())
+            for (String arg : scriptEntry.getOriginalArguments())
                 output.append(" \"").append(arg).append("\"");
         }
 
@@ -115,7 +115,8 @@ public class CommandExecuter {
         try {
 
             // Throw exception if arguments are required for this command, but not supplied.
-            if (command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size()) throw new InvalidArgumentsException("");
+            if (command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size())
+                throw new InvalidArgumentsException("");
 
             if (scriptEntry.has_tags) {
                 scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
@@ -214,7 +215,7 @@ public class CommandExecuter {
             if (e.getMessage() != null && e.getMessage().length() > 0)
                 dB.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             dB.log("Usage: " + command.getUsageHint());
-            dB.log("(Attempted: " + scriptEntry.toString()+ ")");
+            dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
         }
@@ -233,7 +234,8 @@ public class CommandExecuter {
                 try {
                     // Run the execute method in the command
                     command.execute(scriptEntry);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");
                     dB.echoError(scriptEntry.getResidingQueue(), e);
                     dB.log("(Attempted: " + scriptEntry.toString() + ")");

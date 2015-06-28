@@ -1,8 +1,8 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -11,9 +11,8 @@ import java.util.List;
 
 /**
  * Example replaceable tag class.
- *
+ * <p/>
  * TODO: Update me!
- *
  */
 public class _templateTags {
 

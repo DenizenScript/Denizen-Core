@@ -1,11 +1,16 @@
 package net.aufdemrand.denizencore.tags;
 
-import net.aufdemrand.denizencore.objects.*;
+import net.aufdemrand.denizencore.objects.ObjectFetcher;
+import net.aufdemrand.denizencore.objects.dList;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.tags.core.*;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +46,7 @@ public class TagManager {
     private static List<Object> method_objects = new ArrayList<Object>();
 
     public static void registerTagEvents(Object o) {
-        for (Method method: o.getClass().getMethods()) {
+        for (Method method : o.getClass().getMethods()) {
             if (!method.isAnnotationPresent(TagManager.TagEvents.class)) {
                 continue;
             }
@@ -227,7 +232,8 @@ public class TagManager {
 
             Attribute attribute = event.getAttributes();
             event.setReplaced(arg.getAttribute(attribute.fulfill(1)));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             dB.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
             dB.echoError(e);
         }
@@ -237,8 +243,9 @@ public class TagManager {
         ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
         if (event.isInstant() != context.instant) {
             // Not the right type of tag, escape the brackets so it doesn't get parsed again
-            return String.valueOf((char)0x01) + str + String.valueOf((char)0x02);
-        } else {
+            return String.valueOf((char) 0x01) + str + String.valueOf((char) 0x02);
+        }
+        else {
             // Call Event
             fireEvent(event);
             if ((!event.replaced() && event.getAlternative() != null) && event.hasAlternative())
@@ -288,7 +295,7 @@ public class TagManager {
             return null;
         // Handle "<-" for the flag command
         if (first + 1 < arg.length() && (arg.charAt(first + 1) == '-')) {
-            return locateTag(arg.substring(0, first) + (char)0x01 + arg.substring(first + 1));
+            return locateTag(arg.substring(0, first) + (char) 0x01 + arg.substring(first + 1));
         }
         int len = arg.length();
         int bracks = 0;

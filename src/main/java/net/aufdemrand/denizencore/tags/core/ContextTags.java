@@ -1,10 +1,10 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -47,7 +47,7 @@ public class ContextTags {
             Map<String, String> context = (HashMap<String, String>) entry.getObject("CONTEXT");
             // Build IDs
             Map<String, Integer> id = script.getContextMap();
-            if (context.containsKey( String.valueOf(id.get(object.toUpperCase())))) {
+            if (context.containsKey(String.valueOf(id.get(object.toUpperCase())))) {
                 event.setReplaced(context.get(String.valueOf(id.get(object.toUpperCase()))));
             }
         }
@@ -75,12 +75,14 @@ public class ContextTags {
             if (held == null) { // Check if the ID is bad
                 dB.echoDebug(event.getScriptEntry(), "Bad saved entry ID '" + id + "'");
 
-            } else {
+            }
+            else {
                 if (!held.hasObject(attribute.getAttribute(2)) // Check if there's no such object
                         || held.getdObject(attribute.getAttribute(2)) == null) { // ... or if there is such an object
                     dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attribute.getAttribute(2) + "'"); // but it's not a dObject...
 
-                } else { // Okay, now it's safe!
+                }
+                else { // Okay, now it's safe!
                     event.setReplaced(held.getdObject(attribute.getAttribute(2)).getAttribute(attribute.fulfill(2)));
                 }
             }

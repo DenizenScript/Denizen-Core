@@ -3,8 +3,10 @@ package net.aufdemrand.denizencore.utilities.javaluator;
 import java.util.HashMap;
 import java.util.Map;
 
-/** A static variable set.
+/**
+ * A static variable set.
  * <br>Here, static means that the values of variables are set before starting to evaluate the expressions.
+ *
  * @param <T> The type of the values of the variable (the one handled by the evaluator).
  * @author Jean-Marc Astesana
  * @see <a href="../../../license.html">License information</a>
@@ -12,7 +14,8 @@ import java.util.Map;
 public class StaticVariableSet<T> implements AbstractVariableSet<T> {
     private final Map<String, T> varToValue;
 
-    /** Constructor.
+    /**
+     * Constructor.
      * <br>Builds a new empty variable set.
      */
     public StaticVariableSet() {
@@ -23,9 +26,11 @@ public class StaticVariableSet<T> implements AbstractVariableSet<T> {
         return this.varToValue.get(variableName);
     }
 
-    /** Sets a variable value.
+    /**
+     * Sets a variable value.
+     *
      * @param variableName The variable name
-     * @param value The variable value (null to remove a variable from the set).
+     * @param value        The variable value (null to remove a variable from the set).
      */
     public void set(String variableName, T value) {
         this.varToValue.put(variableName, value);

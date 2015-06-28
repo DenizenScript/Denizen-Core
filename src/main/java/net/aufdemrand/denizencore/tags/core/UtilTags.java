@@ -101,35 +101,35 @@ public class UtilTags {
                         .getAttribute(attribute.fulfill(1)));
             }
 
-                // <--[tag]
-                // @attribute <util.random.gauss>
-                // @returns Element
-                // @description
-                // Returns a random decimal number with a gaussian distribution.
-                // 70% of all results will be within the range of -1 to 1.
-                // -->
+            // <--[tag]
+            // @attribute <util.random.gauss>
+            // @returns Element
+            // @description
+            // Returns a random decimal number with a gaussian distribution.
+            // 70% of all results will be within the range of -1 to 1.
+            // -->
             else if (attribute.startsWith("gauss")) {
                 event.setReplaced(new Element(CoreUtilities.getRandom().nextGaussian())
                         .getAttribute(attribute.fulfill(1)));
             }
 
-                // <--[tag]
-                // @attribute <util.random.uuid>
-                // @returns Element
-                // @description
-                // Returns a random unique ID.
-                // -->
+            // <--[tag]
+            // @attribute <util.random.uuid>
+            // @returns Element
+            // @description
+            // Returns a random unique ID.
+            // -->
             else if (attribute.startsWith("uuid")) {
                 event.setReplaced(new Element(UUID.randomUUID().toString())
                         .getAttribute(attribute.fulfill(1)));
             }
 
-                // <--[tag]
-                // @attribute <util.random.duuid>
-                // @returns Element
-                // @description
-                // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
-                // -->
+            // <--[tag]
+            // @attribute <util.random.duuid>
+            // @returns Element
+            // @description
+            // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
+            // -->
             else if (attribute.startsWith("duuid")) {
                 event.setReplaced(new Element(ScriptQueue
                         .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID"))
@@ -204,68 +204,68 @@ public class UtilTags {
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.month>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current month of the system time.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.month>
+                // @returns Element(Number)
+                // @description
+                // Returns the current month of the system time.
+                // -->
                 else if (attribute.startsWith("month")) {
                     event.setReplaced(new Element(calendar.get(Calendar.MONTH) + 1)
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.day>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current day of the system time.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.day>
+                // @returns Element(Number)
+                // @description
+                // Returns the current day of the system time.
+                // -->
                 else if (attribute.startsWith("day")) {
                     event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_MONTH))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.hour>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current hour of the system time.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.hour>
+                // @returns Element(Number)
+                // @description
+                // Returns the current hour of the system time.
+                // -->
                 else if (attribute.startsWith("hour")) {
                     event.setReplaced(new Element(calendar.get(Calendar.HOUR_OF_DAY))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.minute>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current minute of the system time.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.minute>
+                // @returns Element(Number)
+                // @description
+                // Returns the current minute of the system time.
+                // -->
                 else if (attribute.startsWith("minute")) {
                     event.setReplaced(new Element(calendar.get(Calendar.MINUTE))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.second>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current second of the system time.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.second>
+                // @returns Element(Number)
+                // @description
+                // Returns the current second of the system time.
+                // -->
                 else if (attribute.startsWith("second")) {
                     event.setReplaced(new Element(calendar.get(Calendar.SECOND))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
-                    // <--[tag]
-                    // @attribute <util.date.time.duration>
-                    // @returns Duration
-                    // @description
-                    // Returns the current system time as a duration.
-                    // To get the exact millisecond count, use <@link tag server.current_time_millis>.
-                    // -->
+                // <--[tag]
+                // @attribute <util.date.time.duration>
+                // @returns Duration
+                // @description
+                // Returns the current system time as a duration.
+                // To get the exact millisecond count, use <@link tag server.current_time_millis>.
+                // -->
                 else if (attribute.startsWith("duration")) {
                     event.setReplaced(new Duration(System.currentTimeMillis() / 50)
                             .getAttribute(attribute.fulfill(1)));

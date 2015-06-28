@@ -9,14 +9,11 @@ import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.WorldScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
-import net.aufdemrand.denizencore.tags.TagContext;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -234,7 +231,7 @@ public class OldEventManager {
 
                         // Check the determination
                         if (DetermineCommand.hasOutcome(id))
-                            determinations =  DetermineCommand.getOutcome(id);
+                            determinations = DetermineCommand.getOutcome(id);
                     }
             }
 

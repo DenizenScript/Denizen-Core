@@ -1,11 +1,13 @@
 package net.aufdemrand.denizencore.scripts.commands;
 
-import java.util.*;
-
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
 public abstract class BracedCommand extends AbstractCommand {
 
@@ -31,11 +33,8 @@ public abstract class BracedCommand extends AbstractCommand {
     /**
      * Gets the commands inside the braces of this ScriptEntry.
      *
-     * @param scriptEntry
-     *          The ScriptEntry to get the braced commands from.
-     *
-     * @return
-     *          The list of ScriptEntries to be executed in the command.
+     * @param scriptEntry The ScriptEntry to get the braced commands from.
+     * @return The list of ScriptEntries to be executed in the command.
      */
     public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry) {
 
@@ -47,9 +46,9 @@ public abstract class BracedCommand extends AbstractCommand {
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
             try {
-                for (BracedData entry: entryBracedSet) {
+                for (BracedData entry : entryBracedSet) {
                     ArrayList<ScriptEntry> array = new ArrayList<ScriptEntry>(entry.value.size());
-                    for (ScriptEntry sEntry: entry.value) {
+                    for (ScriptEntry sEntry : entry.value) {
                         ScriptEntry newEntry = sEntry.clone();
                         newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         array.add(newEntry);
@@ -150,8 +149,10 @@ public abstract class BracedCommand extends AbstractCommand {
                                     args,
                                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                             bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
-                            if (hyperdebug) dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
-                        } catch (ScriptEntryCreationException e) {
+                            if (hyperdebug)
+                                dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
+                        }
+                        catch (ScriptEntryCreationException e) {
                             dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
                         }
                     }

@@ -1,24 +1,22 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.objects.properties.PropertyParser;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.tags.core.EscapeTags;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.SQLEscaper;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
-import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.tags.TagContext;
-import net.aufdemrand.denizencore.tags.TagManager;
-import net.aufdemrand.denizencore.tags.core.EscapeTags;
-import net.aufdemrand.denizencore.utilities.SQLEscaper;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
-
-import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 // <--[language]
 // @name Element
@@ -64,10 +62,8 @@ public class Element implements dObject {
     }
 
     /**
-     *
-     * @param string  the string or dScript argument String
-     * @return  a dScript dList
-     *
+     * @param string the string or dScript argument String
+     * @return a dScript dList
      */
     @Fetchable("el")
     public static Element valueOf(String string, TagContext context) {
@@ -81,7 +77,7 @@ public class Element implements dObject {
             return new Element(value);
         }
 
-        return new Element(string.toLowerCase().startsWith("el@") ? string.substring(3): string);
+        return new Element(string.toLowerCase().startsWith("el@") ? string.substring(3) : string);
     }
 
     public static boolean matches(String string) {
@@ -92,9 +88,9 @@ public class Element implements dObject {
      * Handle null dObjects appropriately for potentionally null tags.
      * Will show a dB error message and return Element.NULL for null objects.
      *
-     * @param tag The input string that produced a potentially null object, for debugging.
+     * @param tag    The input string that produced a potentially null object, for debugging.
      * @param object The potentially null object.
-     * @param type The type of object expected, for debugging. (EG: 'dNPC')
+     * @param type   The type of object expected, for debugging. (EG: 'dNPC')
      * @return The object or Element.NULL if the object is null.
      */
     public static dObject handleNull(String tag, dObject object, String type, boolean has_fallback) {
@@ -216,7 +212,9 @@ public class Element implements dObject {
         try {
             if (Double.valueOf(element) != null)
                 return true;
-        } catch (Exception e) {}
+        }
+        catch (Exception e) {
+        }
         return false;
     }
 
@@ -224,7 +222,9 @@ public class Element implements dObject {
         try {
             if (Float.valueOf(element) != null)
                 return true;
-        } catch (Exception e) {}
+        }
+        catch (Exception e) {
+        }
         return false;
     }
 
@@ -232,7 +232,9 @@ public class Element implements dObject {
         try {
             if (Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", "")) != null)
                 return true;
-        } catch (Exception e) {}
+        }
+        catch (Exception e) {
+        }
         return false;
     }
 
@@ -315,7 +317,7 @@ public class Element implements dObject {
         registerTag("as_boolean", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 return new Element(element.equalsIgnoreCase("true")
                         || element.equalsIgnoreCase("t")
                         || element.equalsIgnoreCase("1"))
@@ -334,7 +336,7 @@ public class Element implements dObject {
         registerTag("as_decimal", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 try {
                     return new Element(Double.valueOf(element))
                             .getAttribute(attribute.fulfill(1));
@@ -360,7 +362,7 @@ public class Element implements dObject {
         registerTag("as_int", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 try {
                     // Round the Double instead of just getting its
                     // value as an Integer (which would incorrectly
@@ -388,7 +390,7 @@ public class Element implements dObject {
         registerTag("as_money", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 try {
                     DecimalFormat d = new DecimalFormat("0.00");
                     return new Element(d.format(Double.valueOf(element)))
@@ -413,7 +415,7 @@ public class Element implements dObject {
         registerTag("as_list", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 dObject obj = handleNull(element, dList.valueOf(element), "dList", attribute.hasAlternative());
                 if (obj != null) {
                     return obj.getAttribute(attribute.fulfill(1));
@@ -433,7 +435,7 @@ public class Element implements dObject {
         registerTag("as_custom", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 dObject obj = handleNull(element, CustomObject.valueOf(element, null), "Custom", attribute.hasAlternative());
                 if (obj != null) {
                     return obj.getAttribute(attribute.fulfill(1));
@@ -454,7 +456,7 @@ public class Element implements dObject {
         registerTag("as_script", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 dObject obj = handleNull(element, dScript.valueOf(element), "dScript", attribute.hasAlternative());
                 if (obj != null) {
                     return obj.getAttribute(attribute.fulfill(1));
@@ -496,7 +498,7 @@ public class Element implements dObject {
         registerTag("as_duration", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 dObject obj = handleNull(element, Duration.valueOf(element), "Duration", attribute.hasAlternative());
                 if (obj != null) {
                     return obj.getAttribute(attribute.fulfill(1));
@@ -518,7 +520,7 @@ public class Element implements dObject {
         registerTag("escaped", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 return new Element(EscapeTags.Escape(element)).getAttribute(attribute.fulfill(1));
             }
         });
@@ -533,7 +535,7 @@ public class Element implements dObject {
         registerTag("sql_escaped", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 return new Element(SQLEscaper.escapeSQL(element)).getAttribute(attribute.fulfill(1));
             }
         });
@@ -550,7 +552,7 @@ public class Element implements dObject {
         registerTag("unescaped", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 return new Element(EscapeTags.unEscape(element)).getAttribute(attribute.fulfill(1));
             }
         });
@@ -567,12 +569,12 @@ public class Element implements dObject {
         // Returns a standard debug representation of the Element.
         // -->
         registerTag("debug", new TagRunnable() {
-                    @Override
-                    public String run(Attribute attribute, dObject object) {
-                        return new Element(object.debug())
-                                .getAttribute(attribute.fulfill(1));
-                    }
-                });
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Element(object.debug())
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <el@element.prefix>
@@ -582,12 +584,12 @@ public class Element implements dObject {
         // Returns the prefix of the element.
         // -->
         registerTag("prefix", new TagRunnable() {
-                @Override
-                public String run(Attribute attribute, dObject object) {
-                    return new Element(object.getPrefix())
-                            .getAttribute(attribute.fulfill(1));
-                }
-            });
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Element(object.getPrefix())
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
 
         /////////////////////
         //   STRING CHECKING ATTRIBUTES
@@ -610,7 +612,7 @@ public class Element implements dObject {
         registerTag("prefix", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                String element = ((Element)object).element;
+                String element = ((Element) object).element;
                 dList list = dList.valueOf(attribute.getContext(1));
                 for (String list_element : list) {
                     if (element.contains(list_element)) {
@@ -637,19 +639,19 @@ public class Element implements dObject {
         // Returns whether the element contains any of a list of specified strings, case insensitive.
         // -->
         registerTag("contains_any", new TagRunnable() {
-                    @Override
-                    public String run(Attribute attribute, dObject object) {
-                        String element = ((Element) object).element;
-                        dList list = dList.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
-                        String ellow = CoreUtilities.toLowerCase(element);
-                        for (String list_element : list) {
-                            if (ellow.contains(list_element)) {
-                                return Element.TRUE.getAttribute(attribute.fulfill(1));
-                            }
-                        }
-                        return Element.FALSE.getAttribute(attribute.fulfill(1));
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                dList list = dList.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
+                String ellow = CoreUtilities.toLowerCase(element);
+                for (String list_element : list) {
+                    if (ellow.contains(list_element)) {
+                        return Element.TRUE.getAttribute(attribute.fulfill(1));
                     }
-                });
+                }
+                return Element.FALSE.getAttribute(attribute.fulfill(1));
+            }
+        });
         TagRunnable r = registeredTags.get("contains_any").clone();
         r.name = null;
         registerTag("contains_any_text", r);
@@ -711,7 +713,8 @@ public class Element implements dObject {
                     if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
                         return new Element("true").getAttribute(attribute.fulfill(1));
                     else return new Element("false").getAttribute(attribute.fulfill(1));
-                } else if (element.toLowerCase().contains(contains.toLowerCase()))
+                }
+                else if (element.toLowerCase().contains(contains.toLowerCase()))
                     return new Element("true").getAttribute(attribute.fulfill(1));
                 else return new Element("false").getAttribute(attribute.fulfill(1));
             }
@@ -739,7 +742,7 @@ public class Element implements dObject {
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue(): null,
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);
@@ -1210,7 +1213,7 @@ public class Element implements dObject {
         // If no second index is specified, it will return the portion of an
         // element after the specified index.
         // -->
-        if (attribute.startsWith("substring")||attribute.startsWith("substr")) {            // substring[2,8]
+        if (attribute.startsWith("substring") || attribute.startsWith("substr")) {            // substring[2,8]
             int beginning_index = new Element(attribute.getContext(1).split(",")[0]).asInt() - 1;
             int ending_index;
             if (attribute.getContext(1).split(",").length > 1)
@@ -1235,7 +1238,7 @@ public class Element implements dObject {
         // -->
         if (attribute.startsWith("pad_left")
                 && attribute.hasContext(1)) {
-            String with = String.valueOf((char)0x00A0);
+            String with = String.valueOf((char) 0x00A0);
             int length = attribute.getIntContext(1);
             attribute = attribute.fulfill(1);
             // <--[tag]
@@ -1268,7 +1271,7 @@ public class Element implements dObject {
         // -->
         if (attribute.startsWith("pad_right")
                 && attribute.hasContext(1)) {
-            String with = String.valueOf((char)0x00A0);
+            String with = String.valueOf((char) 0x00A0);
             int length = attribute.getIntContext(1);
             attribute = attribute.fulfill(1);
             // <--[tag]
@@ -1708,7 +1711,7 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element((int)Math.ceil(asDouble()))
+            return new Element((int) Math.ceil(asDouble()))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -1724,7 +1727,7 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element((int)Math.floor(asDouble()))
+            return new Element((int) Math.floor(asDouble()))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -1740,7 +1743,7 @@ public class Element implements dObject {
                 dB.echoError("Element '" + element + "' is not a valid decimal number!");
                 return null;
             }
-            return new Element((int)Math.round(asDouble()))
+            return new Element((int) Math.round(asDouble()))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -1765,7 +1768,8 @@ public class Element implements dObject {
                         "' for tag <" + attribute.getOrigin() + ">!");
             return null;
 
-        } else {
+        }
+        else {
             return element;
         }
     }

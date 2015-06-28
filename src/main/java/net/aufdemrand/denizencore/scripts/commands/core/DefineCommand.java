@@ -10,7 +10,6 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 /**
  * Creates a queue/script-level variable.
- *
  */
 public class DefineCommand extends AbstractCommand {
 
@@ -24,20 +23,24 @@ public class DefineCommand extends AbstractCommand {
                     scriptEntry.addObject("remove", new Element("true"));
                     scriptEntry.addObject("value", new Element("null"));
                     scriptEntry.addObject("definition", arg.getPrefix().asElement());
-                } else
+                }
+                else {
                     scriptEntry.addObject("definition", new Element(arg.getValue().toLowerCase()));
+                }
             }
 
             else if (!scriptEntry.hasObject("value"))
                 // Use the raw_value as to not exclude values with :'s in them.
                 scriptEntry.addObject("value", new Element(arg.raw_value));
 
-            else arg.reportUnhandled();
+            else {
+                arg.reportUnhandled();
+            }
         }
 
-        if (!scriptEntry.hasObject("definition") || !scriptEntry.hasObject("value"))
+        if (!scriptEntry.hasObject("definition") || !scriptEntry.hasObject("value")) {
             throw new InvalidArgumentsException("Must specify a definition and value!");
-
+        }
     }
 
     @Override

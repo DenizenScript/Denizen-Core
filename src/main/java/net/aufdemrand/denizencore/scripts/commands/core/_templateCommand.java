@@ -1,17 +1,17 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
+import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
-import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 /**
  * Your command!
  * This class is a template for a Command in Denizen.
- *
+ * <p/>
  * If loading externally, implement dExternal and its load() method.
  *
  * @author Jeremy Schroeder, mcmonkey
@@ -28,7 +28,7 @@ public class _templateCommand extends AbstractCommand {
                     && arg.matchesPrimitive(aH.PrimitiveType.Integer))
                 scriptEntry.addObject("required_integer", arg.asElement());
 
-            // else if (...)
+                // else if (...)
 
             else
                 arg.reportUnhandled();

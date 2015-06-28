@@ -2,8 +2,6 @@ package net.aufdemrand.denizencore.tags;
 
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-
-import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 import java.util.List;
@@ -135,14 +133,14 @@ public class ReplaceableTagEvent {
     public boolean matches(String tagName) {
         List<String> tagNames = CoreUtilities.split(tagName, ',');
         String name = getName();
-        for (String string: tagNames)
+        for (String string : tagNames)
             if (name.equalsIgnoreCase(string.trim())) return true;
         return false;
     }
 
     public boolean matches(String... tagNames) {
         String name = getName();
-        for (String string: tagNames)
+        for (String string : tagNames)
             if (name.equalsIgnoreCase(string.trim())) return true;
         return false;
     }
@@ -319,6 +317,6 @@ public class ReplaceableTagEvent {
 
     @Override
     public String toString() {
-        return core_attributes.toString() + (hasValue() ? ":" + value: "") + (hasAlternative() ? "||" + alternative: "");
+        return core_attributes.toString() + (hasValue() ? ":" + value : "") + (hasAlternative() ? "||" + alternative : "");
     }
 }

@@ -2,7 +2,6 @@ package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.ScriptEvent;
-import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
@@ -50,7 +49,8 @@ public class DenizenCore {
                 version = properties.getProperty("version") + " (Build " + properties.getProperty("build") + ")";
                 is.close();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         VERSION = version;
@@ -64,6 +64,7 @@ public class DenizenCore {
 
     /**
      * Must be called first: prepares the engine!
+     *
      * @param implementation your Denizen implementation.
      */
     public static void init(DenizenImplementation implementation) {
@@ -126,7 +127,7 @@ public class DenizenCore {
      */
     public static void tick(int ms_elapsed) {
         for (int i = 0; i < scheduled.size(); i++) {
-            if (!scheduled.get(i).tick((float)ms_elapsed / 1000)) {
+            if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
                 scheduled.remove(i--);
             }
         }
