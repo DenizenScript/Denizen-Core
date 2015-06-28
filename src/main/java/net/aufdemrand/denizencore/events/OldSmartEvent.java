@@ -6,9 +6,8 @@ import java.util.Set;
  * To make the world event system as easy as possible, firing an event is as easy as calling the
  * EventHandler's doEvents(...) from anywhere in your code that's appropriate. However, should
  * you choose to implement SmartEvent, you'll make your event more efficient and manageable.
- *
+ * <p/>
  * SmartEvents must be registered with the EventManager
- *
  */
 public interface OldSmartEvent {
 

@@ -1,6 +1,6 @@
 package net.aufdemrand.denizencore.objects.properties;
 
-import net.aufdemrand.denizencore.objects.*;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +44,8 @@ public class PropertyParser {
             describes.put(property, property.getMethod("describes", dObject.class));
             getFrom.put(property, property.getMethod("getFrom", dObject.class));
 
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e) {
             dB.echoError("Unable to register property '" + property.getSimpleName() + "'!");
         }
 
@@ -55,11 +56,11 @@ public class PropertyParser {
 
         // Iterate through each property associated with the dObject type, invoke 'describes'
         // and if 'true', add property string from the property to the prop_string.
-        for (Property property: getProperties(object)) {
+        for (Property property : getProperties(object)) {
             String description = property.getPropertyString();
             if (description != null) {
                 prop_string.append(property.getPropertyId()).append('=')
-                        .append(description.replace(';', (char)0x2011)).append(';');
+                        .append(description.replace(';', (char) 0x2011)).append(';');
             }
         }
 
@@ -81,9 +82,11 @@ public class PropertyParser {
                 }
             }
 
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             dB.echoError(e);
-        } catch (InvocationTargetException e) {
+        }
+        catch (InvocationTargetException e) {
             dB.echoError(e);
         }
 

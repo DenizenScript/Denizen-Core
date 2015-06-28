@@ -1,7 +1,7 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -81,7 +81,7 @@ public class EscapeTags {
                 .replace("&gt", ">").replace("&lt", "<")
                 .replace("&sc", ";").replace("&sq", "'")
                 .replace("&lb", "[").replace("&rb", "]")
-                .replace("&sp", String.valueOf((char)0x00A0))
+                .replace("&sp", String.valueOf((char) 0x00A0))
                 .replace("&co", ":").replace("&at", "@")
                 .replace("&dot", ".").replace("&bs", "\\")
                 .replace("&quo", "\"").replace("&exc", "!")

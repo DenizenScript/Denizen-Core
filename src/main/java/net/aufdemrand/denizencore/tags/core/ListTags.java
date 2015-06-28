@@ -1,14 +1,13 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 
 
 /**
  * Location tag is a starting point for getting attributes for a
- *
  */
 
 public class ListTags {

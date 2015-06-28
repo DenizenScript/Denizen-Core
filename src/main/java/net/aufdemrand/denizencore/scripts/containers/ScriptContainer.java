@@ -1,11 +1,7 @@
 package net.aufdemrand.denizencore.scripts.containers;
 
 import net.aufdemrand.denizencore.objects.dScript;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
-import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.ScriptEntrySet;
-import net.aufdemrand.denizencore.scripts.ScriptEntryData;
-import net.aufdemrand.denizencore.scripts.ScriptHelper;
+import net.aufdemrand.denizencore.scripts.*;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
@@ -85,7 +81,7 @@ public class ScriptContainer implements Debuggable {
      *
      * @param type the class of the ScriptContainer casting to
      * @param <T>  the ScriptContainer object
-     * @return     a ScriptContainer of the type specified
+     * @return a ScriptContainer of the type specified
      */
     public <T extends ScriptContainer> T getAsContainerType(Class<T> type) {
         return type.cast(this);
@@ -118,7 +114,7 @@ public class ScriptContainer implements Debuggable {
     /**
      * Gets the name of the script container.
      *
-     * @return  the script container name.
+     * @return the script container name.
      */
     public String getName() {
         return name;
@@ -136,7 +132,7 @@ public class ScriptContainer implements Debuggable {
     /**
      * Gets a dScript object that represents this container.
      *
-     * @return  a dScript object linking this script container.
+     * @return a dScript object linking this script container.
      */
     public dScript getAsScriptArg() {
         return dScript.valueOf(name);
@@ -163,7 +159,7 @@ public class ScriptContainer implements Debuggable {
     /**
      * Gets the value of the type: node specified in the script container structure.
      *
-     * @return  the type of container
+     * @return the type of container
      */
     public String getContainerType() {
         return contents.contains("TYPE")
@@ -175,8 +171,8 @@ public class ScriptContainer implements Debuggable {
     /**
      * Checks the ConfigurationSection for the key/path to key specified.
      *
-     * @param path  the path of the key
-     * @return      true if the key exists
+     * @param path the path of the key
+     * @return true if the key exists
      */
     public boolean contains(String path) {
         return contents.contains(path.toUpperCase());
@@ -219,7 +215,7 @@ public class ScriptContainer implements Debuggable {
         ScriptEntrySet set = getSetFor(path.toUpperCase());
         if (set == null)
             return new ArrayList<ScriptEntry>();
-        for (ScriptEntry entry: set.getEntries()) {
+        for (ScriptEntry entry : set.getEntries()) {
             entry.entryData = data.clone();
         }
         return set.getEntries();

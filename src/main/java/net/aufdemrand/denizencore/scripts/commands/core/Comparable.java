@@ -1,6 +1,9 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.objects.*;
+import net.aufdemrand.denizencore.objects.Duration;
+import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
+import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class Comparable {
@@ -67,12 +70,12 @@ public class Comparable {
         REGULAR, NEGATIVE
     }
 
-    Logic         logic = Logic.REGULAR;
-    Bridge       bridge = Bridge.FIRST;
-    Object   comparable = null;
-    Operator   operator = Operator.EQUALS;
-    Object   comparedto = "true";
-    Boolean     outcome = null;
+    Logic logic = Logic.REGULAR;
+    Bridge bridge = Bridge.FIRST;
+    Object comparable = null;
+    Operator operator = Operator.EQUALS;
+    Object comparedto = "true";
+    Boolean outcome = null;
 
 
     public void setNegativeLogic() {
@@ -199,7 +202,7 @@ public class Comparable {
         else
             comparedto = ((Long) this.comparedto).doubleValue();
 
-        switch(operator) {
+        switch (operator) {
 
             case EQUALS:
                 if (comparable.doubleValue() == comparedto.doubleValue()) outcome = true;
@@ -229,7 +232,7 @@ public class Comparable {
 
         dList comparable = (dList) this.comparable;
 
-        switch(operator) {
+        switch (operator) {
 
             case CONTAINS:
                 for (String string : comparable) {
@@ -278,7 +281,7 @@ public class Comparable {
 
             case EQUALS:
                 if (comparedto instanceof dList) {
-                    dList list2 = (dList)comparedto;
+                    dList list2 = (dList) comparedto;
                     outcome = list2.identify().equalsIgnoreCase(comparable.identify());
                 }
                 break;
@@ -295,7 +298,7 @@ public class Comparable {
 
         if (comparable == null || comparedto == null) return;
 
-        switch(operator) {
+        switch (operator) {
             // For checking if a FLAG is empty.
             case IS_EMPTY:
                 outcome = comparable.length() == 0;
@@ -421,13 +424,13 @@ public class Comparable {
 
     @Override
     public String toString() {
-        return  (logic != Logic.REGULAR ? "Logic='" + logic.toString() + "', " : "")
-                + "Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal":
-                comparable instanceof String ? "Element": (comparable instanceof Long ? "Number": (comparable instanceof dList ? "dList" :log(comparable.getClass().getSimpleName()))))
+        return (logic != Logic.REGULAR ? "Logic='" + logic.toString() + "', " : "")
+                + "Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal" :
+                comparable instanceof String ? "Element" : (comparable instanceof Long ? "Number" : (comparable instanceof dList ? "dList" : log(comparable.getClass().getSimpleName()))))
                 + "(<A>" + comparable + "<W>)'")
                 + ", Operator='" + operator.toString()
-                + "', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal":
-                comparedto instanceof String ? "Element": (comparedto instanceof Long ? "Number": (comparedto instanceof dList ? "dList" :log(comparedto.getClass().getSimpleName()))))
+                + "', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal" :
+                comparedto instanceof String ? "Element" : (comparedto instanceof Long ? "Number" : (comparedto instanceof dList ? "dList" : log(comparedto.getClass().getSimpleName()))))
                 + "(<A>" + comparedto + "<W>)' ")
                 + "<Y>--> OUTCOME='" + outcome + "'";
     }

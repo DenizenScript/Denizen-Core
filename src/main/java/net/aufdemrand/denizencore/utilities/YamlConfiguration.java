@@ -43,12 +43,12 @@ public class YamlConfiguration {
      * Use StringHolders instead of strings.
      */
     private static void switchKeys(Map<StringHolder, Object> objs) {
-        for (Object o: new HashSet<Object>(objs.keySet())) {
+        for (Object o : new HashSet<Object>(objs.keySet())) {
             Object got = objs.get(o);
             objs.remove(o);
             objs.put(new StringHolder(o.toString()), got);
         }
-        for (Map.Entry<StringHolder, Object> str: objs.entrySet()) {
+        for (Map.Entry<StringHolder, Object> str : objs.entrySet()) {
             if (str.getValue() instanceof Map) {
                 Map map = (Map<StringHolder, Object>) str.getValue();
                 switchKeys(map);
@@ -60,7 +60,7 @@ public class YamlConfiguration {
 
     private static Map<String, Object> reverse(Map<StringHolder, Object> objs) {
         HashMap<String, Object> map = new HashMap<String, Object>();
-        for (Map.Entry<StringHolder, Object> obj: objs.entrySet()) {
+        for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             if (obj.getValue() instanceof Map) {
                 map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue()));
             }
@@ -73,7 +73,7 @@ public class YamlConfiguration {
 
     private static List<String> patchListNonsense(List<Object> objs) {
         List<String> list = new ArrayList<String>();
-        for (Object o: objs) {
+        for (Object o : objs) {
             if (o == null)
                 list.add("null");
             else
@@ -101,7 +101,7 @@ public class YamlConfiguration {
 
     private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs) {
         Set<StringHolder> strings = new HashSet<StringHolder>(objs.keySet());
-        for (Map.Entry<StringHolder, Object> str: objs.entrySet()) {
+        for (Map.Entry<StringHolder, Object> str : objs.entrySet()) {
             if (str.getValue() instanceof Map) {
                 strings.addAll(getKeysDeep((Map<StringHolder, Object>) str.getValue()));
             }
@@ -143,7 +143,7 @@ public class YamlConfiguration {
 
     public void set(String path, Object o) {
         if (o instanceof YamlConfiguration)
-            o = new HashMap<StringHolder,Object>(((YamlConfiguration)o).contents);
+            o = new HashMap<StringHolder, Object>(((YamlConfiguration) o).contents);
         List<String> parts = CoreUtilities.split(path, '.');
         Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
@@ -183,7 +183,7 @@ public class YamlConfiguration {
                 return;
             }
             else if (oPortion instanceof Map) {
-                if (((Map<StringHolder, Object>)oPortion).size() == 0) {
+                if (((Map<StringHolder, Object>) oPortion).size() == 0) {
                     portion.remove(new StringHolder(parts.get(i)));
                     emptyEmptyMaps(parts);
                     return;

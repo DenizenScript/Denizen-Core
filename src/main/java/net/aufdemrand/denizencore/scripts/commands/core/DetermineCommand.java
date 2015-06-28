@@ -1,17 +1,17 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
+import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
+import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
+import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
-import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
-import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
-import net.aufdemrand.denizencore.objects.aH;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class DetermineCommand extends AbstractCommand {
 
@@ -78,7 +78,7 @@ public class DetermineCommand extends AbstractCommand {
      * @return the current value of the outcome
      */
     public static String readOutcome(long id) {
-        return cache.get(id).isEmpty() ? DETERMINE_NONE: cache.get(id).get(0);
+        return cache.get(id).isEmpty() ? DETERMINE_NONE : cache.get(id).get(0);
     }
 
 

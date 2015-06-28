@@ -1,12 +1,12 @@
 package net.aufdemrand.denizencore.scripts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScriptBuilder {
     /**
@@ -14,11 +14,9 @@ public class ScriptBuilder {
      * by using getObject(String key)
      *
      * @param scriptEntryList the list of ScriptEntries
-     * @param key the key (name) of the object being added
-     * @param obj the object
-     *
+     * @param key             the key (name) of the object being added
+     * @param obj             the object
      * @return the List of ScriptEntries, with the object added in each member
-     *
      */
     public static List<ScriptEntry> addObjectToEntries(List<ScriptEntry> scriptEntryList, String key, Object obj) {
         for (ScriptEntry entry : scriptEntryList) {
@@ -53,7 +51,8 @@ public class ScriptBuilder {
             if (splitEntry.length == 1) {
                 scriptEntry[0] = entry;
                 scriptEntry[1] = null;
-            } else {
+            }
+            else {
                 scriptEntry = splitEntry;
             }
 
@@ -65,7 +64,8 @@ public class ScriptBuilder {
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent);
                 newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 dB.echoError(e);
             }
         }

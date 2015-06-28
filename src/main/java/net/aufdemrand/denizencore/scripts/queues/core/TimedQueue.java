@@ -11,21 +11,21 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     /**
      * Gets a TimedQueue instance.
-     *
+     * <p/>
      * If a queue already exists with the given id, it will return that instance,
      * which may be currently running, unless the type of queue is not a TimedQueue.
      * If a queue does not exist, a new stopped queue is created instead.
-     *
+     * <p/>
      * IDs are case insensitive.  If having an easy-to-recall ID is not necessary, just
      * pass along null as the id, and it will use ScriptQueue's static method _getNextId()
      * which will return a random UUID.
-     *
+     * <p/>
      * The speed node will be automatically read from the configuration,
      * and new ScriptQueues may need further information before they
      * can start(), including entries, delays, loops, and possibly context.
      *
-     * @param id  unique id of the queue
-     * @return  a TimedQueue
+     * @param id unique id of the queue
+     * @return a TimedQueue
      */
     public static TimedQueue getQueue(String id) {
         // Get id if not specified.
@@ -117,7 +117,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     /**
      * Checks if the queue is currently paused.
      *
-     * @return  true if paused.
+     * @return true if paused.
      */
     @Override
     public boolean isPaused() {
@@ -129,7 +129,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      * Sets the speed of a queue. Uses bukkit's 'ticks', which is
      * 20 ticks per second.
      *
-     * @param ticks  the number of ticks between each rotation.
+     * @param ticks the number of ticks between each rotation.
      */
     public TimedQueue setSpeed(long ticks) {
         this.ticks = ticks;
@@ -144,7 +144,8 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         // ...and schedule the rest for later.
         RepeatingSchedulable sched = new RepeatingSchedulable(
                 new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         revolve();
                     }
                 }, (ticks == 0 ? 1 : ticks) / 20f);

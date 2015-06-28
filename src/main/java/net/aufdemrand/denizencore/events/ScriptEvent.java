@@ -52,7 +52,7 @@ public abstract class ScriptEvent {
 
     public static void reload() {
         dB.log("Reloading script events...");
-        for (ScriptContainer container: worldContainers) {
+        for (ScriptContainer container : worldContainers) {
             YamlConfiguration config = container.getConfigurationSection("events");
             if (config == null) {
                 dB.echoError("Missing or invalid events block for " + container.getName());
@@ -68,11 +68,11 @@ public abstract class ScriptEvent {
                 }
             }
         }
-        for (ScriptEvent event: events) {
+        for (ScriptEvent event : events) {
             event.destroy();
             event.eventPaths.clear();
             boolean matched = false;
-            for (ScriptContainer container: worldContainers) {
+            for (ScriptContainer container : worldContainers) {
                 YamlConfiguration config = container.getConfigurationSection("events");
                 if (config == null) {
                     dB.echoError("Missing or invalid events block for " + container.getName());
@@ -142,15 +142,15 @@ public abstract class ScriptEvent {
     // The default priority is 0.
     // -->
     public void sort() {
-        for (ScriptPath path: eventPaths) {
+        for (ScriptPath path : eventPaths) {
             String gotten = getSwitch(path.event, "priority");
-            path.priority = gotten == null ? 0: aH.getIntegerFrom(gotten);
+            path.priority = gotten == null ? 0 : aH.getIntegerFrom(gotten);
         }
         Collections.sort(eventPaths, new Comparator<ScriptPath>() {
             @Override
             public int compare(ScriptPath scriptPath, ScriptPath t1) {
                 int rel = scriptPath.priority - t1.priority;
-                return rel < 0 ? -1: (rel > 0 ? 1: 0);
+                return rel < 0 ? -1 : (rel > 0 ? 1 : 0);
             }
         });
     }
@@ -162,10 +162,10 @@ public abstract class ScriptEvent {
     }
 
     public boolean checkSwitch(String event, String switcher, String value) {
-        for (String possible: CoreUtilities.split(event, ' ')) {
+        for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);
             if (dB.verbose) dB.log("TEST: " + split.size() + ", " + split.get(0) + " && "
-                    + (split.size() > 1 ? split.get(1): "") + " comp " + switcher + ":" + value);
+                    + (split.size() > 1 ? split.get(1) : "") + " comp " + switcher + ":" + value);
             if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1 && !split.get(1).equalsIgnoreCase(value)) {
                 return false;
             }
@@ -174,7 +174,7 @@ public abstract class ScriptEvent {
     }
 
     public String getSwitch(String event, String switcher) {
-        for (String possible: CoreUtilities.split(event, ' ')) {
+        for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);
             if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1) {
                 return split.get(1);
@@ -221,9 +221,9 @@ public abstract class ScriptEvent {
 
     public void fire() {
         fires++;
-        for (ScriptPath path: eventPaths) {
+        for (ScriptPath path : eventPaths) {
             try {
-            if (matchesScript(this, path.container, path.event)) {
+                if (matchesScript(this, path.container, path.event)) {
                     run(path.container, path.event);
                 }
             }
@@ -239,7 +239,7 @@ public abstract class ScriptEvent {
         HashMap<String, dObject> context = getContext();
         dB.echoDebug(script, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + event + "<Y>'"
                 + " for script '<A>" + script.getName() + "<Y>'");
-        for (Map.Entry<String, dObject> obj: context.entrySet()) {
+        for (Map.Entry<String, dObject> obj : context.entrySet()) {
             dB.echoDebug(script, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
         }
         List<ScriptEntry> entries = script.getEntries(getScriptEntryData(), "events.on " + event);

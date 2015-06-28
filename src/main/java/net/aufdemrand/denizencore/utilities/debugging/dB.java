@@ -1,7 +1,6 @@
 package net.aufdemrand.denizencore.utilities.debugging;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 
 public class dB {
@@ -13,15 +12,14 @@ public class dB {
     public static boolean verbose = false;
 
 
-
     /**
      * Can be used with echoDebug(...) to output a header, footer,
      * or a spacer.
-     *
+     * <p/>
      * DebugElement.Header = +- string description ------+
      * DebugElement.Spacer =
      * DebugElement.Footer = +--------------+
-     *
+     * <p/>
      * Also includes color.
      */
     public static enum DebugElement {

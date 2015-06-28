@@ -1,16 +1,16 @@
 package net.aufdemrand.denizencore.objects;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ObjectFetcher {
 
@@ -100,8 +100,9 @@ public class ObjectFetcher {
             return false;
         Matcher m = PROPERTIES_PATTERN.matcher(value);
         try {
-            return (Boolean) matches.get(dClass).invoke(null, m.matches() ? m.group(1): value);
-        } catch (Exception e) {
+            return (Boolean) matches.get(dClass).invoke(null, m.matches() ? m.group(1) : value);
+        }
+        catch (Exception e) {
             dB.echoError(e);
         }
 
@@ -145,7 +146,7 @@ public class ObjectFetcher {
         try {
             List<String> matches = separateProperties(value);
             boolean matched = matches != null && Adjustable.class.isAssignableFrom(dClass);
-            T gotten = (T) valueof.get(dClass).invoke(null, matched ? matches.get(0): value, context);
+            T gotten = (T) valueof.get(dClass).invoke(null, matched ? matches.get(0) : value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {
                     List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
@@ -154,11 +155,12 @@ public class ObjectFetcher {
                         continue;
                     }
                     ((Adjustable) gotten).applyProperty(new Mechanism(new Element(data.get(0)),
-                            new Element((data.get(1)).replace((char)0x2011, ';'))));
+                            new Element((data.get(1)).replace((char) 0x2011, ';'))));
                 }
             }
             return gotten;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             dB.echoError(e);
         }
 
@@ -175,6 +177,7 @@ public class ObjectFetcher {
     public static dObject pickObjectFor(String value) {
         return pickObjectFor(value, DenizenCore.getImplementation().getEmptyScriptEntryData().getTagContext());
     }
+
     public static dObject pickObjectFor(String value, TagContext context) {
         // While many inputs are valid as various object types
         // (EG, 'bob' could be a player or NPC's name)

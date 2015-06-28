@@ -1,14 +1,13 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 
 
 /**
  * Script tag is a starting point for getting attributes from an embedded
- *
  */
 
 public class ScriptTags {
@@ -42,7 +41,9 @@ public class ScriptTags {
         Attribute attribute = event.getAttributes();
 
         // Check if location is null, return null if it is
-        if (script == null) { return; }
+        if (script == null) {
+            return;
+        }
 
         // Else, get the attribute from the script
         event.setReplaced(script.getAttribute(attribute.fulfill(1)));

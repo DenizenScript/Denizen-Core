@@ -1,11 +1,11 @@
 package net.aufdemrand.denizencore.scripts;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.containers.core.*;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
-import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
@@ -74,7 +74,8 @@ public class ScriptRegistry {
                 try {
                     scriptContainers.put(scriptName, typeClass.getConstructor(YamlConfiguration.class, String.class)
                             .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     dB.echoError(e);
                     ScriptHelper.setHadError();
                 }
@@ -92,8 +93,7 @@ public class ScriptRegistry {
      * Adds a YAML FileConfiguration to the list of scripts to be loaded. Adding a new
      * FileConfiguration will reload the scripts automatically.
      *
-     * @param yaml_script  the FileConfiguration containing the script
-     *
+     * @param yaml_script the FileConfiguration containing the script
      */
     public static void addYamlScriptContainer(YamlConfiguration yaml_script) {
         outside_scripts.add(yaml_script);
@@ -103,8 +103,7 @@ public class ScriptRegistry {
      * Removes a YAML FileConfiguration to the list of scripts to be loaded. Removing a
      * FileConfiguration will reload the scripts automatically.
      *
-     * @param yaml_script  the FileConfiguration containing the script
-     *
+     * @param yaml_script the FileConfiguration containing the script
      */
     public static void removeYamlScriptContainer(YamlConfiguration yaml_script) {
         outside_scripts.remove(yaml_script);
@@ -116,7 +115,9 @@ public class ScriptRegistry {
             if (scriptContainers.containsKey(name.toUpperCase()))
                 return type.cast(scriptContainers.get(name.toUpperCase()));
             else return null;
-        } catch (Exception e) { }
+        }
+        catch (Exception e) {
+        }
 
         return null;
     }
