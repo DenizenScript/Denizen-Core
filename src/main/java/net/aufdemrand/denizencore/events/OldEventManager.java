@@ -167,8 +167,8 @@ public class OldEventManager {
 
 
     public static String StripIdentifiers(String original) {
-        if (original.matches(".*?[a-z]{1,2}@[\\w ]+"))
-            return original.replaceAll("[a-z]{1,2}@", "");
+        if (original.matches(".*?[a-z]@[\\w ]+"))
+            return original.replaceAll("[a-z]@", "");
         else
             return original;
     }

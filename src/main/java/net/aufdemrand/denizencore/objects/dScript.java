@@ -352,16 +352,13 @@ public class dScript implements dObject {
                     if (each == null) {
                         each = "null";
                     }
-                    // TODO
-                    list.add(TagManager.tag(each.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
+                    list.add(each.toString());
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
-            // TODO
             else {
-                return new Element(TagManager.tag(obj.toString(),
-                        DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
+                return new Element(obj.toString())
                         .getAttribute(attribute.fulfill(1));
             }
         }
