@@ -137,6 +137,9 @@ public class CoreUtilities {
                 if (data2[x++] != data[i]) {
                     return false;
                 }
+                if (x + 1 == data2.length) {
+                    return x == data2.length;
+                }
             }
         }
         return x == data2.length;
