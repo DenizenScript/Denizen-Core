@@ -134,11 +134,11 @@ public class CoreUtilities {
                 arg++;
             }
             else if (arg == argc) {
-                if (data2[x++] != data[i]) {
+                if (x == data2.length) {
                     return false;
                 }
-                if (x + 1 == data2.length) {
-                    return x == data2.length;
+                if (data2[x++] != data[i]) {
+                    return false;
                 }
             }
         }
