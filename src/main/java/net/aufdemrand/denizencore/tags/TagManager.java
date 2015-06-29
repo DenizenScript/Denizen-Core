@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 public class TagManager {
 
@@ -239,6 +240,35 @@ public class TagManager {
         }
     }
 
+    public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+        Future<?> future = executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                fireEvent(event);
+            }
+        });
+
+        executor.shutdown();
+
+        try {
+            future.get(seconds, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e) {
+            dB.echoError("Tag filling was interrupted!");
+        }
+        catch (ExecutionException e) {
+            dB.echoError(e);
+        }
+        catch (TimeoutException e) {
+            future.cancel(true);
+            dB.echoError("Tag filling timed out!");
+        }
+
+        executor.shutdownNow();
+    }
+
     public static String readSingleTag(String str, TagContext context) {
         ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
         if (event.isInstant() != context.instant) {
@@ -247,7 +277,7 @@ public class TagManager {
         }
         else {
             // Call Event
-            fireEvent(event);
+            executeWithTimeLimit(event, 10); // TODO: timeout setting
             if ((!event.replaced() && event.getAlternative() != null) && event.hasAlternative())
                 event.setReplaced(event.getAlternative());
             if (context.debug)
