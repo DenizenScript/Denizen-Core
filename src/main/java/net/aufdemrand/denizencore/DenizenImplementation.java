@@ -132,4 +132,6 @@ public interface DenizenImplementation {
     public abstract String getLastEntryFromFlag(String flag);
 
     public TagContext getTagContext(ScriptEntry entry);
+
+    public int getTagTimeout();
 }
