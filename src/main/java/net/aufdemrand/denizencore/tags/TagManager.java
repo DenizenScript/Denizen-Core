@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.tags;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dObject;
@@ -277,7 +278,13 @@ public class TagManager {
         }
         else {
             // Call Event
-            executeWithTimeLimit(event, 10); // TODO: timeout setting
+            int tT = DenizenCore.getImplementation().getTagTimeout();
+            if (tT <= 0) {
+                fireEvent(event);
+            }
+            else {
+                executeWithTimeLimit(event, tT);
+            }
             if ((!event.replaced() && event.getAlternative() != null) && event.hasAlternative())
                 event.setReplaced(event.getAlternative());
             if (context.debug)
