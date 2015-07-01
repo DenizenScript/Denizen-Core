@@ -226,7 +226,7 @@ public class ScriptContainer implements Debuggable {
         if (got != null) {
             return got.Duplicate();
         }
-        List<String> stringEntries = contents.getStringList(path);
+        List<Object> stringEntries = contents.getList(path);
         if (stringEntries == null || stringEntries.size() == 0) return null;
         List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(stringEntries, this, null);
         got = new ScriptEntrySet(entries);

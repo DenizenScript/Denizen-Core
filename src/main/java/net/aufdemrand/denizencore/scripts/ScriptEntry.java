@@ -65,6 +65,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return se;
     }
 
+    private List<Object> insideList;
+
+    public List<Object> getInsideList() {
+        return insideList;
+    }
+
 
     /**
      * Get a hot, fresh, script entry, ready for execution! Just supply a valid command,
@@ -76,6 +82,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @throws ScriptEntryCreationException if 'command' is null
      */
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) throws ScriptEntryCreationException {
+        this(command, arguments, script, null);
+    }
+
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
 
         if (command == null)
             throw new ScriptEntryCreationException("dCommand 'name' cannot be null!");
@@ -83,6 +93,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
 
         this.command = command.toUpperCase();
+
+        insideList = insides;
 
         // Knowing which script created this entry provides important context. We'll store
         // a dScript object of the container if script is not null.

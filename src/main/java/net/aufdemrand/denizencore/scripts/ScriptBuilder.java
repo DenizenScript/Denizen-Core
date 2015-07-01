@@ -7,6 +7,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ScriptBuilder {
     /**
@@ -30,7 +31,7 @@ public class ScriptBuilder {
      * Builds ScriptEntry(ies) of items read from a script
      */
 
-    public static List<ScriptEntry> buildScriptEntries(List<String> contents, ScriptContainer parent, ScriptEntryData data) {
+    public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
         List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
 
         if (contents == null || contents.isEmpty()) {
@@ -42,13 +43,27 @@ public class ScriptBuilder {
         if (dB.showScriptBuilder)
             dB.echoDebug(parent, "Building script entries:");
 
-        for (String entry : contents) {
+        for (Object ientry : contents) {
+
+            String entry;
+            List<Object> inside;
+
+            if (ientry instanceof Map) {
+                Object key = ((Map) ientry).keySet().toArray()[0];
+                entry = key.toString();
+                inside = (List<Object>) ((Map) ientry).get(key);
+            }
+            else {
+                entry = ientry.toString();
+                inside = null;
+            }
 
 
-            String[] scriptEntry = new String[2];
+            String[] scriptEntry;
             String[] splitEntry = entry.split(" ", 2);
 
             if (splitEntry.length == 1) {
+                scriptEntry = new String[2];
                 scriptEntry[0] = entry;
                 scriptEntry[1] = null;
             }
@@ -61,7 +76,7 @@ public class ScriptBuilder {
                 String[] args = aH.buildArgs(scriptEntry[1]);
                 if (dB.showScriptBuilder)
                     dB.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
-                ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent);
+                ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside);
                 newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);
             }
