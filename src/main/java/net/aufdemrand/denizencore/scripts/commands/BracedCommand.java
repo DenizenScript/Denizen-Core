@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.scripts.commands;
 
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -38,6 +39,10 @@ public abstract class BracedCommand extends AbstractCommand {
      */
     public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry) {
 
+        if (scriptEntry == null) {
+            return null;
+        }
+
         boolean hyperdebug = dB.verbose;
 
         // And a place to store all the final braces...
@@ -64,6 +69,19 @@ public abstract class BracedCommand extends AbstractCommand {
             catch (CloneNotSupportedException e) {
                 dB.echoError(scriptEntry.getResidingQueue(), e);
             }
+        }
+
+        if (scriptEntry.getInsideList() != null) {
+            List<Object> contents = scriptEntry.getInsideList();
+            List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents,
+                    scriptEntry.getScript() == null ? null: scriptEntry.getScript().getContainer(), scriptEntry.entryData);
+            BracedData bd = new BracedData();
+            bd.key = "base";
+            bd.args = new ArrayList<String>();
+            bd.value = entries;
+            bracedSections.add(bd);
+            scriptEntry.setBracedSet(bracedSections);
+            return bracedSections;
         }
 
         // We need a place to store the commands being built at...

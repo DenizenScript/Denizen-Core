@@ -223,6 +223,15 @@ public class YamlConfiguration {
         return true;
     }
 
+    public List<Object> getList(String path) {
+        Object o = get(path);
+        if (o == null)
+            return null;
+        if (!(o instanceof List))
+            return null;
+        return (List<Object>) o;
+    }
+
     public List<String> getStringList(String path) {
         Object o = get(path);
         if (o == null)
