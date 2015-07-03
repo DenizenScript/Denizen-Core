@@ -1,9 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
@@ -14,6 +10,8 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
+
+import java.util.List;
 
 public class ForeachCommand extends BracedCommand {
 
@@ -142,7 +140,7 @@ public class ForeachCommand extends BracedCommand {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equalsIgnoreCase("foreach") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().size() == 0 ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
-                ForeachData data = (ForeachData)scriptEntry.getOwner().getData();
+                ForeachData data = (ForeachData) scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.list.size()) {
                     dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop " + data.index);
@@ -151,8 +149,8 @@ public class ForeachCommand extends BracedCommand {
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = null;
                     try {
-                        callbackEntry = new ScriptEntry("FOREACH", new String[] { "\0CALLBACK" },
-                                (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer(): null));
+                        callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
+                                (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                         callbackEntry.copyFrom(scriptEntry);
                     }
                     catch (ScriptEntryCreationException e) {
@@ -202,8 +200,8 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = null;
             try {
-                callbackEntry = new ScriptEntry("FOREACH", new String[] { "\0CALLBACK" },
-                        (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer(): null));
+                callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
+                        (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                 callbackEntry.copyFrom(scriptEntry);
             }
             catch (ScriptEntryCreationException e) {

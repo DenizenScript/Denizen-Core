@@ -1,15 +1,15 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -125,12 +125,15 @@ public class ProcedureScriptTags {
                 path = split[1];
                 script = dScript.valueOf(split[0]);
 
-            } else script = dScript.valueOf(event.getNameContext());
+            }
+            else script = dScript.valueOf(event.getNameContext());
 
-        } else if (event.getValue() != null) {
+        }
+        else if (event.getValue() != null) {
             script = dScript.valueOf(event.getValue());
 
-        } else {
+        }
+        else {
             dB.echoError("Invalid procedure script tag '" + event.getValue() + "'!");
             return;
         }
@@ -167,8 +170,11 @@ public class ProcedureScriptTags {
             dList definitions = new dList(event.getTypeContext());
             String[] definition_names = null;
 
-            try { definition_names = script.getContainer().getString("definitions").split("\\|");
-            } catch (Exception e) { }
+            try {
+                definition_names = script.getContainer().getString("definitions").split("\\|");
+            }
+            catch (Exception e) {
+            }
 
             for (String definition : definitions) {
                 String name = definition_names != null && definition_names.length >= x ?

@@ -1,7 +1,5 @@
 package net.aufdemrand.denizencore.scripts;
 
-import java.util.*;
-
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
@@ -15,6 +13,8 @@ import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+
+import java.util.*;
 
 
 /**
@@ -65,17 +65,27 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return se;
     }
 
+    private List<Object> insideList;
+
+    public List<Object> getInsideList() {
+        return insideList;
+    }
+
 
     /**
      * Get a hot, fresh, script entry, ready for execution! Just supply a valid command,
      * some arguments, and bonus points for a script container (can be null)!
      *
-     * @param command  the name of the command this entry will be handed to
-     * @param arguments  an array of the arguments
-     * @param script  optional ScriptContainer reference
+     * @param command   the name of the command this entry will be handed to
+     * @param arguments an array of the arguments
+     * @param script    optional ScriptContainer reference
      * @throws ScriptEntryCreationException if 'command' is null
      */
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) throws ScriptEntryCreationException {
+        this(command, arguments, script, null);
+    }
+
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
 
         if (command == null)
             throw new ScriptEntryCreationException("dCommand 'name' cannot be null!");
@@ -83,6 +93,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
 
         this.command = command.toUpperCase();
+
+        insideList = insides;
 
         // Knowing which script created this entry provides important context. We'll store
         // a dScript object of the container if script is not null.
@@ -122,7 +134,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             // This will be useful if cloning the script entry for use in a loop, etc.
             this.pre_tagged_args = Arrays.asList(arguments);
             this.modified_arguments = Arrays.asList(arguments);
-        } else {
+        }
+        else {
             this.args = new ArrayList<String>();
             this.pre_tagged_args = new ArrayList<String>();
             this.modified_arguments = new ArrayList<String>();
@@ -130,7 +143,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         // Check for replaceable tags. We'll try not to make a habit of checking for tags/doing
         // tag stuff if the script entry doesn't have any to begin with.
-        argLoop: for (String arg : args) {
+        argLoop:
+        for (String arg : args) {
             boolean left = false, right = false;
             for (int i = 0; i < arg.length(); i++) {
                 char c = arg.charAt(i);
@@ -160,8 +174,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * Technically any type of object can be stored, however providing dObjects
      * is preferred.
      *
-     * @param key  the name of the object
-     * @param object  the object, preferably a dObject
+     * @param key    the name of the object
+     * @param object the object, preferably a dObject
      */
     public ScriptEntry addObject(String key, Object object) {
         if (object == null) return this;
@@ -176,8 +190,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * If the scriptEntry lacks the object corresponding to the
      * key, set it to the first non-null argument
      *
-     * @param key  The key of the object to check
-     * @return  The scriptEntry
+     * @param key The key of the object to check
+     * @return The scriptEntry
      */
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
         if (!this.objects.containsKey(key.toLowerCase()))
@@ -208,7 +222,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * the original arguments, immune from any changes that may be made (such as tag filling)
      * by the CommandExecuter.
      *
-     * @return  unmodified arguments from entry creation
+     * @return unmodified arguments from entry creation
      */
     public List<String> getOriginalArguments() {
         return pre_tagged_args;
@@ -276,7 +290,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public Object getObject(String key) {
         try {
             return objects.get(key.toLowerCase());
-        } catch (Exception e) { return null; }
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public <T extends dObject> T getdObject(String key) {
@@ -288,13 +305,19 @@ public class ScriptEntry implements Cloneable, Debuggable {
             // Otherwise, just return the stored dObject
             return (T) gotten;
             // If not a dObject, return null
-        } catch (Exception e) { return null; }
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public Element getElement(String key) {
         try {
             return (Element) objects.get(key.toLowerCase());
-        } catch (Exception e) { return null; }
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -361,6 +384,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // previous versions of Denizen.
     // TODO: Get rid of this
     public List<String> tracked_objects = new ArrayList<String>();
+
     public ScriptEntry trackObject(String key) {
         tracked_objects.add(key.toLowerCase());
         return this;
@@ -386,7 +410,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (String str: getOriginalArguments()) {
+        for (String str : getOriginalArguments()) {
             sb.append(" \"" + str + "\"");
         }
         return command + sb.toString();

@@ -13,17 +13,16 @@ import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
-import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-import java.lang.Object;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class dList extends ArrayList<String> implements dObject {
 
-    public final static char internal_escape_char = (char)0x05;
+    public final static char internal_escape_char = (char) 0x05;
     public final static String internal_escape = String.valueOf(internal_escape_char);
 
     public static dList valueOf(String string) {
@@ -67,7 +66,8 @@ public class dList extends ArrayList<String> implements dObject {
     }
 
     // Empty dList
-    public dList() { }
+    public dList() {
+    }
 
     // A string of items, split by '|'
     public dList(String items) {
@@ -186,10 +186,10 @@ public class dList extends ArrayList<String> implements dObject {
 
 
     /**
-     *  Return a new list that includes only strings that match the values of an Enum array
+     * Return a new list that includes only strings that match the values of an Enum array
      *
-     * @param values  the Enum's value
-     * @return  a filtered list
+     * @param values the Enum's value
+     * @return a filtered list
      */
     public List<String> filter(Enum[] values) {
         List<String> list = new ArrayList<String>();
@@ -221,7 +221,7 @@ public class dList extends ArrayList<String> implements dObject {
                 if (ObjectFetcher.checkMatch(dClass, element)) {
 
                     T object = ObjectFetcher.getObjectFrom(dClass, element,
-                            (entry == null ? DenizenCore.getImplementation().getTagContext(null):
+                            (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
                                     entry.entryData.getTagContext()));
 
                     // Only add the object if it is not null, thus filtering useless
@@ -231,7 +231,8 @@ public class dList extends ArrayList<String> implements dObject {
                         results.add(object);
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 dB.echoError(e);
             }
         }
@@ -589,7 +590,7 @@ public class dList extends ArrayList<String> implements dObject {
             dList list = new dList(this);
             // Iterate through
             for (String exclusion : exclusions) {
-                for (int i = 0;i < list.size();i++) {
+                for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(exclusion)) {
                         list.remove(i--);
                     }
@@ -611,7 +612,7 @@ public class dList extends ArrayList<String> implements dObject {
                 attribute.hasContext(1)) {
             dList indices = dList.valueOf(attribute.getContext(1));
             dList list = new dList(this);
-            for (String index: indices) {
+            for (String index : indices) {
                 int remove = new Element(index).asInt() - 1;
                 if (remove >= 0 && remove < list.size()) {
                     list.set(remove, "\0");
@@ -679,7 +680,7 @@ public class dList extends ArrayList<String> implements dObject {
             dList indices = dList.valueOf(attribute.getContext(1));
             if (indices.size() > 1) {
                 dList results = new dList();
-                for (String index: indices) {
+                for (String index : indices) {
                     int ind = aH.getIntegerFrom(index);
                     if (ind > 0 && ind <= size())
                         results.add(get(ind - 1));
@@ -706,7 +707,7 @@ public class dList extends ArrayList<String> implements dObject {
                     if (index2 < 1) index2 = 1;
                     String item = "";
                     for (int i = index; i <= index2; i++) {
-                        item += get(i - 1) + (i < index2 ? "|": "");
+                        item += get(i - 1) + (i < index2 ? "|" : "");
                     }
                     return new dList(item).getAttribute(attribute.fulfill(1));
                 }
@@ -961,7 +962,10 @@ public class dList extends ArrayList<String> implements dObject {
                         definitions.add(o2);
                         definitions.addAll(context_send);
                         String[] definition_names = null;
-                        try { definition_names = script.getString("definitions").split("\\|"); } catch (Exception e) { /* IGNORE */ }
+                        try {
+                            definition_names = script.getString("definitions").split("\\|");
+                        }
+                        catch (Exception e) { /* IGNORE */ }
                         for (String definition : definitions) {
                             String name = definition_names != null && definition_names.length >= x ?
                                     definition_names[x - 1].trim() : String.valueOf(x);
@@ -999,7 +1003,7 @@ public class dList extends ArrayList<String> implements dObject {
                 && attribute.hasContext(1)) {
             dList newlist = new dList();
             try {
-                for (String str: this) {
+                for (String str : this) {
                     if (str == null) {
                         dB.echoError("Null string in dList! (From .filter tag)");
                     }
@@ -1027,7 +1031,7 @@ public class dList extends ArrayList<String> implements dObject {
                 && attribute.hasContext(1)) {
             dList newlist = new dList();
             try {
-                for (String str: this) {
+                for (String str : this) {
                     newlist.add(ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
                             attribute.getScriptEntry())));
                 }
@@ -1048,7 +1052,7 @@ public class dList extends ArrayList<String> implements dObject {
         // -->
         if (attribute.startsWith("escape_contents")) {
             dList escaped = new dList();
-            for (String entry: this) {
+            for (String entry : this) {
                 escaped.add(EscapeTags.Escape(entry));
             }
             return escaped.getAttribute(attribute.fulfill(1));
@@ -1064,7 +1068,7 @@ public class dList extends ArrayList<String> implements dObject {
         // -->
         if (attribute.startsWith("unescape_contents")) {
             dList escaped = new dList();
-            for (String entry: this) {
+            for (String entry : this) {
                 escaped.add(EscapeTags.unEscape(entry));
             }
             return escaped.getAttribute(attribute.fulfill(1));
@@ -1083,7 +1087,7 @@ public class dList extends ArrayList<String> implements dObject {
 
                 full_set:
                 for (String element : this) {
-                    for (String sub_element: list) {
+                    for (String sub_element : list) {
                         if (element.equals(sub_element)) {
                             state = true;
                             break full_set;
@@ -1108,7 +1112,7 @@ public class dList extends ArrayList<String> implements dObject {
 
                 full_set:
                 for (String element : this) {
-                    for (String sub_element: list) {
+                    for (String sub_element : list) {
                         if (element.equalsIgnoreCase(sub_element)) {
                             state = true;
                             break full_set;
@@ -1152,7 +1156,7 @@ public class dList extends ArrayList<String> implements dObject {
             dList needed = dList.valueOf(attribute.getContext(1));
             int gotten = 0;
 
-            for (String check: needed) {
+            for (String check : needed) {
                 for (String element : this) {
                     if (element.equalsIgnoreCase(check)) {
                         gotten++;

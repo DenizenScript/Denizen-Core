@@ -6,7 +6,10 @@ import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
-* Reloads and retrieves information from the scripts folder.
-*/
+ * Reloads and retrieves information from the scripts folder.
+ */
 public class ScriptHelper {
     public static YamlConfiguration _yamlScripts = null;
 
@@ -63,7 +66,7 @@ public class ScriptHelper {
     }
 
     static void handleListing(YamlConfiguration config, List<String> list) {
-        for (StringHolder str: config.getKeys(false)) {
+        for (StringHolder str : config.getKeys(false)) {
             String up = str.str.toUpperCase();
             if (list.contains(up)) {
                 hadError = true;
@@ -102,7 +105,7 @@ public class ScriptHelper {
             if (!line.startsWith("#")) {
                 if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":")) {
                     result.append(' ').append(lines[i].replace('\0', ' ')
-                    .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
+                            .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
                 }
                 else {
                     String liner = lines[i].replace('\0', ' ');
@@ -120,6 +123,7 @@ public class ScriptHelper {
         result.append("\n");
         return result.toString();
     }
+
     public static String convertStreamToString(InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
@@ -143,7 +147,7 @@ public class ScriptHelper {
             file = DenizenCore.getImplementation().getScriptFolder();
 
             // Check if the directory exists
-            if(!file.exists()) {
+            if (!file.exists()) {
                 dB.echoError("No script folder found, please create one.");
                 hadError = true;
                 return "";
@@ -187,7 +191,8 @@ public class ScriptHelper {
                             hadError = true;
                         }
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         dB.echoError("Woah! Error parsing " + fileName + "!");
                         hadError = true;
                         dB.echoError(e);
@@ -196,12 +201,14 @@ public class ScriptHelper {
 
                 dB.echoApproval("All scripts loaded!");
                 return yamlKeysToUpperCase(sb.toString());
-            } else {
+            }
+            else {
                 dB.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
                 hadError = true;
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             dB.echoError("Woah! No script folder found in /plugins/Denizen/scripts/");
             hadError = true;
             dB.echoError(e);

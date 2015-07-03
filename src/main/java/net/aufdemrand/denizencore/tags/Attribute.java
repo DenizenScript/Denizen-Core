@@ -170,7 +170,9 @@ public class Attribute {
         try {
             if (hasContext(attribute))
                 return Integer.valueOf(getContext(attribute));
-        } catch (Exception e) { }
+        }
+        catch (Exception e) {
+        }
 
         return 0;
     }
@@ -179,7 +181,9 @@ public class Attribute {
         try {
             if (hasContext(attribute))
                 return Double.valueOf(getContext(attribute));
-        } catch (Exception e) { }
+        }
+        catch (Exception e) {
+        }
         return 0;
     }
 

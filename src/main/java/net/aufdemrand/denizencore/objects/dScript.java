@@ -1,7 +1,5 @@
 package net.aufdemrand.denizencore.objects;
 
-import java.util.List;
-
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
@@ -10,9 +8,11 @@ import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class dScript implements dObject {
 
@@ -72,8 +72,8 @@ public class dScript implements dObject {
     /**
      * Gets a dContainer Object from a dScript argument.
      *
-     * @param string  the dScript argument String
-     * @return  a Script, or null if incorrectly formatted
+     * @param string the dScript argument String
+     * @return a Script, or null if incorrectly formatted
      */
     @Fetchable("s")
     public static dScript valueOf(String string, TagContext context) {
@@ -139,7 +139,7 @@ public class dScript implements dObject {
     /**
      * Confirms that the script references a valid name and type in current loaded ScriptsContainers.
      *
-     * @return  true if the script is valid, false if the script was not found, or the type is missing
+     * @return true if the script is valid, false if the script was not found, or the type is missing
      */
     public boolean isValid() {
         return valid;
@@ -148,7 +148,7 @@ public class dScript implements dObject {
     /**
      * Gets the type of the ScriptContainer, as defined by the TYPE: key.
      *
-     * @return  the type of the Script Container
+     * @return the type of the Script Container
      */
     public String getType() {
         return (container != null ? container.getContainerType() : "invalid");
@@ -160,7 +160,7 @@ public class dScript implements dObject {
     /**
      * Gets the name of the ScriptContainer.
      *
-     * @return  script name
+     * @return script name
      */
     public String getName() {
         return name;
@@ -170,7 +170,7 @@ public class dScript implements dObject {
     /**
      * Gets the contents of the scriptContainer.
      *
-     * @return  ConfigurationSection of the script contents
+     * @return ConfigurationSection of the script contents
      */
     public ScriptContainer getContainer() {
         return container;
@@ -352,16 +352,13 @@ public class dScript implements dObject {
                     if (each == null) {
                         each = "null";
                     }
-                    // TODO
-                    list.add(TagManager.tag(each.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
+                    list.add(each.toString());
                 }
                 return list.getAttribute(attribute.fulfill(1));
 
             }
-            // TODO
             else {
-                return new Element(TagManager.tag(obj.toString(),
-                        DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
+                return new Element(obj.toString())
                         .getAttribute(attribute.fulfill(1));
             }
         }
@@ -374,7 +371,7 @@ public class dScript implements dObject {
         // -->
         if (attribute.startsWith("list_keys")) {
             return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ?
-                    attribute.getContext(1): "").getKeys(false))
+                    attribute.getContext(1) : "").getKeys(false))
                     .getAttribute(attribute.fulfill(1));
         }
 
@@ -386,7 +383,7 @@ public class dScript implements dObject {
         // -->
         if (attribute.startsWith("list_deep_keys")) {
             return new dList(getContainer().getConfigurationSection(attribute.hasContext(1) ?
-                    attribute.getContext(1): "").getKeys(true))
+                    attribute.getContext(1) : "").getKeys(true))
                     .getAttribute(attribute.fulfill(1));
         }
 

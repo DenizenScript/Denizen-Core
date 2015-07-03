@@ -1,19 +1,17 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
-
-import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 
 /**
  * The dScript Argument Helper will aid you in parsing and formatting arguments from a
  * dScript argument string (such as those found in a ScriptEntry.getArguments() method).
- *
  */
 public class aH {
 
@@ -22,7 +20,7 @@ public class aH {
     // Patterns and Enumerations
     /////////////////
 
-    public enum PrimitiveType { Float, Double, Integer, Boolean, String, Word, Percentage }
+    public enum PrimitiveType {Float, Double, Integer, Boolean, String, Word, Percentage}
 
     final static Pattern floatPrimitive =
             Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
@@ -86,7 +84,7 @@ public class aH {
             int first_colon = string.indexOf(':');
             int first_space = string.indexOf(' ');
 
-            if ((first_space > -1 && first_space < first_colon) || first_colon == -1)  {
+            if ((first_space > -1 && first_space < first_colon) || first_colon == -1) {
                 value = string;
                 lower_value = CoreUtilities.toLowerCase(string);
             }
@@ -292,8 +290,8 @@ public class aH {
      * Turns a list of string arguments (separated by buildArgs) into Argument
      * Objects for easy matching and dObject creation throughout Denizen.
      *
-     * @param args  a list of string arguments
-     * @return  a list of Arguments
+     * @param args a list of string arguments
+     * @return a list of Arguments
      */
     public static List<Argument> interpret(List<String> args) {
         List<Argument> arg_list = new ArrayList<Argument>();
@@ -310,9 +308,8 @@ public class aH {
      * Builds an arguments array, recognizing items in quotes as a single item, but
      * otherwise splitting on a space.
      *
-     * @param stringArgs  the line of arguments that need split
-     * @return  an array of arguments
-     *
+     * @param stringArgs the line of arguments that need split
+     * @return an array of arguments
      */
     public static String[] buildArgs(String stringArgs) {
         if (stringArgs == null) return null;
@@ -321,9 +318,11 @@ public class aH {
         while (regexMatcher.find()) {
             if (regexMatcher.group(1) != null) {
                 matchList.add(regexMatcher.group(1));
-            } else if (regexMatcher.group(2) != null) {
+            }
+            else if (regexMatcher.group(2) != null) {
                 matchList.add(regexMatcher.group(2));
-            } else {
+            }
+            else {
                 matchList.add(regexMatcher.group());
             }
         }
@@ -338,10 +337,9 @@ public class aH {
      * To be used with the dBuggers' .report to provide debug output for
      * objects that don't extend dObject.
      *
-     * @param prefix  name/type/simple description of the object being reported
+     * @param prefix name/type/simple description of the object being reported
      * @param value  object being reported will report the value of toString()
-     *
-     * @return  color coded debug report
+     * @return color coded debug report
      */
     public static String debugObj(String prefix, Object value) {
         return "<G>" + prefix + "='<Y>" + (value != null ? value.toString() : "null") + "<G>'  ";
@@ -351,7 +349,7 @@ public class aH {
         if (objects == null)
             return debugObj(prefix, null);
         StringBuilder sb = new StringBuilder();
-        for (dObject obj: objects) {
+        for (dObject obj : objects) {
             String output = obj.debug();
             sb.append(output.substring((obj.getPrefix() + "='<A>").length(), output.length() - 6)).append(", ");
         }
@@ -366,11 +364,10 @@ public class aH {
      * objects that may have some kind of id or type also associated with
      * the object.
      *
-     * @param prefix  name/type/simple description of the object being reported
-     * @param id  additional id/type of the object
+     * @param prefix name/type/simple description of the object being reported
+     * @param id     additional id/type of the object
      * @param value  object being reported will report the value of toString()
-     *
-     * @return  color coded debug report
+     * @return color coded debug report
      */
     public static String debugUniqueObj(String prefix, String id, Object value) {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
@@ -388,7 +385,7 @@ public class aH {
      * If a dScript valued argument (such as TARGET:NAME) is passed, this method
      * will always return false. Also supports multiple argument names, separated by a
      * comma (,) character. This method will trim() each name specified.</p>
-     *
+     * <p/>
      * <b>Example use of '<tt>aH.matchesArg("NOW, LATER", arg)</tt>':</b>
      * <ol>
      * <tt>arg = "NOW"</tt> will return true.<br>
@@ -397,16 +394,16 @@ public class aH {
      * <tt>arg = "LATER"</tt> will return true.
      * </ol>
      *
-     * @param names the valid argument names to match
+     * @param names      the valid argument names to match
      * @param string_arg the dScript argument string
      * @return true if matched, false if not
-     *
      */
     public static boolean matchesArg(String names, String string_arg) {
         String[] parts = names.split(",");
         if (parts.length == 1) {
             if (string_arg.toUpperCase().equals(names.toUpperCase())) return true;
-        } else {
+        }
+        else {
             for (String string : parts)
                 if (string_arg.split(":")[0].equalsIgnoreCase(string.trim())) return true;
         }
@@ -421,7 +418,7 @@ public class aH {
      * however, this method provides some support. After all, while using standard
      * arguments is nice, you should never reach. Arguments should make as much
      * sense to the user/script writer as possible.</p>
-     *
+     * <p/>
      * <b>Small code example:</b>
      * <ol>
      * <tt>0 if (aH.matchesValueArg("HARDNESS", arg, ArgumentType.Word))</tt><br>
@@ -431,16 +428,16 @@ public class aH {
      * <tt>4        dB.echoError("Invalid HARDNESS!") </tt><br>
      * <tt>5 }</tt><br>
      * </ol>
-     *
+     * <p/>
      * <p>Note: Like {@link #matchesArg(String, String)}, matchesValueArg(String)
      * supports multiple argument names, separated by a comma (,) character. This method
      * will trim() each name specified.</p>
-     *
+     * <p/>
      * <p>Also requires a specified ArgumentType, which will filter the type of value
      * to match to. If anything should be excepted as the value, or you plan
      * on parsing the value yourself, use ArgumentType.Custom, otherwise use an
      * an appropriate ArgumentType. See: {@link ArgumentType}.</p>
-     *
+     * <p/>
      * <b>Example use of '<tt>aH.matchesValueArg("TIME", arg, ArgumentType.Integer)</tt>':</b>
      * <ol>
      * <tt>arg = "TIME:60"</tt> will return true.<br>
@@ -449,11 +446,10 @@ public class aH {
      * <tt>arg = "TIME:0"</tt> will return true.
      * </ol>
      *
-     * @param names the desired name variations of the argument
+     * @param names      the desired name variations of the argument
      * @param string_arg the dScript argument string
-     * @param type a valid ArgumentType, used for matching values
+     * @param type       a valid ArgumentType, used for matching values
      * @return true if matched, false otherwise
-     *
      */
     @Deprecated
     public static boolean matchesValueArg(String names, String string_arg, ArgumentType type) {
@@ -465,14 +461,14 @@ public class aH {
         String[] commaParts = names.split(",");
 
         if (commaParts.length == 1) {
-            if (!string_arg.substring(0,firstColonIndex).equalsIgnoreCase(names))
+            if (!string_arg.substring(0, firstColonIndex).equalsIgnoreCase(names))
                 return false;
         }
 
         else {
             boolean matched = false;
             for (String string : commaParts)
-                if (string_arg.substring(0,firstColonIndex).equalsIgnoreCase(string.trim()))
+                if (string_arg.substring(0, firstColonIndex).equalsIgnoreCase(string.trim()))
                     matched = true;
             if (!matched) return false;
         }
@@ -500,18 +496,18 @@ public class aH {
                 return true;
 
             /** TODO: MOVE OUT OF CORE:
-            case Location:
-                return dLocation.matches(string_arg);
+             case Location:
+             return dLocation.matches(string_arg);
 
-            case Item:
-                return dItem.matches(string_arg);
+             case Item:
+             return dItem.matches(string_arg);
 
-            case LivingEntity:
-                return dEntity.matches(string_arg);
+             case LivingEntity:
+             return dEntity.matches(string_arg);
 
-            case Duration:
-                return Duration.matches(string_arg);
-*/
+             case Duration:
+             return Duration.matches(string_arg);
+             */
             case String:
                 return true;
 
@@ -537,7 +533,8 @@ public class aH {
     public static double getDoubleFrom(String arg) {
         try {
             return Double.valueOf(getStringFrom(arg));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return 0D;
         }
     }
@@ -545,7 +542,8 @@ public class aH {
     public static float getFloatFrom(String arg) {
         try {
             return Float.valueOf(getStringFrom(arg));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return 0f;
         }
     }
@@ -553,7 +551,8 @@ public class aH {
     public static int getIntegerFrom(String arg) {
         try {
             return Integer.valueOf(getStringFrom(arg));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return 0;
         }
     }
@@ -566,7 +565,8 @@ public class aH {
     public static long getLongFrom(String arg) {
         try {
             return Long.valueOf(getStringFrom(arg));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return 0;
         }
     }
@@ -579,7 +579,7 @@ public class aH {
 
     public static String getStringFrom(String arg) {
         String[] parts = arg.split(":", 2);
-        return parts.length >=2 ? parts[1] : arg;
+        return parts.length >= 2 ? parts[1] : arg;
     }
 
     @Deprecated

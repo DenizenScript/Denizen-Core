@@ -10,7 +10,8 @@ import net.aufdemrand.denizencore.scripts.commands.CommandExecuter;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IfCommand extends BracedCommand {
 
@@ -54,14 +55,18 @@ public class IfCommand extends BracedCommand {
             if (!has_brace && !in_elsecommand && DenizenCore.getCommandRegistry().get(arg.toUpperCase()) != null) {
                 in_subcommand = true;
                 subcommand.add(arg);
-            } else if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
+            }
+            else if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
                 in_elsecommand = true;
                 in_subcommand = false;
-            } else if (!has_brace && in_subcommand) {
+            }
+            else if (!has_brace && in_subcommand) {
                 subcommand.add(arg);
-            } else if (!has_brace && in_elsecommand) {
+            }
+            else if (!has_brace && in_elsecommand) {
                 elsecommand.add(arg);
-            } else {
+            }
+            else {
                 comparisons.add(arg);
             }
         }
@@ -149,7 +154,8 @@ public class IfCommand extends BracedCommand {
             entry.setInstant(true);
             entry.addObject("reqId", scriptEntry.getObject("reqId"));
             scriptEntry.getResidingQueue().injectEntry(entry, 0);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             dB.echoError(e);
         }
     }
@@ -209,7 +215,7 @@ public class IfCommand extends BracedCommand {
                                 for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
                                 }
-                                args.add(i, cfound ? "true": "false");
+                                args.add(i, cfound ? "true" : "false");
                                 found = true;
                             }
                             else {
@@ -238,8 +244,7 @@ public class IfCommand extends BracedCommand {
                 String arg = args.get(i);
                 if (arg.equalsIgnoreCase("||")) {
                     List<String> beforeargs = new ArrayList<String>(i);
-                    for (int x = 0; x < i; x++)
-                    {
+                    for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
@@ -248,8 +253,7 @@ public class IfCommand extends BracedCommand {
                         return true;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
-                    for (int x = i + 1; x < args.size(); x++)
-                    {
+                    for (int x = i + 1; x < args.size(); x++) {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
@@ -258,8 +262,7 @@ public class IfCommand extends BracedCommand {
                 }
                 else if (arg.equalsIgnoreCase("&&")) {
                     List<String> beforeargs = new ArrayList<String>(i);
-                    for (int x = 0; x < i; x++)
-                    {
+                    for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
@@ -268,8 +271,7 @@ public class IfCommand extends BracedCommand {
                         return false;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
-                    for (int x = i + 1; x < args.size(); x++)
-                    {
+                    for (int x = i + 1; x < args.size(); x++) {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
@@ -277,8 +279,7 @@ public class IfCommand extends BracedCommand {
                     return comp;
                 }
             }
-            if (args.size() == 1)
-            {
+            if (args.size() == 1) {
                 String arg = args.get(0);
                 boolean negative = false;
                 if (arg.startsWith("!")) {
@@ -291,8 +292,7 @@ public class IfCommand extends BracedCommand {
                 }
                 return arg.equalsIgnoreCase("true");
             }
-            if (args.size() == 2)
-            {
+            if (args.size() == 2) {
                 if (dB.verbose) dB.log("Returning false because two args only");
                 return false;
             }

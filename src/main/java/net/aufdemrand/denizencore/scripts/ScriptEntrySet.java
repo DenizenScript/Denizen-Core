@@ -16,7 +16,7 @@ public class ScriptEntrySet {
         int count = entries.size();
         List<ScriptEntry> newEntries = new ArrayList<ScriptEntry>(count);
         try {
-            for (ScriptEntry entry: entries) {
+            for (ScriptEntry entry : entries) {
                 newEntries.add(entry.clone());
             }
         }

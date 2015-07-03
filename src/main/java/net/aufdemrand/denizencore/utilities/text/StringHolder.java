@@ -21,7 +21,7 @@ public class StringHolder {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof String) {
-            return low.equalsIgnoreCase((String) obj);
+            return low.equals(CoreUtilities.toLowerCase((String)obj));
         }
         else if (obj instanceof StringHolder) {
             return low.equals(((StringHolder) obj).low);
