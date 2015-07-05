@@ -18,7 +18,7 @@ public class ScriptEngine {
 
 
     boolean shouldHold(ScriptQueue scriptQueue) {
-        if (scriptQueue instanceof Delayable && ((Delayable)scriptQueue).isPaused())
+        if (scriptQueue instanceof Delayable && ((Delayable) scriptQueue).isPaused())
             return true;
         if (scriptQueue.getLastEntryExecuted() != null
                 && scriptQueue.getLastEntryExecuted().shouldWaitFor()) {
@@ -33,6 +33,7 @@ public class ScriptEngine {
         }
         return false;
     }
+
     public void revolve(ScriptQueue scriptQueue) {
         // Check last ScriptEntry to see if it should be waited for
         if (shouldHold(scriptQueue))
@@ -84,8 +85,7 @@ public class ScriptEngine {
     /**
      * Gets the currently loaded instance of the Command Executer
      *
-     * @return  CommandExecuter
-     *
+     * @return CommandExecuter
      */
     public CommandExecuter getScriptExecuter() {
         return commandExecuter;

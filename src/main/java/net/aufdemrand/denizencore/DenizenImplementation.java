@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore;
 
-import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -133,4 +132,6 @@ public interface DenizenImplementation {
     public abstract String getLastEntryFromFlag(String flag);
 
     public TagContext getTagContext(ScriptEntry entry);
+
+    public int getTagTimeout();
 }

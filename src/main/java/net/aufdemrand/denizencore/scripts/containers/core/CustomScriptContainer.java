@@ -3,7 +3,6 @@ package net.aufdemrand.denizencore.scripts.containers.core;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.CustomObject;
 import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
@@ -18,7 +17,6 @@ import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CustomScriptContainer extends ScriptContainer {
 
@@ -29,7 +27,7 @@ public class CustomScriptContainer extends ScriptContainer {
         if (inherit != null) {
             ScriptContainer sc = ScriptRegistry.getScriptContainer(inherit);
             if (sc != null && sc instanceof CustomScriptContainer) {
-                vars = ((CustomScriptContainer)sc).getVars();
+                vars = ((CustomScriptContainer) sc).getVars();
             }
             else {
                 vars = new HashMap<String, String>();
@@ -38,7 +36,7 @@ public class CustomScriptContainer extends ScriptContainer {
         else {
             vars = new HashMap<String, String>();
         }
-        for (String str: defaultVars.keySet()) {
+        for (String str : defaultVars.keySet()) {
             vars.remove(str);
             vars.put(str, defaultVars.get(str));
         }
@@ -50,7 +48,7 @@ public class CustomScriptContainer extends ScriptContainer {
     public CustomScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
 
-        for (StringHolder str: getConfigurationSection("").getKeys(false)) {
+        for (StringHolder str : getConfigurationSection("").getKeys(false)) {
             if (str.low.equals("inherit")) {
                 inherit = getString(str.str);
             }

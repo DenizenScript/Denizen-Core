@@ -1,13 +1,12 @@
 package net.aufdemrand.denizencore.scripts.containers.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
-import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
-import net.aufdemrand.denizencore.objects.Duration;
-
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
@@ -31,7 +30,8 @@ public class TaskScriptContainer extends ScriptContainer {
             else
                 speed = Duration.valueOf(getString("SPEED", "0t"));
 
-        } else
+        }
+        else
             speed = new Duration(Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()).getSeconds());
 
         return speed;

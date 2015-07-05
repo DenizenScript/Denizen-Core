@@ -305,7 +305,8 @@ public abstract class CommandRegistry implements dRegistry {
 
             try {
                 cmd.newInstance().activate().as(name).withOptions(hint, args);
-            } catch(Throwable e) {
+            }
+            catch (Throwable e) {
                 dB.echoError("Could not register command " + name + ": " + e.getMessage());
                 dB.echoError(e);
             }
@@ -317,7 +318,8 @@ public abstract class CommandRegistry implements dRegistry {
         for (RegistrationableInstance member : instances.values())
             try {
                 member.onDisable();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 dB.echoError("Unable to disable '" + member.getClass().getName() + "'!");
                 dB.echoError(e);
             }

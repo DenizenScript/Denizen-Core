@@ -1,12 +1,6 @@
 package net.aufdemrand.denizencore.scripts.queues;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.objects.properties.Property;
@@ -15,13 +9,15 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.QueueWordList;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ScriptQueues hold/control ScriptEntries while being sent
@@ -42,17 +38,17 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      */
     public static String _getStats() {
         StringBuilder stats = new StringBuilder();
-        for (ScriptEvent event: ScriptEvent.events) {
+        for (ScriptEvent event : ScriptEvent.events) {
             stats.append("Event '" + event.getName() + "' ran "
                     + event.fires + " times (" + event.scriptFires + " script fires)"
-                    + ", totalling " + ((float)event.nanoTimes / 1000000f) + "ms, averaging "
-                    + ((float)event.nanoTimes / 1000000f / (float)event.fires) + "ms per event or " +
-                    + ((float)event.nanoTimes / 1000000f / (float)event.scriptFires) + "ms per script.\n");
+                    + ", totalling " + ((float) event.nanoTimes / 1000000f) + "ms, averaging "
+                    + ((float) event.nanoTimes / 1000000f / (float) event.fires) + "ms per event or " +
+                    +((float) event.nanoTimes / 1000000f / (float) event.scriptFires) + "ms per script.\n");
         }
         return "Total number of queues created: "
                 + total_queues
                 + ", currently active queues: "
-                + _queues.size() +  ",\n" + stats.toString();
+                + _queues.size() + ",\n" + stats.toString();
     }
 
 
@@ -60,8 +56,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * Gets an existing queue. Cast to the correct QueueType to
      * access further methods.
      *
-     * @param id  the id of the queue
-     * @return    a ScriptQueue instance, or null
+     * @param id the id of the queue
+     * @return a ScriptQueue instance, or null
      */
     public static ScriptQueue _getExistingQueue(String id) {
         if (!_queueExists(id)) return null;
@@ -102,10 +98,10 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Checks the type of an existing queue with the type given.
      *
-     * @param queue  id of the queue
-     * @param type   class of the queue type
-     * @return       true if they match, false if the queue
-     *               doesn't exist or does not match
+     * @param queue id of the queue
+     * @param type  class of the queue type
+     * @return true if they match, false if the queue
+     * doesn't exist or does not match
      */
     public static boolean _matchesType(String queue, Class type) {
         return (_queueExists(queue)) && _queues.get(queue).getClass() == type;
@@ -130,8 +126,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Checks if a queue exists with the given id.
      *
-     * @param id  the String ID of the queue to check.
-     * @return  true if it exists.
+     * @param id the String ID of the queue to check.
+     * @return true if it exists.
      */
     public static boolean _queueExists(String id) {
         return _queues.containsKey(id);
@@ -203,7 +199,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * the API should instead use the static members
      * of classes that extend ScriptQueue.
      *
-     * @param id  the name of the ScriptQueue
+     * @param id the name of the ScriptQueue
      */
     protected ScriptQueue(String id) {
         // Remember the 'id'
@@ -232,7 +228,6 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * Gets a held script entry. Held script entries might
      * contains some script entry context that might need
      * to be fetched!
-     *
      */
     public ScriptEntry getHeldScriptEntry(String id) {
         return held_entries.get(id.toLowerCase());
@@ -245,7 +240,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      *
      * @param id    intended name of the entry
      * @param entry the ScriptEntry instance
-     * @return      the ScriptQueue, just in case you need to do more with it
+     * @return the ScriptQueue, just in case you need to do more with it
      */
 
     public ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
@@ -261,8 +256,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * use the <c.context_name> or <context.context_name> tags
      * to fetch this data.
      *
-     * @param id  The name of the definitions
-     * @return  The value of the definitions, or null
+     * @param id The name of the definitions
+     * @return The value of the definitions, or null
      */
     public dObject getContext(String id) {
         return context.get(id.toLowerCase());
@@ -272,8 +267,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Checks for a piece of context.
      *
-     * @param id  The name of the context
-     * @return  true if the context exists.
+     * @param id The name of the context
+     * @return true if the context exists.
      */
     public boolean hasContext(String id) {
         return context.containsKey(id.toLowerCase());
@@ -285,8 +280,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * done within events or actions, or wherever script creation has
      * some information to pass along, other than a player and npc.
      *
-     * @param id  the name of the context
-     * @param value  the value of the context
+     * @param id    the name of the context
+     * @param value the value of the context
      */
     public void addContext(String id, dObject value) {
         if (value != null && id != null)
@@ -298,7 +293,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * Returns a Map of all the current context
      * stored in the queue, keyed by 'id'
      *
-     * @return  all current context, empty if none.
+     * @return all current context, empty if none.
      */
     public Map<String, dObject> getAllContext() {
         return context;
@@ -324,8 +319,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * by using the %definition_name% format, similar
      * to 'replaceable tags'
      *
-     * @param definition  The name of the definitions
-     * @return  The value of the definitions, or null
+     * @param definition The name of the definitions
+     * @return The value of the definitions, or null
      */
     public String getDefinition(String definition) {
         if (definition == null)
@@ -337,8 +332,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Checks for a piece of definitions.
      *
-     * @param definition  The name of the definitions
-     * @return  true if the definition exists.
+     * @param definition The name of the definitions
+     * @return true if the definition exists.
      */
     public boolean hasDefinition(String definition) {
         return definitions.containsKey(definition.toLowerCase());
@@ -350,8 +345,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * can be done with dScript as well by using the
      * 'define' command.
      *
-     * @param definition  the name of the definitions
-     * @param value  the value of the definition
+     * @param definition the name of the definitions
+     * @param value      the value of the definition
      */
     public void addDefinition(String definition, String value) {
         definitions.put(definition.toLowerCase(), value);
@@ -364,7 +359,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * 'define' command, with :! as the value using the definition
      * name as a prefix.
      *
-     * @param definition  the name of the definitions
+     * @param definition the name of the definitions
      */
     public void removeDefinition(String definition) {
         definitions.remove(definition.toLowerCase());
@@ -374,7 +369,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * Returns a Map of all the current definitions
      * stored in the queue, keyed by 'definition id'
      *
-     * @return  all current definitions, empty if none.
+     * @return all current definitions, empty if none.
      */
     public Map<String, String> getAllDefinitions() {
         return definitions;
@@ -395,7 +390,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     /**
      * Clears the script queue.
-     *
+     * <p/>
      * Use the 'queue clear' command in dScript to
      * access this method.
      */
@@ -410,8 +405,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * System.currentTimeMillis() is less than the
      * delayTime.
      *
-     * @param delayTime  the time to start the queue, in
-     *                   System.currentTimeMillis() format.
+     * @param delayTime the time to start the queue, in
+     *                  System.currentTimeMillis() format.
      */
     public void delayUntil(long delayTime) {
         this.delay_time = delayTime;
@@ -431,17 +426,17 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     public TimedQueue forceToTimed(Duration delay) {
         stop();
         TimedQueue newQueue = TimedQueue.getQueue(id);
-        for (ScriptEntry entry: getEntries()) {
+        for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
         }
         newQueue.addEntries(getEntries());
-        for (Map.Entry<String, String> def: getAllDefinitions().entrySet()) {
+        for (Map.Entry<String, String> def : getAllDefinitions().entrySet()) {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
-        for (Map.Entry<String, dObject> entry: getAllContext().entrySet()) {
+        for (Map.Entry<String, dObject> entry : getAllContext().entrySet()) {
             newQueue.addContext(entry.getKey(), entry.getValue());
         }
-        for (Map.Entry<String, ScriptEntry> entry: held_entries.entrySet()) {
+        for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
         }
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
@@ -456,7 +451,6 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     /**
      * Called when the script queue is started.
-     *
      */
     protected abstract void onStart();
 
@@ -472,7 +466,6 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     /**
      * Starts the script queue.
-     *
      */
     public void start() {
         if (is_started) return;
@@ -492,8 +485,9 @@ public abstract class ScriptQueue implements Debuggable, dObject {
             classNameCache.put(clazz, name = clazz.getSimpleName());
         if (is_delayed) {
             dB.echoDebug(this, "Delaying " + name + " '" + id + "'" + " for '"
-                    + new Duration(((double)(delay_time - System.currentTimeMillis())) / 1000f).identify() + "'...");
-        } else
+                    + new Duration(((double) (delay_time - System.currentTimeMillis())) / 1000f).identify() + "'...");
+        }
+        else
             dB.echoDebug(this, "Starting " + name + " '" + id + "'...");
 
         // If it's delayed, schedule it for later
@@ -510,9 +504,10 @@ public abstract class ScriptQueue implements Debuggable, dObject {
                         // Take the delay time, find out how many milliseconds away
                         // it is, turn it into seconds, then divide by 20 for ticks.
                     },
-                    ((float)(delay_time - System.currentTimeMillis())) / 1000));
+                    ((float) (delay_time - System.currentTimeMillis())) / 1000));
 
-        } else {
+        }
+        else {
             // If it's not, start the engine now!
             startTime = System.nanoTime();
             startTimeMilli = System.currentTimeMillis();
@@ -530,7 +525,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // Inject the entries at the start
         injectEntries(entries, 0);
         //Note which entry comes next in the existing queue
-        ScriptEntry nextup = getQueueSize() > entries.size() ? getEntry(entries.size()): null;
+        ScriptEntry nextup = getQueueSize() > entries.size() ? getEntry(entries.size()) : null;
         // Loop through until the queue is emptied or the entry noted above is reached
         while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
             if (breakMe != null) {
@@ -577,7 +572,6 @@ public abstract class ScriptQueue implements Debuggable, dObject {
 
     /**
      * Stops the script_queue and breaks it down.
-     *
      */
     protected abstract void onStop();
 
@@ -602,7 +596,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
             if (!entries.isEmpty()) {
                 script_entries.addAll(entries);
                 dB.echoDebug(this, "Finishing up queue '" + id + "'...");
-            } else /* if empty, just stop the queue like normal */ {
+            }
+            else /* if empty, just stop the queue like normal */ {
                 if (_queues.get(id) == this)
                     _queues.remove(id);
                 dB.echoDebug(this, "Completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
@@ -636,7 +631,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Sets the last entry executed by the ScriptEngine.
      *
-     * @param entry  the ScriptEntry last executed.
+     * @param entry the ScriptEntry last executed.
      */
     public void setLastEntryExecuted(ScriptEntry entry) {
         lastEntryExecuted = entry;
@@ -749,9 +744,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     /**
      * Gets a Queue Object from a string form of q@queue_name.
      *
-     * @param string  the string or dScript argument String
-     * @return  a ScriptQueue, or null if incorrectly formatted
-     *
+     * @param string the string or dScript argument String
+     * @return a ScriptQueue, or null if incorrectly formatted
      */
     @Fetchable("q")
     public static ScriptQueue valueOf(String string, TagContext context) {
@@ -885,10 +879,10 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // -->
         if (attribute.startsWith("commands")) {
             dList commands = new dList();
-            for (ScriptEntry entry: script_entries) {
+            for (ScriptEntry entry : script_entries) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(entry.getCommandName()).append(" ");
-                for (String arg: entry.getOriginalArguments()) {
+                for (String arg : entry.getOriginalArguments()) {
                     sb.append(arg).append(" ");
                 }
                 commands.add(sb.substring(0, sb.length() - 1));

@@ -9,7 +9,7 @@ public abstract class ScriptEntryData implements Cloneable {
     @Override
     public ScriptEntryData clone() {
         try {
-            return (ScriptEntryData)super.clone();
+            return (ScriptEntryData) super.clone();
         }
         catch (Exception e) {
             dB.echoError(e);

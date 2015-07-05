@@ -1,22 +1,19 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.objects.properties.PropertyParser;
+import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
-import net.aufdemrand.denizencore.tags.Attribute;
-import net.aufdemrand.denizencore.tags.TagContext;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
-
-import net.aufdemrand.denizencore.utilities.CoreUtilities;
-
 
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
- *
  */
 public class Duration implements dObject {
 
@@ -87,8 +84,8 @@ public class Duration implements dObject {
      * number. Can specify the unit of time by using one of the following: T=ticks, M=minutes,
      * S=seconds, H=hours, D=days. Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 50.
      *
-     * @param string  the Argument value.
-     * @return  a Duration, or null if incorrectly formatted.
+     * @param string the Argument value.
+     * @return a Duration, or null if incorrectly formatted.
      */
     @Fetchable("d")
     public static Duration valueOf(String string, TagContext context) {
@@ -116,7 +113,8 @@ public class Duration implements dObject {
 
                 return new Duration(seconds);
 
-            } else return null;
+            }
+            else return null;
         }
 
         // Standard Duration. Check the type and create new Duration object accordingly.
@@ -153,8 +151,8 @@ public class Duration implements dObject {
     /**
      * Checks to see if the string is a valid Duration.
      *
-     * @param string  the String to match.
-     * @return  true if valid.
+     * @param string the String to match.
+     * @return true if valid.
      */
     public static boolean matches(String string) {
         Matcher m = match.matcher(string);
@@ -169,7 +167,7 @@ public class Duration implements dObject {
     /**
      * Creates a duration object when given number of seconds.
      *
-     * @param seconds  the number of seconds.
+     * @param seconds the number of seconds.
      */
     public Duration(double seconds) {
         this.seconds = seconds;
@@ -179,7 +177,7 @@ public class Duration implements dObject {
     /**
      * Creates a duration object when given number of seconds.
      *
-     * @param seconds  the number of seconds.
+     * @param seconds the number of seconds.
      */
     public Duration(int seconds) {
         this.seconds = seconds;
@@ -189,9 +187,9 @@ public class Duration implements dObject {
     /**
      * Creates a duration object when given number of Bukkit ticks.
      *
-     * @param ticks  the number of ticks.
+     * @param ticks the number of ticks.
      */
-    public Duration (long ticks) {
+    public Duration(long ticks) {
         this.seconds = ticks / 20;
         if (this.seconds < 0) this.seconds = 0;
     }
@@ -214,7 +212,7 @@ public class Duration implements dObject {
      * Gets the number of ticks of this duration. There are 20 ticks
      * per second.
      *
-     * @return  the number of ticks.
+     * @return the number of ticks.
      */
     public long getTicks() {
         return (long) (seconds * 20);
@@ -225,17 +223,17 @@ public class Duration implements dObject {
      * Gets the number of ticks of this duration as an integer. There are
      * 20 per second.
      *
-     * @return  the number of ticks.
+     * @return the number of ticks.
      */
     public int getTicksAsInt() {
-        return (int)(seconds * 20);
+        return (int) (seconds * 20);
     }
 
 
     /**
      * Gets the number of milliseconds in this duration.
      *
-     * @return  the number of milliseconds.
+     * @return the number of milliseconds.
      */
     public long getMillis() {
         Double millis = seconds * 1000;
@@ -246,7 +244,7 @@ public class Duration implements dObject {
     /**
      * Gets the number of seconds of this duration.
      *
-     * @return  number of seconds
+     * @return number of seconds
      */
     public double getSeconds() {
         return seconds;
@@ -256,7 +254,7 @@ public class Duration implements dObject {
     /**
      * Gets the number of seconds as an integer value of the duration.
      *
-     * @return  number of seconds rounded to the nearest second
+     * @return number of seconds rounded to the nearest second
      */
     public int getSecondsAsInt() {
         // Durations that are a fraction of a second
@@ -265,14 +263,15 @@ public class Duration implements dObject {
         return round(seconds);
     }
 
-    private int round(double d){
+    private int round(double d) {
         double dAbs = Math.abs(d);
         int i = (int) dAbs;
         double result = dAbs - i;
-        if(result<0.5){
-            return d<0 ? -i : i;
-        }else{
-            return d<0 ? -(i+1) : i+1;
+        if (result < 0.5) {
+            return d < 0 ? -i : i;
+        }
+        else {
+            return d < 0 ? -(i + 1) : i + 1;
         }
     }
 
@@ -307,7 +306,7 @@ public class Duration implements dObject {
      * valid String that can be re-interpreted with Duration.valueOf()
      * thus acting as a form of 'serialization/deserialization'.
      *
-     * @return  a valid String-form Duration.
+     * @return a valid String-form Duration.
      */
     @Override
     public String identify() {
@@ -322,7 +321,7 @@ public class Duration implements dObject {
     /**
      * Acts just like identify().
      *
-     * @return  a valid String-form Duration.
+     * @return a valid String-form Duration.
      */
     @Override
     public String toString() {
