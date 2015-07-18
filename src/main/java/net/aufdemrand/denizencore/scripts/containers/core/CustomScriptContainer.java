@@ -1,8 +1,10 @@
 package net.aufdemrand.denizencore.scripts.containers.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.CustomObject;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
@@ -78,7 +80,9 @@ public class CustomScriptContainer extends ScriptContainer {
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
                 long id = DetermineCommand.getNewId();
                 ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
-                queue.addContext("this", obj);
+                CustomScriptContextSource cscs = new CustomScriptContextSource();
+                cscs.obj = obj;
+                queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
                 return id;
@@ -98,8 +102,10 @@ public class CustomScriptContainer extends ScriptContainer {
                 List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
                 long id = DetermineCommand.getNewId();
                 ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
-                queue.addContext("this", obj);
-                queue.addContext("value", new Element(value));
+                CustomScriptContextSource cscs = new CustomScriptContextSource();
+                cscs.obj = obj;
+                cscs.value = new Element(value);
+                queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
                 return id;
@@ -107,5 +113,30 @@ public class CustomScriptContainer extends ScriptContainer {
             csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
         }
         return -1;
+    }
+
+    public static class CustomScriptContextSource implements ContextSource {
+
+        public CustomObject obj;
+
+        public Element value;
+
+        @Override
+        public boolean getShouldCache() {
+            return true;
+        }
+
+        @Override
+        public dObject getContext(String name) {
+            if (name.equals("this")) {
+                return obj;
+            }
+            else if (name.equals("value")) {
+                 return value;
+            }
+            else {
+                 return null;
+            }
+        }
     }
 }

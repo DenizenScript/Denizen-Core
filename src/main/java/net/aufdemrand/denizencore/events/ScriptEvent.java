@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.events;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
+import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
@@ -19,7 +20,18 @@ import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
 
-public abstract class ScriptEvent {
+public abstract class ScriptEvent implements ContextSource, Cloneable {
+
+    @Override
+    public ScriptEvent clone() {
+        try {
+            return (ScriptEvent) super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            dB.echoError("Clone not supported for script events?!");
+            return this;
+        }
+    }
 
     public static void registerCoreEvents() {
         registerScriptEvent(new ReloadScriptsScriptEvent());
@@ -199,10 +211,8 @@ public abstract class ScriptEvent {
         return true;
     }
 
-    public HashMap<String, dObject> getContext() {
-        HashMap<String, dObject> context = new HashMap<String, dObject>();
-        context.put("cancelled", new Element(cancelled));
-        return context;
+    public HashMap<String, dObject> getContext() { // TODO: Delete
+        return new HashMap<String, dObject>();
     }
 
     public ScriptEntryData getScriptEntryData() {
@@ -234,7 +244,7 @@ public abstract class ScriptEvent {
         }
     }
 
-    public void run(ScriptContainer script, String event) {
+    public void run(ScriptContainer script, String event) throws CloneNotSupportedException {
         scriptFires++;
         HashMap<String, dObject> context = getContext();
         dB.echoDebug(script, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + event + "<Y>'"
@@ -246,8 +256,15 @@ public abstract class ScriptEvent {
         long id = DetermineCommand.getNewId();
         ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
         ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);
-        for (Map.Entry<String, dObject> entry : context.entrySet()) {
-            queue.addContext(entry.getKey(), entry.getValue());
+        HashMap<String, dObject> oldStyleContext = getContext();
+        if (oldStyleContext.size() > 0) {
+            OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
+            oecs.contexts = oldStyleContext;
+            oecs.contexts.put("cancelled", new Element("cancelled"));
+            queue.setContextSource(oecs);
+        }
+        else {
+            queue.setContextSource(this.clone());
         }
         queue.start();
         nanoTimes += System.nanoTime() - queue.startTime;
@@ -257,5 +274,18 @@ public abstract class ScriptEvent {
                 applyDetermination(script, determination);
             }
         }
+    }
+
+    @Override
+    public boolean getShouldCache() {
+        return false;
+    }
+
+    @Override
+    public dObject getContext(String name) {
+        if (name.equals("cancelled")) {
+            return new Element(cancelled);
+        }
+        return null;
     }
 }

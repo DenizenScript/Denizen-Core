@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.scripts.queues;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.ScriptEvent;
+import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
@@ -176,15 +177,6 @@ public abstract class ScriptQueue implements Debuggable, dObject {
             definitions = new ConcurrentHashMap<String, String>(8, 0.9f, 1);
 
 
-    // ScriptQueues can also have a list of context, added
-    // by events/actions/etc. This is kind of like the context
-    // inside scriptEntries, but within the scope of the entire
-    // queue.
-    // To access this context, use <c.context_name> or <context.context_name>
-    private final Map<String, dObject>
-            context = new ConcurrentHashMap<String, dObject>(8, 0.9f, 1);
-
-
     // Held script entries can be recalled later in the script
     // and their scriptEntry context can be recalled. Good for
     // commands that contain unique items/objects that it's
@@ -260,43 +252,29 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @return The value of the definitions, or null
      */
     public dObject getContext(String id) {
-        return context.get(id.toLowerCase());
+        id = CoreUtilities.toLowerCase(id);
+        if (cs == null) {
+            return null;
+        }
+        dObject obj = cachedContext.get(id);
+        if (obj != null) {
+            return obj;
+        }
+        obj = cs.getContext(id);
+        if (obj != null && cs.getShouldCache()) {
+            cachedContext.put(id, obj);
+        }
+        return obj;
     }
 
 
-    /**
-     * Checks for a piece of context.
-     *
-     * @param id The name of the context
-     * @return true if the context exists.
-     */
-    public boolean hasContext(String id) {
-        return context.containsKey(id.toLowerCase());
-    }
+    private ContextSource cs = null;
 
+    public HashMap<String, dObject> cachedContext;
 
-    /**
-     * Adds a new piece of context to the queue. This is usually
-     * done within events or actions, or wherever script creation has
-     * some information to pass along, other than a player and npc.
-     *
-     * @param id    the name of the context
-     * @param value the value of the context
-     */
-    public void addContext(String id, dObject value) {
-        if (value != null && id != null)
-            context.put(id.toLowerCase(), value);
-    }
-
-
-    /**
-     * Returns a Map of all the current context
-     * stored in the queue, keyed by 'id'
-     *
-     * @return all current context, empty if none.
-     */
-    public Map<String, dObject> getAllContext() {
-        return context;
+    public void setContextSource(ContextSource source) {
+        cs = source;
+        cachedContext = new HashMap<String, dObject>();
     }
 
 
@@ -433,9 +411,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         for (Map.Entry<String, String> def : getAllDefinitions().entrySet()) {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
-        for (Map.Entry<String, dObject> entry : getAllContext().entrySet()) {
-            newQueue.addContext(entry.getKey(), entry.getValue());
-        }
+        newQueue.setContextSource(cs);
+        newQueue.cachedContext = cachedContext;
         for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
         }

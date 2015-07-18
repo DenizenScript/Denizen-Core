@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.events;
 
+import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
@@ -221,9 +222,9 @@ public class OldEventManager {
                         ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);
 
                         if (context != null) {
-                            for (Map.Entry<String, dObject> entry : context.entrySet()) {
-                                queue.addContext(entry.getKey(), entry.getValue());
-                            }
+                            OldEventContextSource oecs = new OldEventContextSource();
+                            oecs.contexts = context;
+                            queue.setContextSource(oecs);
                         }
 
                         // Start the queue!
@@ -240,6 +241,21 @@ public class OldEventManager {
         catch (Exception e) {
             dB.echoError(e);
             return new ArrayList<String>();
+        }
+    }
+
+    public static class OldEventContextSource implements ContextSource {
+
+        public Map<String, dObject> contexts;
+
+        @Override
+        public boolean getShouldCache() {
+            return true;
+        }
+
+        @Override
+        public dObject getContext(String name) {
+            return contexts.get(name);
         }
     }
 
