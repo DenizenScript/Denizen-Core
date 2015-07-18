@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
+import net.aufdemrand.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -140,6 +141,11 @@ public class ProcedureScriptTags {
 
         if (script == null) {
             dB.echoError("Missing script for procedure script tag '" + event.getValue() + "'!");
+            return;
+        }
+
+        if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
+            dB.echoError("Chosen script is not a procedure script!");
             return;
         }
 
