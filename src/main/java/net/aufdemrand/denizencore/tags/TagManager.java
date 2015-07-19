@@ -153,9 +153,6 @@ public class TagManager {
                 case 0x2011:
                     data[i] = ';';
                     break;
-                case 0x00A0:
-                    data[i] = ' ';
-                    break;
                 case 0x07:
                     data[i] = '[';
                     break;
