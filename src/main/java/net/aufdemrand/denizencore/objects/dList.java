@@ -443,6 +443,26 @@ public class dList extends ArrayList<String> implements dObject {
         }
 
         // <--[tag]
+        // @attribute <li@list.separated_by[<text>]>>
+        // @returns Element
+        // @description
+        // returns the list formatted, with each item separated by the defined text.
+        // -->
+        if (attribute.startsWith("separated_by")) {
+            if (attribute.hasContext(1)) {
+                if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
+                StringBuilder dScriptArg = new StringBuilder();
+                for (String item : this) {
+                    dScriptArg.append(item);
+                    // Insert the text after each item.
+                    dScriptArg.append(attribute.getContext(1));
+                }
+                return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - attribute.getContext(1).length()))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        }
+
+        // <--[tag]
         // @attribute <li@list.unseparated>
         // @returns Element
         // @description
