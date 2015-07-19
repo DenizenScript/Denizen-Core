@@ -447,6 +447,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list formatted, with each item separated by the defined text.
+        // e.g. <li@bob|jacob|mcmonkey.separated_by[ 1 ]> will return "bob 1 jacob 1 mcmonkey 1".
         // -->
         if (attribute.startsWith("separated_by")) {
             if (attribute.hasContext(1)) {
