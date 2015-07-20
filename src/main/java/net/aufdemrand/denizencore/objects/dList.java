@@ -403,29 +403,29 @@ public class dList extends ArrayList<String> implements dObject {
         }
 
         // <--[tag]
-        // @attribute <li@list.find_key[<element>]>
+        // @attribute <li@list.map_find_key[<element>]>
         // @returns dList
         // @description
         // Returns the sub-list split by the / symbol's
         // value for the matching input element.
         // TODO: Clarify
-        // EG, li@one/a|two/b.find_key[a] returns one.
+        // EG, li@one/a|two/b.map_find_key[a] returns one.
         // -->
 
-        if (attribute.startsWith("find_key")
+        if (attribute.startsWith("map_find_key")
                 && attribute.hasContext(1)) {
             String input = attribute.getContext(1);
             attribute.fulfill(1);
 
 
             // <--[tag]
-            // @attribute <li@list.find_key[<element>].split_by[<element>]>
+            // @attribute <li@list.map_find_key[<element>].split_by[<element>]>
             // @returns dList
             // @description
             // Returns the sub-list split by the given symbol's
             // value for the matching input element.
             // TODO: Clarify
-            // EG, li@one/a|two/b.find_key[a].split_by[/] returns one.
+            // EG, li@one/a|two/b.map_find_key[a].split_by[/] returns one.
             // -->
 
             String split = "/";
@@ -542,6 +542,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element(Boolean)
         // @description
         // returns whether the list is empty.
+        // EG, a list of "" returns true, while "one" returns false.
         // -->
         if (attribute.startsWith("is_empty"))
             return new Element(isEmpty()).getAttribute(attribute.fulfill(1));
@@ -909,7 +910,7 @@ public class dList extends ArrayList<String> implements dObject {
         // returns the last element in the list.
         // If the list is empty, returns null instead.
         // EG, a list of "one|two|three" will return "three".
-        // Effectively equivalent to .get[999999]
+        // Effectively equivalent to .get[<list.size>]
         // -->
         if (attribute.startsWith("last")) {
             if (size() == 0)
@@ -1065,7 +1066,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
-        // For example, a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
+        // EG, a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
         if (attribute.startsWith("filter")
                 && attribute.hasContext(1)) {
@@ -1093,7 +1094,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents parsed through the given tag.
-        // For example, a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
+        // EG, a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
         // -->
         if (attribute.startsWith("parse")
                 && attribute.hasContext(1)) {
@@ -1115,8 +1116,8 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents escaped.
-        // Inverts <@link tag li@list.unescape_contents>
-        // See <@link language property escaping>
+        // Inverts <@link tag li@list.unescape_contents>.
+        // See <@link language property escaping>.
         // -->
         if (attribute.startsWith("escape_contents")) {
             dList escaped = new dList();
@@ -1131,8 +1132,8 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents unescaped.
-        // Inverts <@link tag li@list.escape_contents>
-        // See <@link language property escaping>
+        // Inverts <@link tag li@list.escape_contents>.
+        // See <@link language property escaping>.
         // -->
         if (attribute.startsWith("unescape_contents")) {
             dList escaped = new dList();
