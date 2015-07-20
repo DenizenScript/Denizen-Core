@@ -368,7 +368,7 @@ public class dList extends ArrayList<String> implements dObject {
         // Returns the sub-list split by the / symbol's
         // value for the matching input element.
         // TODO: Clarify
-        // EG: li@one/a|two/b.map_get[one] returns a.
+        // EG, li@one/a|two/b.map_get[one] returns a.
         // -->
 
         if (attribute.startsWith("map_get")
@@ -384,7 +384,7 @@ public class dList extends ArrayList<String> implements dObject {
             // Returns the sub-list split by the given symbol's
             // value for the matching input element.
             // TODO: Clarify
-            // EG: li@one/a|two/b.map_get[one] returns a.
+            // EG, li@one/a|two/b.map_get[one].split_by[/] returns a.
             // -->
 
             String split = "/";
@@ -403,6 +403,47 @@ public class dList extends ArrayList<String> implements dObject {
         }
 
         // <--[tag]
+        // @attribute <li@list.find_key[<element>]>
+        // @returns dList
+        // @description
+        // Returns the sub-list split by the / symbol's
+        // value for the matching input element.
+        // TODO: Clarify
+        // EG, li@one/a|two/b.find_key[a] returns one.
+        // -->
+
+        if (attribute.startsWith("find_key")
+                && attribute.hasContext(1)) {
+            String input = attribute.getContext(1);
+            attribute.fulfill(1);
+
+
+            // <--[tag]
+            // @attribute <li@list.find_key[<element>].split_by[<element>]>
+            // @returns dList
+            // @description
+            // Returns the sub-list split by the given symbol's
+            // value for the matching input element.
+            // TODO: Clarify
+            // EG, li@one/a|two/b.find_key[a].split_by[/] returns one.
+            // -->
+
+            String split = "/";
+            if (attribute.startsWith("split_by")) {
+                if (attribute.hasContext(1) && attribute.getContext(1).length() > 0)
+                    split = attribute.getContext(1);
+                attribute.fulfill(1);
+            }
+
+            for (String item : this) {
+                String[] strings = item.split(Pattern.quote(split), 2);
+                if (strings.length > 1 && strings[1].equalsIgnoreCase(input)) {
+                    return new Element(strings[0]).getAttribute(attribute);
+                }
+            }
+        }
+
+        // <--[tag]
         // @attribute <li@list.comma_separated>
         // @returns Element
         // @description
@@ -412,11 +453,12 @@ public class dList extends ArrayList<String> implements dObject {
         if (attribute.startsWith("comma_separated")
                 || attribute.startsWith("ascslist")
                 || attribute.startsWith("as_cslist")) {
-            if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
+            if (isEmpty()) {
+                return new Element("").getAttribute(attribute.fulfill(1));
+            }
             StringBuilder dScriptArg = new StringBuilder();
             for (String item : this) {
                 dScriptArg.append(item);
-                // Insert a comma and space after each item
                 dScriptArg.append(", ");
             }
             return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 2))
@@ -431,11 +473,12 @@ public class dList extends ArrayList<String> implements dObject {
         // EG, a list of "one|two|three" will return "one two three".
         // -->
         if (attribute.startsWith("space_separated")) {
-            if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
+            if (isEmpty()) {
+                return new Element("").getAttribute(attribute.fulfill(1));
+            }
             StringBuilder dScriptArg = new StringBuilder();
             for (String item : this) {
                 dScriptArg.append(item);
-                // Insert a space after each item
                 dScriptArg.append(" ");
             }
             return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 1))
@@ -447,18 +490,20 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list formatted, with each item separated by the defined text.
-        // e.g. <li@bob|jacob|mcmonkey.separated_by[ 1 ]> will return "bob 1 jacob 1 mcmonkey 1".
+        // EG <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
         // -->
         if (attribute.startsWith("separated_by")) {
             if (attribute.hasContext(1)) {
-                if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
+                if (isEmpty()) {
+                    return new Element("").getAttribute(attribute.fulfill(1));
+                }
                 StringBuilder dScriptArg = new StringBuilder();
                 for (String item : this) {
                     dScriptArg.append(item);
-                    // Insert the text after each item.
                     dScriptArg.append(attribute.getContext(1));
                 }
-                return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - attribute.getContext(1).length()))
+                return new Element(dScriptArg.toString().substring(0,
+                        dScriptArg.length() - attribute.getContext(1).length()))
                         .getAttribute(attribute.fulfill(1));
             }
         }
@@ -471,7 +516,9 @@ public class dList extends ArrayList<String> implements dObject {
         // EG, a list of "one|two|three" will return "onetwothree".
         // -->
         if (attribute.startsWith("unseparated")) {
-            if (isEmpty()) return new Element("").getAttribute(attribute.fulfill(1));
+            if (isEmpty()) {
+                return new Element("").getAttribute(attribute.fulfill(1));
+            }
             StringBuilder dScriptArg = new StringBuilder();
             for (String item : this) {
                 dScriptArg.append(item);
