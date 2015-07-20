@@ -32,11 +32,8 @@ public class aH {
     // this kind of hint can generally be filled with any reasonable positive or negative number with or without a
     // decimal point. Numbers can be verified with the 'if' commands' 'matches' functionality.
     // For example: - if <number> matches double ... will return true if <number> is a valid number.
-    //
-    // Denizen uses the regular expression pattern -?(?:\d+)?(\.\d+)? for number matching.
     // -->
-    final static Pattern doublePrimitive =
-            Pattern.compile("-?(?:\\d+)?(\\.\\d+)?([Ee]\\d+)?");
+    final static Pattern doublePrimitive = floatPrimitive;
 
     // <--[language]
     // @name percentage

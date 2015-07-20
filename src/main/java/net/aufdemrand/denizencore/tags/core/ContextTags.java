@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
@@ -26,34 +27,14 @@ public class ContextTags {
         String object = event.getType();
 
         // First, check queue object context.
-        if (event.getScriptEntry().getResidingQueue().hasContext(object)) {
+        dObject obj = event.getScriptEntry().getResidingQueue().getContext(object);
+        if (obj != null) {
             Attribute attribute = event.getAttributes();
-            event.setReplaced(event.getScriptEntry().getResidingQueue()
-                    .getContext(object).getAttribute(attribute.fulfill(2)));
+            event.setReplaced(obj.getAttribute(attribute.fulfill(2)));
             return;
         }
 
-        // Next, try to replace with task-script-defined context
-        // NOTE: (DEPRECATED -- new RUN command uses definitions system instead)
-        if (!ScriptRegistry.containsScript(event.getScriptEntry().getScript().getName(),
-                TaskScriptContainer.class)) return;
-
-        TaskScriptContainer script = ScriptRegistry.getScriptContainer(event.getScriptEntry().getScript().getName());
-
-        ScriptEntry entry = event.getScriptEntry();
-
-        if (entry.hasObject("CONTEXT")) {
-            // Get context
-            Map<String, String> context = (HashMap<String, String>) entry.getObject("CONTEXT");
-            // Build IDs
-            Map<String, Integer> id = script.getContextMap();
-            if (context.containsKey(String.valueOf(id.get(object.toUpperCase())))) {
-                event.setReplaced(context.get(String.valueOf(id.get(object.toUpperCase()))));
-            }
-        }
-
-        else return;
-
+        dB.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue(): null, "Invalid context ID '" + object + "'!");
     }
 
 

@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.HashMap;
 
@@ -54,12 +55,17 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public HashMap<String, dObject> getContext() {
-        HashMap<String, dObject> context = super.getContext();
-        context.put("haderror", new Element(hadError));
-        context.put("all", new Element(all));
-        context.put("sender", new Element(sender));
-        return context;
+    public dObject getContext(String name) {
+        if (name.equals("haderror")) {
+            return new Element(hadError);
+        }
+        else if (name.equals("all")) {
+            return new Element(all);
+        }
+        else if (name.equals("sender")) {
+            return new Element(sender);
+        }
+        return super.getContext(name);
     }
 
     public ReloadScriptsScriptEvent() {

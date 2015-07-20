@@ -1732,6 +1732,23 @@ public class Element implements dObject {
         }
 
         // <--[tag]
+        // @attribute <el@element.round_to[<#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Rounds a decimal to the specified place.
+        // -->
+        if (attribute.startsWith("round_to") && attribute.hasContext(1)) {
+            if (!isDouble()) {
+                dB.echoError("Element '" + element + "' is not a valid decimal number!");
+                return null;
+            }
+            int ten = (int) Math.pow(10, attribute.getIntContext(1));
+            return new Element(((double)Math.round(asDouble()*ten))/ten)
+                    .getAttribute(attribute.fulfill(1));
+        }
+
+        // <--[tag]
         // @attribute <el@element.round>
         // @returns Element(Number)
         // @group math
