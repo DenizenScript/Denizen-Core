@@ -307,11 +307,57 @@ public class dList extends ArrayList<String> implements dObject {
         return identify();
     }
 
+    public static void registerTags() {
+        // <--[tag]
+        // @attribute <li@list.space_separated>
+        // @returns Element
+        // @description
+        // returns the list in a cleaner format, separated by spaces.
+        // EG, a list of "one|two|three" will return "one two three".
+        // -->
+
+        registerTag("space_separated", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (((dList)object).isEmpty()) {
+                    return new Element("").getAttribute(attribute.fulfill(1));
+                }
+                StringBuilder dScriptArg = new StringBuilder();
+                for (String item : (dList)object) {
+                    dScriptArg.append(item);
+                    dScriptArg.append(" ");
+                }
+                return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 1))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
+
+    }
+
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+
+    public static void registerTag(String name, TagRunnable runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registeredTags.put(name, runnable);
+    }
 
     @Override
     public String getAttribute(Attribute attribute) {
 
         if (attribute == null) return null;
+
+        // TODO: Scrap getAttribute, make this functionality a core system
+        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
+        TagRunnable tr = registeredTags.get(attrLow);
+        if (tr != null) {
+            if (!tr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
+            }
+            return tr.run(attribute, this);
+        }
 
         // <--[tag]
         // @attribute <li@list.get_sub_items[<#>]>
@@ -462,26 +508,6 @@ public class dList extends ArrayList<String> implements dObject {
                 dScriptArg.append(", ");
             }
             return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 2))
-                    .getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <li@list.space_separated>
-        // @returns Element
-        // @description
-        // returns the list in a cleaner format, separated by spaces.
-        // EG, a list of "one|two|three" will return "one two three".
-        // -->
-        if (attribute.startsWith("space_separated")) {
-            if (isEmpty()) {
-                return new Element("").getAttribute(attribute.fulfill(1));
-            }
-            StringBuilder dScriptArg = new StringBuilder();
-            for (String item : this) {
-                dScriptArg.append(item);
-                dScriptArg.append(" ");
-            }
-            return new Element(dScriptArg.toString().substring(0, dScriptArg.length() - 1))
                     .getAttribute(attribute.fulfill(1));
         }
 

@@ -738,6 +738,7 @@ public class Element implements dObject {
 
         if (attribute == null) return null;
 
+        // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
@@ -1367,7 +1368,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.div[<#>]>
+        // @attribute <el@element.div_int[<#>]>
         // @returns Element(Number)
         // @group math
         // @description
@@ -1418,7 +1419,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.add[<#>]>
+        // @attribute <el@element.add[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1441,7 +1442,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.div[<#>]>
+        // @attribute <el@element.div[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1464,7 +1465,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.mod[<#>]>
+        // @attribute <el@element.mod[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1481,7 +1482,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.mul[<#>]>
+        // @attribute <el@element.mul[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1504,7 +1505,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.sub[<#>]>
+        // @attribute <el@element.sub[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1549,7 +1550,7 @@ public class Element implements dObject {
         }
 
         // <--[tag]
-        // @attribute <el@element.power[<#>]>
+        // @attribute <el@element.power[<#.#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
@@ -1764,7 +1765,6 @@ public class Element implements dObject {
                     .getAttribute(attribute.fulfill(1));
         }
 
-
         // <--[tag]
         // @attribute <el@element.type>
         // @returns Element
@@ -1775,6 +1775,7 @@ public class Element implements dObject {
         if (attribute.startsWith("type")) {
             return new Element("Element").getAttribute(attribute.fulfill(1));
         }
+
         // Unfilled attributes past this point probably means the tag is spelled
         // incorrectly. So instead of just passing through what's been resolved
         // so far, 'null' shall be returned with a debug message.
@@ -1784,7 +1785,6 @@ public class Element implements dObject {
                 dB.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.attributes.toString() +
                         "' for tag <" + attribute.getOrigin() + ">!");
             return null;
-
         }
         else {
             return element;
