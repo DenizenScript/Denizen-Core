@@ -609,7 +609,7 @@ public class Element implements dObject {
         // @description
         // Returns whether the element contains any of a list of specified strings, case sensitive.
         // -->
-        registerTag("prefix", new TagRunnable() {
+        registerTag("contains_any_case_sensitive", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
@@ -622,6 +622,9 @@ public class Element implements dObject {
                 return Element.FALSE.getAttribute(attribute.fulfill(1));
             }
         });
+        TagRunnable r = registeredTags.get("contains_any_case_sensitive").clone();
+        r.name = null;
+        registerTag("contains_any_case_sensitive_text", r);
 
         // <--[tag]
         // @attribute <el@element.contains_any_text[<element>|...]>
