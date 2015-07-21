@@ -655,7 +655,7 @@ public class Element implements dObject {
                 return Element.FALSE.getAttribute(attribute.fulfill(1));
             }
         });
-        TagRunnable r = registeredTags.get("contains_any").clone();
+        r = registeredTags.get("contains_any").clone();
         r.name = null;
         registerTag("contains_any_text", r);
 
