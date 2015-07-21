@@ -86,6 +86,47 @@ public abstract class CommandRegistry implements dRegistry {
     public void registerCoreCommands() {
 
         // <--[command]
+        // @Name Choose
+        // @Syntax choose [<option>] [<cases>]
+        // @Required 1
+        // @Stable unstable
+        // @Short Chooses an option from the list of cases.
+        // @Author mcmonkey
+        // @Group core
+
+        // @Description
+        // Chooses an option from the list of cases.
+        // Intended to replace a long chain of simplistic if/else if or complicated script path selection systems.
+        // Simply input the selected option, and the system will automatically jump to the most relevant case input.
+        // Cases are given as a sub-set of commands inside the current command (see Usage for samples).
+        //
+        // Optionally, specify "default" in place of a case to give a result when all other cases fail to match.
+        //
+        // Cases are best kept as static text options, but tags are accepted.
+
+        // @Tags
+        // None
+
+        // @Usage
+        // Use to choose the only case.
+        // - choose "1":
+        //   - case "1":
+        //     - debug LOG "Success!"
+
+        // @Usage
+        // Use to choose the default case.
+        // - choose "2":
+        //   - case "1":
+        //     - debug log "Failure!"
+        //   - default:
+        //     - debug log "Success!"
+
+        // -->
+        registerCoreMember(ChooseCommand.class,
+                "choose", "choose [<option>] [<cases>]", 1);
+
+
+        // <--[command]
         // @Name Debug
         // @Syntax debug [<type>] [<message>] (name:<name>)
         // @Required 2
@@ -93,8 +134,10 @@ public abstract class CommandRegistry implements dRegistry {
         // @Short Shows a debug message.
         // @Author mcmonkey
         // @Group core
+
         // @Description
         // Use to quickly output debug information to console.
+        //
         // Valid types include:
         // DEBUG: standard hideable debug.
         // HEADER: standard hideable debug inside a header line.
@@ -105,14 +148,20 @@ public abstract class CommandRegistry implements dRegistry {
         // ERROR: "Error!" output, non-hideable.
         // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
         // EXCEPTION: outputs a full java stacktrace.
+        //
+        // TODO: Should [<type>] be required? Perhaps default to 'debug' mode?
+
         // @Tags
         // None
+
         // @Usage
         // Use to show an error
         // - debug error "Something went wrong!"
+
         // @Usage
         // Use to add some information to help your own ability to read debug output from you script
         // - debug debug "Time is currently <def[milliseconds].div[1000].round> seconds!"
+
         // -->
         registerCoreMember(DebugCommand.class,
                 "debug", "debug [<type>] [<message>] (name:<name>)", 2);
@@ -221,16 +270,14 @@ public abstract class CommandRegistry implements dRegistry {
 
         // @Usage
         // Use to run commands for 'each entry' in a list of objects/elements.
-        // - foreach li@e@123|n@424|p@BobBarker {
+        // - foreach li@e@123|n@424|p@BobBarker:
         //     - announce "There's something at <def[value].location>!"
-        //   }
 
         // @Usage
         // Use to iterate through entries in any tag that returns a list
-        // - foreach <server.list_online_players> {
+        // - foreach <server.list_online_players>:
         //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
         //     - give <def[value]> money qty:50
-        //   }
 
         // -->
         registerCoreMember(ForeachCommand.class,
@@ -275,6 +322,7 @@ public abstract class CommandRegistry implements dRegistry {
         // TODO: Document Command Details
         // @Tags
         // <el@element.is[<operator>].to[<element>]>
+        // <el@element.is[<operator>].than[<element>]>
         // @Usage
         // TODO: Document Command Details
         // -->

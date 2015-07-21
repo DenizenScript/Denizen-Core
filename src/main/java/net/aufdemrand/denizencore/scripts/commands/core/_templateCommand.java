@@ -25,18 +25,21 @@ public class _templateCommand extends AbstractCommand {
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
             if (!scriptEntry.hasObject("required_integer")
-                    && arg.matchesPrimitive(aH.PrimitiveType.Integer))
+                    && arg.matchesPrimitive(aH.PrimitiveType.Integer)) {
                 scriptEntry.addObject("required_integer", arg.asElement());
+            }
 
                 // else if (...)
 
-            else
+            else {
                 arg.reportUnhandled();
+            }
         }
 
         // Check for required information
-        if (!scriptEntry.hasObject("required_object"))
+        if (!scriptEntry.hasObject("required_object")) {
             throw new InvalidArgumentsException("Must have required object!");
+        }
 
     }
 
