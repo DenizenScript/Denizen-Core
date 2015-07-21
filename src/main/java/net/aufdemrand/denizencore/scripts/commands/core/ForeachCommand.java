@@ -25,10 +25,6 @@ public class ForeachCommand extends BracedCommand {
         setBraced();
     }
 
-    // - foreach li@p@Vegeta|p@MuhammedAli|n@123 {
-    //   - announce "Hello, <%value%.name>!"
-    //   }
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
