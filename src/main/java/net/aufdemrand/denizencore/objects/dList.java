@@ -340,13 +340,11 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("separated_by", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dB.log("inside of tag register");
                 dList list = (dList) object;
                 if (list.isEmpty()) {
                     return new Element("").getAttribute(attribute.fulfill(1));
                 }
                 String input = attribute.getContext(1);
-                dB.log("input:" + input);
                 return new Element(parseString(list, input)).getAttribute(attribute.fulfill(1));
             }
         });
