@@ -625,7 +625,8 @@ public class dList extends ArrayList<String> implements dObject {
                 else {
                     dB.echoError("The tag li@list.set[...] must be followed by .at[#]!");
                     return null;
-                }            }
+                }
+            }
         });
 
         // <--[tag]
