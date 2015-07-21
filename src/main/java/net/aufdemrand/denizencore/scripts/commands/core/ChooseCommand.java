@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -74,7 +75,7 @@ public class ChooseCommand extends BracedCommand {
             }
             else if (cmdName.equals("case")) {
                 if (se.getArguments().size() == 1) {
-                    String arg = TagManager.tag(se.getArguments().get(0), scriptEntry.entryData.getTagContext());
+                    String arg = TagManager.tag(se.getArguments().get(0), DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
                     if (CoreUtilities.toLowerCase(arg).equals(choice_low)) {
                         result = se;
                         break;
