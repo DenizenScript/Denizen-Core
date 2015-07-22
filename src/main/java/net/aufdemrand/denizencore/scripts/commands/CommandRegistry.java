@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class CommandRegistry implements dRegistry {
+
     public CommandRegistry() {
     }
 
@@ -19,7 +20,7 @@ public abstract class CommandRegistry implements dRegistry {
     @Override
     public boolean register(String commandName, RegistrationableInstance commandInstance) {
         this.instances.put(CoreUtilities.toLowerCase(commandName), (AbstractCommand) commandInstance);
-        this.classes.put(((AbstractCommand) commandInstance).getClass(), commandName.toUpperCase());
+        this.classes.put(((AbstractCommand) commandInstance).getClass(), CoreUtilities.toLowerCase(commandName));
         return true;
     }
 

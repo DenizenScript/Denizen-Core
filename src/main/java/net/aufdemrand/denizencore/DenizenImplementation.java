@@ -131,7 +131,11 @@ public interface DenizenImplementation {
 
     public abstract String getLastEntryFromFlag(String flag);
 
-    public TagContext getTagContext(ScriptEntry entry);
+    public abstract TagContext getTagContext(ScriptEntry entry);
 
-    public int getTagTimeout();
+    public abstract int getTagTimeout();
+
+    public abstract boolean allowConsoleRedirection();
+
+    public abstract String cleanseLogString(String str);
 }
