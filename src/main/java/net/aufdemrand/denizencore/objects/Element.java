@@ -1860,7 +1860,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(Math.ceil(ele.asDouble()))
+                return new Element((int)Math.ceil(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1880,7 +1880,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(Math.floor(ele.asDouble()))
+                return new Element((int)Math.floor(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1905,7 +1905,7 @@ public class Element implements dObject {
                     return null;
                 }
                 int ten = (int) Math.pow(10, attribute.getIntContext(1));
-                return new Element(((double)Math.round(ele.asDouble()*ten))/ten)
+                return new Element(((double)Math.round(ele.asDouble() * ten)) / ten)
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1925,7 +1925,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(Math.round(ele.asDouble()))
+                return new Element((int)Math.round(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
