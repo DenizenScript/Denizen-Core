@@ -54,6 +54,7 @@ public class ObjectFetcher {
         // Initialize the ObjectFetcher
         registerWithObjectFetcher(CustomObject.class); // custom@
         registerWithObjectFetcher(dList.class);        // li@/fl@
+        dList.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(dScript.class);      // s@
         registerWithObjectFetcher(Element.class);      // el@
         Element.registerTags(); // TODO: Automate this once all classes have tag registries

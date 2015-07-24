@@ -1,7 +1,9 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.Mechanism;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -298,6 +300,35 @@ public class UtilTags {
                 format.applyPattern("EEE, MMM d, yyyy");
                 event.setReplaced(new Element(format.format(currentDate))
                         .getAttribute(attribute));
+            }
+        }
+    }
+
+
+    public static void adjustSystem(Mechanism mechanism) {
+        Element value = mechanism.getValue();
+
+        // <--[mechanism]
+        // @object server
+        // @name redirect_logging
+        // @input Element(Boolean)
+        // @description
+        // Tells the server to redirect logging to a world event or not.
+        // Note that this redirects *all console output* not just Denizen output.
+        // Note: don't enable /denizen debug -e while this is active.
+        // @tags
+        // None
+        // -->
+        if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
+            if (!DenizenCore.getImplementation().allowConsoleRedirection()) {
+                dB.echoError("Console redirection disabled by administrator.");
+                return;
+            }
+            if (mechanism.getValue().asBoolean()) {
+                DenizenCore.logInterceptor.redirectOutput();
+            }
+            else {
+                DenizenCore.logInterceptor.standardOutput();
             }
         }
     }

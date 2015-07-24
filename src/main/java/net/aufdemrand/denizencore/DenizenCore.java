@@ -5,6 +5,7 @@ import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
+import net.aufdemrand.denizencore.utilities.debugging.LogInterceptor;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
@@ -35,6 +36,8 @@ public class DenizenCore {
     public static ScriptEngine getScriptEngine() {
         return scriptEngine;
     }
+
+    public static LogInterceptor logInterceptor = new LogInterceptor();
 
     static {
         String version = "UNKNOWN";

@@ -18,8 +18,8 @@ public class EscapeTags {
     // Some item properties (and corresponding mechanisms) need to escape their
     // text output/input to prevent players using them to cheat the system
     // (EG, if a player set the display name of an item to:
-    //      'name;enchantments=damage_all,3', he would get a free enchantment!)
-    // This are the escape codes used to prevent that:
+    //      'name;enchantments=damage_all,3', they would get a free enchantment!)
+    // These are the escape codes used to prevent that:
     //
     // | = &pipe
     // < = &lt
@@ -42,7 +42,7 @@ public class EscapeTags {
     //
     // These symbols are automatically used by the internal system, if you are
     // writing your own property string and need to escape some symbols, you
-    // can just directly type them in, EG: i@stick[display_name=&ltStick&gt]
+    // can just directly type them in, EG: i@stick[display_name=&ltFancy&spStick&gt]
     // -->
 
     /**
@@ -91,7 +91,7 @@ public class EscapeTags {
     @TagManager.TagEvents
     public void escapeTags(ReplaceableTagEvent event) {
         // <--[tag]
-        // @attribute <escape:<text to escape>>
+        // @attribute <escape:<text_to_escape>>
         // @returns Element
         // @description
         // Returns the text simply escaped to prevent tagging conflicts.
@@ -105,7 +105,7 @@ public class EscapeTags {
             event.setReplaced(new Element(Escape(event.getValue())).getAttribute(event.getAttributes().fulfill(1)));
         }
         // <--[tag]
-        // @attribute <unescape:<escaped text>>
+        // @attribute <unescape:<escaped_text>>
         // @returns Element
         // @description
         // Returns the text with escaping removed.

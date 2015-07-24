@@ -4,7 +4,8 @@ import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public abstract class ScriptEntryData implements Cloneable {
-    // TODO: private ScriptEntry entry; ?
+
+    public ScriptEntry scriptEntry;
 
     @Override
     public ScriptEntryData clone() {
