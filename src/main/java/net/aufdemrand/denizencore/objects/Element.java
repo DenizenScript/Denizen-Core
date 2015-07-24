@@ -364,9 +364,6 @@ public class Element implements dObject {
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
                 try {
-                    // Round the Double instead of just getting its
-                    // value as an Integer (which would incorrectly
-                    // turn 2.9 into 2)
                     return new Element(Math.round(Double.valueOf(element)))
                             .getAttribute(attribute.fulfill(1));
                 }
@@ -759,6 +756,7 @@ public class Element implements dObject {
                 return new Element(((Element) object).element.equals(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
             }
         });
+        registerTag("equals_with_case", registeredTags.get("equals_case_sensitive"));
 
         // <--[tag]
         // @attribute <el@element.matches[<regex>]>
@@ -771,7 +769,7 @@ public class Element implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.equals_case_sensitive[...] must have a value.");
+                    dB.echoError("The tag el@element.matches[...] must have a value.");
                     return null;
                 }
                 return new Element(((Element) object).element.matches(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
@@ -877,15 +875,6 @@ public class Element implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 return new Element(((Element) object).element.equalsIgnoreCase("true") != attribute.getContext(1).equalsIgnoreCase("true"))
-                        .getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // Deprecated
-        registerTag("equals_with_case", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Element) object).element.equals(attribute.getContext(1)))
                         .getAttribute(attribute.fulfill(1));
             }
         });
