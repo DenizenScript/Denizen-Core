@@ -901,7 +901,7 @@ public class Element implements dObject {
         // @group string checking
         // @description
         // Returns the index of the first occurrence of a specified string.
-        // Returns -1 if the string never occurs within the element.
+        // Returns 0 if the string never occurs within the element.
         // -->
         registerTag("index_of", new TagRunnable() {
             @Override
@@ -910,7 +910,8 @@ public class Element implements dObject {
                     dB.echoError("The tag el@element.index_of[...] must have a value.");
                     return null;
                 }
-                return new Element(((Element) object).element.toLowerCase().indexOf(attribute.getContext(1).toLowerCase()) + 1)
+                return new Element(CoreUtilities.toLowerCase(((Element) object).element)
+                        .indexOf(CoreUtilities.toLowerCase(attribute.getContext(1))) + 1)
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -921,16 +922,17 @@ public class Element implements dObject {
         // @group string checking
         // @description
         // Returns the index of the last occurrence of a specified string.
-        // Returns -1 if the string never occurs within the element.
+        // Returns 0 if the string never occurs within the element.
         // -->
-        registerTag("index_of", new TagRunnable() {
+        registerTag("last_index_of", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag el@element.last_index_of[...] must have a value.");
                     return null;
                 }
-                return new Element(((Element) object).element.toLowerCase().lastIndexOf(attribute.getContext(1).toLowerCase()) + 1)
+                return new Element(CoreUtilities.toLowerCase(((Element) object).element)
+                        .lastIndexOf(CoreUtilities.toLowerCase(attribute.getContext(1))) + 1)
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -951,11 +953,13 @@ public class Element implements dObject {
                     return null;
                 }
                 int index = attribute.getIntContext(1) - 1;
-                if (index < 0 || index >= ((Element) object).element.length())
+                if (index < 0 || index >= ((Element) object).element.length()) {
                     return null;
-                else
+                }
+                else {
                     return new Element(String.valueOf(((Element) object).element.charAt(index)))
                             .getAttribute(attribute.fulfill(1));
+                }
             }
         });
 
