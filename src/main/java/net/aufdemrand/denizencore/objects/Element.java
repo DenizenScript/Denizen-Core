@@ -832,7 +832,7 @@ public class Element implements dObject {
         registerTag("not", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Element) object).element.equalsIgnoreCase("true")).getAttribute(attribute.fulfill(1));
+                return new Element(!((Element) object).element.equalsIgnoreCase("true")).getAttribute(attribute.fulfill(1));
             }
         });
 
