@@ -1120,40 +1120,6 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.split[(regex:)<string>].limit[<#>]>
-        // @returns dList
-        // @group string manipulation
-        // @description
-        // Returns a list of portions of this element, split by the specified string,
-        // and capped at the specified number of max list items.
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.split[(regex:)<string>]>
-        // @returns dList
-        // @group string manipulation
-        // @description
-        // Returns a list of portions of this element, split by the specified string.
-        // -->
-        registerTag("split", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.split[...] must have a value.");
-                    return null;
-                }
-                String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
-                Integer limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 0);
-                if (split_string.toLowerCase().startsWith("regex:"))
-                    return new dList(Arrays.asList(((Element) object).element.split(split_string.split(":", 2)[1], limit)))
-                            .getAttribute(attribute.fulfill(2));
-                else
-                    return new dList(Arrays.asList(((Element) object).element.split("(?i)" + Pattern.quote(split_string), limit)))
-                            .getAttribute(attribute.fulfill(2));
-            }
-        });
-
-        // <--[tag]
         // @attribute <el@element.format_number>
         // @returns Element
         // @group string manipulation
@@ -2003,6 +1969,43 @@ public class Element implements dObject {
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);
+        }
+
+
+        // <--[tag]
+        // @attribute <el@element.split[(regex:)<string>].limit[<#>]>
+        // @returns dList
+        // @group string manipulation
+        // @description
+        // Returns a list of portions of this element, split by the specified string,
+        // and capped at the specified number of max list items.
+        // -->
+        if (attribute.startsWith("split") && attribute.startsWith("limit", 2)) {
+            String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
+            Integer limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
+            if (split_string.toLowerCase().startsWith("regex:"))
+                return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1], limit)))
+                        .getAttribute(attribute.fulfill(2));
+            else
+                return new dList(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string), limit)))
+                        .getAttribute(attribute.fulfill(2));
+        }
+
+        // <--[tag]
+        // @attribute <el@element.split[(regex:)<string>]>
+        // @returns dList
+        // @group string manipulation
+        // @description
+        // Returns a list of portions of this element, split by the specified string.
+        // -->
+        if (attribute.startsWith("split")) {
+            String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
+            if (split_string.toLowerCase().startsWith("regex:"))
+                return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1])))
+                        .getAttribute(attribute.fulfill(1));
+            else
+                return new dList(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string))))
+                        .getAttribute(attribute.fulfill(1));
         }
 
         // Iterate through this object's properties' attributes

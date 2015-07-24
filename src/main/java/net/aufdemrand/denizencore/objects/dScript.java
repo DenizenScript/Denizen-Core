@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
-public class dScript implements dObject {
+public class dScript implements dObject, Adjustable {
 
     // <--[language]
     // @name Script
@@ -526,4 +526,20 @@ public class dScript implements dObject {
 
         return new Element(identify()).getAttribute(attribute);
     }
+
+    @Override
+    public void applyProperty(Mechanism mechanism) {
+        dB.echoError("Cannot apply properties to a script!");
+    }
+
+    @Override
+    public void adjust(Mechanism mechanism) {
+
+        // TODO: enable/disable
+
+        if (!mechanism.fulfilled()) {
+            mechanism.reportInvalid();
+        }
+    }
+
 }

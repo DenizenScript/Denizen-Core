@@ -107,6 +107,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, String event) {
+        if (!script.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
+            return false;
+        }
         if (event.endsWith(" cancelled:false")) {
             if (sEvent.cancelled) {
                 return false;
