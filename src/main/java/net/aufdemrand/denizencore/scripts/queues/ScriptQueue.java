@@ -870,7 +870,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns a list of commands waiting in the queue.
         // -->
-        registerTag("script", new TagRunnable() {
+        registerTag("commands", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 dList commands = new dList();
@@ -906,7 +906,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
-        registerTag("definitions", new TagRunnable() {
+        registerTag("definition", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
