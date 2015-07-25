@@ -263,7 +263,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (oldStyleContext.size() > 0) {
             OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
             oecs.contexts = oldStyleContext;
-            oecs.contexts.put("cancelled", new Element("cancelled"));
+            oecs.contexts.put("cancelled", new Element(cancelled));
             queue.setContextSource(oecs);
         }
         else {
