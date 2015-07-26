@@ -66,7 +66,7 @@ public class OldEventManager {
                         break;
                     }
                     for (StringHolder eventName1 : keys) {
-                        String eventName = eventName1.str;
+                        String eventName = eventName1.str.toUpperCase();
                         List<WorldScriptContainer> list;
                         if (events.containsKey(eventName))
                             list = events.get(eventName);
