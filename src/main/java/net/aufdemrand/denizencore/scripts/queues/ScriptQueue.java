@@ -790,9 +790,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         return identify();
     }
 
-    @Override
-    public String getAttribute(Attribute attribute) {
-        if (attribute == null) return null;
+    public static void registerTags() {
 
         // <--[tag]
         // @attribute <q@queue.id>
@@ -800,9 +798,12 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns the id of the queue.
         // -->
-        if (attribute.startsWith("id")) {
-            return new Element(id).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("id", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Element(((ScriptQueue) object).id).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.size>
@@ -810,9 +811,12 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns the number of script entries in the queue.
         // -->
-        if (attribute.startsWith("size")) {
-            return new Element(script_entries.size()).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("size", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Element(((ScriptQueue) object).script_entries.size()).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.start_time>
@@ -820,9 +824,12 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns the time this queue started as a duration.
         // -->
-        if (attribute.startsWith("start_time")) {
-            return new Duration(startTimeMilli / 50).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("start_time", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Duration(((ScriptQueue) object).startTimeMilli / 50).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.state>
@@ -830,13 +837,16 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns 'stopping', 'running', or 'unknown'.
         // -->
-        if (attribute.startsWith("state")) {
-            String state;
-            if (is_started) state = "running";
-            else if (is_stopping) state = "stopping";
-            else state = "unknown";
-            return new Element(state).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("state", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String state;
+                if (((ScriptQueue) object).is_started) state = "running";
+                else if (((ScriptQueue) object).is_stopping) state = "stopping";
+                else state = "unknown";
+                return new Element(state).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.script>
@@ -844,9 +854,15 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns the script that started this queue.
         // -->
-        if (attribute.startsWith("script") && script != null) {
-            return script.getAttribute(attribute.fulfill(1));
-        }
+        registerTag("script", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (((ScriptQueue) object).script == null) {
+                    return null;
+                }
+                return ((ScriptQueue) object).script.getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.commands>
@@ -854,18 +870,21 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns a list of commands waiting in the queue.
         // -->
-        if (attribute.startsWith("commands")) {
-            dList commands = new dList();
-            for (ScriptEntry entry : script_entries) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(entry.getCommandName()).append(" ");
-                for (String arg : entry.getOriginalArguments()) {
-                    sb.append(arg).append(" ");
+        registerTag("commands", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dList commands = new dList();
+                for (ScriptEntry entry : ((ScriptQueue) object).script_entries) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(entry.getCommandName()).append(" ");
+                    for (String arg : entry.getOriginalArguments()) {
+                        sb.append(arg).append(" ");
+                    }
+                    commands.add(sb.substring(0, sb.length() - 1));
                 }
-                commands.add(sb.substring(0, sb.length() - 1));
+                return commands.getAttribute(attribute.fulfill(1));
             }
-            return commands.getAttribute(attribute.fulfill(1));
-        }
+        });
 
         // <--[tag]
         // @attribute <q@queue.definitions>
@@ -873,9 +892,12 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // @description
         // Returns the names of all definitions that were passed to the current queue.
         // -->
-        if (attribute.startsWith("definitions")) {
-            return new dList(getAllDefinitions().keySet()).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("definitions", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new dList(((ScriptQueue) object).getAllDefinitions().keySet()).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.definition[<definition>]>
@@ -884,10 +906,16 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
-        if (attribute.startsWith("definition")
-                && attribute.hasContext(1)) {
-            return new Element(getDefinition(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
-        }
+        registerTag("definition", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag q@queue.definition[...] must have a value.");
+                    return null;
+                }
+                return new Element(((ScriptQueue) object).getDefinition(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
+            }
+        });
 
         // <--[tag]
         // @attribute <q@queue.determination>
@@ -897,11 +925,43 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         // for this queue, or null if there is none.
         // The object will be returned as the most-valid type based on the input.
         // -->
-        if (attribute.startsWith("determination")) {
-            if (reqId < 0 || !DetermineCommand.hasOutcome(reqId))
-                return null;
-            else
-                return ObjectFetcher.pickObjectFor(DetermineCommand.readOutcome(reqId)).getAttribute(attribute.fulfill(1));
+        registerTag("determination", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                Long rID = ((ScriptQueue) object).reqId;
+                if (rID < 0 || !DetermineCommand.hasOutcome(rID)) {
+                    return null;
+                }
+                else {
+                    return ObjectFetcher.pickObjectFor(DetermineCommand.readOutcome(rID)).getAttribute(attribute.fulfill(1));
+                }
+            }
+        });
+
+    }
+
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+
+    public static void registerTag(String name, TagRunnable runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registeredTags.put(name, runnable);
+    }
+
+    @Override
+    public String getAttribute(Attribute attribute) {
+        if (attribute == null) return null;
+
+        // TODO: Scrap getAttribute, make this functionality a core system
+        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
+        TagRunnable tr = registeredTags.get(attrLow);
+        if (tr != null) {
+            if (!tr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
+            }
+            return tr.run(attribute, this);
         }
 
         // Iterate through this object's properties' attributes

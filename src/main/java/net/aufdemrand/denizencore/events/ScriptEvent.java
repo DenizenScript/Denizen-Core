@@ -107,6 +107,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, String event) {
+        if (!script.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
+            return false;
+        }
         if (event.endsWith(" cancelled:false")) {
             if (sEvent.cancelled) {
                 return false;
@@ -260,7 +263,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (oldStyleContext.size() > 0) {
             OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
             oecs.contexts = oldStyleContext;
-            oecs.contexts.put("cancelled", new Element("cancelled"));
+            oecs.contexts.put("cancelled", new Element(cancelled));
             queue.setContextSource(oecs);
         }
         else {

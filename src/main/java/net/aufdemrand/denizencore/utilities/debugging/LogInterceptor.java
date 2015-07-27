@@ -26,6 +26,8 @@ public class LogInterceptor extends PrintStream {
     // @Events
     // console output
     //
+    // @Regex ^(console output)$
+    //
     // @Warning Disable debug on this event or you'll get an infinite loop!
     //
     // @Triggers when any message is printed to console. (Requires <@link mechanism system.redirect_logging> be set true.)

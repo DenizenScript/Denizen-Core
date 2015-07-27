@@ -56,10 +56,13 @@ public class ObjectFetcher {
         registerWithObjectFetcher(dList.class);        // li@/fl@
         dList.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(dScript.class);      // s@
+        dScript.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(Element.class);      // el@
         Element.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(Duration.class);     // d@
+        Duration.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(ScriptQueue.class);  // q@
+        ScriptQueue.registerTags(); // TODO: Automate this once all classes have tag registries
         _initialize();
 
     }

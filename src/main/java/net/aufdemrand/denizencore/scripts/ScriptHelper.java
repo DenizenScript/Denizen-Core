@@ -70,7 +70,7 @@ public class ScriptHelper {
             String up = str.str.toUpperCase();
             if (list.contains(up)) {
                 hadError = true;
-                DenizenCore.getImplementation().debugError("There is more than one script named '" + up + "'!");
+                dB.echoError("There is more than one script named '" + up + "'!");
             }
             else {
                 list.add(up);
@@ -95,14 +95,13 @@ public class ScriptHelper {
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
             String trimStart = lines[i].replaceAll("^[\\s\\t]+", "");
-            if (trackSources) {
-                if (trimStart.length() == lines[i].length() && line.endsWith(":") && line.length() > 1) {
-                    String name = line.substring(0, line.length() - 1).replace('\"', '\'').replace("'", "");
-                    scriptSources.put(name.toUpperCase(), filename);
-                    scriptOriginalNames.put(name.toUpperCase(), name);
-                }
+            if (trackSources && !line.startsWith("#") && trimStart.length() == lines[i].length() && line.endsWith(":") && line.length() > 1) {
+                String name = line.substring(0, line.length() - 1).replace('\"', '\'').replace("'", "");
+                scriptSources.put(name.toUpperCase(), filename);
+                scriptOriginalNames.put(name.toUpperCase(), name);
+                result.append(name.toUpperCase() + ":\n");
             }
-            if (!line.startsWith("#")) {
+            else if (!line.startsWith("#")) {
                 if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":")) {
                     result.append(' ').append(lines[i].replace('\0', ' ')
                             .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
@@ -200,7 +199,7 @@ public class ScriptHelper {
                 }
 
                 dB.echoApproval("All scripts loaded!");
-                return yamlKeysToUpperCase(sb.toString());
+                return sb.toString();
             }
             else {
                 dB.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
@@ -215,21 +214,5 @@ public class ScriptHelper {
         }
 
         return "";
-    }
-
-
-    static Pattern pattern = Pattern.compile("(^.*?[^\\s](:\\s))", Pattern.MULTILINE);
-
-    /**
-     * Changes YAML 'keys' to all Upper Case to de-sensitize case sensitivity when
-     * reading and parsing scripts.
-     */
-    private static String yamlKeysToUpperCase(String string) {
-        StringBuffer sb = new StringBuffer();
-        Matcher matcher = pattern.matcher(string);
-        while (matcher.find())
-            matcher.appendReplacement(sb, matcher.group().toUpperCase());
-        matcher.appendTail(sb);
-        return sb.toString();
     }
 }
