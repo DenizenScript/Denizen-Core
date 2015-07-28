@@ -126,13 +126,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return false;
         }
         String cancelmode = getSwitch(event, "cancelled");
-        if (cancelmode.equalsIgnoreCase("false") && sEvent.cancelled) {
+        if (cancelmode != null && cancelmode.equalsIgnoreCase("false") && sEvent.cancelled) {
             return false;
         }
-        else if (cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
+        else if (cancelmode != null && cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
             return false;
         }
-        if (!getSwitch(event, "ignorecancelled").equalsIgnoreCase("true") && sEvent.cancelled) {
+        if (!checkSwitch(event, "ignorecancelled", "true") && sEvent.cancelled) {
             return false;
         }
         return sEvent.matches(script, event);
