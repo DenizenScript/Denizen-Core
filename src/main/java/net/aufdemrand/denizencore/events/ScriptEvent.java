@@ -106,38 +106,39 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
+    // <--[language]
+    // @name script event cancellation
+    // @description
+    // Any modern ScriptEvent can take a "cancelled:<true/false>" argument and a "ignorecancelled:true" argument.
+    // EG, "on object does something ignorecancelled:true:"
+    // Or, "on object does something cancelled:true:"
+    // If you set 'ignorecancalled:true', the event will fire regardless of whether it was cancelled.
+    // If you set 'cancelled:true', the event will fire /only/ when it was cancelled.
+    // By default, only non-cancelled events will fire. (Effectively acting as if you had set "cancelled:false").
+    //
+    // Any modern script event can take the determinations "cancelled" and "cancelled:false".
+    // These determinations will set whether the script event is 'cancelled' in the eyes of following script events,
+    // and, in some cases, can be used to stop the event itself from continuing.
+    // A script event can at any time check the cancellation state of an event by accessing "<context.cancelled>".
+    // -->
     public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, String event) {
         if (!script.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
             return false;
         }
-        if (event.endsWith(" cancelled:false")) {
-            if (sEvent.cancelled) {
-                return false;
-            }
-            event = event.substring(0, event.length() - " cancelled:false".length());
+        String cancelmode = getSwitch(event, "cancelled");
+        if (cancelmode.equalsIgnoreCase("false") && sEvent.cancelled) {
+            return false;
         }
-        if (event.endsWith(" cancelled:true")) {
-            if (!sEvent.cancelled) {
-                return false;
-            }
-            event = event.substring(0, event.length() - " cancelled:true".length());
+        else if (cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
+            return false;
+        }
+        if (!getSwitch(event, "ignorecancelled").equalsIgnoreCase("true") && sEvent.cancelled) {
+            return false;
         }
         return sEvent.matches(script, event);
     }
 
     public static boolean couldMatchScript(ScriptEvent sEvent, ScriptContainer script, String event) {
-        if (event.endsWith(" cancelled:false")) {
-            if (sEvent.cancelled) {
-                return false;
-            }
-            event = event.substring(0, event.length() - "cancelled:false".length());
-        }
-        if (event.endsWith(" cancelled:true")) {
-            if (!sEvent.cancelled) {
-                return false;
-            }
-            event = event.substring(0, event.length() - "cancelled:true".length());
-        }
         return sEvent.couldMatch(script, event);
     }
 
@@ -176,11 +177,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void destroy() {
     }
 
-    public boolean checkSwitch(String event, String switcher, String value) {
+    public static boolean checkSwitch(String event, String switcher, String value) {
         for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);
-            if (dB.verbose) dB.log("TEST: " + split.size() + ", " + split.get(0) + " && "
-                    + (split.size() > 1 ? split.get(1) : "") + " comp " + switcher + ":" + value);
             if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1 && !split.get(1).equalsIgnoreCase(value)) {
                 return false;
             }
@@ -188,7 +187,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return true;
     }
 
-    public String getSwitch(String event, String switcher) {
+    public static String getSwitch(String event, String switcher) {
         for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);
             if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1) {
@@ -199,11 +198,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public boolean applyDetermination(ScriptContainer container, String determination) {
-        if (determination.equalsIgnoreCase("CANCELLED")) {
+        if (determination.equalsIgnoreCase("cancelled")) {
             dB.echoDebug(container, "Event cancelled!");
             cancelled = true;
         }
-        else if (determination.equalsIgnoreCase("CANCELLED:FALSE")) {
+        else if (determination.equalsIgnoreCase("cancelled:false")) {
             dB.echoDebug(container, "Event uncancelled!");
             cancelled = false;
         }
