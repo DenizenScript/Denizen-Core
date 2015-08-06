@@ -402,6 +402,8 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @return the newly created queue.
      */
     public TimedQueue forceToTimed(Duration delay) {
+        Runnable r = callback;
+        callback = null;
         stop();
         TimedQueue newQueue = TimedQueue.getQueue(id);
         for (ScriptEntry entry : getEntries()) {
@@ -419,8 +421,10 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
         newQueue.setSpeed(1);
         clear();
-        if (delay != null)
+        if (delay != null) {
             newQueue.delayFor(delay);
+        }
+        newQueue.callBack(r);
         newQueue.start();
         return newQueue;
     }
