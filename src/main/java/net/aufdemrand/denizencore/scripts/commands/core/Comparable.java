@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dList;
@@ -340,59 +341,11 @@ public class Comparable {
             case MATCHES:
                 comparedto = comparedto.replace("_", "");
 
-                /*
-                if (comparedto.equalsIgnoreCase("location"))
-                    outcome = dLocation.matches(comparable);
-
-                else if (comparedto.equalsIgnoreCase("material"))
-                    outcome = dMaterial.matches(comparable);
-
-                else if (comparedto.equalsIgnoreCase("materiallist"))
-                    outcome = dList.valueOf(comparable).containsObjectsFrom(dMaterial.class);
-                    */ // TODO
-
                 if (comparedto.equalsIgnoreCase("script"))
                     outcome = dScript.matches(comparable);
 
-            /*
-                else if (comparedto.equalsIgnoreCase("entity"))
-                    outcome = dEntity.matches(comparable);
-
-                else if (comparedto.equalsIgnoreCase("spawnedentity"))
-                    outcome = (dEntity.matches(comparable) && dEntity.valueOf(comparable).isSpawned());
-                    */ // TODO
-
-                /** TODO: FIX
-                 else if (comparedto.equalsIgnoreCase("entitytype"))
-                 outcome = aH.matchesEntityType(comparable);
-                 */
-
-                /*
-                else if (comparedto.equalsIgnoreCase("npc"))
-                    outcome = dNPC.matches(comparable);
-
-                else if (comparedto.equalsIgnoreCase("player"))
-                    outcome = dPlayer.matches(comparable);
-
-                else if (comparedto.equalsIgnoreCase("offlineplayer"))
-                    outcome = (dPlayer.valueOf(comparable) != null && !dPlayer.valueOf(comparable).isOnline());
-
-                else if (comparedto.equalsIgnoreCase("onlineplayer"))
-                    outcome = (dPlayer.valueOf(comparable) != null && dPlayer.valueOf(comparable).isOnline());
-
-                else if (comparedto.equalsIgnoreCase("item"))
-                    outcome = dItem.matches(comparable);
-
-*/ // TODO
                 else if (comparedto.equalsIgnoreCase("duration"))
                     outcome = Duration.matches(comparable);
-
-                /*
-                else if (comparedto.equalsIgnoreCase("cuboid"))
-                    outcome = dCuboid.matches(comparable);
-                    */ // TODO
-
-                    // Use aH on primitives
 
                 else if (comparedto.equalsIgnoreCase("double")
                         || comparedto.equalsIgnoreCase("decimal"))
@@ -412,6 +365,9 @@ public class Comparable {
 
                 else if (comparedto.equalsIgnoreCase("boolean"))
                     outcome = (comparable.equalsIgnoreCase("true") || comparable.equalsIgnoreCase("false"));
+
+                else
+                    outcome = DenizenCore.getImplementation().matchesType(comparable, comparedto);
 
                 break;
         }

@@ -138,4 +138,6 @@ public interface DenizenImplementation {
     public abstract boolean allowConsoleRedirection();
 
     public abstract String cleanseLogString(String str);
+
+    public abstract  boolean matchesType(String comparable, String comparedTo);
 }
