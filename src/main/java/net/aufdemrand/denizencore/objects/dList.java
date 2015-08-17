@@ -1378,7 +1378,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return new Element(gotten == needed.size()).getAttribute(attribute.fulfill(1));
+                return new Element(gotten == needed.size() && gotten > 0).getAttribute(attribute.fulfill(1));
             }
         });
 
