@@ -589,22 +589,22 @@ public class Element implements dObject {
         });
 
         /////////////////////
-        //   STRING CHECKING ATTRIBUTES
+        //   ELEMENT CHECKING ATTRIBUTES
         /////////////////
 
         // <--[tag]
         // @attribute <el@element.contains_any_case_sensitive_text[<element>|...]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains any of a list of specified strings, case sensitive.
+        // Returns whether the element contains any of a list of specified elements, case sensitive.
         // -->
         // <--[tag]
         // @attribute <el@element.contains_any_case_sensitive[<element>|...]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains any of a list of specified strings, case sensitive.
+        // Returns whether the element contains any of a list of specified elements, case sensitive.
         // -->
         registerTag("contains_any_case_sensitive", new TagRunnable() {
             @Override
@@ -626,17 +626,17 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.contains_any_text[<element>|...]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains any of a list of specified strings, case insensitive.
+        // Returns whether the element contains any of a list of specified elements, case insensitive.
         // -->
 
         // <--[tag]
         // @attribute <el@element.contains_any[<element>|...]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains any of a list of specified strings, case insensitive.
+        // Returns whether the element contains any of a list of specified elements, case insensitive.
         // -->
         registerTag("contains_any", new TagRunnable() {
             @Override
@@ -659,17 +659,17 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.contains_case_sensitive_text[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains a specified string, case sensitive.
+        // Returns whether the element contains a specified element, case sensitive.
         // -->
 
         // <--[tag]
         // @attribute <el@element.contains_case_sensitive[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains a specified string, case sensitive.
+        // Returns whether the element contains a specified element, case sensitive.
         // -->
         registerTag("contains_case_sensitive", new TagRunnable() {
             @Override
@@ -688,19 +688,19 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.contains_text[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains a specified string, case insensitive. Can use
-        // regular expression by prefixing the string with regex:
+        // Returns whether the element contains a specified element, case insensitive. Can use
+        // regular expression by prefixing the element with regex:
         // -->
 
         // <--[tag]
         // @attribute <el@element.contains[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element contains a specified string, case insensitive. Can use
-        // regular expression by prefixing the string with regex:
+        // Returns whether the element contains a specified element, case insensitive. Can use
+        // regular expression by prefixing the element with regex:
         // -->
         registerTag("contains", new TagRunnable() {
             @Override
@@ -727,9 +727,9 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.ends_with[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element ends with a specified string.
+        // Returns whether the element ends with a specified element.
         // -->
         registerTag("ends_with", new TagRunnable() {
             @Override
@@ -742,7 +742,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.equals_case_sensitive[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns whether the element matches another element, case-sensitive.
         // -->
@@ -761,7 +761,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.matches[<regex>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns whether the element matches a regex input.
         // -->
@@ -779,7 +779,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.regex[<regex>].group[<group>]>
         // @returns Element
-        // @group string checking
+        // @group element checking
         // @description
         // Returns the specific group from a regex match.
         // Specify group 0 for the whole match.
@@ -808,7 +808,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.length>
         // @returns Element(Number)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns the length of the element.
         // -->
@@ -822,7 +822,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.not>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns the opposite of the element
         // IE, true returns false and false returns true.
@@ -837,7 +837,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.and[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns whether both the element and the second element are true.
         // -->
@@ -852,7 +852,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.or[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns whether either the element or the second element are true.
         // -->
@@ -867,7 +867,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.xor[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
         // Returns whether the element and the second element are true and false (exclusive or).
         // -->
@@ -880,11 +880,11 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.starts_with[<string>]>
+        // @attribute <el@element.starts_with[<element>]>
         // @returns Element(Boolean)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns whether the element starts with a specified string.
+        // Returns whether the element starts with a specified element.
         // -->
         registerTag("starts_with", new TagRunnable() {
             @Override
@@ -896,12 +896,12 @@ public class Element implements dObject {
         registerTag("startswith", registeredTags.get("starts_with"));
 
         // <--[tag]
-        // @attribute <el@element.index_of[<string>]>
+        // @attribute <el@element.index_of[<element>]>
         // @returns Element(Number)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns the index of the first occurrence of a specified string.
-        // Returns 0 if the string never occurs within the element.
+        // Returns the index of the first occurrence of a specified element.
+        // Returns 0 if the element never occurs within the element.
         // -->
         registerTag("index_of", new TagRunnable() {
             @Override
@@ -917,12 +917,12 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.last_index_of[<string>]>
+        // @attribute <el@element.last_index_of[<element>]>
         // @returns Element(Number)
-        // @group string checking
+        // @group element checking
         // @description
-        // Returns the index of the last occurrence of a specified string.
-        // Returns 0 if the string never occurs within the element.
+        // Returns the index of the last occurrence of a specified element.
+        // Returns 0 if the element never occurs within the element.
         // -->
         registerTag("last_index_of", new TagRunnable() {
             @Override
@@ -940,7 +940,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.char_at[<#>]>
         // @returns Element
-        // @group string checking
+        // @group element checking
         // @description
         // Returns the character at a specified index.
         // Returns null if the index is outside the range of the element.
@@ -964,15 +964,15 @@ public class Element implements dObject {
         });
 
         /////////////////////
-        //   STRING MANIPULATION ATTRIBUTES
+        //   ELEMENT MANIPULATION ATTRIBUTES
         /////////////////
 
         // <--[tag]
-        // @attribute <el@element.after_last[<text>]>
+        // @attribute <el@element.after_last[<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the portion of an element after the last occurrence of a specified string.
+        // Returns the portion of an element after the last occurrence of a specified element.
         // EG, abcabc .after_last[b] returns c.
         // -->
         registerTag("after_last", new TagRunnable() {
@@ -995,11 +995,11 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.after[<text>]>
+        // @attribute <el@element.after[<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the portion of an element after the first occurrence of a specified string.
+        // Returns the portion of an element after the first occurrence of a specified element.
         // EG, HelloWorld .after[Hello] returns World.
         // -->
         registerTag("after", new TagRunnable() {
@@ -1022,11 +1022,11 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.before_last[<text>]>
+        // @attribute <el@element.before_last[<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the portion of an element before the last occurrence of a specified string.
+        // Returns the portion of an element before the last occurrence of a specified element.
         // EG, abcabc .before_last[b] returns abca.
         // -->
         registerTag("before_last", new TagRunnable() {
@@ -1049,11 +1049,11 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.before[<text>]>
+        // @attribute <el@element.before[<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the portion of an element before the first occurrence of specified string.
+        // Returns the portion of an element before the first occurrence of specified element.
         // EG, abcd .before[c] returns ab.
         // -->
         registerTag("before", new TagRunnable() {
@@ -1076,21 +1076,21 @@ public class Element implements dObject {
         });
 
         // <--[tag]
-        // @attribute <el@element.replace[((first)regex:)<string>]>
+        // @attribute <el@element.replace[((first)regex:)<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the element with all instances of a string removed.
+        // Returns the element with all instances of a element removed.
         // -->
 
         // <--[tag]
-        // @attribute <el@element.replace[((first)regex:)<string>].with[<string>]>
+        // @attribute <el@element.replace[((first)regex:)<element>].with[<element>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the element with all instances of a string replaced with another.
-        // Specify regex: at the start of the replace string to use Regex replacement.
-        // Specify firstregex: at the start of the replace string to Regex 'replaceFirst'
+        // Returns the element with all instances of a element replaced with another.
+        // Specify regex: at the start of the replace element to use Regex replacement.
+        // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
         // -->
         registerTag("replace", new TagRunnable() {
             @Override
@@ -1126,7 +1126,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.format_number>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns a number reformatted for easier reading.
         // EG, 1234567 will become 1,234,567.
@@ -1167,7 +1167,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.to_list>
         // @returns dList
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns a dList of each letter in the element.
         // -->
@@ -1185,7 +1185,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.trim>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns the value of an element minus any leading or trailing whitespace.
         // -->
@@ -1199,7 +1199,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.to_uppercase>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns the value of an element in all uppercase letters.
         // -->
@@ -1214,7 +1214,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.to_lowercase>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns the value of an element in all lowercase letters.
         // -->
@@ -1229,7 +1229,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.to_titlecase>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns The Value Of An Element In Title Case.
         // -->
@@ -1257,9 +1257,9 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.substring[<#>(,<#>)]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
-        // Returns the portion of an element between two string indices.
+        // Returns the portion of an element between two element indices.
         // If no second index is specified, it will return the portion of an
         // element after the specified index.
         // -->
@@ -1289,7 +1289,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.pad_left[<#>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns the value of an element extended to reach a minimum specified length
         // by adding spaces to the left side.
@@ -1328,7 +1328,7 @@ public class Element implements dObject {
         // <--[tag]
         // @attribute <el@element.pad_right[<#>]>
         // @returns Element
-        // @group string manipulation
+        // @group element manipulation
         // @description
         // Returns the value of an element extended to reach a minimum specified length
         // by adding spaces to the right side.
@@ -1346,7 +1346,7 @@ public class Element implements dObject {
                 // <--[tag]
                 // @attribute <el@element.pad_right[<#>].with[<element>]>
                 // @returns Element
-                // @group string manipulation
+                // @group element manipulation
                 // @description
                 // Returns the value of an element extended to reach a minimum specified length
                 // by adding a specific symbol to the right side.
