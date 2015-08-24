@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -7,10 +8,11 @@ import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
+import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
 
 import java.util.List;
 
-public class AsyncCommand extends BracedCommand implements Holdable {
+public class SyncCommand extends BracedCommand implements Holdable {
 
     @Override
     public void onEnable() {
@@ -25,10 +27,11 @@ public class AsyncCommand extends BracedCommand implements Holdable {
     @Override
     public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
 
-        InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("ASYNC_COMMAND"));
-        queue.run_async = true;
+        ScriptQueue residingQueue = scriptEntry.getResidingQueue();
+
+        final InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("SYNC_COMMAND"));
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
-        queue.getAllDefinitions().putAll(scriptEntry.getResidingQueue().getAllDefinitions());
+        queue.getAllDefinitions().putAll(residingQueue.getAllDefinitions());
 
         // Setup a callback if the queue is being waited on
         if (scriptEntry.shouldWaitFor()) {
@@ -42,6 +45,18 @@ public class AsyncCommand extends BracedCommand implements Holdable {
             });
         }
 
-        queue.start();
+        // If the current queue is asynchronous, delay this queue until the next tick
+        if (residingQueue.run_async) {
+            DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
+                @Override
+                public void run() {
+                    queue.start();
+                }
+            }, 0));
+        }
+        else {
+            // TODO: warn user about running SyncCommand when already sync?
+            queue.start();
+        }
     }
 }
