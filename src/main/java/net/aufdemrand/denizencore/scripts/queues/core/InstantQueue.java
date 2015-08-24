@@ -48,6 +48,10 @@ public class InstantQueue extends ScriptQueue {
         super(id);
     }
 
+    public InstantQueue(String id, boolean async) {
+        super(id, async);
+    }
+
     @Override
     public void onStart() {
         while (is_started) revolve();

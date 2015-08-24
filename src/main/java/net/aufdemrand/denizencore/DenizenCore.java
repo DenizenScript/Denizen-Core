@@ -39,6 +39,8 @@ public class DenizenCore {
 
     public static LogInterceptor logInterceptor = new LogInterceptor();
 
+    public static Thread MAIN_THREAD;
+
     static {
         String version = "UNKNOWN";
         try {
@@ -72,6 +74,7 @@ public class DenizenCore {
      */
     public static void init(DenizenImplementation implementation) {
         DenizenCore.implementation = implementation;
+        implementation.getMainThread();
         dB.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());

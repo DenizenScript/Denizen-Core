@@ -86,6 +86,9 @@ public abstract class CommandRegistry implements dRegistry {
 
     public void registerCoreCommands() {
 
+        registerCoreMember(AsyncCommand.class,
+                "async", "async [<commands>]", 1);
+
         // <--[command]
         // @Name Choose
         // @Syntax choose [<option>] [<cases>]

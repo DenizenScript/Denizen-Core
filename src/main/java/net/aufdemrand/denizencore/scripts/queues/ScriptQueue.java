@@ -15,7 +15,9 @@ import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.QueueWordList;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.scheduling.AsyncSchedulable;
 import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
+import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -146,6 +148,9 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     // Whether the queue was cleared
     public boolean was_cleared = false;
 
+    // Whether the queue should run asynchronously
+    public boolean run_async = false;
+
 
     /////////////////////
     // Private instance fields and constructors
@@ -196,10 +201,13 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     protected ScriptQueue(String id) {
         // Remember the 'id'
         this.id = id;
-        // Save the instance to the _queues static map
-        _queues.put(id, this);
         // Increment the stats
         total_queues++;
+    }
+
+    protected ScriptQueue(String id, boolean async) {
+        this(id);
+        this.run_async = async;
     }
 
     /////////////////////
@@ -406,6 +414,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         callback = null;
         stop();
         TimedQueue newQueue = TimedQueue.getQueue(id);
+        newQueue.run_async = this.run_async;
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
         }
@@ -451,6 +460,9 @@ public abstract class ScriptQueue implements Debuggable, dObject {
     public void start() {
         if (is_started) return;
 
+        // Save the instance to the _queues static map
+        _queues.put(id, this);
+
         // Set as started, and check for a valid delay_time.
         is_started = true;
         boolean is_delayed = delay_time > System.currentTimeMillis();
@@ -471,28 +483,35 @@ public abstract class ScriptQueue implements Debuggable, dObject {
         else
             dB.echoDebug(this, "Starting " + name + " '" + id + "'...");
 
+        Runnable runToStart = new Runnable() {
+            @Override
+            public void run() {
+                startTime = System.nanoTime();
+                startTimeMilli = System.currentTimeMillis();
+                onStart(); /* Start the engine */
+            }
+        };
+
         // If it's delayed, schedule it for later
         if (is_delayed) {
-            DenizenCore.schedule(new OneTimeSchedulable(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            startTime = System.nanoTime();
-                            startTimeMilli = System.currentTimeMillis();
-                            onStart(); /* Start the engine */
-                        }
-
-                        // Take the delay time, find out how many milliseconds away
-                        // it is, turn it into seconds, then divide by 20 for ticks.
-                    },
-                    ((float) (delay_time - System.currentTimeMillis())) / 1000));
+            Schedulable schedulable = new OneTimeSchedulable(runToStart,
+                    // Take the delay time, find out how many milliseconds away
+                    // it is, turn it into seconds, then divide by 20 for ticks.
+                    ((float) (delay_time - System.currentTimeMillis())) / 1000);
+            if (run_async) {
+                schedulable = new AsyncSchedulable(schedulable);
+            }
+            DenizenCore.schedule(schedulable);
 
         }
         else {
             // If it's not, start the engine now!
-            startTime = System.nanoTime();
-            startTimeMilli = System.currentTimeMillis();
-            onStart();
+            if (!run_async) {
+                runToStart.run();
+            }
+            else {
+                AsyncSchedulable.executor.execute(runToStart);
+            }
         }
     }
 
