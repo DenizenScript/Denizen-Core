@@ -12,6 +12,18 @@ public class AsyncSchedulable extends Schedulable {
 
     public AsyncSchedulable(Schedulable schedulable) {
         this.schedulable = schedulable;
+        final Runnable runnable = schedulable.run;
+        this.schedulable.run = new Runnable() {
+            @Override
+            public void run() {
+                if (DenizenCore.MAIN_THREAD == Thread.currentThread()) {
+                    executor.execute(runnable);
+                }
+                else {
+                    runnable.run();
+                }
+            }
+        };
     }
 
     @Override
@@ -22,15 +34,5 @@ public class AsyncSchedulable extends Schedulable {
     @Override
     public boolean tick(float seconds) {
         return this.schedulable.tick(seconds);
-    }
-
-    @Override
-    protected void run() {
-        if (DenizenCore.MAIN_THREAD == Thread.currentThread()) {
-            executor.execute(run);
-        }
-        else {
-            run.run();
-        }
     }
 }

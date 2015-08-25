@@ -14,14 +14,9 @@ public class OneTimeSchedulable extends Schedulable {
         }
         secondsLeft -= seconds;
         if (secondsLeft <= 0) {
-            this.run();
+            run.run();
             return false;
         }
         return true;
-    }
-
-    @Override
-    protected void run() {
-        run.run();
     }
 }

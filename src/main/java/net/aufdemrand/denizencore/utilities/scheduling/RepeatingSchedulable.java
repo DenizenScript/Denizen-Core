@@ -17,14 +17,9 @@ public class RepeatingSchedulable extends Schedulable {
         }
         secondsLeft -= seconds;
         if (secondsLeft <= 0) {
-            this.run();
+            run.run();
             secondsLeft += fireEverySeconds;
         }
         return true;
-    }
-
-    @Override
-    protected void run() {
-        run.run();
     }
 }
