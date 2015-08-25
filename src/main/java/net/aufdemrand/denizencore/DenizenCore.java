@@ -74,7 +74,7 @@ public class DenizenCore {
      */
     public static void init(DenizenImplementation implementation) {
         DenizenCore.implementation = implementation;
-        implementation.getMainThread();
+        MAIN_THREAD = implementation.getMainThread();
         dB.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
