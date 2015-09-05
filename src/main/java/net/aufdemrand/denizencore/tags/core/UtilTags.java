@@ -309,7 +309,7 @@ public class UtilTags {
         Element value = mechanism.getValue();
 
         // <--[mechanism]
-        // @object server
+        // @object system
         // @name redirect_logging
         // @input Element(Boolean)
         // @description
