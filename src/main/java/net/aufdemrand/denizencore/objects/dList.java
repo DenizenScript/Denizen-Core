@@ -704,7 +704,7 @@ public class dList extends ArrayList<String> implements dObject {
                     if (index.equalsIgnoreCase("last")) {
                         remove = list.size() - 1;
                     }
-                    else if (index.equalsIgnoreCase("last")){
+                    else if (index.equalsIgnoreCase("first")) {
                         remove = 0;
                     }
                     else {
