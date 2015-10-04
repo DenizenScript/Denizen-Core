@@ -70,10 +70,25 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         return super.getContext(name);
     }
 
+    boolean enab = false;
+
+    @Override
+    public void init() {
+        enab = true;
+    }
+
+    @Override
+    public void destroy() {
+        enab = false;
+    }
+
     int lH = 0;
     int lM = 0;
 
     public void checkTime() {
+        if (!enab) {
+            return;
+        }
         Date date = new Date();
         // BY WHICH BLACK MAGIC DOES JAVA EXPECT US TO HANDLE DATETIMES IF NOT THIS?!
         int h = date.getHours();
