@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.ScriptEvent;
+import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
@@ -128,12 +129,23 @@ public class DenizenCore {
         }
     }
 
+    static void oncePerSecond() {
+        SystemTimeScriptEvent.instance.checkTime();
+    }
+
+    static int tMS = 0;
+
     /**
      * Call every 'tick' in the engine. (1/20th of a second on a standard engine.)
      *
      * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
      */
     public static void tick(int ms_elapsed) {
+        tMS += ms_elapsed;
+        while (tMS > 1000) {
+            tMS -= 1000;
+            oncePerSecond();
+        }
         synchronized (scheduled) {
             for (int i = 0; i < scheduled.size(); i++) {
                 if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
