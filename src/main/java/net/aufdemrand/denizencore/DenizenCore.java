@@ -39,6 +39,8 @@ public class DenizenCore {
 
     public static LogInterceptor logInterceptor = new LogInterceptor();
 
+    public static Thread MAIN_THREAD;
+
     static {
         String version = "UNKNOWN";
         try {
@@ -72,6 +74,7 @@ public class DenizenCore {
      */
     public static void init(DenizenImplementation implementation) {
         DenizenCore.implementation = implementation;
+        MAIN_THREAD = implementation.getMainThread();
         dB.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
@@ -114,13 +117,15 @@ public class DenizenCore {
         loadScripts();
     }
 
-    public static List<Schedulable> scheduled = new ArrayList<Schedulable>();
+    public static final List<Schedulable> scheduled = new ArrayList<Schedulable>();
 
     /**
      * Schedule an item to be run automatically after a given period of time, optionally repeating.
      */
     public static void schedule(Schedulable sched) {
-        scheduled.add(sched);
+        synchronized (scheduled) {
+            scheduled.add(sched);
+        }
     }
 
     /**
@@ -129,9 +134,11 @@ public class DenizenCore {
      * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
      */
     public static void tick(int ms_elapsed) {
-        for (int i = 0; i < scheduled.size(); i++) {
-            if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
-                scheduled.remove(i--);
+        synchronized (scheduled) {
+            for (int i = 0; i < scheduled.size(); i++) {
+                if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
+                    scheduled.remove(i--);
+                }
             }
         }
     }

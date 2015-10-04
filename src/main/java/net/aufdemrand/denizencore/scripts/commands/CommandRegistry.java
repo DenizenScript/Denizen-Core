@@ -87,6 +87,38 @@ public abstract class CommandRegistry implements dRegistry {
     public void registerCoreCommands() {
 
         // <--[command]
+        // @Name Async
+        // @Syntax async [<commands>]
+        // @Required 0
+        // @Stable unstable
+        // @Short Runs commands asynchronously. Invert of <@link command sync>.
+        // @Author Morphan1
+        // @Group core
+
+        // @Description
+        // Runs commands asynchronously. This means that anything executed within will run off the main
+        // thread of the server, allowing server-intensive scripts to have virtually no impact on the amount
+        // of time between ticks (AKA majorly reduces lag).
+        //
+        // Generally, this command is only recommended for those who know what they're doing with it, as there
+        // is always a slight possibility of corruption.
+        //
+        // The safety of things such as editing worlds is NOT guaranteed.
+
+        // @Tags
+        // None
+
+        // @Usage
+        // Use to perform intensive commands without major lag.
+        // - async:
+        //   - repeat 100:
+        //     - some intensive command
+
+        // -->
+        registerCoreMember(AsyncCommand.class,
+                "async", "async [<commands>]", 0);
+
+        // <--[command]
         // @Name Choose
         // @Syntax choose [<option>] [<cases>]
         // @Required 1
@@ -347,6 +379,32 @@ public abstract class CommandRegistry implements dRegistry {
         // - mark potato
         // -->
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
+
+        // <--[command]
+        // @Name Sync
+        // @Syntax sync [<commands>]
+        // @Required 0
+        // @Stable unstable
+        // @Short Runs commands synchronously. Invert of <@link command async>.
+        // @Author Morphan1
+        // @Group core
+
+        // @Description
+        // Runs commands synchronously. This means that anything executed within will run on the
+        // main server thread, without the possibility of corrupting anything that an asynchronous
+        // queue could theoretically do.
+
+        // @Tags
+        // None
+
+        // @Usage
+        // Use to perform possibly not thread-safe commands.
+        // - sync:
+        //   - edit the world, etc
+
+        // -->
+        registerCoreMember(SyncCommand.class,
+                "sync", "sync [<commands>]", 0);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {

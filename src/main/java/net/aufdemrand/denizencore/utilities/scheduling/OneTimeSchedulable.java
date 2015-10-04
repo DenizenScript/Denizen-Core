@@ -2,16 +2,10 @@ package net.aufdemrand.denizencore.utilities.scheduling;
 
 public class OneTimeSchedulable extends Schedulable {
 
-    public OneTimeSchedulable(Runnable runme, float fireTime) {
-        run = runme;
+    public OneTimeSchedulable(Runnable runnable, float fireTime) {
+        run = runnable;
         secondsLeft = fireTime;
     }
-
-    public float secondsLeft = 0;
-
-    public Runnable run;
-
-    public boolean cancelled = false;
 
     @Override
     public boolean tick(float seconds) {

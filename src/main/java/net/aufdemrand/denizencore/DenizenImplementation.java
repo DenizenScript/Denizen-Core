@@ -139,5 +139,7 @@ public interface DenizenImplementation {
 
     public abstract String cleanseLogString(String str);
 
-    public abstract  boolean matchesType(String comparable, String comparedTo);
+    public abstract boolean matchesType(String comparable, String comparedTo);
+
+    public abstract Thread getMainThread();
 }

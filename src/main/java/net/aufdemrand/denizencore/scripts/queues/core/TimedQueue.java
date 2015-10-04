@@ -5,7 +5,9 @@ import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.utilities.scheduling.AsyncSchedulable;
 import net.aufdemrand.denizencore.utilities.scheduling.RepeatingSchedulable;
+import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
 public class TimedQueue extends ScriptQueue implements Delayable {
 
@@ -48,7 +50,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     /////////////////////
 
 
-    private RepeatingSchedulable schedulable;
+    private Schedulable schedulable;
 
 
     // The speed of the engine, the # of ticks
@@ -142,21 +144,25 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         // Do the first revolution now...
         revolve();
         // ...and schedule the rest for later.
-        RepeatingSchedulable sched = new RepeatingSchedulable(
+        Schedulable schedulable = new RepeatingSchedulable(
                 new Runnable() {
                     @Override
                     public void run() {
                         revolve();
                     }
                 }, (ticks == 0 ? 1 : ticks) / 20f);
-        DenizenCore.schedule(sched);
+        if (run_async) {
+            schedulable = new AsyncSchedulable(schedulable);
+        }
+        this.schedulable = schedulable;
+        DenizenCore.schedule(schedulable);
     }
 
 
     @Override
     protected void onStop() {
         if (schedulable != null) {
-            schedulable.cancelled = true;
+            schedulable.cancel();
         }
     }
 
