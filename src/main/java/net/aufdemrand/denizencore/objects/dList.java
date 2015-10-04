@@ -687,6 +687,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns a new dList excluding the items at the specified index.
         // EG, .remove[2] on a list of "one|two|three|four" will return "one|three|four".
+        // Also supports [first] and [last] values.
         // -->
 
         registerTag("remove", new TagRunnable() {
@@ -699,7 +700,16 @@ public class dList extends ArrayList<String> implements dObject {
                 dList indices = dList.valueOf(attribute.getContext(1));
                 dList list = new dList((dList) object);
                 for (String index : indices) {
-                    int remove = new Element(index).asInt() - 1;
+                    int remove;
+                    if (index.equalsIgnoreCase("last")) {
+                        remove = list.size() - 1;
+                    }
+                    else if (index.equalsIgnoreCase("first")) {
+                        remove = 0;
+                    }
+                    else {
+                        remove = new Element(index).asInt() - 1;
+                    }
                     if (remove >= 0 && remove < list.size()) {
                         list.set(remove, "\0");
                     }
