@@ -202,7 +202,7 @@ public class aH {
                     return wordPrimitive.matcher(value).matches();
 
                 case Integer:
-                    return integerPrimitive.matcher(value).matches();
+                    return doublePrimitive.matcher(value).matches();
 
                 case Double:
                     return doublePrimitive.matcher(value).matches();
@@ -477,7 +477,7 @@ public class aH {
                 return wordPrimitive.matcher(string_arg).matches();
 
             case Integer:
-                return integerPrimitive.matcher(string_arg).matches();
+                return doublePrimitive.matcher(string_arg).matches();
 
             case Double:
                 return doublePrimitive.matcher(string_arg).matches();
@@ -547,7 +547,7 @@ public class aH {
 
     public static int getIntegerFrom(String arg) {
         try {
-            return Integer.valueOf(getStringFrom(arg));
+            return Double.valueOf(getStringFrom(arg)).intValue();
         }
         catch (NumberFormatException e) {
             return 0;
@@ -596,7 +596,7 @@ public class aH {
     }
 
     public static boolean matchesInteger(String arg) {
-        return integerPrimitive.matcher(arg).matches();
+        return doublePrimitive.matcher(arg).matches();
     }
 
     @Deprecated
