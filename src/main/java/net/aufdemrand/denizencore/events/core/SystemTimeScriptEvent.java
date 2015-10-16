@@ -14,9 +14,9 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // system time <HH:MM>
+    // system time [<HH:MM>/hourly]
     //
-    // @Regex ^system time \d\d\:\d\d$
+    // @Regex ^system time (\d\d\:\d\d|hourly)$
     //
     // @Triggers when the system time changes to the specified value.
     //
@@ -51,7 +51,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     @Override
     public boolean matches(ScriptContainer script, String event) {
         String time = CoreUtilities.getXthArg(2, event);
-        return time.equals(hour.asString() + ":" + minute.asString());
+        return time.equals(hour.asString() + ":" + minute.asString()) || (minute.asString().equals("00") && time.equals("hourly"));
     }
 
     @Override
