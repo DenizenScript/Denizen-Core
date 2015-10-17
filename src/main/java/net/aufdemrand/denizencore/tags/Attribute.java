@@ -56,6 +56,7 @@ public class Attribute {
     public List<String> original_contexts;
 
     ScriptEntry scriptEntry;
+    public TagContext context;
 
     public String raw_tag;
     public String raw_tag_low;
@@ -69,11 +70,12 @@ public class Attribute {
         return origin;
     }
 
-    public Attribute(String attributes, ScriptEntry scriptEntry) {
+    public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
         raw_tag = attributes;
         raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
         origin = attributes;
         this.scriptEntry = scriptEntry;
+        this.context = context;
 
         if (attributes == null) {
             this.attributes = Collections.emptyList();
@@ -147,7 +149,7 @@ public class Attribute {
             if (contextMatcher.find()) {
                 String tagged = TagManager.cleanOutputFully(TagManager.tag(
                         text.substring(contextMatcher.start() + 1, contextMatcher.end() - 1),
-                        DenizenCore.getImplementation().getTagContext(scriptEntry)));
+                        context));
                 contexts.set(attribute - 1, tagged);
                 original_contexts.set(attribute - 1 + fulfilled, tagged);
                 return tagged;

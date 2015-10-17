@@ -1195,7 +1195,7 @@ public class dList extends ArrayList<String> implements dObject {
                             dB.echoError("Null string in dList! (From .filter tag)");
                         }
                         String result = ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry()));
+                                attribute.getScriptEntry(), attribute.context));
                         if (result != null && result.equalsIgnoreCase("true")) {
                             newlist.add(str);
                         }
@@ -1223,7 +1223,7 @@ public class dList extends ArrayList<String> implements dObject {
                 try {
                     for (String str : (dList) object) {
                         newlist.add(ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry())));
+                                attribute.getScriptEntry(), attribute.context)));
                     }
                 }
                 catch (Exception ex) {

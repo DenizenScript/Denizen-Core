@@ -74,7 +74,7 @@ public class ReplaceableTagEvent {
         raw_tag = tag.trim();
 
         // Use Attributes system to get type/subtype/etc. etc. for 'static/legacy' tags.
-        core_attributes = new Attribute(raw_tag, scriptEntry);
+        core_attributes = new Attribute(raw_tag, scriptEntry, context);
         core_attributes.setHadAlternative(hasAlternative());
     }
 
