@@ -92,9 +92,7 @@ public class Comparable {
     public void setComparable(String arg) {
 
         // If a Number
-        if (arg.length() > 0 && aH.matchesInteger(arg))
-            comparable = aH.getLongFrom(arg);
-        else if (arg.length() > 0 && aH.matchesDouble(arg))
+        if (arg.length() > 0 && aH.matchesDouble(arg))
             comparable = aH.getDoubleFrom(arg);
 
             // If a List<Object>
@@ -120,10 +118,9 @@ public class Comparable {
 
             // Comparable is a Number, return Double
         else if (comparable instanceof Double || comparable instanceof Long) {
-            if (aH.matchesInteger(arg))
-                comparedto = aH.getLongFrom(arg);
-            else if (aH.matchesDouble(arg))
+            if (aH.matchesDouble(arg)) {
                 comparedto = aH.getDoubleFrom(arg);
+            }
             else {
                 if (!arg.equalsIgnoreCase("null"))
                     // TODO: echoDebug instead of log
