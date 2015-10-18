@@ -561,7 +561,7 @@ public class aH {
 
     public static long getLongFrom(String arg) {
         try {
-            return Long.valueOf(getStringFrom(arg));
+            return Double.valueOf(getStringFrom(arg)).longValue();
         }
         catch (NumberFormatException e) {
             return 0;
