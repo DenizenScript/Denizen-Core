@@ -15,6 +15,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class UtilTags {
@@ -270,6 +271,30 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("duration")) {
                     event.setReplaced(new Duration(System.currentTimeMillis() / 50)
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
+                // <--[tag]
+                // @attribute <util.date.time.zone>
+                // @returns Element
+                // @description
+                // Returns the abbreviated timezone of the server.
+                // -->
+                else if (attribute.startsWith("zone")) {
+                    TimeZone tz = Calendar.getInstance().getTimeZone();
+                    event.setReplaced(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.SHORT))
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
+                // <--[tag]
+                // @attribute <util.date.time.formatted_zone>
+                // @returns Element
+                // @description
+                // Returns the timezone of the server.
+                // -->
+                else if (attribute.startsWith("formatted_zone")) {
+                    TimeZone tz = Calendar.getInstance().getTimeZone();
+                    event.setReplaced(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.LONG))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
