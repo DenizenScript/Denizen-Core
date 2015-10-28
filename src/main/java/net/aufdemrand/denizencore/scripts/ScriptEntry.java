@@ -394,12 +394,14 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // DEBUGGABLE
     /////////
 
+    public boolean fallbackDebug = true;
+
     @Override
     public boolean shouldDebug() {
-        if (script != null && script.getContainer() != null)
-            return script.getContainer().shouldDebug();
-        else
-            return true;
+        if (script == null || script.getContainer() == null) {
+            return fallbackDebug;
+        }
+        return script.getContainer().shouldDebug();
     }
 
     @Override
