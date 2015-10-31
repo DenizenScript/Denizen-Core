@@ -5,6 +5,7 @@ import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.DefinitionProvider;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class DefinitionTags {
@@ -37,11 +38,13 @@ public class DefinitionTags {
         // -->
         // Get the definition from the name input
         String defName = event.getNameContext();
-        if (event.getScriptEntry() == null) {
-            dB.echoError("No definitions available outside of a queue.");
+
+        DefinitionProvider definitionProvider = event.getContext().definitionProvider;
+        if (definitionProvider == null) {
+            dB.echoError("No definitions are provided at this moment!");
             return;
         }
-        String def = event.getContext().definitionProvider.getDefinition(defName);
+        String def = definitionProvider.getDefinition(defName);
 
         Attribute atttribute = event.getAttributes().fulfill(1);
 
