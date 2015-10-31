@@ -41,7 +41,7 @@ public class DefinitionTags {
             dB.echoError("No definitions available outside of a queue.");
             return;
         }
-        String def = event.getScriptEntry().getResidingQueue().getDefinition(defName);
+        String def = event.getContext().definitionProvider.getDefinition(defName);
 
         Attribute atttribute = event.getAttributes().fulfill(1);
 
