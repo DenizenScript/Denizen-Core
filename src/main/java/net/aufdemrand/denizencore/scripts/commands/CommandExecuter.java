@@ -145,7 +145,7 @@ public class CommandExecuter {
 
                 // If nested, continue.
                 if (nested_depth > 0) {
-                    newArgs.add(arg.raw_value); // ????
+                    newArgs.add(arg.raw_value);
                     continue;
                 }
 
@@ -178,13 +178,7 @@ public class CommandExecuter {
                     scriptEntry.modifiedArguments().set(argn - 1, sb.toString());
                 }
 
-                // If using IF, check if we've reached the command + args
-                // so that we don't fill player: or npc: prematurely
-                if (!command.shouldPreParse() || nested_depth > 0) {
-                    // Do nothing
-                }
-
-                else if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
+                if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
 
@@ -193,6 +187,10 @@ public class CommandExecuter {
                     String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
+                }
+
+                else if (!command.shouldPreParse()) {
+                    // Do nothing
                 }
 
                 else newArgs.add(arg.raw_value);

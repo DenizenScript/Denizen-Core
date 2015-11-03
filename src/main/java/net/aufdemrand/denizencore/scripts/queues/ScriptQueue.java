@@ -12,6 +12,7 @@ import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.DefinitionProvider;
 import net.aufdemrand.denizencore.utilities.QueueWordList;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to the CommandExecuter
  */
 
-public abstract class ScriptQueue implements Debuggable, dObject {
+public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProvider {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<Class<? extends ScriptQueue>, String>();
 
     protected static long total_queues = 0;
@@ -308,6 +309,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @param definition The name of the definitions
      * @return The value of the definitions, or null
      */
+    @Override
     public String getDefinition(String definition) {
         if (definition == null)
             return null;
@@ -321,6 +323,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @param definition The name of the definitions
      * @return true if the definition exists.
      */
+    @Override
     public boolean hasDefinition(String definition) {
         return definitions.containsKey(definition.toLowerCase());
     }
@@ -334,6 +337,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      * @param definition the name of the definitions
      * @param value      the value of the definition
      */
+    @Override
     public void addDefinition(String definition, String value) {
         definitions.put(definition.toLowerCase(), value);
     }
@@ -347,6 +351,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      *
      * @param definition the name of the definitions
      */
+    @Override
     public void removeDefinition(String definition) {
         definitions.remove(definition.toLowerCase());
     }
@@ -357,6 +362,7 @@ public abstract class ScriptQueue implements Debuggable, dObject {
      *
      * @return all current definitions, empty if none.
      */
+    @Override
     public Map<String, String> getAllDefinitions() {
         return definitions;
     }
