@@ -313,7 +313,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list in a cleaner format, separated by spaces.
-        // EG, a list of "one|two|three" will return "one two three".
+        // For example: a list of "one|two|three" will return "one two three".
         // -->
 
         registerTag("space_separated", new TagRunnable() {
@@ -334,7 +334,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list formatted, with each item separated by the defined text.
-        // EG <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
+        // For example: <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
         // -->
 
         registerTag("separated_by", new TagRunnable() {
@@ -354,7 +354,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list in a cleaner format, separated by commas.
-        // EG, a list of "one|two|three" will return "one, two, three".
+        // For example: a list of "one|two|three" will return "one, two, three".
         // -->
 
         registerTag("comma_separated", new TagRunnable() {
@@ -374,7 +374,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list in a less clean format, separated by nothing.
-        // EG, a list of "one|two|three" will return "onetwothree".
+        // For example: a list of "one|two|three" will return "onetwothree".
         // -->
 
         registerTag("unseparated", new TagRunnable() {
@@ -394,7 +394,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns a list of the specified sub items in the list, as split by the
         // forward-slash character (/).
-        // EG, .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
+        // For example: .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
         // -->
 
         registerTag("get_sub_items", new TagRunnable() {
@@ -412,7 +412,7 @@ public class dList extends ArrayList<String> implements dObject {
                 // returns a list of the specified sub item in the list, allowing you to specify a
                 // character in which to split the sub items by. WARNING: When setting your own split
                 // character, make note that it is CASE SENSITIVE.
-                // EG, .get_sub_items[1].split_by[-] on a list of "one-alpha|two-beta" will return "one|two".
+                // For example: .get_sub_items[1].split_by[-] on a list of "one-alpha|two-beta" will return "one|two".
                 // -->
 
                 String split = "/";
@@ -444,7 +444,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // Returns the element split by the / symbol's value for the matching input element.
         // TODO: Clarify
-        // EG, li@one/a|two/b.map_get[one] returns a.
+        // For example: li@one/a|two/b.map_get[one] returns a.
         // -->
 
         registerTag("map_get", new TagRunnable() {
@@ -462,7 +462,7 @@ public class dList extends ArrayList<String> implements dObject {
                 // @description
                 // Returns the element split by the given symbol's value for the matching input element.
                 // TODO: Clarify
-                // EG, li@one/a|two/b.map_get[one].split_by[/] returns a.
+                // For example: li@one/a|two/b.map_get[one].split_by[/] returns a.
                 // -->
                 String split = "/";
                 if (attribute.startsWith("split_by")) {
@@ -488,7 +488,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // Returns the element split by the / symbol's value for the matching input element.
         // TODO: Clarify
-        // EG, li@one/a|two/b.map_find_key[a] returns one.
+        // For example: li@one/a|two/b.map_find_key[a] returns one.
         // -->
 
         registerTag("map_find_key", new TagRunnable() {
@@ -503,7 +503,7 @@ public class dList extends ArrayList<String> implements dObject {
                 // @description
                 // Returns the element split by the given symbol's value for the matching input element.
                 // TODO: Clarify
-                // EG, li@one/a|two/b.map_find_key[a].split_by[/] returns one.
+                // For example: li@one/a|two/b.map_find_key[a].split_by[/] returns one.
                 // -->
 
                 String split = "/";
@@ -528,7 +528,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element(Number)
         // @description
         // returns the size of the list.
-        // EG, a list of "one|two|three" will return "3".
+        // For example: a list of "one|two|three" will return "3".
         // -->
         registerTag("size", new TagRunnable() {
             @Override
@@ -542,7 +542,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element(Boolean)
         // @description
         // returns whether the list is empty.
-        // EG, a list of "" returns true, while "one" returns false.
+        // For example: a list of "" returns true, while "one" returns false.
         // -->
         registerTag("is_empty", new TagRunnable() {
             @Override
@@ -556,7 +556,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a new dList with the items specified inserted to the specified location.
-        // EG, .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
+        // For example: .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
         // -->
 
         registerTag("insert", new TagRunnable() {
@@ -593,7 +593,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns a new dList with the items specified inserted to the specified location, replacing the element
         // already at that location.
-        // EG, .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
+        // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // -->
 
         registerTag("set", new TagRunnable() {
@@ -634,7 +634,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a new dList including the items specified.
-        // EG, .include[three|four] on a list of "one|two" will return "one|two|three|four".
+        // For example: .include[three|four] on a list of "one|two" will return "one|two|three|four".
         // -->
 
         registerTag("include", new TagRunnable() {
@@ -655,7 +655,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a new dList excluding the items specified.
-        // EG, .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
+        // For example: .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
         // -->
 
         registerTag("exclude", new TagRunnable() {
@@ -686,7 +686,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a new dList excluding the items at the specified index.
-        // EG, .remove[2] on a list of "one|two|three|four" will return "one|three|four".
+        // For example: .remove[2] on a list of "one|two|three|four" will return "one|three|four".
         // Also supports [first] and [last] values.
         // -->
 
@@ -727,7 +727,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list, with all items placed in opposite order.
-        // EG, a list of "one|two|three" will become "three|two|one".
+        // For example: a list of "one|two|three" will become "three|two|one".
         // -->
 
         registerTag("reverse", new TagRunnable() {
@@ -744,7 +744,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with any duplicate items removed.
-        // EG, a list of "one|one|two|three" will become "one|two|three".
+        // For example: a list of "one|one|two|three" will become "one|two|three".
         // -->
 
         registerTag("deduplicate", new TagRunnable() {
@@ -775,7 +775,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dObject
         // @description
         // returns an element of the value specified by the supplied context.
-        // EG, .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
+        // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
         // -->
 
@@ -811,7 +811,7 @@ public class dList extends ArrayList<String> implements dObject {
                     // @returns dList
                     // @description
                     // returns all elements in the range from the first index to the second.
-                    // EG, .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three"
+                    // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three"
                     // -->
                     if (attribute.startsWith("to") && attribute.hasContext(1)) {
                         int index2 = attribute.getIntContext(1);
@@ -839,7 +839,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns all the numbered locations of elements that contain the text within a list,
         // or an empty list if the list does not contain that item.
-        // EG, .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
+        // For example: .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
@@ -868,7 +868,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns all the numbered locations of elements that match the text within a list,
         // or an empty list if the list does not contain that item.
-        // EG, .find[two] on a list of "one|two|three|two" will return "2|4".
+        // For example: .find[two] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
@@ -896,7 +896,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns the numbered location of the first partially matching element within a list,
         // or -1 if the list does not contain that item.
-        // EG, .find[two] on a list of "one|two|three" will return "2".
+        // For example: .find[two] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
@@ -924,7 +924,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns the numbered location of an element within a list,
         // or -1 if the list does not contain that item.
-        // EG, .find[two] on a list of "one|two|three" will return "2".
+        // For example: .find[two] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
@@ -956,7 +956,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element(Number)
         // @description
         // returns how many times in the sub-list occurs.
-        // EG, a list of "one|two|two|three" .count[two] returns 2.
+        // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
 
         registerTag("count", new TagRunnable() {
@@ -983,7 +983,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns the first element in the list.
         // If the list is empty, returns null instead.
-        // EG, a list of "one|two|three" will return "one".
+        // For example: a list of "one|two|three" will return "one".
         // Effectively equivalent to .get[1]
         // -->
 
@@ -1004,7 +1004,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns the last element in the list.
         // If the list is empty, returns null instead.
-        // EG, a list of "one|two|three" will return "three".
+        // For example: a list of "one|two|three" will return "three".
         // Effectively equivalent to .get[<list.size>]
         // -->
 
@@ -1024,7 +1024,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list sorted to be in numerical order.
-        // EG, a list of "3|2|1|10" will return "1|2|3|10".
+        // For example: a list of "3|2|1|10" will return "1|2|3|10".
         // -->
 
         registerTag("numerical", new TagRunnable() {
@@ -1052,7 +1052,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list sorted to be in alphabetical/numerical order.
-        // EG, a list of "b|c|a10|a1" will return "a1|a10|b|c".
+        // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
         // -->
 
         registerTag("alphanumeric", new TagRunnable() {
@@ -1069,7 +1069,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns the list sorted to be in alphabetical order.
-        // EG, a list of "c|d|q|a|g" will return "a|c|d|g|q".
+        // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".
         // -->
 
         registerTag("alphabetical", new TagRunnable() {
@@ -1182,7 +1182,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
-        // EG, a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
+        // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
 
         registerTag("filter", new TagRunnable() {
@@ -1213,7 +1213,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns dList
         // @description
         // returns a copy of the list with all its contents parsed through the given tag.
-        // EG, a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
+        // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
         // -->
 
         registerTag("parse", new TagRunnable() {
@@ -1413,9 +1413,9 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // Gets a random item in the list and returns it as an Element.
         // Optionally, add [<#>] to get a list of multiple randomly chosen elements.
-        // EG, .random on a list of "one|two" could return EITHER "one" or "two" - different each time!
-        // EG, .random[2] on a list of "one|two|three" could return "one|two", "two|three", OR "one|three" - different each time!
-        // EG, .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
+        // For example: .random on a list of "one|two" could return EITHER "one" or "two" - different each time!
+        // For example: .random[2] on a list of "one|two|three" could return "one|two", "two|three", OR "one|three" - different each time!
+        // For example: .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
 

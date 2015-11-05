@@ -1021,7 +1021,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element after the last occurrence of a specified element.
-        // EG, abcabc .after_last[b] returns c.
+        // For example: abcabc .after_last[b] returns c.
         // -->
         registerTag("after_last", new TagRunnable() {
             @Override
@@ -1048,7 +1048,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element after the first occurrence of a specified element.
-        // EG, HelloWorld .after[Hello] returns World.
+        // For example: HelloWorld .after[Hello] returns World.
         // -->
         registerTag("after", new TagRunnable() {
             @Override
@@ -1075,7 +1075,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element before the last occurrence of a specified element.
-        // EG, abcabc .before_last[b] returns abca.
+        // For example: abcabc .before_last[b] returns abca.
         // -->
         registerTag("before_last", new TagRunnable() {
             @Override
@@ -1102,7 +1102,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element before the first occurrence of specified element.
-        // EG, abcd .before[c] returns ab.
+        // For example: abcd .before[c] returns ab.
         // -->
         registerTag("before", new TagRunnable() {
             @Override
@@ -1177,7 +1177,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns a number reformatted for easier reading.
-        // EG, 1234567 will become 1,234,567.
+        // For example: 1234567 will become 1,234,567.
         // -->
         registerTag("format_number", new TagRunnable() {
             @Override

@@ -112,7 +112,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // @name script event cancellation
     // @description
     // Any modern ScriptEvent can take a "cancelled:<true/false>" argument and a "ignorecancelled:true" argument.
-    // EG, "on object does something ignorecancelled:true:"
+    // For example: "on object does something ignorecancelled:true:"
     // Or, "on object does something cancelled:true:"
     // If you set 'ignorecancalled:true', the event will fire regardless of whether it was cancelled.
     // If you set 'cancelled:true', the event will fire /only/ when it was cancelled.
@@ -152,7 +152,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // @name script event priority
     // @description
     // Any modern ScriptEvent can take a "priority:#" argument.
-    // EG, "on object does something priority:3:"
+    // For example: "on object does something priority:3:"
     // The priority indicates which order the events will fire in.
     // Lower numbers fire earlier. EG, -1 fires before 0 fires before 1.
     // Any integer number, within reason, is valid. (IE, -1 is fine, 100000 is fine,
