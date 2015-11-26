@@ -358,6 +358,7 @@ public class Element implements dObject {
         // @group conversion
         // @description
         // Returns the element as a number without a decimal. Rounds decimal values.
+        // NOTE: Please use .round instead of .as_int!
         // -->
         registerTag("as_int", new TagRunnable() {
             @Override
