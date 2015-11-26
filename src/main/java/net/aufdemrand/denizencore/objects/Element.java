@@ -112,37 +112,37 @@ public class Element implements dObject {
             this.element = TagManager.cleanOutputFully(string);
     }
 
-    public Element(Boolean bool) {
+    public Element(boolean bool) {
         this.prefix = "boolean";
         this.element = String.valueOf(bool);
     }
 
-    public Element(Integer integer) {
+    public Element(int integer) {
         this.prefix = "integer";
         this.element = String.valueOf(integer);
     }
 
-    public Element(Byte byt) {
+    public Element(byte byt) {
         this.prefix = "byte";
         this.element = String.valueOf(byt);
     }
 
-    public Element(Short shrt) {
+    public Element(short shrt) {
         this.prefix = "short";
         this.element = String.valueOf(shrt);
     }
 
-    public Element(Long lng) {
+    public Element(long lng) {
         this.prefix = "long";
         this.element = String.valueOf(lng);
     }
 
-    public Element(Double dbl) {
+    public Element(double dbl) {
         this.prefix = "double";
         this.element = String.valueOf(dbl);
     }
 
-    public Element(Float flt) {
+    public Element(float flt) {
         this.prefix = "float";
         this.element = String.valueOf(flt);
     }
@@ -1913,7 +1913,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.ceil(ele.asDouble()))
+                return new Element((long)Math.ceil(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1933,7 +1933,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.floor(ele.asDouble()))
+                return new Element((long)Math.floor(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1978,7 +1978,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.round(ele.asDouble()))
+                return new Element((long)Math.round(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
