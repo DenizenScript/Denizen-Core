@@ -41,7 +41,7 @@ public class Comparable {
     // IS_EMPTY checks whether a list is empty. (This exists for back-support).
     //
     // MATCHES checks whether the first element matches a given type.
-    // EG, "if 1 matches number" or "if p@bob matches player".
+    // For example: "if 1 matches number" or "if p@bob matches player".
     // Match types: location, material, materiallist, script, entity, spawnedentity, entitytype,
     // npc, player, offlineplayer, onlineplayer, item, pose, duration, cuboid, decimal,
     // number, even number, odd number, boolean.

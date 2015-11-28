@@ -39,7 +39,7 @@ public class UtilTags {
             // @returns Element(Number)
             // @description
             // Returns a random number between the 2 specified numbers, inclusive.
-            // EG, random.int[1].to[3] could return 1, 2, or 3.
+            // For example: random.int[1].to[3] could return 1, 2, or 3.
             // -->
             if (attribute.startsWith("int")) {
                 String stc = attribute.getContext(1);
@@ -68,7 +68,7 @@ public class UtilTags {
             // @returns Element(Decimal)
             // @description
             // Returns a random number between the 2 specified numbers, inclusive.
-            // EG, random.int[1].to[3] could return 1, 2, or 3.
+            // For example: random.int[1].to[3] could return 1, 2, or 3.
             // -->
             if (attribute.startsWith("decimal")
                     && attribute.hasContext(1)) {
@@ -215,6 +215,17 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("month")) {
                     event.setReplaced(new Element(calendar.get(Calendar.MONTH) + 1)
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
+                // <--[tag]
+                // @attribute <util.date.time.week>
+                // @returns Element(Number)
+                // @description
+                // Returns the current week of the system time.
+                // -->
+                else if (attribute.startsWith("week")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR) + 1)
                             .getAttribute(attribute.fulfill(1)));
                 }
 

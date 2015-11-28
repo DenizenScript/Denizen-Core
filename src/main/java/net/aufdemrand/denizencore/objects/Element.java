@@ -112,37 +112,37 @@ public class Element implements dObject {
             this.element = TagManager.cleanOutputFully(string);
     }
 
-    public Element(Boolean bool) {
+    public Element(boolean bool) {
         this.prefix = "boolean";
         this.element = String.valueOf(bool);
     }
 
-    public Element(Integer integer) {
+    public Element(int integer) {
         this.prefix = "integer";
         this.element = String.valueOf(integer);
     }
 
-    public Element(Byte byt) {
+    public Element(byte byt) {
         this.prefix = "byte";
         this.element = String.valueOf(byt);
     }
 
-    public Element(Short shrt) {
+    public Element(short shrt) {
         this.prefix = "short";
         this.element = String.valueOf(shrt);
     }
 
-    public Element(Long lng) {
+    public Element(long lng) {
         this.prefix = "long";
         this.element = String.valueOf(lng);
     }
 
-    public Element(Double dbl) {
+    public Element(double dbl) {
         this.prefix = "double";
         this.element = String.valueOf(dbl);
     }
 
-    public Element(Float flt) {
+    public Element(float flt) {
         this.prefix = "float";
         this.element = String.valueOf(flt);
     }
@@ -358,6 +358,7 @@ public class Element implements dObject {
         // @group conversion
         // @description
         // Returns the element as a number without a decimal. Rounds decimal values.
+        // NOTE: Please use .round instead of .as_int!
         // -->
         registerTag("as_int", new TagRunnable() {
             @Override
@@ -1021,7 +1022,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element after the last occurrence of a specified element.
-        // EG, abcabc .after_last[b] returns c.
+        // For example: abcabc .after_last[b] returns c.
         // -->
         registerTag("after_last", new TagRunnable() {
             @Override
@@ -1048,7 +1049,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element after the first occurrence of a specified element.
-        // EG, HelloWorld .after[Hello] returns World.
+        // For example: HelloWorld .after[Hello] returns World.
         // -->
         registerTag("after", new TagRunnable() {
             @Override
@@ -1075,7 +1076,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element before the last occurrence of a specified element.
-        // EG, abcabc .before_last[b] returns abca.
+        // For example: abcabc .before_last[b] returns abca.
         // -->
         registerTag("before_last", new TagRunnable() {
             @Override
@@ -1102,7 +1103,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns the portion of an element before the first occurrence of specified element.
-        // EG, abcd .before[c] returns ab.
+        // For example: abcd .before[c] returns ab.
         // -->
         registerTag("before", new TagRunnable() {
             @Override
@@ -1177,7 +1178,7 @@ public class Element implements dObject {
         // @group element manipulation
         // @description
         // Returns a number reformatted for easier reading.
-        // EG, 1234567 will become 1,234,567.
+        // For example: 1234567 will become 1,234,567.
         // -->
         registerTag("format_number", new TagRunnable() {
             @Override
@@ -1912,7 +1913,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.ceil(ele.asDouble()))
+                return new Element((long)Math.ceil(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1932,7 +1933,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.floor(ele.asDouble()))
+                return new Element((long)Math.floor(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1977,7 +1978,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((int)Math.round(ele.asDouble()))
+                return new Element((long)Math.round(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
