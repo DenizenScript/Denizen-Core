@@ -219,6 +219,17 @@ public class UtilTags {
                 }
 
                 // <--[tag]
+                // @attribute <util.date.time.week>
+                // @returns Element(Number)
+                // @description
+                // Returns the current week of the system time.
+                // -->
+                else if (attribute.startsWith("week")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR) + 1)
+                            .getAttribute(attribute.fulfill(1)));
+                }
+
+                // <--[tag]
                 // @attribute <util.date.time.day>
                 // @returns Element(Number)
                 // @description
