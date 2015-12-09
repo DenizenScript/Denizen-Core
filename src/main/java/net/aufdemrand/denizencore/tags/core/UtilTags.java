@@ -225,7 +225,7 @@ public class UtilTags {
                 // Returns the current week of the system time.
                 // -->
                 else if (attribute.startsWith("week")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR) + 1)
+                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
