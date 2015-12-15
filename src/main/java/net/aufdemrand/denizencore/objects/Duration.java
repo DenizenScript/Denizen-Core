@@ -698,7 +698,7 @@ public class Duration implements dObject {
                 timeString = "forever";
             }
             else {
-                timeString = ((long)(this.seconds * 100)) + "s";
+                timeString = ((double)((long)(this.seconds * 100)) / 100d) + "s";
             }
         }
 
