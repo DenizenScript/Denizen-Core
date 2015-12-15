@@ -693,8 +693,14 @@ public class Duration implements dObject {
         if (seconds > 0 && minutes < 10 && hours == 0 && days == 0)
             timeString = timeString + String.valueOf(seconds) + "s";
 
-        if (timeString.isEmpty())
-            timeString = "forever";
+        if (timeString.isEmpty()) {
+            if (this.seconds <= 0) {
+                timeString = "forever";
+            }
+            else {
+                timeString = ((long)(this.seconds * 100)) + "s";
+            }
+        }
 
         return timeString.trim();
     }
