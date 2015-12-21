@@ -303,16 +303,9 @@ public class Duration implements dObject {
         return "duration";
     }
 
-    /**
-     * Return the value of this Duration. This will also return a
-     * valid String that can be re-interpreted with Duration.valueOf()
-     * thus acting as a form of 'serialization/deserialization'.
-     *
-     * @return a valid String-form Duration.
-     */
     @Override
     public String identify() {
-        return "d@" + getTicks() + "t";
+        return "d@" + seconds + "s";
     }
 
     @Override
@@ -320,11 +313,6 @@ public class Duration implements dObject {
         return identify();
     }
 
-    /**
-     * Acts just like identify().
-     *
-     * @return a valid String-form Duration.
-     */
     @Override
     public String toString() {
         return identify();
@@ -693,8 +681,14 @@ public class Duration implements dObject {
         if (seconds > 0 && minutes < 10 && hours == 0 && days == 0)
             timeString = timeString + String.valueOf(seconds) + "s";
 
-        if (timeString.isEmpty())
-            timeString = "forever";
+        if (timeString.isEmpty()) {
+            if (this.seconds <= 0) {
+                timeString = "forever";
+            }
+            else {
+                timeString = ((double)((long)(this.seconds * 100)) / 100d) + "s";
+            }
+        }
 
         return timeString.trim();
     }

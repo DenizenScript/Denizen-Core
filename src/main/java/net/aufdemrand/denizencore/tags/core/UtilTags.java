@@ -68,7 +68,7 @@ public class UtilTags {
             // @returns Element(Decimal)
             // @description
             // Returns a random number between the 2 specified numbers, inclusive.
-            // For example: random.int[1].to[3] could return 1, 2, or 3.
+            // For example: random.decimal[1].to[2] could return 1.5, 1.75, or a massive number of other options.
             // -->
             if (attribute.startsWith("decimal")
                     && attribute.hasContext(1)) {
@@ -225,7 +225,7 @@ public class UtilTags {
                 // Returns the current week of the system time.
                 // -->
                 else if (attribute.startsWith("week")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR) + 1)
+                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR))
                             .getAttribute(attribute.fulfill(1)));
                 }
 
