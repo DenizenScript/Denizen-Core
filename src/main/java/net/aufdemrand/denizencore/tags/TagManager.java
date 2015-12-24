@@ -162,6 +162,9 @@ public class TagManager {
                 case dList.internal_escape_char:
                     data[i] = '|';
                     break;
+                case 0x00A0:
+                    data[i] = ' ';
+                    break;
                 default:
                     break;
             }
