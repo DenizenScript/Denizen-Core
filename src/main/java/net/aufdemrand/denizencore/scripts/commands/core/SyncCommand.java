@@ -32,6 +32,7 @@ public class SyncCommand extends BracedCommand implements Holdable {
         final InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("SYNC_COMMAND"));
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
         queue.getAllDefinitions().putAll(residingQueue.getAllDefinitions());
+        queue.cachedContext.putAll(scriptEntry.getResidingQueue().cachedContext);
 
         // Setup a callback if the queue is being waited on
         if (scriptEntry.shouldWaitFor()) {
