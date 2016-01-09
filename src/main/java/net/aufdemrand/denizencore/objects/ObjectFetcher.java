@@ -23,8 +23,9 @@ public class ObjectFetcher {
 
     public static void _initialize() throws IOException, ClassNotFoundException {
 
-        if (fetchable_objects.isEmpty())
+        if (fetchable_objects.isEmpty()) {
             return;
+        }
 
         Map<String, Class> adding = new HashMap<String, Class>();
         for (Class dClass : fetchable_objects) {
@@ -100,8 +101,9 @@ public class ObjectFetcher {
             Pattern.compile("[^\\[]+\\[.+=.+\\]", Pattern.DOTALL | Pattern.MULTILINE);
 
     public static boolean checkMatch(Class<? extends dObject> dClass, String value) {
-        if (value == null || dClass == null)
+        if (value == null || dClass == null) {
             return false;
+        }
         Matcher m = PROPERTIES_PATTERN.matcher(value);
         try {
             return (Boolean) matches.get(dClass).invoke(null, m.matches() ? m.group(1) : value);
@@ -120,8 +122,9 @@ public class ObjectFetcher {
     }
 
     public static List<String> separateProperties(String input) {
-        if (input.indexOf('[') == -1 || input.lastIndexOf(']') != input.length() - 1)
+        if (input.indexOf('[') == -1 || input.lastIndexOf(']') != input.length() - 1) {
             return null;
+        }
         ArrayList<String> output = new ArrayList<String>();
         int start = 0;
         boolean needObject = true;

@@ -87,8 +87,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
 
-        if (command == null)
+        if (command == null) {
             throw new ScriptEntryCreationException("dCommand 'name' cannot be null!");
+        }
 
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
 
@@ -100,8 +101,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         // a dScript object of the container if script is not null.
         // Side note: When is script ever null? Think about situations such as the /ex command,
         // in which a single script entry is created and sent to be executed.
-        if (script != null)
+        if (script != null) {
             this.script = script.getAsScriptArg();
+        }
 
         // Check if this is an 'instant' or 'waitfor' command. These are
         // features that are used with 'TimedScriptQueues'
@@ -148,10 +150,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
             boolean left = false, right = false;
             for (int i = 0; i < arg.length(); i++) {
                 char c = arg.charAt(i);
-                if (c == '<')
+                if (c == '<') {
                     left = true;
-                if (c == '>')
+                }
+                if (c == '>') {
                     right = true;
+                }
                 if (left && right) {
                     has_tags = true;
                     break argLoop;
@@ -178,9 +182,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @param object the object, preferably a dObject
      */
     public ScriptEntry addObject(String key, Object object) {
-        if (object == null) return this;
-        if (object instanceof dObject)
+        if (object == null) {
+            return this;
+        }
+        if (object instanceof dObject) {
             ((dObject) object).setPrefix(key);
+        }
         objects.put(key.toLowerCase(), object);
         return this;
     }
@@ -194,18 +201,23 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @return The scriptEntry
      */
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
-        if (!this.objects.containsKey(key.toLowerCase()))
-            for (Object obj : objects)
+        if (!this.objects.containsKey(key.toLowerCase())) {
+            for (Object obj : objects) {
                 if (obj != null) {
                     this.addObject(key, obj);
                     break;
                 }
+            }
+        }
 
         // Check if the object has been filled. If not, throw new Invalid Arguments Exception.
         // TODO: Should this be here? Most checks are done separately.
-        if (!hasObject(key)) throw new InvalidArgumentsException("Missing '" + key + "' argument!");
-        else
+        if (!hasObject(key)) {
+            throw new InvalidArgumentsException("Missing '" + key + "' argument!");
+        }
+        else {
             return this;
+        }
     }
 
 
@@ -300,8 +312,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         try {
             // If an ENUM, return as an Element
             Object gotten = objects.get(key.toLowerCase());
-            if (gotten instanceof Enum)
+            if (gotten instanceof Enum) {
                 return (T) new Element(((Enum) gotten).name());
+            }
             // Otherwise, just return the stored dObject
             return (T) gotten;
             // If not a dObject, return null

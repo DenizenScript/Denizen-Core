@@ -29,7 +29,9 @@ public class _templateTags {
         // tag 'name'. Using event.matches(tag_name) will ensure that the name
         // of the tag is 'tag_name'. :)
         // ie. <skills.something...> .. the tag name would be 'skills'
-        if (!event.matches("skills")) return;
+        if (!event.matches("skills")) {
+            return;
+        }
 
         // Your event may need to fetch some information.
         // Denizen will break down the first 4 parts of the tag to help identify

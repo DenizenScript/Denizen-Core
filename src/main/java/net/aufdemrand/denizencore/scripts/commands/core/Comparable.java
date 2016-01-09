@@ -92,41 +92,48 @@ public class Comparable {
     public void setComparable(String arg) {
 
         // If a Number
-        if (arg.length() > 0 && aH.matchesDouble(arg))
+        if (arg.length() > 0 && aH.matchesDouble(arg)) {
             comparable = aH.getDoubleFrom(arg);
+        }
 
-            // If a List<Object>
+        // If a List<Object>
         else if (arg.length() > 0 && dList.matches(arg)) {
             comparable = dList.valueOf(arg);
         }
 
         // If none of the above, must be a String! :D
         // 'arg' is already a String.
-        else comparable = arg;
+        else {
+            comparable = arg;
+        }
     }
 
 
     public void setComparedto(String arg) {
 
         // If MATCHES, change comparable to String
-        if (operator == Comparable.Operator.MATCHES)
+        if (operator == Comparable.Operator.MATCHES) {
             comparable = String.valueOf(comparable);
+        }
 
         // Comparable is String, return String
-        if (comparable instanceof String)
+        if (comparable instanceof String) {
             comparedto = arg;
+        }
 
-            // Comparable is a Number, return Double
+        // Comparable is a Number, return Double
         else if (comparable instanceof Double || comparable instanceof Long) {
             if (aH.matchesDouble(arg)) {
                 comparedto = aH.getDoubleFrom(arg);
             }
             else {
                 if (!arg.equalsIgnoreCase("null"))
-                    // TODO: echoDebug instead of log
-                    //   dB.log(ChatColor.YELLOW + "WARNING! " + ChatColor.WHITE + "Cannot compare NUMBER("
-                    //           + comparable + ") with '" + arg + "'. Outcome for this Comparable will be false.");
+                // TODO: echoDebug instead of log
+                //   dB.log(ChatColor.YELLOW + "WARNING! " + ChatColor.WHITE + "Cannot compare NUMBER("
+                //           + comparable + ") with '" + arg + "'. Outcome for this Comparable will be false.");
+                {
                     comparedto = Double.NaN;
+                }
             }
         }
 
@@ -135,13 +142,17 @@ public class Comparable {
         }
 
         else if (comparable instanceof dList) {
-            if (dList.matches(arg))
+            if (dList.matches(arg)) {
                 comparedto = dList.valueOf(arg);
-            else
+            }
+            else {
                 comparedto = arg;
+            }
         }
 
-        else comparedto = arg;
+        else {
+            comparedto = arg;
+        }
     }
 
 
@@ -151,8 +162,9 @@ public class Comparable {
 
         // Check '== null' right now
         if (comparedto.toString().equals("null")) {
-            if (comparable.toString().equals("null"))
+            if (comparable.toString().equals("null")) {
                 outcome = true;
+            }
         }
 
         // or... compare 'compared_to' as the type of 'comparable'
@@ -179,7 +191,9 @@ public class Comparable {
             // Not comparing booleans, outcome = false
         }
 
-        if (logic == Comparable.Logic.NEGATIVE) outcome = !outcome;
+        if (logic == Comparable.Logic.NEGATIVE) {
+            outcome = !outcome;
+        }
 
         return outcome;
     }
@@ -190,36 +204,50 @@ public class Comparable {
         outcome = false;
 
         Double comparable;
-        if (this.comparable instanceof Double)
+        if (this.comparable instanceof Double) {
             comparable = (Double) this.comparable;
-        else
+        }
+        else {
             comparable = ((Long) this.comparable).doubleValue();
+        }
         Double comparedto;
-        if (this.comparedto instanceof Double)
+        if (this.comparedto instanceof Double) {
             comparedto = (Double) this.comparedto;
-        else
+        }
+        else {
             comparedto = ((Long) this.comparedto).doubleValue();
+        }
 
         switch (operator) {
 
             case EQUALS:
-                if (comparable.doubleValue() == comparedto.doubleValue()) outcome = true;
+                if (comparable.doubleValue() == comparedto.doubleValue()) {
+                    outcome = true;
+                }
                 break;
 
             case OR_MORE:
-                if (comparable.compareTo(comparedto) >= 0) outcome = true;
+                if (comparable.compareTo(comparedto) >= 0) {
+                    outcome = true;
+                }
                 break;
 
             case OR_LESS:
-                if (comparable.compareTo(comparedto) <= 0) outcome = true;
+                if (comparable.compareTo(comparedto) <= 0) {
+                    outcome = true;
+                }
                 break;
 
             case MORE:
-                if (comparable.compareTo(comparedto) > 0) outcome = true;
+                if (comparable.compareTo(comparedto) > 0) {
+                    outcome = true;
+                }
                 break;
 
             case LESS:
-                if (comparable.compareTo(comparedto) < 0) outcome = true;
+                if (comparable.compareTo(comparedto) < 0) {
+                    outcome = true;
+                }
                 break;
         }
     }
@@ -258,22 +286,30 @@ public class Comparable {
                 break;
 
             case OR_MORE:
-                if (!(comparedto instanceof Double)) break;
+                if (!(comparedto instanceof Double)) {
+                    break;
+                }
                 outcome = (comparable.size() >= ((Double) comparedto).intValue());
                 break;
 
             case OR_LESS:
-                if (!(comparedto instanceof Double)) break;
+                if (!(comparedto instanceof Double)) {
+                    break;
+                }
                 outcome = (comparable.size() <= ((Double) comparedto).intValue());
                 break;
 
             case MORE:
-                if (!(comparedto instanceof Double)) break;
+                if (!(comparedto instanceof Double)) {
+                    break;
+                }
                 outcome = (comparable.size() > ((Double) comparedto).intValue());
                 break;
 
             case LESS:
-                if (!(comparedto instanceof Double)) break;
+                if (!(comparedto instanceof Double)) {
+                    break;
+                }
                 outcome = (comparable.size() < ((Double) comparedto).intValue());
                 break;
 
@@ -294,7 +330,9 @@ public class Comparable {
         String comparable = String.valueOf(this.comparable);
         String comparedto = String.valueOf(this.comparedto);
 
-        if (comparable == null || comparedto == null) return;
+        if (comparable == null || comparedto == null) {
+            return;
+        }
 
         switch (operator) {
             // For checking if a FLAG is empty.
@@ -338,33 +376,41 @@ public class Comparable {
             case MATCHES:
                 comparedto = comparedto.replace("_", "");
 
-                if (comparedto.equalsIgnoreCase("script"))
+                if (comparedto.equalsIgnoreCase("script")) {
                     outcome = dScript.matches(comparable);
+                }
 
-                else if (comparedto.equalsIgnoreCase("duration"))
+                else if (comparedto.equalsIgnoreCase("duration")) {
                     outcome = Duration.matches(comparable);
+                }
 
                 else if (comparedto.equalsIgnoreCase("double")
-                        || comparedto.equalsIgnoreCase("decimal"))
+                        || comparedto.equalsIgnoreCase("decimal")) {
                     outcome = aH.matchesDouble(comparable);
+                }
 
                 else if (comparedto.equalsIgnoreCase("integer")
-                        || comparedto.equalsIgnoreCase("number"))
+                        || comparedto.equalsIgnoreCase("number")) {
                     outcome = aH.matchesInteger(comparable);
+                }
 
                 else if (comparedto.equalsIgnoreCase("even integer")
-                        || comparedto.equalsIgnoreCase("even number"))
+                        || comparedto.equalsIgnoreCase("even number")) {
                     outcome = aH.matchesInteger(comparable) && (aH.getLongFrom(comparable) % 2) == 0;
+                }
 
                 else if (comparedto.equalsIgnoreCase("odd integer")
-                        || comparedto.equalsIgnoreCase("odd number"))
+                        || comparedto.equalsIgnoreCase("odd number")) {
                     outcome = aH.matchesInteger(comparable) && (aH.getLongFrom(comparable) % 2) == 1;
+                }
 
-                else if (comparedto.equalsIgnoreCase("boolean"))
+                else if (comparedto.equalsIgnoreCase("boolean")) {
                     outcome = (comparable.equalsIgnoreCase("true") || comparable.equalsIgnoreCase("false"));
+                }
 
-                else
+                else {
                     outcome = DenizenCore.getImplementation().matchesType(comparable, comparedto);
+                }
 
                 break;
         }

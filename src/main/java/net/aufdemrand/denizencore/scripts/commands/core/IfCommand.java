@@ -37,7 +37,9 @@ public class IfCommand extends BracedCommand {
         boolean has_brace = false;
         for (String arg : scriptEntry.getOriginalArguments()) {
             if (arg.equalsIgnoreCase("{")) {
-                if (dB.verbose) dB.log("Has_brace = true");
+                if (dB.verbose) {
+                    dB.log("Has_brace = true");
+                }
                 has_brace = true;
                 break;
             }
@@ -91,7 +93,9 @@ public class IfCommand extends BracedCommand {
 
         dB.report(scriptEntry, getName(), aH.debugObj("use_braces", braces != null));
 
-        if (dB.verbose) dB.log("comparisons=" + comparisons + ", sc:" + subcommand + ", ec:" + elsecommand);
+        if (dB.verbose) {
+            dB.log("comparisons=" + comparisons + ", sc:" + subcommand + ", ec:" + elsecommand);
+        }
 
         boolean first_set = new ArgComparer().compare(comparisons, scriptEntry);
         if (first_set && subcommand != null && subcommand.size() > 0) {
@@ -102,7 +106,9 @@ public class IfCommand extends BracedCommand {
         }
         if (braces != null) {
             if (first_set) {
-                if (dB.verbose) dB.log("Running the first set");
+                if (dB.verbose) {
+                    dB.log("Running the first set");
+                }
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
@@ -113,7 +119,9 @@ public class IfCommand extends BracedCommand {
             else {
                 for (int z = 1; z < braces.size(); z++) {
                     BracedData braceSet = braces.get(z);
-                    if (dB.verbose) dB.log("Trying: " + braceSet.key);
+                    if (dB.verbose) {
+                        dB.log("Trying: " + braceSet.key);
+                    }
                     List<String> key = braceSet.args;
                     boolean should_fire = false;
                     if (key.size() > 0 && key.get(0).equalsIgnoreCase("else")) {
@@ -178,9 +186,13 @@ public class IfCommand extends BracedCommand {
         public boolean compare(List<String> args, ScriptEntry scriptEntry) {
             argstemp = args;
             argstemp_parsed = new String[args.size()];
-            if (dB.verbose) dB.log("Comparing " + args);
+            if (dB.verbose) {
+                dB.log("Comparing " + args);
+            }
             if (args.size() == 0) {
-                if (dB.verbose) dB.log("Args.size == 0, return false");
+                if (dB.verbose) {
+                    dB.log("Args.size == 0, return false");
+                }
                 return false;
             }
             else if (args.size() == 1) {
@@ -190,7 +202,9 @@ public class IfCommand extends BracedCommand {
                     arg = arg.substring(1);
                     negative = true;
                 }
-                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
+                if (dB.verbose) {
+                    dB.log("Returning comparison: " + args.get(0));
+                }
                 if (negative) {
                     return !arg.equalsIgnoreCase("true");
                 }
@@ -227,17 +241,23 @@ public class IfCommand extends BracedCommand {
                         }
                     }
                     if (!found) {
-                        if (dB.verbose) dB.log("Returning false: strange ()");
+                        if (dB.verbose) {
+                            dB.log("Returning false: strange ()");
+                        }
                         return false;
                     }
                 }
                 else if (arg.equalsIgnoreCase(")")) {
-                    if (dB.verbose) dB.log("Returning false: strange ()");
+                    if (dB.verbose) {
+                        dB.log("Returning false: strange ()");
+                    }
                     return false;
                 }
             }
             if (args.size() == 1) {
-                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
+                if (dB.verbose) {
+                    dB.log("Returning comparison: " + args.get(0));
+                }
                 return args.get(0).equalsIgnoreCase("true");
             }
             for (int i = 0; i < args.size(); i++) {
@@ -249,7 +269,9 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (before) {
-                        if (dB.verbose) dB.log("Returning true because true || irrel");
+                        if (dB.verbose) {
+                            dB.log("Returning true because true || irrel");
+                        }
                         return true;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
@@ -257,7 +279,9 @@ public class IfCommand extends BracedCommand {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
-                    if (dB.verbose) dB.log("Returning comparison: " + comp);
+                    if (dB.verbose) {
+                        dB.log("Returning comparison: " + comp);
+                    }
                     return comp;
                 }
                 else if (arg.equalsIgnoreCase("&&")) {
@@ -267,7 +291,9 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (!before) {
-                        if (dB.verbose) dB.log("Returning false because false && irrel");
+                        if (dB.verbose) {
+                            dB.log("Returning false because false && irrel");
+                        }
                         return false;
                     }
                     List<String> afterargs = new ArrayList<String>(i);
@@ -275,7 +301,9 @@ public class IfCommand extends BracedCommand {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
-                    if (dB.verbose) dB.log("Returning comparison: " + comp);
+                    if (dB.verbose) {
+                        dB.log("Returning comparison: " + comp);
+                    }
                     return comp;
                 }
             }
@@ -286,14 +314,18 @@ public class IfCommand extends BracedCommand {
                     arg = arg.substring(1);
                     negative = true;
                 }
-                if (dB.verbose) dB.log("Returning comparison: " + args.get(0));
+                if (dB.verbose) {
+                    dB.log("Returning comparison: " + args.get(0));
+                }
                 if (negative) {
                     return !arg.equalsIgnoreCase("true");
                 }
                 return arg.equalsIgnoreCase("true");
             }
             if (args.size() == 2) {
-                if (dB.verbose) dB.log("Returning false because two args only");
+                if (dB.verbose) {
+                    dB.log("Returning false because two args only");
+                }
                 return false;
             }
             String arg = args.get(1);
@@ -302,13 +334,27 @@ public class IfCommand extends BracedCommand {
                 arg = arg.substring(1);
                 negative = true;
             }
-            if (arg.equals("==") || arg.equals("=")) arg = "EQUALS";
-            else if (arg.equals(">=")) arg = "OR_MORE";
-            else if (arg.equals("<=")) arg = "OR_LESS";
-            else if (arg.equals("<")) arg = "LESS";
-            else if (arg.equals(">")) arg = "MORE";
-            else if (arg.equals("||")) arg = "OR";
-            else if (arg.equals("&&")) arg = "AND";
+            if (arg.equals("==") || arg.equals("=")) {
+                arg = "EQUALS";
+            }
+            else if (arg.equals(">=")) {
+                arg = "OR_MORE";
+            }
+            else if (arg.equals("<=")) {
+                arg = "OR_LESS";
+            }
+            else if (arg.equals("<")) {
+                arg = "LESS";
+            }
+            else if (arg.equals(">")) {
+                arg = "MORE";
+            }
+            else if (arg.equals("||")) {
+                arg = "OR";
+            }
+            else if (arg.equals("&&")) {
+                arg = "AND";
+            }
             Comparable comparable = new Comparable();
             if (negative) {
                 comparable.logic = Comparable.Logic.NEGATIVE;

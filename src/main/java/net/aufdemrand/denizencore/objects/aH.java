@@ -90,10 +90,12 @@ public class aH {
                 List<String> split = CoreUtilities.split(string, ':', 2);
                 prefix = split.get(0);
                 lower_prefix = CoreUtilities.toLowerCase(prefix);
-                if (split.size() == 2)
+                if (split.size() == 2) {
                     value = split.get(1);
-                else
+                }
+                else {
                     value = "";
+                }
                 lower_value = CoreUtilities.toLowerCase(value);
             }
 
@@ -116,8 +118,9 @@ public class aH {
 
 
         public Argument getPrefix() {
-            if (prefix == null)
+            if (prefix == null) {
                 return null;
+            }
             return valueOf(prefix);
         }
 
@@ -125,16 +128,18 @@ public class aH {
         // TODO: REMOVE IN 1.0
         public boolean matches(String values) {
             for (String value : CoreUtilities.split(values, ',')) {
-                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_value))
+                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_value)) {
                     return true;
+                }
             }
             return false;
         }
 
         public boolean matches(String... values) {
             for (String value : values) {
-                if (CoreUtilities.toLowerCase(value).equals(lower_value))
+                if (CoreUtilities.toLowerCase(value).equals(lower_value)) {
                     return true;
+                }
             }
             return false;
         }
@@ -152,9 +157,11 @@ public class aH {
 
 
         public boolean matchesEnum(Enum<?>[] values) {
-            for (Enum<?> value : values)
-                if (value.name().replace("_", "").equalsIgnoreCase(this.value.replace("_", "")))
+            for (Enum<?> value : values) {
+                if (value.name().replace("_", "").equalsIgnoreCase(this.value.replace("_", ""))) {
                     return true;
+                }
+            }
 
             return false;
         }
@@ -165,9 +172,11 @@ public class aH {
             dList list = dList.valueOf(this.value);
 
             for (String string : list) {
-                for (Enum<?> value : values)
-                    if (value.name().replace("_", "").equalsIgnoreCase(string.replace("_", "")))
+                for (Enum<?> value : values) {
+                    if (value.name().replace("_", "").equalsIgnoreCase(string.replace("_", ""))) {
                         return true;
+                    }
+                }
             }
 
             return false;
@@ -176,26 +185,34 @@ public class aH {
 
         // TODO: REMOVE IN 1.0
         public boolean matchesPrefix(String values) {
-            if (!hasPrefix()) return false;
+            if (!hasPrefix()) {
+                return false;
+            }
             for (String value : CoreUtilities.split(values, ',')) {
-                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_prefix))
+                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_prefix)) {
                     return true;
+                }
             }
             return false;
         }
 
         public boolean matchesPrefix(String... values) {
-            if (!hasPrefix()) return false;
+            if (!hasPrefix()) {
+                return false;
+            }
             for (String value : values) {
-                if (CoreUtilities.toLowerCase(value).equals(lower_prefix))
+                if (CoreUtilities.toLowerCase(value).equals(lower_prefix)) {
                     return true;
+                }
             }
             return false;
         }
 
 
         public boolean matchesPrimitive(PrimitiveType argumentType) {
-            if (value == null) return false;
+            if (value == null) {
+                return false;
+            }
 
             switch (argumentType) {
                 case Word:
@@ -309,7 +326,9 @@ public class aH {
      * @return an array of arguments
      */
     public static String[] buildArgs(String stringArgs) {
-        if (stringArgs == null) return null;
+        if (stringArgs == null) {
+            return null;
+        }
         java.util.List<String> matchList = new ArrayList<String>();
         Matcher regexMatcher = argsRegex.matcher(stringArgs);
         while (regexMatcher.find()) {
@@ -324,8 +343,9 @@ public class aH {
             }
         }
 
-        if (dB.showScriptBuilder)
+        if (dB.showScriptBuilder) {
             dB.log("Constructed args: " + Arrays.toString(matchList.toArray()));
+        }
 
         return matchList.toArray(new String[matchList.size()]);
     }
@@ -343,17 +363,20 @@ public class aH {
     }
 
     public static <T extends dObject> String debugList(String prefix, Collection<T> objects) {
-        if (objects == null)
+        if (objects == null) {
             return debugObj(prefix, null);
+        }
         StringBuilder sb = new StringBuilder();
         for (dObject obj : objects) {
             String output = obj.debug();
             sb.append(output.substring((obj.getPrefix() + "='<A>").length(), output.length() - 6)).append(", ");
         }
-        if (sb.length() == 0)
+        if (sb.length() == 0) {
             return debugObj(prefix, sb);
-        else
+        }
+        else {
             return debugObj(prefix, "[" + sb.substring(0, sb.length() - 2) + "]");
+        }
     }
 
     /**
@@ -398,11 +421,16 @@ public class aH {
     public static boolean matchesArg(String names, String string_arg) {
         String[] parts = names.split(",");
         if (parts.length == 1) {
-            if (string_arg.toUpperCase().equals(names.toUpperCase())) return true;
+            if (string_arg.toUpperCase().equals(names.toUpperCase())) {
+                return true;
+            }
         }
         else {
-            for (String string : parts)
-                if (string_arg.split(":")[0].equalsIgnoreCase(string.trim())) return true;
+            for (String string : parts) {
+                if (string_arg.split(":")[0].equalsIgnoreCase(string.trim())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -450,24 +478,33 @@ public class aH {
      */
     @Deprecated
     public static boolean matchesValueArg(String names, String string_arg, ArgumentType type) {
-        if (string_arg == null) return false;
+        if (string_arg == null) {
+            return false;
+        }
 
         int firstColonIndex = string_arg.indexOf(':');
-        if (firstColonIndex == -1) return false;
+        if (firstColonIndex == -1) {
+            return false;
+        }
 
         String[] commaParts = names.split(",");
 
         if (commaParts.length == 1) {
-            if (!string_arg.substring(0, firstColonIndex).equalsIgnoreCase(names))
+            if (!string_arg.substring(0, firstColonIndex).equalsIgnoreCase(names)) {
                 return false;
+            }
         }
 
         else {
             boolean matched = false;
-            for (String string : commaParts)
-                if (string_arg.substring(0, firstColonIndex).equalsIgnoreCase(string.trim()))
+            for (String string : commaParts) {
+                if (string_arg.substring(0, firstColonIndex).equalsIgnoreCase(string.trim())) {
                     matched = true;
-            if (!matched) return false;
+                }
+            }
+            if (!matched) {
+                return false;
+            }
         }
 
         string_arg = string_arg.split(":", 2)[1];
@@ -601,15 +638,18 @@ public class aH {
 
     @Deprecated
     public static boolean matchesItem(String arg) {
-        if (arg.length() > 5 && arg.toUpperCase().startsWith("ITEM:"))
+        if (arg.length() > 5 && arg.toUpperCase().startsWith("ITEM:")) {
             return true;
+        }
         return false;
     }
 
     @Deprecated
     public static boolean matchesContext(String arg) {
         if (arg.toUpperCase().startsWith("CONTEXT:") ||
-                arg.toUpperCase().startsWith("DEFINE:")) return true;
+                arg.toUpperCase().startsWith("DEFINE:")) {
+            return true;
+        }
         return false;
     }
 
@@ -643,8 +683,9 @@ public class aH {
     public static boolean matchesScript(String arg) {
         Matcher m = matchesScriptPtrn.matcher(arg);
         if (m.matches()) {
-            if (ScriptRegistry.containsScript(m.group(1)))
+            if (ScriptRegistry.containsScript(m.group(1))) {
                 return true;
+            }
             else {
                 dB.echoError("While parsing '" + arg + "', Denizen has run into a problem. This " +
                         "argument's format is correct, but Denizen couldn't locate a script " +
@@ -657,10 +698,13 @@ public class aH {
     @Deprecated
     public static boolean matchesState(String arg) {
         final Pattern m = Pattern.compile("(state|toggle):(true|false|toggle)");
-        if (m.matcher(arg).matches()) return true;
-        else if (arg.toUpperCase().startsWith("(state|toggle):"))
+        if (m.matcher(arg).matches()) {
+            return true;
+        }
+        else if (arg.toUpperCase().startsWith("(state|toggle):")) {
             dB.echoError("While parsing '" + arg + "', Denizen has run into a problem. While the prefix is " +
                     "correct, the value is not valid. 'STATE' requires a value of TRUE, FALSE, or TOGGLE. ");
+        }
 
         return false;
     }

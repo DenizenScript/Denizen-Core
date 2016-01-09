@@ -273,8 +273,9 @@ public class DoubleEvaluator extends AbstractEvaluator<Double> {
     protected Double toValue(String literal, Object evaluationContext) {
         ParsePosition p = new ParsePosition(0);
         Number result = FORMATTER.parse(literal, p);
-        if (p.getIndex() == 0 || p.getIndex() != literal.length())
+        if (p.getIndex() == 0 || p.getIndex() != literal.length()) {
             throw new IllegalArgumentException(literal + " is not a number");
+        }
         return result.doubleValue();
     }
 
@@ -420,7 +421,8 @@ public class DoubleEvaluator extends AbstractEvaluator<Double> {
     }
 
     private void errIfNaN(Double result, Function function) {
-        if (result.equals(Double.NaN))
+        if (result.equals(Double.NaN)) {
             throw new IllegalArgumentException("Invalid argument passed to " + function.getName());
+        }
     }
 }

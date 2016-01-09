@@ -16,16 +16,19 @@ public class MarkCommand extends AbstractCommand {
         // Interpret arguments
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
-            if (!scriptEntry.hasObject("m_name"))
+            if (!scriptEntry.hasObject("m_name")) {
                 scriptEntry.addObject("m_name", arg.asElement());
+            }
 
-            else
+            else {
                 arg.reportUnhandled();
+            }
         }
 
         // Check for required information
-        if (!scriptEntry.hasObject("m_name"))
+        if (!scriptEntry.hasObject("m_name")) {
             throw new InvalidArgumentsException("Must have a mark name!");
+        }
 
     }
 

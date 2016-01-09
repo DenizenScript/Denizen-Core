@@ -23,21 +23,25 @@ public class Attribute {
 
             Character chr = attributes.charAt(x);
 
-            if (chr == '[')
+            if (chr == '[') {
                 braced++;
+            }
 
             else if (x == attributes.length() - 1) {
                 x2 = x + 1;
             }
 
             else if (chr == ']') {
-                if (braced > 0) braced--;
+                if (braced > 0) {
+                    braced--;
+                }
             }
 
             else if (chr == '.'
                     && !(attributes.charAt(x + 1) >= '0' && attributes.charAt(x + 1) <= '9')
-                    && braced == 0)
+                    && braced == 0) {
                 x2 = x;
+            }
 
             if (x2 > -1) {
                 matches.add(attributes.substring(x1, x2));
@@ -84,22 +88,28 @@ public class Attribute {
 
         this.attributes = separate_attributes(attributes);
         contexts = new ArrayList<String>(this.attributes.size());
-        for (int i = 0; i < this.attributes.size(); i++)
+        for (int i = 0; i < this.attributes.size(); i++) {
             contexts.add(null);
+        }
         original_attributes = new ArrayList<String>(this.attributes);
         original_contexts = new ArrayList<String>(contexts);
     }
 
     public boolean matches(String string) {
-        if (attributes.isEmpty()) return false;
+        if (attributes.isEmpty()) {
+            return false;
+        }
         String attr = attributes.get(0);
-        if (attr.contains("[") && attr.endsWith("]"))
+        if (attr.contains("[") && attr.endsWith("]")) {
             attr = attr.substring(0, attr.indexOf('['));
+        }
         return attr.equalsIgnoreCase(string);
     }
 
     public boolean startsWith(String string) {
-        if (attributes.isEmpty()) return false;
+        if (attributes.isEmpty()) {
+            return false;
+        }
         return raw_tag_low.startsWith(string);
     }
 
@@ -120,13 +130,17 @@ public class Attribute {
     }
 
     private void rebuild_raw_tag() {
-        if (attributes.size() == 0) raw_tag = "";
+        if (attributes.size() == 0) {
+            raw_tag = "";
+        }
         StringBuilder sb = new StringBuilder();
-        for (String attribute : attributes)
+        for (String attribute : attributes) {
             sb.append(attribute).append(".");
+        }
         raw_tag = sb.toString();
-        if (raw_tag.length() > 1)
+        if (raw_tag.length() > 1) {
             raw_tag = raw_tag.substring(0, raw_tag.length() - 1);
+        }
         raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
     }
 
@@ -170,8 +184,9 @@ public class Attribute {
 
     public int getIntContext(int attribute) {
         try {
-            if (hasContext(attribute))
+            if (hasContext(attribute)) {
                 return Integer.valueOf(getContext(attribute));
+            }
         }
         catch (Exception e) {
         }
@@ -181,8 +196,9 @@ public class Attribute {
 
     public double getDoubleContext(int attribute) {
         try {
-            if (hasContext(attribute))
+            if (hasContext(attribute)) {
                 return Double.valueOf(getContext(attribute));
+            }
         }
         catch (Exception e) {
         }
@@ -190,16 +206,18 @@ public class Attribute {
     }
 
     public String getAttribute(int num) {
-        if (attributes.size() < num || num <= 0)
+        if (attributes.size() < num || num <= 0) {
             return "";
+        }
         else {
             return attributes.get(num - 1);
         }
     }
 
     public String getAttributeWithoutContext(int num) {
-        if (attributes.size() < num || num <= 0)
+        if (attributes.size() < num || num <= 0) {
             return "";
+        }
         else {
             String str = attributes.get(num - 1);
             int brack = str.indexOf('[');
@@ -216,14 +234,17 @@ public class Attribute {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < original_attributes.size(); i++) {
-            if (original_contexts.get(i) != null)
+            if (original_contexts.get(i) != null) {
                 sb.append(original_attributes.get(i).substring(0, original_attributes.get(i).indexOf('[')))
                         .append("[").append(original_contexts.get(i)).append("].");
-            else
+            }
+            else {
                 sb.append(original_attributes.get(i)).append(".");
+            }
         }
-        if (sb.length() > 0)
+        if (sb.length() > 0) {
             return sb.substring(0, sb.length() - 1);
+        }
         return "";
     }
 }

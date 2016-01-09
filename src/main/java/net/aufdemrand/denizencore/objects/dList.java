@@ -31,7 +31,9 @@ public class dList extends ArrayList<String> implements dObject {
 
     @Fetchable("li, fl")
     public static dList valueOf(String string, TagContext context) {
-        if (string == null) return null;
+        if (string == null) {
+            return null;
+        }
 
         ///////
         // Match @object format
@@ -61,8 +63,9 @@ public class dList extends ArrayList<String> implements dObject {
 
     // A list of dObjects
     public dList(Collection<? extends dObject> dObjectList) {
-        for (dObject obj : dObjectList)
+        for (dObject obj : dObjectList) {
             add(obj.identify());
+        }
     }
 
     // Empty dList
@@ -84,7 +87,9 @@ public class dList extends ArrayList<String> implements dObject {
                     brackets++;
                 }
                 else if (chr == ']') {
-                    if (brackets > 0) brackets--;
+                    if (brackets > 0) {
+                        brackets--;
+                    }
                 }
                 // Separate if an un-bracketed pipe is found
                 else if ((brackets == 0) && (chr == '|' || chr == internal_escape_char)) {
@@ -108,7 +113,9 @@ public class dList extends ArrayList<String> implements dObject {
 
     // A List<String> of items
     public dList(List<String> items) {
-        if (items != null) addAll(items);
+        if (items != null) {
+            addAll(items);
+        }
     }
 
     // A Set<Object> of items
@@ -177,9 +184,11 @@ public class dList extends ArrayList<String> implements dObject {
     public boolean containsObjectsFrom(Class<? extends dObject> dClass) {
 
         // Iterate through elements until one matches() the dClass
-        for (String element : this)
-            if (ObjectFetcher.checkMatch(dClass, element))
+        for (String element : this) {
+            if (ObjectFetcher.checkMatch(dClass, element)) {
                 return true;
+            }
+        }
 
         return false;
     }
@@ -195,14 +204,19 @@ public class dList extends ArrayList<String> implements dObject {
         List<String> list = new ArrayList<String>();
 
         for (String string : this) {
-            for (Enum value : values)
-                if (value.name().equalsIgnoreCase(string))
+            for (Enum value : values) {
+                if (value.name().equalsIgnoreCase(string)) {
                     list.add(string);
+                }
+            }
         }
 
-        if (!list.isEmpty())
+        if (!list.isEmpty()) {
             return list;
-        else return null;
+        }
+        else {
+            return null;
+        }
     }
 
 
@@ -288,7 +302,9 @@ public class dList extends ArrayList<String> implements dObject {
             return flag;
         }
 
-        if (isEmpty()) return "li@";
+        if (isEmpty()) {
+            return "li@";
+        }
 
         StringBuilder dScriptArg = new StringBuilder();
         dScriptArg.append("li@");
@@ -401,8 +417,9 @@ public class dList extends ArrayList<String> implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 int index = -1;
-                if (aH.matchesInteger(attribute.getContext(1)))
+                if (aH.matchesInteger(attribute.getContext(1))) {
                     index = attribute.getIntContext(1) - 1;
+                }
                 attribute.fulfill(1);
 
                 // <--[tag]
@@ -417,21 +434,26 @@ public class dList extends ArrayList<String> implements dObject {
 
                 String split = "/";
                 if (attribute.startsWith("split_by")) {
-                    if (attribute.hasContext(1) && attribute.getContext(1).length() > 0)
+                    if (attribute.hasContext(1) && attribute.getContext(1).length() > 0) {
                         split = attribute.getContext(1);
+                    }
                     attribute.fulfill(1);
                 }
 
-                if (index < 0)
+                if (index < 0) {
                     return null;
+                }
 
                 dList sub_list = new dList();
 
                 for (String item : (dList) object) {
                     String[] strings = item.split(Pattern.quote(split));
-                    if (strings.length > index)
+                    if (strings.length > index) {
                         sub_list.add(strings[index]);
-                    else sub_list.add("null");
+                    }
+                    else {
+                        sub_list.add("null");
+                    }
                 }
 
                 return sub_list.getAttribute(attribute);
@@ -571,10 +593,12 @@ public class dList extends ArrayList<String> implements dObject {
                 if (attribute.startsWith("at") && attribute.hasContext(1)) {
                     dList result = new dList((dList) object);
                     int index = new Element(attribute.getContext(1)).asInt() - 1;
-                    if (index < 0)
+                    if (index < 0) {
                         index = 0;
-                    if (index > result.size())
+                    }
+                    if (index > result.size()) {
                         index = result.size();
+                    }
                     for (int i = 0; i < items.size(); i++) {
                         result.add(index + i, items.get(i));
                     }
@@ -612,10 +636,12 @@ public class dList extends ArrayList<String> implements dObject {
                         && attribute.hasContext(1)) {
                     dList result = new dList((dList) object);
                     int index = new Element(attribute.getContext(1)).asInt() - 1;
-                    if (index < 0)
+                    if (index < 0) {
                         index = 0;
-                    if (index > result.size() - 1)
+                    }
+                    if (index > result.size() - 1) {
                         index = result.size() - 1;
+                    }
                     result.remove(index);
                     for (int i = 0; i < items.size(); i++) {
                         result.add(index + i, items.get(i));
@@ -715,8 +741,9 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).equals("\0"))
+                    if (list.get(i).equals("\0")) {
                         list.remove(i--);
+                    }
                 }
                 return list.getAttribute(attribute.fulfill(1));
             }
@@ -795,15 +822,20 @@ public class dList extends ArrayList<String> implements dObject {
                     dList results = new dList();
                     for (String index : indices) {
                         int ind = aH.getIntegerFrom(index);
-                        if (ind > 0 && ind <= list.size())
+                        if (ind > 0 && ind <= list.size()) {
                             results.add(list.get(ind - 1));
+                        }
                     }
                     return results.getAttribute(attribute.fulfill(1));
                 }
                 if (indices.size() > 0) {
                     int index = aH.getIntegerFrom(indices.get(0));
-                    if (index > list.size()) return null;
-                    if (index < 1) index = 1;
+                    if (index > list.size()) {
+                        return null;
+                    }
+                    if (index < 1) {
+                        index = 1;
+                    }
                     attribute = attribute.fulfill(1);
 
                     // <--[tag]
@@ -815,8 +847,12 @@ public class dList extends ArrayList<String> implements dObject {
                     // -->
                     if (attribute.startsWith("to") && attribute.hasContext(1)) {
                         int index2 = attribute.getIntContext(1);
-                        if (index2 > list.size()) index2 = list.size();
-                        if (index2 < 1) index2 = 1;
+                        if (index2 > list.size()) {
+                            index2 = list.size();
+                        }
+                        if (index2 < 1) {
+                            index2 = 1;
+                        }
                         String item = "";
                         for (int i = index; i <= index2; i++) {
                             item += list.get(i - 1) + (i < index2 ? "|" : "");
@@ -937,8 +973,9 @@ public class dList extends ArrayList<String> implements dObject {
                 }
                 dList list = new dList((dList) object);
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).equalsIgnoreCase(attribute.getContext(1)))
+                    if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
                         return new Element(i + 1).getAttribute(attribute.fulfill(1));
+                    }
                 }
                 // TODO: This should be find_partial or something
             /*
@@ -970,8 +1007,9 @@ public class dList extends ArrayList<String> implements dObject {
                 String element = attribute.getContext(1);
                 int count = 0;
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).equalsIgnoreCase(element))
+                    if (list.get(i).equalsIgnoreCase(element)) {
                         count++;
+                    }
                 }
                 return new Element(count).getAttribute(attribute.fulfill(1));
             }
@@ -991,10 +1029,12 @@ public class dList extends ArrayList<String> implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 dList list = new dList((dList) object);
-                if (list.isEmpty())
+                if (list.isEmpty()) {
                     return null;
-                else
+                }
+                else {
                     return new Element(list.get(0)).getAttribute(attribute.fulfill(1));
+                }
             }
         });
 
@@ -1012,10 +1052,12 @@ public class dList extends ArrayList<String> implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 dList list = new dList((dList) object);
-                if (list.isEmpty())
+                if (list.isEmpty()) {
                     return null;
-                else
+                }
+                else {
                     return new Element(list.get(list.size() - 1)).getAttribute(attribute.fulfill(1));
+                }
             }
         });
 
@@ -1035,12 +1077,15 @@ public class dList extends ArrayList<String> implements dObject {
                     @Override
                     public int compare(String o1, String o2) {
                         double value = new Element(o1).asDouble() - new Element(o2).asDouble();
-                        if (value == 0)
+                        if (value == 0) {
                             return 0;
-                        else if (value > 0)
+                        }
+                        else if (value > 0) {
                             return 1;
-                        else
+                        }
+                        else {
                             return -1;
+                        }
                     }
                 });
                 return list.getAttribute(attribute.fulfill(1));
@@ -1159,14 +1204,18 @@ public class dList extends ArrayList<String> implements dObject {
                             }
                             queue.start();
                             int res = 0;
-                            if (DetermineCommand.hasOutcome(id))
+                            if (DetermineCommand.hasOutcome(id)) {
                                 res = new Element(DetermineCommand.getOutcome(id).get(0)).asInt();
-                            if (res < 0)
+                            }
+                            if (res < 0) {
                                 return -1;
-                            else if (res > 0)
+                            }
+                            else if (res > 0) {
                                 return 1;
-                            else
+                            }
+                            else {
                                 return 0;
+                            }
                         }
                     });
                 }
@@ -1529,7 +1578,9 @@ public class dList extends ArrayList<String> implements dObject {
     @Override
     public String getAttribute(Attribute attribute) {
 
-        if (attribute == null) return null;
+        if (attribute == null) {
+            return null;
+        }
 
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
@@ -1570,8 +1621,9 @@ public class dList extends ArrayList<String> implements dObject {
         // returns a dList containing the items in the flag.
         // -->
         if (flag != null && (attribute.startsWith("as_list")
-                || attribute.startsWith("aslist")))
+                || attribute.startsWith("aslist"))) {
             return new dList(this).getAttribute(attribute.fulfill(1));
+        }
 
 
         // If this is a flag, return the last element (this is how it has always worked...)
@@ -1582,7 +1634,9 @@ public class dList extends ArrayList<String> implements dObject {
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this)) {
             String returned = property.getAttribute(attribute);
-            if (returned != null) return returned;
+            if (returned != null) {
+                return returned;
+            }
         }
 
         return (flag != null

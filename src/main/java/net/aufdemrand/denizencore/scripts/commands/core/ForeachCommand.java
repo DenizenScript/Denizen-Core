@@ -64,8 +64,9 @@ public class ForeachCommand extends BracedCommand {
         if (!scriptEntry.hasObject("list")
                 && !scriptEntry.hasObject("stop")
                 && !scriptEntry.hasObject("next")
-                && !scriptEntry.hasObject("callback"))
+                && !scriptEntry.hasObject("callback")) {
             throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
+        }
     }
 
     @SuppressWarnings("unchecked")

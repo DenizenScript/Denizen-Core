@@ -108,7 +108,9 @@ public class CustomObject implements dObject, Adjustable {
 
     @Override
     public String getAttribute(Attribute attribute) {
-        if (attribute == null) return "null";
+        if (attribute == null) {
+            return "null";
+        }
 
         String res = vars.get(attribute.getAttribute(1));
         if (res == null) {

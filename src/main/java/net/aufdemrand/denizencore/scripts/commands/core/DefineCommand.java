@@ -30,8 +30,10 @@ public class DefineCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("value"))
-                // Use the raw_value as to not exclude values with :'s in them.
+            // Use the raw_value as to not exclude values with :'s in them.
+            {
                 scriptEntry.addObject("value", new Element(arg.raw_value));
+            }
 
             else {
                 arg.reportUnhandled();

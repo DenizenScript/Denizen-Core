@@ -34,10 +34,12 @@ public class CommandExecuter {
                     }
                     String definition;
                     String defval = scriptEntry.getResidingQueue().getDefinition(def);
-                    if (dynamic)
+                    if (dynamic) {
                         definition = scriptEntry.getResidingQueue().getDefinition(def);
-                    else
+                    }
+                    else {
                         definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+                    }
                     if (defval == null) {
                         dB.echoError("Unknown definition %" + m.group(1) + "%.");
                         definition = "null";
@@ -67,8 +69,9 @@ public class CommandExecuter {
             dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
         }
         else {
-            for (String arg : scriptEntry.getOriginalArguments())
+            for (String arg : scriptEntry.getOriginalArguments()) {
                 output.append(" \"").append(arg).append("\"");
+            }
         }
 
         dB.echoDebug(scriptEntry, "Queue '" + scriptEntry.getResidingQueue().id + "' Executing: " + output.toString());
@@ -115,8 +118,9 @@ public class CommandExecuter {
         try {
 
             // Throw exception if arguments are required for this command, but not supplied.
-            if (command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size())
+            if (command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size()) {
                 throw new InvalidArgumentsException("");
+            }
 
             if (scriptEntry.has_tags) {
                 scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
@@ -140,8 +144,12 @@ public class CommandExecuter {
 
             for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
                 argn++;
-                if (arg.getValue().equals("{")) nested_depth++;
-                if (arg.getValue().equals("}")) nested_depth--;
+                if (arg.getValue().equals("{")) {
+                    nested_depth++;
+                }
+                if (arg.getValue().equals("}")) {
+                    nested_depth--;
+                }
 
                 // If nested, continue.
                 if (nested_depth > 0) {
@@ -161,10 +169,12 @@ public class CommandExecuter {
                         }
                         String definition;
                         String defval = scriptEntry.getResidingQueue().getDefinition(def);
-                        if (dynamic)
+                        if (dynamic) {
                             definition = scriptEntry.getResidingQueue().getDefinition(def);
-                        else
+                        }
+                        else {
                             definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+                        }
                         if (defval == null) {
                             dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
                             dB.log("(Attempted: " + scriptEntry.toString() + ")");
@@ -193,7 +203,9 @@ public class CommandExecuter {
                     // Do nothing
                 }
 
-                else newArgs.add(arg.raw_value);
+                else {
+                    newArgs.add(arg.raw_value);
+                }
             }
 
             // Add the arguments back to the scriptEntry.
@@ -210,8 +222,9 @@ public class CommandExecuter {
             keepGoing = false;
             // Give usage hint if InvalidArgumentsException was called.
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
-            if (e.getMessage() != null && e.getMessage().length() > 0)
+            if (e.getMessage() != null && e.getMessage().length() > 0) {
                 dB.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
+            }
             dB.log("Usage: " + command.getUsageHint());
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
@@ -228,7 +241,7 @@ public class CommandExecuter {
         }
         finally {
 
-            if (keepGoing)
+            if (keepGoing) {
                 try {
                     // Run the execute method in the command
                     command.execute(scriptEntry);
@@ -240,6 +253,7 @@ public class CommandExecuter {
                     dB.echoDebug(scriptEntry, DebugElement.Footer);
                     scriptEntry.setFinished(true);
                 }
+            }
 
         }
 

@@ -29,7 +29,7 @@ public class _templateCommand extends AbstractCommand {
                 scriptEntry.addObject("required_integer", arg.asElement());
             }
 
-                // else if (...)
+            // else if (...)
 
             else {
                 arg.reportUnhandled();

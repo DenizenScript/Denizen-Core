@@ -22,7 +22,9 @@ public class ContextTags {
     // Get scriptqueue context!
     @TagManager.TagEvents
     public void contextTags(ReplaceableTagEvent event) {
-        if (!event.matches("context", "c") || event.getScriptEntry() == null) return;
+        if (!event.matches("context", "c") || event.getScriptEntry() == null) {
+            return;
+        }
 
         String object = event.getType();
 
@@ -45,7 +47,9 @@ public class ContextTags {
     public void savedEntryTags(ReplaceableTagEvent event) {
         if (!event.matches("entry", "e")
                 || event.getScriptEntry() == null
-                || !event.hasNameContext()) return;
+                || !event.hasNameContext()) {
+            return;
+        }
 
         // <e[entry_id].entity.blah.blah>
         if (event.getScriptEntry().getResidingQueue() != null) {

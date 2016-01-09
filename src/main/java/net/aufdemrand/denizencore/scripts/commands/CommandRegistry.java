@@ -37,8 +37,12 @@ public abstract class CommandRegistry implements dRegistry {
     @Override
     public <T extends RegistrationableInstance> T get(Class<T> clazz) {
         String command = classes.get(clazz);
-        if (command != null) return clazz.cast(instances.get(command));
-        else return null;
+        if (command != null) {
+            return clazz.cast(instances.get(command));
+        }
+        else {
+            return null;
+        }
     }
 
     // <--[language]
@@ -422,7 +426,7 @@ public abstract class CommandRegistry implements dRegistry {
 
     @Override
     public void disableCoreMembers() {
-        for (RegistrationableInstance member : instances.values())
+        for (RegistrationableInstance member : instances.values()) {
             try {
                 member.onDisable();
             }
@@ -430,5 +434,6 @@ public abstract class CommandRegistry implements dRegistry {
                 dB.echoError("Unable to disable '" + member.getClass().getName() + "'!");
                 dB.echoError(e);
             }
+        }
     }
 }

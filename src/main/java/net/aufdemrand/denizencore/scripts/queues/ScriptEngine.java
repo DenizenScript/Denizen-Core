@@ -18,8 +18,9 @@ public class ScriptEngine {
 
 
     boolean shouldHold(ScriptQueue scriptQueue) {
-        if (scriptQueue instanceof Delayable && ((Delayable) scriptQueue).isPaused())
+        if (scriptQueue instanceof Delayable && ((Delayable) scriptQueue).isPaused()) {
             return true;
+        }
         if (scriptQueue.getLastEntryExecuted() != null
                 && scriptQueue.getLastEntryExecuted().shouldWaitFor()) {
             if (!(scriptQueue instanceof Delayable)) {
@@ -36,8 +37,9 @@ public class ScriptEngine {
 
     public void revolve(ScriptQueue scriptQueue) {
         // Check last ScriptEntry to see if it should be waited for
-        if (shouldHold(scriptQueue))
+        if (shouldHold(scriptQueue)) {
             return;
+        }
 
         // Okay to run next scriptEntry
         ScriptEntry scriptEntry = scriptQueue.getNext();
@@ -61,24 +63,28 @@ public class ScriptEngine {
 
             // Check if the scriptQueue is delayed (EG, via wait)
             if (scriptQueue instanceof Delayable) {
-                if (((Delayable) scriptQueue).isDelayed())
+                if (((Delayable) scriptQueue).isDelayed()) {
                     break;
-                if (((Delayable) scriptQueue).isPaused())
+                }
+                if (((Delayable) scriptQueue).isPaused()) {
                     break;
+                }
             }
 
             // If the entry is instant, and not injected, get the next Entry
             if (scriptEntry.isInstant()) {
                 // If it's holding, even if it's instant, just stop and wait
-                if (shouldHold(scriptQueue))
+                if (shouldHold(scriptQueue)) {
                     return;
+                }
                 // Remove from execution list
                 scriptEntry = scriptQueue.getNext();
             }
 
             // If entry isn't instant, end the revolutions and wait
-            else
+            else {
                 break;
+            }
         }
     }
 

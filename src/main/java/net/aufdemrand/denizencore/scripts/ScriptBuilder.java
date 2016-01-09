@@ -35,13 +35,15 @@ public class ScriptBuilder {
         List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
 
         if (contents == null || contents.isEmpty()) {
-            if (dB.showScriptBuilder)
+            if (dB.showScriptBuilder) {
                 dB.echoError("Building script entries... no entries to build!");
+            }
             return null;
         }
 
-        if (dB.showScriptBuilder)
+        if (dB.showScriptBuilder) {
             dB.echoDebug(parent, "Building script entries:");
+        }
 
         for (Object ientry : contents) {
 
@@ -74,8 +76,9 @@ public class ScriptBuilder {
             try {
                 /* Build new script commands */
                 String[] args = aH.buildArgs(scriptEntry[1]);
-                if (dB.showScriptBuilder)
+                if (dB.showScriptBuilder) {
                     dB.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
+                }
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside);
                 newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);

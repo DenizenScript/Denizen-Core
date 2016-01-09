@@ -83,14 +83,18 @@ public class ReplaceableTagEvent {
         int bracks2 = 0;
         for (int i = 0; i < tag.length(); i++) {
             char c = tag.charAt(i);
-            if (c == '<')
+            if (c == '<') {
                 bracks++;
-            else if (c == '>')
+            }
+            else if (c == '>') {
                 bracks--;
-            else if (bracks == 0 && c == '[')
+            }
+            else if (bracks == 0 && c == '[') {
                 bracks2++;
-            else if (bracks == 0 && c == ']')
+            }
+            else if (bracks == 0 && c == ']') {
                 bracks2--;
+            }
             else if (c == ':' && bracks == 0 && bracks2 == 0) {
                 return i;
             }
@@ -104,14 +108,18 @@ public class ReplaceableTagEvent {
         boolean previousWasTarget = false;
         for (int i = 0; i < tag.length(); i++) {
             char c = tag.charAt(i);
-            if (c == '<')
+            if (c == '<') {
                 bracks++;
-            else if (c == '>')
+            }
+            else if (c == '>') {
                 bracks--;
-            else if (bracks == 0 && c == '[')
+            }
+            else if (bracks == 0 && c == '[') {
                 bracks2++;
-            else if (bracks == 0 && c == ']')
+            }
+            else if (bracks == 0 && c == ']') {
                 bracks2--;
+            }
             else if (c == '|' && bracks == 0 && bracks2 == 0) {
                 if (previousWasTarget) {
                     return i - 1;
@@ -120,8 +128,9 @@ public class ReplaceableTagEvent {
                     previousWasTarget = true;
                 }
             }
-            else
+            else {
                 previousWasTarget = false;
+            }
         }
         return -1;
     }
@@ -133,27 +142,36 @@ public class ReplaceableTagEvent {
     public boolean matches(String tagName) {
         List<String> tagNames = CoreUtilities.split(tagName, ',');
         String name = getName();
-        for (String string : tagNames)
-            if (name.equalsIgnoreCase(string.trim())) return true;
+        for (String string : tagNames) {
+            if (name.equalsIgnoreCase(string.trim())) {
+                return true;
+            }
+        }
         return false;
     }
 
     public boolean matches(String... tagNames) {
         String name = getName();
-        for (String string : tagNames)
-            if (name.equalsIgnoreCase(string.trim())) return true;
+        for (String string : tagNames) {
+            if (name.equalsIgnoreCase(string.trim())) {
+                return true;
+            }
+        }
         return false;
     }
 
 
     private String StripContext(String input) {
-        if (input == null)
+        if (input == null) {
             return null;
+        }
         int index = input.indexOf('[');
-        if (index < 0 || !input.endsWith("]"))
+        if (index < 0 || !input.endsWith("]")) {
             return input;
-        else
+        }
+        else {
             return input.substring(0, index);
+        }
     }
 
     ////////
@@ -243,8 +261,9 @@ public class ReplaceableTagEvent {
     // Value
 
     public String getValue() {
-        if (value_tagged)
+        if (value_tagged) {
             return value;
+        }
         value_tagged = true;
         value = TagManager.cleanOutputFully(TagManager.tag(value, context));
         return value;
@@ -257,8 +276,9 @@ public class ReplaceableTagEvent {
     // Alternative
 
     public String getAlternative() {
-        if (alternative_tagged)
+        if (alternative_tagged) {
             return alternative;
+        }
         alternative_tagged = true;
         alternative = TagManager.cleanOutputFully(TagManager.tag(alternative, context));
         return alternative;

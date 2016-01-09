@@ -74,10 +74,12 @@ public class YamlConfiguration {
     private static List<String> patchListNonsense(List<Object> objs) {
         List<String> list = new ArrayList<String>();
         for (Object o : objs) {
-            if (o == null)
+            if (o == null) {
                 list.add("null");
-            else
+            }
+            else {
                 list.add(o.toString());
+            }
         }
         return list;
     }
@@ -115,8 +117,9 @@ public class YamlConfiguration {
         options.setAllowUnicode(true);
         Yaml yaml = new Yaml(options);
         String dumped = yaml.dump(reverse(contents));
-        if (dB.verbose)
+        if (dB.verbose) {
             dB.log("Outputting " + dumped);
+        }
         return dumped;
     }
 
@@ -142,8 +145,9 @@ public class YamlConfiguration {
     }
 
     public void set(String path, Object o) {
-        if (o instanceof YamlConfiguration)
+        if (o instanceof YamlConfiguration) {
             o = new HashMap<StringHolder, Object>(((YamlConfiguration) o).contents);
+        }
         List<String> parts = CoreUtilities.split(path, '.');
         Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
@@ -202,42 +206,50 @@ public class YamlConfiguration {
 
     public String getString(String path) {
         Object o = get(path);
-        if (o == null)
+        if (o == null) {
             return null;
+        }
         return o.toString();
     }
 
     public String getString(String path, String def) {
         Object o = get(path);
-        if (o == null)
+        if (o == null) {
             return def;
+        }
         return o.toString();
     }
 
     public boolean isList(String path) {
         Object o = get(path);
-        if (o == null)
+        if (o == null) {
             return false;
-        if (!(o instanceof List))
+        }
+        if (!(o instanceof List)) {
             return false;
+        }
         return true;
     }
 
     public List<Object> getList(String path) {
         Object o = get(path);
-        if (o == null)
+        if (o == null) {
             return null;
-        if (!(o instanceof List))
+        }
+        if (!(o instanceof List)) {
             return null;
+        }
         return (List<Object>) o;
     }
 
     public List<String> getStringList(String path) {
         Object o = get(path);
-        if (o == null)
+        if (o == null) {
             return null;
-        if (!(o instanceof List))
+        }
+        if (!(o instanceof List)) {
             return null;
+        }
         return patchListNonsense((List<Object>) o);
     }
 
@@ -252,8 +264,9 @@ public class YamlConfiguration {
                 }
                 else if (parts.size() == i + 1) {
                     YamlConfiguration configuration = new YamlConfiguration();
-                    if (!(oPortion instanceof Map))
+                    if (!(oPortion instanceof Map)) {
                         return null;
+                    }
                     configuration.contents = (Map<StringHolder, Object>) oPortion;
                     return configuration;
                 }

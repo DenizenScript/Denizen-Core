@@ -103,7 +103,9 @@ public class TagManager {
      * @return the cleaned output string.
      */
     public static String cleanOutput(String input) {
-        if (input == null) return null;
+        if (input == null) {
+            return null;
+        }
         char[] data = input.toCharArray();
         for (int i = 0; i < data.length; i++) {
             switch (data[i]) {
@@ -140,7 +142,9 @@ public class TagManager {
      * @return the cleaned output string.
      */
     public static String cleanOutputFully(String input) {
-        if (input == null) return null;
+        if (input == null) {
+            return null;
+        }
         char[] data = input.toCharArray();
         for (int i = 0; i < data.length; i++) {
             switch (data[i]) {
@@ -173,7 +177,9 @@ public class TagManager {
     }
 
     public static String escapeOutput(String input) {
-        if (input == null) return null;
+        if (input == null) {
+            return null;
+        }
         char[] data = input.toCharArray();
         for (int i = 0; i < data.length; i++) {
             switch (data[i]) {
@@ -201,7 +207,9 @@ public class TagManager {
 
     @TagManager.TagEvents
     public void fetchObject(ReplaceableTagEvent event) {
-        if (!event.getName().contains("@")) return;
+        if (!event.getName().contains("@")) {
+            return;
+        }
 
         String object_type = CoreUtilities.toLowerCase(CoreUtilities.split(event.getName(), '@').get(0));
         Class object_class = ObjectFetcher.getObjectClass(object_type);
@@ -285,23 +293,30 @@ public class TagManager {
             else {
                 executeWithTimeLimit(event, tT);
             }
-            if ((!event.replaced() && event.getAlternative() != null) && event.hasAlternative())
+            if ((!event.replaced() && event.getAlternative() != null) && event.hasAlternative()) {
                 event.setReplaced(event.getAlternative());
-            if (context.debug)
+            }
+            if (context.debug) {
                 dB.echoDebug(context.entry, "Filled tag <" + event.toString() + "> with '" +
                         event.getReplaced() + "'.");
-            if (!event.replaced())
+            }
+            if (!event.replaced()) {
                 dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
                         "Tag <" + event.toString() + "> is invalid!");
+            }
             return escapeOutput(event.getReplaced());
         }
     }
 
     public static String tag(String arg, TagContext context) {
-        if (arg == null) return null;
+        if (arg == null) {
+            return null;
+        }
 
         // confirm there are/is a replaceable TAG(s), if not, return the arg.
-        if (arg.indexOf('>') == -1 || arg.length() < 3) return cleanOutput(arg);
+        if (arg.indexOf('>') == -1 || arg.length() < 3) {
+            return cleanOutput(arg);
+        }
 
         // Find location of the first tag
         int[] positions = locateTag(arg);
@@ -313,7 +328,9 @@ public class TagManager {
         do {
             // Just in case, do-loops make me nervous, but does implement a limit of 25 tags per argument.
             failsafe++;
-            if (positions == null) break;
+            if (positions == null) {
+                break;
+            }
             else {
                 String oriarg = arg.substring(positions[0] + 1, positions[1]);
                 String replaced = readSingleTag(oriarg, context);
@@ -321,15 +338,17 @@ public class TagManager {
             }
             // Find new tag
             positions = locateTag(arg);
-        } while (positions != null || failsafe < 50);
+        }
+        while (positions != null || failsafe < 50);
 
         return cleanOutput(arg);
     }
 
     private static int[] locateTag(String arg) {
         int first = arg.indexOf('<');
-        if (first == -1)
+        if (first == -1) {
             return null;
+        }
         // Handle "<-" for the flag command
         if (first + 1 < arg.length() && (arg.charAt(first + 1) == '-')) {
             return locateTag(arg.substring(0, first) + (char) 0x01 + arg.substring(first + 1));
@@ -349,9 +368,12 @@ public class TagManager {
                 }
             }
         }
-        if (first > -1 && second > first)
+        if (first > -1 && second > first) {
             return new int[]{first, second};
-        else return null;
+        }
+        else {
+            return null;
+        }
     }
 
     public static List<String> fillArguments(List<String> args, TagContext context) {
@@ -361,8 +383,12 @@ public class TagManager {
         if (args != null) {
             for (String argument : args) {
                 // Check nested level to avoid filling tags prematurely.
-                if (argument.equals("{")) nested_level++;
-                if (argument.equals("}")) nested_level--;
+                if (argument.equals("{")) {
+                    nested_level++;
+                }
+                if (argument.equals("}")) {
+                    nested_level--;
+                }
                 // If this argument isn't nested, fill the tag.
                 if (nested_level < 1) {
                     filledArgs.add(tag(argument, context));

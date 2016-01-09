@@ -112,7 +112,9 @@ public class ProcedureScriptTags {
         // Returns the 'determine' result of a procedure script.
         // See <@link example Using Procedure Scripts>.
         // -->
-        if (!event.matches("proc", "pr")) return;
+        if (!event.matches("proc", "pr")) {
+            return;
+        }
 
         Attribute attr = event.getAttributes();
         int attribs = 1;
@@ -127,7 +129,9 @@ public class ProcedureScriptTags {
                 script = dScript.valueOf(split[0]);
 
             }
-            else script = dScript.valueOf(event.getNameContext());
+            else {
+                script = dScript.valueOf(event.getNameContext());
+            }
 
         }
         else if (event.getValue() != null) {
@@ -151,13 +155,17 @@ public class ProcedureScriptTags {
 
         // Build script entries
         List<ScriptEntry> entries;
-        if (path != null)
+        if (path != null) {
             entries = script.getContainer().getEntries(event.getContext().getScriptEntryData(), path);
-        else
+        }
+        else {
             entries = script.getContainer().getBaseEntries(event.getContext().getScriptEntryData());
+        }
 
         // Return if no entries built
-        if (entries.isEmpty()) return;
+        if (entries.isEmpty()) {
+            return;
+        }
 
         // Create new ID -- this is what we will look for when determining an outcome
         long id = DetermineCommand.getNewId();

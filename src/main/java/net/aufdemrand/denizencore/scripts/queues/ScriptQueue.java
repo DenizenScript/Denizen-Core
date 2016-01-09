@@ -64,8 +64,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      * @return a ScriptQueue instance, or null
      */
     public static ScriptQueue _getExistingQueue(String id) {
-        if (!_queueExists(id)) return null;
-        else return _queues.get(id);
+        if (!_queueExists(id)) {
+            return null;
+        }
+        else {
+            return _queues.get(id);
+        }
     }
 
     /*
@@ -311,8 +315,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     @Override
     public String getDefinition(String definition) {
-        if (definition == null)
+        if (definition == null) {
             return null;
+        }
         return definitions.get(definition.toLowerCase());
     }
 
@@ -464,7 +469,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      * Starts the script queue.
      */
     public void start() {
-        if (is_started) return;
+        if (is_started) {
+            return;
+        }
 
         // Save the instance to the _queues static map
         _queues.put(id, this);
@@ -474,20 +481,23 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         boolean is_delayed = delay_time > System.currentTimeMillis();
 
         // Record what script generated the first entry in the queue
-        if (script_entries.size() > 0)
+        if (script_entries.size() > 0) {
             script = script_entries.get(0).getScript();
+        }
 
         // Debug info
         Class<? extends ScriptQueue> clazz = this.cachedClass == null ? this.cachedClass = getClass() : this.cachedClass;
         String name = classNameCache.get(clazz);
-        if (name == null)
+        if (name == null) {
             classNameCache.put(clazz, name = clazz.getSimpleName());
+        }
         if (is_delayed) {
             dB.echoDebug(this, "Delaying " + name + " '" + id + "'" + " for '"
                     + new Duration(((double) (delay_time - System.currentTimeMillis())) / 1000f).identify() + "'...");
         }
-        else
+        else {
             dB.echoDebug(this, "Starting " + name + " '" + id + "'...");
+        }
 
         Runnable runToStart = new Runnable() {
             @Override
@@ -604,11 +614,13 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
                 dB.echoDebug(this, "Finishing up queue '" + id + "'...");
             }
             else /* if empty, just stop the queue like normal */ {
-                if (_queues.get(id) == this)
+                if (_queues.get(id) == this) {
                     _queues.remove(id);
+                }
                 dB.echoDebug(this, "Completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
-                if (callback != null)
+                if (callback != null) {
                     callback.run();
+                }
                 is_started = false;
                 onStop();
             }
@@ -621,8 +633,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             if (_queues.get(id) == this) {
                 _queues.remove(id);
                 dB.echoDebug(this, "Re-completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
-                if (callback != null)
+                if (callback != null) {
                     callback.run();
+                }
                 is_started = false;
                 onStop();
             }
@@ -654,7 +667,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             return;
         }
 
-        if (!shouldRevolve()) return;
+        if (!shouldRevolve()) {
+            return;
+        }
 
         // Criteria met for a successful 'revolution' of this queue,
         // so send the next script entry to the ScriptEngine.
@@ -670,7 +685,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         if (!script_entries.isEmpty()) {
             return script_entries.remove(0);
         }
-        else return null;
+        else {
+            return null;
+        }
     }
 
 
@@ -689,8 +706,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
 
     public ScriptQueue injectEntries(List<ScriptEntry> entries, int position) {
-        if (position > script_entries.size() || position < 0) position = 1;
-        if (script_entries.size() == 0) position = 0;
+        if (position > script_entries.size() || position < 0) {
+            position = 1;
+        }
+        if (script_entries.size() == 0) {
+            position = 0;
+        }
         script_entries.addAll(position, entries);
         hasInjectedItems = true;
         return this;
@@ -698,21 +719,29 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
 
     public boolean removeEntry(int position) {
-        if (script_entries.size() < position) return false;
+        if (script_entries.size() < position) {
+            return false;
+        }
         script_entries.remove(position);
         return true;
     }
 
 
     public ScriptEntry getEntry(int position) {
-        if (script_entries.size() < position) return null;
+        if (script_entries.size() < position) {
+            return null;
+        }
         return script_entries.get(position);
     }
 
 
     public ScriptQueue injectEntry(ScriptEntry entry, int position) {
-        if (position > script_entries.size() || position < 0) position = 1;
-        if (script_entries.size() == 0) position = 0;
+        if (position > script_entries.size() || position < 0) {
+            position = 1;
+        }
+        if (script_entries.size() == 0) {
+            position = 0;
+        }
         script_entries.add(position, entry);
         hasInjectedItems = true;
         return this;
@@ -755,13 +784,17 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     @Fetchable("q")
     public static ScriptQueue valueOf(String string, TagContext context) {
-        if (string == null) return null;
+        if (string == null) {
+            return null;
+        }
 
-        if (string.startsWith("q@") && string.length() > 2)
+        if (string.startsWith("q@") && string.length() > 2) {
             string = string.substring(2);
+        }
 
-        if (_queueExists(string))
+        if (_queueExists(string)) {
             return _getExistingQueue(string);
+        }
 
         return null;
     }
@@ -769,8 +802,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
     public static boolean matches(String string) {
         // Starts with q@? Assume match.
-        if (string.toLowerCase().startsWith("q@")) return true;
-        else return false;
+        if (string.toLowerCase().startsWith("q@")) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     String prefix = "Queue";
@@ -870,9 +907,15 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             @Override
             public String run(Attribute attribute, dObject object) {
                 String state;
-                if (((ScriptQueue) object).is_started) state = "running";
-                else if (((ScriptQueue) object).is_stopping) state = "stopping";
-                else state = "unknown";
+                if (((ScriptQueue) object).is_started) {
+                    state = "running";
+                }
+                else if (((ScriptQueue) object).is_stopping) {
+                    state = "stopping";
+                }
+                else {
+                    state = "unknown";
+                }
                 return new Element(state).getAttribute(attribute.fulfill(1));
             }
         });
@@ -980,7 +1023,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
     @Override
     public String getAttribute(Attribute attribute) {
-        if (attribute == null) return null;
+        if (attribute == null) {
+            return null;
+        }
 
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
@@ -996,7 +1041,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this)) {
             String returned = property.getAttribute(attribute);
-            if (returned != null) return returned;
+            if (returned != null) {
+                return returned;
+            }
         }
 
         return new Element(identify()).getAttribute(attribute);

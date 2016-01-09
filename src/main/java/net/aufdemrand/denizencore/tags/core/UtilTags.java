@@ -26,7 +26,9 @@ public class UtilTags {
 
     @TagManager.TagEvents
     public void utilTag(ReplaceableTagEvent event) {
-        if (!event.matches("util", "u")) return;
+        if (!event.matches("util", "u")) {
+            return;
+        }
 
         Attribute attribute = event.getAttributes().fulfill(1);
 

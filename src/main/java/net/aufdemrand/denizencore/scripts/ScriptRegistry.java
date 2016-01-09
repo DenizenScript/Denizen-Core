@@ -37,12 +37,15 @@ public class ScriptRegistry {
     }
 
     public static boolean containsScript(String id, Class scriptContainerType) {
-        if (!scriptContainers.containsKey(id.toUpperCase())) return false;
+        if (!scriptContainers.containsKey(id.toUpperCase())) {
+            return false;
+        }
         ScriptContainer script = (ScriptContainer) scriptContainers.get(id.toUpperCase());
         String type = null;
         for (Map.Entry<String, Class<? extends ScriptContainer>> entry : scriptContainerTypes.entrySet()) {
-            if (entry.getValue() == scriptContainerType)
+            if (entry.getValue() == scriptContainerType) {
                 type = entry.getKey();
+            }
         }
         return type != null && (script.getContainerType().equalsIgnoreCase(type));
     }
@@ -52,8 +55,9 @@ public class ScriptRegistry {
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
         DenizenCore.getImplementation().refreshScriptContainers();
-        if (yamlScripts == null)
+        if (yamlScripts == null) {
             return;
+        }
         // Get a set of key names in concatenated Denizen Scripts
         Set<StringHolder> scripts = yamlScripts.getKeys(false);
         // Iterate through set
@@ -112,9 +116,12 @@ public class ScriptRegistry {
 
     public static <T extends ScriptContainer> T getScriptContainerAs(String name, Class<T> type) {
         try {
-            if (scriptContainers.containsKey(name.toUpperCase()))
+            if (scriptContainers.containsKey(name.toUpperCase())) {
                 return type.cast(scriptContainers.get(name.toUpperCase()));
-            else return null;
+            }
+            else {
+                return null;
+            }
         }
         catch (Exception e) {
         }
@@ -123,9 +130,12 @@ public class ScriptRegistry {
     }
 
     public static <T extends ScriptContainer> T getScriptContainer(String name) {
-        if (scriptContainers.containsKey(name.toUpperCase()))
+        if (scriptContainers.containsKey(name.toUpperCase())) {
             return (T) scriptContainers.get(name.toUpperCase());
+        }
 
-        else return null;
+        else {
+            return null;
+        }
     }
 }

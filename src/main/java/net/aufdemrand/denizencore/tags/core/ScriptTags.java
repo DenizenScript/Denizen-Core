@@ -19,23 +19,30 @@ public class ScriptTags {
     @TagManager.TagEvents
     public void scriptTags(ReplaceableTagEvent event) {
 
-        if (!event.matches("script", "s") || event.replaced()) return;
+        if (!event.matches("script", "s") || event.replaced()) {
+            return;
+        }
 
         // Stage the location
         dScript script = null;
 
         // Check name context for a specified script, or check
         // the ScriptEntry for a 'script' context
-        if (event.hasNameContext() && dScript.matches(event.getNameContext()))
+        if (event.hasNameContext() && dScript.matches(event.getNameContext())) {
             script = dScript.valueOf(event.getNameContext());
-        else if (event.getScript() != null)
+        }
+        else if (event.getScript() != null) {
             script = event.getScript();
-        else if (event.getScriptEntry() == null)
+        }
+        else if (event.getScriptEntry() == null) {
             return;
-        else if (event.getScriptEntry().getScript() != null)
+        }
+        else if (event.getScriptEntry().getScript() != null) {
             script = event.getScriptEntry().getScript();
-        else if (event.getScriptEntry().hasObject("script"))
+        }
+        else if (event.getScriptEntry().hasObject("script")) {
             script = (dScript) event.getScriptEntry().getObject("script");
+        }
 
         // Build and fill attributes
         Attribute attribute = event.getAttributes();

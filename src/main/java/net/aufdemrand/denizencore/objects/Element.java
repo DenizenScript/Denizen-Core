@@ -67,7 +67,9 @@ public class Element implements dObject {
      */
     @Fetchable("el")
     public static Element valueOf(String string, TagContext context) {
-        if (string == null) return null;
+        if (string == null) {
+            return null;
+        }
 
         Matcher m = VALUE_PATTERN.matcher(string);
 
@@ -95,8 +97,9 @@ public class Element implements dObject {
      */
     public static dObject handleNull(String tag, dObject object, String type, boolean has_fallback) {
         if (object == null) {
-            if (!has_fallback)
+            if (!has_fallback) {
                 dB.echoError("'" + tag + "' is an invalid " + type + "!");
+            }
             return null;
         }
         return object;
@@ -106,10 +109,12 @@ public class Element implements dObject {
 
     public Element(String string) {
         this.prefix = "element";
-        if (string == null)
+        if (string == null) {
             this.element = "null";
-        else
+        }
+        else {
             this.element = TagManager.cleanOutputFully(string);
+        }
     }
 
     public Element(boolean bool) {
@@ -148,8 +153,12 @@ public class Element implements dObject {
     }
 
     public Element(String prefix, String string) {
-        if (prefix == null) this.prefix = "element";
-        else this.prefix = prefix;
+        if (prefix == null) {
+            this.prefix = "element";
+        }
+        else {
+            this.prefix = prefix;
+        }
         this.element = TagManager.cleanOutputFully(string);
     }
 
@@ -210,8 +219,9 @@ public class Element implements dObject {
 
     public boolean isDouble() {
         try {
-            if (Double.valueOf(element) != null)
+            if (Double.valueOf(element) != null) {
                 return true;
+            }
         }
         catch (Exception e) {
         }
@@ -220,8 +230,9 @@ public class Element implements dObject {
 
     public boolean isFloat() {
         try {
-            if (Float.valueOf(element) != null)
+            if (Float.valueOf(element) != null) {
                 return true;
+            }
         }
         catch (Exception e) {
         }
@@ -230,8 +241,9 @@ public class Element implements dObject {
 
     public boolean isInt() {
         try {
-            if (Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", "")) != null)
+            if (Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", "")) != null) {
                 return true;
+            }
         }
         catch (Exception e) {
         }
@@ -251,9 +263,11 @@ public class Element implements dObject {
     }
 
     public boolean matchesEnum(Enum[] values) {
-        for (Enum value : values)
-            if (value.name().equalsIgnoreCase(element))
+        for (Enum value : values) {
+            if (value.name().equalsIgnoreCase(element)) {
                 return true;
+            }
+        }
 
         return false;
     }
@@ -395,8 +409,9 @@ public class Element implements dObject {
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (NumberFormatException e) {
-                    if (!attribute.hasAlternative())
+                    if (!attribute.hasAlternative()) {
                         dB.echoError("'" + element + "' is not a valid decimal number.");
+                    }
                     return null;
                 }
             }
@@ -677,9 +692,12 @@ public class Element implements dObject {
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
                 String contains = attribute.getContext(1);
-                if (element.contains(contains))
+                if (element.contains(contains)) {
                     return new Element("true").getAttribute(attribute.fulfill(1));
-                else return new Element("false").getAttribute(attribute.fulfill(1));
+                }
+                else {
+                    return new Element("false").getAttribute(attribute.fulfill(1));
+                }
             }
         });
         r = registeredTags.get("contains_case_sensitive").clone();
@@ -711,13 +729,19 @@ public class Element implements dObject {
 
                 if (contains.toLowerCase().startsWith("regex:")) {
 
-                    if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches())
+                    if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches()) {
                         return new Element("true").getAttribute(attribute.fulfill(1));
-                    else return new Element("false").getAttribute(attribute.fulfill(1));
+                    }
+                    else {
+                        return new Element("false").getAttribute(attribute.fulfill(1));
+                    }
                 }
-                else if (element.toLowerCase().contains(contains.toLowerCase()))
+                else if (element.toLowerCase().contains(contains.toLowerCase())) {
                     return new Element("true").getAttribute(attribute.fulfill(1));
-                else return new Element("false").getAttribute(attribute.fulfill(1));
+                }
+                else {
+                    return new Element("false").getAttribute(attribute.fulfill(1));
+                }
             }
         });
         r = registeredTags.get("contains").clone();
@@ -847,11 +871,14 @@ public class Element implements dObject {
                     return null;
                 }
                 int group = new Element(attribute.getContext(2)).asInt();
-                if (group < 0)
+                if (group < 0) {
                     group = 0;
-                if (group > m.groupCount())
+                }
+                if (group > m.groupCount()) {
                     group = m.groupCount();
-                return new Element(m.group(group)).getAttribute(attribute.fulfill(2));            }
+                }
+                return new Element(m.group(group)).getAttribute(attribute.fulfill(2));
+            }
         });
 
         // <--[tag]
@@ -1154,21 +1181,25 @@ public class Element implements dObject {
                 if (attribute.startsWith("with")) {
                     if (attribute.hasContext(1)) {
                         replacement = attribute.getContext(1);
-                        if (replacement == null)
+                        if (replacement == null) {
                             replacement = "";
+                        }
                         attribute.fulfill(1);
                     }
                 }
 
-                if (replace.startsWith("regex:"))
+                if (replace.startsWith("regex:")) {
                     return new Element(((Element) object).element.replaceAll(replace.substring("regex:".length()), replacement))
                             .getAttribute(attribute);
-                if (replace.startsWith("firstregex:"))
+                }
+                if (replace.startsWith("firstregex:")) {
                     return new Element(((Element) object).element.replaceFirst(replace.substring("firstregex:".length()), replacement))
                             .getAttribute(attribute);
-                else
+                }
+                else {
                     return new Element(((Element) object).element.replaceAll("(?i)" + Pattern.quote(replace), replacement))
                             .getAttribute(attribute);
+                }
             }
         });
 
@@ -1293,10 +1324,12 @@ public class Element implements dObject {
                 String Lower = ((Element) object).element.toLowerCase();
                 TitleCase.append(Upper.charAt(0));
                 for (int i = 1; i < ((Element) object).element.length(); i++) {
-                    if (((Element) object).element.charAt(i - 1) == ' ')
+                    if (((Element) object).element.charAt(i - 1) == ' ') {
                         TitleCase.append(Upper.charAt(i));
-                    else
+                    }
+                    else {
                         TitleCase.append(Lower.charAt(i));
+                    }
                 }
                 return new Element(TitleCase.toString()).getAttribute(attribute.fulfill(1));
             }
@@ -1321,14 +1354,24 @@ public class Element implements dObject {
                 }
                 int beginning_index = new Element(attribute.getContext(1).split(",")[0]).asInt() - 1;
                 int ending_index;
-                if (attribute.getContext(1).split(",").length > 1)
+                if (attribute.getContext(1).split(",").length > 1) {
                     ending_index = new Element(attribute.getContext(1).split(",")[1]).asInt();
-                else
+                }
+                else {
                     ending_index = ((Element) object).element.length();
-                if (beginning_index < 0) beginning_index = 0;
-                if (beginning_index > ((Element) object).element.length()) beginning_index = ((Element) object).element.length();
-                if (ending_index > ((Element) object).element.length()) ending_index = ((Element) object).element.length();
-                if (ending_index < beginning_index) ending_index = beginning_index;
+                }
+                if (beginning_index < 0) {
+                    beginning_index = 0;
+                }
+                if (beginning_index > ((Element) object).element.length()) {
+                    beginning_index = ((Element) object).element.length();
+                }
+                if (ending_index > ((Element) object).element.length()) {
+                    ending_index = ((Element) object).element.length();
+                }
+                if (ending_index < beginning_index) {
+                    ending_index = beginning_index;
+                }
                 return new Element(((Element) object).element.substring(beginning_index, ending_index))
                         .getAttribute(attribute.fulfill(1));
             }
@@ -1433,7 +1476,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(Math.abs(ele.asDouble()))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1452,7 +1496,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(Math.max(ele.asDouble(), new Element(attribute.getContext(1)).asDouble()))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1471,7 +1516,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(Math.min(ele.asDouble(), new Element(attribute.getContext(1)).asDouble()))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1490,7 +1536,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(ele.asLong() + aH.getLongFrom(attribute.getContext(1)))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1509,7 +1556,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(ele.asLong() / aH.getLongFrom(attribute.getContext(1)))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1528,7 +1576,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(ele.asLong() * aH.getLongFrom(attribute.getContext(1)))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1547,7 +1596,8 @@ public class Element implements dObject {
                     return null;
                 }
                 return new Element(ele.asLong() - aH.getLongFrom(attribute.getContext(1)))
-                        .getAttribute(attribute.fulfill(1));            }
+                        .getAttribute(attribute.fulfill(1));
+            }
         });
 
         // <--[tag]
@@ -1913,7 +1963,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((long)Math.ceil(ele.asDouble()))
+                return new Element((long) Math.ceil(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1933,7 +1983,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((long)Math.floor(ele.asDouble()))
+                return new Element((long) Math.floor(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1958,7 +2008,7 @@ public class Element implements dObject {
                     return null;
                 }
                 int ten = (int) Math.pow(10, attribute.getIntContext(1));
-                return new Element(((double)Math.round(ele.asDouble() * ten)) / ten)
+                return new Element(((double) Math.round(ele.asDouble() * ten)) / ten)
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1978,7 +2028,7 @@ public class Element implements dObject {
                     dB.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element((long)Math.round(ele.asDouble()))
+                return new Element((long) Math.round(ele.asDouble()))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -2011,7 +2061,9 @@ public class Element implements dObject {
     @Override
     public String getAttribute(Attribute attribute) {
 
-        if (attribute == null) return null;
+        if (attribute == null) {
+            return null;
+        }
 
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
@@ -2036,12 +2088,14 @@ public class Element implements dObject {
         if (attribute.startsWith("split") && attribute.startsWith("limit", 2)) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
             Integer limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
-            if (split_string.toLowerCase().startsWith("regex:"))
+            if (split_string.toLowerCase().startsWith("regex:")) {
                 return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1], limit)))
                         .getAttribute(attribute.fulfill(2));
-            else
+            }
+            else {
                 return new dList(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string), limit)))
                         .getAttribute(attribute.fulfill(2));
+            }
         }
 
         // <--[tag]
@@ -2053,18 +2107,22 @@ public class Element implements dObject {
         // -->
         if (attribute.startsWith("split")) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
-            if (split_string.toLowerCase().startsWith("regex:"))
+            if (split_string.toLowerCase().startsWith("regex:")) {
                 return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1])))
                         .getAttribute(attribute.fulfill(1));
-            else
+            }
+            else {
                 return new dList(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string))))
                         .getAttribute(attribute.fulfill(1));
+            }
         }
 
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this)) {
             String returned = property.getAttribute(attribute);
-            if (returned != null) return returned;
+            if (returned != null) {
+                return returned;
+            }
         }
 
         // Unfilled attributes past this point probably means the tag is spelled
@@ -2072,9 +2130,10 @@ public class Element implements dObject {
         // so far, 'null' shall be returned with a debug message.
 
         if (attribute.attributes.size() > 0) {
-            if (!attribute.hasAlternative())
+            if (!attribute.hasAlternative()) {
                 dB.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.attributes.toString() +
                         "' for tag <" + attribute.getOrigin() + ">!");
+            }
             return null;
         }
         else {
