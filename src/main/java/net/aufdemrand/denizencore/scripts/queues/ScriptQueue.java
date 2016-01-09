@@ -266,27 +266,27 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     public dObject getContext(String id) {
         id = CoreUtilities.toLowerCase(id);
-        if (cs == null) {
+        if (contextSource == null) {
             return null;
         }
         dObject obj = cachedContext.get(id);
         if (obj != null) {
             return obj;
         }
-        obj = cs.getContext(id);
-        if (obj != null && cs.getShouldCache()) {
+        obj = contextSource.getContext(id);
+        if (obj != null && contextSource.getShouldCache()) {
             cachedContext.put(id, obj);
         }
         return obj;
     }
 
 
-    private ContextSource cs = null;
+    public ContextSource contextSource = null;
 
     public HashMap<String, dObject> cachedContext;
 
     public void setContextSource(ContextSource source) {
-        cs = source;
+        contextSource = source;
         cachedContext = new HashMap<String, dObject>();
     }
 
@@ -433,7 +433,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         for (Map.Entry<String, String> def : getAllDefinitions().entrySet()) {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
-        newQueue.setContextSource(cs);
+        newQueue.setContextSource(contextSource);
         newQueue.cachedContext = cachedContext;
         for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
