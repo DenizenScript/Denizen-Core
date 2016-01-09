@@ -49,15 +49,6 @@ public class Duration implements dObject {
     //   STATIC METHODS AND FIELDS
     /////////////////
 
-    // Use regex pattern matching to easily determine if a string
-    // value is a valid Duration.
-    final static Pattern match =
-            Pattern.compile("(?:d@)?(\\d+.\\d+|.\\d+|\\d+)(t|m|s|h|d|w)?" +
-                            // Optional 'high-range' for random durations.
-                            "(?:(?:-\\d+.\\d+|.\\d+|\\d+)(?:t|m|s|h|d|w)?)?",
-                    Pattern.CASE_INSENSITIVE);
-
-
     // Define a 'ZERO' Duration
     final public static Duration ZERO = new Duration(0);
 
@@ -119,34 +110,33 @@ public class Duration implements dObject {
             else return null;
         }
 
+        String mg1 = CoreUtilities.toLowerCase(string);
+        String mg2 = Character.isDigit(string.charAt(string.length() - 1)) ? string: string.substring(0, string.length() - 1);
+
         // Standard Duration. Check the type and create new Duration object accordingly.
-        Matcher m = match.matcher(string);
-        if (m.matches()) {
-            if (m.group().toLowerCase().endsWith("t"))
-                // Matches TICKS, so 1 tick = .05 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 0.05);
-
-            else if (m.group().toLowerCase().endsWith("d"))
-                // Matches DAYS, so 1 day = 86400 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 86400);
-
-            else if (m.group().toLowerCase().endsWith("w"))
-                // Matches WEEKS, so 1 week = 604800 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 604800);
-
-            else if (m.group().toLowerCase().endsWith("m"))
-                // Matches MINUTES, so 1 minute = 60 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 60);
-
-            else if (m.group().toLowerCase().endsWith("h"))
-                // Matches HOURS, so 1 hour = 3600 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 3600);
-
-            else // seconds
-                return new Duration(Double.valueOf(m.group(1)));
+        if (mg1.endsWith("t")) {
+            // Matches TICKS, so 1 tick = .05 seconds
+            return new Duration(Double.valueOf(mg2) * 0.05);
         }
-
-        return null;
+        else if (mg1.endsWith("d")) {
+            // Matches DAYS, so 1 day = 86400 seconds
+            return new Duration(Double.valueOf(mg2) * 86400);
+        }
+        else if (mg1.endsWith("w")) {
+            // Matches WEEKS, so 1 week = 604800 seconds
+            return new Duration(Double.valueOf(mg2) * 604800);
+        }
+        else if (mg1.endsWith("m")) {
+            // Matches MINUTES, so 1 minute = 60 seconds
+            return new Duration(Double.valueOf(mg2) * 60);
+        }
+        else if (mg1.endsWith("h")) {
+            // Matches HOURS, so 1 hour = 3600 seconds
+            return new Duration(Double.valueOf(mg2) * 3600);
+        }
+        else {// seconds
+            return new Duration(Double.valueOf(mg2));
+        }
     }
 
 
@@ -157,8 +147,7 @@ public class Duration implements dObject {
      * @return true if valid.
      */
     public static boolean matches(String string) {
-        Matcher m = match.matcher(string);
-        return m.matches();
+        return valueOf(string) != null;
     }
 
 
