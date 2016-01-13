@@ -8,6 +8,7 @@ import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
+import net.aufdemrand.denizencore.scripts.queues.core.Delayable;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
@@ -901,13 +902,16 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         // @attribute <q@queue.state>
         // @returns Element
         // @description
-        // Returns 'stopping', 'running', or 'unknown'.
+        // Returns 'stopping', 'running', 'paused', or 'unknown'.
         // -->
         registerTag("state", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 String state;
-                if (((ScriptQueue) object).is_started) {
+                if ((object instanceof Delayable) && ((Delayable) object).isPaused()) {
+                    state = "paused";
+                }
+                else if (((ScriptQueue) object).is_started) {
                     state = "running";
                 }
                 else if (((ScriptQueue) object).is_stopping) {
