@@ -1136,15 +1136,13 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // returns a list sorted according to the return values of a procedure.
-        // The <procedure> should link a procedure script that takes two definitions
-        // each of which will be an item in the list, and returns -1, 0, or 1 based on
-        // whether the second item should be added. EG, if a procedure with definitions
-        // "one" and "two" returned 1, it would place "two" after "one". Note that this
-        // uses some complex internal sorting code that could potentially throw errors
-        // if the procedure does not return consistently - EG, if "one" and "two" returned
-        // 1, but "two" and "one" returned 1 as well - obviously, "two" can not be both
-        // before AND after "one"!
-        // Note that the script should ALWAYS return -1, 0, or 1, or glitches will happen!
+        // The <procedure> should link a procedure script that takes two definitions each of which will be an item
+        // in the list, and returns -1, 0, or 1 based on whether the second item should be added. EG, if a procedure
+        // with definitions "one" and "two" returned -1, it would place "two" after "one". Note that this
+        // uses some complex internal sorting code that could potentially throw errors if the procedure does not return
+        // consistently - EG, if "one" and "two" returned 1, but "two" and "one" returned 1 as well - obviously,
+        // "two" can not be both before AND after "one"!
+        // Note that the script should ALWAYS return -1, 0, or 1, or glitches could happen!
         // Note that if two inputs are exactly equal, the procedure should always return 0.
         // -->
 
@@ -1152,7 +1150,7 @@ public class dList extends ArrayList<String> implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 dList obj = new dList((dList) object);
-                final ProcedureScriptContainer script = ScriptRegistry.getScriptContainer(attribute.getContext(1));
+                final ProcedureScriptContainer script = (ProcedureScriptContainer) dScript.valueOf(attribute.getContext(1)).getContainer();
                 if (script == null) {
                     dB.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
                     return obj.getAttribute(attribute.fulfill(1));
@@ -1176,7 +1174,8 @@ public class dList extends ArrayList<String> implements dObject {
                     Collections.sort(list, new Comparator<String>() {
                         @Override
                         public int compare(String o1, String o2) {
-                            List<ScriptEntry> entries = script.getBaseEntries(entry.entryData.clone());
+                            List<ScriptEntry> entries = script.getBaseEntries(entry == null ?
+                                    DenizenCore.getImplementation().getEmptyScriptEntryData() : entry.entryData.clone());
                             if (entries.isEmpty()) {
                                 return 0;
                             }
@@ -1199,7 +1198,7 @@ public class dList extends ArrayList<String> implements dObject {
                                 String name = definition_names != null && definition_names.length >= x ?
                                         definition_names[x - 1].trim() : String.valueOf(x);
                                 queue.addDefinition(name, definition);
-                                dB.echoDebug(entry, "Adding definition %" + name + "% as " + definition);
+                                dB.echoDebug(entries.get(0), "Adding definition %" + name + "% as " + definition);
                                 x++;
                             }
                             queue.start();
@@ -1220,7 +1219,7 @@ public class dList extends ArrayList<String> implements dObject {
                     });
                 }
                 catch (Exception e) {
-                    dB.echoError("list.sort[...] tag failed - procedure returned unreasonable valid - internal error: " + e.getMessage());
+                    dB.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
                 }
                 return new dList(list).getAttribute(attribute);
             }
