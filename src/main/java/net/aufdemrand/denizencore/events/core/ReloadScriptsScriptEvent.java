@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptContainer script, String event) {
-        String lower = event.toLowerCase();
+        String lower = CoreUtilities.toLowerCase(event);
         return lower.startsWith("reload scripts") || lower.startsWith("script reload");
     }
 

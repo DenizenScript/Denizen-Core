@@ -11,6 +11,7 @@ import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -188,7 +189,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         if (object instanceof dObject) {
             ((dObject) object).setPrefix(key);
         }
-        objects.put(key.toLowerCase(), object);
+        objects.put(CoreUtilities.toLowerCase(key), object);
         return this;
     }
 
@@ -201,7 +202,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @return The scriptEntry
      */
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
-        if (!this.objects.containsKey(key.toLowerCase())) {
+        if (!this.objects.containsKey(CoreUtilities.toLowerCase(key))) {
             for (Object obj : objects) {
                 if (obj != null) {
                     this.addObject(key, obj);
@@ -301,7 +302,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public Object getObject(String key) {
         try {
-            return objects.get(key.toLowerCase());
+            return objects.get(CoreUtilities.toLowerCase(key));
         }
         catch (Exception e) {
             return null;
@@ -311,7 +312,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public <T extends dObject> T getdObject(String key) {
         try {
             // If an ENUM, return as an Element
-            Object gotten = objects.get(key.toLowerCase());
+            Object gotten = objects.get(CoreUtilities.toLowerCase(key));
             if (gotten instanceof Enum) {
                 return (T) new Element(((Enum) gotten).name());
             }
@@ -326,7 +327,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public Element getElement(String key) {
         try {
-            return (Element) objects.get(key.toLowerCase());
+            return (Element) objects.get(CoreUtilities.toLowerCase(key));
         }
         catch (Exception e) {
             return null;
@@ -335,7 +336,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
 
     public boolean hasObject(String key) {
-        return objects.containsKey(key.toLowerCase());
+        return objects.containsKey(CoreUtilities.toLowerCase(key));
     }
 
     /////////////
@@ -399,7 +400,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public List<String> tracked_objects = new ArrayList<String>();
 
     public ScriptEntry trackObject(String key) {
-        tracked_objects.add(key.toLowerCase());
+        tracked_objects.add(CoreUtilities.toLowerCase(key));
         return this;
     }
 

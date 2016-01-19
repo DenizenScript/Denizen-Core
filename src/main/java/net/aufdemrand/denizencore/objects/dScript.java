@@ -97,7 +97,7 @@ public class dScript implements dObject, Adjustable {
 
     public static boolean matches(String string) {
 
-        if (string.toLowerCase().startsWith("s@")) {
+        if (CoreUtilities.toLowerCase(string).startsWith("s@")) {
             return true;
         }
 

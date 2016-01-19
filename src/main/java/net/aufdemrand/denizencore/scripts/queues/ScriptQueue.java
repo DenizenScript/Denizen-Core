@@ -236,7 +236,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      * to be fetched!
      */
     public ScriptEntry getHeldScriptEntry(String id) {
-        return held_entries.get(id.toLowerCase());
+        return held_entries.get(CoreUtilities.toLowerCase(id));
     }
 
     /**
@@ -251,7 +251,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
     public ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
         // to lowercase to avoid case sensitivity.
-        held_entries.put(id.toLowerCase(), entry);
+        held_entries.put(CoreUtilities.toLowerCase(id), entry);
 
         return this;
     }
@@ -319,7 +319,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         if (definition == null) {
             return null;
         }
-        return definitions.get(definition.toLowerCase());
+        return definitions.get(CoreUtilities.toLowerCase(definition));
     }
 
 
@@ -331,7 +331,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     @Override
     public boolean hasDefinition(String definition) {
-        return definitions.containsKey(definition.toLowerCase());
+        return definitions.containsKey(CoreUtilities.toLowerCase(definition));
     }
 
 
@@ -345,7 +345,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     @Override
     public void addDefinition(String definition, String value) {
-        definitions.put(definition.toLowerCase(), value);
+        definitions.put(CoreUtilities.toLowerCase(definition), value);
     }
 
 
@@ -359,7 +359,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      */
     @Override
     public void removeDefinition(String definition) {
-        definitions.remove(definition.toLowerCase());
+        definitions.remove(CoreUtilities.toLowerCase(definition));
     }
 
     /**
@@ -803,7 +803,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
     public static boolean matches(String string) {
         // Starts with q@? Assume match.
-        if (string.toLowerCase().startsWith("q@")) {
+        if (CoreUtilities.toLowerCase(string).startsWith("q@")) {
             return true;
         }
         else {
