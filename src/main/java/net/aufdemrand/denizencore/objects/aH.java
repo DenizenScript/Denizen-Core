@@ -76,7 +76,6 @@ public class aH {
         // Construction
         public Argument(String string) {
             raw_value = string;
-            string = string;
 
             int first_colon = string.indexOf(':');
             int first_space = string.indexOf(' ');
