@@ -127,7 +127,7 @@ public class aH {
         // TODO: REMOVE IN 1.0
         public boolean matches(String values) {
             for (String value : CoreUtilities.split(values, ',')) {
-                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_value)) {
+                if (CoreUtilities.toLowerCase(value.replace(" ", "")).equals(lower_value)) {
                     return true;
                 }
             }
