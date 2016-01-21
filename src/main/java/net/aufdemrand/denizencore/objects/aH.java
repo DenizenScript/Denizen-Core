@@ -76,7 +76,7 @@ public class aH {
         // Construction
         public Argument(String string) {
             raw_value = string;
-            string = string.trim();
+            string = string;
 
             int first_colon = string.indexOf(':');
             int first_space = string.indexOf(' ');
@@ -310,7 +310,7 @@ public class aH {
     public static List<Argument> interpret(List<String> args) {
         List<Argument> arg_list = new ArrayList<Argument>();
         for (String string : args) {
-            arg_list.add(new Argument(string.trim()));
+            arg_list.add(new Argument(string));
         }
         return arg_list;
     }
