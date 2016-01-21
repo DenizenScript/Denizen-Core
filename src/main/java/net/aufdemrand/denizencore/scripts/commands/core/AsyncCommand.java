@@ -29,7 +29,8 @@ public class AsyncCommand extends BracedCommand implements Holdable {
         queue.run_async = true;
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
         queue.getAllDefinitions().putAll(scriptEntry.getResidingQueue().getAllDefinitions());
-        queue.cachedContext.putAll(scriptEntry.getResidingQueue().cachedContext);
+        queue.contextSource = scriptEntry.getResidingQueue().contextSource;
+        queue.cachedContext = scriptEntry.getResidingQueue().cachedContext;
 
         // Setup a callback if the queue is being waited on
         if (scriptEntry.shouldWaitFor()) {

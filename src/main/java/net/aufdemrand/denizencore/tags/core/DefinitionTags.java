@@ -22,7 +22,9 @@ public class DefinitionTags {
     @TagManager.TagEvents
     public void definitionTag(ReplaceableTagEvent event) {
 
-        if (!event.matches("definition", "def", "d")) return;
+        if (!event.matches("definition", "def", "d")) {
+            return;
+        }
 
         if (!event.hasNameContext()) {
             dB.echoError("Invalid definition tag, no context specified!");
@@ -55,17 +57,20 @@ public class DefinitionTags {
         // Returns whether a definition exists for the given definition name.
         // -->
         if (atttribute.startsWith("exists")) {
-            if (def == null)
+            if (def == null) {
                 event.setReplaced(Element.FALSE.getAttribute(atttribute.fulfill(1)));
-            else
+            }
+            else {
                 event.setReplaced(Element.TRUE.getAttribute(atttribute.fulfill(1)));
+            }
             return;
         }
 
         // No invalid definitions!
         if (def == null) {
-            if (!event.hasAlternative())
+            if (!event.hasAlternative()) {
                 dB.echoError("Invalid definition name '" + defName + "'.");
+            }
             return;
         }
 

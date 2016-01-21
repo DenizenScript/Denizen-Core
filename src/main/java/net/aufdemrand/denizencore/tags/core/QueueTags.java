@@ -21,16 +21,20 @@ public class QueueTags {
     @TagManager.TagEvents
     public void queueTag(ReplaceableTagEvent event) {
 
-        if (!event.matches("queue", "q")) return;
+        if (!event.matches("queue", "q")) {
+            return;
+        }
 
         // Handle <queue[id]. ...> tags
 
         if (event.hasNameContext()) {
-            if (!ScriptQueue._queueExists(event.getNameContext()))
+            if (!ScriptQueue._queueExists(event.getNameContext())) {
                 return;
-            else
+            }
+            else {
                 event.setReplaced(ScriptQueue._getExistingQueue(event.getNameContext())
                         .getAttribute(event.getAttributes().fulfill(1)));
+            }
             return;
         }
 

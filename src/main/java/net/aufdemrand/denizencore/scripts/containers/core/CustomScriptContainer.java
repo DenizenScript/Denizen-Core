@@ -132,10 +132,10 @@ public class CustomScriptContainer extends ScriptContainer {
                 return obj;
             }
             else if (name.equals("value")) {
-                 return value;
+                return value;
             }
             else {
-                 return null;
+                return null;
             }
         }
     }

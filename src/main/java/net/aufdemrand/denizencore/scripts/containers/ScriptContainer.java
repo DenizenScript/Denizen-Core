@@ -195,8 +195,9 @@ public class ScriptContainer implements Debuggable {
 
 
     public YamlConfiguration getConfigurationSection(String path) {
-        if (path.length() == 0)
+        if (path.length() == 0) {
             return contents;
+        }
         return contents.getConfigurationSection(path.toUpperCase());
     }
 
@@ -211,10 +212,13 @@ public class ScriptContainer implements Debuggable {
     }
 
     public List<ScriptEntry> getEntries(ScriptEntryData data, String path) {
-        if (path == null) path = "script";
+        if (path == null) {
+            path = "script";
+        }
         ScriptEntrySet set = getSetFor(path.toUpperCase());
-        if (set == null)
+        if (set == null) {
             return new ArrayList<ScriptEntry>();
+        }
         for (ScriptEntry entry : set.getEntries()) {
             entry.entryData = data.clone();
         }
@@ -227,7 +231,9 @@ public class ScriptContainer implements Debuggable {
             return got.Duplicate();
         }
         List<Object> stringEntries = contents.getList(path);
-        if (stringEntries == null || stringEntries.size() == 0) return null;
+        if (stringEntries == null || stringEntries.size() == 0) {
+            return null;
+        }
         List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(stringEntries, this, null);
         got = new ScriptEntrySet(entries);
         scriptsMap.put(path, got);
@@ -245,8 +251,9 @@ public class ScriptContainer implements Debuggable {
 
     @Override
     public boolean shouldDebug() {
-        if (shouldDebug == null)
+        if (shouldDebug == null) {
             shouldDebug = (!(contents.contains("DEBUG") && contents.getString("DEBUG").equalsIgnoreCase("false")));
+        }
         return shouldDebug;
     }
 

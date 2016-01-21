@@ -55,7 +55,9 @@ public abstract class AbstractEvaluator<T> {
                     this.operators.put(ope.getSymbol(), known);
                 }
                 known.add(ope);
-                if (known.size() > 1) validateHomonyms(known);
+                if (known.size() > 1) {
+                    validateHomonyms(known);
+                }
             }
         }
         boolean needFunctionSeparator = false;
@@ -63,7 +65,9 @@ public abstract class AbstractEvaluator<T> {
             for (Function function : parameters.getFunctions()) {
                 //TODO if function name contains operators or reserved chars => error
                 this.functions.put(parameters.getTranslation(function.getName()), function);
-                if (function.getMaximumArgumentCount() > 1) needFunctionSeparator = true;
+                if (function.getMaximumArgumentCount() > 1) {
+                    needFunctionSeparator = true;
+                }
             }
         }
         if (parameters.getConstants() != null) {
@@ -90,7 +94,9 @@ public abstract class AbstractEvaluator<T> {
      * @see #guessOperator(Token, List)
      */
     protected void validateHomonyms(List<Operator> operators) {
-        if (operators.size() > 2) throw new IllegalArgumentException();
+        if (operators.size() > 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -108,7 +114,9 @@ public abstract class AbstractEvaluator<T> {
     protected Operator guessOperator(Token previous, List<Operator> candidates) {
         final int argCount = ((previous != null) && (previous.isCloseBracket() || previous.isLiteral())) ? 2 : 1;
         for (Operator operator : candidates) {
-            if (operator.getOperandCount() == argCount) return operator;
+            if (operator.getOperandCount() == argCount) {
+                return operator;
+            }
         }
         return null;
     }
@@ -119,8 +127,9 @@ public abstract class AbstractEvaluator<T> {
             String literal = token.getLiteral();
             Constant ct = this.constants.get(literal);
             T value = ct == null ? null : evaluate(ct, evaluationContext);
-            if (value == null && evaluationContext != null && (evaluationContext instanceof AbstractVariableSet))
+            if (value == null && evaluationContext != null && (evaluationContext instanceof AbstractVariableSet)) {
                 value = ((AbstractVariableSet<T>) evaluationContext).get(literal);
+            }
             values.push(value != null ? value : toValue(literal, evaluationContext));
         }
         else if (token.isOperator()) {
@@ -186,7 +195,9 @@ public abstract class AbstractEvaluator<T> {
     private Iterator<T> getArguments(Stack<T> values, int nb) {
         // Be aware that arguments are in reverse order on the values stack.
         // Don't forget to reorder them in the original order (the one they appear in the evaluated formula)
-        if (values.size() < nb) throw new IllegalArgumentException();
+        if (values.size() < nb) {
+            throw new IllegalArgumentException();
+        }
         LinkedList<T> result = new LinkedList<T>();
         for (int i = 0; i < nb; i++) {
             result.addFirst(values.pop());
@@ -236,23 +247,31 @@ public abstract class AbstractEvaluator<T> {
         while (tokens.hasNext()) {
             // read one token from the input stream
             String trimmed = tokens.next().trim();
-            if (trimmed.length() == 0) continue; // Ignored blank tokens
+            if (trimmed.length() == 0) {
+                continue; // Ignored blank tokens
+            }
             final Token token = toToken(previous, trimmed);
             if (token.isOpenBracket()) {
                 // If the token is a left parenthesis, then push it onto the stack.
                 stack.push(token);
                 if (previous != null && previous.isFunction()) {
-                    if (!functionBrackets.containsKey(token.getBrackets().getOpen()))
+                    if (!functionBrackets.containsKey(token.getBrackets().getOpen())) {
                         throw new IllegalArgumentException("Invalid bracket after function: " + trimmed);
+                    }
                 }
                 else {
-                    if (!expressionBrackets.containsKey(token.getBrackets().getOpen()))
+                    if (!expressionBrackets.containsKey(token.getBrackets().getOpen())) {
                         throw new IllegalArgumentException("Invalid bracket in expression: " + trimmed);
+                    }
                 }
             }
             else if (token.isCloseBracket()) {
-                if (previous == null) throw new IllegalArgumentException("expression can't start with a close bracket");
-                if (previous.isFunctionArgumentSeparator()) throw new IllegalArgumentException("argument is missing");
+                if (previous == null) {
+                    throw new IllegalArgumentException("expression can't start with a close bracket");
+                }
+                if (previous.isFunctionArgumentSeparator()) {
+                    throw new IllegalArgumentException("argument is missing");
+                }
                 BracketPair brackets = token.getBrackets();
                 // If the token is a right parenthesis:
                 boolean openBracketFound = false;
@@ -288,8 +307,9 @@ public abstract class AbstractEvaluator<T> {
                 }
             }
             else if (token.isFunctionArgumentSeparator()) {
-                if (previous == null)
+                if (previous == null) {
                     throw new IllegalArgumentException("expression can't start with a function argument separator");
+                }
                 // Verify that there was an argument before this separator
                 if (previous.isOpenBracket() || previous.isFunctionArgumentSeparator()) {
                     // The cases were operator miss an operand are detected elsewhere.
@@ -346,8 +366,9 @@ public abstract class AbstractEvaluator<T> {
             }
             else {
                 // If the token is a number (identifier), a constant or a variable, then add its value to the output queue.
-                if ((previous != null) && previous.isLiteral())
+                if ((previous != null) && previous.isLiteral()) {
                     throw new IllegalArgumentException("A literal can't follow another literal");
+                }
                 output(values, token, evaluationContext);
             }
             previous = token;
@@ -361,7 +382,9 @@ public abstract class AbstractEvaluator<T> {
             }
             output(values, sc, evaluationContext);
         }
-        if (values.size() != 1) throw new IllegalArgumentException();
+        if (values.size() != 1) {
+            throw new IllegalArgumentException();
+        }
         return values.pop();
     }
 
@@ -374,7 +397,9 @@ public abstract class AbstractEvaluator<T> {
         }
         else if (operators.containsKey(token)) {
             List<Operator> list = operators.get(token);
-            if (list.size() == 1) return Token.buildOperator(list.get(0));
+            if (list.size() == 1) {
+                return Token.buildOperator(list.get(0));
+            }
             return Token.buildOperator(guessOperator(previous, list));
         }
         else {

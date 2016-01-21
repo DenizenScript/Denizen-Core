@@ -43,8 +43,9 @@ public class ScriptHelper {
     }
 
     private static YamlConfiguration getScripts() {
-        if (_yamlScripts == null)
+        if (_yamlScripts == null) {
             reloadScripts();
+        }
         return _yamlScripts;
     }
 

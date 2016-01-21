@@ -34,9 +34,12 @@ public class Function {
      * @param maxArgumentCount The function's maximum argument count (Integer.MAX_VALUE to specify no upper limit).
      */
     public Function(String name, int minArgumentCount, int maxArgumentCount) {
-        if ((minArgumentCount < 0) || (minArgumentCount > maxArgumentCount))
+        if ((minArgumentCount < 0) || (minArgumentCount > maxArgumentCount)) {
             throw new IllegalArgumentException("Invalid argument count");
-        if (name == null || name.length() == 0) throw new IllegalArgumentException("Invalid function name");
+        }
+        if (name == null || name.length() == 0) {
+            throw new IllegalArgumentException("Invalid function name");
+        }
         this.name = name;
         this.minArgumentCount = minArgumentCount;
         this.maxArgumentCount = maxArgumentCount;

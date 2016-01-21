@@ -29,9 +29,12 @@ public class PropertyParser {
         List<Class> prop_list;
 
         // Get current properties list, or make a new one
-        if (properties.containsKey(object))
+        if (properties.containsKey(object)) {
             prop_list = properties.get(object);
-        else prop_list = new ArrayList<Class>();
+        }
+        else {
+            prop_list = new ArrayList<Class>();
+        }
 
         // Add this property to the list
         prop_list.add(property);
@@ -66,9 +69,12 @@ public class PropertyParser {
 
         // Return the list of properties
         if (prop_string.length() > 0) // Remove final semicolon
+        {
             return "[" + prop_string.substring(0, prop_string.length() - 1) + "]";
-        else
+        }
+        else {
             return "";
+        }
     }
 
     public static List<Property> getProperties(dObject object) {
@@ -77,8 +83,9 @@ public class PropertyParser {
         try {
             if (properties.containsKey(object.getClass())) {
                 for (Class property : properties.get(object.getClass())) {
-                    if ((Boolean) describes.get(property).invoke(null, object))
+                    if ((Boolean) describes.get(property).invoke(null, object)) {
                         props.add((Property) getFrom.get(property).invoke(null, object));
+                    }
                 }
             }
 

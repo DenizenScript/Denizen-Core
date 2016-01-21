@@ -41,7 +41,9 @@ public class DebugCommand extends AbstractCommand {
                 scriptEntry.addObject("name", arg.asElement());
             }
 
-            else arg.reportUnhandled();
+            else {
+                arg.reportUnhandled();
+            }
         }
 
         if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {

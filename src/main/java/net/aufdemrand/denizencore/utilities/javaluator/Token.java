@@ -47,7 +47,9 @@ public class Token {
         super();
         if ((kind.equals(Kind.OPERATOR) && !(content instanceof Operator)) ||
                 (kind.equals(Kind.FUNCTION) && !(content instanceof Function)) ||
-                (kind.equals(Kind.LITERAL) && !(content instanceof String))) throw new IllegalArgumentException();
+                (kind.equals(Kind.LITERAL) && !(content instanceof String))) {
+            throw new IllegalArgumentException();
+        }
         this.kind = kind;
         this.content = content;
     }
@@ -131,7 +133,9 @@ public class Token {
     }
 
     String getLiteral() {
-        if (!this.kind.equals(Kind.LITERAL)) throw new IllegalArgumentException();
+        if (!this.kind.equals(Kind.LITERAL)) {
+            throw new IllegalArgumentException();
+        }
         return (String) this.content;
     }
 }

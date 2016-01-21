@@ -49,15 +49,6 @@ public class Duration implements dObject {
     //   STATIC METHODS AND FIELDS
     /////////////////
 
-    // Use regex pattern matching to easily determine if a string
-    // value is a valid Duration.
-    final static Pattern match =
-            Pattern.compile("(?:d@)?(\\d+.\\d+|.\\d+|\\d+)(t|m|s|h|d|w)?" +
-                            // Optional 'high-range' for random durations.
-                            "(?:(?:-\\d+.\\d+|.\\d+|\\d+)(?:t|m|s|h|d|w)?)?",
-                    Pattern.CASE_INSENSITIVE);
-
-
     // Define a 'ZERO' Duration
     final public static Duration ZERO = new Duration(0);
 
@@ -91,7 +82,9 @@ public class Duration implements dObject {
      */
     @Fetchable("d")
     public static Duration valueOf(String string, TagContext context) {
-        if (string == null) return null;
+        if (string == null) {
+            return null;
+        }
 
         string = string.replace("d@", "");
 
@@ -116,37 +109,39 @@ public class Duration implements dObject {
                 return new Duration(seconds);
 
             }
-            else return null;
+            else {
+                return null;
+            }
         }
+
+        String mg1 = CoreUtilities.toLowerCase(string);
+        String mg2 = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
 
         // Standard Duration. Check the type and create new Duration object accordingly.
-        Matcher m = match.matcher(string);
-        if (m.matches()) {
-            if (m.group().toLowerCase().endsWith("t"))
-                // Matches TICKS, so 1 tick = .05 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 0.05);
-
-            else if (m.group().toLowerCase().endsWith("d"))
-                // Matches DAYS, so 1 day = 86400 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 86400);
-
-            else if (m.group().toLowerCase().endsWith("w"))
-                // Matches WEEKS, so 1 week = 604800 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 604800);
-
-            else if (m.group().toLowerCase().endsWith("m"))
-                // Matches MINUTES, so 1 minute = 60 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 60);
-
-            else if (m.group().toLowerCase().endsWith("h"))
-                // Matches HOURS, so 1 hour = 3600 seconds
-                return new Duration(Double.valueOf(m.group(1)) * 3600);
-
-            else // seconds
-                return new Duration(Double.valueOf(m.group(1)));
+        if (mg1.endsWith("t")) {
+            // Matches TICKS, so 1 tick = .05 seconds
+            return new Duration(Double.valueOf(mg2) * 0.05);
         }
-
-        return null;
+        else if (mg1.endsWith("d")) {
+            // Matches DAYS, so 1 day = 86400 seconds
+            return new Duration(Double.valueOf(mg2) * 86400);
+        }
+        else if (mg1.endsWith("w")) {
+            // Matches WEEKS, so 1 week = 604800 seconds
+            return new Duration(Double.valueOf(mg2) * 604800);
+        }
+        else if (mg1.endsWith("m")) {
+            // Matches MINUTES, so 1 minute = 60 seconds
+            return new Duration(Double.valueOf(mg2) * 60);
+        }
+        else if (mg1.endsWith("h")) {
+            // Matches HOURS, so 1 hour = 3600 seconds
+            return new Duration(Double.valueOf(mg2) * 3600);
+        }
+        else {
+            // seconds
+            return new Duration(Double.valueOf(mg2));
+        }
     }
 
 
@@ -157,8 +152,12 @@ public class Duration implements dObject {
      * @return true if valid.
      */
     public static boolean matches(String string) {
-        Matcher m = match.matcher(string);
-        return m.matches();
+        try {
+            return valueOf(string) != null;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
 
@@ -173,7 +172,9 @@ public class Duration implements dObject {
      */
     public Duration(double seconds) {
         this.seconds = seconds;
-        if (this.seconds < 0) this.seconds = 0;
+        if (this.seconds < 0) {
+            this.seconds = 0;
+        }
     }
 
     /**
@@ -183,7 +184,9 @@ public class Duration implements dObject {
      */
     public Duration(int seconds) {
         this.seconds = seconds;
-        if (this.seconds < 0) this.seconds = 0;
+        if (this.seconds < 0) {
+            this.seconds = 0;
+        }
     }
 
     /**
@@ -193,7 +196,9 @@ public class Duration implements dObject {
      */
     public Duration(long ticks) {
         this.seconds = ticks / 20;
-        if (this.seconds < 0) this.seconds = 0;
+        if (this.seconds < 0) {
+            this.seconds = 0;
+        }
     }
 
 
@@ -261,7 +266,9 @@ public class Duration implements dObject {
     public int getSecondsAsInt() {
         // Durations that are a fraction of a second
         // will return as 1 when using this method.
-        if (seconds < 1 && seconds > 0) return 1;
+        if (seconds < 1 && seconds > 0) {
+            return 1;
+        }
         return round(seconds);
     }
 
@@ -498,55 +505,61 @@ public class Duration implements dObject {
                 // @description
                 // Returns the current year of the time specified by the duration object.
                 // -->
-                if (attribute.startsWith("year"))
+                if (attribute.startsWith("year")) {
                     return new Element(currentDate.getYear() + 1900 /* ??? */).getAttribute(attribute.fulfill(1));
+                }
 
-                    // <--[tag]
-                    // @attribute <d@duration.time.month>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current month of the time specified by the duration object.
-                    // -->
-                else if (attribute.startsWith("month"))
+                // <--[tag]
+                // @attribute <d@duration.time.month>
+                // @returns Element(Number)
+                // @description
+                // Returns the current month of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("month")) {
                     return new Element(currentDate.getMonth() + 1).getAttribute(attribute.fulfill(1));
+                }
 
-                    // <--[tag]
-                    // @attribute <d@duration.time.day>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current day of the time specified by the duration object.
-                    // -->
-                else if (attribute.startsWith("day"))
+                // <--[tag]
+                // @attribute <d@duration.time.day>
+                // @returns Element(Number)
+                // @description
+                // Returns the current day of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("day")) {
                     return new Element(currentDate.getDate()).getAttribute(attribute.fulfill(1));
+                }
 
-                    // <--[tag]
-                    // @attribute <d@duration.time.hour>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current hour of the time specified by the duration object.
-                    // -->
-                else if (attribute.startsWith("hour"))
+                // <--[tag]
+                // @attribute <d@duration.time.hour>
+                // @returns Element(Number)
+                // @description
+                // Returns the current hour of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("hour")) {
                     return new Element(currentDate.getHours()).getAttribute(attribute.fulfill(1));
+                }
 
-                    // <--[tag]
-                    // @attribute <d@duration.time.minute>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current minute of the time specified by the duration object.
-                    // -->
-                else if (attribute.startsWith("minute"))
+                // <--[tag]
+                // @attribute <d@duration.time.minute>
+                // @returns Element(Number)
+                // @description
+                // Returns the current minute of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("minute")) {
                     return new Element(currentDate.getMinutes()).getAttribute(attribute.fulfill(1));
+                }
 
-                    // <--[tag]
-                    // @attribute <d@duration.time.second>
-                    // @returns Element(Number)
-                    // @description
-                    // Returns the current second of the time specified by the duration object.
-                    // -->
-                else if (attribute.startsWith("second"))
+                // <--[tag]
+                // @attribute <d@duration.time.second>
+                // @returns Element(Number)
+                // @description
+                // Returns the current second of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("second")) {
                     return new Element(currentDate.getSeconds()).getAttribute(attribute.fulfill(1));
+                }
 
-                    // TODO: Custom format option
+                // TODO: Custom format option
                 else {
                     format.applyPattern("EEE, d MMM yyyy HH:mm:ss");
                     return new Element(format.format(currentDate))
@@ -619,7 +632,8 @@ public class Duration implements dObject {
         registerTag("formatted", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).formatted()).getAttribute(attribute.fulfill(1));            }
+                return new Element(((Duration) object).formatted()).getAttribute(attribute.fulfill(1));
+            }
         });
         registerTag("value", registeredTags.get("formatted"));
 
@@ -638,7 +652,9 @@ public class Duration implements dObject {
     @Override
     public String getAttribute(Attribute attribute) {
 
-        if (attribute == null) return null;
+        if (attribute == null) {
+            return null;
+        }
 
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
@@ -654,7 +670,9 @@ public class Duration implements dObject {
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this)) {
             String returned = property.getAttribute(attribute);
-            if (returned != null) return returned;
+            if (returned != null) {
+                return returned;
+            }
         }
 
         return new Element(identify()).getAttribute(attribute);
@@ -672,21 +690,25 @@ public class Duration implements dObject {
 
         String timeString = "";
 
-        if (days > 0)
+        if (days > 0) {
             timeString = String.valueOf(days) + "d ";
-        if (hours > 0)
+        }
+        if (hours > 0) {
             timeString = timeString + String.valueOf(hours) + "h ";
-        if (minutes > 0 && days == 0)
+        }
+        if (minutes > 0 && days == 0) {
             timeString = timeString + String.valueOf(minutes) + "m ";
-        if (seconds > 0 && minutes < 10 && hours == 0 && days == 0)
+        }
+        if (seconds > 0 && minutes < 10 && hours == 0 && days == 0) {
             timeString = timeString + String.valueOf(seconds) + "s";
+        }
 
         if (timeString.isEmpty()) {
             if (this.seconds <= 0) {
                 timeString = "forever";
             }
             else {
-                timeString = ((double)((long)(this.seconds * 100)) / 100d) + "s";
+                timeString = ((double) ((long) (this.seconds * 100)) / 100d) + "s";
             }
         }
 

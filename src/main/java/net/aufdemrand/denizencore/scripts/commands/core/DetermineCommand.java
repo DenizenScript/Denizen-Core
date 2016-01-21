@@ -39,8 +39,9 @@ public class DetermineCommand extends AbstractCommand {
      */
     public static long getNewId() {
         // Just in case? Start over if already max_value.
-        if (uniqueId == Long.MAX_VALUE)
+        if (uniqueId == Long.MAX_VALUE) {
             uniqueId = 0;
+        }
         // Increment the counter
         return uniqueId++;
     }
@@ -95,13 +96,17 @@ public class DetermineCommand extends AbstractCommand {
 
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
-            if (arg.matches("passive", "passively"))
+            if (arg.matches("passive", "passively")) {
                 scriptEntry.addObject("passively", new Element(true));
+            }
 
-            else if (!scriptEntry.hasObject("outcome"))
+            else if (!scriptEntry.hasObject("outcome")) {
                 scriptEntry.addObject("outcome", new Element(arg.raw_value));
+            }
 
-            else arg.reportUnhandled();
+            else {
+                arg.reportUnhandled();
+            }
         }
 
         //
@@ -144,7 +149,9 @@ public class DetermineCommand extends AbstractCommand {
         strs.add(outcome);
 
         if (!passively)
-            // Stop the queue by clearing the remainder of it.
+        // Stop the queue by clearing the remainder of it.
+        {
             scriptEntry.getResidingQueue().clear();
+        }
     }
 }

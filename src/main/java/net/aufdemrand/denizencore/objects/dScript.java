@@ -80,21 +80,26 @@ public class dScript implements dObject, Adjustable {
     @Fetchable("s")
     public static dScript valueOf(String string, TagContext context) {
 
-        if (string.startsWith("s@"))
+        if (string.startsWith("s@")) {
             string = string.substring(2);
+        }
 
         dScript script = new dScript(string);
         // Make sure it's valid.
-        if (script.isValid())
+        if (script.isValid()) {
             return script;
-        else
+        }
+        else {
             return null;
+        }
     }
 
 
     public static boolean matches(String string) {
 
-        if (string.toLowerCase().startsWith("s@")) return true;
+        if (string.toLowerCase().startsWith("s@")) {
+            return true;
+        }
 
         dScript script = new dScript(string);
         // Make sure it's valid.
@@ -222,6 +227,7 @@ public class dScript implements dObject, Adjustable {
     public boolean isUnique() {
         return true;
     }
+
     public static void registerTags() {
 
         // <--[tag]
@@ -324,9 +330,13 @@ public class dScript implements dObject, Adjustable {
                     return null;
                 }
                 YamlConfiguration section = ((dScript) object).getContainer().getConfigurationSection("default constants");
-                if (section == null) return null;
+                if (section == null) {
+                    return null;
+                }
                 Object obj = section.get(attribute.getContext(1).toUpperCase());
-                if (obj == null) return null;
+                if (obj == null) {
+                    return null;
+                }
 
                 if (obj instanceof List) {
                     dList list = new dList();
@@ -374,7 +384,9 @@ public class dScript implements dObject, Adjustable {
                     return new Element(scr.identify()).getAttribute(attribute);
                 }
                 Object obj = section.get(attribute.getContext(1).toUpperCase());
-                if (obj == null) return null;
+                if (obj == null) {
+                    return null;
+                }
 
                 if (obj instanceof List) {
                     dList list = new dList();
@@ -475,7 +487,7 @@ public class dScript implements dObject, Adjustable {
         registerTag("prefix", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript)object).prefix).getAttribute(attribute.fulfill(1));
+                return new Element(((dScript) object).prefix).getAttribute(attribute.fulfill(1));
             }
         });
 
@@ -506,7 +518,9 @@ public class dScript implements dObject, Adjustable {
 
     @Override
     public String getAttribute(Attribute attribute) {
-        if (attribute == null) return "null";
+        if (attribute == null) {
+            return "null";
+        }
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
         TagRunnable tr = registeredTags.get(attrLow);
@@ -521,7 +535,9 @@ public class dScript implements dObject, Adjustable {
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this)) {
             String returned = property.getAttribute(attribute);
-            if (returned != null) return returned;
+            if (returned != null) {
+                return returned;
+            }
         }
 
         return new Element(identify()).getAttribute(attribute);

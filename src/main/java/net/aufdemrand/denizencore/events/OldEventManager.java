@@ -68,10 +68,12 @@ public class OldEventManager {
                     for (StringHolder eventName1 : keys) {
                         String eventName = eventName1.str.toUpperCase();
                         List<WorldScriptContainer> list;
-                        if (events.containsKey(eventName))
+                        if (events.containsKey(eventName)) {
                             list = events.get(eventName);
-                        else
+                        }
+                        else {
                             list = new ArrayList<WorldScriptContainer>();
+                        }
                         list.add(script);
                         events.put(eventName, list);
                     }
@@ -83,14 +85,16 @@ public class OldEventManager {
             // dB.echoApproval("Built events map: " + events);
 
             // Breakdown all SmartEvents (if still being used, they will reinitialize next)
-            for (OldSmartEvent smartEvent : smart_events)
+            for (OldSmartEvent smartEvent : smart_events) {
                 smartEvent.breakDown();
+            }
 
             // Pass these along to each SmartEvent so they can determine whether they can be enabled or not
             for (OldSmartEvent smartEvent : smart_events) {
                 // If it should initialize, run _initialize!
-                if (smartEvent.shouldInitialize(events.keySet()))
+                if (smartEvent.shouldInitialize(events.keySet())) {
                     smartEvent._initialize();
+                }
             }
         }
         catch (Exception e) {
@@ -103,7 +107,9 @@ public class OldEventManager {
         event.addAll(original);
         List<String> parsed = new ArrayList<String>();
 
-        if (dB.showEventsTrimming) dB.echoApproval("Trimming world events '" + event.toString() + '\'');
+        if (dB.showEventsTrimming) {
+            dB.echoApproval("Trimming world events '" + event.toString() + '\'');
+        }
 
         // Remove any duplicate event names
         for (int i = 0; i < event.size(); i++) {
@@ -117,9 +123,11 @@ public class OldEventManager {
         }
 
         // Create a new list, only containing events that have existing scripts
-        for (String e : event)
-            if (events.containsKey("ON " + e.toUpperCase()))
+        for (String e : event) {
+            if (events.containsKey("ON " + e.toUpperCase())) {
                 parsed.add(e);
+            }
+        }
 
         return parsed;
     }
@@ -168,10 +176,12 @@ public class OldEventManager {
 
 
     public static String StripIdentifiers(String original) {
-        if (original.matches(".*?[a-z]+@[\\w ]+"))
+        if (original.matches(".*?[a-z]+@[\\w ]+")) {
             return original.replaceAll("[a-z]+@", "");
-        else
+        }
+        else {
             return original;
+        }
     }
 
     ///////////////////
@@ -194,14 +204,19 @@ public class OldEventManager {
 
                 if (events.containsKey("ON " + eventName.toUpperCase()))
 
+                {
                     for (WorldScriptContainer script : events.get("ON " + eventName.toUpperCase())) {
 
-                        if (script == null) continue;
+                        if (script == null) {
+                            continue;
+                        }
 
                         // Fetch script from Event
                         List<ScriptEntry> entries = script.getEntries(data, "events.on " + eventName);
 
-                        if (entries.isEmpty()) continue;
+                        if (entries.isEmpty()) {
+                            continue;
+                        }
 
                         dB.report(script, "Event",
                                 aH.debugObj("Type", "on " + eventName)
@@ -231,9 +246,11 @@ public class OldEventManager {
                         queue.start();
 
                         // Check the determination
-                        if (DetermineCommand.hasOutcome(id))
+                        if (DetermineCommand.hasOutcome(id)) {
                             determinations = DetermineCommand.getOutcome(id);
+                        }
                     }
+                }
             }
 
             return determinations;
@@ -270,7 +287,8 @@ public class OldEventManager {
 
     public static void registerSmartEvent(OldSmartEvent event) {
         // Seems simple enough
-        if (event != null)
+        if (event != null) {
             smart_events.add(event);
+        }
     }
 }

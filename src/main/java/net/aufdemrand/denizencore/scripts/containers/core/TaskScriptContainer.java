@@ -25,14 +25,17 @@ public class TaskScriptContainer extends ScriptContainer {
     public Duration getSpeed() {
         Duration speed;
         if (contains("SPEED")) {
-            if (getString("SPEED", "0").toUpperCase().equals("INSTANT"))
+            if (getString("SPEED", "0").toUpperCase().equals("INSTANT")) {
                 speed = Duration.valueOf("0t");
-            else
+            }
+            else {
                 speed = Duration.valueOf(getString("SPEED", "0t"));
+            }
 
         }
-        else
+        else {
             speed = new Duration(Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()).getSeconds());
+        }
 
         return speed;
     }
@@ -49,13 +52,17 @@ public class TaskScriptContainer extends ScriptContainer {
 
     public ScriptQueue runTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
         ScriptQueue queue;
-        if (getSpeed().getSeconds() == 0)
+        if (getSpeed().getSeconds() == 0) {
             queue = InstantQueue.getQueue(queueId);
-        else queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+        }
+        else {
+            queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+        }
 
         List<ScriptEntry> listOfEntries = getBaseEntries(data);
-        if (context != null)
+        if (context != null) {
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
+        }
         queue.addEntries(listOfEntries);
         queue.start();
         return queue;
@@ -76,13 +83,17 @@ public class TaskScriptContainer extends ScriptContainer {
 
     public ScriptQueue runTaskScriptWithDelay(String queueId, ScriptEntryData data, Map<String, String> context, Duration delay) {
         ScriptQueue queue;
-        if (getSpeed().getSeconds() == 0)
+        if (getSpeed().getSeconds() == 0) {
             queue = InstantQueue.getQueue(queueId);
-        else queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+        }
+        else {
+            queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+        }
 
         List<ScriptEntry> listOfEntries = getBaseEntries(data);
-        if (context != null)
+        if (context != null) {
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
+        }
         queue.addEntries(listOfEntries);
         queue.delayUntil(System.currentTimeMillis() + (long) (delay.getSeconds() * 1000));
         queue.start();
@@ -92,8 +103,9 @@ public class TaskScriptContainer extends ScriptContainer {
     public ScriptQueue injectTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
         ScriptQueue queue = ScriptQueue._getExistingQueue(queueId);
         List<ScriptEntry> listOfEntries = getBaseEntries(data);
-        if (context != null)
+        if (context != null) {
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
+        }
         queue.injectEntries(listOfEntries, 0);
         queue.start();
         return queue;

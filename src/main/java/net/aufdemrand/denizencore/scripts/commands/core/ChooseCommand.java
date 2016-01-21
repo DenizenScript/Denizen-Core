@@ -67,7 +67,7 @@ public class ChooseCommand extends BracedCommand {
 
         ScriptEntry result = null;
 
-        for (ScriptEntry se: bracedCommandsList) {
+        for (ScriptEntry se : bracedCommandsList) {
             String cmdName = CoreUtilities.toLowerCase(se.getCommandName());
             if (cmdName.equals("default")) {
                 result = se;

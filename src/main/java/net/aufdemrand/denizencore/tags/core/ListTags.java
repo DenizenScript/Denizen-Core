@@ -19,12 +19,15 @@ public class ListTags {
     @TagManager.TagEvents
     public void listTags(ReplaceableTagEvent event) {
 
-        if (!event.matches("list") || event.replaced()) return;
+        if (!event.matches("list") || event.replaced()) {
+            return;
+        }
 
         dList list = null;
 
-        if (event.hasNameContext())
+        if (event.hasNameContext()) {
             list = dList.valueOf(event.getNameContext());
+        }
 
         // Check if list is null, return null if it is
         if (list == null) {

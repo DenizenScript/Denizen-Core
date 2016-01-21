@@ -40,7 +40,9 @@ public class Tokenizer {
      */
     private boolean onlyOneChar(List<String> delimiters) {
         for (String delimiter : delimiters) {
-            if (delimiter.length() != 1) return false;
+            if (delimiter.length() != 1) {
+                return false;
+            }
         }
         return true;
     }
@@ -59,7 +61,9 @@ public class Tokenizer {
         StringBuilder result = new StringBuilder();
         result.append('(');
         for (String delim : delimiters) { // For each delimiter
-            if (result.length() != 1) result.append('|'); // Add it to the union
+            if (result.length() != 1) {
+                result.append('|'); // Add it to the union
+            }
             for (int i = 0; i < delim.length(); i++) {
                 // Add an escape character if the character is a regexp reserved char
                 result.append('\\');

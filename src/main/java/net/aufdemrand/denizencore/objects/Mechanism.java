@@ -69,27 +69,31 @@ public class Mechanism {
     }
 
     public boolean requireBoolean(String error) {
-        if (value.isBoolean())
+        if (value.isBoolean()) {
             return true;
+        }
         dB.echoError(error);
         return false;
     }
 
     public boolean requireDouble(String error) {
-        if (value.isDouble())
+        if (value.isDouble()) {
             return true;
+        }
         dB.echoError(error);
         return false;
     }
 
     public boolean requireEnum(String error, boolean allowInt, Enum<?>... values) {
-        if (allowInt && value.isInt() && value.asInt() < values.length)
+        if (allowInt && value.isInt() && value.asInt() < values.length) {
             return true;
+        }
         if (value.isString()) {
             String raw_value = value.asString().toUpperCase();
             for (Enum<?> check_value : values) {
-                if (raw_value.equals(check_value.name()))
+                if (raw_value.equals(check_value.name())) {
                     return true;
+                }
             }
         }
         if (error == null) {
@@ -104,22 +108,25 @@ public class Mechanism {
     }
 
     public boolean requireFloat(String error) {
-        if (value.isFloat())
+        if (value.isFloat()) {
             return true;
+        }
         dB.echoError(error);
         return false;
     }
 
     public boolean requireInteger(String error) {
-        if (value.isInt())
+        if (value.isInt()) {
             return true;
+        }
         dB.echoError(error);
         return false;
     }
 
     public <T extends dObject> boolean requireObject(String error, Class<T> type) {
-        if (value.matchesType(type))
+        if (value.matchesType(type)) {
             return true;
+        }
         if (error == null) {
             // TODO: Remove getSimpleName(), or simplify somehow.
             dB.echoError("Invalid " + type.getSimpleName() + " specified.");

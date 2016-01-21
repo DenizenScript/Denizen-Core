@@ -54,8 +54,9 @@ public class EscapeTags {
      * @return the escaped data.
      */
     public static String Escape(String input) {
-        if (input == null)
+        if (input == null) {
             return null;
+        }
         return TagManager.cleanOutputFully(input)
                 .replace("&", "&amp").replace("|", "&pipe")
                 .replace(">", "&gt").replace("<", "&lt")
@@ -76,8 +77,9 @@ public class EscapeTags {
      * @return the unescaped data.
      */
     public static String unEscape(String input) {
-        if (input == null)
+        if (input == null) {
             return null;
+        }
         return TagManager.cleanOutputFully(input)
                 .replace("&pipe", "|").replace("&nl", "\n")
                 .replace("&gt", ">").replace("&lt", "<")

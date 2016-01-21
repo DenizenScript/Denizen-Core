@@ -21,7 +21,9 @@ public class CoreUtilities {
     static {
         scriptsFilter = new FilenameFilter() {
             public boolean accept(File file, String fileName) {
-                if (fileName.startsWith(".")) return false;
+                if (fileName.startsWith(".")) {
+                    return false;
+                }
 
                 String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
                 return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSCRIPT");
@@ -90,8 +92,9 @@ public class CoreUtilities {
             }
         }
         strings.add(str.substring(start, str.length()));
-        if (dB.verbose)
+        if (dB.verbose) {
             dB.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
+        }
         return strings;
     }
 

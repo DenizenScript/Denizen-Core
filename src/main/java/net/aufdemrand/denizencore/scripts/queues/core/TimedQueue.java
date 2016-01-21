@@ -31,12 +31,15 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      */
     public static TimedQueue getQueue(String id) {
         // Get id if not specified.
-        if (id == null) throw new IllegalArgumentException("ID cannot be null!");
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null!");
+        }
         TimedQueue scriptQueue;
         // Does the queue already exist? Get it if it does.
-        if (_queueExists(id))
+        if (_queueExists(id)) {
             scriptQueue = (TimedQueue) ScriptQueue._queues.get(id);
-            // If not, create a new one.
+        }
+        // If not, create a new one.
         else {
             scriptQueue = new TimedQueue(id,
                     Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
@@ -170,7 +173,9 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     @Override
     protected boolean shouldRevolve() {
         // Check if this Queue isn't paused
-        if (paused) return false;
+        if (paused) {
+            return false;
+        }
 
         // If it's delayed, schedule it for later
         return !isDelayed();
