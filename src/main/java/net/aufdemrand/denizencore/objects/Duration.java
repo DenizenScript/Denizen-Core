@@ -152,7 +152,12 @@ public class Duration implements dObject {
      * @return true if valid.
      */
     public static boolean matches(String string) {
-        return valueOf(string) != null;
+        try {
+            return valueOf(string) != null;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
 
