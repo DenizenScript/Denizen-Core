@@ -129,9 +129,11 @@ public class Attribute {
         return this;
     }
 
-    private void rebuild_raw_tag() {
+    private void rebuild_raw_tag() { // TODO: Make this unneeded!
         if (attributes.size() == 0) {
             raw_tag = "";
+            raw_tag_low = "";
+            return;
         }
         StringBuilder sb = new StringBuilder();
         for (String attribute : attributes) {
