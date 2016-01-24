@@ -195,7 +195,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
     private final Map<String, ScriptEntry>
             held_entries = new ConcurrentHashMap<String, ScriptEntry>(8, 0.9f, 1);
 
-    private dScript script;
+    public dScript script;
 
     /**
      * Creates a ScriptQueue instance. Users of

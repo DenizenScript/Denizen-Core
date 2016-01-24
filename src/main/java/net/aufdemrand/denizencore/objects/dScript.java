@@ -5,6 +5,7 @@ import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.TagManager;
@@ -503,6 +504,27 @@ public class dScript implements dObject, Adjustable {
             @Override
             public String run(Attribute attribute, dObject object) {
                 return new Element("Script").getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <s@script.list_queues>
+        // @returns dList(Queue)
+        // @description
+        // Returns all queues which are running for this script.
+        // -->
+
+        registerTag("list_queues", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dScript script = (dScript) object;
+                dList queues = new dList();
+                for (ScriptQueue queue : ScriptQueue._getQueues()) {
+                    if (queue.script != null && queue.script.getName().equals(script.getName())) {
+                        queues.add(queue.identify());
+                    }
+                }
+                return queues.getAttribute(attribute.fulfill(1));
             }
         });
     }
