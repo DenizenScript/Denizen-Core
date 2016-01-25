@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 /**
@@ -25,7 +26,7 @@ public class DefineCommand extends AbstractCommand {
                     scriptEntry.addObject("definition", arg.getPrefix().asElement());
                 }
                 else {
-                    scriptEntry.addObject("definition", new Element(arg.getValue().toLowerCase()));
+                    scriptEntry.addObject("definition", new Element(CoreUtilities.toLowerCase(arg.getValue())));
                 }
             }
 

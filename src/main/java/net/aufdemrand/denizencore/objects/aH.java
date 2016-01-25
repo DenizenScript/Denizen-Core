@@ -606,7 +606,7 @@ public class aH {
 
     @Deprecated
     public static dScript getScriptFrom(String arg) {
-        arg = arg.toLowerCase().replace("script:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("script:", "");
         return dScript.valueOf(arg);
     }
 
@@ -617,7 +617,7 @@ public class aH {
 
     @Deprecated
     public static Duration getDurationFrom(String arg) {
-        arg = arg.toLowerCase().replace("duration:", "").replace("delay:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
         return Duration.valueOf(arg);
     }
 
@@ -627,7 +627,7 @@ public class aH {
 
     @Deprecated
     public static boolean matchesDuration(String arg) {
-        arg = arg.toLowerCase().replace("duration:", "").replace("delay:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
         return Duration.matches(arg);
     }
 
