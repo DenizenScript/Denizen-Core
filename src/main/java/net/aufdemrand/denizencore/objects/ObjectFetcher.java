@@ -34,7 +34,7 @@ public class ObjectFetcher {
                 if (method.isAnnotationPresent(Fetchable.class)) {
                     String[] identifiers = method.getAnnotation(Fetchable.class).value().split(",");
                     for (String identifier : identifiers) {
-                        adding.put(identifier.trim().toLowerCase(), dClass);
+                        adding.put(CoreUtilities.toLowerCase(identifier.trim()), dClass);
                         dB.log("Registered: " + dClass.getSimpleName() + " as " + identifier);
                     }
                 }
