@@ -5,6 +5,7 @@ import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dScript;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class Comparable {
@@ -347,7 +348,7 @@ public class Comparable {
 
             // For checking if the comparable contains comparedto
             case CONTAINS:
-                outcome = comparable.toLowerCase().contains(comparedto.toLowerCase());
+                outcome = CoreUtilities.toLowerCase(comparable).contains(CoreUtilities.toLowerCase(comparedto));
                 break;
 
             // OR_MORE/OR_LESS/etc. deal with the LENGTH of the the comparable/comparedto strings

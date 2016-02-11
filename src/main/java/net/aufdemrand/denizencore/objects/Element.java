@@ -79,7 +79,7 @@ public class Element implements dObject {
             return new Element(value);
         }
 
-        return new Element(string.toLowerCase().startsWith("el@") ? string.substring(3) : string);
+        return new Element(CoreUtilities.toLowerCase(string).startsWith("el@") ? string.substring(3) : string);
     }
 
     public static boolean matches(String string) {
@@ -727,7 +727,7 @@ public class Element implements dObject {
                 String element = ((Element) object).element;
                 String contains = attribute.getContext(1);
 
-                if (contains.toLowerCase().startsWith("regex:")) {
+                if (CoreUtilities.toLowerCase(contains).startsWith("regex:")) {
 
                     if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches()) {
                         return new Element("true").getAttribute(attribute.fulfill(1));
@@ -736,7 +736,7 @@ public class Element implements dObject {
                         return new Element("false").getAttribute(attribute.fulfill(1));
                     }
                 }
-                else if (element.toLowerCase().contains(contains.toLowerCase())) {
+                else if (CoreUtilities.toLowerCase(element).contains(CoreUtilities.toLowerCase(contains))) {
                     return new Element("true").getAttribute(attribute.fulfill(1));
                 }
                 else {
@@ -807,7 +807,9 @@ public class Element implements dObject {
         registerTag("ends_with", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Element) object).element.toLowerCase().endsWith(attribute.getContext(1).toLowerCase())).getAttribute(attribute.fulfill(1));
+                return new Element(CoreUtilities.toLowerCase(((Element) object).element).
+                        endsWith(CoreUtilities.toLowerCase(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("endswith", registeredTags.get("ends_with"));
@@ -826,7 +828,8 @@ public class Element implements dObject {
                     dB.echoError("The tag el@element.equals_case_sensitive[...] must have a value.");
                     return null;
                 }
-                return new Element(((Element) object).element.equals(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
+                return new Element(((Element) object).element.equals(attribute.getContext(1)))
+                        .getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("equals_with_case", registeredTags.get("equals_case_sensitive"));
@@ -965,7 +968,7 @@ public class Element implements dObject {
         registerTag("starts_with", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Element) object).element.toLowerCase().startsWith(attribute.getContext(1).toLowerCase()))
+                return new Element(CoreUtilities.toLowerCase(((Element) object).element).startsWith(CoreUtilities.toLowerCase(attribute.getContext(1))))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -1059,9 +1062,9 @@ public class Element implements dObject {
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
-                if (((Element) object).element.toLowerCase().contains(delimiter.toLowerCase())) {
+                if (CoreUtilities.toLowerCase(((Element) object).element).contains(CoreUtilities.toLowerCase(delimiter))) {
                     return new Element(((Element) object).element.substring
-                            (((Element) object).element.toLowerCase().lastIndexOf(delimiter.toLowerCase()) + delimiter.length()))
+                            (CoreUtilities.toLowerCase(((Element) object).element).lastIndexOf(CoreUtilities.toLowerCase(delimiter)) + delimiter.length()))
                             .getAttribute(attribute.fulfill(1));
                 }
                 else {
@@ -1086,9 +1089,9 @@ public class Element implements dObject {
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
-                if (((Element) object).element.toLowerCase().contains(delimiter.toLowerCase())) {
+                if (CoreUtilities.toLowerCase(((Element) object).element).contains(CoreUtilities.toLowerCase(delimiter))) {
                     return new Element(((Element) object).element.substring
-                            (((Element) object).element.toLowerCase().indexOf(delimiter.toLowerCase()) + delimiter.length()))
+                            (CoreUtilities.toLowerCase(((Element) object).element).indexOf(CoreUtilities.toLowerCase(delimiter)) + delimiter.length()))
                             .getAttribute(attribute.fulfill(1));
                 }
                 else {
@@ -1113,9 +1116,9 @@ public class Element implements dObject {
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
-                if (((Element) object).element.toLowerCase().contains(delimiter.toLowerCase())) {
+                if (CoreUtilities.toLowerCase(((Element) object).element).contains(CoreUtilities.toLowerCase(delimiter))) {
                     return new Element(((Element) object).element.substring
-                            (0, ((Element) object).element.toLowerCase().lastIndexOf(delimiter.toLowerCase())))
+                            (0, CoreUtilities.toLowerCase(((Element) object).element).lastIndexOf(CoreUtilities.toLowerCase(delimiter))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 else {
@@ -1140,9 +1143,9 @@ public class Element implements dObject {
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
-                if (((Element) object).element.toLowerCase().contains(delimiter.toLowerCase())) {
+                if (CoreUtilities.toLowerCase(((Element) object).element).contains(CoreUtilities.toLowerCase(delimiter))) {
                     return new Element(((Element) object).element.substring
-                            (0, ((Element) object).element.toLowerCase().indexOf(delimiter.toLowerCase())))
+                            (0, CoreUtilities.toLowerCase(((Element) object).element).indexOf(CoreUtilities.toLowerCase(delimiter))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 else {
@@ -1301,7 +1304,7 @@ public class Element implements dObject {
         registerTag("to_lowercase", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Element) object).element.toLowerCase()).getAttribute(attribute.fulfill(1));
+                return new Element(CoreUtilities.toLowerCase(((Element) object).element)).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("lower", registeredTags.get("to_lowercase"));
@@ -1321,7 +1324,7 @@ public class Element implements dObject {
                 }
                 StringBuilder TitleCase = new StringBuilder(((Element) object).element.length());
                 String Upper = ((Element) object).element.toUpperCase();
-                String Lower = ((Element) object).element.toLowerCase();
+                String Lower = CoreUtilities.toLowerCase(((Element) object).element);
                 TitleCase.append(Upper.charAt(0));
                 for (int i = 1; i < ((Element) object).element.length(); i++) {
                     if (((Element) object).element.charAt(i - 1) == ' ') {
@@ -2088,7 +2091,7 @@ public class Element implements dObject {
         if (attribute.startsWith("split") && attribute.startsWith("limit", 2)) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
             Integer limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
-            if (split_string.toLowerCase().startsWith("regex:")) {
+            if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
                 return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1], limit)))
                         .getAttribute(attribute.fulfill(2));
             }
@@ -2107,7 +2110,7 @@ public class Element implements dObject {
         // -->
         if (attribute.startsWith("split")) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
-            if (split_string.toLowerCase().startsWith("regex:")) {
+            if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
                 return new dList(Arrays.asList(element.split(split_string.split(":", 2)[1])))
                         .getAttribute(attribute.fulfill(1));
             }

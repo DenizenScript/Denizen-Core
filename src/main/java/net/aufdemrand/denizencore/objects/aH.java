@@ -76,7 +76,6 @@ public class aH {
         // Construction
         public Argument(String string) {
             raw_value = string;
-            string = string.trim();
 
             int first_colon = string.indexOf(':');
             int first_space = string.indexOf(' ');
@@ -128,7 +127,7 @@ public class aH {
         // TODO: REMOVE IN 1.0
         public boolean matches(String values) {
             for (String value : CoreUtilities.split(values, ',')) {
-                if (CoreUtilities.toLowerCase(value.trim()).equals(lower_value)) {
+                if (CoreUtilities.toLowerCase(value.replace(" ", "")).equals(lower_value)) {
                     return true;
                 }
             }
@@ -310,7 +309,7 @@ public class aH {
     public static List<Argument> interpret(List<String> args) {
         List<Argument> arg_list = new ArrayList<Argument>();
         for (String string : args) {
-            arg_list.add(new Argument(string.trim()));
+            arg_list.add(new Argument(string));
         }
         return arg_list;
     }
@@ -607,7 +606,7 @@ public class aH {
 
     @Deprecated
     public static dScript getScriptFrom(String arg) {
-        arg = arg.toLowerCase().replace("script:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("script:", "");
         return dScript.valueOf(arg);
     }
 
@@ -618,7 +617,7 @@ public class aH {
 
     @Deprecated
     public static Duration getDurationFrom(String arg) {
-        arg = arg.toLowerCase().replace("duration:", "").replace("delay:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
         return Duration.valueOf(arg);
     }
 
@@ -628,7 +627,7 @@ public class aH {
 
     @Deprecated
     public static boolean matchesDuration(String arg) {
-        arg = arg.toLowerCase().replace("duration:", "").replace("delay:", "");
+        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
         return Duration.matches(arg);
     }
 
