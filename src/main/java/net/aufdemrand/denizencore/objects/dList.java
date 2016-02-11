@@ -5,7 +5,6 @@ import net.aufdemrand.denizencore.objects.properties.Property;
 import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -746,6 +745,74 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
                 return list.getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.replace[(regex:)<element>]>
+        // @returns Element
+        // @description
+        // Returns the list with all instances of an element removed.
+        // -->
+
+        // <--[tag]
+        // @attribute <li@list.replace[(regex:)<element>].with[<element>]>
+        // @returns dList
+        // @description
+        // Returns the list with all instances of an element replaced with another.
+        // Specify regex: at the start of the replace element to replace elements that match the Regex.
+        // -->
+        registerTag("replace", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag li@list.replace[...] must have a value.");
+                    return null;
+                }
+                String replace = attribute.getContext(1);
+                String replacement = "";
+                attribute.fulfill(1);
+                if (attribute.startsWith("with")) {
+                    if (attribute.hasContext(1)) {
+                        replacement = attribute.getContext(1);
+                        if (replacement == null) {
+                            replacement = "";
+                        }
+                        attribute.fulfill(1);
+                    }
+                }
+
+                dList obj = (dList) object;
+                dList list = new dList();
+
+                if (replace.startsWith("regex:")) {
+                    String regex = replace.substring("regex:".length());
+                    for (String string : obj) {
+                        if (string.matches(regex)) {
+                            if (!replacement.equals("")) {
+                                list.add(replacement);
+                            }
+                        }
+                        else {
+                            list.add(string);
+                        }
+                    }
+                }
+                else {
+                    String lower = CoreUtilities.toLowerCase(replace);
+                    for (String string : obj) {
+                        if (CoreUtilities.toLowerCase(string).equals(lower)) {
+                            if (!replacement.equals("")) {
+                                list.add(replacement);
+                            }
+                        }
+                        else {
+                            list.add(string);
+                        }
+                    }
+                }
+
+                return list.getAttribute(attribute);
             }
         });
 
