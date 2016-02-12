@@ -118,29 +118,34 @@ public class Duration implements dObject {
         String mg2 = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
 
         // Standard Duration. Check the type and create new Duration object accordingly.
-        if (mg1.endsWith("t")) {
-            // Matches TICKS, so 1 tick = .05 seconds
-            return new Duration(Double.valueOf(mg2) * 0.05);
+        try {
+            if (mg1.endsWith("t")) {
+                // Matches TICKS, so 1 tick = .05 seconds
+                return new Duration(Double.valueOf(mg2) * 0.05);
+            }
+            else if (mg1.endsWith("d")) {
+                // Matches DAYS, so 1 day = 86400 seconds
+                return new Duration(Double.valueOf(mg2) * 86400);
+            }
+            else if (mg1.endsWith("w")) {
+                // Matches WEEKS, so 1 week = 604800 seconds
+                return new Duration(Double.valueOf(mg2) * 604800);
+            }
+            else if (mg1.endsWith("m")) {
+                // Matches MINUTES, so 1 minute = 60 seconds
+                return new Duration(Double.valueOf(mg2) * 60);
+            }
+            else if (mg1.endsWith("h")) {
+                // Matches HOURS, so 1 hour = 3600 seconds
+                return new Duration(Double.valueOf(mg2) * 3600);
+            }
+            else {
+                // seconds
+                return new Duration(Double.valueOf(mg2));
+            }
         }
-        else if (mg1.endsWith("d")) {
-            // Matches DAYS, so 1 day = 86400 seconds
-            return new Duration(Double.valueOf(mg2) * 86400);
-        }
-        else if (mg1.endsWith("w")) {
-            // Matches WEEKS, so 1 week = 604800 seconds
-            return new Duration(Double.valueOf(mg2) * 604800);
-        }
-        else if (mg1.endsWith("m")) {
-            // Matches MINUTES, so 1 minute = 60 seconds
-            return new Duration(Double.valueOf(mg2) * 60);
-        }
-        else if (mg1.endsWith("h")) {
-            // Matches HOURS, so 1 hour = 3600 seconds
-            return new Duration(Double.valueOf(mg2) * 3600);
-        }
-        else {
-            // seconds
-            return new Duration(Double.valueOf(mg2));
+        catch (Exception e) {
+            return null;
         }
     }
 
@@ -444,7 +449,7 @@ public class Duration implements dObject {
         registerTag("in_ticks", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds * 20).getAttribute(attribute.fulfill(1));
+                return new Element((long)(((Duration) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("ticks", registeredTags.get("in_ticks"));
