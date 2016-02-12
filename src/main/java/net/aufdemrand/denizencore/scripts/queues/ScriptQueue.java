@@ -1028,7 +1028,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
                     return new Element(entry.getObject("reqID") != null).getAttribute(attribute.fulfill(1));
                 }
                 else {
-                    return null;
+                    return new Element(false).getAttribute(attribute.fulfill(1));
                 }
             }
         });
