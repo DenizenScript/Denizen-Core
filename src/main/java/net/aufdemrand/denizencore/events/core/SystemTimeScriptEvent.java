@@ -16,7 +16,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     // @Events
     // system time [<HH:MM>/hourly/minutely]
     //
-    // @Regex ^system time (\d\d\:\d\d|hourly|minutely)$
+    // @Regex ^on system time (\d\d\:\d\d|hourly|minutely)$
     //
     // @Triggers when the system time changes to the specified value.
     //
