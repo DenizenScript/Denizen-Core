@@ -1205,6 +1205,26 @@ public class Element implements dObject {
                 }
             }
         });
+        // <--[tag]
+        // @attribute <el@element.replace_text[((first)regex:)<element>]>
+        // @returns Element
+        // @group element manipulation
+        // @description
+        // Returns the element with all instances of a element removed.
+        // -->
+
+        // <--[tag]
+        // @attribute <el@element.replace_text[((first)regex:)<element>].with[<element>]>
+        // @returns Element
+        // @group element manipulation
+        // @description
+        // Returns the element with all instances of a element replaced with another.
+        // Specify regex: at the start of the replace element to use Regex replacement.
+        // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
+        // -->
+        r = registeredTags.get("replace").clone();
+        r.name = null;
+        registerTag("replace_text", r);
 
         // <--[tag]
         // @attribute <el@element.format_number>
