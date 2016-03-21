@@ -322,6 +322,22 @@ public class Element implements dObject {
         /////////////////
 
         // <--[tag]
+        // @attribute <el@element.as_element>
+        // @returns Element(Boolean)
+        // @group conversion
+        // @description
+        // Returns the element as itself.
+        // For use in special cases, generally not very useful.
+        // -->
+        registerTag("as_element", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return  object.getAttribute(attribute.fulfill(1));
+            }
+        });
+        registerTag("aselement", registeredTags.get("as_element"));
+
+        // <--[tag]
         // @attribute <el@element.as_boolean>
         // @returns Element(Boolean)
         // @group conversion
