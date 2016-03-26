@@ -323,7 +323,7 @@ public class Element implements dObject {
 
         // <--[tag]
         // @attribute <el@element.as_element>
-        // @returns Element(Boolean)
+        // @returns Element
         // @group conversion
         // @description
         // Returns the element as itself.
