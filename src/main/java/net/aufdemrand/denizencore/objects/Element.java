@@ -322,6 +322,22 @@ public class Element implements dObject {
         /////////////////
 
         // <--[tag]
+        // @attribute <el@element.as_element>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Returns the element as itself.
+        // For use in special cases, generally not very useful.
+        // -->
+        registerTag("as_element", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return  object.getAttribute(attribute.fulfill(1));
+            }
+        });
+        registerTag("aselement", registeredTags.get("as_element"));
+
+        // <--[tag]
         // @attribute <el@element.as_boolean>
         // @returns Element(Boolean)
         // @group conversion
@@ -1205,6 +1221,26 @@ public class Element implements dObject {
                 }
             }
         });
+        // <--[tag]
+        // @attribute <el@element.replace_text[((first)regex:)<element>]>
+        // @returns Element
+        // @group element manipulation
+        // @description
+        // Returns the element with all instances of a element removed.
+        // -->
+
+        // <--[tag]
+        // @attribute <el@element.replace_text[((first)regex:)<element>].with[<element>]>
+        // @returns Element
+        // @group element manipulation
+        // @description
+        // Returns the element with all instances of a element replaced with another.
+        // Specify regex: at the start of the replace element to use Regex replacement.
+        // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
+        // -->
+        r = registeredTags.get("replace").clone();
+        r.name = null;
+        registerTag("replace_text", r);
 
         // <--[tag]
         // @attribute <el@element.format_number>

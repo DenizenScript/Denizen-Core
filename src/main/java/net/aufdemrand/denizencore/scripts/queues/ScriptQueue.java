@@ -1014,6 +1014,25 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             }
         });
 
+        // <--[tag]
+        // @attribute <q@queue.determinable>
+        // @returns Element(Boolean)
+        // @description
+        // Returns true if this queue currently supports using the Determine command.
+        // -->
+        registerTag("determinable", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                ScriptEntry entry = ((ScriptQueue) object).getEntries().get(0);
+                if (entry != null) {
+                    return new Element(entry.getObject("reqID") != null).getAttribute(attribute.fulfill(1));
+                }
+                else {
+                    return new Element(false).getAttribute(attribute.fulfill(1));
+                }
+            }
+        });
+
     }
 
     public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();

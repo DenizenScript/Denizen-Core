@@ -12,6 +12,7 @@ import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.List;
@@ -194,7 +195,9 @@ public class ProcedureScriptTags {
                 String name = definition_names != null && definition_names.length >= x ?
                         definition_names[x - 1].trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                dB.echoDebug(event.getScriptEntry(), "Adding definition %" + name + "% as " + definition);
+                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? null:
+                        event.getScript().getContainer()) : event.getScriptEntry(),
+                        "Adding definition %" + name + "% as " + definition);
                 x++;
             }
         }

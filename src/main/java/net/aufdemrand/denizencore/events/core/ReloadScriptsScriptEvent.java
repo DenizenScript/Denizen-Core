@@ -22,7 +22,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // @Switch sender player|server
     // @Switch all true|false
     //
-    // @Regex ^((reload scripts)|(script reload))$
+    // @Regex ^on ((reload scripts)|(script reload))$
     //
     // @Triggers when Denizen scripts are reloaded.
     //
