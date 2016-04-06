@@ -385,6 +385,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("ascslist", registeredTags.get("comma_separated"));
         registerTag("as_cslist", registeredTags.get("comma_separated"));
 
+        // <--[tag]
         // @attribute <li@list.unseparated>
         // @returns Element
         // @description
