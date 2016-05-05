@@ -42,6 +42,8 @@ public class DenizenCore {
 
     public static Thread MAIN_THREAD;
 
+    public static long currentTimeMillis = System.currentTimeMillis();
+
     static {
         String version = "UNKNOWN";
         try {
@@ -74,6 +76,7 @@ public class DenizenCore {
      * @param implementation your Denizen implementation.
      */
     public static void init(DenizenImplementation implementation) {
+        currentTimeMillis = System.currentTimeMillis();
         DenizenCore.implementation = implementation;
         MAIN_THREAD = implementation.getMainThread();
         dB.log("Initializing Denizen Core v" + VERSION +
@@ -141,6 +144,7 @@ public class DenizenCore {
      * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
      */
     public static void tick(int ms_elapsed) {
+        currentTimeMillis = System.currentTimeMillis();
         tMS += ms_elapsed;
         while (tMS > 1000) {
             tMS -= 1000;
