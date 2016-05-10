@@ -153,7 +153,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
                     public void run() {
                         revolve();
                     }
-                }, (ticks == 0 ? 1 : ticks) / 20f);
+                }, (ticks <= 0 ? 1 : ticks) / 20f);
         if (run_async) {
             schedulable = new AsyncSchedulable(schedulable);
         }

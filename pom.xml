@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <json.version>20090211</json.version>
-        <build.number>Unknown</build.number>
+        <BUILD_NUMBER>Unknown</BUILD_NUMBER>
     </properties>
 
     <!-- Repositories -->

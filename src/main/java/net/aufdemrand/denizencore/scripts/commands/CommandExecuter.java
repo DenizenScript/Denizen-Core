@@ -115,6 +115,8 @@ public class CommandExecuter {
         // Don't execute() if problems arise in parseArgs()
         boolean keepGoing = true;
 
+        String saveName = null;
+
         try {
 
             // Throw exception if arguments are required for this command, but not supplied.
@@ -194,9 +196,8 @@ public class CommandExecuter {
 
                 // Save the scriptentry if needed later for fetching scriptentry context
                 else if (arg.matchesPrefix("save")) {
-                    String saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
+                    saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
-                    scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
                 }
 
                 else if (!command.shouldPreParse()) {
@@ -239,12 +240,15 @@ public class CommandExecuter {
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
         }
-        finally {
+        finally { // TODO: Why is this a finally block?
 
             if (keepGoing) {
                 try {
                     // Run the execute method in the command
                     command.execute(scriptEntry);
+                    if (saveName != null) {
+                        scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
+                    }
                 }
                 catch (Exception e) {
                     dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");

@@ -248,6 +248,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
+    private String currentEvent;
+
     public void run(ScriptContainer script, String event) throws CloneNotSupportedException {
         scriptFires++;
         HashMap<String, dObject> context = getContext();
@@ -261,10 +263,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
         ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);
         HashMap<String, dObject> oldStyleContext = getContext();
+        currentEvent = event;
         if (oldStyleContext.size() > 0) {
             OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
             oecs.contexts = oldStyleContext;
             oecs.contexts.put("cancelled", new Element(cancelled));
+            oecs.contexts.put("event_header", new Element(currentEvent));
             queue.setContextSource(oecs);
         }
         else {
@@ -289,6 +293,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public dObject getContext(String name) {
         if (name.equals("cancelled")) {
             return new Element(cancelled);
+        }
+        else if (name.equals("event_header")) {
+            return new Element(currentEvent);
         }
         return null;
     }

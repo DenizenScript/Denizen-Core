@@ -385,6 +385,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("ascslist", registeredTags.get("comma_separated"));
         registerTag("as_cslist", registeredTags.get("comma_separated"));
 
+        // <--[tag]
         // @attribute <li@list.unseparated>
         // @returns Element
         // @description
@@ -971,7 +972,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns all the numbered locations of elements that match the text within a list,
         // or an empty list if the list does not contain that item.
-        // For example: .find[two] on a list of "one|two|three|two" will return "2|4".
+        // For example: .find_all[two] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
@@ -999,7 +1000,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @description
         // returns the numbered location of the first partially matching element within a list,
         // or -1 if the list does not contain that item.
-        // For example: .find[two] on a list of "one|two|three" will return "2".
+        // For example: .find_partial[tw] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
 

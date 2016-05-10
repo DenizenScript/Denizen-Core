@@ -65,7 +65,7 @@ public class GotoCommand extends AbstractCommand {
             }
         }
         else {
-            dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
+            dB.echoError(scriptEntry.getResidingQueue(), "Cannot go to that location - doesn't seem to exist!");
         }
     }
 }
