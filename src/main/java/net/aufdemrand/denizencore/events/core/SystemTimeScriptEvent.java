@@ -8,7 +8,7 @@ import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class SystemTimeScriptEvent extends ScriptEvent {
 
@@ -89,10 +89,9 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         if (!enab) {
             return;
         }
-        Date date = new Date();
-        // BY WHICH BLACK MAGIC DOES JAVA EXPECT US TO HANDLE DATETIMES IF NOT THIS?!
-        int h = date.getHours();
-        int m = date.getMinutes();
+        Calendar calendar = Calendar.getInstance();
+        int h = calendar.get(Calendar.HOUR_OF_DAY);
+        int m = calendar.get(Calendar.MINUTE);
         if (lH == h && lM == m) {
             return;
         }
