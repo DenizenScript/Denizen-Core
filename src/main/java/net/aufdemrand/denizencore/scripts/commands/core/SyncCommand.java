@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.scripts.commands.core;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
@@ -10,6 +11,7 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class SyncCommand extends BracedCommand implements Holdable {
@@ -32,7 +34,10 @@ public class SyncCommand extends BracedCommand implements Holdable {
         final InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("SYNC_COMMAND"));
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
         queue.getAllDefinitions().putAll(residingQueue.getAllDefinitions());
-        queue.cachedContext.putAll(scriptEntry.getResidingQueue().cachedContext);
+        if (residingQueue.cachedContext != null) {
+            queue.cachedContext = new HashMap<String, dObject>();
+            queue.cachedContext.putAll(residingQueue.cachedContext);
+        }
 
         // Setup a callback if the queue is being waited on
         if (scriptEntry.shouldWaitFor()) {
