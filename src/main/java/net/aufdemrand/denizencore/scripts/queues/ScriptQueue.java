@@ -445,6 +445,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         if (delay != null) {
             newQueue.delayFor(delay);
         }
+        newQueue.script = script;
         newQueue.callBack(r);
         newQueue.start();
         return newQueue;
