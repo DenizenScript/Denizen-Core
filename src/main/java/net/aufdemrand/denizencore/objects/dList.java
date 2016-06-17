@@ -1018,7 +1018,7 @@ public class dList extends ArrayList<String> implements dObject {
                         return new Element(i + 1).getAttribute(attribute.fulfill(1));
                     }
                 }
-                return null;
+                return new Element(-1).getAttribute(attribute.fulfill(1));
             }
         });
 
