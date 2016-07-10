@@ -68,12 +68,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         BufferedReader in = null;
         try {
-            // Open a connection to the paste server
             URL url = new URL(urlp.asString());
             HttpURLConnection uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
-            uc.setConnectTimeout(10000);
+            uc.setConnectTimeout(10000); // TODO: Option for this!
             uc.connect();
             in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             final StringBuilder sb = new StringBuilder();

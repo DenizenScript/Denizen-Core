@@ -1203,7 +1203,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @attribute <li@list.sort_by_number[<tag>]>
         // @returns dList
         // @description
-        // returns a copy of the listed, sorted such that the lower numbers appear first, and the higher numbers appear last.
+        // returns a copy of the list, sorted such that the lower numbers appear first, and the higher numbers appear last.
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
         // -->
