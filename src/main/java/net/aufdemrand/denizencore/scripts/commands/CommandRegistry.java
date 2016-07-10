@@ -409,6 +409,30 @@ public abstract class CommandRegistry implements dRegistry {
         // -->
         registerCoreMember(SyncCommand.class,
                 "sync", "sync [<commands>]", 0);
+
+        // <--[command]
+        // @Name Webget
+        // @Syntax webget [<url>]
+        // @Required 1
+        // @Stable unstable
+        // @Short Gets the contents of a web page.
+        // @Author mcmonkey
+        // @Group core
+        //
+        // @Description
+        // TODO: Document Command Details
+        // @Tags
+        // <entry[saveName].failed> returns whether the webget failed.
+        // <entry[saveName].result> returns the result of the webget, if it did not fail.
+        //
+        // @Usage
+        // Use to download the google home page.
+        // - ~webget "http://google.com" save:google
+        // - narrate "<entry[google].result>"
+        //
+        // -->
+        registerCoreMember(WebGetCommand.class,
+                "webget", "webget [<url>]", 1);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {

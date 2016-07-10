@@ -142,4 +142,6 @@ public interface DenizenImplementation {
     public abstract boolean matchesType(String comparable, String comparedTo);
 
     public abstract Thread getMainThread();
+
+    public abstract boolean allowedToWebget();
 }
