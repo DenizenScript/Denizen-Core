@@ -1018,7 +1018,7 @@ public class dList extends ArrayList<String> implements dObject {
                         return new Element(i + 1).getAttribute(attribute.fulfill(1));
                     }
                 }
-                return null;
+                return new Element(-1).getAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1196,6 +1196,48 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 });
                 return list.getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.sort_by_number[<tag>]>
+        // @returns dList
+        // @description
+        // returns a copy of the list, sorted such that the lower numbers appear first, and the higher numbers appear last.
+        // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
+        // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
+        // -->
+
+        registerTag("sort_by_number", new TagRunnable() {
+            @Override
+            public String run(final Attribute attribute, final dObject object) {
+                dList newlist = new dList((dList) object);
+                try {
+                    Collections.sort(newlist, new Comparator<String>() {
+                        @Override
+                        public int compare(String o1, String o2) {
+                            double r1 = new Element(ObjectFetcher.pickObjectFor(o1).getAttribute(new Attribute(attribute.getContext(1),
+                                    attribute.getScriptEntry(), attribute.context))).asDouble();
+                            double r2 = new Element(ObjectFetcher.pickObjectFor(o2).getAttribute(new Attribute(attribute.getContext(1),
+                                    attribute.getScriptEntry(), attribute.context))).asDouble();
+                            double value = r1 - r2;
+                            if (value == 0) {
+                                return 0;
+                            }
+                            else if (value > 0) {
+                                return 1;
+                            }
+                            else {
+                                return -1;
+                            }
+                        }
+                    });
+                    return newlist.getAttribute(attribute.fulfill(1));
+                }
+                catch (Exception ex) {
+                    dB.echoError(ex);
+                }
+                return newlist.getAttribute(attribute.fulfill(1));
             }
         });
 
