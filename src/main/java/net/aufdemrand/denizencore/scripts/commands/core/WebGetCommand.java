@@ -68,7 +68,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         BufferedReader in = null;
         try {
-            URL url = new URL(urlp.asString());
+            URL url = new URL(urlp.asString().replace(" ", "%20"));
             HttpURLConnection uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
