@@ -242,6 +242,17 @@ public class UtilTags {
                             .getAttribute(attribute.fulfill(1)));
                 }
 
+
+                // <--[tag]
+                // @attribute <util.date.time.day_of_week>
+                // @returns Element(Number)
+                // @description
+                // Returns the current day-of-the-week of the system time.
+                // -->
+                else if (attribute.startsWith("day_of_week")) {
+                    event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_WEEK))
+                            .getAttribute(attribute.fulfill(1)));
+                }
                 // <--[tag]
                 // @attribute <util.date.time.hour>
                 // @returns Element(Number)
