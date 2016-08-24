@@ -84,8 +84,9 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     public void fileCopy(final ScriptEntry scriptEntry, Element origin, Element destination, Element overwrite) {
         boolean success = true;
         try {
-            File originFile = new File(origin.asString());
-            File destinationFile = new File(destination.asString());
+            File startDirectory = DenizenCore.getImplementation().getScriptFolder().getParentFile();
+            File originFile = new File(startDirectory, origin.asString());
+            File destinationFile = new File(startDirectory, destination.asString());
             if (destinationFile.isDirectory()) {
                 if (!destinationFile.exists()) {
                     destinationFile.mkdirs();

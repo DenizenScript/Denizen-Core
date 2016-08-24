@@ -293,6 +293,8 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // @Description
         // TODO: Document Command Details
+        // The starting directory is the parent of the scripts folder. For example, if the scripts folder is
+        // at /plugins/Denizen/scripts, then the starting directory is /plugins/Denizen.
         // Directories will be copied, but their contents will not. This is to avoid accidental mass overwriting.
         //
         // @Tags
