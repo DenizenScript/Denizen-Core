@@ -69,7 +69,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         BufferedReader in = null;
         try {
             URL url = new URL(urlp.asString().replace(" ", "%20"));
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
             uc.setConnectTimeout(10000); // TODO: Option for this!
@@ -93,7 +93,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
-                    scriptEntry.addObject("failed", new Element("false"));
+                    try {
+                        scriptEntry.addObject("failed", new Element(uc.getResponseCode() == 200 ? "false" : "true"));
+                    }
+                    catch (Exception e) {
+                        dB.echoError(e);
+                    }
                     scriptEntry.addObject("result", new Element(sb.toString()));
                     scriptEntry.setFinished(true);
                     return false;
@@ -102,8 +107,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
         catch (Exception e) {
             dB.echoError(e);
-        }
-        finally {
             try {
                 DenizenCore.schedule(new Schedulable() {
                     @Override
@@ -113,6 +116,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                         return false;
                     }
                 });
+            }
+            catch (Exception e2) {
+                dB.echoError(e2);
+            }
+        }
+        finally {
+            try {
                 if (in != null) {
                     in.close();
                 }
