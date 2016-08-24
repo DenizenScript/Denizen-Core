@@ -282,6 +282,31 @@ public abstract class CommandRegistry implements dRegistry {
         registerCoreMember(DetermineCommand.class,
                 "determine", "determine (passively) [<value>]", 1);
 
+        // <--[command]
+        // @Name FileCopy
+        // @Syntax filecopy [o:<origin>] [d:<destination>] (overwrite)
+        // @Required 2
+        // @Stable stable
+        // @Short Copies a file from one location to another.
+        // @Author Morphan1
+        // @Group core
+        //
+        // @Description
+        // TODO: Document Command Details
+        // Directories will be copied, but their contents will not. This is to avoid accidental mass overwriting.
+        //
+        // @Tags
+        // <entry[saveName].success> returns whether the copy succeeded.
+        //
+        // @Usage
+        // Use to copy a custom YAML data file to a backup folder, overwriting any old backup of it that exists.
+        // - ~filecopy o:data/custom.yaml d:data/backup/ overwrite save:copy
+        // - narrate "Copy success: <entry[copy].success>"
+        //
+        // -->
+        registerCoreMember(FileCopyCommand.class,
+                "filecopy", "filecopy [o:<origin>] [d:<destination>] (overwrite)", 2);
+
 
         // <--[command]
         // @Name Foreach
