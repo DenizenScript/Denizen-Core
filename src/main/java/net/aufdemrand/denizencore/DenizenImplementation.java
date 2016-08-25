@@ -144,6 +144,4 @@ public interface DenizenImplementation {
     public abstract Thread getMainThread();
 
     public abstract boolean allowedToWebget();
-
-    public abstract boolean allowedToFilecopy();
 }
