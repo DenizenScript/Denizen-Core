@@ -200,6 +200,8 @@ public class ProcedureScriptTags {
                         "Adding definition %" + name + "% as " + definition);
                 x++;
             }
+
+            queue.addDefinition("raw_context", event.getTypeContext());
         }
 
         queue.start();

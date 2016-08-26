@@ -47,6 +47,10 @@ public class ScriptBuilder {
 
         for (Object ientry : contents) {
 
+            if (ientry == null) {
+                ientry = "null";
+            }
+
             String entry;
             List<Object> inside;
 

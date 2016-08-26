@@ -11,42 +11,42 @@ public class EscapeTags {
         TagManager.registerTagEvents(this);
     }
 
-    // <--[language]
-    // @name Property Escaping
-    // @group Useful Lists
-    // @description
-    // Some item properties (and corresponding mechanisms) need to escape their
-    // text output/input to prevent players using them to cheat the system
-    // (EG, if a player set the display name of an item to:
-    //      'name;enchantments=damage_all,3', they would get a free enchantment!)
-    // These are the escape codes used to prevent that:
-    //
-    // | = &pipe
-    // < = &lt
-    // > = &gt
-    // newline = &nl
-    // & = &amp
-    // ; = &sc
-    // [ = &lb
-    // ] = &rb
-    // : = &co
-    // @ = &at
-    // . = &dot
-    // \ = &bs
-    // ' = &sq
-    // " = &quo
-    // ! = &exc
-    // / = &fs
-    // § = &ss
-    //
-    // Also, you can input a non-breaking space via &sp
-    //
-    // These symbols are automatically used by the internal system, if you are
-    // writing your own property string and need to escape some symbols, you
-    // can just directly type them in, EG: i@stick[display_name=&ltFancy&spStick&gt]
-    // -->
+     // <--[language]
+     // @name Property Escaping
+     // @group Useful Lists
+     // @description
+     // Some item properties (and corresponding mechanisms) need to escape their
+     // text output/input to prevent players using them to cheat the system
+     // (EG, if a player set the display name of an item to:
+     //      'name;enchantments=damage_all,3', they would get a free enchantment!)
+     // These are the escape codes used to prevent that:
+     //
+     // | = &pipe
+     // < = &lt
+     // > = &gt
+     // newline = &nl
+     // & = &amp
+     // ; = &sc
+     // [ = &lb
+     // ] = &rb
+     // : = &co
+     // @ = &at
+     // . = &dot
+     // \ = &bs
+     // ' = &sq
+     // " = &quo
+     // ! = &exc
+     // / = &fs
+     // § = &ss
+     //
+     // Also, you can input a non-breaking space via &sp
+     //
+     // These symbols are automatically used by the internal system, if you are
+     // writing your own property string and need to escape some symbols, you
+     // can just directly type them in, EG: i@stick[display_name=&ltFancy&spStick&gt]
+     // -->
 
-    /**
+     /**
      * A quick function to escape book Strings.
      * This is just to prevent tag reading errors.
      *

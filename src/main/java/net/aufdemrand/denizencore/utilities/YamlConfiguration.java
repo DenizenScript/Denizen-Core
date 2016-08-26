@@ -93,7 +93,7 @@ public class YamlConfiguration {
             return new HashSet<StringHolder>(contents.keySet());
         }
         else {
-            return getKeysDeep(contents);
+            return getKeysDeep(contents, "");
         }
     }
 
@@ -101,11 +101,12 @@ public class YamlConfiguration {
         return new HashMap<StringHolder, Object>(contents);
     }
 
-    private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs) {
-        Set<StringHolder> strings = new HashSet<StringHolder>(objs.keySet());
-        for (Map.Entry<StringHolder, Object> str : objs.entrySet()) {
-            if (str.getValue() instanceof Map) {
-                strings.addAll(getKeysDeep((Map<StringHolder, Object>) str.getValue()));
+    private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs, String base) {
+        Set<StringHolder> strings = new HashSet<StringHolder>();
+        for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
+            strings.add(new StringHolder(base + obj.getKey()));
+            if (obj.getValue() instanceof Map) {
+                strings.addAll(getKeysDeep((Map<StringHolder, Object>) obj.getValue(), base + obj.getKey() + "."));
             }
         }
         return strings;

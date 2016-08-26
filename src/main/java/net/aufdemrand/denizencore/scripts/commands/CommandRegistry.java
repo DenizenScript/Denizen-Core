@@ -421,6 +421,8 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // @Description
         // TODO: Document Command Details
+        // Note that while this replace spaces to %20, you are responsible for any other necessary encoding.
+        //
         // @Tags
         // <entry[saveName].failed> returns whether the webget failed.
         // <entry[saveName].result> returns the result of the webget, if it did not fail.

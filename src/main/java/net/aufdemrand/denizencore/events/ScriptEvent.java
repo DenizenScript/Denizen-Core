@@ -114,7 +114,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // Any modern ScriptEvent can take a "cancelled:<true/false>" argument and a "ignorecancelled:true" argument.
     // For example: "on object does something ignorecancelled:true:"
     // Or, "on object does something cancelled:true:"
-    // If you set 'ignorecancalled:true', the event will fire regardless of whether it was cancelled.
+    // If you set 'ignorecancelled:true', the event will fire regardless of whether it was cancelled.
     // If you set 'cancelled:true', the event will fire /only/ when it was cancelled.
     // By default, only non-cancelled events will fire. (Effectively acting as if you had set "cancelled:false").
     //

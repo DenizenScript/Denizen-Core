@@ -535,6 +535,16 @@ public class Duration implements dObject {
                 }
 
                 // <--[tag]
+                // @attribute <d@duration.time.day_of_week>
+                // @returns Element(Number)
+                // @description
+                // Returns the current day-of-the-week of the time specified by the duration object.
+                // -->
+                else if (attribute.startsWith("day_of_week")) {
+                    return new Element(currentDate.getDay()).getAttribute(attribute.fulfill(1));
+                }
+
+                // <--[tag]
                 // @attribute <d@duration.time.hour>
                 // @returns Element(Number)
                 // @description
