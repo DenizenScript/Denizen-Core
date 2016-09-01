@@ -388,19 +388,19 @@ public class Element implements dObject {
         // @group conversion
         // @description
         // Returns the element as a number without a decimal. Rounds decimal values.
-        // NOTE: Please use .round instead of .as_int!
+        // NOTE: Please use .round_down instead of .as_int!
         // -->
         registerTag("as_int", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
                 try {
-                    return new Element(Math.round(Double.valueOf(element)))
+                    return new Element(Math.floor(Double.valueOf(element)))
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (NumberFormatException e) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("'" + element + "' is not a valid number.");
+                        dB.echoError("'" + element + "' is not a valid decimal number.");
                     }
                     return null;
                 }
