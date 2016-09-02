@@ -395,7 +395,7 @@ public class Element implements dObject {
             public String run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
                 try {
-                    return new Element(Math.floor(Double.valueOf(element)))
+                    return new Element(Double.valueOf(element).longValue())
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (NumberFormatException e) {
