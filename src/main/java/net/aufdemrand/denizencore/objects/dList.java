@@ -1558,7 +1558,7 @@ public class dList extends ArrayList<String> implements dObject {
         // type of object that is fulfilling this attribute.
         // -->
 
-        registerTag("type", new TagRunnable() { // TODO: ???
+        registerTag("type", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 return new Element("List").getAttribute(attribute.fulfill(1));
@@ -1577,7 +1577,7 @@ public class dList extends ArrayList<String> implements dObject {
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
 
-        registerTag("random", new TagRunnable() { // TODO: ???
+        registerTag("random", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
                 dList obj = (dList) object;
@@ -1604,6 +1604,27 @@ public class dList extends ArrayList<String> implements dObject {
                 }
             }
         });
+
+        // <--[tag]
+        // @attribute <li@list.closest_to[<text>]>
+        // @returns Element
+        // @description
+        // Returns the item in the list that seems closest to the given value.
+        // Particularly useful for command handlers, "<li@c1|c2|c3|[...].closet_to[<argument>]>" to get the best option as  "did you mean" suggestion.
+        // For example, "<li@dance|quit|spawn.closest_to[spwn]>" returns "spawn".
+        // Be warned that this will always return /something/, excluding the case of an empty list, which will return an empty element.
+        // Uses the logic of tag "el@element.difference"!
+        // You can use that tag to add an upper limit on how different the strings can be.
+        // -->
+
+        registerTag("closest_to", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                return new Element(CoreUtilities.getClosestOption((dList) object, attribute.getContext(1)))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
+
 
 
         /////////////////

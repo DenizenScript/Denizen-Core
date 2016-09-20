@@ -625,6 +625,23 @@ public class Element implements dObject {
         /////////////////
 
         // <--[tag]
+        // @attribute <el@element.difference[<element>]>
+        // @returns Element(Number)
+        // @group element checking
+        // @description
+        // Returns a number representing the difference between the two elements. (Uses Levenshtein logic).
+        // -->
+        registerTag("difference", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                String element = ((Element) object).element;
+                String two = attribute.getContext(1);
+                return new Element(CoreUtilities.getLevenshteinDistance(element, two))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <el@element.contains_any_case_sensitive_text[<element>|...]>
         // @returns Element(Boolean)
         // @group element checking
