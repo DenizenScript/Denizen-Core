@@ -1610,7 +1610,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // Returns the item in the list that seems closest to the given value.
-        // Particularly useful for command handlers, "<li@c1|c2|c3|[...].closet_to[<argument>]>" to get the best option as  "did you mean" suggestion.
+        // Particularly useful for command handlers, "<li@c1|c2|c3|[...].closest_to[<argument>]>" to get the best option as  "did you mean" suggestion.
         // For example, "<li@dance|quit|spawn.closest_to[spwn]>" returns "spawn".
         // Be warned that this will always return /something/, excluding the case of an empty list, which will return an empty element.
         // Uses the logic of tag "el@element.difference"!
