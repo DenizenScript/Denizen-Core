@@ -14,7 +14,7 @@ public abstract class TagContext {
     public final DefinitionProvider definitionProvider;
 
     public TagContext(boolean instant, boolean debug, ScriptEntry entry, dScript script) {
-        this(instant, debug, entry, script, new SimpleDefinitionProvider());
+        this(instant, debug, entry, script, null);
     }
 
     public TagContext(boolean instant, boolean debug, ScriptEntry entry, dScript script, DefinitionProvider definitionProvider) {
