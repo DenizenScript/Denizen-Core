@@ -89,7 +89,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             for (ScriptContainer container : worldContainers) {
                 YamlConfiguration config = container.getConfigurationSection("events");
                 if (config == null) {
-                    dB.echoError("Missing or invalid events block for " + container.getName());
                     continue;
                 }
                 for (StringHolder evt1 : config.getKeys(false)) {
