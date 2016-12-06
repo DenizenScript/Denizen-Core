@@ -412,7 +412,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Webget
-        // @Syntax webget [<url>]
+        // @Syntax webget [<url>] (post:<data>)
         // @Required 1
         // @Stable unstable
         // @Short Gets the contents of a web page.
@@ -421,7 +421,8 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // @Description
         // TODO: Document Command Details
-        // Note that while this replace spaces to %20, you are responsible for any other necessary encoding.
+        // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding.
+        // Optionally, specify a set of data to post to the server (changes the message from GET to POST).
         //
         // @Tags
         // <entry[saveName].failed> returns whether the webget failed.

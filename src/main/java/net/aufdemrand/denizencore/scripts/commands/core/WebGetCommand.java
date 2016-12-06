@@ -26,6 +26,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("url", new Element(arg.raw_value));
             }
 
+            else if (!scriptEntry.hasObject("post")
+                    && arg.matchesPrefix("post")) {
+                scriptEntry.addObject("post", arg.asElement());
+            }
+
             else {
                 arg.reportUnhandled();
             }
@@ -53,18 +58,20 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         final Element url = scriptEntry.getElement("url");
 
+        final String postData = scriptEntry.hasObject("post") ? scriptEntry.getElement("post").asString() : null;
+
         dB.report(scriptEntry, getName(), url.debug());
 
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, url);
+                webGet(scriptEntry, postData, url);
             }
         });
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, Element urlp) {
+    public void webGet(final ScriptEntry scriptEntry, final String postData, Element urlp) {
 
         BufferedReader in = null;
         try {
@@ -72,8 +79,14 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
+            if (postData != null) {
+                uc.setRequestMethod("POST");
+            }
             uc.setConnectTimeout(10000); // TODO: Option for this!
             uc.connect();
+            if (postData != null) {
+                uc.getOutputStream().write(postData.getBytes("UTF-8"));
+            }
             in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             final StringBuilder sb = new StringBuilder();
             // Probably a better way to do this bit.
