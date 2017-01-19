@@ -417,8 +417,12 @@ public class dScript implements dObject, Adjustable {
         registerTag("list_keys", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new dList(((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
-                        attribute.getContext(1) : "").getKeys(false))
+                YamlConfiguration conf = ((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
+                        attribute.getContext(1) : "");
+                if (conf == null) {
+                    return null;
+                }
+                return new dList(conf.getKeys(false))
                         .getAttribute(attribute.fulfill(1));
             }
         });
@@ -433,8 +437,12 @@ public class dScript implements dObject, Adjustable {
         registerTag("list_deep_keys", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new dList(((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
-                        attribute.getContext(1) : "").getKeys(true))
+                YamlConfiguration conf = ((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
+                        attribute.getContext(1) : "");
+                if (conf == null) {
+                    return null;
+                }
+                return new dList(conf.getKeys(true))
                         .getAttribute(attribute.fulfill(1));
             }
         });
