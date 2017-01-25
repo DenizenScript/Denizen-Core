@@ -38,6 +38,7 @@ public class EscapeTags {
      // ! = &exc
      // / = &fs
      // § = &ss
+     // # = &ns
      //
      // Also, you can input a non-breaking space via &sp
      //
@@ -66,7 +67,7 @@ public class EscapeTags {
                 .replace(".", "&dot").replace("\\", "&bs")
                 .replace("'", "&sq").replace("\"", "&quo")
                 .replace("!", "&exc").replace("/", "&fs")
-                .replace("§", "&ss");
+                .replace("§", "&ss").replace("#", "&ns");
     }
 
     /**
@@ -90,7 +91,7 @@ public class EscapeTags {
                 .replace("&dot", ".").replace("&bs", "\\")
                 .replace("&quo", "\"").replace("&exc", "!")
                 .replace("&fs", "/").replace("&ss", "§")
-                .replace("&amp", "&");
+                .replace("&amp", "&").replace("&ns", "#");
     }
 
     @TagManager.TagEvents
