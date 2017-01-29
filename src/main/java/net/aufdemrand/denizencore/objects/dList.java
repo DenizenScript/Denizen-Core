@@ -1380,8 +1380,12 @@ public class dList extends ArrayList<String> implements dObject {
                 dList newlist = new dList();
                 try {
                     for (String str : (dList) object) {
-                        newlist.add(ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry(), attribute.context)));
+                        String objs = ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
+                                attribute.getScriptEntry(), attribute.context));
+                        if (objs == null) {
+                            objs = "null";
+                        }
+                        newlist.add(objs);
                     }
                 }
                 catch (Exception ex) {
