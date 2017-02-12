@@ -157,7 +157,7 @@ public abstract class CommandRegistry implements dRegistry {
         //     - debug log "Failure!"
         //   - default:
         //     - debug log "Success!"
-
+		
         // @Usage
         // Use for dynamically choosing a case.
         // - choose "<def[entity_type]>":
@@ -218,7 +218,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Define
-        // @Syntax define [<id>] [<value>] (no_parse)
+        // @Syntax define [<id>] [<value>]
         // @Required 1
         // @Stable stable
         // @Short Creates a temporary variable inside a script queue.
@@ -238,9 +238,6 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // Definitions are also resolved before replaceable tags, meaning you can use them within tags, even as an
         // attribute. ie. <%player%.name>
-        //
-        // To make using certain symbols easier, such as '<' and '>', you can put them in a definition value and use
-        // the no_parse argument. This will stop the define command from parsing anything inside the value argument.
 
         // @Tags
         // %<ID>% to get the value assign to an ID
@@ -270,14 +267,9 @@ public abstract class CommandRegistry implements dRegistry {
         // Use to remove a definition
         // - define myDef:!
 
-        // @Usage
-        // Use to easily pass around symbols.
-        // - define fish <>< no_parse
-        // - narrate "Have a fish! <def[fish]>"
-
         // -->
         registerCoreMember(DefineCommand.class,
-                "define", "define [<id>] [<value>] (no_parse)", 1);
+                "define", "define [<id>] [<value>]", 1);
 
 
         // <--[command]
