@@ -200,6 +200,10 @@ public class CommandExecuter {
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                 }
 
+                else if (arg.matchesPrefix("unparsed")) {
+                    newArgs.add(TagManager.escapeOutput(arg.getValue()));
+                }
+
                 else if (!command.shouldPreParse()) {
                     // Do nothing
                 }
