@@ -330,6 +330,8 @@ public class UtilTags {
 
             }
 
+            // <--[tag]
+            // @attribute <util.date.format[<format>]>
             // @description
             // Returns the current system time, formatted as specified
             // Example format: [EEE, MMM d, yyyy K:mm a] will become "Mon, Jan 1, 2112 0:01 AM"
