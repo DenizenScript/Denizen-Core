@@ -1821,6 +1821,30 @@ public class Element implements dObject {
         });
 
         // <--[tag]
+        // @attribute <el@element.log[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Returns the logarithm of the element, with the base of the specified number.
+        // -->
+        registerTag("log", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag el@element.log[...] must have a value.");
+                    return null;
+                }
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                return new Element(Math.log(ele.asDouble()) / Math.log(aH.getDoubleFrom(attribute.getContext(1))))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <el@element.power[<#.#>]>
         // @returns Element(Decimal)
         // @group math
