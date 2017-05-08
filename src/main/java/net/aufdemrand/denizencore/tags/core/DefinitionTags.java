@@ -75,7 +75,7 @@ public class DefinitionTags {
         }
 
 
-        event.setReplaced(ObjectFetcher.pickObjectFor(def)
+        event.setReplaced(ObjectFetcher.pickObjectFor(def, event.getContext())
                 .getAttribute(atttribute));
     }
 }
