@@ -271,8 +271,12 @@ public class dScript implements dObject, Adjustable {
             @Override
             public String run(Attribute attribute, dObject object) {
                 try {
-                    return new Element(((dScript) object).container.getFileName().replace(DenizenCore.getImplementation()
-                            .getScriptFolder().getParentFile().getCanonicalPath(), "").replace("\\", "/"))
+                    String fn = ((dScript) object).container.getFileName().replace(DenizenCore.getImplementation()
+                            .getScriptFolder().getParentFile().getCanonicalPath(), "").replace("\\", "/");
+                    while (fn.startsWith("/")) {
+                        fn = fn.substring(1);
+                    }
+                    return new Element(fn)
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Exception e) {
