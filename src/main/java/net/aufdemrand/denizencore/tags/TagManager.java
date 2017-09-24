@@ -14,6 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -282,7 +283,7 @@ public class TagManager {
         ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
         if (event.isInstant() != context.instant) {
             // Not the right type of tag, escape the brackets so it doesn't get parsed again
-            return String.valueOf((char) 0x01) + str + String.valueOf((char) 0x02);
+            return String.valueOf((char) 0x01) + str.replace('<', (char)0x01).replace('>', (char)0x02) + String.valueOf((char) 0x02);
         }
         else {
             // Call Event
@@ -308,41 +309,112 @@ public class TagManager {
         }
     }
 
+    static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<String, List<ParseableTagPiece>>();
+
+    public static class ParseableTagPiece
+    {
+        public String content;
+
+        public boolean isTag = false;
+    }
+
+    public static String parseChain(List<ParseableTagPiece> pieces, TagContext context) {
+        if (pieces.size() < 2) {
+            if (pieces.size() == 0) {
+                return "";
+            }
+            if (pieces.get(0).isTag) {
+                return readSingleTag(pieces.get(0).content, context);
+            }
+            return pieces.get(0).content;
+        }
+        StringBuilder helpy = new StringBuilder();
+        for (ParseableTagPiece p : pieces) {
+            helpy.append(p.isTag ? readSingleTag(p.content, context) : p.content);
+        }
+        return helpy.toString();
+    }
+
     public static String tag(String arg, TagContext context) {
         if (arg == null) {
             return null;
         }
 
-        // confirm there are/is a replaceable TAG(s), if not, return the arg.
+        List<ParseableTagPiece> pieces = preCalced.get(arg);
+
+        if (pieces != null) {
+            return cleanOutput(parseChain(pieces, context));
+        }
+
+        String oArg = arg;
+
+        pieces = new ArrayList<ParseableTagPiece>();
+
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
+            ParseableTagPiece txt = new ParseableTagPiece();
+            txt.content = arg;
+            pieces.add(txt);
+            preCalced.put(arg, pieces);
             return cleanOutput(arg);
         }
 
-        // Find location of the first tag
         int[] positions = locateTag(arg);
+
         if (positions == null) {
+            ParseableTagPiece txt = new ParseableTagPiece();
+            txt.content = arg;
+            pieces.add(txt);
+            preCalced.put(arg, pieces);
             return cleanOutput(arg);
         }
 
         int failsafe = 0;
-        do {
-            // Just in case, do-loops make me nervous, but does implement a limit of 25 tags per argument.
+
+        String lastExtra = arg;
+
+        int lastEnder = 0;
+
+        while (positions != null && failsafe < 100) {
             failsafe++;
-            if (positions == null) {
-                break;
+
+            String oriarg = arg.substring(positions[0] + 1, positions[1]);
+
+            ParseableTagPiece preText = null;
+            if (lastEnder < positions[0]) {
+                preText = new ParseableTagPiece();
+                preText.content = arg.substring(lastEnder, positions[0]);
+                pieces.add(preText);
             }
-            else {
-                String oriarg = arg.substring(positions[0] + 1, positions[1]);
-                String replaced = readSingleTag(oriarg, context);
-                arg = arg.substring(0, positions[0]) + replaced + arg.substring(positions[1] + 1, arg.length());
+            ParseableTagPiece midTag = new ParseableTagPiece();
+            midTag.content = oriarg;
+            midTag.isTag = true;
+            pieces.add(midTag);
+
+            if (dB.verbose) {
+                dB.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
             }
-            // Find new tag
+
+            String replaced = readSingleTag(oriarg, context);
+            lastExtra = arg.substring(positions[1] + 1, arg.length());
+            arg = arg.substring(0, positions[0]) + replaced + lastExtra;
+            lastEnder = positions[0] + replaced.length();
             positions = locateTag(arg);
         }
-        while (positions != null || failsafe < 50);
+
+        ParseableTagPiece postText = new ParseableTagPiece();
+        postText.content = lastExtra;
+        pieces.add(postText);
+
+        preCalced.put(oArg, pieces);
+
+        if (dB.verbose) {
+            dB.log("Tag complete: " + lastExtra);
+        }
 
         return cleanOutput(arg);
     }
+
+    static int[] holder = new int[2];
 
     private static int[] locateTag(String arg) {
         int first = arg.indexOf('<');
@@ -369,7 +441,9 @@ public class TagManager {
             }
         }
         if (first > -1 && second > first) {
-            return new int[]{first, second};
+            holder[0] = first;
+            holder[1] = second;
+            return holder;
         }
         else {
             return null;
