@@ -358,7 +358,9 @@ public class TagManager {
             return cleanOutput(arg);
         }
 
-        int[] positions = locateTag(arg);
+        int[] holder = new int[2];
+
+        int[] positions = locateTag(arg, holder);
 
         if (positions == null) {
             ParseableTagPiece txt = new ParseableTagPiece();
@@ -398,7 +400,7 @@ public class TagManager {
             lastExtra = arg.substring(positions[1] + 1, arg.length());
             arg = arg.substring(0, positions[0]) + replaced + lastExtra;
             lastEnder = positions[0] + replaced.length();
-            positions = locateTag(arg);
+            positions = locateTag(arg, holder);
         }
 
         ParseableTagPiece postText = new ParseableTagPiece();
@@ -414,16 +416,14 @@ public class TagManager {
         return cleanOutput(arg);
     }
 
-    static int[] holder = new int[2];
-
-    private static int[] locateTag(String arg) {
+    private static int[] locateTag(String arg, int[] holder) {
         int first = arg.indexOf('<');
         if (first == -1) {
             return null;
         }
         // Handle "<-" for the flag command
         if (first + 1 < arg.length() && (arg.charAt(first + 1) == '-')) {
-            return locateTag(arg.substring(0, first) + (char) 0x01 + arg.substring(first + 1));
+            return locateTag(arg.substring(0, first) + (char) 0x01 + arg.substring(first + 1), holder);
         }
         int len = arg.length();
         int bracks = 0;
