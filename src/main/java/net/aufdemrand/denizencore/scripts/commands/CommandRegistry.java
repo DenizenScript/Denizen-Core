@@ -95,8 +95,9 @@ public abstract class CommandRegistry implements dRegistry {
         // @Syntax async [<commands>]
         // @Required 0
         // @Stable unstable
-        // @Short Runs commands asynchronously. Invert of <@link command sync>.
+        // @Short Runs commands asynchronously. Inverse of <@link command sync>.
         // @Author Morphan1
+        // @Warning Do NOT use this. This is VERY dangerous. It is added purely as a tech experiment, not something to use in serious code!
         // @Group core
 
         // @Description
@@ -401,7 +402,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Syntax sync [<commands>]
         // @Required 0
         // @Stable unstable
-        // @Short Runs commands synchronously. Invert of <@link command async>.
+        // @Short Runs commands synchronously. Inverse of <@link command async>.
         // @Author Morphan1
         // @Group core
 
