@@ -95,7 +95,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Syntax async [<commands>]
         // @Required 0
         // @Stable unstable
-        // @Short Runs commands asynchronously. Inverse of <@link command sync>.
+        // @Short Runs commands asynchronously. Inverse of <@link command sync>. (WARNING: DO NOT USE. See description for safety warning!)
         // @Author Morphan1
         // @Warning Do NOT use this. This is VERY dangerous. It is added purely as a tech experiment, not something to use in serious code!
         // @Group core
@@ -109,6 +109,8 @@ public abstract class CommandRegistry implements dRegistry {
         // is always a slight possibility of corruption.
         //
         // The safety of things such as editing worlds is NOT guaranteed.
+        //
+        // Do NOT use this. This is VERY dangerous. It is added purely as a tech experiment, not something to use in serious code!
 
         // @Tags
         // None
