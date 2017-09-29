@@ -397,6 +397,9 @@ public class TagManager {
             }
 
             String replaced = readSingleTag(oriarg, context);
+            if (replaced == null) {
+                replaced = "null";
+            }
             lastExtra = arg.substring(positions[1] + 1, arg.length());
             arg = arg.substring(0, positions[0]) + replaced + lastExtra;
             lastEnder = positions[0] + replaced.length();
