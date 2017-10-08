@@ -1084,6 +1084,60 @@ public class dList extends ArrayList<String> implements dObject {
         });
 
         // <--[tag]
+        // @attribute <li@list.sum>
+        // @returns Element(Number)
+        // @description
+        // returns the sum from the list of numbers.
+        // -->
+
+        registerTag("sum", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dList list = new dList((dList) object);
+                String element = attribute.getContext(1);
+                int sum = 0;
+                try {
+                    for (String item : list) {
+                        sum = +Integer.parseInt(item);
+                    }
+                }
+                catch (Exception e) {
+                    dB.echoError(e);
+                    return null;
+                }
+                return new Element(sum).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.average>
+        // @returns Element(Decimal)
+        // @description
+        // returns the average from the list of numbers.
+        // -->
+
+        registerTag("average", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dList list = new dList((dList) object);
+                String element = attribute.getContext(1);
+                double sum = 0;
+                double result;
+                try {
+                    for (String item : list) {
+                        sum = + Double.parseDouble(item);
+                    }
+                    result = sum/list.size();
+                }
+                catch (Exception e) {
+                    dB.echoError(e);
+                    return null;
+                }
+                return new Element(result).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <li@list.first>
         // @returns Element
         // @description
@@ -1628,8 +1682,6 @@ public class dList extends ArrayList<String> implements dObject {
                         .getAttribute(attribute.fulfill(1));
             }
         });
-
-
 
         /////////////////
         // dObject attributes
