@@ -1120,7 +1120,7 @@ public class dList extends ArrayList<String> implements dObject {
                 for (String entry : list) {
                     sum += aH.getDoubleFrom(entry);
                 }
-                return new Element(sum/list.size()).getAttribute(attribute.fulfill(1));
+                return new Element(sum / list.size()).getAttribute(attribute.fulfill(1));
             }
         });
 
