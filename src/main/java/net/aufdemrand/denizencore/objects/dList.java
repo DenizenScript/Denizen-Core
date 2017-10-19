@@ -670,7 +670,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.include[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 list.addAll(dList.valueOf(attribute.getContext(1)));
                 return list.getAttribute(attribute.fulfill(1));
             }
@@ -693,7 +693,7 @@ public class dList extends ArrayList<String> implements dObject {
                 }
                 dList exclusions = dList.valueOf(attribute.getContext(1));
                 // Create a new dList that will contain the exclusions
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 // Iterate through
                 for (String exclusion : exclusions) {
                     for (int i = 0; i < list.size(); i++) {
@@ -724,7 +724,7 @@ public class dList extends ArrayList<String> implements dObject {
                     return null;
                 }
                 dList indices = dList.valueOf(attribute.getContext(1));
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 for (String index : indices) {
                     int remove;
                     if (index.equalsIgnoreCase("last")) {
@@ -828,7 +828,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("reverse", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 Collections.reverse(list);
                 return list.getAttribute(attribute.fulfill(1));
             }
@@ -881,7 +881,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.get[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 if (list.isEmpty()) {
                     return null;
                 }
@@ -954,7 +954,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.find_all_partial[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 String test = attribute.getContext(1).toUpperCase();
                 dList positions = new dList();
                 for (int i = 0; i < list.size(); i++) {
@@ -983,7 +983,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.find_all[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 dList positions = new dList();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
@@ -1011,7 +1011,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.find_partial[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 String test = attribute.getContext(1).toUpperCase();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
@@ -1039,7 +1039,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.find[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
                         return new Element(i + 1).getAttribute(attribute.fulfill(1));
@@ -1071,7 +1071,7 @@ public class dList extends ArrayList<String> implements dObject {
                     dB.echoError("The tag li@list.count[...] must have a value.");
                     return null;
                 }
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 String element = attribute.getContext(1);
                 int count = 0;
                 for (int i = 0; i < list.size(); i++) {
@@ -1137,7 +1137,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("first", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 if (list.isEmpty()) {
                     return null;
                 }
@@ -1160,7 +1160,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("last", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 if (list.isEmpty()) {
                     return null;
                 }
@@ -1181,7 +1181,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("numerical", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 Collections.sort(list, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
@@ -1212,7 +1212,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("alphanumeric", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 Collections.sort(list, new NaturalOrderComparator());
                 return list.getAttribute(attribute.fulfill(1));
             }
@@ -1229,7 +1229,7 @@ public class dList extends ArrayList<String> implements dObject {
         registerTag("alphabetical", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                dList list = new dList((dList) object);
+                dList list = (dList) object;
                 Collections.sort(list, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
