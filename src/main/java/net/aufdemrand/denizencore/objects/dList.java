@@ -1084,6 +1084,47 @@ public class dList extends ArrayList<String> implements dObject {
         });
 
         // <--[tag]
+        // @attribute <li@list.sum>
+        // @returns Element(Number)
+        // @description
+        // returns the sum of all numbers in the list.
+        // -->
+
+        registerTag("sum", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dList list = (dList) object;
+                double sum = 0;
+                for (String entry : list) {
+                    sum += aH.getDoubleFrom(entry);
+                }
+                return new Element(sum).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.average>
+        // @returns Element(Number)
+        // @description
+        // returns the average of all numbers in the list.
+        // -->
+
+        registerTag("average", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                dList list = (dList) object;
+                if (list.isEmpty()) {
+                    return new Element(0).getAttribute(attribute.fulfill(1));
+                }
+                double sum = 0;
+                for (String entry : list) {
+                    sum += aH.getDoubleFrom(entry);
+                }
+                return new Element(sum / list.size()).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <li@list.first>
         // @returns Element
         // @description
