@@ -427,7 +427,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Webget
-        // @Syntax webget [<url>] (post:<data>)
+        // @Syntax webget [<url>] (post:<data>) (timeout:<duration>/{10s})
         // @Required 1
         // @Stable unstable
         // @Short Gets the contents of a web page.

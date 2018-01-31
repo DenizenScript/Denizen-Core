@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.scripts.commands.core;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
+import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -31,6 +32,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("post", arg.asElement());
             }
 
+            else if (!scriptEntry.hasObject("timeout")
+                    && arg.matchesPrefix("timeout", "t")
+                    && arg.matchesArgumentType(Duration.class)) {
+                scriptEntry.addObject("timeout", arg.asType(Duration.class));
+            }
+
             else {
                 arg.reportUnhandled();
             }
@@ -44,6 +51,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         if (!url.asString().startsWith("http://") && !url.asString().startsWith("https://")) {
             throw new InvalidArgumentsException("Must have a valid (HTTP/HTTPS) URL! Attempted: " + url.asString());
         }
+
+        scriptEntry.defaultObject("timeout", new Duration(10));
 
     }
 
@@ -60,18 +69,20 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         final String postData = scriptEntry.hasObject("post") ? scriptEntry.getElement("post").asString() : null;
 
+        final Duration timeout = scriptEntry.getdObject("timeout");
+
         dB.report(scriptEntry, getName(), url.debug());
 
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, postData, url);
+                webGet(scriptEntry, postData, url, timeout);
             }
         });
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final String postData, Element urlp) {
+    public void webGet(final ScriptEntry scriptEntry, final String postData, Element urlp, Duration timeout) {
 
         BufferedReader in = null;
         try {
@@ -82,7 +93,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             if (postData != null) {
                 uc.setRequestMethod("POST");
             }
-            uc.setConnectTimeout(10000); // TODO: Option for this!
+            uc.setConnectTimeout((int) timeout.getMillis());
             uc.connect();
             if (postData != null) {
                 uc.getOutputStream().write(postData.getBytes("UTF-8"));
@@ -96,7 +107,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     if (temp == null) {
                         break;
                     }
-                    sb.append(temp);
+                    sb.append(temp).append("\n");
                 }
                 catch (Exception ex) {
                     break;
