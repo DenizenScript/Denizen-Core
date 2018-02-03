@@ -67,6 +67,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void reload() {
         dB.log("Reloading script events...");
         for (ScriptContainer container : worldContainers) {
+            if (!container.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
+                continue;
+            }
             YamlConfiguration config = container.getConfigurationSection("events");
             if (config == null) {
                 dB.echoError("Missing or invalid events block for " + container.getName());
@@ -123,17 +126,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // A script event can at any time check the cancellation state of an event by accessing "<context.cancelled>".
     // -->
     public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, String event) {
-        if (!script.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
-            return false;
-        }
         String cancelmode = getSwitch(event, "cancelled");
         if (cancelmode != null && cancelmode.equalsIgnoreCase("false") && sEvent.cancelled) {
             return false;
         }
-        else if (cancelmode != null && cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
+        if (cancelmode != null && cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
             return false;
         }
-        if (!checkSwitch(event, "ignorecancelled", "true") && sEvent.cancelled) {
+        if (checkSwitch(event, "ignorecancelled", "false") && sEvent.cancelled) {
             return false;
         }
         return sEvent.matches(script, event);
