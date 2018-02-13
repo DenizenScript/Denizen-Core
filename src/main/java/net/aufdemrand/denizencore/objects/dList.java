@@ -1172,7 +1172,7 @@ public class dList extends ArrayList<String> implements dObject {
 
         // <--[tag]
         // @attribute <li@list.numerical>
-        // @returns Element
+        // @returns dList
         // @description
         // returns the list sorted to be in numerical order.
         // For example: a list of "3|2|1|10" will return "1|2|3|10".
