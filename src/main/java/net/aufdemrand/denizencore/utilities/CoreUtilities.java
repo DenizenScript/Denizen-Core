@@ -157,7 +157,7 @@ public class CoreUtilities {
             int distance = getLevenshteinDistance(opt, comp);
             if (minDist > distance) {
                 minDist = distance;
-                closest = comp;
+                closest = cmd;
             }
         }
 
