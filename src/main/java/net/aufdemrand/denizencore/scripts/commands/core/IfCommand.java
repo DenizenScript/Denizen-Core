@@ -109,6 +109,7 @@ public class IfCommand extends BracedCommand {
                 if (dB.verbose) {
                     dB.log("Running the first set");
                 }
+                scriptEntry.setInstant(true);
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
@@ -139,6 +140,7 @@ public class IfCommand extends BracedCommand {
                         }
                     }
                     if (should_fire) {
+                        scriptEntry.setInstant(true);
                         List<ScriptEntry> bracedCommandsList = braceSet.value;
                         for (int i = 0; i < bracedCommandsList.size(); i++) {
                             bracedCommandsList.get(i).setInstant(true);
@@ -154,6 +156,7 @@ public class IfCommand extends BracedCommand {
 
     public void executeCommandList(List<String> subcommand, ScriptEntry scriptEntry) {
         try {
+            scriptEntry.setInstant(true);
             String cmd = subcommand.get(0);
             subcommand.remove(0);
             ScriptEntry entry = new ScriptEntry(cmd, subcommand.toArray(new String[subcommand.size()]),
