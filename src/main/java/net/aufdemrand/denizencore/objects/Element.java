@@ -123,33 +123,38 @@ public class Element implements dObject {
     }
 
     public Element(int integer) {
-        this.prefix = "integer";
+        this.prefix = "number";
         this.element = String.valueOf(integer);
     }
 
     public Element(byte byt) {
-        this.prefix = "byte";
+        this.prefix = "number";
         this.element = String.valueOf(byt);
     }
 
     public Element(short shrt) {
-        this.prefix = "short";
+        this.prefix = "number";
         this.element = String.valueOf(shrt);
     }
 
     public Element(long lng) {
-        this.prefix = "long";
+        this.prefix = "number";
         this.element = String.valueOf(lng);
     }
 
+    public Element(BigDecimal bdl) {
+        this.prefix = "decimal";
+        this.element = CoreUtilities.bigDecToString(bdl);
+    }
+
     public Element(double dbl) {
-        this.prefix = "double";
-        this.element = String.valueOf(dbl);
+        this.prefix = "decimal";
+        this.element = CoreUtilities.doubleToString(dbl);
     }
 
     public Element(float flt) {
-        this.prefix = "float";
-        this.element = String.valueOf(flt);
+        this.prefix = "decimal";
+        this.element = CoreUtilities.doubleToString(flt);
     }
 
     public Element(String prefix, String string) {
@@ -1676,7 +1681,7 @@ public class Element implements dObject {
                     return null;
                 }
                 try {
-                    return new Element(ele.asBigDecimal().add(ele.getBD(attribute.getContext(1))).toString())
+                    return new Element(ele.asBigDecimal().add(ele.getBD(attribute.getContext(1))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
@@ -1706,7 +1711,7 @@ public class Element implements dObject {
                     return null;
                 }
                 try {
-                    return new Element(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1))).toString())
+                    return new Element(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
@@ -1760,7 +1765,7 @@ public class Element implements dObject {
                     return null;
                 }
                 try {
-                    return new Element(ele.asBigDecimal().multiply(ele.getBD(attribute.getContext(1))).toString())
+                    return new Element(ele.asBigDecimal().multiply(ele.getBD(attribute.getContext(1))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
@@ -1790,7 +1795,7 @@ public class Element implements dObject {
                     return null;
                 }
                 try {
-                    return new Element(ele.asBigDecimal().subtract(ele.getBD(attribute.getContext(1))).toString())
+                    return new Element(ele.asBigDecimal().subtract(ele.getBD(attribute.getContext(1))))
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {

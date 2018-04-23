@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,6 +30,22 @@ public class CoreUtilities {
                 return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSCRIPT");
             }
         };
+    }
+
+    public static String bigDecToString(BigDecimal input) {
+        String temp = input.toString();
+        if (temp.endsWith(".0")) {
+            return temp.substring(0, temp.length() - 2);
+        }
+        return temp;
+    }
+
+    public static String doubleToString(double input) {
+        String temp = String.valueOf(input);
+        if (temp.endsWith(".0")) {
+            return temp.substring(0, temp.length() - 2);
+        }
+        return temp;
     }
 
     /**
