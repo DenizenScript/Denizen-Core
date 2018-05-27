@@ -144,4 +144,6 @@ public interface DenizenImplementation {
     public abstract Thread getMainThread();
 
     public abstract boolean allowedToWebget();
+
+    public abstract void preTagExecute();
 }

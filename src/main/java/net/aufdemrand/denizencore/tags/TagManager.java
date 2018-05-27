@@ -251,6 +251,9 @@ public class TagManager {
     }
 
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
+
+        DenizenCore.getImplementation().preTagExecute();
+
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
         Future<?> future = executor.submit(new Runnable() {
