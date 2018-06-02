@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.CustomObject;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -54,7 +55,7 @@ public class CustomScriptContainer extends ScriptContainer {
             if (str.low.equals("inherit")) {
                 inherit = getString(str.str);
             }
-            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms"))) {
+            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms") || str.low.equals("debug"))) {
                 defaultVars.put(str.low, getString(str.str));
             }
         }
@@ -71,7 +72,7 @@ public class CustomScriptContainer extends ScriptContainer {
         return false;
     }
 
-    public long runTagScript(String path, CustomObject obj, ScriptEntryData data) {
+    public long runTagScript(String path, String val, CustomObject obj, ScriptEntryData data) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("tags." + path)) {
@@ -82,6 +83,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
+                cscs.value = new Element(val);
                 queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();

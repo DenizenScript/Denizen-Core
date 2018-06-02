@@ -114,8 +114,9 @@ public class CustomObject implements dObject, Adjustable {
 
         String res = vars.get(attribute.getAttribute(1));
         if (res == null) {
-            if (container.hasPath("tags." + attribute.getAttribute(1))) {
-                long ID = container.runTagScript(attribute.getAttribute(1), this,
+            String taggo = attribute.getAttributeWithoutContext(1);
+            if (container.hasPath("tags." + taggo)) {
+                long ID = container.runTagScript(taggo, attribute.getContext(1), this,
                         attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData : null);
                 List<String> outcomes = DetermineCommand.getOutcome(ID);
                 if (outcomes == null) {
