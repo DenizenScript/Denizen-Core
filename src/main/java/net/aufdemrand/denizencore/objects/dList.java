@@ -1408,6 +1408,88 @@ public class dList extends ArrayList<String> implements dObject {
         });
 
         // <--[tag]
+        // @attribute <li@list.pad_left[<#>]>
+        // @returns dList
+        // @description
+        // Returns a dList extended to reach a minimum specified length
+        // by adding entries to the left side.
+        // -->
+
+        registerTag("pad_left", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag li@list.pad_left[...] must have a value.");
+                    return null;
+                }
+                String with = "";
+                int length = attribute.getIntContext(1);
+                attribute = attribute.fulfill(1);
+
+                // <--[tag]
+                // @attribute <li@list.pad_left[<#>].with[<element>]>
+                // @returns dList
+                // @description
+                // Returns a dList extended to reach a minimum specified length
+                // by adding a specific entry to the left side.
+                // -->
+                if (attribute.startsWith("with")
+                        && attribute.hasContext(1)) {
+                    with = String.valueOf(attribute.getContext(1));
+                    attribute = attribute.fulfill(1);
+                }
+
+                dList newList = new dList((dList) object);
+                while (newList.size() < length) {
+                    newList.add(0, with);
+                }
+
+                return newList.getAttribute(attribute);
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.pad_right[<#>]>
+        // @returns dList
+        // @description
+        // Returns a dList extended to reach a minimum specified length
+        // by adding entries to the right side.
+        // -->
+
+        registerTag("pad_right", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag li@list.pad_right[...] must have a value.");
+                    return null;
+                }
+                String with = "";
+                int length = attribute.getIntContext(1);
+                attribute = attribute.fulfill(1);
+
+                // <--[tag]
+                // @attribute <li@list.pad_right[<#>].with[<element>]>
+                // @returns dList
+                // @description
+                // Returns a dList extended to reach a minimum specified length
+                // by adding a specific entry to the right side.
+                // -->
+                if (attribute.startsWith("with")
+                        && attribute.hasContext(1)) {
+                    with = String.valueOf(attribute.getContext(1));
+                    attribute = attribute.fulfill(1);
+                }
+
+                dList newList = new dList((dList) object);
+                while (newList.size() < length) {
+                    newList.add(with);
+                }
+
+                return newList.getAttribute(attribute);
+            }
+        });
+
+        // <--[tag]
         // @attribute <li@list.parse[<tag>]>
         // @returns dList
         // @description
