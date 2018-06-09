@@ -35,6 +35,22 @@ public class ScriptEngine {
         return false;
     }
 
+    public void revolveOnceForce(ScriptQueue scriptQueue) {
+        ScriptEntry scriptEntry = scriptQueue.getNext();
+        if (scriptEntry == null) {
+            return;
+        }
+        scriptEntry.setSendingQueue(scriptQueue);
+        try {
+            getScriptExecuter().execute(scriptEntry);
+        }
+        catch (Throwable e) {
+            dB.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command!");
+            dB.echoError(scriptEntry.getResidingQueue(), e);
+        }
+        scriptQueue.setLastEntryExecuted(scriptEntry);
+    }
+
     public void revolve(ScriptQueue scriptQueue) {
         // Check last ScriptEntry to see if it should be waited for
         if (shouldHold(scriptQueue)) {

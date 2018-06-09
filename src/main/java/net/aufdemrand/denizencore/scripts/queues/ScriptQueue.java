@@ -540,22 +540,21 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      * @param entries the entries to be run.
      */
     public String runNow(List<ScriptEntry> entries, String type) {
+        //Note which entry comes next in the existing queue
+        ScriptEntry nextup = getQueueSize() > 0 ? getEntry(0) : null;
         // Inject the entries at the start
         injectEntries(entries, 0);
-        //Note which entry comes next in the existing queue
-        ScriptEntry nextup = getQueueSize() > entries.size() ? getEntry(entries.size()) : null;
         // Loop through until the queue is emptied or the entry noted above is reached
         while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
             if (breakMe != null) {
                 removeEntry(0);
             }
             else {
-                // Ensure the engine won't try to run its own instant code on the entry.
-                getEntry(0).setInstant(false);
+                getEntry(0).setInstant(true);
                 // Don't let the system try to 'hold' this entry.
                 getEntry(0).setFinished(true);
                 // Execute the ScriptEntry properly through the Script Engine.
-                DenizenCore.getScriptEngine().revolve(this);
+                DenizenCore.getScriptEngine().revolveOnceForce(this);
             }
         }
         if (breakMe != null && breakMe.startsWith(type)) {
@@ -609,9 +608,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             List<ScriptEntry> entries =
                     (lastEntryExecuted != null && lastEntryExecuted.getScript() != null ?
                             lastEntryExecuted.getScript().getContainer()
-                                    .getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : new ArrayList<ScriptEntry>());
+                                    .getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : null);
             // Add the 'finishing' entries back into the queue (if not empty)
-            if (!entries.isEmpty()) {
+            if (entries != null && !entries.isEmpty()) {
                 script_entries.addAll(entries);
                 dB.echoDebug(this, "Finishing up queue '" + id + "'...");
             }
