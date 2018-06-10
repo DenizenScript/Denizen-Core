@@ -165,6 +165,17 @@ public class UtilTags {
         }
 
         // <--[tag]
+        // @attribute <util.e>
+        // @returns Element
+        // @description
+        // Returns e: 2.718281828459045
+        // -->
+        else if (attribute.matches("e")) {
+            event.setReplaced(new Element(Math.E)
+                    .getAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.date>
         // @returns Element
         // @description
