@@ -170,7 +170,7 @@ public class UtilTags {
         // @description
         // Returns e: 2.718281828459045
         // -->
-        else if (attribute.startsWith("e")) {
+        else if (attribute.matches("e")) {
             event.setReplaced(new Element(Math.E)
                     .getAttribute(attribute.fulfill(1)));
         }
