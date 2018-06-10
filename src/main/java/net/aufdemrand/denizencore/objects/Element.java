@@ -1850,6 +1850,26 @@ public class Element implements dObject {
         });
 
         // <--[tag]
+        // @attribute <el@element.ln>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Returns the natural logarithm of the element.
+        // -->
+        registerTag("ln", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                return new Element(Math.log(ele.asDouble()))
+                        .getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <el@element.power[<#.#>]>
         // @returns Element(Decimal)
         // @group math
