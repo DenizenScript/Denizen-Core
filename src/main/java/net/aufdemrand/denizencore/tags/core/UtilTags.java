@@ -146,7 +146,7 @@ public class UtilTags {
         // @attribute <util.pi>
         // @returns Element
         // @description
-        // Returns PI: 3.141592653589793
+        // Returns PI: 3.14159265358979323846
         // -->
         else if (attribute.startsWith("pi")) {
             event.setReplaced(new Element(Math.PI)
@@ -157,7 +157,7 @@ public class UtilTags {
         // @attribute <util.tau>
         // @returns Element
         // @description
-        // Returns Tau: 6.283185307179586
+        // Returns Tau: 6.28318530717958647692
         // -->
         else if (attribute.startsWith("tau")) {
             event.setReplaced(new Element(Math.PI * 2)
@@ -168,7 +168,7 @@ public class UtilTags {
         // @attribute <util.e>
         // @returns Element
         // @description
-        // Returns e: 2.718281828459045
+        // Returns e: 2.7182818284590452354
         // -->
         else if (attribute.matches("e")) {
             event.setReplaced(new Element(Math.E)
