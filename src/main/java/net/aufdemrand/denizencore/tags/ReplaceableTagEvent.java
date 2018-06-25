@@ -308,7 +308,7 @@ public class ReplaceableTagEvent {
             return mainRef.value;
         }
         value_tagged = true;
-        mainRef.value = TagManager.cleanOutputFully(TagManager.tag(mainRef.value, context));
+        mainRef.value = TagManager.cleanOutput(TagManager.tag(mainRef.value, context));
         return mainRef.value;
     }
 

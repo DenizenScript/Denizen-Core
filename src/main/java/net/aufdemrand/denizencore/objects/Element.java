@@ -123,7 +123,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             this.element = "null";
         }
         else {
-            this.element = TagManager.cleanOutputFully(string);
+            this.element = TagManager.cleanOutput(string);
         }
     }
 
@@ -174,7 +174,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         else {
             this.prefix = prefix;
         }
-        this.element = TagManager.cleanOutputFully(string);
+        this.element = TagManager.cleanOutput(string);
     }
 
     static final BigDecimal max = new BigDecimal("10E1000");

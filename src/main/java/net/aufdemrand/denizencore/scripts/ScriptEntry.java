@@ -550,7 +550,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String str : getOriginalArguments()) {
-            sb.append(" \"" + str + "\"");
+            sb.append(" \"").append(str).append("\"");
+        }
+        for (aH.Argument arg : internal.preprocArgs) {
+            sb.append(" \"").append(arg.toString()).append("\"");
         }
         return internal.command + sb.toString();
     }
