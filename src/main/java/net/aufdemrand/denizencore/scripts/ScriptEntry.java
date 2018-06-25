@@ -248,9 +248,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     argVal.prefix = arg.substring(0, colon);
                     arg = arg.substring(colon + 1);
                 }
-                internal.args_ref.get(i).value = TagManager.genChain(arg, refContext);
-                if (arg.indexOf('%') != 0) {
+                if (arg.indexOf('%') != -1) {
                     internal.hasOldDefs = true;
+                    internal.args_ref.get(i).value = new LinkedList<TagManager.ParseableTagPiece>();
+                    TagManager.ParseableTagPiece piece = new TagManager.ParseableTagPiece();
+                    piece.content = arg;
+                    internal.args_ref.get(i).value.add(piece);
+                }
+                else {
+                    internal.args_ref.get(i).value = TagManager.genChain(arg, refContext);
                 }
                 boolean isTag = false;
                 int indStart = arg.indexOf('<');

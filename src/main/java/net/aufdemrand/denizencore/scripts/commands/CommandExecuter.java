@@ -99,13 +99,19 @@ public class CommandExecuter {
         String saveName = null;
         try {
             scriptEntry.generateAHArgs();
+            boolean genned = false;
             if (scriptEntry.internal.actualCommand.shouldPreParse() && scriptEntry.internal.hasInstantTags) {
                 scriptEntry.regenerateArgsCur();
+                genned = true;
                 scriptEntry.setArgumentsObjects(TagManager.fillArgumentsObjects(scriptEntry.processed_arguments,
                         scriptEntry.args_cur, scriptEntry.aHArgs, true,
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs));
             }
             if (scriptEntry.internal.hasOldDefs) {
+                if (!genned) {
+                    scriptEntry.regenerateArgsCur();
+                    genned = true;
+                }
                 for (int argId : scriptEntry.internal.processArgs) {
                     String arg = scriptEntry.args.get(argId);
                     if (arg.indexOf('%') != -1) {
@@ -138,6 +144,10 @@ public class CommandExecuter {
                         }
                         m.appendTail(sb);
                         scriptEntry.setArgument(argId, sb.toString());
+                        aH.Argument aharg = new aH.Argument(sb.toString());
+                        aharg.needsFill = scriptEntry.aHArgs.get(argId).needsFill;
+                        scriptEntry.aHArgs.set(argId, aharg);
+                        scriptEntry.args_cur.get(argId).value = TagManager.genChain(sb.toString(), scriptEntry);
                     }
                 }
             }
@@ -152,7 +162,7 @@ public class CommandExecuter {
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
                 scriptEntry.setArgumentsObjects(TagManager.fillArgumentsObjects(scriptEntry.processed_arguments,
-                        scriptEntry.internal.hasInstantTags ? scriptEntry.args_cur : scriptEntry.internal.args_ref, scriptEntry.aHArgs, false,
+                        genned ? scriptEntry.args_cur : scriptEntry.internal.args_ref, scriptEntry.aHArgs, false,
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, false), scriptEntry.internal.processArgs));
                 // TODO: Fix this weird interpreter efficiency hack (remove string dependence)
                 aH.specialInterpretTrickStrings = scriptEntry.args;
