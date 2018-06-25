@@ -56,7 +56,6 @@ public class ContextTags {
                 if (!event.hasAlternative()) {
                     dB.echoDebug(event.getScriptEntry(), "Bad saved entry ID '" + id + "'");
                 }
-
             }
             else {
                 String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(2));
@@ -65,10 +64,9 @@ public class ContextTags {
                     if (!event.hasAlternative()) {
                         dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
                     }
-
                 }
                 else {
-                    event.setReplacedObject(CoreUtilities.autoAttrib(got, attribute.fulfill(2)));
+                    event.setReplacedObject(CoreUtilities.autoAttribTyped(got, attribute.fulfill(2)));
                 }
             }
         }
