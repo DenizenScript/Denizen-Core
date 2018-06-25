@@ -167,7 +167,7 @@ public class Attribute {
                 return false;
             }
             for (int i = 0; i < tmp.size(); i++) {
-                if (!attributes[fulfilled + i].equals(tmp.get(i))) {
+                if (!attributes[fulfilled + i].key.equals(tmp.get(i))) {
                     return false;
                 }
             }
