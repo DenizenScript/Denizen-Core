@@ -1400,7 +1400,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                                 return 0;
                             }
                             long id = DetermineCommand.getNewId();
-                            ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
+                            ScriptBuilder.addObjectToEntries(entries, "reqid", id);
                             InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("DLIST_SORT"));
                             queue.addEntries(entries);
                             queue.setReqId(id);

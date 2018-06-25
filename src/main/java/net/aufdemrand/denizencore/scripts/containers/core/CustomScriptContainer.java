@@ -80,7 +80,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("TAG_" + csc.getName() + "_" + path + "__"));
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
                 long id = DetermineCommand.getNewId();
-                ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
+                ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
                 cscs.value = val;
@@ -103,7 +103,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("MECH_" + csc.getName() + "_" + path + "__"));
                 List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
                 long id = DetermineCommand.getNewId();
-                ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
+                ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
                 cscs.value = value;

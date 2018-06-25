@@ -231,7 +231,7 @@ public class OldEventManager {
                         long id = DetermineCommand.getNewId();
 
                         // Add the reqId to each of the entries for the determine command
-                        ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
+                        ScriptBuilder.addObjectToEntries(entries, "reqid", id);
 
                         // Add entries and context to the queue
                         ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);

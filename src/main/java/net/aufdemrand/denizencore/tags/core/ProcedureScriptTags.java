@@ -106,7 +106,7 @@ public class ProcedureScriptTags {
         long id = DetermineCommand.getNewId();
 
         // Add the reqId to each of the entries for referencing
-        ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
+        ScriptBuilder.addObjectToEntries(entries, "reqid", id);
 
         InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getContainer().getName()));
         queue.addEntries(entries);
