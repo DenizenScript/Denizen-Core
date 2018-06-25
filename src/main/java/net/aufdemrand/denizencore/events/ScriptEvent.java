@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -297,10 +298,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         queue.start();
         nanoTimes += System.nanoTime() - queue.startTime;
-        List<dObject> determinations = DetermineCommand.getOutcome(id).objectForms;
-        if (determinations != null) {
-            for (dObject determination : determinations) {
-                applyDetermination(path.container, determination);
+        dList outList = DetermineCommand.getOutcome(id);
+        if (outList != null && !outList.isEmpty()) {
+            List<dObject> determinations = outList.objectForms;
+            if (determinations != null) {
+                for (dObject determination : determinations) {
+                    applyDetermination(path.container, determination);
+                }
             }
         }
     }
