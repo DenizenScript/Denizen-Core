@@ -19,7 +19,7 @@ public class DefineCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretObjects(scriptEntry.processed_arguments)) {
+        for (aH.Argument arg : aH.interpret(scriptEntry.args)) {
 
             if (!scriptEntry.hasObject("definition")) {
                 if (arg.getValue().equals("!") && arg.hasPrefix()) {

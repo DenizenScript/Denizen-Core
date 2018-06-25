@@ -111,6 +111,26 @@ public class aH {
             object = new Element(value);
         }
 
+        public Argument(String prefix, dObject value) {
+            this.prefix = prefix;
+            this.value = value.toString();
+            if (prefix != null) {
+                if (prefix.equals("no_prefix")) {
+                    this.prefix = null;
+                    raw_value = this.value;
+                }
+                else {
+                    raw_value = prefix + ":" + value;
+                    lower_prefix = CoreUtilities.toLowerCase(prefix);
+                }
+            }
+            else {
+                raw_value = this.value;
+            }
+            lower_value = CoreUtilities.toLowerCase(this.value);
+            object = value;
+        }
+
         public Argument(dObject obj) {
             object = obj;
             if (obj instanceof Element) {
