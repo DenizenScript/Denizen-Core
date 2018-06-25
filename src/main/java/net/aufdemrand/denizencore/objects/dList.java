@@ -373,23 +373,22 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     @Override
     public String identify() {
-        /*if (flag != null) {
-            return flag;
-        }*/
+        if (flag != null) {
+            return DenizenCore.getImplementation().getLastEntryFromFlag(flag);
+        }
+        return identifyList();
+    }
 
+    public String identifyList() {
         if (isEmpty()) {
             return "li@";
         }
-
         StringBuilder dScriptArg = new StringBuilder();
         dScriptArg.append("li@");
         for (String item : this) {
-            dScriptArg.append(item);
-            // Items are separated by the | character in dLists
-            dScriptArg.append('|');
+            dScriptArg.append(item).append('|');
         }
-
-        return dScriptArg.toString().substring(0, dScriptArg.length() - 1);
+        return dScriptArg.substring(0, dScriptArg.length() - 1);
     }
 
 
@@ -2005,6 +2004,6 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
         return (flag != null
                 ? new Element(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getObjectAttribute(attribute)
-                : new Element(identify()).getObjectAttribute(attribute));
+                : new Element(identifyList()).getObjectAttribute(attribute));
     }
 }
