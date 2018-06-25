@@ -33,7 +33,7 @@ public class DefineCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("value")) {
-                scriptEntry.addObject("value", arg.object);
+                scriptEntry.addObject("value", arg.object instanceof Element ? new Element(arg.raw_value) : arg.object);
             }
 
             else {
