@@ -113,8 +113,6 @@ public interface DenizenImplementation {
      */
     public abstract List<YamlConfiguration> getOutsideScripts();
 
-    public abstract void handleCommandSpecialCases(ScriptEntry entry);
-
     public abstract void debugCommandHeader(ScriptEntry entry);
 
     public abstract TagContext getTagContextFor(ScriptEntry entry, boolean instant);
@@ -146,4 +144,12 @@ public interface DenizenImplementation {
     public abstract boolean allowedToWebget();
 
     public abstract void preTagExecute();
+
+    public abstract boolean needsHandleArgPrefix(String prefix);
+
+    public abstract boolean shouldDebug(Debuggable debug);
+
+    public abstract void debugQueueExecute(ScriptEntry entry, String queue, String execute);
+
+    public abstract void debugTagFill(ScriptEntry entry, String tag, String result);
 }

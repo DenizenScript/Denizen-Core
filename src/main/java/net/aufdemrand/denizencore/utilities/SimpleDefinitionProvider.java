@@ -1,20 +1,31 @@
 package net.aufdemrand.denizencore.utilities;
 
+import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.dObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleDefinitionProvider implements DefinitionProvider {
 
-    private final Map<String, String> definitions = new HashMap<String, String>();
+    private final Map<String, dObject> definitions = new HashMap<String, dObject>();
 
     @Override
     public void addDefinition(String definition, String value) {
-        this.definitions.put(CoreUtilities.toLowerCase(definition), value);
+        this.definitions.put(CoreUtilities.toLowerCase(definition), new Element(value));
     }
 
     @Override
-    public Map<String, String> getAllDefinitions() {
+    public Map<String, dObject> getAllDefinitions() {
         return this.definitions;
+    }
+
+    @Override
+    public dObject getDefinitionObject(String definition) {
+        if (definition == null) {
+            return null;
+        }
+        return definitions.get(CoreUtilities.toLowerCase(definition));
     }
 
     @Override
@@ -22,16 +33,16 @@ public class SimpleDefinitionProvider implements DefinitionProvider {
         if (definition == null) {
             return null;
         }
-        return this.definitions.get(CoreUtilities.toLowerCase(definition));
+        return CoreUtilities.stringifyNullPass(definitions.get(CoreUtilities.toLowerCase(definition)));
     }
 
     @Override
     public boolean hasDefinition(String definition) {
-        return this.definitions.containsKey(CoreUtilities.toLowerCase(definition));
+        return definitions.containsKey(CoreUtilities.toLowerCase(definition));
     }
 
     @Override
     public void removeDefinition(String definition) {
-        this.definitions.remove(CoreUtilities.toLowerCase(definition));
+        definitions.remove(CoreUtilities.toLowerCase(definition));
     }
 }

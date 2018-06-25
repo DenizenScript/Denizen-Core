@@ -1,22 +1,23 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
-
-
-/**
- * Script tag is a starting point for getting attributes from an embedded
- */
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 public class ScriptTags {
 
     public ScriptTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                scriptTags(event);
+            }
+        }, "script", "s");
     }
 
-    @TagManager.TagEvents
     public void scriptTags(ReplaceableTagEvent event) {
 
         if (!event.matches("script", "s") || event.replaced()) {
@@ -53,7 +54,7 @@ public class ScriptTags {
         }
 
         // Else, get the attribute from the script
-        event.setReplaced(script.getAttribute(attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(script, attribute.fulfill(1)));
 
     }
 }

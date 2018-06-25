@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to the CommandExecuter
  */
 
-public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProvider {
+public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<Class<? extends ScriptQueue>, String>();
 
     protected static long total_queues = 0;
@@ -179,21 +179,11 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
     private long delay_time = 0;
 
 
-    // ScriptQueues can have a definitions,
-    // keyed by a String Id. Denizen's
-    // 'Definitions' system uses this map.
-    // This information is fetched by using
-    // %definition_name%
-    private final Map<String, String>
-            definitions = new ConcurrentHashMap<String, String>(8, 0.9f, 1);
+    private final HashMap<String, dObject> definitions = new HashMap<String, dObject>();
 
 
-    // Held script entries can be recalled later in the script
-    // and their scriptEntry context can be recalled. Good for
-    // commands that contain unique items/objects that it's
-    // created.
-    private final Map<String, ScriptEntry>
-            held_entries = new ConcurrentHashMap<String, ScriptEntry>(8, 0.9f, 1);
+    private final HashMap<String, ScriptEntry> held_entries = new HashMap<String, ScriptEntry>();
+
 
     public dScript script;
 
@@ -305,21 +295,20 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         return this;
     }
 
-    /**
-     * Gets a definition from the queue. Denizen's
-     * CommandExecuter will fetch this information
-     * by using the %definition_name% format, similar
-     * to 'replaceable tags'
-     *
-     * @param definition The name of the definitions
-     * @return The value of the definitions, or null
-     */
+    @Override
+    public dObject getDefinitionObject(String definition) {
+        if (definition == null) {
+            return null;
+        }
+        return definitions.get(CoreUtilities.toLowerCase(definition));
+    }
+
     @Override
     public String getDefinition(String definition) {
         if (definition == null) {
             return null;
         }
-        return definitions.get(CoreUtilities.toLowerCase(definition));
+        return CoreUtilities.stringifyNullPass(definitions.get(CoreUtilities.toLowerCase(definition)));
     }
 
 
@@ -335,17 +324,14 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
     }
 
 
-    /**
-     * Adds a new piece of definitions to the queue. This
-     * can be done with dScript as well by using the
-     * 'define' command.
-     *
-     * @param definition the name of the definitions
-     * @param value      the value of the definition
-     */
+    public void addDefinition(String definition, dObject value) {
+        definitions.put(CoreUtilities.toLowerCase(definition), value);
+    }
+
+
     @Override
     public void addDefinition(String definition, String value) {
-        definitions.put(CoreUtilities.toLowerCase(definition), value);
+        definitions.put(CoreUtilities.toLowerCase(definition), new Element(value));
     }
 
 
@@ -369,7 +355,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
      * @return all current definitions, empty if none.
      */
     @Override
-    public Map<String, String> getAllDefinitions() {
+    public Map<String, dObject> getAllDefinitions() {
         return definitions;
     }
 
@@ -425,13 +411,13 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         Runnable r = callback;
         callback = null;
         stop();
-        TimedQueue newQueue = TimedQueue.getQueue(id);
+        TimedQueue newQueue = new TimedQueue(id, 0);
         newQueue.run_async = this.run_async;
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
         }
         newQueue.addEntries(getEntries());
-        for (Map.Entry<String, String> def : getAllDefinitions().entrySet()) {
+        for (Map.Entry<String, dObject> def : getAllDefinitions().entrySet()) {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
         newQueue.setContextSource(contextSource);
@@ -440,7 +426,6 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
         }
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
-        newQueue.setSpeed(1);
         clear();
         if (delay != null) {
             newQueue.delayFor(delay);
@@ -977,19 +962,19 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
 
         // <--[tag]
         // @attribute <q@queue.definition[<definition>]>
-        // @returns dList
+        // @returns dObject
         // @description
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
-        registerTag("definition", new TagRunnable() {
+        registerTag("definition", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag q@queue.definition[...] must have a value.");
                     return null;
                 }
-                return new Element(((ScriptQueue) object).getDefinition(attribute.getContext(1))).getAttribute(attribute.fulfill(1));
+                return CoreUtilities.autoAttrib(((ScriptQueue) object).getDefinitionObject(attribute.getContext(1)), attribute.fulfill(1));
             }
         });
 
@@ -1025,7 +1010,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
             public String run(Attribute attribute, dObject object) {
                 ScriptEntry entry = ((ScriptQueue) object).getEntries().get(0);
                 if (entry != null) {
-                    return new Element(entry.getObject("reqID") != null).getAttribute(attribute.fulfill(1));
+                    return new Element(entry.getObject("reqid") != null).getAttribute(attribute.fulfill(1));
                 }
                 else {
                     return new Element(false).getAttribute(attribute.fulfill(1));
@@ -1044,31 +1029,68 @@ public abstract class ScriptQueue implements Debuggable, dObject, DefinitionProv
         registeredTags.put(name, runnable);
     }
 
+    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<String, TagRunnable.ObjectForm>();
+
+    public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registeredObjectTags.put(name, runnable);
+    }
+
+    @Override
+    public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
+        return null;
+    }
+
+    @Override
+    public boolean canPossiblyBeType(Class<? extends dObject> type) {
+        return false;
+    }
+
     @Override
     public String getAttribute(Attribute attribute) {
+        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+    }
+
+    @Override
+    public dObject getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
             return null;
         }
 
+        if (attribute.isComplete()) {
+            return this;
+        }
+
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
+        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
+        if (otr != null) {
+            if (!otr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
+            }
+            return otr.run(attribute, this);
+        }
+
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
                 dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
-            return tr.run(attribute, this);
+            return new Element(tr.run(attribute, this));
         }
 
         // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this)) {
-            String returned = property.getAttribute(attribute);
+        for (Property property : PropertyParser.getProperties(this, attrLow)) {
+            dObject returned = CoreUtilities.autoAttrib(property, attribute);
             if (returned != null) {
                 return returned;
             }
         }
 
-        return new Element(identify()).getAttribute(attribute);
+        return new Element(identify()).getObjectAttribute(attribute);
     }
 }

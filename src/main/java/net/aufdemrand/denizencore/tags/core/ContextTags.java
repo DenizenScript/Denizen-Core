@@ -1,84 +1,76 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.containers.core.TaskScriptContainer;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ContextTags {
 
     public ContextTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                contextTags(event);
+            }
+        }, "context", "c");
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                savedEntryTags(event);
+            }
+        }, "entry", "e");
     }
 
-
-    // Get scriptqueue context!
-    @TagManager.TagEvents
     public void contextTags(ReplaceableTagEvent event) {
         if (!event.matches("context", "c") || event.getScriptEntry() == null) {
             return;
         }
-
         String object = event.getType();
-
-        // First, check queue object context.
         dObject obj = event.getScriptEntry().getResidingQueue().getContext(object);
         if (obj != null) {
             Attribute attribute = event.getAttributes();
-            event.setReplaced(obj.getAttribute(attribute.fulfill(2)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(obj, attribute.fulfill(2)));
             return;
         }
-
         if (!event.hasAlternative()) {
             dB.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + object + "'!");
         }
     }
 
-
-    // Get a saved script entry!
-    @TagManager.TagEvents
     public void savedEntryTags(ReplaceableTagEvent event) {
         if (!event.matches("entry", "e")
                 || event.getScriptEntry() == null
                 || !event.hasNameContext()) {
             return;
         }
-
-        // <e[entry_id].entity.blah.blah>
         if (event.getScriptEntry().getResidingQueue() != null) {
-
-            // Get the entry_id from name context
             String id = event.getNameContext();
-
             Attribute attribute = event.getAttributes();
             ScriptEntry held = event.getScriptEntry().getResidingQueue().getHeldScriptEntry(id);
-            if (held == null) { // Check if the ID is bad
+            if (held == null) {
                 if (!event.hasAlternative()) {
                     dB.echoDebug(event.getScriptEntry(), "Bad saved entry ID '" + id + "'");
                 }
 
             }
             else {
-                if (!held.hasObject(attribute.getAttribute(2))
-                        || held.getdObject(attribute.getAttribute(2)) == null) {
+                String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(2));
+                dObject got = held.getdObject(attrib);
+                if (got == null) {
                     if (!event.hasAlternative()) {
-                        dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attribute.getAttribute(2) + "'");
+                        dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
                     }
 
                 }
-                else { // Okay, now it's safe!
-                    event.setReplaced(held.getdObject(attribute.getAttribute(2)).getAttribute(attribute.fulfill(2)));
+                else {
+                    event.setReplacedObject(CoreUtilities.autoAttrib(got, attribute.fulfill(2)));
                 }
             }
         }
-
-        //else event.setReplaced("null");
     }
 }

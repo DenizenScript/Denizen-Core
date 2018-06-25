@@ -8,6 +8,8 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
+import java.util.HashSet;
+
 public class DebugCommand extends AbstractCommand {
 
     public enum DebugType {
@@ -22,13 +24,15 @@ public class DebugCommand extends AbstractCommand {
         EXCEPTION
     }
 
+    public static HashSet<String> DBINFO = aH.Argument.precalcEnum(DebugType.values());
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
             if (!scriptEntry.hasObject("type")
-                    && arg.matchesEnum(DebugType.values())) {
+                    && arg.matchesEnum(DBINFO)) {
                 scriptEntry.addObject("type", arg.asElement());
             }
 
@@ -37,7 +41,7 @@ public class DebugCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("name")
-                    && arg.matchesPrefix("name")) {
+                    && arg.matchesOnePrefix("name")) {
                 scriptEntry.addObject("name", arg.asElement());
             }
 

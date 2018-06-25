@@ -20,28 +20,28 @@ import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomScriptContainer extends ScriptContainer {
 
     public HashMap<String, String> defaultVars = new HashMap<String, String>();
 
-    public HashMap<String, String> getVars() {
-        HashMap<String, String> vars;
+    public HashMap<String, dObject> getVars() {
+        HashMap<String, dObject> vars;
         if (inherit != null) {
             ScriptContainer sc = ScriptRegistry.getScriptContainer(inherit);
             if (sc != null && sc instanceof CustomScriptContainer) {
                 vars = ((CustomScriptContainer) sc).getVars();
             }
             else {
-                vars = new HashMap<String, String>();
+                vars = new HashMap<String, dObject>();
             }
         }
         else {
-            vars = new HashMap<String, String>();
+            vars = new HashMap<String, dObject>();
         }
-        for (String str : defaultVars.keySet()) {
-            vars.remove(str);
-            vars.put(str, defaultVars.get(str));
+        for (Map.Entry<String, String> str : defaultVars.entrySet()) {
+            vars.put(str.getKey(), new Element(str.getValue()));
         }
         return vars;
     }
@@ -55,7 +55,7 @@ public class CustomScriptContainer extends ScriptContainer {
             if (str.low.equals("inherit")) {
                 inherit = getString(str.str);
             }
-            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms") || str.low.equals("debug"))) {
+            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms") || str.low.equals("speed") || str.low.equals("debug"))) {
                 defaultVars.put(str.low, getString(str.str));
             }
         }
@@ -72,7 +72,7 @@ public class CustomScriptContainer extends ScriptContainer {
         return false;
     }
 
-    public long runTagScript(String path, String val, CustomObject obj, ScriptEntryData data) {
+    public long runTagScript(String path, dObject val, CustomObject obj, ScriptEntryData data) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("tags." + path)) {
@@ -83,7 +83,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
-                cscs.value = new Element(val);
+                cscs.value = val;
                 queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
@@ -96,7 +96,7 @@ public class CustomScriptContainer extends ScriptContainer {
         return -1;
     }
 
-    public long runMechScript(String path, CustomObject obj, String value) {
+    public long runMechScript(String path, CustomObject obj, dObject value) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("mechanisms." + path)) {
@@ -106,7 +106,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 ScriptBuilder.addObjectToEntries(listOfEntries, "ReqId", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
-                cscs.value = new Element(value);
+                cscs.value = value;
                 queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
@@ -121,7 +121,7 @@ public class CustomScriptContainer extends ScriptContainer {
 
         public CustomObject obj;
 
-        public Element value;
+        public dObject value;
 
         @Override
         public boolean getShouldCache() {

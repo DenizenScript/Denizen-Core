@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.tags.core;
 
 import net.aufdemrand.denizencore.objects.ObjectFetcher;
+import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
@@ -12,6 +13,7 @@ import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -20,10 +22,14 @@ import java.util.List;
 public class ProcedureScriptTags {
 
     public ProcedureScriptTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                procedureTag(event);
+            }
+        }, "proc", "pr");
     }
 
-    @TagManager.TagEvents
     public void procedureTag(ReplaceableTagEvent event) {
 
         // <--[tag]
@@ -123,8 +129,8 @@ public class ProcedureScriptTags {
                 String name = definition_names != null && definition_names.length >= x ?
                         definition_names[x - 1].trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? null:
-                        event.getScript().getContainer()) : event.getScriptEntry(),
+                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? null :
+                                event.getScript().getContainer()) : event.getScriptEntry(),
                         "Adding definition %" + name + "% as " + definition);
                 x++;
             }
@@ -135,8 +141,8 @@ public class ProcedureScriptTags {
         queue.start();
 
         if (DetermineCommand.hasOutcome(id)) {
-            event.setReplaced(ObjectFetcher.pickObjectFor(DetermineCommand.getOutcome(id).get(0))
-                    .getAttribute(attr.fulfill(attribs)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(ObjectFetcher.pickObjectFor(DetermineCommand.getOutcome(id).get(0))
+                    ,attr.fulfill(attribs)));
         }
     }
 }

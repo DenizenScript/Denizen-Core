@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.objects.properties;
 
 import net.aufdemrand.denizencore.objects.dObject;
+import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,49 +10,66 @@ import java.util.*;
 
 public class PropertyParser {
 
-    // Keep track of which Property belongs to which dObject
-    static Map<Class<? extends dObject>, List<Class>> properties
-            = new HashMap<Class<? extends dObject>, List<Class>>();
+    public static abstract class PropertyGetter {
 
-    // Keep track of the static 'describes' and 'getFrom' methods for each Property
-    static Map<Class, Method> describes = new WeakHashMap<Class, Method>();
-    static Map<Class, Method> getFrom = new WeakHashMap<Class, Method>();
-
-
-    public PropertyParser() {
-        properties.clear();
-        describes.clear();
-        getFrom.clear();
+        public abstract Property get(dObject obj);
     }
 
-    public void registerProperty(Class property, Class<? extends dObject> object) {
-        // Add property to the dObject's Properties list
-        List<Class> prop_list;
+    static Map<Class<? extends dObject>, Map<String, List<PropertyGetter>>> propgetters = new HashMap<Class<? extends dObject>, Map<String, List<PropertyGetter>>>();
 
-        // Get current properties list, or make a new one
-        if (properties.containsKey(object)) {
-            prop_list = properties.get(object);
+
+    public static void registerProperty(PropertyGetter getter, Class<? extends dObject> object) {
+        registerProperty(getter, object, (String) null);
+    }
+
+    public static void insert(Map<String, List<PropertyGetter>> gettyByTag, String attrl, PropertyGetter getter) {
+        List<PropertyGetter> getters = gettyByTag.get(attrl);
+        if (getters == null) {
+            getters = new ArrayList<PropertyGetter>();
+            gettyByTag.put(attrl, getters);
         }
-        else {
-            prop_list = new ArrayList<Class>();
+        getters.add(getter);
+    }
+
+    public static void registerProperty(PropertyGetter getter, Class<? extends dObject> object, String... attrLow) {
+        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object);
+        if (gettyByTag == null) {
+            gettyByTag = new HashMap<String, List<PropertyGetter>>();
+            propgetters.put(object, gettyByTag);
         }
+        for (String attrl : attrLow) {
+            insert(gettyByTag, attrl, getter);
+        }
+        insert(gettyByTag, "_all_", getter);
+    }
 
-        // Add this property to the list
-        prop_list.add(property);
-
-        // Put the list back into the Map
-        properties.put(object, prop_list);
-
-        // Cache methods used for fetching new properties
+    public static void registerProperty(final Class property, Class<? extends dObject> object) {
         try {
-            describes.put(property, property.getMethod("describes", dObject.class));
-            getFrom.put(property, property.getMethod("getFrom", dObject.class));
-
+            final Method getf = property.getMethod("getFrom", dObject.class);
+            getf.setAccessible(true);
+            PropertyGetter getter = new PropertyGetter() {
+                @Override
+                public Property get(dObject obj) {
+                    try {
+                        Object o = getf.invoke(null, obj);
+                        if (o instanceof Property) {
+                            return (Property) o;
+                        }
+                    }
+                    catch (IllegalAccessException e) {
+                        dB.echoError(e);
+                    }
+                    catch (InvocationTargetException e) {
+                        dB.echoError(e);
+                    }
+                    return null;
+                }
+            };
+            registerProperty(getter, object);
         }
         catch (NoSuchMethodException e) {
             dB.echoError("Unable to register property '" + property.getSimpleName() + "'!");
         }
-
     }
 
     public static String getPropertiesString(dObject object) {
@@ -77,27 +95,54 @@ public class PropertyParser {
         }
     }
 
-    public static List<Property> getProperties(dObject object) {
-        List<Property> props = new ArrayList<Property>();
+    public static List<Property> empty = new ArrayList<Property>();
 
-        try {
-            if (properties.containsKey(object.getClass())) {
-                for (Class property : properties.get(object.getClass())) {
-                    if ((Boolean) describes.get(property).invoke(null, object)) {
-                        props.add((Property) getFrom.get(property).invoke(null, object));
+    public static List<Property> getProperties(dObject object, String attribLow) {
+        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object.getClass());
+        if (gettyByTag != null) {
+            List<Property> returnMe = empty;
+            List<PropertyGetter> getty = gettyByTag.get(attribLow);
+            if (getty != null) {
+                returnMe = new ArrayList<Property>(getty.size());
+                for (PropertyGetter property : getty) {
+                    Property propGot = property.get(object);
+                    if (propGot != null) {
+                        returnMe.add(propGot);
                     }
                 }
             }
-
+            getty = gettyByTag.get(null);
+            if (getty != null) {
+                if (returnMe == empty) {
+                    returnMe = new ArrayList<Property>(getty.size());
+                }
+                for (PropertyGetter property : getty) {
+                    Property propGot = property.get(object);
+                    if (propGot != null) {
+                        returnMe.add(propGot);
+                    }
+                }
+            }
+            return returnMe;
         }
-        catch (IllegalAccessException e) {
-            dB.echoError(e);
-        }
-        catch (InvocationTargetException e) {
-            dB.echoError(e);
-        }
+        return empty;
+    }
 
-        return props;
-
+    public static List<Property> getProperties(dObject object) {
+        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object.getClass());
+        if (gettyByTag != null) {
+            List<PropertyGetter> getty = gettyByTag.get("_all_");
+            if (getty != null) {
+                List<Property> props = new ArrayList<Property>();
+                for (PropertyGetter property : getty) {
+                    Property propGot = property.get(object);
+                    if (propGot != null) {
+                        props.add(propGot);
+                    }
+                }
+                return props;
+            }
+        }
+        return empty;
     }
 }

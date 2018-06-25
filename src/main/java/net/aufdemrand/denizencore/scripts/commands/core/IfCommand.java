@@ -49,7 +49,7 @@ public class IfCommand extends BracedCommand {
         }
 
         // Interpret arguments
-        for (String arg : scriptEntry.modifiedArguments()) {
+        for (String arg : scriptEntry.getOriginalArguments()) {
             if (arg.equalsIgnoreCase("{")) {
                 break;
             }
@@ -113,7 +113,7 @@ public class IfCommand extends BracedCommand {
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
-                    bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqId"));
+                    bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
                 }
                 scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
             }
@@ -144,7 +144,7 @@ public class IfCommand extends BracedCommand {
                         List<ScriptEntry> bracedCommandsList = braceSet.value;
                         for (int i = 0; i < bracedCommandsList.size(); i++) {
                             bracedCommandsList.get(i).setInstant(true);
-                            bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqId"));
+                            bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
                         }
                         scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
                         break;
@@ -163,7 +163,7 @@ public class IfCommand extends BracedCommand {
                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
             entry.entryData = scriptEntry.entryData.clone();
             entry.setInstant(true);
-            entry.addObject("reqId", scriptEntry.getObject("reqId"));
+            entry.addObject("reqId", scriptEntry.getObject("reqid"));
             scriptEntry.getResidingQueue().injectEntry(entry, 0);
         }
         catch (Exception e) {
@@ -171,24 +171,147 @@ public class IfCommand extends BracedCommand {
         }
     }
 
-    static class ArgComparer {
-        List<String> argstemp = null;
-        String[] argstemp_parsed = null;
+    public static class ArgComparer {
 
-        public String tagme(int arg, ScriptEntry scriptEntry) {
+        List argstemp = null;
+
+        ArgInternal[] argstemp_parsed = null;
+
+        ScriptEntry scriptEntry = null;
+
+        Boolean result = null;
+
+        public static class ArgInternal {
+
+            boolean negative;
+
+            String value;
+
+            boolean boolify() {
+                return negative != value.equals("true");
+            }
+
+            @Override
+            public String toString() {
+                return negative ? "!" + value : value;
+            }
+        }
+
+        public static boolean boolify(String arg) {
+            if (arg.startsWith("!")) {
+                return !arg.equalsIgnoreCase("!true");
+            }
+            return arg.equalsIgnoreCase("true");
+        }
+
+        public static boolean procBoolean(Object arg) {
+            if (arg instanceof String) {
+                return boolify((String) arg);
+            }
+            else if (arg instanceof ArgInternal) {
+                return ((ArgInternal) arg).boolify();
+            }
+            else if (arg instanceof ArgComparer) {
+                return ((ArgComparer) arg).compare();
+            }
+            else if (arg instanceof Boolean) {
+                return ((Boolean) arg);
+            }
+            return boolify(arg.toString());
+        }
+
+        public static String procString(Object arg) {
+            if (arg instanceof String) {
+                return (String) arg;
+            }
+            else if (arg instanceof ArgInternal) {
+                return arg.toString();
+            }
+            else if (arg instanceof ArgComparer) {
+                return ((ArgComparer) arg).compare() ? "true" : "false";
+            }
+            else if (arg instanceof Boolean) {
+                return ((Boolean) arg) ? "true" : "false";
+            }
+            return arg.toString();
+        }
+
+        public static String procStringNoTag(Object arg) {
+            if (arg instanceof String) {
+                return (String) arg;
+            }
+            else if (arg instanceof ArgInternal) {
+                return arg.toString();
+            }
+            else if (arg instanceof ArgComparer) {
+                return "<UnTaggedComparison>";
+            }
+            else if (arg instanceof Boolean) {
+                return ((Boolean) arg) ? "true" : "false";
+            }
+            return arg.toString();
+        }
+
+        public boolean tagbool(int arg) {
+            if (argstemp_parsed[arg] != null) {
+                return argstemp_parsed[arg].boolify();
+            }
+            Object argObj = argstemp.get(arg);
+            if (argObj instanceof String) {
+                return tagify((String) argObj).boolify();
+            }
+            else if (argObj instanceof ArgInternal) {
+                return ((ArgInternal) argObj).boolify();
+            }
+            else if (argObj instanceof ArgComparer) {
+                return ((ArgComparer) argObj).compare();
+            }
+            else if (argObj instanceof Boolean) {
+                return ((Boolean) argObj);
+            }
+            return tagify(argObj.toString()).boolify();
+        }
+
+        public ArgInternal tagify(String arg) {
+            ArgInternal toRet = new ArgInternal();
+            if (arg.startsWith("!")) {
+                toRet.negative = true;
+                arg = arg.substring(1);
+            }
+            toRet.value = TagManager.tag(arg, DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
+            return toRet;
+        }
+
+        public ArgInternal tagme(int arg) {
             if (argstemp_parsed[arg] != null) {
                 return argstemp_parsed[arg];
             }
-            String parsed = TagManager.tag(argstemp.get(arg),
-                    DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
-            argstemp_parsed[arg] = parsed;
-            return parsed;
-
+            ArgInternal got = tagify(procString(argstemp.get(arg)));
+            argstemp_parsed[arg] = got;
+            return got;
         }
 
-        public boolean compare(List<String> args, ScriptEntry scriptEntry) {
+        public ArgComparer construct(List args, ScriptEntry scriptEntry) {
             argstemp = args;
-            argstemp_parsed = new String[args.size()];
+            argstemp_parsed = new ArgInternal[args.size()];
+            this.scriptEntry = scriptEntry;
+            return this;
+        }
+
+        public boolean compare(List args, ScriptEntry scriptEntry) {
+            construct(args, scriptEntry);
+            return compare();
+        }
+
+        public boolean compare() {
+            if (result == null) {
+                result = compareInternal();
+            }
+            return result;
+        }
+
+        public boolean compareInternal() {
+            List args = argstemp;
             if (dB.verbose) {
                 dB.log("Comparing " + args);
             }
@@ -199,40 +322,31 @@ public class IfCommand extends BracedCommand {
                 return false;
             }
             else if (args.size() == 1) {
-                String arg = tagme(0, scriptEntry);
-                boolean negative = false;
-                if (arg.startsWith("!")) {
-                    arg = arg.substring(1);
-                    negative = true;
-                }
                 if (dB.verbose) {
-                    dB.log("Returning comparison: " + args.get(0));
+                    dB.log("Returning comparison for " + args.get(0));
                 }
-                if (negative) {
-                    return !arg.equalsIgnoreCase("true");
-                }
-                return arg.equalsIgnoreCase("true");
+                return tagbool(0);
             }
             for (int i = 0; i < args.size(); i++) {
-                String arg = args.get(i);
-                if (arg.equalsIgnoreCase("(")) {
-                    List<String> subargs = new ArrayList<String>();
+                String arg = procStringNoTag(args.get(i));
+                if (arg.equals("(")) {
+                    List subargs = new ArrayList();
                     int count = 0;
                     boolean found = false;
                     for (int x = i + 1; x < args.size(); x++) {
-                        String xarg = args.get(x);
-                        if (xarg.equalsIgnoreCase("(")) {
+                        String xarg = procStringNoTag(args.get(x));
+                        if (xarg.equals("(")) {
                             count++;
                             subargs.add("(");
                         }
-                        else if (xarg.equalsIgnoreCase(")")) {
+                        else if (xarg.equals(")")) {
                             count--;
                             if (count == -1) {
-                                boolean cfound = new ArgComparer().compare(subargs, scriptEntry);
+                                ArgComparer comp = new ArgComparer().construct(subargs, scriptEntry);
                                 for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
                                 }
-                                args.add(i, cfound ? "true" : "false");
+                                args.add(i, comp);
                                 found = true;
                             }
                             else {
@@ -240,7 +354,7 @@ public class IfCommand extends BracedCommand {
                             }
                         }
                         else {
-                            subargs.add(xarg);
+                            subargs.add(args.get(x));
                         }
                     }
                     if (!found) {
@@ -250,7 +364,7 @@ public class IfCommand extends BracedCommand {
                         return false;
                     }
                 }
-                else if (arg.equalsIgnoreCase(")")) {
+                else if (arg.equals(")")) {
                     if (dB.verbose) {
                         dB.log("Returning false: strange ()");
                     }
@@ -259,14 +373,14 @@ public class IfCommand extends BracedCommand {
             }
             if (args.size() == 1) {
                 if (dB.verbose) {
-                    dB.log("Returning comparison: " + args.get(0));
+                    dB.log("Returning comparison for " + args.get(0));
                 }
-                return args.get(0).equalsIgnoreCase("true");
+                return tagbool(0);
             }
             for (int i = 0; i < args.size(); i++) {
-                String arg = args.get(i);
+                String arg = procStringNoTag(args.get(i));
                 if (arg.equalsIgnoreCase("||")) {
-                    List<String> beforeargs = new ArrayList<String>(i);
+                    List beforeargs = new ArrayList(i);
                     for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
                     }
@@ -277,18 +391,18 @@ public class IfCommand extends BracedCommand {
                         }
                         return true;
                     }
-                    List<String> afterargs = new ArrayList<String>(i);
+                    List afterargs = new ArrayList(args.size() - (i + 1));
                     for (int x = i + 1; x < args.size(); x++) {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
                     if (dB.verbose) {
-                        dB.log("Returning comparison: " + comp);
+                        dB.log("Returning || comparison: " + comp);
                     }
                     return comp;
                 }
                 else if (arg.equalsIgnoreCase("&&")) {
-                    List<String> beforeargs = new ArrayList<String>(i);
+                    List beforeargs = new ArrayList(i);
                     for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
                     }
@@ -299,39 +413,30 @@ public class IfCommand extends BracedCommand {
                         }
                         return false;
                     }
-                    List<String> afterargs = new ArrayList<String>(i);
+                    List afterargs = new ArrayList(args.size() - (i + 1));
                     for (int x = i + 1; x < args.size(); x++) {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
                     if (dB.verbose) {
-                        dB.log("Returning comparison: " + comp);
+                        dB.log("Returning && comparison: " + comp);
                     }
                     return comp;
                 }
             }
             if (args.size() == 1) {
-                String arg = args.get(0);
-                boolean negative = false;
-                if (arg.startsWith("!")) {
-                    arg = arg.substring(1);
-                    negative = true;
-                }
                 if (dB.verbose) {
-                    dB.log("Returning comparison: " + args.get(0));
+                    dB.log("Returning comparison for " + args.get(0));
                 }
-                if (negative) {
-                    return !arg.equalsIgnoreCase("true");
-                }
-                return arg.equalsIgnoreCase("true");
+                return tagbool(0);
             }
             if (args.size() == 2) {
                 if (dB.verbose) {
-                    dB.log("Returning false because two args only");
+                    dB.log("Returning false because two args only (non-processable)");
                 }
                 return false;
             }
-            String arg = args.get(1);
+            String arg = procStringNoTag(args.get(1));
             boolean negative = false;
             if (arg.startsWith("!")) {
                 arg = arg.substring(1);
@@ -364,8 +469,8 @@ public class IfCommand extends BracedCommand {
             }
             try {
                 comparable.operator = Comparable.Operator.valueOf(arg.toUpperCase());
-                comparable.setComparable(tagme(0, scriptEntry));
-                comparable.setComparedto(tagme(2, scriptEntry));
+                comparable.setComparable(tagme(0).toString());
+                comparable.setComparedto(tagme(2).toString());
                 boolean outcome = comparable.determineOutcome();
                 dB.echoDebug(scriptEntry, comparable.toString());
                 return outcome;

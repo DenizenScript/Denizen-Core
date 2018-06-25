@@ -683,7 +683,7 @@ public class Duration implements dObject {
         }
 
         // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this)) {
+        for (Property property : PropertyParser.getProperties(this, attrLow)) {
             String returned = property.getAttribute(attribute);
             if (returned != null) {
                 return returned;

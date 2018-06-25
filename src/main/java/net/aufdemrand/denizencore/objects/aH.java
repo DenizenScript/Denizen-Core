@@ -1,10 +1,12 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,17 +66,66 @@ public class aH {
     // Argument Object
     //////////////////
 
-    public static class Argument {
+    public static class Argument implements Cloneable {
+
+        @Override
+        public Argument clone() {
+            try {
+                return (Argument) super.clone();
+            }
+            catch (CloneNotSupportedException ex) {
+                dB.echoError(ex);
+                return null;
+            }
+        }
 
         public String raw_value;
-        String prefix = null;
+        public String prefix = null;
         String lower_prefix = null;
         String value;
         String lower_value;
-        boolean has_prefix = false;
 
-        // Construction
-        public Argument(String string) {
+        public dObject object = null;
+
+        public boolean needsFill = false;
+
+        public String generateRaw() {
+            return prefix == null ? value : prefix + ":" + value;
+        }
+
+        public Argument(String prefix, String value) {
+            this.prefix = prefix;
+            this.value = value;
+            if (prefix != null) {
+                if (prefix.equals("no_prefix")) {
+                    this.prefix = null;
+                    raw_value = value;
+                }
+                else {
+                    raw_value = prefix + ":" + value;
+                    lower_prefix = CoreUtilities.toLowerCase(prefix);
+                }
+            }
+            else {
+                raw_value = value;
+            }
+            lower_value = CoreUtilities.toLowerCase(value);
+            object = new Element(value);
+        }
+
+        public Argument(dObject obj) {
+            object = obj;
+            if (obj instanceof Element) {
+                fillStr(obj.toString());
+            }
+            else {
+                raw_value = obj.toString(); // TODO: Avoid for non-elements
+                value = raw_value;
+                lower_value = CoreUtilities.toLowerCase(value);
+            }
+        }
+
+        void fillStr(String string) {
             raw_value = string;
 
             int first_colon = string.indexOf(':');
@@ -82,22 +133,27 @@ public class aH {
 
             if ((first_space > -1 && first_space < first_colon) || first_colon == -1) {
                 value = string;
-                lower_value = CoreUtilities.toLowerCase(string);
+                if (object == null) {
+                    object = new Element(value);
+                }
             }
             else {
-                has_prefix = true;
-                List<String> split = CoreUtilities.split(string, ':', 2);
-                prefix = split.get(0);
-                lower_prefix = CoreUtilities.toLowerCase(prefix);
-                if (split.size() == 2) {
-                    value = split.get(1);
+                prefix = string.substring(0, first_colon);
+                if (prefix.equals("no_prefix")) {
+                    prefix = null;
                 }
                 else {
-                    value = "";
+                    lower_prefix = CoreUtilities.toLowerCase(prefix);
                 }
-                lower_value = CoreUtilities.toLowerCase(value);
+                value = string.substring(first_colon + 1);
+                object = new Element(value);
             }
+            lower_value = CoreUtilities.toLowerCase(value);
+        }
 
+        // Construction
+        public Argument(String string) {
+            fillStr(string);
         }
 
 
@@ -112,7 +168,7 @@ public class aH {
 
 
         public boolean hasPrefix() {
-            return has_prefix;
+            return prefix != null;
         }
 
 
@@ -132,6 +188,10 @@ public class aH {
                 }
             }
             return false;
+        }
+
+        public boolean matchesOne(String value) {
+            return CoreUtilities.toLowerCase(value).equals(lower_value);
         }
 
         public boolean matches(String... values) {
@@ -154,30 +214,56 @@ public class aH {
             return value;
         }
 
+        public dList getList() {
+            if (object instanceof dList) {
+                return (dList) object;
+            }
+            return dList.valueOf(value);
+        }
 
-        public boolean matchesEnum(Enum<?>[] values) {
-            for (Enum<?> value : values) {
-                if (value.name().replace("_", "").equalsIgnoreCase(this.value.replace("_", ""))) {
+        public static HashSet<String> precalcEnum(Enum<?>[] values) {
+            HashSet<String> toRet = new HashSet<String>(values.length);
+            for (int i = 0; i < values.length; i++) {
+                toRet.add(values[i].name().toUpperCase().replace("_", ""));
+            }
+            return toRet;
+        }
+
+        public boolean matchesEnum(HashSet<String> values) {
+            String upper = value.replace("_", "").toUpperCase();
+            return values.contains(upper);
+        }
+
+        public boolean matchesEnumList(HashSet<String> values) {
+            dList list = getList();
+            for (String string : list) {
+                String tval = string.replace("_", "").toUpperCase();
+                if (values.contains(tval)) {
                     return true;
                 }
             }
-
+            return false;
+        }
+        public boolean matchesEnum(Enum<?>[] values) {
+            String upper = value.replace("_", "").toUpperCase();
+            for (Enum<?> value : values) {
+                if (value.name().replace("_", "").equals(upper)) {
+                    return true;
+                }
+            }
             return false;
         }
 
-
-        // Check if this argument matches a dList of Enum values
         public boolean matchesEnumList(Enum<?>[] values) {
-            dList list = dList.valueOf(this.value);
-
+            dList list = getList();
             for (String string : list) {
+                String tval = string.replace("_", "").toUpperCase();
                 for (Enum<?> value : values) {
-                    if (value.name().replace("_", "").equalsIgnoreCase(string.replace("_", ""))) {
+                    if (value.name().replace("_", "").equalsIgnoreCase(tval)) {
                         return true;
                     }
                 }
             }
-
             return false;
         }
 
@@ -193,6 +279,13 @@ public class aH {
                 }
             }
             return false;
+        }
+
+        public boolean matchesOnePrefix(String value) {
+            if (!hasPrefix()) {
+                return false;
+            }
+            return CoreUtilities.toLowerCase(value).equals(lower_prefix);
         }
 
         public boolean matchesPrefix(String... values) {
@@ -242,7 +335,7 @@ public class aH {
 
         // Check if this argument matches a certain dObject type
         public boolean matchesArgumentType(Class<? extends dObject> dClass) {
-            return ObjectFetcher.checkMatch(dClass, value);
+            return CoreUtilities.canPossiblyBeType(object, dClass);
         }
 
 
@@ -262,22 +355,25 @@ public class aH {
         // Check if this argument matches a dList of a certain dObject
         public boolean matchesArgumentList(Class<? extends dObject> dClass) {
 
-            dList list = dList.valueOf(this.value);
+            dList list = getList();
 
             return list.isEmpty() || list.containsObjectsFrom(dClass);
         }
 
 
         public Element asElement() {
+            if (object instanceof Element) {
+                return (Element) object;
+            }
             return new Element(prefix, value);
         }
 
 
         public <T extends dObject> T asType(Class<T> clazz) {
-            dObject arg = ObjectFetcher.getObjectFrom(clazz, value);
+            T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(null));
             if (arg != null) {
                 arg.setPrefix(prefix);
-                return clazz.cast(arg);
+                return arg;
             }
             return null;
         }
@@ -298,6 +394,33 @@ public class aH {
     // Static Methods
     ///////////////
 
+    public static List<Argument> interpretObjects(List<dObject> args) {
+        List<Argument> arg_list = new ArrayList<Argument>(args.size());
+        for (dObject obj : args) {
+            arg_list.add(new Argument(obj));
+        }
+        return arg_list;
+    }
+
+    public static List<String> specialInterpretTrickStrings = null;
+
+    public static List<Argument> specialInterpretTrickObjects = null;
+
+    public static List<Argument> interpretArguments(List<Argument> args) {
+        for (Argument arg : args) {
+            if (arg.needsFill) {
+                if (arg.object instanceof Element && arg.prefix == null) {
+                    arg.fillStr(arg.object.toString());
+                }
+                else {
+                    arg.value = arg.object.toString();
+                    arg.lower_value = CoreUtilities.toLowerCase(arg.value);
+                    arg.raw_value = arg.generateRaw();
+                }
+            }
+        }
+        return args;
+    }
 
     /**
      * Turns a list of string arguments (separated by buildArgs) into Argument
@@ -307,7 +430,10 @@ public class aH {
      * @return a list of Arguments
      */
     public static List<Argument> interpret(List<String> args) {
-        List<Argument> arg_list = new ArrayList<Argument>();
+        if (args == specialInterpretTrickStrings) {
+            return interpretArguments(specialInterpretTrickObjects);
+        }
+        List<Argument> arg_list = new ArrayList<Argument>(args.size());
         for (String string : args) {
             arg_list.add(new Argument(string));
         }

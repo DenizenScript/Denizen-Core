@@ -207,28 +207,37 @@ public class ScriptContainer implements Debuggable {
     }
 
 
+    public ScriptEntrySet baseEntries = null;
+
     public List<ScriptEntry> getBaseEntries(ScriptEntryData data) {
-        return getEntries(data, "script");
+        if (baseEntries == null) {
+            baseEntries = getSetFor("script");
+        }
+        return cleanDup(data, baseEntries);
+    }
+
+    public static List<ScriptEntry> cleanDup(ScriptEntryData data, ScriptEntrySet set) {
+        if (set == null) {
+            return new ArrayList<ScriptEntry>();
+        }
+        set = set.duplicate();
+        for (ScriptEntry entry : set.entries) {
+            entry.entryData = data.clone();
+        }
+        return set.entries;
     }
 
     public List<ScriptEntry> getEntries(ScriptEntryData data, String path) {
         if (path == null) {
             path = "script";
         }
-        ScriptEntrySet set = getSetFor(path.toUpperCase());
-        if (set == null) {
-            return new ArrayList<ScriptEntry>();
-        }
-        for (ScriptEntry entry : set.getEntries()) {
-            entry.entryData = data.clone();
-        }
-        return set.getEntries();
+        return cleanDup(data, getSetFor(path));
     }
 
-    ScriptEntrySet getSetFor(String path) {
+    public ScriptEntrySet getSetFor(String path) {
         ScriptEntrySet got = scriptsMap.get(path);
         if (got != null) {
-            return got.Duplicate();
+            return got;
         }
         List<Object> stringEntries = contents.getList(path);
         if (stringEntries == null || stringEntries.size() == 0) {
@@ -237,7 +246,7 @@ public class ScriptContainer implements Debuggable {
         List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(stringEntries, this, null);
         got = new ScriptEntrySet(entries);
         scriptsMap.put(path, got);
-        return got.Duplicate();
+        return got;
     }
 
     private Map<String, ScriptEntrySet> scriptsMap = new HashMap<String, ScriptEntrySet>();
@@ -252,7 +261,7 @@ public class ScriptContainer implements Debuggable {
     @Override
     public boolean shouldDebug() {
         if (shouldDebug == null) {
-            shouldDebug = (!(contents.contains("DEBUG") && contents.getString("DEBUG").equalsIgnoreCase("false")));
+            shouldDebug = (!(contents.contains("debug") && contents.getString("debug").equalsIgnoreCase("false")));
         }
         return shouldDebug;
     }

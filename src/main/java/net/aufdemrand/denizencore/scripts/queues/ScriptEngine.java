@@ -45,7 +45,7 @@ public class ScriptEngine {
             getScriptExecuter().execute(scriptEntry);
         }
         catch (Throwable e) {
-            dB.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command!");
+            dB.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
             dB.echoError(scriptEntry.getResidingQueue(), e);
         }
         scriptQueue.setLastEntryExecuted(scriptEntry);
@@ -71,7 +71,7 @@ public class ScriptEngine {
             }
             // Absolutely NO errors beyond this point!
             catch (Throwable e) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while revolving the queue)!");
                 dB.echoError(scriptEntry.getResidingQueue(), e);
             }
             // Set as last entry executed
@@ -85,10 +85,16 @@ public class ScriptEngine {
                 if (((Delayable) scriptQueue).isPaused()) {
                     break;
                 }
+                if (((Delayable) scriptQueue).isInstantSpeed() || scriptEntry.isInstant()) {
+                    if (shouldHold(scriptQueue)) {
+                        return;
+                    }
+                    scriptEntry = scriptQueue.getNext();
+                }
             }
 
             // If the entry is instant, and not injected, get the next Entry
-            if (scriptEntry.isInstant()) {
+            else if (scriptEntry.isInstant()) {
                 // If it's holding, even if it's instant, just stop and wait
                 if (shouldHold(scriptQueue)) {
                     return;

@@ -1,33 +1,76 @@
 package net.aufdemrand.denizencore.tags;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Attribute {
 
-    private static List<String> separate_attributes(String attributes) {
+    public static class AttributeComponent {
 
-        List<String> matches = new ArrayList<String>();
+        public final String rawKey;
+
+        public final String key;
+
+        public final String context;
+
+        public AttributeComponent(String inp) {
+            if (inp.endsWith("]") && inp.contains("[")) {
+                int ind = inp.indexOf('[');
+                rawKey = inp.substring(0, ind);
+                context = inp.substring(ind + 1, inp.length() - 1);
+            }
+            else {
+                rawKey = inp;
+                context = null;
+            }
+            key = CoreUtilities.toLowerCase(rawKey);
+        }
+
+        @Override
+        public String toString() {
+            if (context != null) {
+                return key + "[" + context + "]";
+            }
+            return key;
+        }
+    }
+
+    private static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<String, AttributeComponent[]>();
+
+    private static AttributeComponent[] separate_attributes(String attributes) {
+
+        AttributeComponent[] matchesRes = attribsLookup.get(attributes);
+
+        if (matchesRes != null) {
+            return matchesRes;
+        }
+
+        ArrayList<AttributeComponent> matches = new ArrayList<AttributeComponent>();
 
         int x1 = 0, x2 = -1;
         int braced = 0;
 
-        for (int x = 0; x < attributes.length(); x++) {
+        char[] attrInp = attributes.toCharArray();
 
-            Character chr = attributes.charAt(x);
+        for (int x = 0; x < attrInp.length; x++) {
+
+            Character chr = attrInp[x];
 
             if (chr == '[') {
                 braced++;
             }
 
-            else if (x == attributes.length() - 1) {
+            else if (x == attrInp.length - 1) {
                 x2 = x + 1;
             }
 
@@ -38,33 +81,47 @@ public class Attribute {
             }
 
             else if (chr == '.'
-                    && !(attributes.charAt(x + 1) >= '0' && attributes.charAt(x + 1) <= '9')
+                    && !(attrInp[x + 1] >= '0' && attrInp[x + 1] <= '9')
                     && braced == 0) {
                 x2 = x;
             }
 
             if (x2 > -1) {
-                matches.add(attributes.substring(x1, x2));
+                matches.add(new AttributeComponent(attributes.substring(x1, x2)));
                 x2 = -1;
                 x1 = x + 1;
             }
 
         }
 
-        return matches;
+        matchesRes = new AttributeComponent[matches.size()];
+        matchesRes = matches.toArray(matchesRes);
+
+        attribsLookup.put(attributes, matchesRes);
+
+        return matchesRes;
     }
 
-    public List<String> attributes;
-    public List<String> contexts;
-    public List<String> original_attributes;
-    public List<String> original_contexts;
+    public AttributeComponent[] attributes;
+    public dObject[] contexts;
 
     ScriptEntry scriptEntry;
     public TagContext context;
 
-    public String raw_tag;
-    public String raw_tag_low;
+    private String raw_tag;
+    private String raw_tag_low;
+    private int rawtaglen = -1;
     String origin;
+
+    public String getRawTag() {
+        rebuild_raw_tag();
+        return raw_tag;
+    }
+
+    public String getRawTagLow() {
+        rebuild_raw_tag();
+        return raw_tag_low;
+    }
 
     public ScriptEntry getScriptEntry() {
         return scriptEntry;
@@ -74,43 +131,52 @@ public class Attribute {
         return origin;
     }
 
+    public Attribute(Attribute ref, ScriptEntry scriptEntry, TagContext context) {
+        origin = ref.origin;
+        this.scriptEntry = scriptEntry;
+        this.context = context;
+        attributes = ref.attributes;
+        contexts = new dObject[attributes.length];
+    }
+
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
-        raw_tag = attributes;
-        raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
         origin = attributes;
         this.scriptEntry = scriptEntry;
         this.context = context;
-
-        if (attributes == null) {
-            this.attributes = Collections.emptyList();
-            return;
-        }
-
         this.attributes = separate_attributes(attributes);
-        contexts = new ArrayList<String>(this.attributes.size());
-        for (int i = 0; i < this.attributes.size(); i++) {
-            contexts.add(null);
-        }
-        original_attributes = new ArrayList<String>(this.attributes);
-        original_contexts = new ArrayList<String>(contexts);
+        contexts = new dObject[this.attributes.length];
     }
 
     public boolean matches(String string) {
-        if (attributes.isEmpty()) {
+        if (fulfilled >= attributes.length) {
             return false;
         }
-        String attr = attributes.get(0);
-        if (attr.contains("[") && attr.endsWith("]")) {
-            attr = attr.substring(0, attr.indexOf('['));
-        }
-        return attr.equalsIgnoreCase(string);
+        return attributes[fulfilled].key.equalsIgnoreCase(string);
     }
 
     public boolean startsWith(String string) {
-        if (attributes.isEmpty()) {
+        if (fulfilled >= attributes.length) {
             return false;
         }
-        return raw_tag_low.startsWith(string);
+        if (string.contains(".")) {
+            if (dB.verbose) {
+                dB.log("Trying tag startsWIth " + string + " on tag " + raw_tag);
+            }
+            List<String> tmp = CoreUtilities.split(string, '.');
+            if (tmp.size() + fulfilled > attributes.length) {
+                return false;
+            }
+            for (int i = 0; i < tmp.size(); i++) {
+                if (!attributes[fulfilled + i].equals(tmp.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+            // TODO: ...? This should probably just never happen.
+            //rebuild_raw_tag();
+            //return raw_tag_low.startsWith(string);
+        }
+        return attributes[fulfilled].key.startsWith(string);
     }
 
     public boolean startsWith(String string, int attribute) {
@@ -119,59 +185,61 @@ public class Attribute {
 
     int fulfilled = 0;
 
+    public boolean isComplete() {
+        return fulfilled >= attributes.length;
+    }
+
     public Attribute fulfill(int attributes) {
-        for (int x = attributes; x > 0; x--) {
-            this.attributes.remove(0);
-            this.contexts.remove(0);
-            fulfilled++;
-        }
-        rebuild_raw_tag();
+        fulfilled += attributes;
         return this;
     }
 
-    private void rebuild_raw_tag() { // TODO: Make this unneeded!
-        if (attributes.size() == 0) {
+    private void rebuild_raw_tag() {
+        if (attributes.length == 0) {
             raw_tag = "";
             raw_tag_low = "";
             return;
         }
+        if (fulfilled == rawtaglen) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
-        for (String attribute : attributes) {
-            sb.append(attribute).append(".");
+        for (AttributeComponent attribute : attributes) {
+            sb.append(attribute.toString()).append(".");
         }
         raw_tag = sb.toString();
         if (raw_tag.length() > 1) {
             raw_tag = raw_tag.substring(0, raw_tag.length() - 1);
         }
         raw_tag_low = CoreUtilities.toLowerCase(raw_tag);
+        rawtaglen = fulfilled;
     }
 
-    public static Pattern CONTEXT_PATTERN = Pattern.compile("\\[.*\\]$", Pattern.DOTALL | Pattern.MULTILINE);
-
     public boolean hasContext(int attribute) {
-        String text = getAttribute(attribute);
-        return text.endsWith("]") && text.contains("[");
+        attribute += fulfilled - 1;
+        if (attribute < 0 || attribute >= attributes.length) {
+            return false;
+        }
+        return attributes[attribute].context != null;
+    }
+
+    public dObject getContextObject(int attribute) {
+        attribute += fulfilled - 1;
+        if (attribute < 0 || attribute >= attributes.length) {
+            return null;
+        }
+        dObject tagged = contexts[attribute];
+        if (tagged != null) {
+            return tagged;
+        }
+        String inp = attributes[attribute].context;
+        tagged = TagManager.tagObject(inp, context);
+        contexts[attribute] = tagged;
+        return tagged;
     }
 
     public String getContext(int attribute) {
-        if (attribute <= attributes.size() && attribute > 0 && hasContext(attribute)) {
-
-            String text = getAttribute(attribute);
-            if (contexts.get(attribute - 1) != null) {
-                return contexts.get(attribute - 1);
-            }
-            Matcher contextMatcher = CONTEXT_PATTERN.matcher(text);
-
-            if (contextMatcher.find()) {
-                String tagged = TagManager.cleanOutputFully(TagManager.tag(
-                        text.substring(contextMatcher.start() + 1, contextMatcher.end() - 1),
-                        context));
-                contexts.set(attribute - 1, tagged);
-                original_contexts.set(attribute - 1 + fulfilled, tagged);
-                return tagged;
-            }
-        }
-        return null;
+        return CoreUtilities.stringifyNullPass(getContextObject(attribute));
     }
 
     private boolean hadAlternative = false;
@@ -208,40 +276,46 @@ public class Attribute {
     }
 
     public String getAttribute(int num) {
-        if (attributes.size() < num || num <= 0) {
+        num += fulfilled - 1;
+        if (num < 0 || num >= attributes.length) {
             return "";
         }
-        else {
-            return attributes.get(num - 1);
-        }
+        return attributes[num].toString();
     }
 
     public String getAttributeWithoutContext(int num) {
-        if (attributes.size() < num || num <= 0) {
+        num += fulfilled - 1;
+        if (num < 0 || num >= attributes.length) {
             return "";
         }
-        else {
-            String str = attributes.get(num - 1);
-            int brack = str.indexOf('[');
-            if (brack >= 0) {
-                return str.substring(0, brack);
+        return CoreUtilities.toLowerCase(attributes[num].key);
+    }
+
+    public String unfilledString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = fulfilled; i < attributes.length; i++) {
+            if (contexts[i] != null) {
+                sb.append(attributes[i].key).append("[").append(contexts[i]).append("].");
             }
             else {
-                return str;
+                sb.append(attributes[i].toString()).append(".");
             }
         }
+        if (sb.length() > 0) {
+            return sb.substring(0, sb.length() - 1);
+        }
+        return "";
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < original_attributes.size(); i++) {
-            if (original_contexts.get(i) != null) {
-                sb.append(original_attributes.get(i).substring(0, original_attributes.get(i).indexOf('[')))
-                        .append("[").append(original_contexts.get(i)).append("].");
+        for (int i = 0; i < attributes.length; i++) {
+            if (contexts[i] != null) {
+                sb.append(attributes[i].key).append("[").append(contexts[i]).append("].");
             }
             else {
-                sb.append(original_attributes.get(i)).append(".");
+                sb.append(attributes[i].toString()).append(".");
             }
         }
         if (sb.length() > 0) {

@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
@@ -11,6 +12,8 @@ import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
+import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -24,52 +27,103 @@ import java.util.*;
  */
 public class ScriptEntry implements Cloneable, Debuggable {
 
-    // The name of the command that will be executed
-    private String command;
-    private AbstractCommand actualCommand;
+    public static class ScriptEntryInternal {
 
-    // Command Arguments
-    private List<String> args;
-    private List<String> pre_tagged_args;
-    private List<String> modified_arguments;
+        public String command = null;
 
-    // TimedQueue features
-    private boolean instant = false;
-    private boolean waitfor = false;
+        public AbstractCommand actualCommand = null;
 
-    // 'Attached' core context
-    public ScriptEntryData entryData;
-    private dScript script = null;
+        public List<String> pre_tagged_args = null;
+
+        public List<BracedCommand.BracedData> bracedSet = null;
+
+        public List<Argument> args_ref = null;
+
+        public dScript script = null;
+
+        public List<Object> insideList = null;
+
+        public boolean instant = false;
+
+        public boolean waitfor = false;
+
+        public boolean hasTags = false;
+
+        public boolean hasInstantTags = false;
+
+        public boolean hasOldDefs = false;
+
+        public int[] processArgs = null;
+
+        public List<aH.Argument> preprocArgs = null;
+    }
+
+    public static class Argument {
+
+        public String prefix = null;
+
+        public List<TagManager.ParseableTagPiece> value = null;
+
+        public aH.Argument aHArg = null;
+    }
+
+    public List<Argument> args_cur = null;
+
+    public List<aH.Argument> aHArgs = null;
+
+    public List<String> args = null;
+
+    public List<dObject> processed_arguments = null;
+
+    public ScriptEntryData entryData = null;
+
     private ScriptQueue queue = null;
 
-    private List<BracedCommand.BracedData> bracedSet = null;
+    public ScriptEntryInternal internal = null;
 
     public List<BracedCommand.BracedData> getBracedSet() {
-        return bracedSet;
+        return internal.bracedSet;
     }
 
     public void setBracedSet(List<BracedCommand.BracedData> set) {
-        bracedSet = set;
+        internal.bracedSet = set;
     }
 
-    // ScriptEntry Context
     private Map<String, Object> objects = new HashMap<String, Object>();
 
+    public void regenerateArgsCur() {
+        args_cur = new ArrayList<Argument>(internal.args_ref);
+        for (int i = 0; i < args_cur.size(); i++) {
+            Argument arg = args_cur.get(i);
+            arg.value = new ArrayList<TagManager.ParseableTagPiece>(arg.value);
+            arg.aHArg = aHArgs.get(i);
+        }
+    }
 
-    // Allow cloning of the scriptEntry. Can be useful in 'loops', etc.
+    public final static aH.Argument NULL_ARGUMENT = new aH.Argument("null_trick", "null_trick");
+
+    public void generateAHArgs() {
+        aHArgs = new ArrayList<aH.Argument>(internal.args_ref.size());
+        for (int i = 0; i < internal.args_ref.size(); i++) {
+            aHArgs.add(NULL_ARGUMENT);
+        }
+        for (int i : internal.processArgs) {
+            Argument arg = internal.args_ref.get(i);
+            aHArgs.set(i, arg.aHArg.needsFill ? arg.aHArg.clone() : arg.aHArg);
+        }
+    }
+
     @Override
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
         se.objects = new HashMap<String, Object>();
-        se.modified_arguments = new ArrayList<String>(modified_arguments);
+        se.processed_arguments = processed_arguments == null ? null : new ArrayList<dObject>(processed_arguments);
         se.entryData = entryData.clone();
         return se;
     }
 
-    private List<Object> insideList;
-
     public List<Object> getInsideList() {
-        return insideList;
+        return internal.insideList;
     }
 
 
@@ -87,92 +141,136 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
-
         if (command == null) {
             throw new ScriptEntryCreationException("dCommand 'name' cannot be null!");
         }
-
+        internal = new ScriptEntryInternal();
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
-
-        this.command = command.toUpperCase();
-
-        insideList = insides;
-
-        // Knowing which script created this entry provides important context. We'll store
-        // a dScript object of the container if script is not null.
-        // Side note: When is script ever null? Think about situations such as the /ex command,
-        // in which a single script entry is created and sent to be executed.
+        internal.command = command.toUpperCase();
+        internal.insideList = insides;
         if (script != null) {
-            this.script = script.getAsScriptArg();
+            internal.script = script.getAsScriptArg();
         }
-
-        // Check if this is an 'instant' or 'waitfor' command. These are
-        // features that are used with 'TimedScriptQueues'
         if (command.length() > 0) {
             if (command.charAt(0) == '^') {
-                instant = true;
-                this.command = command.substring(1).toUpperCase();
+                internal.instant = true;
+                internal.command = command.substring(1);
             }
             else if (command.charAt(0) == '~') {
-                this.command = command.substring(1).toUpperCase();
-                // Make sure this command can be 'waited for'
-                if (DenizenCore.getCommandRegistry().get(this.command)
-                        instanceof Holdable) {
-                    waitfor = true;
+                internal.command = command.substring(1);
+                if (DenizenCore.getCommandRegistry().get(internal.command) instanceof Holdable) {
+                    internal.waitfor = true;
                 }
                 else {
-                    dB.echoError("The command '" + this.command + "' cannot be waited for!");
+                    dB.echoError("The command '" + internal.command + "' cannot be waited for!");
                 }
             }
-            actualCommand = DenizenCore.getCommandRegistry().get(this.command);
+            internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
         }
         else {
-            actualCommand = null;
+            internal.actualCommand = null;
         }
-
-        // Store the args. The CommandExecuter will fill these out.
         if (arguments != null) {
-            this.args = Arrays.asList(arguments);
-            // Keep seperate list for 'un-tagged' copy of the arguments.
-            // This will be useful if cloning the script entry for use in a loop, etc.
-            this.pre_tagged_args = Arrays.asList(arguments);
-            this.modified_arguments = Arrays.asList(arguments);
-        }
-        else {
-            this.args = new ArrayList<String>();
-            this.pre_tagged_args = new ArrayList<String>();
-            this.modified_arguments = new ArrayList<String>();
-        }
-
-        // Check for replaceable tags. We'll try not to make a habit of checking for tags/doing
-        // tag stuff if the script entry doesn't have any to begin with.
-        argLoop:
-        for (String arg : args) {
-            boolean left = false, right = false;
-            for (int i = 0; i < arg.length(); i++) {
-                char c = arg.charAt(i);
-                if (c == '<') {
-                    left = true;
+            args = new ArrayList<String>(arguments.length);
+            internal.preprocArgs = new ArrayList<aH.Argument>();
+            for (String arg : arguments) {
+                String parg = arg;
+                String after = null;
+                if (parg.endsWith("{") && !parg.equals("{")) {
+                    after = "{";
+                    parg = parg.substring(0, parg.length() - 1);
+                    dB.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
                 }
-                if (c == '>') {
-                    right = true;
+                aH.Argument argObj = new aH.Argument(arg);
+                if (argObj.hasPrefix()) {
+                    if (argObj.matchesOnePrefix("unparsed")) {
+                        args.add(TagManager.escapeOutput(argObj.getValue()));
+                    }
+                    else if (argObj.matchesOnePrefix("save") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
+                        internal.preprocArgs.add(argObj);
+                    }
+                    else {
+                        args.add(arg);
+                    }
                 }
-                if (left && right) {
-                    has_tags = true;
-                    break argLoop;
+                else {
+                    args.add(parg);
+                }
+                if (after != null) {
+                    args.add(after);
                 }
             }
+            internal.pre_tagged_args = new ArrayList<String>(args);
+            int nested_depth = 0;
+            TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
+            internal.args_ref = new ArrayList<Argument>(args.size());
+            List<Integer> tempProcessArgs = new ArrayList<Integer>();
+            for (int i = 0; i < args.size(); i++) {
+                String arg = args.get(i);
+                internal.args_ref.add(null);
+                if (arg.equals("{")) {
+                    nested_depth++;
+                    continue;
+                }
+                if (arg.equals("}")) {
+                    nested_depth--;
+                    continue;
+                }
+                if (nested_depth > 0) {
+                    continue;
+                }
+                tempProcessArgs.add(i);
+                int colon = arg.indexOf(':');
+                int space = arg.indexOf(' ');
+                Argument argVal = new Argument();
+                internal.args_ref.set(i, argVal);
+                if (colon > 0 && (space == -1 || space > colon)) {
+                    argVal.prefix = arg.substring(0, colon);
+                    arg = arg.substring(colon + 1);
+                }
+                internal.args_ref.get(i).value = TagManager.genChain(arg, refContext);
+                if (arg.indexOf('%') != 0) {
+                    internal.hasOldDefs = true;
+                }
+                boolean isTag = false;
+                int indStart = arg.indexOf('<');
+                if (indStart >= 0) {
+                    int indEnd = arg.indexOf('>');
+                    if (indEnd > indStart) {
+                        isTag = true;
+                        internal.hasTags = true;
+                        char c = arg.charAt(indStart + 1);
+                        if (c == '!' || c == '^') {
+                            internal.hasInstantTags = true;
+                        }
+                    }
+                }
+                argVal.aHArg = new aH.Argument(argVal.prefix, arg);
+                argVal.aHArg.needsFill = isTag;
+            }
+            internal.processArgs = new int[tempProcessArgs.size()];
+            for (int i = 0; i < tempProcessArgs.size(); i++) {
+                internal.processArgs[i] = tempProcessArgs.get(i);
+            }
+            objectify();
         }
-
-        if (actualCommand != null && actualCommand instanceof BracedCommand) {
-            BracedCommand.getBracedCommands(this);
+        else {
+            args = new ArrayList<String>();
+            internal.preprocArgs = new ArrayList<aH.Argument>();
+            internal.pre_tagged_args = new ArrayList<String>();
+            internal.processArgs = new int[0];
+            internal.args_ref = new ArrayList<Argument>();
+            processed_arguments = new ArrayList<dObject>();
+        }
+        if (internal.actualCommand != null) {
+            if (internal.actualCommand.getOptions().REQUIRED_ARGS > args.size()) {
+                broken = true;
+            }
+            if (internal.actualCommand instanceof BracedCommand) {
+                BracedCommand.getBracedCommands(this);
+            }
         }
     }
-
-
-    // As explained, this is really just a micro-performance enhancer
-    public boolean has_tags = false;
-
 
     /**
      * Adds a context object to the script entry. Just provide a key and an object.
@@ -238,31 +336,45 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @return unmodified arguments from entry creation
      */
     public List<String> getOriginalArguments() {
-        return pre_tagged_args;
+        return internal.pre_tagged_args;
     }
-
-    public List<String> modifiedArguments() {
-        return modified_arguments;
-    }
-
 
     public String getCommandName() {
-        return command;
+        return internal.command;
     }
 
     public AbstractCommand getCommand() {
-        return actualCommand;
+        return internal.actualCommand;
     }
 
+    public boolean broken = false;
+
+    public void setArgument(int ind, String val) {
+        args.set(ind, val);
+        if (processed_arguments != null) {
+            processed_arguments.set(ind, new Element(val));
+        }
+    }
 
     public ScriptEntry setArguments(List<String> arguments) {
         args = arguments;
         return this;
     }
 
+    public ScriptEntry setArgumentsObjects(List<dObject> arguments) {
+        processed_arguments = arguments;
+        args = new ArrayList<String>(arguments.size()); // TODO: Placeholder! Remove old string args entirely!
+        for (dObject tmp : arguments) {
+            args.add(TagManager.escapeOutput(tmp.toString()));
+        }
+        return this;
+    }
 
-    public void setCommandName(String commandName) {
-        this.command = commandName;
+    public void objectify() {
+        processed_arguments = new ArrayList<dObject>(args.size());
+        for (String arg : args) {
+            processed_arguments.add(new Element(arg));
+        }
     }
 
     private ScriptEntry owner = null;
@@ -302,7 +414,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public Object getObject(String key) {
         try {
-            return objects.get(CoreUtilities.toLowerCase(key));
+            return objects.get(key);
         }
         catch (Exception e) {
             return null;
@@ -312,7 +424,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public <T extends dObject> T getdObject(String key) {
         try {
             // If an ENUM, return as an Element
-            Object gotten = objects.get(CoreUtilities.toLowerCase(key));
+            Object gotten = objects.get(key);
             if (gotten instanceof Enum) {
                 return (T) new Element(((Enum) gotten).name());
             }
@@ -327,7 +439,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public Element getElement(String key) {
         try {
-            return (Element) objects.get(CoreUtilities.toLowerCase(key));
+            return (Element) objects.get(key);
         }
         catch (Exception e) {
             return null;
@@ -336,7 +448,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
 
     public boolean hasObject(String key) {
-        return objects.containsKey(CoreUtilities.toLowerCase(key));
+        return objects.containsKey(key);
     }
 
     /////////////
@@ -344,12 +456,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
     ///////
 
     public dScript getScript() {
-        return script;
+        return internal.script;
     }
 
 
     public ScriptEntry setScript(String scriptName) {
-        this.script = dScript.valueOf(scriptName);
+        internal.script = dScript.valueOf(scriptName);
         return this;
     }
 
@@ -368,23 +480,27 @@ public class ScriptEntry implements Cloneable, Debuggable {
     /////////
 
 
+    public boolean forceInstant = false;
+
     public boolean isInstant() {
-        return instant;
+        return internal.instant || forceInstant;
     }
 
 
     public ScriptEntry setInstant(boolean instant) {
-        this.instant = instant;
+        forceInstant = instant;
         return this;
     }
 
+    public boolean isFinished = false;
+
     public boolean shouldWaitFor() {
-        return waitfor;
+        return internal.waitfor && !isFinished;
     }
 
 
     public ScriptEntry setFinished(boolean finished) {
-        waitfor = !finished;
+        isFinished = finished;
         return this;
     }
 
@@ -410,17 +526,24 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public boolean fallbackDebug = true;
 
+    public Boolean shouldDebugBool = null;
+
     @Override
     public boolean shouldDebug() {
-        if (script == null || script.getContainer() == null) {
-            return fallbackDebug;
+        if (shouldDebugBool != null) {
+            return shouldDebugBool;
         }
-        return script.getContainer().shouldDebug();
+        if (internal.script == null || internal.script.getContainer() == null) {
+            shouldDebugBool = fallbackDebug;
+            return shouldDebugBool;
+        }
+        shouldDebugBool = internal.script.getContainer().shouldDebug();
+        return shouldDebugBool;
     }
 
     @Override
     public boolean shouldFilter(String criteria) throws Exception {
-        return script.getName().equalsIgnoreCase(criteria.replace("s@", ""));
+        return internal.script.getName().equalsIgnoreCase(criteria.replace("s@", ""));
     }
 
     @Override
@@ -429,6 +552,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         for (String str : getOriginalArguments()) {
             sb.append(" \"" + str + "\"");
         }
-        return command + sb.toString();
+        return internal.command + sb.toString();
     }
 }

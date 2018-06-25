@@ -63,168 +63,104 @@ public class CommandExecuter {
      */
 
     public boolean execute(ScriptEntry scriptEntry) {
-        StringBuilder output = new StringBuilder();
-        output.append(scriptEntry.getCommandName());
-        if (scriptEntry.getOriginalArguments() == null) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
-        }
-        else {
-            for (String arg : scriptEntry.getOriginalArguments()) {
-                output.append(" \"").append(arg).append("\"");
+        if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
+            StringBuilder output = new StringBuilder();
+            output.append(scriptEntry.getCommandName());
+            if (scriptEntry.getOriginalArguments() == null) {
+                dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
             }
-        }
-
-        dB.echoDebug(scriptEntry, "Queue '" + scriptEntry.getResidingQueue().id + "' Executing: " + output.toString());
-
-        Matcher m;
-        StringBuffer sb;
-        if (scriptEntry.getCommandName().indexOf('%') != -1) {
-            m = definition_pattern.matcher(scriptEntry.getCommandName());
-            sb = new StringBuffer();
-            while (m.find()) {
-                String definition = scriptEntry.getResidingQueue().getDefinition(m.group(1));
-                if (definition == null) {
-                    dB.echoError("Unknown definition %" + m.group(1) + "%.");
-                    definition = "null";
+            else {
+                for (String arg : scriptEntry.getOriginalArguments()) {
+                    output.append(" \"").append(arg).append("\"");
                 }
-                dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
-                m.appendReplacement(sb, Matcher.quoteReplacement(definition));
             }
-            m.appendTail(sb);
-            scriptEntry.setCommandName(sb.toString());
+            DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().id, output.toString());
+            DenizenCore.getImplementation().debugCommandHeader(scriptEntry);
         }
-
-        // Get the command instance ready for the execution of the scriptEntry
-        AbstractCommand command = scriptEntry.getCommand();
+        AbstractCommand command = scriptEntry.internal.actualCommand;
         if (command == null) {
-            command = DenizenCore.getCommandRegistry().get(scriptEntry.getCommandName());
+            command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
+            scriptEntry.internal.actualCommand = command;
+            if (command == null || command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size()) {
+                scriptEntry.broken = true;
+            }
         }
-
-        if (command == null) {
+        if (scriptEntry.broken) {
             dB.echoDebug(scriptEntry, DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
-            dB.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid dCommand! Are you sure it loaded?");
+            if (command == null) {
+                dB.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid dCommand! Are you sure it loaded?");
+            }
+            else {
+                dB.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?");
+            }
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             return false;
         }
-
-        DenizenCore.getImplementation().handleCommandSpecialCases(scriptEntry);
-
-        // Debugger information
-        DenizenCore.getImplementation().debugCommandHeader(scriptEntry);
-
-        // Don't execute() if problems arise in parseArgs()
-        boolean keepGoing = true;
-
         String saveName = null;
-
         try {
-
-            // Throw exception if arguments are required for this command, but not supplied.
-            if (command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size()) {
-                throw new InvalidArgumentsException("");
+            scriptEntry.generateAHArgs();
+            if (scriptEntry.internal.actualCommand.shouldPreParse() && scriptEntry.internal.hasInstantTags) {
+                scriptEntry.regenerateArgsCur();
+                scriptEntry.setArgumentsObjects(TagManager.fillArgumentsObjects(scriptEntry.processed_arguments,
+                        scriptEntry.args_cur, scriptEntry.aHArgs, true,
+                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs));
             }
-
-            if (scriptEntry.has_tags) {
-                scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
-                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, true))); // Replace tags
-            }
-
-            /*  If using NPC:# or PLAYER:Name arguments, these need to be changed out immediately because...
-             *  1) Denizen/Player flags need the desired NPC/PLAYER before parseArgs's getFilledArguments() so that
-             *     the Player/Denizen flags will read from the correct Object. If using PLAYER or NPCID arguments,
-             *     the desired Objects are obviously not the same objects that were sent with the ScriptEntry.
-             *  2) These arguments should be valid for EVERY ScriptCommand, so why not just take care of it
-             *     here, instead of requiring each command to take care of the argument.
-             */
-
-            List<String> newArgs = new ArrayList<String>();
-
-            // Don't fill in tags if there were brackets detected..
-            // This means we're probably in a nested if.
-            int nested_depth = 0;
-            int argn = 0;
-
-            for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
-                argn++;
-                if (arg.getValue().equals("{")) {
-                    nested_depth++;
-                }
-                if (arg.getValue().equals("}")) {
-                    nested_depth--;
-                }
-
-                // If nested, continue.
-                if (nested_depth > 0) {
-                    newArgs.add(arg.raw_value);
-                    continue;
-                }
-
-                if (arg.raw_value.indexOf('%') != -1) {
-                    m = definition_pattern.matcher(arg.raw_value);
-                    sb = new StringBuffer();
-                    while (m.find()) {
-                        String def = m.group(1);
-                        boolean dynamic = false;
-                        if (def.startsWith("|")) {
-                            def = def.substring(1, def.length() - 1);
-                            dynamic = true;
+            if (scriptEntry.internal.hasOldDefs) {
+                for (int argId : scriptEntry.internal.processArgs) {
+                    String arg = scriptEntry.args.get(argId);
+                    if (arg.indexOf('%') != -1) {
+                        Matcher m;
+                        StringBuffer sb;
+                        m = definition_pattern.matcher(arg);
+                        sb = new StringBuffer();
+                        while (m.find()) {
+                            String def = m.group(1);
+                            boolean dynamic = false;
+                            if (def.startsWith("|")) {
+                                def = def.substring(1, def.length() - 1);
+                                dynamic = true;
+                            }
+                            String definition;
+                            String defval = scriptEntry.getResidingQueue().getDefinition(def);
+                            if (dynamic) {
+                                definition = scriptEntry.getResidingQueue().getDefinition(def);
+                            }
+                            else {
+                                definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+                            }
+                            if (defval == null) {
+                                dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
+                                dB.log("(Attempted: " + scriptEntry.toString() + ")");
+                                definition = "null";
+                            }
+                            dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
+                            m.appendReplacement(sb, Matcher.quoteReplacement(definition));
                         }
-                        String definition;
-                        String defval = scriptEntry.getResidingQueue().getDefinition(def);
-                        if (dynamic) {
-                            definition = scriptEntry.getResidingQueue().getDefinition(def);
-                        }
-                        else {
-                            definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
-                        }
-                        if (defval == null) {
-                            dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
-                            dB.log("(Attempted: " + scriptEntry.toString() + ")");
-                            definition = "null";
-                        }
-                        dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
-                        m.appendReplacement(sb, Matcher.quoteReplacement(definition));
+                        m.appendTail(sb);
+                        scriptEntry.setArgument(argId, sb.toString());
                     }
-                    m.appendTail(sb);
-                    arg = aH.Argument.valueOf(sb.toString());
-                    scriptEntry.modifiedArguments().set(argn - 1, sb.toString());
                 }
-
+            }
+            for (aH.Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
-
-                // Save the scriptentry if needed later for fetching scriptentry context
-                else if (arg.matchesPrefix("save")) {
+                else if (arg.matchesOnePrefix("save")) {
                     saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                 }
-
-                else if (arg.matchesPrefix("unparsed")) {
-                    newArgs.add(TagManager.escapeOutput(arg.getValue()));
-                }
-
-                else if (!command.shouldPreParse()) {
-                    // Do nothing
-                }
-
-                else {
-                    newArgs.add(arg.raw_value);
-                }
             }
-
-            // Add the arguments back to the scriptEntry.
-            scriptEntry.setArguments(newArgs);
-
-            // Now process non-instant tags.
-            scriptEntry.setArguments(TagManager.fillArguments(scriptEntry.getArguments(),
-                    DenizenCore.getImplementation().getTagContextFor(scriptEntry, false))); // Replace tags
-
-            // Parse the rest of the arguments for execution.
+            if (scriptEntry.internal.actualCommand.shouldPreParse()) {
+                scriptEntry.setArgumentsObjects(TagManager.fillArgumentsObjects(scriptEntry.processed_arguments,
+                        scriptEntry.internal.hasInstantTags ? scriptEntry.args_cur : scriptEntry.internal.args_ref, scriptEntry.aHArgs, false,
+                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, false), scriptEntry.internal.processArgs));
+                // TODO: Fix this weird interpreter efficiency hack (remove string dependence)
+                aH.specialInterpretTrickStrings = scriptEntry.args;
+                aH.specialInterpretTrickObjects = scriptEntry.aHArgs;
+            }
             command.parseArgs(scriptEntry);
         }
         catch (InvalidArgumentsException e) {
-            keepGoing = false;
             // Give usage hint if InvalidArgumentsException was called.
             dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0) {
@@ -234,37 +170,30 @@ public class CommandExecuter {
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
+            return false;
         }
         catch (Exception e) {
-
-            keepGoing = false;
-            dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
+            dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while preparing it)!");
             dB.echoError(scriptEntry.getResidingQueue(), e);
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
+            return false;
         }
-        finally { // TODO: Why is this a finally block?
-
-            if (keepGoing) {
-                try {
-                    // Run the execute method in the command
-                    command.execute(scriptEntry);
-                    if (saveName != null) {
-                        scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
-                    }
-                }
-                catch (Exception e) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command!");
-                    dB.echoError(scriptEntry.getResidingQueue(), e);
-                    dB.log("(Attempted: " + scriptEntry.toString() + ")");
-                    dB.echoDebug(scriptEntry, DebugElement.Footer);
-                    scriptEntry.setFinished(true);
-                }
+        try {
+            command.execute(scriptEntry);
+            if (saveName != null) {
+                scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
             }
-
+            return true;
         }
-
-        return true;
+        catch (Exception e) {
+            dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command (while executing it)!");
+            dB.echoError(scriptEntry.getResidingQueue(), e);
+            dB.log("(Attempted: " + scriptEntry.toString() + ")");
+            dB.echoDebug(scriptEntry, DebugElement.Footer);
+            scriptEntry.setFinished(true);
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
 
 public interface dObject {
 
@@ -114,4 +115,13 @@ public interface dObject {
      * @return a string result of the fetched attribute
      */
     public String getAttribute(Attribute attribute);
+
+    interface ObjectAttributable {
+
+        dObject getObjectAttribute(Attribute attribute);
+
+        <T extends dObject> T asObjectType(Class<T> type, TagContext context);
+
+        boolean canPossiblyBeType(Class<? extends dObject> type);
+    }
 }

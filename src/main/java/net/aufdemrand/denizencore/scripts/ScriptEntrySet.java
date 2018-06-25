@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptEntrySet {
-    private List<ScriptEntry> entries;
+
+    public List<ScriptEntry> entries;
 
     public ScriptEntrySet(List<ScriptEntry> baseEntries) {
         entries = baseEntries;
     }
 
-    public ScriptEntrySet Duplicate() {
-        int count = entries.size();
-        List<ScriptEntry> newEntries = new ArrayList<ScriptEntry>(count);
+    public ScriptEntrySet duplicate() {
+        List<ScriptEntry> newEntries = new ArrayList<ScriptEntry>(entries.size());
         try {
             for (ScriptEntry entry : entries) {
                 newEntries.add(entry.clone());
@@ -24,9 +24,5 @@ public class ScriptEntrySet {
             dB.echoError(e); // This should never happen
         }
         return new ScriptEntrySet(newEntries);
-    }
-
-    public List<ScriptEntry> getEntries() {
-        return entries;
     }
 }

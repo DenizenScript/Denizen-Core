@@ -9,6 +9,7 @@ import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 
 import java.util.Collections;
@@ -22,27 +23,30 @@ public class TaskScriptContainer extends ScriptContainer {
         super(configurationSection, scriptContainerName);
     }
 
+    Duration speed = null;
+
     public Duration getSpeed() {
-        Duration speed;
-        if (contains("SPEED")) {
-            if (getString("SPEED", "0").toUpperCase().equals("INSTANT")) {
+        if (speed != null) {
+            return speed;
+        }
+        if (contains("speed")) {
+            String tmp = getString("speed", "0t");
+            if (CoreUtilities.toLowerCase(tmp).equals("instant")) {
                 speed = Duration.valueOf("0t");
             }
             else {
-                speed = Duration.valueOf(getString("SPEED", "0t"));
+                speed = Duration.valueOf(tmp);
             }
-
         }
         else {
-            speed = new Duration(Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()).getSeconds());
+            speed = Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
         }
-
         return speed;
     }
 
     public TaskScriptContainer setSpeed(Duration speed) {
         //  TODO: Remove with RunTask
-        set("SPEED", speed.getSeconds());
+        this.speed = speed;
         return this;
     }
 

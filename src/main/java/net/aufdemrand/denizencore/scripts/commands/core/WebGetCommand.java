@@ -28,7 +28,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             }
 
             else if (!scriptEntry.hasObject("post")
-                    && arg.matchesPrefix("post")) {
+                    && arg.matchesOnePrefix("post")) {
                 scriptEntry.addObject("post", arg.asElement());
             }
 

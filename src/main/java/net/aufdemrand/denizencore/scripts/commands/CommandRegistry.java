@@ -411,7 +411,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Description
         // Runs commands synchronously. This means that anything executed within will run on the
         // main server thread, without the possibility of corrupting anything that an asynchronous
-        // queue could theoretically do.
+        // queue could theoretically do. This is only needed for use alongside <@link command async>.
 
         // @Tags
         // None

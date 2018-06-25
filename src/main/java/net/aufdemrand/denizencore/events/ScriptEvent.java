@@ -10,6 +10,7 @@ import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
+import net.aufdemrand.denizencore.scripts.ScriptEntrySet;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -53,6 +54,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         ScriptContainer container;
         String event;
         int priority = 0;
+        ScriptEntrySet set;
 
         public ScriptPath(ScriptContainer container, String event) {
             this.container = container;
@@ -198,20 +200,31 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return null;
     }
 
+    public boolean applyDetermination(ScriptContainer container, dObject determination) {
+        return applyDetermination(container, determination.identify());
+    }
+
     public boolean applyDetermination(ScriptContainer container, String determination) {
-        if (determination.equalsIgnoreCase("cancelled")) {
+        String low = CoreUtilities.toLowerCase(determination);
+        if (low.equals("cancelled")) {
             dB.echoDebug(container, "Event cancelled!");
             cancelled = true;
+            return true;
         }
-        else if (determination.equalsIgnoreCase("cancelled:false")) {
+        else if (low.equals("cancelled:true")) {
+            dB.echoDebug(container, "Event cancelled!");
+            cancelled = true;
+            return true;
+        }
+        else if (low.equals("cancelled:false")) {
             dB.echoDebug(container, "Event uncancelled!");
             cancelled = false;
+            return true;
         }
         else {
             dB.echoError("Unknown determination '" + determination + "'");
             return false;
         }
-        return true;
     }
 
     public HashMap<String, dObject> getContext() { // TODO: Delete
@@ -234,10 +247,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public void fire() {
         fires++;
+        ScriptEvent dupd = null;
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(this, path.container, path.event)) {
-                    run(path.container, path.event);
+                    if (dupd == null) {
+                        dupd = clone();
+                    }
+                    dupd.run(path.container, path.event);
                 }
             }
             catch (Exception e) {
@@ -250,19 +267,27 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private String currentEvent;
 
     public void run(ScriptContainer script, String event) throws CloneNotSupportedException {
+    }
+
+    public void run(ScriptPath path) {
         scriptFires++;
         HashMap<String, dObject> context = getContext();
-        dB.echoDebug(script, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + event + "<Y>'"
-                + " for script '<A>" + script.getName() + "<Y>'");
-        for (Map.Entry<String, dObject> obj : context.entrySet()) {
-            dB.echoDebug(script, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
+        if (path.container.shouldDebug()) {
+            dB.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
+                    + " for script '<A>" + path.container.getName() + "<Y>'");
+            for (Map.Entry<String, dObject> obj : context.entrySet()) {
+                dB.echoDebug(path.container, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
+            }
         }
-        List<ScriptEntry> entries = script.getEntries(getScriptEntryData(), "events.on " + event);
+        if (path.set == null) {
+            path.set = path.container.getSetFor("events.on " + path.event);
+        }
+        List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         long id = DetermineCommand.getNewId();
         ScriptBuilder.addObjectToEntries(entries, "ReqId", id);
-        ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);
+        ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(path.container.getName())).addEntries(entries).setReqId(id);
         HashMap<String, dObject> oldStyleContext = getContext();
-        currentEvent = event;
+        currentEvent = path.event;
         if (oldStyleContext.size() > 0) {
             OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
             oecs.contexts = oldStyleContext;
@@ -271,14 +296,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             queue.setContextSource(oecs);
         }
         else {
-            queue.setContextSource(this.clone());
+            queue.setContextSource(this);
         }
         queue.start();
         nanoTimes += System.nanoTime() - queue.startTime;
-        List<String> determinations = DetermineCommand.getOutcome(id);
+        List<dObject> determinations = DetermineCommand.getOutcome(id).objectForms;
         if (determinations != null) {
-            for (String determination : determinations) {
-                applyDetermination(script, determination);
+            for (dObject determination : determinations) {
+                applyDetermination(path.container, determination);
             }
         }
     }

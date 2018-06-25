@@ -31,19 +31,19 @@ public class ForeachCommand extends BracedCommand {
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
             if (!scriptEntry.hasObject("stop")
-                    && arg.matches("stop")) {
+                    && arg.matchesOne("stop")) {
                 scriptEntry.addObject("stop", Element.TRUE);
                 break;
             }
 
             else if (!scriptEntry.hasObject("next")
-                    && arg.matches("next")) {
+                    && arg.matchesOne("next")) {
                 scriptEntry.addObject("next", Element.TRUE);
                 break;
             }
 
             else if (!scriptEntry.hasObject("callback")
-                    && arg.matches("\0CALLBACK")) {
+                    && arg.matchesOne("\0CALLBACK")) {
                 scriptEntry.addObject("callback", Element.TRUE);
                 break;
             }
@@ -157,9 +157,12 @@ public class ForeachCommand extends BracedCommand {
                     bracedCommands.add(callbackEntry);
                     for (int i = 0; i < bracedCommands.size(); i++) {
                         bracedCommands.get(i).setInstant(true);
-                        bracedCommands.get(i).addObject("reqId", scriptEntry.getObject("reqId"));
+                        bracedCommands.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
                     }
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
+                }
+                else {
+                    dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop complete");
                 }
             }
             else {
@@ -210,7 +213,7 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);
-                bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqId"));
+                bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
             }
             scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
         }

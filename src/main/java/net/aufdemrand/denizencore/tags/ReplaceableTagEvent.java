@@ -1,40 +1,61 @@
 package net.aufdemrand.denizencore.tags;
 
+import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ReplaceableTagEvent {
 
     private final TagContext context;
 
-    private boolean instant = false;
     private boolean wasReplaced = false;
 
-    private String alternative = null;
-    private boolean alternative_tagged = false;
+    private dObject alternative_tagged = null;
     private String replaced = null;
-    private String value = null;
     private boolean value_tagged = false;
     private Attribute core_attributes = null;
 
-    private ScriptEntry scriptEntry = null;
-
     public String raw_tag;
 
-    private dScript script;
+    public dObject replaced_obj = null;
+
+    public dObject getReplacedObj() {
+        if (replaced_obj == null) {
+            if (replaced == null) {
+                return null;
+            }
+            replaced_obj = new Element(replaced);
+        }
+        return replaced_obj;
+    }
 
     ////////////
     // Constructors
 
-    public ReplaceableTagEvent(String tag, TagContext context) {
+    public static class ReferenceData {
 
-        // Reference ScriptEntry if available
-        this.scriptEntry = context.entry;
-        this.script = context.script;
+        public boolean isInstant = false;
 
+        public Attribute attribs = null;
+
+        public String alternative = null;
+
+        public String rawTag = null;
+
+        public String value = null;
+    }
+
+    public ReferenceData mainRef = null;
+
+    public static HashMap<String, ReferenceData> refs = new HashMap<String, ReferenceData>();
+
+    public ReplaceableTagEvent(ReferenceData ref, String tag, TagContext context) {
         // Reference context
         this.context = context;
 
@@ -43,11 +64,26 @@ public class ReplaceableTagEvent {
         // scripts using tags incorrectly, but makes more sense overall
         this.replaced = tag;
 
+        if (ref != null) {
+            mainRef = ref;
+            core_attributes = new Attribute(ref.attribs, context.entry, context);
+            raw_tag = ref.rawTag;
+        }
+    }
+
+    public ReplaceableTagEvent(String tag, TagContext context) {
+        this(refs.get(tag), tag, context);
+        if (mainRef != null) {
+            return;
+        }
+
+        mainRef = new ReferenceData();
+
         // Check if tag is 'instant'
         if (tag.length() > 0) {
             char start = tag.charAt(0);
             if (start == '!' || start == '^') {
-                instant = true;
+                mainRef.isInstant = true;
                 tag = tag.substring(1);
             }
         }
@@ -57,7 +93,7 @@ public class ReplaceableTagEvent {
 
         if (alternativeLoc >= 0) {
             // get rid of the || at the alternative's start and any trailing spaces
-            alternative = tag.substring(alternativeLoc + 2).trim();
+            mainRef.alternative = tag.substring(alternativeLoc + 2).trim();
             // remove found alternative from tag
             tag = tag.substring(0, alternativeLoc);
         }
@@ -66,7 +102,7 @@ public class ReplaceableTagEvent {
         int valueLoc = locateValue(tag);
 
         if (valueLoc > 0) {
-            value = tag.substring(valueLoc + 1);
+            mainRef.value = tag.substring(valueLoc + 1);
             tag = tag.substring(0, valueLoc);
         }
 
@@ -74,11 +110,15 @@ public class ReplaceableTagEvent {
         raw_tag = tag.trim();
 
         // Use Attributes system to get type/subtype/etc. etc. for 'static/legacy' tags.
-        core_attributes = new Attribute(raw_tag, scriptEntry, context);
+        core_attributes = new Attribute(raw_tag, context.entry, context);
         core_attributes.setHadAlternative(hasAlternative());
+
+        mainRef.attribs = new Attribute(core_attributes, null, null);
+        mainRef.rawTag = raw_tag;
+        refs.put(tag, mainRef);
     }
 
-    private int locateValue(String tag) {
+    private static int locateValue(String tag) {
         int bracks = 0;
         int bracks2 = 0;
         for (int i = 0; i < tag.length(); i++) {
@@ -102,7 +142,7 @@ public class ReplaceableTagEvent {
         return -1;
     }
 
-    private int locateAlternative(String tag) {
+    private static int locateAlternative(String tag) {
         int bracks = 0;
         int bracks2 = 0;
         boolean previousWasTarget = false;
@@ -138,15 +178,15 @@ public class ReplaceableTagEvent {
 
     // Matches method (checks first attribute (name) of the tag)
 
-    // TODO: Remove in 1.0!
+    // TODO: Remove!
     public boolean matches(String tagName) {
         if (!tagName.contains(",")) {
-            return getName().equalsIgnoreCase(tagName);
+            return getName().equals(tagName);
         }
         List<String> tagNames = CoreUtilities.split(tagName, ',');
         String name = getName();
         for (String string : tagNames) {
-            if (name.equalsIgnoreCase(string.trim())) {
+            if (name.equals(string.trim())) {
                 return true;
             }
         }
@@ -156,7 +196,7 @@ public class ReplaceableTagEvent {
     public boolean matches(String... tagNames) {
         String name = getName();
         for (String string : tagNames) {
-            if (name.equalsIgnoreCase(string.trim())) {
+            if (name.equals(string)) {
                 return true;
             }
         }
@@ -164,7 +204,7 @@ public class ReplaceableTagEvent {
     }
 
 
-    private String StripContext(String input) {
+    private static String StripContext(String input) {
         if (input == null) {
             return null;
         }
@@ -184,7 +224,7 @@ public class ReplaceableTagEvent {
     // Name
 
     public String getName() {
-        return StripContext(core_attributes.getAttribute(1));
+        return core_attributes.getAttributeWithoutContext(1);
     }
 
     public String getNameContext() {
@@ -199,7 +239,7 @@ public class ReplaceableTagEvent {
 
     @Deprecated
     public String getType() {
-        return StripContext(core_attributes.getAttribute(2));
+        return core_attributes.getAttributeWithoutContext(2);
     }
 
     @Deprecated
@@ -221,7 +261,7 @@ public class ReplaceableTagEvent {
 
     @Deprecated
     public String getSubType() {
-        return StripContext(core_attributes.getAttribute(3));
+        return core_attributes.getAttributeWithoutContext(3);
     }
 
     @Deprecated
@@ -243,7 +283,7 @@ public class ReplaceableTagEvent {
 
     @Deprecated
     public String getSpecifier() {
-        return StripContext(core_attributes.getAttribute(4));
+        return core_attributes.getAttributeWithoutContext(4);
     }
 
     @Deprecated
@@ -265,30 +305,32 @@ public class ReplaceableTagEvent {
 
     public String getValue() {
         if (value_tagged) {
-            return value;
+            return mainRef.value;
         }
         value_tagged = true;
-        value = TagManager.cleanOutputFully(TagManager.tag(value, context));
-        return value;
+        mainRef.value = TagManager.cleanOutputFully(TagManager.tag(mainRef.value, context));
+        return mainRef.value;
     }
 
     public boolean hasValue() {
-        return value != null;
+        return mainRef.value != null;
     }
 
     // Alternative
 
-    public String getAlternative() {
-        if (alternative_tagged) {
-            return alternative;
+    public dObject getAlternative() {
+        if (!hasAlternative()) {
+            return null;
         }
-        alternative_tagged = true;
-        alternative = TagManager.cleanOutputFully(TagManager.tag(alternative, context));
-        return alternative;
+        if (alternative_tagged != null) {
+            return alternative_tagged;
+        }
+        alternative_tagged = TagManager.tagObject(mainRef.alternative, context);
+        return alternative_tagged;
     }
 
     public boolean hasAlternative() {
-        return alternative != null;
+        return mainRef.alternative != null;
     }
 
     // Other internal mechanics
@@ -298,32 +340,51 @@ public class ReplaceableTagEvent {
     }
 
     public String getReplaced() {
+        if (replaced == null && replaced_obj != null) {
+            replaced = replaced_obj.toString();
+        }
         return replaced;
     }
 
     public boolean isInstant() {
-        return instant;
+        return mainRef.isInstant;
     }
 
     public dScript getScript() {
-        return script;
+        return context.script;
     }
 
     public boolean replaced() {
-        return wasReplaced && replaced != null;
+        return wasReplaced && (replaced != null || replaced_obj != null);
+    }
+
+    public void setReplacedObject(dObject obj) {
+        replaced_obj = obj;
+        replaced = null;
+        wasReplaced = obj != null;
     }
 
     public void setReplaced(String string) {
+        if (dB.verbose) {
+            try {
+                throw new RuntimeException("Trace");
+            }
+            catch (Exception ex) {
+                dB.echoError(ex);
+            }
+            dB.log("Tag " + raw_tag + " updating to value: " + string);
+        }
         replaced = string;
+        replaced_obj = null;
         wasReplaced = string != null;
     }
 
     public boolean hasScriptEntryAttached() {
-        return scriptEntry != null;
+        return context.entry != null;
     }
 
     public ScriptEntry getScriptEntry() {
-        return scriptEntry;
+        return context.entry;
     }
 
 
@@ -340,6 +401,6 @@ public class ReplaceableTagEvent {
 
     @Override
     public String toString() {
-        return core_attributes.toString() + (hasValue() ? ":" + value : "") + (hasAlternative() ? "||" + alternative : "");
+        return core_attributes.toString() + (hasValue() ? ":" + mainRef.value : "") + (hasAlternative() ? "||" + mainRef.alternative : "");
     }
 }

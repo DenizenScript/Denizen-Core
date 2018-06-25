@@ -1,17 +1,24 @@
 package net.aufdemrand.denizencore.tags.core;
 
 import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.ObjectFetcher;
+import net.aufdemrand.denizencore.objects.TagRunnable;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.DefinitionProvider;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class DefinitionTags {
 
     public DefinitionTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                definitionTag(event);
+            }
+        }, "definition", "def", "d");
     }
 
 
@@ -19,7 +26,6 @@ public class DefinitionTags {
     //  ReplaceableTagEvent handler
     ////////
 
-    @TagManager.TagEvents
     public void definitionTag(ReplaceableTagEvent event) {
 
         if (!event.matches("definition", "def", "d")) {
@@ -46,7 +52,7 @@ public class DefinitionTags {
             dB.echoError("No definitions are provided at this moment!");
             return;
         }
-        String def = definitionProvider.getDefinition(defName);
+        dObject def = definitionProvider.getDefinitionObject(defName);
 
         Attribute atttribute = event.getAttributes().fulfill(1);
 
@@ -58,10 +64,10 @@ public class DefinitionTags {
         // -->
         if (atttribute.startsWith("exists")) {
             if (def == null) {
-                event.setReplaced(Element.FALSE.getAttribute(atttribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(false), atttribute.fulfill(1)));
             }
             else {
-                event.setReplaced(Element.TRUE.getAttribute(atttribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(true), atttribute.fulfill(1)));
             }
             return;
         }
@@ -75,8 +81,7 @@ public class DefinitionTags {
         }
 
 
-        event.setReplaced(ObjectFetcher.pickObjectFor(def, event.getContext())
-                .getAttribute(atttribute));
+        event.setReplacedObject(CoreUtilities.autoAttrib(def, atttribute));
     }
 }
 

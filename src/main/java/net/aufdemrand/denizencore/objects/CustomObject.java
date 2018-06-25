@@ -9,11 +9,10 @@ import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-public class CustomObject implements dObject, Adjustable {
+public class CustomObject implements dObject, dObject.ObjectAttributable, Adjustable {
 
     @Fetchable("custom")
     public static CustomObject valueOf(String string, TagContext context) {
@@ -47,14 +46,18 @@ public class CustomObject implements dObject, Adjustable {
         return new CustomObject((CustomScriptContainer) sc, ((CustomScriptContainer) sc).getVars());
     }
 
+    public static CustomObject getFor(dObject obj, TagContext context) {
+        return obj instanceof CustomObject ? (CustomObject) obj : valueOf(obj.toString(), context);
+    }
+
     public static boolean matches(String string) {
         return string.startsWith("custom@");
     }
 
     public CustomScriptContainer container;
-    public Map<String, String> vars;
+    public Map<String, dObject> vars;
 
-    public CustomObject(CustomScriptContainer type, Map<String, String> values) {
+    public CustomObject(CustomScriptContainer type, Map<String, dObject> values) {
         container = type;
         vars = values;
     }
@@ -69,8 +72,8 @@ public class CustomObject implements dObject, Adjustable {
     @Override
     public String identify() {
         StringBuilder outp = new StringBuilder();
-        for (Map.Entry<String, String> var : vars.entrySet()) {
-            outp.append(var.getKey() + "=" + var.getValue().replace(';', (char) 0x2011) + ";");
+        for (Map.Entry<String, dObject> var : vars.entrySet()) {
+            outp.append(var.getKey() + "=" + var.getValue().toString().replace(';', (char) 0x2011) + ";");
         }
         return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1) : "") + "]";
     }
@@ -108,25 +111,48 @@ public class CustomObject implements dObject, Adjustable {
 
     @Override
     public String getAttribute(Attribute attribute) {
+        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+    }
+
+    @Override
+    public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
+        return null;
+    }
+
+    @Override
+    public boolean canPossiblyBeType(Class<? extends dObject> type) {
+        if (type == CustomObject.class) {
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public dObject getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
-            return "null";
+            return null;
         }
 
-        String res = vars.get(attribute.getAttribute(1));
+        if (attribute.isComplete()) {
+            return this;
+        }
+
+        dObject res = vars.get(attribute.getAttribute(1));
         if (res == null) {
             String taggo = attribute.getAttributeWithoutContext(1);
             if (container.hasPath("tags." + taggo)) {
-                long ID = container.runTagScript(taggo, attribute.getContext(1), this,
+                long ID = container.runTagScript(taggo, attribute.getContextObject(1), this,
                         attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData : null);
-                List<String> outcomes = DetermineCommand.getOutcome(ID);
+                dList outcomes = DetermineCommand.getOutcome(ID);
                 if (outcomes == null) {
                     return null;
                 }
-                return ObjectFetcher.pickObjectFor(outcomes.get(0)).getAttribute(attribute.fulfill(1));
+                return CoreUtilities.autoAttribTyped(outcomes.getObject(0), attribute.fulfill(1));
             }
-            return new Element(identify()).getAttribute(attribute);
+            return new Element(identify()).getObjectAttribute(attribute);
         }
-        return ObjectFetcher.pickObjectFor(res).getAttribute(attribute.fulfill(1));
+        return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
     }
 
     @Override
@@ -137,19 +163,22 @@ public class CustomObject implements dObject, Adjustable {
     @Override
     public void adjust(Mechanism mechanism) {
         String name = CoreUtilities.toLowerCase(mechanism.getName());
-        String value = mechanism.getValue().asString();
+        if (!mechanism.hasValue()) {
+            vars.remove(name);
+            return;
+        }
+        dObject value = mechanism.getValue();
         if (container.hasPath("mechanisms." + name)) {
             long ID = container.runMechScript(name, this, value);
-            List<String> outcomes = DetermineCommand.getOutcome(ID);
+            dList outcomes = DetermineCommand.getOutcome(ID);
             if (outcomes == null) {
                 return;
             }
-            CustomObject co = CustomObject.valueOf(outcomes.get(0), null);
+            CustomObject co = CustomObject.getFor(outcomes.getObject(0), null);
             container = co.container;
             vars = co.vars;
         }
         else {
-            vars.remove(name);
             vars.put(name, value);
         }
     }

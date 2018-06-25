@@ -136,7 +136,7 @@ public abstract class BracedCommand extends AbstractCommand {
             }
 
             // Listen for opened braces
-            if (arg.matches("{")) {
+            if (arg.matchesOne("{")) {
                 bracesEntered++;
                 newCommand = false;
                 waitingForDash = bracesEntered == 1;
@@ -149,7 +149,7 @@ public abstract class BracedCommand extends AbstractCommand {
             }
 
             // Listen for closed braces
-            else if (arg.matches("}")) {
+            else if (arg.matchesOne("}")) {
                 bracesEntered--;
                 newCommand = false;
                 if (hyperdebug) {
@@ -218,7 +218,7 @@ public abstract class BracedCommand extends AbstractCommand {
             }
 
             // Start building a command
-            else if (arg.matches("-") && bracesEntered == 1) {
+            else if (arg.matchesOne("-") && bracesEntered == 1) {
                 newCommand = true;
                 waitingForDash = false;
                 if (hyperdebug) {

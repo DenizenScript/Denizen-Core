@@ -1,9 +1,11 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.ArrayList;
@@ -12,17 +14,22 @@ import java.util.List;
 /**
  * Example replaceable tag class.
  * <p/>
+ * This is very outdated / bad.
  * TODO: Update me!
  */
 public class _templateTags {
 
     public _templateTags() {
         // Register this class with the TagManager event handler.
-        // TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                skillTags(event);
+            }
+        }, "skills");
     }
 
-    @TagManager.TagEvents
-    public void constantTags(ReplaceableTagEvent event) {
+    public void skillTags(ReplaceableTagEvent event) {
         // Since this event will be called each time Denizen comes across a
         // replaceable tag, something needs to tell Denizen if this is the
         // appropriate place to fill the tag. This is done by checking the
@@ -48,27 +55,6 @@ public class _templateTags {
         // Context to a type, subtype, specifier, etc. is contained in [] brackets.
         // ie. <tag_name.type[context]>
         String type_context = event.hasTypeContext() ? event.getTypeContext() : "";
-
-        //
-        // Now, 2 small examples of possible fulfillment of the tag.
-        //
-
-        // For this small example, let's process a tag in the format of: <skills.version>
-        if (type.equalsIgnoreCase("version")) {
-
-            String version_number = null;
-
-            // It's assumed here that your code will handle getting the appropriate
-            // information to be filled in.
-            // version_number = Skills.getVersionNumber();
-
-            event.setReplaced(version_number);
-            return;
-        }
-
-        //
-        // Tag possibility 2
-        //
 
         // For this example, let's process a tag in the format of: <skills.for[player_name]>
         // and return a dList dObject object to fulfill any additional attributes of the tag.
@@ -96,7 +82,7 @@ public class _templateTags {
 
             // Use event.setReplaced() to pass the attribute off to the dList object (or any other dScriptArg object).
             // The dList constructor requires a string list and a prefix.
-            event.setReplaced(new dList(skills).getAttribute(attribute));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new dList(skills), attribute));
         }
 
         // Got here? No attributes were handled! Probably should let the dBugger know.

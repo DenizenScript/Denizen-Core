@@ -1,10 +1,7 @@
 package net.aufdemrand.denizencore.tags.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.objects.Duration;
-import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.Mechanism;
-import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
@@ -21,10 +18,14 @@ import java.util.UUID;
 public class UtilTags {
 
     public UtilTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                utilTag(event);
+            }
+        }, "util", "u");
     }
 
-    @TagManager.TagEvents
     public void utilTag(ReplaceableTagEvent event) {
         if (!event.matches("util", "u")) {
             return;
@@ -58,9 +59,9 @@ public class UtilTags {
                             max = store;
                         }
 
-                        event.setReplaced(new Element(
-                                String.valueOf(CoreUtilities.getRandom().nextInt(max - min + 1) + min))
-                                .getAttribute(attribute.fulfill(1)));
+                        event.setReplacedObject(CoreUtilities.autoAttrib(new Element(
+                                String.valueOf(CoreUtilities.getRandom().nextInt(max - min + 1) + min)),
+                                attribute.fulfill(1)));
                     }
                 }
             }
@@ -88,9 +89,9 @@ public class UtilTags {
                             max = store;
                         }
 
-                        event.setReplaced(new Element(
-                                String.valueOf(CoreUtilities.getRandom().nextDouble() * (max - min) + min))
-                                .getAttribute(attribute.fulfill(1)));
+                        event.setReplacedObject(CoreUtilities.autoAttrib(new Element(
+                                String.valueOf(CoreUtilities.getRandom().nextDouble() * (max - min) + min)),
+                                attribute.fulfill(1)));
                     }
                 }
             }
@@ -102,8 +103,8 @@ public class UtilTags {
             // Returns a random decimal number from 0 to 1
             // -->
             else if (attribute.startsWith("decimal")) {
-                event.setReplaced(new Element(CoreUtilities.getRandom().nextDouble())
-                        .getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(CoreUtilities.getRandom().nextDouble())
+                        ,attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -114,8 +115,8 @@ public class UtilTags {
             // 70% of all results will be within the range of -1 to 1.
             // -->
             else if (attribute.startsWith("gauss")) {
-                event.setReplaced(new Element(CoreUtilities.getRandom().nextGaussian())
-                        .getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(CoreUtilities.getRandom().nextGaussian())
+                        ,attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -125,8 +126,8 @@ public class UtilTags {
             // Returns a random unique ID.
             // -->
             else if (attribute.startsWith("uuid")) {
-                event.setReplaced(new Element(UUID.randomUUID().toString())
-                        .getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(UUID.randomUUID().toString())
+                        ,attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -136,9 +137,9 @@ public class UtilTags {
             // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
             // -->
             else if (attribute.startsWith("duuid")) {
-                event.setReplaced(new Element(ScriptQueue
-                        .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID"))
-                        .getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue
+                        .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
+                        attribute.fulfill(1)));
             }
         }
 
@@ -149,8 +150,8 @@ public class UtilTags {
         // Returns PI: 3.14159265358979323846
         // -->
         else if (attribute.startsWith("pi")) {
-            event.setReplaced(new Element(Math.PI)
-                    .getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.PI)
+                    ,attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -160,8 +161,8 @@ public class UtilTags {
         // Returns Tau: 6.28318530717958647692
         // -->
         else if (attribute.startsWith("tau")) {
-            event.setReplaced(new Element(Math.PI * 2)
-                    .getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.PI * 2)
+                    ,attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -171,8 +172,8 @@ public class UtilTags {
         // Returns e: 2.7182818284590452354
         // -->
         else if (attribute.matches("e")) {
-            event.setReplaced(new Element(Math.E)
-                    .getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.E)
+                    ,attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -206,8 +207,8 @@ public class UtilTags {
                 // -->
                 if (attribute.startsWith("twentyfour_hour")) {
                     format.applyPattern("k:mm");
-                    event.setReplaced(new Element(format.format(currentDate))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
+                            ,attribute.fulfill(1)));
                 }
                 // <--[tag]
                 // @attribute <util.date.time.year>
@@ -216,8 +217,8 @@ public class UtilTags {
                 // Returns the current year of the system time.
                 // -->
                 else if (attribute.startsWith("year")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.YEAR))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.YEAR))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -227,8 +228,8 @@ public class UtilTags {
                 // Returns the current month of the system time.
                 // -->
                 else if (attribute.startsWith("month")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.MONTH) + 1)
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.MONTH) + 1)
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -238,8 +239,8 @@ public class UtilTags {
                 // Returns the current week of the system time.
                 // -->
                 else if (attribute.startsWith("week")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.WEEK_OF_YEAR))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.WEEK_OF_YEAR))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -249,8 +250,8 @@ public class UtilTags {
                 // Returns the current day-of-the-week of the system time.
                 // -->
                 else if (attribute.startsWith("day_of_week")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_WEEK))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.DAY_OF_WEEK))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -260,8 +261,8 @@ public class UtilTags {
                 // Returns the current day of the system time.
                 // -->
                 else if (attribute.startsWith("day")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.DAY_OF_MONTH))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.DAY_OF_MONTH))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -271,8 +272,8 @@ public class UtilTags {
                 // Returns the current hour of the system time.
                 // -->
                 else if (attribute.startsWith("hour")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.HOUR_OF_DAY))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.HOUR_OF_DAY))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -282,8 +283,8 @@ public class UtilTags {
                 // Returns the current minute of the system time.
                 // -->
                 else if (attribute.startsWith("minute")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.MINUTE))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.MINUTE))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -293,8 +294,8 @@ public class UtilTags {
                 // Returns the current second of the system time.
                 // -->
                 else if (attribute.startsWith("second")) {
-                    event.setReplaced(new Element(calendar.get(Calendar.SECOND))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.SECOND))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -305,8 +306,8 @@ public class UtilTags {
                 // To get the exact millisecond count, use <@link tag server.current_time_millis>.
                 // -->
                 else if (attribute.startsWith("duration")) {
-                    event.setReplaced(new Duration(System.currentTimeMillis() / 50)
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Duration(System.currentTimeMillis() / 50)
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -317,8 +318,8 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("zone")) {
                     TimeZone tz = Calendar.getInstance().getTimeZone();
-                    event.setReplaced(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.SHORT))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.SHORT))
+                            ,attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -329,14 +330,14 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("formatted_zone")) {
                     TimeZone tz = Calendar.getInstance().getTimeZone();
-                    event.setReplaced(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.LONG))
-                            .getAttribute(attribute.fulfill(1)));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.LONG))
+                            ,attribute.fulfill(1)));
                 }
 
                 else {
                     format.applyPattern("K:mm a");
-                    event.setReplaced(new Element(format.format(currentDate))
-                            .getAttribute(attribute));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
+                            ,attribute));
                 }
 
             }
@@ -351,7 +352,7 @@ public class UtilTags {
                     && attribute.hasContext(1)) {
                 try {
                     format.applyPattern(attribute.getContext(1));
-                    event.setReplaced(format.format(currentDate));
+                    event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate)), attribute.fulfill(1)));
                 }
                 catch (Exception ex) {
                     dB.echoError("Error: invalid pattern '" + attribute.getContext(1) + "'");
@@ -360,8 +361,8 @@ public class UtilTags {
             }
             else {
                 format.applyPattern("EEE, MMM d, yyyy");
-                event.setReplaced(new Element(format.format(currentDate))
-                        .getAttribute(attribute));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
+                        ,attribute));
             }
         }
     }

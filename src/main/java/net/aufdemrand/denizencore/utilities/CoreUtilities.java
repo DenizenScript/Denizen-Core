@@ -1,5 +1,11 @@
 package net.aufdemrand.denizencore.utilities;
 
+import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.ObjectFetcher;
+import net.aufdemrand.denizencore.objects.dObject;
+import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.tags.Attribute;
+import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.io.File;
@@ -11,13 +17,85 @@ import java.util.Random;
 
 public class CoreUtilities {
 
+    public static String stringifyNullPass(Object obj) {
+        return obj == null ? null : obj.toString();
+    }
+
+    public static dObject fixType(dObject input, TagContext context) {
+        if (input instanceof Element) {
+            return ObjectFetcher.pickObjectFor(input.toString(), context);
+        }
+        return input;
+    }
+
+    public static dObject autoAttrib(Property inp, Attribute attribute) {
+        if (attribute.isComplete()) {
+            return null;
+        }
+        if (inp instanceof dObject.ObjectAttributable) {
+            return ((dObject.ObjectAttributable) inp).getObjectAttribute(attribute);
+        }
+        String ret = inp.getAttribute(attribute);
+        if (ret == null) {
+            return null;
+        }
+        return new Element(ret);
+    }
+
+    public static dObject autoAttribTyped(dObject inp, Attribute attribute) {
+        return autoAttrib(fixType(inp, attribute.context), attribute);
+    }
+
+    public static dObject autoAttrib(dObject inp, Attribute attribute) {
+        if (inp == null) {
+            dB.echoError("Tag parse failed (null return) for tag <" + attribute.toString() + ">!");
+            return null;
+        }
+        if (attribute.isComplete()) {
+            return inp;
+        }
+        if (inp instanceof dObject.ObjectAttributable) {
+            return ((dObject.ObjectAttributable) inp).getObjectAttribute(attribute);
+        }
+        return new Element(inp.getAttribute(attribute));
+    }
+
+    public static <T extends dObject> T asType(dObject inp, Class<T> type, TagContext context) {
+        if (inp.getClass() == type) {
+            return (T) inp;
+        }
+        if (type == Element.class) {
+            return (T) new Element(inp.toString());
+        }
+        if (inp instanceof dObject.ObjectAttributable) {
+            T temp = ((dObject.ObjectAttributable) inp).asObjectType(type, context);
+            if (temp != null) {
+                return temp;
+            }
+        }
+        return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
+    }
+
+    public static boolean canPossiblyBeType(dObject inp, Class<? extends dObject> type) {
+        if (inp.getClass() == type) {
+            return true;
+        }
+        if (type == Element.class) {
+            return true;
+        }
+        if (inp instanceof dObject.ObjectAttributable && !((dObject.ObjectAttributable) inp).canPossiblyBeType(type)) {
+            return false;
+        }
+        return ObjectFetcher.checkMatch(type, inp.toString());
+    }
+
     static Random random = new Random();
 
     public static Random getRandom() {
         return random;
     }
 
-    protected static FilenameFilter scriptsFilter;
+    static FilenameFilter scriptsFilter;
 
     static {
         scriptsFilter = new FilenameFilter() {

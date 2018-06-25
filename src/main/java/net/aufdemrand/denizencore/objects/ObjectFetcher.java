@@ -70,11 +70,15 @@ public class ObjectFetcher {
 
     private static ArrayList<Class> fetchable_objects = new ArrayList<Class>();
 
-    public static void registerWithObjectFetcher(Class dObject) {
+    public static void registerWithObjectFetcher(Class<? extends dObject> dObject) {
         try {
             fetchable_objects.add(dObject);
-            matches.put(dObject, dObject.getMethod("matches", String.class));
-            valueof.put(dObject, dObject.getMethod("valueOf", String.class, TagContext.class));
+            Method method_matches = dObject.getMethod("matches", String.class);
+            method_matches.setAccessible(true);
+            Method method_valueof = dObject.getMethod("valueOf", String.class, TagContext.class);
+            method_valueof.setAccessible(true);
+            matches.put(dObject, method_matches);
+            valueof.put(dObject, method_valueof);
         }
         catch (Throwable e) {
             dB.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");

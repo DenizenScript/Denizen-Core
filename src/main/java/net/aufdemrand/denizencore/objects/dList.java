@@ -19,7 +19,50 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class dList extends ArrayList<String> implements dObject {
+public class dList extends ArrayList<String> implements dObject, dObject.ObjectAttributable {
+
+    public final ArrayList<dObject> objectForms;
+
+    @Override
+    public boolean add(String addMe) {
+        objectForms.add(new Element(addMe));
+        return super.add(addMe);
+    }
+
+    @Override
+    public String remove(int index) {
+        objectForms.remove(index);
+        return super.remove(index);
+    }
+
+    @Override
+    public boolean remove(Object key) {
+        int ind = super.indexOf(key);
+        if (ind < 0 || ind >= size()) {
+            return false;
+        }
+        this.remove(ind);
+        return true;
+    }
+
+    public boolean addAll(dList inp) {
+        objectForms.addAll(inp.objectForms);
+        return super.addAll(inp);
+    }
+
+    public boolean addObject(dObject obj) {
+        objectForms.add(obj);
+        return super.add(obj.toString());
+    }
+
+    public void addObject(int index, dObject obj) {
+        objectForms.add(index, obj);
+        super.add(index, obj.toString());
+    }
+
+    public dObject getObject(int id) {
+        return objectForms.get(id);
+    }
 
     public final static char internal_escape_char = (char) 0x05;
     public final static String internal_escape = String.valueOf(internal_escape_char);
@@ -47,6 +90,10 @@ public class dList extends ArrayList<String> implements dObject {
         return new dList(string.startsWith("li@") ? string.substring(3) : string);
     }
 
+    public static dList getListFor(dObject inp) {
+        return inp instanceof dList ? (dList) inp : valueOf(inp.toString());
+    }
+
 
     public static boolean matches(String arg) {
 
@@ -62,13 +109,15 @@ public class dList extends ArrayList<String> implements dObject {
 
     // A list of dObjects
     public dList(Collection<? extends dObject> dObjectList) {
+        objectForms = new ArrayList<dObject>(dObjectList);
         for (dObject obj : dObjectList) {
-            add(obj.identify());
+            super.add(obj.identify());
         }
     }
 
     // Empty dList
     public dList() {
+        objectForms = new ArrayList<dObject>();
     }
 
     // A string of items, split by '|'
@@ -92,14 +141,18 @@ public class dList extends ArrayList<String> implements dObject {
                 }
                 // Separate if an un-bracketed pipe is found
                 else if ((brackets == 0) && (chr == '|' || chr == internal_escape_char)) {
-                    add(items.substring(start, i));
+                    super.add(items.substring(start, i));
                     start = i + 1;
                 }
             }
             // If there is an item waiting, add it too
             if (start < items.length()) {
-                add(items.substring(start, items.length()));
+                super.add(items.substring(start, items.length()));
             }
+        }
+        objectForms = new ArrayList<dObject>(size());
+        for (String str : this) {
+            objectForms.add(new Element(str));
         }
     }
 
@@ -107,21 +160,49 @@ public class dList extends ArrayList<String> implements dObject {
         if (is_flag) {
             this.flag = flag;
         }
-        addAll(flag_contents);
+        for (String it : flag_contents) {
+            super.add(it);
+        }
+        objectForms = new ArrayList<dObject>(size());
+        for (String str : this) {
+            objectForms.add(new Element(str));
+        }
+    }
+
+    public dList(dList input) {
+        objectForms = new ArrayList<dObject>(input.objectForms);
+        super.ensureCapacity(input.size());
+        for (String str : input) {
+            super.add(str);
+        }
     }
 
     // A List<String> of items
     public dList(List<String> items) {
         if (items != null) {
-            addAll(items);
+            for (String it : items) {
+                super.add(it);
+            }
+        }
+        objectForms = new ArrayList<dObject>(size());
+        for (String str : this) {
+            objectForms.add(new Element(str));
         }
     }
 
     // A Set<Object> of items
     public dList(Set<? extends Object> items) {
+        objectForms = new ArrayList<dObject>();
         if (items != null) {
             for (Object o : items) {
-                add(o.toString());
+                String strd = o.toString();
+                super.add(strd);
+                if (o instanceof dObject) {
+                    objectForms.add((dObject) o);
+                }
+                else {
+                    objectForms.add(new Element(strd));
+                }
             }
         }
     }
@@ -129,7 +210,11 @@ public class dList extends ArrayList<String> implements dObject {
     // A List<String> of items, with a prefix
     public dList(List<String> items, String prefix) {
         for (String element : items) {
-            add(prefix + element);
+            super.add(prefix + element);
+        }
+        objectForms = new ArrayList<dObject>(size());
+        for (String str : this) {
+            objectForms.add(new Element(str));
         }
     }
 
@@ -137,15 +222,9 @@ public class dList extends ArrayList<String> implements dObject {
     //   Instance Fields/Methods
     //////////
 
-    /**
-     * Adds a list of dObjects to a dList by forcing each to 'identify()'.
-     *
-     * @param dObjects the List of dObjects
-     * @return a dList
-     */
     public dList addObjects(List<dObject> dObjects) {
         for (dObject obj : dObjects) {
-            add(obj.identify());
+            addObject(obj);
         }
 
         return this;
@@ -183,8 +262,8 @@ public class dList extends ArrayList<String> implements dObject {
     public boolean containsObjectsFrom(Class<? extends dObject> dClass) {
 
         // Iterate through elements until one matches() the dClass
-        for (String element : this) {
-            if (ObjectFetcher.checkMatch(dClass, element)) {
+        for (dObject testable : objectForms) {
+            if (CoreUtilities.canPossiblyBeType(testable, dClass)) {
                 return true;
             }
         }
@@ -228,17 +307,14 @@ public class dList extends ArrayList<String> implements dObject {
     public <T extends dObject> List<T> filter(Class<T> dClass, ScriptEntry entry) {
         List<T> results = new ArrayList<T>();
 
-        for (String element : this) {
+        TagContext context = (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
+                entry.entryData.getTagContext());
+
+        for (dObject obj : objectForms) {
 
             try {
-                if (ObjectFetcher.checkMatch(dClass, element)) {
-
-                    T object = ObjectFetcher.getObjectFrom(dClass, element,
-                            (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
-                                    entry.entryData.getTagContext()));
-
-                    // Only add the object if it is not null, thus filtering useless
-                    // list items
+                if (CoreUtilities.canPossiblyBeType(obj, dClass)) {
+                    T object = CoreUtilities.asType(obj, dClass, context);
 
                     if (object != null) {
                         results.add(object);
@@ -331,18 +407,17 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|two|three" will return "one two three".
         // -->
 
-        registerTag("space_separated", new TagRunnable() {
+        registerTag("space_separated", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (((dList) object).isEmpty()) {
-                    return new Element("").getAttribute(attribute.fulfill(1));
+                    return new Element("").getObjectAttribute(attribute.fulfill(1));
                 }
-                String input = " ";
-                return new Element(parseString((dList) object, input)).getAttribute(attribute.fulfill(1));
+                return new Element(parseString((dList) object, " ")).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("as_string", registeredTags.get("space_separated"));
-        registerTag("asstring", registeredTags.get("space_separated"));
+        registerTag("as_string", registeredObjectTags.get("space_separated"));
+        registerTag("asstring", registeredObjectTags.get("space_separated"));
 
         // <--[tag]
         // @attribute <li@list.separated_by[<text>]>>
@@ -352,15 +427,15 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
         // -->
 
-        registerTag("separated_by", new TagRunnable() {
+        registerTag("separated_by", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList list = (dList) object;
                 if (list.isEmpty()) {
-                    return new Element("").getAttribute(attribute.fulfill(1));
+                    return new Element("").getObjectAttribute(attribute.fulfill(1));
                 }
                 String input = attribute.getContext(1);
-                return new Element(parseString(list, input)).getAttribute(attribute.fulfill(1));
+                return new Element(parseString(list, input)).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -372,18 +447,17 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|two|three" will return "one, two, three".
         // -->
 
-        registerTag("comma_separated", new TagRunnable() {
+        registerTag("comma_separated", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (((dList) object).isEmpty()) {
-                    return new Element("").getAttribute(attribute.fulfill(1));
+                    return new Element("").getObjectAttribute(attribute.fulfill(1));
                 }
-                String input = ", ";
-                return new Element(parseString((dList) object, input)).getAttribute(attribute.fulfill(1));
+                return new Element(parseString((dList) object, ", ")).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("ascslist", registeredTags.get("comma_separated"));
-        registerTag("as_cslist", registeredTags.get("comma_separated"));
+        registerTag("ascslist", registeredObjectTags.get("comma_separated"));
+        registerTag("as_cslist", registeredObjectTags.get("comma_separated"));
 
         // <--[tag]
         // @attribute <li@list.unseparated>
@@ -393,14 +467,13 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|two|three" will return "onetwothree".
         // -->
 
-        registerTag("unseparated", new TagRunnable() {
+        registerTag("unseparated", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (((dList) object).isEmpty()) {
-                    return new Element("").getAttribute(attribute.fulfill(1));
+                    return new Element("").getObjectAttribute(attribute.fulfill(1));
                 }
-                String input = "";
-                return new Element(parseString((dList) object, input)).getAttribute(attribute.fulfill(1));
+                return new Element(parseString((dList) object, "")).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -413,9 +486,9 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
         // -->
 
-        registerTag("get_sub_items", new TagRunnable() {
+        registerTag("get_sub_items", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 int index = -1;
                 if (aH.matchesInteger(attribute.getContext(1))) {
                     index = attribute.getIntContext(1) - 1;
@@ -456,7 +529,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return sub_list.getAttribute(attribute);
+                return sub_list.getObjectAttribute(attribute);
             }
         });
 
@@ -469,11 +542,11 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: li@one/a|two/b.map_get[one] returns a.
         // -->
 
-        registerTag("map_get", new TagRunnable() {
+        registerTag("map_get", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (((dList) object).isEmpty()) {
-                    return new Element("").getAttribute(attribute.fulfill(1));
+                    return new Element("").getObjectAttribute(attribute.fulfill(1));
                 }
                 String input = attribute.getContext(1);
                 attribute.fulfill(1);
@@ -497,7 +570,7 @@ public class dList extends ArrayList<String> implements dObject {
                 for (String item : (dList) object) {
                     String[] strings = item.split(Pattern.quote(split), 2);
                     if (strings.length > 1 && strings[0].equalsIgnoreCase(input)) {
-                        return new Element(strings[1]).getAttribute(attribute);
+                        return new Element(strings[1]).getObjectAttribute(attribute);
                     }
                 }
                 return null;
@@ -513,9 +586,9 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: li@one/a|two/b.map_find_key[a] returns one.
         // -->
 
-        registerTag("map_find_key", new TagRunnable() {
+        registerTag("map_find_key", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 String input = attribute.getContext(1);
                 attribute.fulfill(1);
 
@@ -538,7 +611,7 @@ public class dList extends ArrayList<String> implements dObject {
                 for (String item : (dList) object) {
                     String[] strings = item.split(Pattern.quote(split), 2);
                     if (strings.length > 1 && strings[1].equalsIgnoreCase(input)) {
-                        return new Element(strings[0]).getAttribute(attribute);
+                        return new Element(strings[0]).getObjectAttribute(attribute);
                     }
                 }
                 return null;
@@ -552,10 +625,10 @@ public class dList extends ArrayList<String> implements dObject {
         // returns the size of the list.
         // For example: a list of "one|two|three" will return "3".
         // -->
-        registerTag("size", new TagRunnable() {
+        registerTag("size", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dList) object).size()).getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(((dList) object).size()).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -566,10 +639,10 @@ public class dList extends ArrayList<String> implements dObject {
         // returns whether the list is empty.
         // For example: a list of "" returns true, while "one" returns false.
         // -->
-        registerTag("is_empty", new TagRunnable() {
+        registerTag("is_empty", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dList) object).isEmpty()).getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(((dList) object).isEmpty()).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -581,14 +654,14 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
         // -->
 
-        registerTag("insert", new TagRunnable() {
+        registerTag("insert", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.insert[...] must have a value.");
                     return null;
                 }
-                dList items = dList.valueOf(attribute.getContext(1));
+                dList items = getListFor(attribute.getContextObject(1));
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("at") && attribute.hasContext(1)) {
                     dList result = new dList((dList) object);
@@ -602,7 +675,7 @@ public class dList extends ArrayList<String> implements dObject {
                     for (int i = 0; i < items.size(); i++) {
                         result.add(index + i, items.get(i));
                     }
-                    return result.getAttribute(attribute.fulfill(1));
+                    return result.getObjectAttribute(attribute.fulfill(1));
                 }
                 else {
                     dB.echoError("The tag li@list.insert[...] must be followed by .at[#]!");
@@ -620,9 +693,9 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // -->
 
-        registerTag("set", new TagRunnable() {
+        registerTag("set", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.set[...] must have a value.");
                     return null;
@@ -630,12 +703,12 @@ public class dList extends ArrayList<String> implements dObject {
                 if (((dList) object).isEmpty()) {
                     return null;
                 }
-                dList items = dList.valueOf(attribute.getContext(1));
+                dList items = getListFor(attribute.getContextObject(1));
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("at")
                         && attribute.hasContext(1)) {
                     dList result = new dList((dList) object);
-                    int index = new Element(attribute.getContext(1)).asInt() - 1;
+                    int index = aH.getIntegerFrom(attribute.getContext(1)) - 1;
                     if (index < 0) {
                         index = 0;
                     }
@@ -644,9 +717,9 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                     result.remove(index);
                     for (int i = 0; i < items.size(); i++) {
-                        result.add(index + i, items.get(i));
+                        result.addObject(index + i, items.objectForms.get(i));
                     }
-                    return result.getAttribute(attribute.fulfill(1));
+                    return result.getObjectAttribute(attribute.fulfill(1));
                 }
                 else {
                     dB.echoError("The tag li@list.set[...] must be followed by .at[#]!");
@@ -663,16 +736,16 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: .include[three|four] on a list of "one|two" will return "one|two|three|four".
         // -->
 
-        registerTag("include", new TagRunnable() {
+        registerTag("include", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.include[...] must have a value.");
                     return null;
                 }
-                dList list = (dList) object;
-                list.addAll(dList.valueOf(attribute.getContext(1)));
-                return list.getAttribute(attribute.fulfill(1));
+                dList copy = new dList((dList) object);
+                copy.addAll(getListFor(attribute.getContextObject(1)));
+                return copy.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -684,26 +757,26 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
         // -->
 
-        registerTag("exclude", new TagRunnable() {
+        registerTag("exclude", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.exclude[...] must have a value.");
                     return null;
                 }
-                dList exclusions = dList.valueOf(attribute.getContext(1));
+                dList exclusions = getListFor(attribute.getContextObject(1));
                 // Create a new dList that will contain the exclusions
-                dList list = (dList) object;
+                dList copy = new dList((dList) object);
                 // Iterate through
                 for (String exclusion : exclusions) {
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).equalsIgnoreCase(exclusion)) {
-                            list.remove(i--);
+                    for (int i = 0; i < copy.size(); i++) {
+                        if (copy.get(i).equalsIgnoreCase(exclusion)) {
+                            copy.remove(i--);
                         }
                     }
                 }
                 // Return the modified list
-                return list.getAttribute(attribute.fulfill(1));
+                return copy.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -716,19 +789,19 @@ public class dList extends ArrayList<String> implements dObject {
         // Also supports [first] and [last] values.
         // -->
 
-        registerTag("remove", new TagRunnable() {
+        registerTag("remove", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.remove[#] must have a value.");
                     return null;
                 }
-                dList indices = dList.valueOf(attribute.getContext(1));
-                dList list = (dList) object;
+                dList indices = getListFor(attribute.getContextObject(1));
+                dList copy = new dList((dList) object);
                 for (String index : indices) {
                     int remove;
                     if (index.equalsIgnoreCase("last")) {
-                        remove = list.size() - 1;
+                        remove = copy.size() - 1;
                     }
                     else if (index.equalsIgnoreCase("first")) {
                         remove = 0;
@@ -736,16 +809,16 @@ public class dList extends ArrayList<String> implements dObject {
                     else {
                         remove = new Element(index).asInt() - 1;
                     }
-                    if (remove >= 0 && remove < list.size()) {
-                        list.set(remove, "\0");
+                    if (remove >= 0 && remove < copy.size()) {
+                        copy.set(remove, "\0");
                     }
                 }
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).equals("\0")) {
-                        list.remove(i--);
+                for (int i = 0; i < copy.size(); i++) {
+                    if (copy.get(i).equals("\0")) {
+                        copy.remove(i--);
                     }
                 }
-                return list.getAttribute(attribute.fulfill(1));
+                return copy.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -754,6 +827,7 @@ public class dList extends ArrayList<String> implements dObject {
         // @returns Element
         // @description
         // Returns the list with all instances of an element removed.
+        // Specify regex: at the start of the replace element to replace elements that match the Regex.
         // -->
 
         // <--[tag]
@@ -763,22 +837,19 @@ public class dList extends ArrayList<String> implements dObject {
         // Returns the list with all instances of an element replaced with another.
         // Specify regex: at the start of the replace element to replace elements that match the Regex.
         // -->
-        registerTag("replace", new TagRunnable() {
+        registerTag("replace", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.replace[...] must have a value.");
                     return null;
                 }
                 String replace = attribute.getContext(1);
-                String replacement = "";
+                dObject replacement = null;
                 attribute.fulfill(1);
                 if (attribute.startsWith("with")) {
                     if (attribute.hasContext(1)) {
-                        replacement = attribute.getContext(1);
-                        if (replacement == null) {
-                            replacement = "";
-                        }
+                        replacement = attribute.getContextObject(1);
                         attribute.fulfill(1);
                     }
                 }
@@ -788,32 +859,33 @@ public class dList extends ArrayList<String> implements dObject {
 
                 if (replace.startsWith("regex:")) {
                     String regex = replace.substring("regex:".length());
-                    for (String string : obj) {
-                        if (string.matches(regex)) {
-                            if (!replacement.equals("")) {
-                                list.add(replacement);
+                    Pattern tempPat = Pattern.compile(regex);
+                    for (int i = 0; i < obj.size(); i++) {
+                        if (tempPat.matcher(obj.get(i)).matches()) {
+                            if (replacement != null) {
+                                list.addObject(replacement);
                             }
                         }
                         else {
-                            list.add(string);
+                            list.addObject(obj.getObject(i));
                         }
                     }
                 }
                 else {
                     String lower = CoreUtilities.toLowerCase(replace);
-                    for (String string : obj) {
-                        if (CoreUtilities.toLowerCase(string).equals(lower)) {
-                            if (!replacement.equals("")) {
-                                list.add(replacement);
+                    for (int i = 0; i < obj.size(); i++) {
+                        if (CoreUtilities.toLowerCase(obj.get(i)).equals(lower)) {
+                            if (replacement != null) {
+                                list.addObject(replacement);
                             }
                         }
                         else {
-                            list.add(string);
+                            list.addObject(obj.getObject(i));
                         }
                     }
                 }
 
-                return list.getAttribute(attribute);
+                return list.getObjectAttribute(attribute);
             }
         });
 
@@ -825,12 +897,12 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|two|three" will become "three|two|one".
         // -->
 
-        registerTag("reverse", new TagRunnable() {
+        registerTag("reverse", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dList list = (dList) object;
-                Collections.reverse(list);
-                return list.getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                ArrayList<dObject> objs = new ArrayList<dObject>(((dList) object).objectForms);
+                Collections.reverse(objs);
+                return new dList(objs).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -842,9 +914,9 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|one|two|three" will become "one|two|three".
         // -->
 
-        registerTag("deduplicate", new TagRunnable() {
+        registerTag("deduplicate", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList obj = (dList) object;
                 dList list = new dList();
                 int size = obj.size();
@@ -858,10 +930,10 @@ public class dList extends ArrayList<String> implements dObject {
                         }
                     }
                     if (!duplicate) {
-                        list.add(entry);
+                        list.addObject(obj.objectForms.get(i));
                     }
                 }
-                return list.getAttribute(attribute.fulfill(1));
+                return list.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -874,9 +946,9 @@ public class dList extends ArrayList<String> implements dObject {
         // Specify more than one index to get a list of results.
         // -->
 
-        registerTag("get", new TagRunnable() {
+        registerTag("get", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.get[...] must have a value.");
                     return null;
@@ -885,7 +957,7 @@ public class dList extends ArrayList<String> implements dObject {
                 if (list.isEmpty()) {
                     return null;
                 }
-                dList indices = dList.valueOf(attribute.getContext(1));
+                dList indices = getListFor(attribute.getContextObject(1));
                 if (indices.size() > 1) {
                     dList results = new dList();
                     for (String index : indices) {
@@ -894,15 +966,15 @@ public class dList extends ArrayList<String> implements dObject {
                             results.add(list.get(ind - 1));
                         }
                     }
-                    return results.getAttribute(attribute.fulfill(1));
+                    return results.getObjectAttribute(attribute.fulfill(1));
                 }
                 if (indices.size() > 0) {
-                    int index = aH.getIntegerFrom(indices.get(0));
-                    if (index > list.size()) {
+                    int index = aH.getIntegerFrom(indices.get(0)) - 1;
+                    if (index >= list.size()) {
                         return null;
                     }
-                    if (index < 1) {
-                        index = 1;
+                    if (index < 0) {
+                        index = 0;
                     }
                     attribute = attribute.fulfill(1);
 
@@ -914,23 +986,21 @@ public class dList extends ArrayList<String> implements dObject {
                     // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three"
                     // -->
                     if (attribute.startsWith("to") && attribute.hasContext(1)) {
-                        int index2 = attribute.getIntContext(1);
-                        if (index2 > list.size()) {
-                            index2 = list.size();
+                        int index2 = attribute.getIntContext(1) - 1;
+                        if (index2 >= list.size()) {
+                            index2 = list.size() - 1;
                         }
-                        if (index2 < 1) {
-                            index2 = 1;
+                        if (index2 < 0) {
+                            index2 = 0;
                         }
-                        String item = "";
+                        dList newList = new dList();
                         for (int i = index; i <= index2; i++) {
-                            item += list.get(i - 1) + (i < index2 ? "|" : "");
+                            newList.addObject(list.objectForms.get(i));
                         }
-                        return new dList(item).getAttribute(attribute.fulfill(1));
+                        return newList.getObjectAttribute(attribute.fulfill(1));
                     }
                     else {
-                        String item;
-                        item = list.get(index - 1);
-                        return ObjectFetcher.pickObjectFor(item).getAttribute(attribute);
+                        return CoreUtilities.autoAttribTyped(list.objectForms.get(index), attribute);
                     }
                 }
                 return null;
@@ -947,9 +1017,9 @@ public class dList extends ArrayList<String> implements dObject {
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
-        registerTag("find_all_partial", new TagRunnable() {
+        registerTag("find_all_partial", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.find_all_partial[...] must have a value.");
                     return null;
@@ -962,7 +1032,7 @@ public class dList extends ArrayList<String> implements dObject {
                         positions.add(String.valueOf(i + 1));
                     }
                 }
-                return positions.getAttribute(attribute.fulfill(1));
+                return positions.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -976,9 +1046,9 @@ public class dList extends ArrayList<String> implements dObject {
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
-        registerTag("find_all", new TagRunnable() {
+        registerTag("find_all", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.find_all[...] must have a value.");
                     return null;
@@ -990,7 +1060,7 @@ public class dList extends ArrayList<String> implements dObject {
                         positions.add(String.valueOf(i + 1));
                     }
                 }
-                return positions.getAttribute(attribute.fulfill(1));
+                return positions.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1004,9 +1074,9 @@ public class dList extends ArrayList<String> implements dObject {
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
-        registerTag("find_partial", new TagRunnable() {
+        registerTag("find_partial", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.find_partial[...] must have a value.");
                     return null;
@@ -1015,10 +1085,10 @@ public class dList extends ArrayList<String> implements dObject {
                 String test = attribute.getContext(1).toUpperCase();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
-                        return new Element(i + 1).getAttribute(attribute.fulfill(1));
+                        return new Element(i + 1).getObjectAttribute(attribute.fulfill(1));
                     }
                 }
-                return new Element(-1).getAttribute(attribute.fulfill(1));
+                return new Element(-1).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1032,9 +1102,9 @@ public class dList extends ArrayList<String> implements dObject {
         // TODO: Take multiple inputs? Or a regex?
         // -->
 
-        registerTag("find", new TagRunnable() {
+        registerTag("find", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.find[...] must have a value.");
                     return null;
@@ -1042,17 +1112,17 @@ public class dList extends ArrayList<String> implements dObject {
                 dList list = (dList) object;
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
-                        return new Element(i + 1).getAttribute(attribute.fulfill(1));
+                        return new Element(i + 1).getObjectAttribute(attribute.fulfill(1));
                     }
                 }
                 // TODO: This should be find_partial or something
             /*
             for (int i = 0; i < size(); i++) {
                 if (get(i).toUpperCase().contains(attribute.getContext(1).toUpperCase()))
-                    return new Element(i + 1).getAttribute(attribute.fulfill(1));
+                    return new Element(i + 1).getObjectAttribute(attribute.fulfill(1));
             }
             */
-                return new Element(-1).getAttribute(attribute.fulfill(1));
+                return new Element(-1).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1064,9 +1134,9 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
 
-        registerTag("count", new TagRunnable() {
+        registerTag("count", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.count[...] must have a value.");
                     return null;
@@ -1079,7 +1149,7 @@ public class dList extends ArrayList<String> implements dObject {
                         count++;
                     }
                 }
-                return new Element(count).getAttribute(attribute.fulfill(1));
+                return new Element(count).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1090,15 +1160,15 @@ public class dList extends ArrayList<String> implements dObject {
         // returns the sum of all numbers in the list.
         // -->
 
-        registerTag("sum", new TagRunnable() {
+        registerTag("sum", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList list = (dList) object;
                 double sum = 0;
                 for (String entry : list) {
                     sum += aH.getDoubleFrom(entry);
                 }
-                return new Element(sum).getAttribute(attribute.fulfill(1));
+                return new Element(sum).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1109,24 +1179,24 @@ public class dList extends ArrayList<String> implements dObject {
         // returns the average of all numbers in the list.
         // -->
 
-        registerTag("average", new TagRunnable() {
+        registerTag("average", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList list = (dList) object;
                 if (list.isEmpty()) {
-                    return new Element(0).getAttribute(attribute.fulfill(1));
+                    return new Element(0).getObjectAttribute(attribute.fulfill(1));
                 }
                 double sum = 0;
                 for (String entry : list) {
                     sum += aH.getDoubleFrom(entry);
                 }
-                return new Element(sum / list.size()).getAttribute(attribute.fulfill(1));
+                return new Element(sum / list.size()).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <li@list.first>
-        // @returns Element
+        // @returns dObject
         // @description
         // returns the first element in the list.
         // If the list is empty, returns null instead.
@@ -1134,22 +1204,22 @@ public class dList extends ArrayList<String> implements dObject {
         // Effectively equivalent to .get[1]
         // -->
 
-        registerTag("first", new TagRunnable() {
+        registerTag("first", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList list = (dList) object;
                 if (list.isEmpty()) {
                     return null;
                 }
                 else {
-                    return new Element(list.get(0)).getAttribute(attribute.fulfill(1));
+                    return CoreUtilities.autoAttribTyped(list.objectForms.get(0), attribute.fulfill(1));
                 }
             }
         });
 
         // <--[tag]
         // @attribute <li@list.last>
-        // @returns Element
+        // @returns dObject
         // @description
         // returns the last element in the list.
         // If the list is empty, returns null instead.
@@ -1157,15 +1227,15 @@ public class dList extends ArrayList<String> implements dObject {
         // Effectively equivalent to .get[<list.size>]
         // -->
 
-        registerTag("last", new TagRunnable() {
+        registerTag("last", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList list = (dList) object;
                 if (list.isEmpty()) {
                     return null;
                 }
                 else {
-                    return new Element(list.get(list.size() - 1)).getAttribute(attribute.fulfill(1));
+                    return CoreUtilities.autoAttribTyped(list.objectForms.get(list.size() - 1), attribute.fulfill(1));
                 }
             }
         });
@@ -1178,11 +1248,11 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "3|2|1|10" will return "1|2|3|10".
         // -->
 
-        registerTag("numerical", new TagRunnable() {
+        registerTag("numerical", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dList list = (dList) object;
-                Collections.sort(list, new Comparator<String>() {
+            public dObject run(Attribute attribute, dObject object) {
+                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
                         double value = new Element(o1).asDouble() - new Element(o2).asDouble();
@@ -1197,7 +1267,7 @@ public class dList extends ArrayList<String> implements dObject {
                         }
                     }
                 });
-                return list.getAttribute(attribute.fulfill(1));
+                return new dList(sortable).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1209,12 +1279,12 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
         // -->
 
-        registerTag("alphanumeric", new TagRunnable() {
+        registerTag("alphanumeric", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dList list = (dList) object;
-                Collections.sort(list, new NaturalOrderComparator());
-                return list.getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                Collections.sort(sortable, new NaturalOrderComparator());
+                return new dList(sortable).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1226,17 +1296,17 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".
         // -->
 
-        registerTag("alphabetical", new TagRunnable() {
+        registerTag("alphabetical", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dList list = (dList) object;
-                Collections.sort(list, new Comparator<String>() {
+            public dObject run(Attribute attribute, dObject object) {
+                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
                         return o1.compareToIgnoreCase(o2);
                     }
                 });
-                return list.getAttribute(attribute.fulfill(1));
+                return new dList(sortable).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1249,18 +1319,18 @@ public class dList extends ArrayList<String> implements dObject {
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
         // -->
 
-        registerTag("sort_by_number", new TagRunnable() {
+        registerTag("sort_by_number", new TagRunnable.ObjectForm() {
             @Override
-            public String run(final Attribute attribute, final dObject object) {
+            public dObject run(final Attribute attribute, final dObject object) {
                 dList newlist = new dList((dList) object);
                 try {
-                    Collections.sort(newlist, new Comparator<String>() {
+                    Collections.sort(newlist.objectForms, new Comparator<dObject>() {
                         @Override
-                        public int compare(String o1, String o2) {
-                            double r1 = new Element(ObjectFetcher.pickObjectFor(o1).getAttribute(new Attribute(attribute.getContext(1),
-                                    attribute.getScriptEntry(), attribute.context))).asDouble();
-                            double r2 = new Element(ObjectFetcher.pickObjectFor(o2).getAttribute(new Attribute(attribute.getContext(1),
-                                    attribute.getScriptEntry(), attribute.context))).asDouble();
+                        public int compare(dObject o1, dObject o2) {
+                            dObject or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                            dObject or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                            double r1 = aH.getDoubleFrom(or1.toString());
+                            double r2 = aH.getDoubleFrom(or2.toString());
                             double value = r1 - r2;
                             if (value == 0) {
                                 return 0;
@@ -1273,18 +1343,18 @@ public class dList extends ArrayList<String> implements dObject {
                             }
                         }
                     });
-                    return newlist.getAttribute(attribute.fulfill(1));
+                    return new dList(newlist.objectForms).getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Exception ex) {
                     dB.echoError(ex);
                 }
-                return newlist.getAttribute(attribute.fulfill(1));
+                return newlist.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <li@list.sort[<procedure>]>
-        // @returns Element
+        // @returns dList
         // @description
         // returns a list sorted according to the return values of a procedure.
         // The <procedure> should link a procedure script that takes two definitions each of which will be an item
@@ -1297,14 +1367,14 @@ public class dList extends ArrayList<String> implements dObject {
         // Note that if two inputs are exactly equal, the procedure should always return 0.
         // -->
 
-        registerTag("sort", new TagRunnable() {
+        registerTag("sort", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList obj = new dList((dList) object);
                 final ProcedureScriptContainer script = (ProcedureScriptContainer) dScript.valueOf(attribute.getContext(1)).getContainer();
                 if (script == null) {
                     dB.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
-                    return obj.getAttribute(attribute.fulfill(1));
+                    return obj.getObjectAttribute(attribute.fulfill(1));
                 }
                 final ScriptEntry entry = attribute.getScriptEntry();
                 attribute = attribute.fulfill(1);
@@ -1316,7 +1386,7 @@ public class dList extends ArrayList<String> implements dObject {
                 // -->
                 dList context = new dList();
                 if (attribute.startsWith("context")) {
-                    context = dList.valueOf(attribute.getContext(1));
+                    context = getListFor(attribute.getContextObject(1));
                     attribute = attribute.fulfill(1);
                 }
                 final dList context_send = context;
@@ -1372,7 +1442,7 @@ public class dList extends ArrayList<String> implements dObject {
                 catch (Exception e) {
                     dB.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
                 }
-                return new dList(list).getAttribute(attribute);
+                return new dList(list).getObjectAttribute(attribute);
             }
         });
 
@@ -1384,26 +1454,52 @@ public class dList extends ArrayList<String> implements dObject {
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
 
-        registerTag("filter", new TagRunnable() {
+        registerTag("filter", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList newlist = new dList();
                 try {
-                    for (String str : (dList) object) {
-                        if (str == null) {
-                            dB.echoError("Null string in dList! (From .filter tag)");
-                        }
-                        String result = ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
+                    for (dObject obj : ((dList) object).objectForms) {
+                        dObject objs = CoreUtilities.autoAttribTyped(obj, new Attribute(attribute.getContext(1),
                                 attribute.getScriptEntry(), attribute.context));
-                        if (result != null && result.equalsIgnoreCase("true")) {
-                            newlist.add(str);
+                        if (objs != null && CoreUtilities.toLowerCase(objs.toString()).equals("true")) {
+                            newlist.addObject(obj);
                         }
                     }
                 }
                 catch (Exception ex) {
                     dB.echoError(ex);
                 }
-                return newlist.getAttribute(attribute.fulfill(1));
+                return newlist.getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <li@list.parse[<tag>]>
+        // @returns dList
+        // @description
+        // returns a copy of the list with all its contents parsed through the given tag.
+        // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
+        // -->
+
+        registerTag("parse", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                dList newlist = new dList();
+                try {
+                    for (dObject obj : ((dList) object).objectForms) {
+                        dObject objs = CoreUtilities.autoAttribTyped(obj, new Attribute(attribute.getContext(1),
+                                attribute.getScriptEntry(), attribute.context));
+                        if (objs == null) {
+                            objs = new Element("null");
+                        }
+                        newlist.addObject(objs);
+                    }
+                }
+                catch (Exception ex) {
+                    dB.echoError(ex);
+                }
+                return newlist.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1415,14 +1511,14 @@ public class dList extends ArrayList<String> implements dObject {
         // by adding entries to the left side.
         // -->
 
-        registerTag("pad_left", new TagRunnable() {
+        registerTag("pad_left", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.pad_left[...] must have a value.");
                     return null;
                 }
-                String with = "";
+                dObject with = new Element("");
                 int length = attribute.getIntContext(1);
                 attribute = attribute.fulfill(1);
 
@@ -1435,16 +1531,16 @@ public class dList extends ArrayList<String> implements dObject {
                 // -->
                 if (attribute.startsWith("with")
                         && attribute.hasContext(1)) {
-                    with = String.valueOf(attribute.getContext(1));
+                    with = attribute.getContextObject(1);
                     attribute = attribute.fulfill(1);
                 }
 
                 dList newList = new dList((dList) object);
                 while (newList.size() < length) {
-                    newList.add(0, with);
+                    newList.addObject(with);
                 }
 
-                return newList.getAttribute(attribute);
+                return newList.getObjectAttribute(attribute);
             }
         });
 
@@ -1456,14 +1552,14 @@ public class dList extends ArrayList<String> implements dObject {
         // by adding entries to the right side.
         // -->
 
-        registerTag("pad_right", new TagRunnable() {
+        registerTag("pad_right", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.pad_right[...] must have a value.");
                     return null;
                 }
-                String with = "";
+                dObject with = new Element("");
                 int length = attribute.getIntContext(1);
                 attribute = attribute.fulfill(1);
 
@@ -1476,45 +1572,16 @@ public class dList extends ArrayList<String> implements dObject {
                 // -->
                 if (attribute.startsWith("with")
                         && attribute.hasContext(1)) {
-                    with = String.valueOf(attribute.getContext(1));
+                    with = attribute.getContextObject(1);
                     attribute = attribute.fulfill(1);
                 }
 
                 dList newList = new dList((dList) object);
                 while (newList.size() < length) {
-                    newList.add(with);
+                    newList.addObject(with);
                 }
 
-                return newList.getAttribute(attribute);
-            }
-        });
-
-        // <--[tag]
-        // @attribute <li@list.parse[<tag>]>
-        // @returns dList
-        // @description
-        // returns a copy of the list with all its contents parsed through the given tag.
-        // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
-        // -->
-
-        registerTag("parse", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                dList newlist = new dList();
-                try {
-                    for (String str : (dList) object) {
-                        String objs = ObjectFetcher.pickObjectFor(str).getAttribute(new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry(), attribute.context));
-                        if (objs == null) {
-                            objs = "null";
-                        }
-                        newlist.add(objs);
-                    }
-                }
-                catch (Exception ex) {
-                    dB.echoError(ex);
-                }
-                return newlist.getAttribute(attribute.fulfill(1));
+                return newList.getObjectAttribute(attribute);
             }
         });
 
@@ -1527,14 +1594,14 @@ public class dList extends ArrayList<String> implements dObject {
         // See <@link language property escaping>.
         // -->
 
-        registerTag("escape_contents", new TagRunnable() {
+        registerTag("escape_contents", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList escaped = new dList();
                 for (String entry : (dList) object) {
                     escaped.add(EscapeTags.Escape(entry));
                 }
-                return escaped.getAttribute(attribute.fulfill(1));
+                return escaped.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1547,14 +1614,14 @@ public class dList extends ArrayList<String> implements dObject {
         // See <@link language property escaping>.
         // -->
 
-        registerTag("unescape_contents", new TagRunnable() {
+        registerTag("unescape_contents", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList escaped = new dList();
                 for (String entry : (dList) object) {
                     escaped.add(EscapeTags.unEscape(entry));
                 }
-                return escaped.getAttribute(attribute.fulfill(1));
+                return escaped.getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1565,14 +1632,14 @@ public class dList extends ArrayList<String> implements dObject {
         // returns whether the list contains any of a list of given elements, case-sensitive.
         // -->
 
-        registerTag("contains_any_case_sensitive", new TagRunnable() {
+        registerTag("contains_any_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.contains_any_case_sensitive[...] must have a value.");
                     return null;
                 }
-                dList list = dList.valueOf(attribute.getContext(1));
+                dList list = getListFor(attribute.getContextObject(1));
                 boolean state = false;
 
                 full_set:
@@ -1585,7 +1652,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return new Element(state).getAttribute(attribute.fulfill(1));
+                return new Element(state).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1596,14 +1663,14 @@ public class dList extends ArrayList<String> implements dObject {
         // returns whether the list contains any of a list of given elements.
         // -->
 
-        registerTag("contains_any", new TagRunnable() {
+        registerTag("contains_any", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.contains_any[...] must have a value.");
                     return null;
                 }
-                dList list = dList.valueOf(attribute.getContext(1));
+                dList list = getListFor(attribute.getContextObject(1));
                 boolean state = false;
 
                 full_set:
@@ -1616,7 +1683,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return new Element(state).getAttribute(attribute.fulfill(1));
+                return new Element(state).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1627,9 +1694,9 @@ public class dList extends ArrayList<String> implements dObject {
         // returns whether the list contains a given element, case-sensitive.
         // -->
 
-        registerTag("contains_case_sensitive", new TagRunnable() {
+        registerTag("contains_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.contains_case_sensitive[...] must have a value.");
                     return null;
@@ -1643,7 +1710,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return new Element(state).getAttribute(attribute.fulfill(1));
+                return new Element(state).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1654,14 +1721,14 @@ public class dList extends ArrayList<String> implements dObject {
         // returns whether the list contains all of the given elements.
         // -->
 
-        registerTag("contains", new TagRunnable() {
+        registerTag("contains", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
                     dB.echoError("The tag li@list.contains[...] must have a value.");
                     return null;
                 }
-                dList needed = dList.valueOf(attribute.getContext(1));
+                dList needed = getListFor(attribute.getContextObject(1));
                 int gotten = 0;
 
                 for (String check : needed) {
@@ -1673,7 +1740,7 @@ public class dList extends ArrayList<String> implements dObject {
                     }
                 }
 
-                return new Element(gotten == needed.size() && gotten > 0).getAttribute(attribute.fulfill(1));
+                return new Element(gotten == needed.size() && gotten > 0).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1685,16 +1752,16 @@ public class dList extends ArrayList<String> implements dObject {
         // type of object that is fulfilling this attribute.
         // -->
 
-        registerTag("type", new TagRunnable() {
+        registerTag("type", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element("List").getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element("List").getObjectAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <li@list.random[<#>]>
-        // @returns Element
+        // @returns dObject
         // @description
         // Gets a random item in the list and returns it as an Element.
         // Optionally, add [<#>] to get a list of multiple randomly chosen elements.
@@ -1704,9 +1771,9 @@ public class dList extends ArrayList<String> implements dObject {
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
 
-        registerTag("random", new TagRunnable() {
+        registerTag("random", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 dList obj = (dList) object;
                 if (obj.isEmpty()) {
                     return null;
@@ -1714,20 +1781,20 @@ public class dList extends ArrayList<String> implements dObject {
                 if (attribute.hasContext(1)) {
                     int count = Integer.valueOf(attribute.getContext(1));
                     int times = 0;
-                    ArrayList<String> available = new ArrayList<String>();
-                    available.addAll(obj);
+                    ArrayList<dObject> available = new ArrayList<dObject>();
+                    available.addAll(obj.objectForms);
                     dList toReturn = new dList();
                     while (!available.isEmpty() && times < count) {
                         int random = CoreUtilities.getRandom().nextInt(available.size());
-                        toReturn.add(available.get(random));
+                        toReturn.addObject(available.get(random));
                         available.remove(random);
                         times++;
                     }
-                    return toReturn.getAttribute(attribute.fulfill(1));
+                    return toReturn.getObjectAttribute(attribute.fulfill(1));
                 }
                 else {
-                    return ObjectFetcher.pickObjectFor(obj.get(CoreUtilities.getRandom().nextInt(obj.size())))
-                            .getAttribute(attribute.fulfill(1));
+                    return CoreUtilities.autoAttribTyped(obj.objectForms.get(CoreUtilities.getRandom().nextInt(obj.size())),
+                            attribute.fulfill(1));
                 }
             }
         });
@@ -1744,11 +1811,11 @@ public class dList extends ArrayList<String> implements dObject {
         // You can use that tag to add an upper limit on how different the strings can be.
         // -->
 
-        registerTag("closest_to", new TagRunnable() {
+        registerTag("closest_to", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public dObject run(Attribute attribute, dObject object) {
                 return new Element(CoreUtilities.getClosestOption((dList) object, attribute.getContext(1)))
-                        .getAttribute(attribute.fulfill(1));
+                        .getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1767,10 +1834,10 @@ public class dList extends ArrayList<String> implements dObject {
         // that is fulfilling this attribute.
         // -->
 
-        registerTag("prefix", new TagRunnable() {
+        registerTag("prefix", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dList) object).prefix).getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(((dList) object).prefix).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1783,10 +1850,10 @@ public class dList extends ArrayList<String> implements dObject {
         // debug entry for the object that is fulfilling this attribute.
         // -->
 
-        registerTag("debug", new TagRunnable() {
+        registerTag("debug", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(object.debug()).getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(object.debug()).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1798,22 +1865,36 @@ public class dList extends ArrayList<String> implements dObject {
         // type of object that is fulfilling this attribute.
         // -->
 
-        registerTag("identify", new TagRunnable() { // TODO: ???
+        registerTag("identify", new TagRunnable.ObjectForm() { // TODO: ???
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(object.identify()).getAttribute(attribute.fulfill(1));
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(object.identify()).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
     }
 
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+    //public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
 
-    public static void registerTag(String name, TagRunnable runnable) {
+    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<String, TagRunnable.ObjectForm>();
+
+    public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
         if (runnable.name == null) {
             runnable.name = name;
         }
-        registeredTags.put(name, runnable);
+        registeredObjectTags.put(name, runnable);
+    }
+
+    public static void registerTag(String name, final TagRunnable runnable) {
+        if (runnable.name == null) {
+            runnable.name = name;
+        }
+        registerTag(name, new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                return new Element(runnable.run(attribute, object)).getObjectAttribute(attribute);
+            }
+        });
     }
 
     //
@@ -1834,21 +1915,49 @@ public class dList extends ArrayList<String> implements dObject {
 
     @Override
     public String getAttribute(Attribute attribute) {
+        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+    }
+
+    @Override
+    public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
+        return null;
+    }
+
+    @Override
+    public boolean canPossiblyBeType(Class<? extends dObject> type) {
+        return flag != null;
+    }
+
+    @Override
+    public dObject getObjectAttribute(Attribute attribute) {
 
         if (attribute == null) {
             return null;
         }
 
-        // TODO: Scrap getAttribute, make this functionality a core system
+        if (attribute.isComplete()) {
+            return this;
+        }
+
+        // TODO: Scrap getObjectAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
+        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
+        if (otr != null) {
+            if (!otr.name.equals(attrLow)) {
+                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
+            }
+            return otr.run(attribute, this);
+        }
+        /*
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
                 dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
-            return tr.run(attribute, this);
-        }
+            return new Element(tr.run(attribute, this));
+        }*/
 
         //
         // TODO: Everything below is deprecated and will be moved to registerTag() format
@@ -1866,7 +1975,6 @@ public class dList extends ArrayList<String> implements dObject {
         // returns true of the flag is expired or does not exist, false if it
         // is not yet expired, or has no expiration.
         // -->
-        // NOTE: Defined in UtilTags.java
 
         // Need this attribute (for flags) since they return the last
         // element of the list, unless '.as_list' is specified.
@@ -1879,7 +1987,7 @@ public class dList extends ArrayList<String> implements dObject {
         // -->
         if (flag != null && (attribute.startsWith("as_list")
                 || attribute.startsWith("aslist"))) {
-            return new dList(this).getAttribute(attribute.fulfill(1));
+            return new dList(this).getObjectAttribute(attribute.fulfill(1));
         }
 
 
@@ -1889,15 +1997,15 @@ public class dList extends ArrayList<String> implements dObject {
         // with dList's identify() value.
 
         // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this)) {
-            String returned = property.getAttribute(attribute);
+        for (Property property : PropertyParser.getProperties(this, attrLow)) {
+            dObject returned = CoreUtilities.autoAttrib(property, attribute);
             if (returned != null) {
                 return returned;
             }
         }
 
         return (flag != null
-                ? new Element(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getAttribute(attribute)
-                : new Element(identify()).getAttribute(attribute));
+                ? new Element(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getObjectAttribute(attribute)
+                : new Element(identify()).getObjectAttribute(attribute));
     }
 }

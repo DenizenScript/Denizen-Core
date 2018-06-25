@@ -4,6 +4,8 @@ import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -25,7 +27,7 @@ public class DetermineCommand extends AbstractCommand {
 
     // Map for keeping track of cache
     // Key: ID, Value: outcome
-    private static Map<Long, List<String>> cache = new ConcurrentHashMap<Long, List<String>>(8, 0.9f, 1);
+    private static Map<Long, dList> cache = new ConcurrentHashMap<Long, dList>(8, 0.9f, 1);
 
     // Start at 0
     public static long uniqueId = 0;
@@ -64,8 +66,8 @@ public class DetermineCommand extends AbstractCommand {
      * @param id the outcome id to check
      * @return the outcome
      */
-    public static List<String> getOutcome(long id) {
-        List<String> outcome = cache.get(id);
+    public static dList getOutcome(long id) {
+        dList outcome = cache.get(id);
         cache.remove(id);
         return outcome;
     }
@@ -101,7 +103,7 @@ public class DetermineCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", new Element(arg.raw_value));
+                scriptEntry.addObject("outcome", arg.object);
             }
 
             else {
@@ -121,15 +123,16 @@ public class DetermineCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
 
+        dObject outcomeObj = scriptEntry.getdObject("outcome");
+
         // Report!
-        dB.report(scriptEntry, getName(), scriptEntry.getElement("outcome").debug()
+        dB.report(scriptEntry, getName(), outcomeObj.debug()
                 + scriptEntry.getElement("passively").debug());
 
         // Fetch the ScriptEntry elements
-        String outcome = scriptEntry.getElement("outcome").asString();
         Boolean passively = scriptEntry.getElement("passively").asBoolean();
 
-        Long uniqueId = (Long) scriptEntry.getObject("reqId");
+        Long uniqueId = (Long) scriptEntry.getObject("reqid");
 
         // Useful for debug
         if (uniqueId == null) {
@@ -138,19 +141,15 @@ public class DetermineCommand extends AbstractCommand {
         }
 
         // Store the outcome in the cache
-        List<String> strs;
-        if (cache.containsKey(uniqueId)) {
-            strs = cache.get(uniqueId);
-        }
-        else {
-            strs = new ArrayList<String>();
+        dList strs = cache.get(uniqueId);
+        if (strs == null) {
+            strs = new dList();
             cache.put(uniqueId, strs);
         }
-        strs.add(outcome);
+        strs.addObject(outcomeObj);
 
-        if (!passively)
+        if (!passively) {
         // Stop the queue by clearing the remainder of it.
-        {
             scriptEntry.getResidingQueue().clear();
         }
     }

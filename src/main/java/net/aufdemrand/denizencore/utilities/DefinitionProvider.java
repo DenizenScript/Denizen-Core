@@ -1,12 +1,16 @@
 package net.aufdemrand.denizencore.utilities;
 
+import net.aufdemrand.denizencore.objects.dObject;
+
 import java.util.Map;
 
 public interface DefinitionProvider {
 
     void addDefinition(String definition, String value);
 
-    Map<String, String> getAllDefinitions();
+    Map<String, dObject> getAllDefinitions();
+
+    dObject getDefinitionObject(String definition);
 
     String getDefinition(String definition);
 

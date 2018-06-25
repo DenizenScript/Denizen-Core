@@ -1,9 +1,11 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -17,7 +19,7 @@ public class DefineCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
+        for (aH.Argument arg : aH.interpretObjects(scriptEntry.processed_arguments)) {
 
             if (!scriptEntry.hasObject("definition")) {
                 if (arg.getValue().equals("!") && arg.hasPrefix()) {
@@ -30,10 +32,8 @@ public class DefineCommand extends AbstractCommand {
                 }
             }
 
-            else if (!scriptEntry.hasObject("value"))
-            // Use the raw_value as to not exclude values with :'s in them.
-            {
-                scriptEntry.addObject("value", new Element(arg.raw_value));
+            else if (!scriptEntry.hasObject("value")) {
+                scriptEntry.addObject("value", arg.object);
             }
 
             else {
@@ -50,19 +50,21 @@ public class DefineCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
 
         Element definition = scriptEntry.getElement("definition");
-        Element value = scriptEntry.getElement("value");
+        dObject value = scriptEntry.getdObject("value");
         Element remove = scriptEntry.getElement("remove");
 
-        dB.report(scriptEntry, getName(), aH.debugObj("queue", scriptEntry.getResidingQueue().id)
-                + definition.debug()
-                + value.debug()
-                + (remove != null ? remove.debug() : ""));
+        if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
+            dB.report(scriptEntry, getName(), aH.debugObj("queue", scriptEntry.getResidingQueue().id)
+                    + definition.debug()
+                    + value.debug()
+                    + (remove != null ? remove.debug() : ""));
+        }
 
         if (scriptEntry.hasObject("remove")) {
             scriptEntry.getResidingQueue().removeDefinition(definition.asString());
         }
         else {
-            scriptEntry.getResidingQueue().addDefinition(definition.asString(), value.asString());
+            scriptEntry.getResidingQueue().addDefinition(definition.asString(), value);
         }
     }
 }

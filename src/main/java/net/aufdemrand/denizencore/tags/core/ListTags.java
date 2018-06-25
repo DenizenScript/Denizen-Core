@@ -1,9 +1,11 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
 
 /**
@@ -13,10 +15,14 @@ import net.aufdemrand.denizencore.tags.TagManager;
 public class ListTags {
 
     public ListTags() {
-        TagManager.registerTagEvents(this);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                listTags(event);
+            }
+        }, "list");
     }
 
-    @TagManager.TagEvents
     public void listTags(ReplaceableTagEvent event) {
 
         if (!event.matches("list") || event.replaced()) {
@@ -36,7 +42,7 @@ public class ListTags {
 
         // Build and fill attributes
         Attribute attribute = event.getAttributes();
-        event.setReplaced(list.getAttribute(attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
 
     }
 }

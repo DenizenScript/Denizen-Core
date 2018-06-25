@@ -83,6 +83,10 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         return (delay_ticks > System.currentTimeMillis());
     }
 
+    public TimedQueue(String id, long ticks) {
+        super(id);
+        this.ticks = ticks;
+    }
 
     public TimedQueue(String id, Duration timing) {
         super(id);
@@ -93,10 +97,15 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     // Public instance setters and getters
     /////////////////////
 
+    @Override
+    public boolean isInstantSpeed() {
+        return ticks <= 0;
+    }
+
 
     /**
      * Gets the speed of the queue. This is the
-     * time in between each revolution. '
+     * time in between each revolution.
      *
      * @return a Duration of the speed.
      */
@@ -189,7 +198,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         // @attribute <q@queue.speed>
         // @returns Duration
         // @description
-        // Returns the speed of the queue as a Duration. A return of '0t' implies it is 'instant'.
+        // Returns the speed of the queue as a Duration. A return of '0' implies it is 'instant'.
         // -->
         if (attribute.startsWith("speed")) {
             return getSpeed().getAttribute(attribute.fulfill(1));
