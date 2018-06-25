@@ -80,8 +80,7 @@ public class DefinitionTags {
             return;
         }
 
-
-        event.setReplacedObject(CoreUtilities.autoAttrib(def, atttribute));
+        event.setReplacedObject(CoreUtilities.autoAttribTyped(def, atttribute));
     }
 }
 
