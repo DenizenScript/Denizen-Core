@@ -373,9 +373,9 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     @Override
     public String identify() {
-        if (flag != null) {
+        /*if (flag != null) {
             return flag;
-        }
+        }*/
 
         if (isEmpty()) {
             return "li@";
@@ -1865,10 +1865,10 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         // type of object that is fulfilling this attribute.
         // -->
 
-        registerTag("identify", new TagRunnable.ObjectForm() { // TODO: ???
+        registerTag("type", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                return new Element(object.identify()).getObjectAttribute(attribute.fulfill(1));
+                return new Element("List").getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -1990,12 +1990,6 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             return new dList(this).getObjectAttribute(attribute.fulfill(1));
         }
 
-
-        // If this is a flag, return the last element (this is how it has always worked...)
-        // Use as_list to return a list representation of the flag.
-        // If this is NOT a flag, but instead a normal dList, return an element
-        // with dList's identify() value.
-
         // Iterate through this object's properties' attributes
         for (Property property : PropertyParser.getProperties(this, attrLow)) {
             dObject returned = CoreUtilities.autoAttrib(property, attribute);
@@ -2003,6 +1997,11 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 return returned;
             }
         }
+
+        // If this is a flag, return the last element (this is how it has always worked...)
+        // Use as_list to return a list representation of the flag.
+        // If this is NOT a flag, but instead a normal dList, return an element
+        // with dList's identify() value.
 
         return (flag != null
                 ? new Element(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getObjectAttribute(attribute)
