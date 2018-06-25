@@ -248,14 +248,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public void fire() {
         fires++;
-        ScriptEvent dupd = null;
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(this, path.container, path.event)) {
-                    if (dupd == null) {
-                        dupd = clone();
-                    }
-                    dupd.run(path);
+                    run(path);
                 }
             }
             catch (Exception e) {
@@ -294,17 +290,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             queue.setContextSource(oecs);
         }
         else {
-            queue.setContextSource(this);
+            queue.setContextSource(this.clone());
         }
         queue.start();
         nanoTimes += System.nanoTime() - queue.startTime;
         dList outList = DetermineCommand.getOutcome(id);
         if (outList != null && !outList.isEmpty()) {
             List<dObject> determinations = outList.objectForms;
-            if (determinations != null) {
-                for (dObject determination : determinations) {
-                    applyDetermination(path.container, determination);
-                }
+            for (dObject determination : determinations) {
+                applyDetermination(path.container, determination);
             }
         }
     }
