@@ -118,6 +118,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         ScriptEntry se = (ScriptEntry) super.clone();
         se.objects = new HashMap<String, Object>();
         se.processed_arguments = processed_arguments == null ? null : new ArrayList<dObject>(processed_arguments);
+        se.args = new ArrayList<String>(args);
         se.entryData = entryData.clone();
         return se;
     }
