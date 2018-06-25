@@ -60,7 +60,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public static class Argument {
 
-        public String prefix = null;
+        public Argument prefix = null;
 
         public List<TagManager.ParseableTagPiece> value = null;
 
@@ -138,6 +138,34 @@ public class ScriptEntry implements Cloneable, Debuggable {
      */
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) throws ScriptEntryCreationException {
         this(command, arguments, script, null);
+    }
+
+    public void crunchInto(Argument argVal, String arg, TagContext refContext) {
+        if (arg.indexOf('%') != -1) {
+            internal.hasOldDefs = true;
+            argVal.value = new LinkedList<TagManager.ParseableTagPiece>();
+            TagManager.ParseableTagPiece piece = new TagManager.ParseableTagPiece();
+            piece.content = arg;
+            argVal.value.add(piece);
+        }
+        else {
+            argVal.value = TagManager.genChain(arg, refContext);
+        }
+        boolean isTag = false;
+        int indStart = arg.indexOf('<');
+        if (indStart >= 0) {
+            int indEnd = arg.indexOf('>');
+            if (indEnd > indStart) {
+                isTag = true;
+                internal.hasTags = true;
+                char c = arg.charAt(indStart + 1);
+                if (c == '!' || c == '^') {
+                    internal.hasInstantTags = true;
+                }
+            }
+        }
+        argVal.aHArg = new aH.Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
+        argVal.aHArg.needsFill = isTag;
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
@@ -240,39 +268,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     continue;
                 }
                 tempProcessArgs.add(i);
-                int colon = arg.indexOf(':');
-                int space = arg.indexOf(' ');
                 Argument argVal = new Argument();
                 internal.args_ref.set(i, argVal);
-                if (colon > 0 && (space == -1 || space > colon)) {
-                    argVal.prefix = arg.substring(0, colon);
+                int colon = TagManager.findColonNotTagNorSpace(arg);
+                if (colon > 0) {
+                    argVal.prefix = new Argument();
+                    crunchInto(argVal.prefix, arg.substring(0, colon), refContext);
                     arg = arg.substring(colon + 1);
                 }
-                if (arg.indexOf('%') != -1) {
-                    internal.hasOldDefs = true;
-                    internal.args_ref.get(i).value = new LinkedList<TagManager.ParseableTagPiece>();
-                    TagManager.ParseableTagPiece piece = new TagManager.ParseableTagPiece();
-                    piece.content = arg;
-                    internal.args_ref.get(i).value.add(piece);
-                }
-                else {
-                    internal.args_ref.get(i).value = TagManager.genChain(arg, refContext);
-                }
-                boolean isTag = false;
-                int indStart = arg.indexOf('<');
-                if (indStart >= 0) {
-                    int indEnd = arg.indexOf('>');
-                    if (indEnd > indStart) {
-                        isTag = true;
-                        internal.hasTags = true;
-                        char c = arg.charAt(indStart + 1);
-                        if (c == '!' || c == '^') {
-                            internal.hasInstantTags = true;
-                        }
-                    }
-                }
-                argVal.aHArg = new aH.Argument(argVal.prefix, arg);
-                argVal.aHArg.needsFill = isTag;
+                crunchInto(argVal, arg, refContext);
             }
             internal.processArgs = new int[tempProcessArgs.size()];
             for (int i = 0; i < tempProcessArgs.size(); i++) {

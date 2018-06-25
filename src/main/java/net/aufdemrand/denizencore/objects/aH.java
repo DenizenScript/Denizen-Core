@@ -79,9 +79,9 @@ public class aH {
 
         public String raw_value;
         public String prefix = null;
-        String lower_prefix = null;
-        String value;
-        String lower_value;
+        public String lower_prefix = null;
+        public String value;
+        public String lower_value;
 
         public dObject object = null;
 

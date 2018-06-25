@@ -514,6 +514,29 @@ public class TagManager {
         return parseChainObject(genChain(arg, context), context, false);
     }
 
+    public static int findColonNotTagNorSpace(String arg) {
+        if (arg.indexOf(':') == -1) {
+            return -1;
+        }
+        char[] arr = arg.toCharArray();
+        int bracks = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == '<') {
+                bracks++;
+            }
+            else if (arr[i] == '>') {
+                bracks--;
+            }
+            else if (arr[i] == ':' && bracks == 0) {
+                return i;
+            }
+            else if (arr[i] == ' ' && bracks == 0) {
+                return -1;
+            }
+        }
+        return -1;
+    }
+
     private static void locateTag(String arg, int[] holder) {
         int first = arg.indexOf('<');
         holder[0] = first;
@@ -526,14 +549,14 @@ public class TagManager {
             locateTag(arg.substring(0, first) + (char) 0x01 + arg.substring(first + 1), holder);
             return;
         }
-        int bracks = 0;
+        int bracks = 1;
         for (int i = first + 1; i < len; i++) {
             if (arg.charAt(i) == '<') {
                 bracks++;
             }
             else if (arg.charAt(i) == '>') {
                 bracks--;
-                if (bracks == -1) {
+                if (bracks == 0) {
                     holder[1] = i;
                     return;
                 }
@@ -578,9 +601,22 @@ public class TagManager {
         for (int argId : targets) {
             aH.Argument aharg = aHArgs.get(argId);
             if (aharg.needsFill) {
-                dObject created = parseChainObject(pieceHelp.get(argId).value, context, repush);
-                filledArgs.set(argId, created);
-                aharg.object = created;
+                ScriptEntry.Argument piece = pieceHelp.get(argId);
+                if (piece.prefix != null) {
+                    dObject prefix_created = parseChainObject(piece.prefix.value, context, repush);
+                    dObject created = parseChainObject(piece.value, context, repush);
+                    aharg.prefix = prefix_created.toString();
+                    aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
+                    aharg.object = created;
+                    filledArgs.set(argId, new Element(aharg.prefix + ":" + created.toString()));
+                }
+                else {
+                    dObject created = parseChainObject(piece.value, context, repush);
+                    filledArgs.set(argId, created);
+                    aharg.object = created;
+                    aharg.prefix = null;
+                    aharg.lower_prefix = null;
+                }
             }
         }
         return filledArgs;
