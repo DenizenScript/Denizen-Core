@@ -473,6 +473,7 @@ public class TagManager {
             pieces.add(txt);
             return pieces;
         }
+        String orig = arg;
         while (positions[0] != -1) {
             ParseableTagPiece preText = null;
             if (positions[0] > 0) {
@@ -495,7 +496,7 @@ public class TagManager {
         if (arg.indexOf('<') != -1) {
             ParseableTagPiece errorNote = new ParseableTagPiece();
             errorNote.isError = true;
-            errorNote.content = "Potential issue: inconsistent tag marks in command!";
+            errorNote.content = "Potential issue: inconsistent tag marks in command! (issue snippet: " + arg + "; from: " + orig + ")";
             pieces.add(errorNote);
         }
         if (arg.length() > 0) {
