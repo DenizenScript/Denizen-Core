@@ -116,7 +116,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     @Override
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
-        se.objects = new HashMap<String, Object>();
+        se.objects = new HashMap<String, Object>(objects);
         se.processed_arguments = processed_arguments == null ? null : new ArrayList<dObject>(processed_arguments);
         se.entryData = entryData.clone();
         return se;
@@ -173,7 +173,22 @@ public class ScriptEntry implements Cloneable, Debuggable {
         if (arguments != null) {
             args = new ArrayList<String>(arguments.length);
             internal.preprocArgs = new ArrayList<aH.Argument>();
+            int nested_depth = 0;
             for (String arg : arguments) {
+                if (arg.equals("{")) {
+                    nested_depth++;
+                    args.add(arg);
+                    continue;
+                }
+                if (arg.equals("}")) {
+                    nested_depth--;
+                    args.add(arg);
+                    continue;
+                }
+                if (nested_depth > 0) {
+                    args.add(arg);
+                    continue;
+                }
                 String parg = arg;
                 String after = null;
                 if (parg.endsWith("{") && !parg.equals("{")) {
@@ -198,10 +213,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 if (after != null) {
                     args.add(after);
+                    if (after.equals("{")) {
+                        nested_depth++;
+                        args.add(arg);
+                        continue;
+                    }
                 }
             }
             internal.pre_tagged_args = new ArrayList<String>(args);
-            int nested_depth = 0;
+            nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
             internal.args_ref = new ArrayList<Argument>(args.size());
             List<Integer> tempProcessArgs = new ArrayList<Integer>();
@@ -416,7 +436,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
         try {
             return objects.get(key);
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            if (dB.verbose) {
+                dB.echoError(ex);
+            }
             return null;
         }
     }
@@ -432,7 +455,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
             return (T) gotten;
             // If not a dObject, return null
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            if (dB.verbose) {
+                dB.echoError(ex);
+            }
             return null;
         }
     }
@@ -441,7 +467,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
         try {
             return (Element) objects.get(key);
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            if (dB.verbose) {
+                dB.echoError(ex);
+            }
             return null;
         }
     }

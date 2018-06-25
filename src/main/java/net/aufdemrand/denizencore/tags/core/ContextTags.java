@@ -63,6 +63,9 @@ public class ContextTags {
                 if (got == null) {
                     if (!event.hasAlternative()) {
                         dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
+                        if (dB.verbose) {
+                            dB.log("Option set is: " + held.getObjects().keySet());
+                        }
                     }
                 }
                 else {
