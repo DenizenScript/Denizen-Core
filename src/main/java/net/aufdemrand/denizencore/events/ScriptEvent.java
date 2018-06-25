@@ -254,7 +254,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     if (dupd == null) {
                         dupd = clone();
                     }
-                    dupd.run(path.container, path.event);
+                    dupd.run(path);
                 }
             }
             catch (Exception e) {
@@ -265,9 +265,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     private String currentEvent;
-
-    public void run(ScriptContainer script, String event) throws CloneNotSupportedException {
-    }
 
     public void run(ScriptPath path) {
         scriptFires++;
