@@ -116,7 +116,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     @Override
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
-        se.objects = new HashMap<String, Object>(objects);
+        se.objects = new HashMap<String, Object>();
         se.processed_arguments = processed_arguments == null ? null : new ArrayList<dObject>(processed_arguments);
         se.entryData = entryData.clone();
         return se;
