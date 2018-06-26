@@ -103,7 +103,7 @@ public class DetermineCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", arg.object);
+                scriptEntry.addObject("outcome", arg.hasPrefix() ? new Element(arg.raw_value) : arg.object);
             }
 
             else {
