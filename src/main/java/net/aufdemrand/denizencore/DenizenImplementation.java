@@ -152,4 +152,6 @@ public interface DenizenImplementation {
     public abstract void debugQueueExecute(ScriptEntry entry, String queue, String execute);
 
     public abstract void debugTagFill(ScriptEntry entry, String tag, String result);
+
+    public abstract boolean tagTimeoutWhenSilent();
 }

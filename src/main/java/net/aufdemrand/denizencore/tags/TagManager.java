@@ -350,7 +350,7 @@ public class TagManager {
         if (dB.verbose) {
             dB.log("Tag read: " + event.raw_tag + ", " + event.isInstant() + ", " + tT + "...");
         }
-        if (tT <= 0) {
+        if (tT <= 0 || (!context.debug && !DenizenCore.getImplementation().tagTimeoutWhenSilent())) {
             fireEvent(event);
         }
         else {
