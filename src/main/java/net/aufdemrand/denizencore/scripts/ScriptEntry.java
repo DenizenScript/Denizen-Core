@@ -93,7 +93,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public void regenerateArgsCur() {
         args_cur = new ArrayList<Argument>(internal.args_ref);
-        for (int i = 0; i < args_cur.size(); i++) {
+        for (int i : internal.processArgs) {
             Argument arg = args_cur.get(i);
             arg.value = new ArrayList<TagManager.ParseableTagPiece>(arg.value);
             arg.aHArg = aHArgs.get(i);
