@@ -593,33 +593,36 @@ public class TagManager {
         return filledArgs;
     }
 
-    public static List<dObject> fillArgumentsObjects(List<dObject> args, List<ScriptEntry.Argument> pieceHelp, List<aH.Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
+    public static void fillArgumentsObjects(List<dObject> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<aH.Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
         if (dB.verbose) {
             dB.log("Fill argument objects: " + args + ", " + context.instant + ", " + targets.length + "...");
         }
-        List<dObject> filledArgs = new ArrayList<dObject>(args);
         for (int argId : targets) {
             aH.Argument aharg = aHArgs.get(argId);
-            if (aharg.needsFill) {
+            if (aharg.needsFill || aharg.hasSpecialPrefix) {
                 ScriptEntry.Argument piece = pieceHelp.get(argId);
                 if (piece.prefix != null) {
                     dObject prefix_created = parseChainObject(piece.prefix.value, context, repush);
-                    dObject created = parseChainObject(piece.value, context, repush);
+                    if (aharg.needsFill) {
+                        dObject created = parseChainObject(piece.value, context, repush);
+                        aharg.object = created;
+                    }
                     aharg.prefix = prefix_created.toString();
                     aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
-                    aharg.object = created;
-                    filledArgs.set(argId, new Element(aharg.prefix + ":" + created.toString()));
+                    String fullx = aharg.prefix + ":" + aharg.object.toString();
+                    args.set(argId, new Element(fullx));
+                    strArgs.set(argId, fullx);
                 }
                 else {
                     dObject created = parseChainObject(piece.value, context, repush);
-                    filledArgs.set(argId, created);
+                    args.set(argId, created);
+                    strArgs.set(argId, created.toString());
                     aharg.object = created;
                     aharg.prefix = null;
                     aharg.lower_prefix = null;
                 }
             }
         }
-        return filledArgs;
     }
 
     public static List<String> fillArguments(List<String> args, TagContext context) {

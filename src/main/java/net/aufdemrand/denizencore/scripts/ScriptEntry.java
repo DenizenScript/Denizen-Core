@@ -167,6 +167,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
         argVal.aHArg = new aH.Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
         argVal.aHArg.needsFill = isTag;
+        argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {

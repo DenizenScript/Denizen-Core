@@ -86,6 +86,7 @@ public class aH {
         public dObject object = null;
 
         public boolean needsFill = false;
+        public boolean hasSpecialPrefix = false;
 
         public String generateRaw() {
             return prefix == null ? value : prefix + ":" + value;
@@ -426,7 +427,7 @@ public class aH {
 
     public static List<Argument> interpretArguments(List<Argument> args) {
         for (Argument arg : args) {
-            if (arg.needsFill) {
+            if (arg.needsFill || arg.hasSpecialPrefix) {
                 if (arg.object instanceof Element && arg.prefix == null) {
                     arg.fillStr(arg.object.toString());
                 }
