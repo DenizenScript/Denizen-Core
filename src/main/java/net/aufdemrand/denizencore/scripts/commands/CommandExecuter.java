@@ -18,9 +18,40 @@ public class CommandExecuter {
     public CommandExecuter() {
     }
 
-    /*
-     * Executes a command defined in scriptEntry
-     */
+    public static String parseDefsRaw(ScriptEntry scriptEntry, String arg) {
+        if (arg.indexOf('%') == -1) {
+            return arg;
+        }
+        Matcher m;
+        StringBuffer sb;
+        m = definition_pattern.matcher(arg);
+        sb = new StringBuffer();
+        while (m.find()) {
+            String def = m.group(1);
+            boolean dynamic = false;
+            if (def.startsWith("|")) {
+                def = def.substring(1, def.length() - 1);
+                dynamic = true;
+            }
+            String definition;
+            String defval = scriptEntry.getResidingQueue().getDefinition(def);
+            if (dynamic) {
+                definition = scriptEntry.getResidingQueue().getDefinition(def);
+            }
+            else {
+                definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
+            }
+            if (defval == null) {
+                dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
+                dB.log("(Attempted: " + scriptEntry.toString() + ")");
+                definition = "null";
+            }
+            dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
+            m.appendReplacement(sb, Matcher.quoteReplacement(definition));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
 
     public boolean execute(ScriptEntry scriptEntry) {
         if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
@@ -75,42 +106,15 @@ public class CommandExecuter {
                 for (int argId : scriptEntry.internal.processArgs) {
                     String arg = scriptEntry.args.get(argId);
                     if (arg.indexOf('%') != -1) {
-                        Matcher m;
-                        StringBuffer sb;
-                        m = definition_pattern.matcher(arg);
-                        sb = new StringBuffer();
-                        while (m.find()) {
-                            String def = m.group(1);
-                            boolean dynamic = false;
-                            if (def.startsWith("|")) {
-                                def = def.substring(1, def.length() - 1);
-                                dynamic = true;
-                            }
-                            String definition;
-                            String defval = scriptEntry.getResidingQueue().getDefinition(def);
-                            if (dynamic) {
-                                definition = scriptEntry.getResidingQueue().getDefinition(def);
-                            }
-                            else {
-                                definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
-                            }
-                            if (defval == null) {
-                                dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
-                                dB.log("(Attempted: " + scriptEntry.toString() + ")");
-                                definition = "null";
-                            }
-                            dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
-                            m.appendReplacement(sb, Matcher.quoteReplacement(definition));
-                        }
-                        m.appendTail(sb);
-                        scriptEntry.setArgument(argId, sb.toString());
-                        aH.Argument aharg = new aH.Argument(sb.toString());
+                        String parsed = parseDefsRaw(scriptEntry, arg);
+                        scriptEntry.setArgument(argId, parsed);
+                        aH.Argument aharg = new aH.Argument(parsed);
                         aH.Argument oldaharg = scriptEntry.aHArgs.get(argId);
                         aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
                         aharg.hasSpecialPrefix = false;
                         scriptEntry.aHArgs.set(argId, aharg);
                         ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
-                        argse.value = TagManager.genChain(sb.toString(), scriptEntry);
+                        argse.value = TagManager.genChain(parsed, scriptEntry);
                         argse.prefix = null;
                     }
                 }

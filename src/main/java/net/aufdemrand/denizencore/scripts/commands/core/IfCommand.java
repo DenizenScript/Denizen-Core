@@ -292,7 +292,7 @@ public class IfCommand extends BracedCommand {
         }
 
         public ArgComparer construct(List args, ScriptEntry scriptEntry) {
-            argstemp = args;
+            argstemp = new ArrayList(args);
             argstemp_parsed = new ArgInternal[args.size()];
             this.scriptEntry = scriptEntry;
             return this;
