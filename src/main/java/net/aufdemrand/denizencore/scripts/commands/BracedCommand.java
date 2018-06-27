@@ -72,6 +72,9 @@ public abstract class BracedCommand extends AbstractCommand {
                         }
                         break;
                     }
+                    else {
+                        newbd.args = bd.args;
+                    }
                 }
             }
             catch (Exception e) {
