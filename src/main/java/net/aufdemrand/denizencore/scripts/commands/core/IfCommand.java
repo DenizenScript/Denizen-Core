@@ -35,7 +35,7 @@ public class IfCommand extends BracedCommand {
         List<String> comparisons = new ArrayList<String>();
 
         boolean has_brace = false;
-        for (String arg : scriptEntry.getOriginalArguments()) {
+        for (String arg : scriptEntry.getArguments()) {
             if (arg.equalsIgnoreCase("{")) {
                 if (dB.verbose) {
                     dB.log("Has_brace = true");
@@ -49,7 +49,7 @@ public class IfCommand extends BracedCommand {
         }
 
         // Interpret arguments
-        for (String arg : scriptEntry.getOriginalArguments()) {
+        for (String arg : scriptEntry.getArguments()) {
             if (arg.equalsIgnoreCase("{")) {
                 break;
             }
@@ -135,7 +135,7 @@ public class IfCommand extends BracedCommand {
                         should_fire = true;
                     }
                     if (!should_fire) {
-                        if (new ArgComparer().compare(CommandExecuter.parseDefs(key, scriptEntry), scriptEntry)) {
+                        if (new ArgComparer().compare(key, scriptEntry)) {
                             should_fire = true;
                         }
                     }

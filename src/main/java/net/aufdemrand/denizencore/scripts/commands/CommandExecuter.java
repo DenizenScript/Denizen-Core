@@ -8,52 +8,12 @@ import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandExecuter {
 
     private static final Pattern definition_pattern = Pattern.compile("%(.+?)%");
-
-    public static List<String> parseDefs(List<String> args, ScriptEntry scriptEntry) {
-        Matcher m;
-        StringBuffer sb;
-        List<String> newArgs = new ArrayList<String>(args.size());
-        for (String arg : args) {
-            if (arg.indexOf('%') != -1) {
-                m = definition_pattern.matcher(arg);
-                sb = new StringBuffer();
-                while (m.find()) {
-                    String def = m.group(1);
-                    boolean dynamic = false;
-                    if (def.startsWith("|")) {
-                        def = def.substring(1, def.length() - 1);
-                        dynamic = true;
-                    }
-                    String definition;
-                    String defval = scriptEntry.getResidingQueue().getDefinition(def);
-                    if (dynamic) {
-                        definition = scriptEntry.getResidingQueue().getDefinition(def);
-                    }
-                    else {
-                        definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
-                    }
-                    if (defval == null) {
-                        dB.echoError("Unknown definition %" + m.group(1) + "%.");
-                        definition = "null";
-                    }
-                    dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
-                    m.appendReplacement(sb, Matcher.quoteReplacement(definition));
-                }
-                m.appendTail(sb);
-                arg = sb.toString();
-            }
-            newArgs.add(arg);
-        }
-        return newArgs;
-    }
 
     public CommandExecuter() {
     }
@@ -146,10 +106,12 @@ public class CommandExecuter {
                         scriptEntry.setArgument(argId, sb.toString());
                         aH.Argument aharg = new aH.Argument(sb.toString());
                         aH.Argument oldaharg = scriptEntry.aHArgs.get(argId);
-                        aharg.needsFill = oldaharg.needsFill;
-                        aharg.hasSpecialPrefix = oldaharg.hasSpecialPrefix;
+                        aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
+                        aharg.hasSpecialPrefix = false;
                         scriptEntry.aHArgs.set(argId, aharg);
-                        scriptEntry.args_cur.get(argId).value = TagManager.genChain(sb.toString(), scriptEntry);
+                        ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
+                        argse.value = TagManager.genChain(sb.toString(), scriptEntry);
+                        argse.prefix = null;
                     }
                 }
             }
