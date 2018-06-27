@@ -5,13 +5,24 @@ import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.utilities.DefinitionProvider;
 import net.aufdemrand.denizencore.utilities.SimpleDefinitionProvider;
+import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 
-public abstract class TagContext {
+public abstract class TagContext implements Debuggable {
     public final boolean instant;
     public final boolean debug;
     public final ScriptEntry entry;
     public final dScript script;
     public final DefinitionProvider definitionProvider;
+
+    @Override
+    public boolean shouldDebug() {
+        return debug;
+    }
+
+    @Override
+    public boolean shouldFilter(String criteria) {
+        return false;
+    }
 
     public TagContext(boolean instant, boolean debug, ScriptEntry entry, dScript script) {
         this(instant, debug, entry, script, null);
