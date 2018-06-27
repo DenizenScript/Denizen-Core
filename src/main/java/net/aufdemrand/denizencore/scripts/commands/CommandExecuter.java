@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
@@ -53,6 +54,8 @@ public class CommandExecuter {
         return sb.toString();
     }
 
+    public static ScriptQueue currentQueue;
+
     public boolean execute(ScriptEntry scriptEntry) {
         if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
             StringBuilder output = new StringBuilder();
@@ -87,6 +90,7 @@ public class CommandExecuter {
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             return false;
         }
+        currentQueue = scriptEntry.getResidingQueue();
         String saveName = null;
         try {
             scriptEntry.generateAHArgs();
@@ -148,6 +152,7 @@ public class CommandExecuter {
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
+            currentQueue = null;
             return false;
         }
         catch (Exception e) {
@@ -156,6 +161,7 @@ public class CommandExecuter {
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
+            currentQueue = null;
             return false;
         }
         try {
@@ -163,6 +169,7 @@ public class CommandExecuter {
             if (saveName != null) {
                 scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
             }
+            currentQueue = null;
             return true;
         }
         catch (Exception e) {
@@ -171,6 +178,7 @@ public class CommandExecuter {
             dB.log("(Attempted: " + scriptEntry.toString() + ")");
             dB.echoDebug(scriptEntry, DebugElement.Footer);
             scriptEntry.setFinished(true);
+            currentQueue = null;
             return false;
         }
     }
