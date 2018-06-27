@@ -218,7 +218,7 @@ public class ScriptContainer implements Debuggable {
 
     public static List<ScriptEntry> cleanDup(ScriptEntryData data, ScriptEntrySet set) {
         if (set == null) {
-            return new ArrayList<ScriptEntry>();
+            return null;
         }
         set = set.duplicate();
         for (ScriptEntry entry : set.entries) {

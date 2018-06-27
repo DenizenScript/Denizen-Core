@@ -62,6 +62,11 @@ public class InstantQueue extends ScriptQueue {
         }
     }
 
+    @Override
+    public String getName() {
+        return "InstantQueue";
+    }
+
     public void onStop() {
         // Nothing to do here!
     }

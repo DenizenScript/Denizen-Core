@@ -91,19 +91,16 @@ public class ScriptEngine {
                     }
                     scriptEntry = scriptQueue.getNext();
                 }
+                else {
+                    break;
+                }
             }
-
-            // If the entry is instant, and not injected, get the next Entry
             else if (scriptEntry.isInstant()) {
-                // If it's holding, even if it's instant, just stop and wait
                 if (shouldHold(scriptQueue)) {
                     return;
                 }
-                // Remove from execution list
                 scriptEntry = scriptQueue.getNext();
             }
-
-            // If entry isn't instant, end the revolutions and wait
             else {
                 break;
             }

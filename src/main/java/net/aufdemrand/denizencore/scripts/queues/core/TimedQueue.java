@@ -153,9 +153,10 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     @Override
     protected void onStart() {
-        // Do the first revolution now...
         revolve();
-        // ...and schedule the rest for later.
+        if (script_entries.isEmpty()) {
+            return;
+        }
         Schedulable schedulable = new RepeatingSchedulable(
                 new Runnable() {
                     @Override
@@ -168,6 +169,11 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         }
         this.schedulable = schedulable;
         DenizenCore.schedule(schedulable);
+    }
+
+    @Override
+    public String getName() {
+        return "TimedQueue";
     }
 
 

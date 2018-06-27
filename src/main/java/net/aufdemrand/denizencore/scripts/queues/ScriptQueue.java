@@ -164,8 +164,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
 
     // List of ScriptEntries in the queue
-    private final List<ScriptEntry>
-            script_entries = new ArrayList<ScriptEntry>();
+    public final List<ScriptEntry> script_entries = new ArrayList<ScriptEntry>();
 
 
     // The last script entry that was executed
@@ -451,6 +450,20 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     private long startTimeMilli = 0;
 
+    public String getName() {
+        Class<? extends ScriptQueue> clazz = this.cachedClass == null ? this.cachedClass = getClass() : this.cachedClass;
+        String name = classNameCache.get(clazz);
+        if (name == null) {
+            classNameCache.put(clazz, name = clazz.getSimpleName());
+        }
+        return name;
+    }
+
+    public void runMeNow() {
+        startTime = System.nanoTime();
+        startTimeMilli = System.currentTimeMillis();
+        onStart(); /* Start the engine */
+    }
 
     /**
      * Starts the script queue.
@@ -465,7 +478,8 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // Set as started, and check for a valid delay_time.
         is_started = true;
-        boolean is_delayed = delay_time > System.currentTimeMillis();
+        long delay = delay_time - System.currentTimeMillis();
+        boolean is_delayed = delay > 0;
 
         // Record what script generated the first entry in the queue
         if (script_entries.size() > 0) {
@@ -473,34 +487,23 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         }
 
         // Debug info
-        Class<? extends ScriptQueue> clazz = this.cachedClass == null ? this.cachedClass = getClass() : this.cachedClass;
-        String name = classNameCache.get(clazz);
-        if (name == null) {
-            classNameCache.put(clazz, name = clazz.getSimpleName());
-        }
+        String name = getName();
         if (is_delayed) {
             dB.echoDebug(this, "Delaying " + name + " '" + id + "'" + " for '"
-                    + new Duration(((double) (delay_time - System.currentTimeMillis())) / 1000f).identify() + "'...");
+                    + new Duration(((double) delay) / 1000f).identify() + "'...");
         }
         else {
             dB.echoDebug(this, "Starting " + name + " '" + id + "'...");
         }
 
-        Runnable runToStart = new Runnable() {
-            @Override
-            public void run() {
-                startTime = System.nanoTime();
-                startTimeMilli = System.currentTimeMillis();
-                onStart(); /* Start the engine */
-            }
-        };
-
         // If it's delayed, schedule it for later
         if (is_delayed) {
-            Schedulable schedulable = new OneTimeSchedulable(runToStart,
-                    // Take the delay time, find out how many milliseconds away
-                    // it is, turn it into seconds, then divide by 20 for ticks.
-                    ((float) (delay_time - System.currentTimeMillis())) / 1000);
+            Schedulable schedulable = new OneTimeSchedulable(new Runnable() {
+                @Override
+                public void run() {
+                    runMeNow();
+                }
+            }, ((float) delay) / 1000);
             if (run_async) {
                 schedulable = new AsyncSchedulable(schedulable);
             }
@@ -510,10 +513,15 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         else {
             // If it's not, start the engine now!
             if (!run_async) {
-                runToStart.run();
+                runMeNow();
             }
             else {
-                AsyncSchedulable.executor.execute(runToStart);
+                AsyncSchedulable.executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        runMeNow();
+                    }
+                });
             }
         }
     }
