@@ -109,6 +109,8 @@ public class ChooseCommand extends BracedCommand {
             new_command_list.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
         }
 
+        scriptEntry.setInstant(true);
+
         scriptEntry.getResidingQueue().injectEntries(new_command_list, 0);
     }
 }
