@@ -52,21 +52,20 @@ public abstract class BracedCommand extends AbstractCommand {
 
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
-            boolean needsPatch = false;
-            for (BracedData bd : entryBracedSet) {
-                if (bd.needPatch) {
-                    needsPatch = true;
-                    break;
-                }
-            }
             List<BracedData> res = new ArrayList<BracedData>(entryBracedSet);
-            if (needsPatch) {
+            try {
                 for (int i = 0; i < res.size(); i++) {
+                    BracedData newbd = new BracedData();
                     BracedData bd = res.get(i);
+                    res.set(i, newbd);
+                    newbd.key = bd.key;
+                    newbd.value = new ArrayList<ScriptEntry>(bd.value.size());
+                    for (ScriptEntry sEntry : bd.value) {
+                        ScriptEntry newEntry = sEntry.clone();
+                        newEntry.entryData.transferDataFrom(scriptEntry.entryData);
+                        newbd.value.add(newEntry);
+                    }
                     if (bd.needPatch) {
-                        BracedData newbd = new BracedData();
-                        res.set(i, newbd);
-                        newbd.key = bd.key;
                         newbd.args = new ArrayList<String>(bd.args.size());
                         for (int x = bd.aStart; x <= bd.aEnd; x++) {
                             newbd.args.add(scriptEntry.args.get(x));
@@ -74,11 +73,11 @@ public abstract class BracedCommand extends AbstractCommand {
                         break;
                     }
                 }
-                return res;
             }
-            else {
-                return entryBracedSet;
+            catch (Exception e) {
+                dB.echoError(scriptEntry.getResidingQueue(), e);
             }
+            return res;
         }
 
         if (scriptEntry.getInsideList() != null) {
