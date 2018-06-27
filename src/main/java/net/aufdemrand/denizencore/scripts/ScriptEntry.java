@@ -155,13 +155,16 @@ public class ScriptEntry implements Cloneable, Debuggable {
         boolean isTag = false;
         int indStart = arg.indexOf('<');
         if (indStart >= 0) {
-            int indEnd = arg.indexOf('>');
+            int indEnd = arg.lastIndexOf('>');
             if (indEnd > indStart) {
                 isTag = true;
                 internal.hasTags = true;
-                char c = arg.charAt(indStart + 1);
-                if (c == '!' || c == '^') {
-                    internal.hasInstantTags = true;
+                while (!internal.hasInstantTags && indStart >= 0 && indStart + 1 < indEnd) {
+                    char c = arg.charAt(indStart + 1);
+                    if (c == '!' || c == '^') {
+                        internal.hasInstantTags = true;
+                    }
+                    indStart = arg.indexOf('<', indStart + 1);
                 }
             }
         }

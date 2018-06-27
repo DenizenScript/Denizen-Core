@@ -386,7 +386,7 @@ public class TagManager {
 
         @Override
         public String toString() {
-            return isError + ", " + isTag + ", " + (isTag ? tagData.isInstant + ", " + tagData.rawTag : "") + ", " + content + "," + objResult;
+            return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.isInstant + ", " + tagData.rawTag : "") + ", " + content + "," + objResult + ")";
         }
     }
 
@@ -602,13 +602,13 @@ public class TagManager {
             if (aharg.needsFill || aharg.hasSpecialPrefix) {
                 ScriptEntry.Argument piece = pieceHelp.get(argId);
                 if (piece.prefix != null) {
-                    dObject prefix_created = parseChainObject(piece.prefix.value, context, repush);
-                    if (aharg.needsFill) {
-                        dObject created = parseChainObject(piece.value, context, repush);
-                        aharg.object = created;
+                    if (piece.prefix.aHArg.needsFill) {
+                        aharg.prefix = parseChainObject(piece.prefix.value, context, repush).toString();
+                        aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
                     }
-                    aharg.prefix = prefix_created.toString();
-                    aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
+                    if (aharg.needsFill) {
+                        aharg.object = parseChainObject(piece.value, context, repush);
+                    }
                     String fullx = aharg.prefix + ":" + aharg.object.toString();
                     args.set(argId, new Element(fullx));
                     strArgs.set(argId, fullx);
