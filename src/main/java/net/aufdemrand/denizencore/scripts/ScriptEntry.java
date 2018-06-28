@@ -105,7 +105,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void generateAHArgs() {
         aHArgs = new ArrayList<aH.Argument>(internal.args_ref.size());
         for (int i = 0; i < internal.args_ref.size(); i++) {
-            aHArgs.add(NULL_ARGUMENT);
+            aHArgs.add(internal.args_ref.get(i) == null ? NULL_ARGUMENT : internal.args_ref.get(i).aHArg);
         }
         for (int i : internal.processArgs) {
             Argument arg = internal.args_ref.get(i);
@@ -260,15 +260,21 @@ public class ScriptEntry implements Cloneable, Debuggable {
             List<Integer> tempProcessArgs = new ArrayList<Integer>();
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
-                internal.args_ref.add(null);
                 if (arg.equals("{")) {
+                    Argument brace = new Argument();
+                    brace.aHArg = new aH.Argument("", "{");
+                    internal.args_ref.add(brace);
                     nested_depth++;
                     continue;
                 }
                 if (arg.equals("}")) {
+                    Argument brace = new Argument();
+                    brace.aHArg = new aH.Argument("", "}");
+                    internal.args_ref.add(brace);
                     nested_depth--;
                     continue;
                 }
+                internal.args_ref.add(null);
                 if (nested_depth > 0) {
                     continue;
                 }
