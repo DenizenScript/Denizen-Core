@@ -1,9 +1,8 @@
 package net.aufdemrand.denizencore.utilities;
 
-import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.ObjectFetcher;
-import net.aufdemrand.denizencore.objects.dObject;
+import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -11,9 +10,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class CoreUtilities {
 
@@ -76,14 +73,53 @@ public class CoreUtilities {
         return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
     }
 
+    public static abstract class TypeComparisonRunnable {
+        public abstract boolean canBecome(dObject inp);
+    }
+
+    public final static Map<Class<? extends dObject>, TypeComparisonRunnable> typeCheckers = new HashMap<Class<? extends dObject>, TypeComparisonRunnable>();
+
+    static {
+        registerTypeAsTrueAlways(Element.class);
+        registerTypeAsTrueAlways(dList.class);
+        registerTypeAsNoOtherTypeCode(dScript.class, "s");
+        registerTypeAsNoOtherTypeCode(Duration.class, "d");
+        registerTypeAsNoOtherTypeCode(CustomObject.class, "custom");
+        registerTypeAsNoOtherTypeCode(ScriptQueue.class, "q");
+    }
+
+    public static void registerTypeAsNoOtherTypeCode(Class<? extends dObject> type, final String knownCode) {
+        typeCheckers.put(type, new TypeComparisonRunnable() {
+            @Override
+            public boolean canBecome(dObject inp) {
+                String simple = inp.identifySimple();
+                int atIndex = simple.indexOf('@');
+                if (atIndex != -1) {
+                    String code = simple.substring(0, atIndex);
+                    if (!code.equals(knownCode)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    public static void registerTypeAsTrueAlways(Class<? extends dObject> type) {
+        typeCheckers.put(type, new TypeComparisonRunnable() {
+            @Override
+            public boolean canBecome(dObject inp) {
+                return true;
+            }
+        });
+    }
+
     public static boolean canPossiblyBeType(dObject inp, Class<? extends dObject> type) {
         if (inp.getClass() == type) {
             return true;
         }
-        if (type == Element.class) {
-            return true;
-        }
-        if (inp instanceof dObject.ObjectAttributable && !((dObject.ObjectAttributable) inp).canPossiblyBeType(type)) {
+        TypeComparisonRunnable comp = typeCheckers.get(type);
+        if (comp != null && !comp.canBecome(inp)) {
             return false;
         }
         return ObjectFetcher.checkMatch(type, inp.toString());

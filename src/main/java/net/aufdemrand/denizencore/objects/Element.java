@@ -2263,11 +2263,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
     }
 
     @Override
-    public boolean canPossiblyBeType(Class<? extends dObject> type) {
-        return true;
-    }
-
-    @Override
     public String getAttribute(Attribute attribute) {
         return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
     }

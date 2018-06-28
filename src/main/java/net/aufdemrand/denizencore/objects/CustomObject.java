@@ -80,7 +80,7 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
 
     @Override
     public String identifySimple() {
-        return identify();
+        return "custom@" + container.getName();
     }
 
     @Override
@@ -118,15 +118,6 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
         return null;
     }
-
-    @Override
-    public boolean canPossiblyBeType(Class<? extends dObject> type) {
-        if (type == CustomObject.class) {
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public dObject getObjectAttribute(Attribute attribute) {

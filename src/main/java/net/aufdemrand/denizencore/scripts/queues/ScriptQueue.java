@@ -1052,11 +1052,6 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     @Override
-    public boolean canPossiblyBeType(Class<? extends dObject> type) {
-        return false;
-    }
-
-    @Override
     public String getAttribute(Attribute attribute) {
         return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
     }

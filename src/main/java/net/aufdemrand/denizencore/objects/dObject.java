@@ -121,7 +121,5 @@ public interface dObject {
         dObject getObjectAttribute(Attribute attribute);
 
         <T extends dObject> T asObjectType(Class<T> type, TagContext context);
-
-        boolean canPossiblyBeType(Class<? extends dObject> type);
     }
 }

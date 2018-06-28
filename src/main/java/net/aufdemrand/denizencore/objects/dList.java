@@ -1923,11 +1923,6 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     }
 
     @Override
-    public boolean canPossiblyBeType(Class<? extends dObject> type) {
-        return flag != null;
-    }
-
-    @Override
     public dObject getObjectAttribute(Attribute attribute) {
 
         if (attribute == null) {
