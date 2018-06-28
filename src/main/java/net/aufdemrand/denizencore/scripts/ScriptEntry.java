@@ -109,7 +109,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
         for (int i : internal.processArgs) {
             Argument arg = internal.args_ref.get(i);
-            aHArgs.set(i, arg.aHArg.needsFill ? arg.aHArg.clone() : arg.aHArg);
+            aHArgs.set(i, arg.aHArg.needsFill || arg.aHArg.hasSpecialPrefix || (internal.hasOldDefs && arg.aHArg.raw_value.indexOf('%') != -1) ? arg.aHArg.clone() : arg.aHArg);
         }
     }
 
