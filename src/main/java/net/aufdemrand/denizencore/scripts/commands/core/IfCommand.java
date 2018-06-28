@@ -125,17 +125,21 @@ public class IfCommand extends BracedCommand {
                     }
                     List<String> key = braceSet.args;
                     boolean should_fire = false;
-                    if (key.size() > 0 && key.get(0).equalsIgnoreCase("else")) {
-                        key.remove(0);
+                    int x = 0;
+                    if (key.size() > x && key.get(x).equalsIgnoreCase("else")) {
+                        x++;
                     }
-                    if (key.size() > 0 && key.get(0).equalsIgnoreCase("if")) {
-                        key.remove(0);
+                    else {
+                        dB.echoError("If command has argument '" + key.get(x) + "' which is unknown.");
+                    }
+                    if (key.size() > x && key.get(x).equalsIgnoreCase("if")) {
+                        x++;
                     }
                     else {
                         should_fire = true;
                     }
                     if (!should_fire) {
-                        if (new ArgComparer().compare(key, scriptEntry)) {
+                        if (new ArgComparer().compare(key.subList(x, key.size()), scriptEntry)) {
                             should_fire = true;
                         }
                     }
@@ -292,7 +296,7 @@ public class IfCommand extends BracedCommand {
         }
 
         public ArgComparer construct(List args, ScriptEntry scriptEntry) {
-            argstemp = new ArrayList(args);
+            argstemp = args;
             argstemp_parsed = new ArgInternal[args.size()];
             this.scriptEntry = scriptEntry;
             return this;
