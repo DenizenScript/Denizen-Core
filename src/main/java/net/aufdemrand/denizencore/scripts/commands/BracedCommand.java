@@ -93,7 +93,7 @@ public abstract class BracedCommand extends AbstractCommand {
             bd.value = entries;
             bracedSections.add(bd);
             scriptEntry.setBracedSet(bracedSections);
-            return bracedSections;
+            return getBracedCommands(scriptEntry);
         }
 
         // We need a place to store the commands being built at...
@@ -274,7 +274,7 @@ public abstract class BracedCommand extends AbstractCommand {
         }
 
         scriptEntry.setBracedSet(bracedSections);
-        return bracedSections;
+        return getBracedCommands(scriptEntry);
 
     }
 }

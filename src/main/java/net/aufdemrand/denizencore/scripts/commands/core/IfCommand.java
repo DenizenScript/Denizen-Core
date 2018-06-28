@@ -113,7 +113,7 @@ public class IfCommand extends BracedCommand {
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
                     bracedCommandsList.get(i).setInstant(true);
-                    bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
+                    bracedCommandsList.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
                 }
                 scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
             }
@@ -148,7 +148,7 @@ public class IfCommand extends BracedCommand {
                         List<ScriptEntry> bracedCommandsList = braceSet.value;
                         for (int i = 0; i < bracedCommandsList.size(); i++) {
                             bracedCommandsList.get(i).setInstant(true);
-                            bracedCommandsList.get(i).addObject("reqId", scriptEntry.getObject("reqid"));
+                            bracedCommandsList.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
                         }
                         scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
                         break;
@@ -167,7 +167,7 @@ public class IfCommand extends BracedCommand {
                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
             entry.entryData = scriptEntry.entryData.clone();
             entry.setInstant(true);
-            entry.addObject("reqId", scriptEntry.getObject("reqid"));
+            entry.addObject("reqid", scriptEntry.getObject("reqid"));
             scriptEntry.getResidingQueue().injectEntry(entry, 0);
         }
         catch (Exception e) {
