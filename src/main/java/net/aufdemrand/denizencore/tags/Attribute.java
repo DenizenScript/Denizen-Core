@@ -137,6 +137,7 @@ public class Attribute {
         this.context = context;
         attributes = ref.attributes;
         contexts = new dObject[attributes.length];
+        hadAlternative = ref.hadAlternative;
     }
 
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
