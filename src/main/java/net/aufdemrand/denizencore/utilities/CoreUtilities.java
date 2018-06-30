@@ -54,7 +54,11 @@ public class CoreUtilities {
         if (inp instanceof dObject.ObjectAttributable) {
             return ((dObject.ObjectAttributable) inp).getObjectAttribute(attribute);
         }
-        return new Element(inp.getAttribute(attribute));
+        String res = inp.getAttribute(attribute);
+        if (res == null) {
+            return null;
+        }
+        return new Element(res);
     }
 
     public static <T extends dObject> T asType(dObject inp, Class<T> type, TagContext context) {

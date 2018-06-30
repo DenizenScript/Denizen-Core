@@ -954,6 +954,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 }
                 dList list = (dList) object;
                 if (list.isEmpty()) {
+                    dB.echoError("Can't get from an empty list.");
                     return null;
                 }
                 dList indices = getListFor(attribute.getContextObject(1));
@@ -970,6 +971,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 if (indices.size() > 0) {
                     int index = aH.getIntegerFrom(indices.get(0)) - 1;
                     if (index >= list.size()) {
+                        dB.echoError("Invalid list.get index.");
                         return null;
                     }
                     if (index < 0) {
