@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
+import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -94,34 +95,34 @@ public class aH {
 
         public Argument(String prefix, String value) {
             this.prefix = prefix;
-            this.value = value;
+            this.value = TagManager.cleanOutputFully(value);
             if (prefix != null) {
                 if (prefix.equals("no_prefix")) {
                     this.prefix = null;
-                    raw_value = value;
+                    raw_value = this.;
                 }
                 else {
-                    raw_value = prefix + ":" + value;
+                    raw_value = prefix + ":" + this.;
                     lower_prefix = CoreUtilities.toLowerCase(prefix);
                 }
             }
             else {
-                raw_value = value;
+                raw_value = this.;
             }
-            lower_value = CoreUtilities.toLowerCase(value);
-            object = new Element(value);
+            lower_value = CoreUtilities.toLowerCase(this.value);
+            object = new Element(this.value);
         }
 
         public Argument(String prefix, dObject value) {
             this.prefix = prefix;
-            this.value = value.toString();
+            this.value = TagManager.cleanOutputFully(value.toString());
             if (prefix != null) {
                 if (prefix.equals("no_prefix")) {
                     this.prefix = null;
                     raw_value = this.value;
                 }
                 else {
-                    raw_value = prefix + ":" + value;
+                    raw_value = prefix + ":" + this.value;
                     lower_prefix = CoreUtilities.toLowerCase(prefix);
                 }
             }
@@ -129,7 +130,12 @@ public class aH {
                 raw_value = this.value;
             }
             lower_value = CoreUtilities.toLowerCase(this.value);
-            object = value;
+            if (value instanceof Element) {
+                object = new Element(this.value);
+            }
+            else {
+                object = value;
+            }
         }
 
         public Argument(dObject obj) {
@@ -138,13 +144,14 @@ public class aH {
                 fillStr(obj.toString());
             }
             else {
-                raw_value = obj.toString(); // TODO: Avoid for non-elements
+                raw_value = TagManager.cleanOutputFully(obj.toString()); // TODO: Avoid for non-elements
                 value = raw_value;
                 lower_value = CoreUtilities.toLowerCase(value);
             }
         }
 
         void fillStr(String string) {
+            string = TagManager.cleanOutputFully(string);
             raw_value = string;
 
             int first_colon = string.indexOf(':');
