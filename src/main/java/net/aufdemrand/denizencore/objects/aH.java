@@ -99,15 +99,15 @@ public class aH {
             if (prefix != null) {
                 if (prefix.equals("no_prefix")) {
                     this.prefix = null;
-                    raw_value = this.;
+                    raw_value = this.value;
                 }
                 else {
-                    raw_value = prefix + ":" + this.;
+                    raw_value = prefix + ":" + this.value;
                     lower_prefix = CoreUtilities.toLowerCase(prefix);
                 }
             }
             else {
-                raw_value = this.;
+                raw_value = this.value;
             }
             lower_value = CoreUtilities.toLowerCase(this.value);
             object = new Element(this.value);
