@@ -1465,8 +1465,10 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList newlist = new dList();
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        dObject objs = CoreUtilities.autoAttribTyped(obj, new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry(), attribute.context));
+                        Attribute tempAttrib =  new Attribute(attribute.getContext(1),
+                                attribute.getScriptEntry(), attribute.context);
+                        tempAttrib.setHadAlternative(true);
+                        dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                         if (objs != null && CoreUtilities.toLowerCase(objs.toString()).equals("true")) {
                             newlist.addObject(obj);
                         }
@@ -1493,8 +1495,10 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList newlist = new dList();
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        dObject objs = CoreUtilities.autoAttribTyped(obj, new Attribute(attribute.getContext(1),
-                                attribute.getScriptEntry(), attribute.context));
+                        Attribute tempAttrib =  new Attribute(attribute.getContext(1),
+                                attribute.getScriptEntry(), attribute.context);
+                        tempAttrib.setHadAlternative(attribute.hasAlternative());
+                        dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                         if (objs == null) {
                             objs = new Element("null");
                         }
