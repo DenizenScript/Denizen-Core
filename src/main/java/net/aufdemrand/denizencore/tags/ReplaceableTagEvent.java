@@ -18,7 +18,7 @@ public class ReplaceableTagEvent {
 
     private dObject alternative_tagged = null;
     private String replaced = null;
-    private boolean value_tagged = false;
+    private String value_tagged = null;
     private Attribute core_attributes = null;
 
     public String raw_tag;
@@ -304,12 +304,10 @@ public class ReplaceableTagEvent {
     // Value
 
     public String getValue() {
-        if (value_tagged) {
-            return mainRef.value;
+        if (value_tagged == null) {
+            value_tagged = TagManager.cleanOutput(TagManager.tag(mainRef.value, context));
         }
-        value_tagged = true;
-        mainRef.value = TagManager.cleanOutput(TagManager.tag(mainRef.value, context));
-        return mainRef.value;
+        return value_tagged;
     }
 
     public boolean hasValue() {
