@@ -345,7 +345,7 @@ public class IfCommand extends BracedCommand {
                         }
                         else if (xarg.equals(")")) {
                             count--;
-                            if (count == -1) {
+                            if (count == 0) {
                                 ArgComparer comp = new ArgComparer().construct(subargs, scriptEntry);
                                 for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
