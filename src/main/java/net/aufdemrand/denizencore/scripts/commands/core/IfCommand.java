@@ -185,6 +185,11 @@ public class IfCommand extends BracedCommand {
 
         Boolean result = null;
 
+        @Override
+        public String toString() {
+            return "[ArgComp: " + argstemp + " res " + result + "]";
+        }
+
         public static class ArgInternal {
 
             boolean negative;
@@ -342,16 +347,29 @@ public class IfCommand extends BracedCommand {
                         if (xarg.equals("(")) {
                             count++;
                             subargs.add("(");
+                            if (dB.verbose) {
+                                dB.log("Open paren");
+                            }
                         }
                         else if (xarg.equals(")")) {
+                            if (dB.verbose) {
+                                dB.log("Close paren");
+                            }
                             count--;
-                            if (count == 0) {
+                            if (count == -1) {
+                                if (dB.verbose) {
+                                    dB.log("Crunch");
+                                }
                                 ArgComparer comp = new ArgComparer().construct(subargs, scriptEntry);
                                 for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
                                 }
                                 args.add(i, comp);
                                 found = true;
+                                if (dB.verbose) {
+                                    dB.log("Shrunk to " + args);
+                                }
+                                break;
                             }
                             else {
                                 subargs.add(")");
@@ -363,14 +381,14 @@ public class IfCommand extends BracedCommand {
                     }
                     if (!found) {
                         if (dB.verbose) {
-                            dB.log("Returning false: strange ()");
+                            dB.log("Returning false: strange(unfound) ()");
                         }
                         return false;
                     }
                 }
                 else if (arg.equals(")")) {
                     if (dB.verbose) {
-                        dB.log("Returning false: strange ()");
+                        dB.log("Returning false: strange(stray) ()");
                     }
                     return false;
                 }
