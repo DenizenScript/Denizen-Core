@@ -76,6 +76,7 @@ public class ReplaceableTagEvent {
         if (mainRef != null) {
             return;
         }
+        String otag = tag;
 
         mainRef = new ReferenceData();
 
@@ -115,7 +116,7 @@ public class ReplaceableTagEvent {
 
         mainRef.attribs = new Attribute(core_attributes, null, null);
         mainRef.rawTag = raw_tag;
-        refs.put(tag, mainRef);
+        refs.put(otag, mainRef);
     }
 
     private static int locateValue(String tag) {
