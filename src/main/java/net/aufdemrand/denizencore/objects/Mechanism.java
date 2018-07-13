@@ -29,11 +29,14 @@ public class Mechanism {
     }
 
     public Element getValue() {
+        if (value == null) {
+            return new Element("");
+        }
         return value;
     }
 
     public boolean hasValue() {
-        return value != null && value.asString().length() > 0;
+        return value != null;
     }
 
     public boolean matches(String string) {
@@ -69,7 +72,7 @@ public class Mechanism {
     }
 
     public boolean requireBoolean(String error) {
-        if (value.isBoolean()) {
+        if (hasValue() && value.isBoolean()) {
             return true;
         }
         dB.echoError(error);
@@ -85,10 +88,10 @@ public class Mechanism {
     }
 
     public boolean requireEnum(String error, boolean allowInt, Enum<?>... values) {
-        if (allowInt && value.isInt() && value.asInt() < values.length) {
+        if (hasValue() && allowInt && value.isInt() && value.asInt() < values.length) {
             return true;
         }
-        if (value.isString()) {
+        if (hasValue() && value.isString()) {
             String raw_value = value.asString().toUpperCase();
             for (Enum<?> check_value : values) {
                 if (raw_value.equals(check_value.name())) {
@@ -97,7 +100,6 @@ public class Mechanism {
             }
         }
         if (error == null) {
-            // TODO: Remove getSimpleName(), or simplify somehow.
             dB.echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
                     + " Must specify a valid name" + (allowInt ? " or number" : "") + ".");
         }
@@ -108,7 +110,7 @@ public class Mechanism {
     }
 
     public boolean requireFloat(String error) {
-        if (value.isFloat()) {
+        if (hasValue() && value.isFloat()) {
             return true;
         }
         dB.echoError(error);
@@ -116,7 +118,7 @@ public class Mechanism {
     }
 
     public boolean requireInteger(String error) {
-        if (value.isInt()) {
+        if (hasValue() && value.isInt()) {
             return true;
         }
         dB.echoError(error);
@@ -124,7 +126,7 @@ public class Mechanism {
     }
 
     public <T extends dObject> boolean requireObject(String error, Class<T> type) {
-        if (value.matchesType(type)) {
+        if (hasValue() && value.matchesType(type)) {
             return true;
         }
         if (error == null) {
