@@ -234,6 +234,9 @@ public class Attribute {
             return tagged;
         }
         String inp = attributes[attribute].context;
+        if (inp == null) {
+            return null;
+        }
         tagged = TagManager.tagObject(inp, context);
         contexts[attribute] = tagged;
         return tagged;
