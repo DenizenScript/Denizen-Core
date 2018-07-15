@@ -185,6 +185,8 @@ public class IfCommand extends BracedCommand {
 
         Boolean result = null;
 
+        boolean flip = false;
+
         @Override
         public String toString() {
             return "[ArgComp: " + argstemp + " res " + result + "]";
@@ -315,6 +317,9 @@ public class IfCommand extends BracedCommand {
         public boolean compare() {
             if (result == null) {
                 result = compareInternal();
+                if (flip) {
+                    result = !result;
+                }
             }
             return result;
         }
@@ -338,10 +343,11 @@ public class IfCommand extends BracedCommand {
             }
             for (int i = 0; i < args.size(); i++) {
                 String arg = procStringNoTag(args.get(i));
-                if (arg.equals("(")) {
+                if (arg.equals("(") || arg.equals("!(")) {
                     List subargs = new ArrayList();
                     int count = 0;
                     boolean found = false;
+                    boolean flip = false;
                     for (int x = i + 1; x < args.size(); x++) {
                         String xarg = procStringNoTag(args.get(x));
                         if (xarg.equals("(")) {
@@ -361,6 +367,7 @@ public class IfCommand extends BracedCommand {
                                     dB.log("Crunch");
                                 }
                                 ArgComparer comp = new ArgComparer().construct(subargs, scriptEntry);
+                                comp.flip = arg.startsWith("!");
                                 for (int c = 0; c < (x - i) + 1; c++) {
                                     args.remove(i);
                                 }
