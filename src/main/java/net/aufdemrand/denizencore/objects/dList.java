@@ -30,6 +30,14 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     }
 
     @Override
+    public boolean addAll(Collection<? extends String> addMe) {
+        for (String str : addMe) {
+            add(str);
+        }
+        return !addMe.isEmpty();
+    }
+
+    @Override
     public String remove(int index) {
         objectForms.remove(index);
         return super.remove(index);
