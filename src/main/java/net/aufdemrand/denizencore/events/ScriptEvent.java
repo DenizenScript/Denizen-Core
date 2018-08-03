@@ -19,6 +19,7 @@ import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
@@ -246,6 +247,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         cancelled = false;
     }
 
+    Runnable resetRunnable = new Runnable() {
+        @Override
+        public void run() {
+            reset();
+        }
+    };
+
     public void fire() {
         fires++;
         for (ScriptPath path : eventPaths) {
@@ -258,6 +266,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 dB.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
                 dB.echoError(e);
             }
+        }
+        if (cancelled) {
+            DenizenCore.schedule(new OneTimeSchedulable(resetRunnable, 0.01f));
         }
     }
 
