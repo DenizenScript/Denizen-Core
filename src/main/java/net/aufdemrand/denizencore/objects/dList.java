@@ -382,7 +382,17 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     @Override
     public String identify() {
         if (flag != null) {
-            return DenizenCore.getImplementation().getLastEntryFromFlag(flag);
+            dList revalidated = DenizenCore.getImplementation().valueOfFlagdList(flag);
+            if (revalidated.size() == 1) {
+                return DenizenCore.getImplementation().getLastEntryFromFlag(flag);
+            }
+            else {
+                StringBuilder dScriptArg = new StringBuilder();
+                for (String item : this) {
+                    dScriptArg.append(item).append('|');
+                }
+                return dScriptArg.substring(0, dScriptArg.length() - 1);
+            }
         }
         return identifyList();
     }
