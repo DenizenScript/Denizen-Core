@@ -382,8 +382,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     @Override
     public String identify() {
         if (flag != null) {
-            dList revalidated = DenizenCore.getImplementation().valueOfFlagdList(flag);
-            if (revalidated.size() == 1) {
+            if (size() == 1) {
                 return DenizenCore.getImplementation().getLastEntryFromFlag(flag);
             }
             else {
