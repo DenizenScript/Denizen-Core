@@ -270,6 +270,7 @@ public class aH {
             }
             return false;
         }
+
         public boolean matchesEnum(Enum<?>[] values) {
             String upper = value.replace("_", "").toUpperCase();
             for (Enum<?> value : values) {

@@ -71,7 +71,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         final Duration timeout = scriptEntry.getdObject("timeout");
 
-        dB.report(scriptEntry, getName(), url.debug());
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), url.debug());
+        }
 
         Thread thr = new Thread(new Runnable() {
             @Override

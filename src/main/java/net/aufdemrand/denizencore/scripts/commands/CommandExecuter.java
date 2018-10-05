@@ -57,7 +57,7 @@ public class CommandExecuter {
     public static ScriptQueue currentQueue;
 
     public boolean execute(ScriptEntry scriptEntry) {
-        if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
+        if (scriptEntry.dbCallShouldDebug()) {
             StringBuilder output = new StringBuilder();
             output.append(scriptEntry.getCommandName());
             if (scriptEntry.getOriginalArguments() == null) {

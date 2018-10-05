@@ -142,7 +142,7 @@ public class ProcedureScriptTags {
 
         if (DetermineCommand.hasOutcome(id)) {
             event.setReplacedObject(CoreUtilities.autoAttrib(ObjectFetcher.pickObjectFor(DetermineCommand.getOutcome(id).get(0))
-                    ,attr.fulfill(attribs)));
+                    , attr.fulfill(attribs)));
         }
     }
 }

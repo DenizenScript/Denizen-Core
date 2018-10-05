@@ -417,7 +417,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         registerTag("as_element", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                return  ((Element) object).getObjectAttribute(attribute.fulfill(1));
+                return ((Element) object).getObjectAttribute(attribute.fulfill(1));
             }
         });
         registerTag("aselement", registeredObjectTags.get("as_element"));

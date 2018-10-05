@@ -89,7 +89,9 @@ public class DebugCommand extends AbstractCommand {
                 dB.echoError(scriptEntry.getResidingQueue(), debug.asString());
                 break;
             case REPORT:
-                dB.report(scriptEntry, name.asString(), debug.asString());
+                if (scriptEntry.dbCallShouldDebug()) {
+                    dB.report(scriptEntry, name.asString(), debug.asString());
+                }
                 break;
             case EXCEPTION:
                 dB.echoError(scriptEntry.getResidingQueue(), new RuntimeException(debug.asString()));

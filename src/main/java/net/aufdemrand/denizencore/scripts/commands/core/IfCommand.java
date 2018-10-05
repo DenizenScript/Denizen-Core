@@ -91,7 +91,9 @@ public class IfCommand extends BracedCommand {
         List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
         List<BracedData> braces = (List<BracedData>) scriptEntry.getObject("braces");
 
-        dB.report(scriptEntry, getName(), aH.debugObj("use_braces", braces != null));
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), aH.debugObj("use_braces", braces != null));
+        }
 
         if (dB.verbose) {
             dB.log("comparisons=" + comparisons + ", sc:" + subcommand + ", ec:" + elsecommand);

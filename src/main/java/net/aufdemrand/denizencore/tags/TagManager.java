@@ -287,7 +287,7 @@ public class TagManager {
             }
 
             Attribute attribute = event.getAttributes();
-            event.setReplacedObject(CoreUtilities.autoAttrib(arg,attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(arg, attribute.fulfill(1)));
         }
         catch (Exception e) {
             dB.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
@@ -331,7 +331,7 @@ public class TagManager {
     public static String readSingleTag(String str, TagContext context) {
         ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
         if (event.isInstant() != context.instant) {
-            return String.valueOf((char) 0x01) + str.replace('<', (char)0x01).replace('>', (char)0x02) + String.valueOf((char) 0x02);
+            return String.valueOf((char) 0x01) + str.replace('<', (char) 0x01).replace('>', (char) 0x02) + String.valueOf((char) 0x02);
         }
         return escapeOutput(readSingleTagObject(context, event).toString());
     }
@@ -372,8 +372,7 @@ public class TagManager {
 
     static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<String, List<ParseableTagPiece>>();
 
-    public static class ParseableTagPiece
-    {
+    public static class ParseableTagPiece {
         public String content;
 
         public dObject objResult = null;

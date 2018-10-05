@@ -160,7 +160,7 @@ public abstract class CommandRegistry implements dRegistry {
         //     - debug log "Failure!"
         //   - default:
         //     - debug log "Success!"
-		
+
         // @Usage
         // Use for dynamically choosing a case.
         // - choose "<def[entity_type]>":

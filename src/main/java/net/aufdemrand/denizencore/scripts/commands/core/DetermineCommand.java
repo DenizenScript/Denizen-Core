@@ -126,8 +126,10 @@ public class DetermineCommand extends AbstractCommand {
         dObject outcomeObj = scriptEntry.getdObject("outcome");
 
         // Report!
-        dB.report(scriptEntry, getName(), outcomeObj.debug()
-                + scriptEntry.getElement("passively").debug());
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), outcomeObj.debug()
+                    + scriptEntry.getElement("passively").debug());
+        }
 
         // Fetch the ScriptEntry elements
         Boolean passively = scriptEntry.getElement("passively").asBoolean();
@@ -149,7 +151,7 @@ public class DetermineCommand extends AbstractCommand {
         strs.addObject(outcomeObj);
 
         if (!passively) {
-        // Stop the queue by clearing the remainder of it.
+            // Stop the queue by clearing the remainder of it.
             scriptEntry.getResidingQueue().clear();
         }
     }

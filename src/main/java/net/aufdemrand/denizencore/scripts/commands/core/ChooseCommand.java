@@ -61,7 +61,9 @@ public class ChooseCommand extends BracedCommand {
 
         List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
 
-        dB.report(scriptEntry, getName(), choice.debug());
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), choice.debug());
+        }
 
         String choice_low = CoreUtilities.toLowerCase(choice.asString());
 

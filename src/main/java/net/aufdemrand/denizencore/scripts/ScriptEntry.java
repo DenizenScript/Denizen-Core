@@ -578,6 +578,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public Boolean shouldDebugBool = null;
 
+    public boolean dbCallShouldDebug() {
+        return DenizenCore.getImplementation().shouldDebug(this);
+    }
+
     @Override
     public boolean shouldDebug() {
         if (shouldDebugBool != null) {

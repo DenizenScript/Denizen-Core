@@ -40,6 +40,8 @@ public class MarkCommand extends AbstractCommand {
         Element mName = scriptEntry.getElement("m_name");
 
         // Debug the execution
-        dB.report(scriptEntry, getName(), mName.debug());
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), mName.debug());
+        }
     }
 }

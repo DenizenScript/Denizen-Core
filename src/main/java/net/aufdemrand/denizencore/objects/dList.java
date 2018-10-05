@@ -1482,7 +1482,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList newlist = new dList();
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        Attribute tempAttrib =  new Attribute(attribute.getContext(1),
+                        Attribute tempAttrib = new Attribute(attribute.getContext(1),
                                 attribute.getScriptEntry(), attribute.context);
                         tempAttrib.setHadAlternative(true);
                         dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
@@ -1512,7 +1512,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList newlist = new dList();
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        Attribute tempAttrib =  new Attribute(attribute.getContext(1),
+                        Attribute tempAttrib = new Attribute(attribute.getContext(1),
                                 attribute.getScriptEntry(), attribute.context);
                         tempAttrib.setHadAlternative(attribute.hasAlternative());
                         dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
@@ -1844,7 +1844,6 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-
 
 
         /////////////////

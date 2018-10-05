@@ -53,7 +53,7 @@ public class DefineCommand extends AbstractCommand {
         dObject value = scriptEntry.getdObject("value");
         Element remove = scriptEntry.getElement("remove");
 
-        if (DenizenCore.getImplementation().shouldDebug(scriptEntry)) {
+        if (scriptEntry.dbCallShouldDebug()) {
             dB.report(scriptEntry, getName(), aH.debugObj("queue", scriptEntry.getResidingQueue().id)
                     + definition.debug()
                     + value.debug()

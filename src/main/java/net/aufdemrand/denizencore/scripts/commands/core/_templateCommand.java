@@ -52,7 +52,9 @@ public class _templateCommand extends AbstractCommand {
         // dObject object = scriptEntry.getdObject("required_object");
 
         // Debug the execution
-        dB.report(scriptEntry, getName(), required_integer.debug());
+        if (scriptEntry.dbCallShouldDebug()) {
+            dB.report(scriptEntry, getName(), required_integer.debug());
+        }
 
         // Do the execution
 

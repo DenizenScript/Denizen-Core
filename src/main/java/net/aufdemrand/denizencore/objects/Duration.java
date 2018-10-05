@@ -449,7 +449,7 @@ public class Duration implements dObject {
         registerTag("in_ticks", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                return new Element((long)(((Duration) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
+                return new Element((long) (((Duration) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("ticks", registeredTags.get("in_ticks"));

@@ -39,7 +39,7 @@ public class QueueTags {
             }
             else {
                 event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue._getExistingQueue(event.getNameContext())
-                        ,event.getAttributes().fulfill(1)));
+                        , event.getAttributes().fulfill(1)));
             }
             return;
         }
@@ -58,7 +58,7 @@ public class QueueTags {
         if (attribute.startsWith("exists")
                 && attribute.hasContext(1)) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue._queueExists(attribute.getContext(1)))
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
             return;
         }
 
@@ -70,7 +70,7 @@ public class QueueTags {
         // -->
         if (attribute.startsWith("stats")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue._getStats())
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
             return;
         }
 
@@ -82,7 +82,7 @@ public class QueueTags {
         // -->
         if (attribute.startsWith("list")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new dList(ScriptQueue._getQueues())
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
             return;
         }
 
@@ -91,7 +91,7 @@ public class QueueTags {
         // Use current queue
 
         event.setReplacedObject(CoreUtilities.autoAttrib(event.getScriptEntry().getResidingQueue()
-                ,attribute));
+                , attribute));
     }
 }
 

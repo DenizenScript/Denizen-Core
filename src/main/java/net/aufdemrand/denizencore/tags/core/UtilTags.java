@@ -60,7 +60,7 @@ public class UtilTags {
                         }
 
                         event.setReplacedObject(CoreUtilities.autoAttrib(new Element(
-                                String.valueOf(CoreUtilities.getRandom().nextInt(max - min + 1) + min)),
+                                        String.valueOf(CoreUtilities.getRandom().nextInt(max - min + 1) + min)),
                                 attribute.fulfill(1)));
                     }
                 }
@@ -90,7 +90,7 @@ public class UtilTags {
                         }
 
                         event.setReplacedObject(CoreUtilities.autoAttrib(new Element(
-                                String.valueOf(CoreUtilities.getRandom().nextDouble() * (max - min) + min)),
+                                        String.valueOf(CoreUtilities.getRandom().nextDouble() * (max - min) + min)),
                                 attribute.fulfill(1)));
                     }
                 }
@@ -104,7 +104,7 @@ public class UtilTags {
             // -->
             else if (attribute.startsWith("decimal")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(CoreUtilities.getRandom().nextDouble())
-                        ,attribute.fulfill(1)));
+                        , attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -116,7 +116,7 @@ public class UtilTags {
             // -->
             else if (attribute.startsWith("gauss")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(CoreUtilities.getRandom().nextGaussian())
-                        ,attribute.fulfill(1)));
+                        , attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -127,7 +127,7 @@ public class UtilTags {
             // -->
             else if (attribute.startsWith("uuid")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(UUID.randomUUID().toString())
-                        ,attribute.fulfill(1)));
+                        , attribute.fulfill(1)));
             }
 
             // <--[tag]
@@ -138,7 +138,7 @@ public class UtilTags {
             // -->
             else if (attribute.startsWith("duuid")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue
-                        .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
+                                .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
                         attribute.fulfill(1)));
             }
         }
@@ -151,7 +151,7 @@ public class UtilTags {
         // -->
         else if (attribute.startsWith("pi")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.PI)
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -162,7 +162,7 @@ public class UtilTags {
         // -->
         else if (attribute.startsWith("tau")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.PI * 2)
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -173,7 +173,7 @@ public class UtilTags {
         // -->
         else if (attribute.matches("e")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Math.E)
-                    ,attribute.fulfill(1)));
+                    , attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -208,7 +208,7 @@ public class UtilTags {
                 if (attribute.startsWith("twentyfour_hour")) {
                     format.applyPattern("k:mm");
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
                 // <--[tag]
                 // @attribute <util.date.time.year>
@@ -218,7 +218,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("year")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.YEAR))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -229,7 +229,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("month")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.MONTH) + 1)
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -240,7 +240,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("week")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.WEEK_OF_YEAR))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -251,7 +251,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("day_of_week")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.DAY_OF_WEEK))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -262,7 +262,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("day")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.DAY_OF_MONTH))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -273,7 +273,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("hour")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.HOUR_OF_DAY))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -284,7 +284,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("minute")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.MINUTE))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -295,7 +295,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("second")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(calendar.get(Calendar.SECOND))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -307,7 +307,7 @@ public class UtilTags {
                 // -->
                 else if (attribute.startsWith("duration")) {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Duration(System.currentTimeMillis() / 50)
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -319,7 +319,7 @@ public class UtilTags {
                 else if (attribute.startsWith("zone")) {
                     TimeZone tz = Calendar.getInstance().getTimeZone();
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.SHORT))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 // <--[tag]
@@ -331,13 +331,13 @@ public class UtilTags {
                 else if (attribute.startsWith("formatted_zone")) {
                     TimeZone tz = Calendar.getInstance().getTimeZone();
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(tz.getDisplayName(tz.inDaylightTime(currentDate), TimeZone.LONG))
-                            ,attribute.fulfill(1)));
+                            , attribute.fulfill(1)));
                 }
 
                 else {
                     format.applyPattern("K:mm a");
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
-                            ,attribute));
+                            , attribute));
                 }
 
             }
@@ -362,7 +362,7 @@ public class UtilTags {
             else {
                 format.applyPattern("EEE, MMM d, yyyy");
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate))
-                        ,attribute));
+                        , attribute));
             }
         }
     }
