@@ -299,6 +299,26 @@ public abstract class CommandRegistry implements dRegistry {
 
 
         // <--[command]
+        // @Name Else
+        // @Syntax else (if <comparison logic>)
+        // @Required 0
+        // @Stable stable
+        // @Short Helper command for usage with the if command.
+        // @Author mcmonkey
+        // @Group core
+        // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
+        // @Description
+        // A helper command for ':' syntax if commands.
+        // See IF command documentation.
+        // @Tags
+        // See IF command documentation.
+        // @Usage
+        // See IF command documentation.
+        // -->
+        registerCoreMember(ElseCommand.class, "ELSE", "else (if <comparison logic>)", 0);
+
+
+        // <--[command]
         // @Name Foreach
         // @Syntax foreach [stop/next/<object>|...] [<commands>]
         // @Required 1
@@ -367,7 +387,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Required 1
         // @Stable stable
         // @Short Compares values, and runs one script if they match, or a different script if they don't match.
-        // @Author aufdemrand, David Cernat
+        // @Author aufdemrand, David Cernat, Morphan1, mcmonkey
         // @Group core
         // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
         // @Description

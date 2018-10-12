@@ -6,11 +6,11 @@ import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
-import net.aufdemrand.denizencore.scripts.commands.CommandExecuter;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IfCommand extends BracedCommand {
@@ -34,18 +34,47 @@ public class IfCommand extends BracedCommand {
 
         List<String> comparisons = new ArrayList<String>();
 
-        boolean has_brace = false;
-        for (String arg : scriptEntry.getArguments()) {
-            if (arg.equalsIgnoreCase("{")) {
-                if (dB.verbose) {
-                    dB.log("Has_brace = true");
-                }
-                has_brace = true;
-                break;
-            }
-        }
+        boolean has_brace = scriptEntry.getInsideList() != null;
         if (has_brace) {
-            scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
+            List<BracedData> allData = new ArrayList<BracedData>();
+            BracedData ifRef = getBracedCommands(scriptEntry).get(0);
+            ifRef.key = scriptEntry.toString();
+            ifRef.args = new ArrayList<>();
+            ifRef.args.add("if");
+            ifRef.args.addAll(scriptEntry.getOriginalArguments());
+            allData.add(ifRef);
+            while (scriptEntry.getResidingQueue().script_entries.size() > 0) {
+                ScriptEntry nextEntry = scriptEntry.getResidingQueue().script_entries.get(0);
+                if (!(nextEntry.getCommand() instanceof ElseCommand)) {
+                    break;
+                }
+                if (nextEntry.getInsideList() == null) {
+                    dB.echoError(scriptEntry.getResidingQueue(), "Upcoming else command is mis-formatted!");
+                    break;
+                }
+                scriptEntry.getResidingQueue().script_entries.remove(0);
+                BracedData elseRef = getBracedCommands(nextEntry).get(0);
+                elseRef.key = nextEntry.toString();
+                elseRef.args = new ArrayList<>();
+                elseRef.args.add("else");
+                elseRef.args.addAll(nextEntry.getOriginalArguments());
+                allData.add(elseRef);
+            }
+            scriptEntry.addObject("braces", allData);
+        }
+        else {
+            for (String arg : scriptEntry.getArguments()) {
+                if (arg.equalsIgnoreCase("{")) {
+                    if (dB.verbose) {
+                        dB.log("Has_brace = true");
+                    }
+                    has_brace = true;
+                    break;
+                }
+            }
+            if (has_brace) {
+                scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
+            }
         }
 
         // Interpret arguments
