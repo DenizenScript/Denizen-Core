@@ -117,21 +117,17 @@ public class ProcedureScriptTags {
             attribs = 2;
             int x = 1;
             dList definitions = new dList(event.getTypeContext());
-            String[] definition_names = null;
-
-            try {
-                definition_names = script.getContainer().getString("definitions").split("\\|");
+            List<String> definition_names = null;
+            if (script.getContainer().getContents().contains("definitions")) {
+                definition_names = CoreUtilities.split(script.getContainer().getString("definitions"), '|');
             }
-            catch (Exception e) {
-            }
-
             for (String definition : definitions) {
-                String name = definition_names != null && definition_names.length >= x ?
-                        definition_names[x - 1].trim() : String.valueOf(x);
+                String name = definition_names != null && definition_names.size() >= x ?
+                        definition_names.get(x - 1).trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
                 dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? null :
                                 event.getScript().getContainer()) : event.getScriptEntry(),
-                        "Adding definition %" + name + "% as " + definition);
+                        "Adding definition '" + name + "' as " + definition);
                 x++;
             }
 
