@@ -10,7 +10,6 @@ import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class IfCommand extends BracedCommand {
