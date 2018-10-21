@@ -436,7 +436,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("asstring", registeredObjectTags.get("space_separated"));
 
         // <--[tag]
-        // @attribute <li@list.separated_by[<text>]>>
+        // @attribute <li@list.separated_by[<text>]>
         // @returns Element
         // @description
         // returns the list formatted, with each item separated by the defined text.
