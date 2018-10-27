@@ -82,13 +82,13 @@ public class IfCommand extends BracedCommand {
                 break;
             }
 
-            if (!has_brace && !in_elsecommand && DenizenCore.getCommandRegistry().get(arg.toUpperCase()) != null) {
-                in_subcommand = true;
-                subcommand.add(arg);
-            }
-            else if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
+            if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
                 in_elsecommand = true;
                 in_subcommand = false;
+            }
+            else if (!has_brace && !in_elsecommand && DenizenCore.getCommandRegistry().get(arg.toUpperCase()) != null) {
+                in_subcommand = true;
+                subcommand.add(arg);
             }
             else if (!has_brace && in_subcommand) {
                 subcommand.add(arg);
