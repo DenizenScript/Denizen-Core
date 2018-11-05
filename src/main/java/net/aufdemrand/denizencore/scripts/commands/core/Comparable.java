@@ -128,13 +128,8 @@ public class Comparable {
                 comparedto = aH.getDoubleFrom(arg);
             }
             else {
-                if (!arg.equalsIgnoreCase("null"))
-                // TODO: echoDebug instead of log
-                //   dB.log(ChatColor.YELLOW + "WARNING! " + ChatColor.WHITE + "Cannot compare NUMBER("
-                //           + comparable + ") with '" + arg + "'. Outcome for this Comparable will be false.");
-                {
-                    comparedto = Double.NaN;
-                }
+                comparable = String.valueOf(comparable);
+                comparedto = arg;
             }
         }
 
@@ -161,15 +156,8 @@ public class Comparable {
 
         outcome = false;
 
-        // Check '== null' right now
-        if (comparedto.toString().equals("null")) {
-            if (comparable.toString().equals("null")) {
-                outcome = true;
-            }
-        }
-
         // or... compare 'compared_to' as the type of 'comparable'
-        else if (comparable instanceof String) {
+        if (comparable instanceof String) {
             compare_as_strings();
         }
 
@@ -353,23 +341,23 @@ public class Comparable {
 
             // OR_MORE/OR_LESS/etc. deal with the LENGTH of the the comparable/comparedto strings
             case OR_MORE:
-                dB.echoError("Comparing text as if it were a number - calculating based on text length");
-                outcome = comparable.length() >= comparedto.length();
+                dB.echoError("Comparing text as if it were a number - comparison automatically false");
+                outcome = false;
                 break;
 
             case OR_LESS:
-                dB.echoError("Comparing text as if it were a number - calculating based on text length");
-                outcome = comparable.length() <= comparedto.length();
+                dB.echoError("Comparing text as if it were a number - comparison automatically false");
+                outcome = false;
                 break;
 
             case MORE:
-                dB.echoError("Comparing text as if it were a number - calculating based on text length");
-                outcome = comparable.length() > comparedto.length();
+                dB.echoError("Comparing text as if it were a number - comparison automatically false");
+                outcome = false;
                 break;
 
             case LESS:
-                dB.echoError("Comparing text as if it were a number - calculating based on text length");
-                outcome = comparable.length() < comparedto.length();
+                dB.echoError("Comparing text as if it were a number - comparison automatically false");
+                outcome = false;
                 break;
 
             // Check if the string comparable MATCHES a specific argument type,
