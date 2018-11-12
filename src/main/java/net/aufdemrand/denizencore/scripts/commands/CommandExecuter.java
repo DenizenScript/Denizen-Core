@@ -54,6 +54,31 @@ public class CommandExecuter {
         return sb.toString();
     }
 
+    public static boolean handleDefs(ScriptEntry scriptEntry, boolean genned) {
+        if (scriptEntry.internal.hasOldDefs) {
+            if (!genned) {
+                scriptEntry.regenerateArgsCur();
+                genned = true;
+            }
+            for (int argId : scriptEntry.internal.processArgs) {
+                String arg = scriptEntry.args.get(argId);
+                if (arg.indexOf('%') != -1) {
+                    String parsed = parseDefsRaw(scriptEntry, arg);
+                    scriptEntry.setArgument(argId, parsed);
+                    aH.Argument aharg = new aH.Argument(parsed);
+                    aH.Argument oldaharg = scriptEntry.aHArgs.get(argId);
+                    aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
+                    aharg.hasSpecialPrefix = false;
+                    scriptEntry.aHArgs.set(argId, aharg);
+                    ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
+                    argse.value = TagManager.genChain(parsed, scriptEntry);
+                    argse.prefix = null;
+                }
+            }
+        }
+        return genned;
+    }
+
     public static ScriptQueue currentQueue;
 
     public boolean execute(ScriptEntry scriptEntry) {
@@ -102,27 +127,7 @@ public class CommandExecuter {
                         scriptEntry.args_cur, scriptEntry.aHArgs, true,
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs);
             }
-            if (scriptEntry.internal.hasOldDefs) {
-                if (!genned) {
-                    scriptEntry.regenerateArgsCur();
-                    genned = true;
-                }
-                for (int argId : scriptEntry.internal.processArgs) {
-                    String arg = scriptEntry.args.get(argId);
-                    if (arg.indexOf('%') != -1) {
-                        String parsed = parseDefsRaw(scriptEntry, arg);
-                        scriptEntry.setArgument(argId, parsed);
-                        aH.Argument aharg = new aH.Argument(parsed);
-                        aH.Argument oldaharg = scriptEntry.aHArgs.get(argId);
-                        aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
-                        aharg.hasSpecialPrefix = false;
-                        scriptEntry.aHArgs.set(argId, aharg);
-                        ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
-                        argse.value = TagManager.genChain(parsed, scriptEntry);
-                        argse.prefix = null;
-                    }
-                }
-            }
+            genned = handleDefs(scriptEntry, genned);
             for (aH.Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing

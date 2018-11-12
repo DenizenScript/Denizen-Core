@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
+import net.aufdemrand.denizencore.scripts.commands.CommandExecuter;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
@@ -51,6 +52,7 @@ public class IfCommand extends BracedCommand {
                     dB.echoError(scriptEntry.getResidingQueue(), "Upcoming else command is mis-formatted!");
                     break;
                 }
+                CommandExecuter.handleDefs(nextEntry, false);
                 scriptEntry.getResidingQueue().script_entries.remove(0);
                 BracedData elseRef = getBracedCommands(nextEntry).get(0);
                 elseRef.key = nextEntry.toString();
