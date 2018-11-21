@@ -23,6 +23,9 @@ public class CommandExecuter {
         if (!hasDef(arg)) {
             return arg;
         }
+        if (scriptEntry.getResidingQueue() == null) {
+            return arg;
+        }
         Matcher m;
         StringBuffer sb;
         m = definition_pattern.matcher(arg);
