@@ -68,7 +68,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     if (bd.needPatch) {
                         newbd.args = new ArrayList<String>(bd.args.size());
                         for (int x = bd.aStart; x <= bd.aEnd; x++) {
-                            newbd.args.add(scriptEntry.args.get(x));
+                            newbd.args.add(CommandExecuter.parseDefsRaw(scriptEntry, scriptEntry.args.get(x)));
                         }
                         break;
                     }

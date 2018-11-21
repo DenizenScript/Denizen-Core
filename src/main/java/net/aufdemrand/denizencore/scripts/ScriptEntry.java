@@ -360,14 +360,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public List<String> getProperArguments() {
-        List<String> args_temp = new ArrayList<>();
-        for (Argument arg : args_cur) {
-            args_temp.add(arg.aHArg.toString());
-        }
-        return args_temp;
-    }
-
     public List<String> getArguments() {
         return args;
     }

@@ -58,7 +58,7 @@ public class IfCommand extends BracedCommand {
                 elseRef.key = nextEntry.toString();
                 elseRef.args = new ArrayList<>();
                 elseRef.args.add("else");
-                elseRef.args.addAll(nextEntry.getProperArguments());
+                elseRef.args.addAll(nextEntry.getArguments());
                 allData.add(elseRef);
             }
             scriptEntry.addObject("braces", allData);
