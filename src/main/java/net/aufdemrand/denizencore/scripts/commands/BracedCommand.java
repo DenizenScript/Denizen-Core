@@ -60,17 +60,20 @@ public abstract class BracedCommand extends AbstractCommand {
                     res.set(i, newbd);
                     newbd.key = bd.key;
                     newbd.value = new ArrayList<ScriptEntry>(bd.value.size());
+                    newbd.needPatch = bd.needPatch;
                     for (ScriptEntry sEntry : bd.value) {
                         ScriptEntry newEntry = sEntry.clone();
                         newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         newbd.value.add(newEntry);
+                    }
+                    if (dB.verbose) {
+                        dB.echoDebug(scriptEntry, "Wrangling braced command args[" + bd.needPatch + "]: " + bd.key);
                     }
                     if (bd.needPatch) {
                         newbd.args = new ArrayList<String>(bd.args.size());
                         for (int x = bd.aStart; x <= bd.aEnd; x++) {
                             newbd.args.add(CommandExecuter.parseDefsRaw(scriptEntry, scriptEntry.args.get(x)));
                         }
-                        break;
                     }
                     else {
                         newbd.args = bd.args;
@@ -215,7 +218,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         }
                     }
                     if (hyperdebug) {
-                        dB.echoDebug(scriptEntry, "Adding section " + bracesName);
+                        dB.echoDebug(scriptEntry, "Adding section " + bracesName + " with " + tStart + " to " + tEnd);
                     }
                     bd.args = bracesArgs;
                     bd.aStart = tStart;
@@ -228,6 +231,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     commandList = new TreeMap<Integer, ArrayList<String>>();
                     tEnd = -1;
                     tStart = i + 1;
+                    tPatchMe = false;
                 }
             }
 
