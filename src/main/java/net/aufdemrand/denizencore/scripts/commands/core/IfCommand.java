@@ -537,7 +537,7 @@ public class IfCommand extends BracedCommand {
                 return outcome;
             }
             catch (IllegalArgumentException ex) {
-                dB.echoError(ex.getMessage());
+                dB.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? IllegalArgumentException: " + ex.getMessage());
                 return false;
             }
         }
