@@ -78,12 +78,11 @@ public abstract class CommandRegistry implements dRegistry {
     // Also, you should never directly type in [], (), {}, or <> even though they are in the syntax info.
     // The only exception is in a replaceable tag (EG: <npc.has_trait[<traitname>]> will take <npc.has_trait[mytrait]> as a valid actual usage)
     //
-    // Highly specific note: <commands> means a block of commands wrapped in braces... EG:
+    // Highly specific note: <commands> means a block of commands wrapped in braces or as a sub-block... EG:
     // <code>
-    // - repeat 3 {
-    //   - narrate "%value%"
-    //   - narrate "everything between the {and} symbols (including them) are for the <commands> input!"
-    //   }
+    // - repeat 3:
+    //   - narrate "<def[value]>"
+    //   - narrate "everything spaced out as a sub-block (these two narrates) following a ":" ended command (that repeat) is for the <commands> input!"
     // </code>
     //
     // -->
