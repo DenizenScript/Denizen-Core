@@ -394,5 +394,9 @@ public class UtilTags {
                 DenizenCore.logInterceptor.standardOutput();
             }
         }
+
+        if (!mechanism.fulfilled()) {
+            mechanism.reportInvalid();
+        }
     }
 }

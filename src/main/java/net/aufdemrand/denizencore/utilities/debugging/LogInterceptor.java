@@ -40,17 +40,26 @@ public class LogInterceptor extends PrintStream {
     // -->
     @Override
     public void print(String s) {
+        if (antiLoop) {
+            super.print(s);
+            return;
+        }
+        antiLoop = true;
         HashMap<String, dObject> context = new HashMap<String, dObject>();
         context.put("message", new Element(DenizenCore.getImplementation().cleanseLogString(s)));
         List<String> Determinations = OldEventManager.doEvents(Arrays.asList("console output"), // TODO: ScriptEvent
                 DenizenCore.getImplementation().getEmptyScriptEntryData(), context);
         for (String str : Determinations) {
             if (str.equalsIgnoreCase("cancelled")) {
+                antiLoop = false;
                 return;
             }
         }
         super.print(s);
+        antiLoop = false;
     }
+
+    private boolean antiLoop = false;
 
     public void redirectOutput() {
         if (redirected) {
