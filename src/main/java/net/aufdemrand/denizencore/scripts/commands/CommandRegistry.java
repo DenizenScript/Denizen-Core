@@ -229,36 +229,33 @@ public abstract class CommandRegistry implements dRegistry {
 
         // @Description
         // Definitions are queue-level (or script-level) 'variables' that can be used throughout a script, once
-        // defined, by using %'s around the definition id/name. Definitions are only valid on the current queue and are
+        // defined, by using the <def[<id>]> tag. Definitions are only valid on the current queue and are
         // not transferred to any new queues constructed within the script, such as a 'run' command, without explicitly
         // specifying to do so.
         //
         // Definitions are lighter and faster than creating a temporary flag, but unlike flags, are only a single entry,
         // that is, you can't add or remove from the definition, but you can re-create it if you wish to specify a new
-        // value. Definitions are also automatically destroyed when the queue is completed, so there is no worry for
+        // value. Definitions are also automatically removed when the queue is completed, so there is no worry for
         // leaving unused data hanging around.
-        //
-        // Definitions are also resolved before replaceable tags, meaning you can use them within tags, even as an
-        // attribute. ie. <%player%.name>
 
         // @Tags
-        // %<ID>% to get the value assign to an ID
-        // <def[<ID>]> to get the value assigned to an ID
+        // <def[<id>]> to get the value assigned to an ID
 
         // @Usage
         // Use to make complex tags look less complex, and scripts more readable
         // - narrate 'You invoke your power of notice...'
         // - define range '<player.flag[range_level].mul[3]>'
         // - define blocks '<player.flag[noticeable_blocks]>'
-        // - narrate '[NOTICE] You have noticed <player.location.find.blocks[<def[blocks]>].within[<def[range]>].size>
-        // blocks in the area that may be of interest.'
+        // - narrate '[NOTICE] You have noticed <player.location.find.blocks[<def[blocks]>].within[<def[range]>].size> blocks in the area that may be of interest.'
 
         // @Usage
         // Use to keep the value of a replaceable tag that you might use many times within a single script. Definitions
         // can be faster and cleaner than reusing a replaceable tag over and over
         // - define arg1 <c.args.get[1]>
-        // - if <def[arg1]> == hello narrate 'Hello!'
-        // - if <def[arg1]> == goodbye narrate 'Goodbye!'
+        // - if <def[arg1]> == hello:
+        //   - narrate 'Hello!'
+        // - else if <def[arg1]> == goodbye:
+        //   - narrate 'Goodbye!'
 
         // @Usage
         // Use to pass some important information (arguments) on to another queue
