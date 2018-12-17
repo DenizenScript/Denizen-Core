@@ -68,15 +68,11 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         enabled = false;
     }
 
-    static long seconds = 0;
-
     public void checkTime() {
-        seconds++;
-
         if (!enabled) {
             return;
         }
-        second = new Element(seconds);
+        second = new Element(DenizenCore.serverTimeMillis / 1000);
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         fire();
     }
