@@ -138,12 +138,15 @@ public class DenizenCore {
 
     static int tMS = 0;
 
+    public static long serverTimeMillis = 1;
+
     /**
      * Call every 'tick' in the engine. (1/20th of a second on a standard engine.)
      *
      * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
      */
     public static void tick(int ms_elapsed) {
+        serverTimeMillis += ms_elapsed;
         currentTimeMillis = System.currentTimeMillis();
         tMS += ms_elapsed;
         while (tMS > 1000) {

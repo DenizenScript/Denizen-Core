@@ -75,12 +75,12 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     @Override
     public void delayFor(Duration duration) {
-        delay_ticks = System.currentTimeMillis() + duration.getMillis();
+        delay_ticks = DenizenCore.serverTimeMillis + duration.getMillis();
     }
 
     @Override
     public boolean isDelayed() {
-        return (delay_ticks > System.currentTimeMillis());
+        return (delay_ticks > DenizenCore.serverTimeMillis);
     }
 
     public TimedQueue(String id, long ticks) {

@@ -172,8 +172,8 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     private ScriptEntry lastEntryExecuted = null;
 
 
-    // If this number is larger than Java's
-    // getCurrentTimeMillis(), the queue will
+    // If this number is larger than
+    // DenizenCore.serverTimeMillis, the queue will
     // delay execution of the next ScriptEntry
     private long delay_time = 0;
 
@@ -478,7 +478,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // Set as started, and check for a valid delay_time.
         is_started = true;
-        long delay = delay_time - System.currentTimeMillis();
+        long delay = delay_time - DenizenCore.serverTimeMillis;
         boolean is_delayed = delay > 0;
 
         // Record what script generated the first entry in the queue

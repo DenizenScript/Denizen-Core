@@ -99,7 +99,7 @@ public class TaskScriptContainer extends ScriptContainer {
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);
         }
         queue.addEntries(listOfEntries);
-        queue.delayUntil(System.currentTimeMillis() + (long) (delay.getSeconds() * 1000));
+        queue.delayUntil(DenizenCore.serverTimeMillis + (long) (delay.getSeconds() * 1000));
         queue.start();
         return queue;
     }
