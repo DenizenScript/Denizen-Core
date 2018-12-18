@@ -35,7 +35,8 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     public boolean matches(ScriptContainer script, String event) {
         String time = CoreUtilities.getXthArg(2, event);
-        return time.equals("secondly") || time.equals("minutely") || time.equals("hourly");
+        long seconds = DenizenCore.serverTimeMillis / 1000;
+        return time.equals("secondly") || (seconds % 60 == 0 && time.equals("minutely")) || (seconds % 3600 == 0 && time.equals("hourly"));
     }
 
     public ScriptEntryData data = null;
