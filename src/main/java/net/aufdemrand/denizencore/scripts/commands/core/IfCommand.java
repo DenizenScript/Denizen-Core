@@ -137,6 +137,10 @@ public class IfCommand extends BracedCommand {
             executeCommandList(elsecommand, scriptEntry);
         }
         if (braces != null) {
+            if (braces.isEmpty()) {
+                dB.echoError(scriptEntry.getResidingQueue(), "Failed to parse IF command: mis-aligned bracing, empty subsections, or other basic formatting error.");
+                return;
+            }
             if (first_set) {
                 if (dB.verbose) {
                     dB.log("Running the first set");
