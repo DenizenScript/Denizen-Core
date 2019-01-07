@@ -55,7 +55,9 @@ public class CustomScriptContainer extends ScriptContainer {
             if (str.low.equals("inherit")) {
                 inherit = getString(str.str);
             }
-            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms") || str.low.equals("speed") || str.low.equals("debug"))) {
+            else if (!(str.low.equals("type") || str.low.equals("tags") || str.low.equals("mechanisms")
+                    || str.low.equals("speed") || str.low.equals("debug")
+                    || configurationSection.getConfigurationSection(str.str) != null)) {
                 defaultVars.put(str.low, getString(str.str));
             }
         }
