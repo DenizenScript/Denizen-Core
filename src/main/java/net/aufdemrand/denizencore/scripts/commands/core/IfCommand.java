@@ -52,7 +52,10 @@ public class IfCommand extends BracedCommand {
                     dB.echoError(scriptEntry.getResidingQueue(), "Upcoming else command is mis-formatted!");
                     break;
                 }
-                CommandExecuter.handleDefs(nextEntry, false);
+                if (nextEntry.internal.hasOldDefs) {
+                    nextEntry.generateAHArgs();
+                    CommandExecuter.handleDefs(nextEntry, false);
+                }
                 scriptEntry.getResidingQueue().script_entries.remove(0);
                 BracedData elseRef = getBracedCommands(nextEntry).get(0);
                 elseRef.key = nextEntry.toString();
