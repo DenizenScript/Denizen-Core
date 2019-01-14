@@ -1,16 +1,15 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
-import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ChooseCommand extends BracedCommand {
@@ -40,26 +39,50 @@ public class ChooseCommand extends BracedCommand {
         if (!scriptEntry.hasObject("choice")) {
             throw new InvalidArgumentsException("Must have a choice!"); // Should never happen
         }
-
-        if (!scriptEntry.hasObject("braces")) {
-            throw new InvalidArgumentsException("Must have sub-commands!");
-        }
     }
 
 
     @Override
     public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
 
-        Element choice = scriptEntry.getElement("choice");
-
         List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
-
         if (bdlist == null || bdlist.isEmpty()) {
             dB.echoError(scriptEntry.getResidingQueue(), "Empty sub-commands (internal)!");
             return;
         }
-
         List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
+
+        HashMap<String, Integer> lookupTable = null;
+        if (scriptEntry.internal.specialProcessedData instanceof HashMap) {
+            lookupTable = (HashMap<String, Integer>) scriptEntry.internal.specialProcessedData;
+        }
+        else {
+            lookupTable = new HashMap<>();
+            for (int i = 0; i < bracedCommandsList.size(); i++) {
+                ScriptEntry se = bracedCommandsList.get(i);
+                String cmdName = CoreUtilities.toLowerCase(se.getCommandName());
+                if (cmdName.equals("default")) {
+                    lookupTable.put("\0DEFAULT", i);
+                    break;
+                }
+                else if (cmdName.equals("case")) {
+                    if (se.getArguments().size() > 0) {
+                        for (String arg : se.getArguments()) {
+                            lookupTable.put(CoreUtilities.toLowerCase(arg), i);
+                        }
+                    }
+                    else {
+                        dB.echoError("Unknown choose sub-command (missing arguments) '" + se.toString() + "'!");
+                    }
+                }
+                else {
+                    dB.echoError("Unknown choose sub-command '" + cmdName + "'!");
+                }
+            }
+            scriptEntry.internal.specialProcessedData = lookupTable;
+        }
+
+        Element choice = scriptEntry.getElement("choice");
 
         if (scriptEntry.dbCallShouldDebug()) {
             dB.report(scriptEntry, getName(), choice.debug());
@@ -67,40 +90,22 @@ public class ChooseCommand extends BracedCommand {
 
         String choice_low = CoreUtilities.toLowerCase(choice.asString());
 
-        ScriptEntry result = null;
+        Integer resultIndex = lookupTable.get(choice_low);
 
-        for (ScriptEntry se : bracedCommandsList) {
-            String cmdName = CoreUtilities.toLowerCase(se.getCommandName());
-            if (cmdName.equals("default")) {
-                result = se;
-                break;
-            }
-            else if (cmdName.equals("case")) {
-                if (se.getArguments().size() == 1) {
-                    String arg = TagManager.tag(se.getArguments().get(0), DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
-                    if (CoreUtilities.toLowerCase(arg).equals(choice_low)) {
-                        result = se;
-                        break;
-                    }
-                }
-                else {
-                    dB.echoError("Unknown choice sub-command '" + se.toString() + "'!");
-                }
-            }
-            else {
-                dB.echoError("Unknown choice sub-command '" + cmdName + "'!");
+        if (resultIndex == null) {
+            resultIndex = lookupTable.get("\0DEFAULT");
+            if (resultIndex == null) {
+                dB.echoDebug(scriptEntry, "No result!");
+                return;
             }
         }
 
-        if (result == null) {
-            dB.echoDebug(scriptEntry, "No result!");
-            return;
-        }
+        ScriptEntry result = bracedCommandsList.get(resultIndex);
 
         List<BracedData> new_commands = getBracedCommands(result);
 
         if (new_commands == null || new_commands.isEmpty()) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Empty case sub-commands (internal)!");
+            dB.echoError(scriptEntry.getResidingQueue(), "Empty choose command case sub-commands (internal) for case '" + result.toString() + "'");
             return;
         }
 

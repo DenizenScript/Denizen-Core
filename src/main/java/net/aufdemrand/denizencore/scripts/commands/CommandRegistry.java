@@ -141,7 +141,7 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // Optionally, specify "default" in place of a case to give a result when all other cases fail to match.
         //
-        // Cases are best kept as static text options, but tags are accepted.
+        // Cases must be static text. They may not contain tags. For multi-tag comparison, consider the IF command.
 
         // @Tags
         // None

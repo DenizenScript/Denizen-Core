@@ -56,6 +56,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public int[] processArgs = null;
 
         public List<aH.Argument> preprocArgs = null;
+
+        public Object specialProcessedData = null;
     }
 
     public static class Argument {
