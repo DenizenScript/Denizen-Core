@@ -167,8 +167,10 @@ public abstract class CommandRegistry implements dRegistry {
         //     - narrate "You slayed an undead zombie!"
         //   - case "skeleton":
         //     - narrate "You knocked the bones out of a skeleton!"
-        //   - case "Creeper":
+        //   - case "creeper":
         //     - narrate "You didn't give that creeper a chance to explode!"
+        //   - case "pig" "cow" "chicken":
+        //     - narrate "You killed an innocent farm animal!"
         //   - default:
         //     - narrate "You killed a <def[entity_type].to_titlecase>!"
 
