@@ -40,7 +40,10 @@ public abstract class BracedCommand extends AbstractCommand {
      * @return The list of ScriptEntries to be executed in the command.
      */
     public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry) {
+        return getBracedCommands(scriptEntry, true);
+    }
 
+    public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry, boolean duplicate) {
         if (scriptEntry == null) {
             return null;
         }
@@ -52,6 +55,9 @@ public abstract class BracedCommand extends AbstractCommand {
 
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
+            if (!duplicate) {
+                return entryBracedSet;
+            }
             List<BracedData> res = new ArrayList<BracedData>(entryBracedSet);
             try {
                 for (int i = 0; i < res.size(); i++) {

@@ -26,7 +26,7 @@ public class ChooseCommand extends BracedCommand {
 
             if (!scriptEntry.hasObject("choice")) {
                 scriptEntry.addObject("choice", arg.asElement());
-                scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
+                scriptEntry.addObject("braces", getBracedCommands(scriptEntry, false));
                 break;
             }
 
