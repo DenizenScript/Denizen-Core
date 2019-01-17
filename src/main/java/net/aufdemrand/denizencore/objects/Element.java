@@ -15,6 +15,7 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2239,6 +2240,38 @@ public class Element implements dObject, dObject.ObjectAttributable {
                     return null;
                 }
                 return new Element((long) Math.round(ele.asDouble()))
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.base64_encode>
+        // @returns Element
+        // @group math
+        // @description
+        // Encodes the element using Base64 encoding.
+        // -->
+        registerTag("base64_encode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                String encoded = Base64.getEncoder().encodeToString(((Element) object).element.getBytes());
+                return new Element(encoded)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.base64_decode>
+        // @returns Element
+        // @group math
+        // @description
+        // Decodes the element using Base64 encoding. Must be valid Base64 input.
+        // -->
+        registerTag("base64_decode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                String decoded = new String(Base64.getDecoder().decode(((Element) object).element));
+                return new Element(decoded)
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
