@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
@@ -38,6 +39,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("timeout", arg.asType(Duration.class));
             }
 
+            else if (!scriptEntry.hasObject("headers")
+                    && arg.matchesPrefix("headers")) {
+                scriptEntry.addObject("headers", arg.asType(dList.class));
+            }
+
             else {
                 arg.reportUnhandled();
             }
@@ -67,24 +73,30 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         final Element url = scriptEntry.getElement("url");
 
-        final String postData = scriptEntry.hasObject("post") ? scriptEntry.getElement("post").asString() : null;
+        final Element postData = scriptEntry.getElement("post");
 
         final Duration timeout = scriptEntry.getdObject("timeout");
 
+        final dList headers = scriptEntry.getdObject("headers");
+
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), url.debug());
+            dB.report(scriptEntry, getName(),
+                    url.debug()
+                    + (postData != null ? postData.debug() : "")
+                    + (timeout != null ? timeout.debug() : "")
+                    + (headers != null ? headers.debug() : ""));
         }
 
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, postData, url, timeout);
+                webGet(scriptEntry, postData, url, timeout, headers);
             }
         });
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final String postData, Element urlp, Duration timeout) {
+    public void webGet(final ScriptEntry scriptEntry, final Element postData, Element urlp, Duration timeout, dList headers) {
 
         BufferedReader in = null;
         try {
@@ -95,10 +107,18 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             if (postData != null) {
                 uc.setRequestMethod("POST");
             }
+            if (headers != null) {
+                for (String str : headers) {
+                    int ind = str.indexOf('/');
+                    if (ind > 0) {
+                        uc.setRequestProperty(str.substring(0, ind), str.substring(ind + 1));
+                    }
+                }
+            }
             uc.setConnectTimeout((int) timeout.getMillis());
             uc.connect();
             if (postData != null) {
-                uc.getOutputStream().write(postData.getBytes("UTF-8"));
+                uc.getOutputStream().write(postData.asString().getBytes("UTF-8"));
             }
             in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             final StringBuilder sb = new StringBuilder();

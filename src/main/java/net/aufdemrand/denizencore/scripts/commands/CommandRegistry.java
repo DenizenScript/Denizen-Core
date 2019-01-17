@@ -445,7 +445,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Webget
-        // @Syntax webget [<url>] (post:<data>) (timeout:<duration>/{10s})
+        // @Syntax webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s})
         // @Required 1
         // @Stable unstable
         // @Short Gets the contents of a web page.
@@ -454,12 +454,14 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // @Description
         // TODO: Document Command Details
-        // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding.
+        // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding. You may want to use the element.url_encode tag for this.
         // Optionally, specify a set of data to post to the server (changes the message from GET to POST).
+        // Optionally specify a list of headers as list of key/value pairs separated by slashes.
         //
         // @Tags
         // <entry[saveName].failed> returns whether the webget failed.
         // <entry[saveName].result> returns the result of the webget, if it did not fail.
+        // <el@element.url_encode>
         //
         // @Usage
         // Use to download the google home page.
@@ -468,7 +470,7 @@ public abstract class CommandRegistry implements dRegistry {
         //
         // -->
         registerCoreMember(WebGetCommand.class,
-                "webget", "webget [<url>]", 1);
+                "webget", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s})", 1);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {
