@@ -12,6 +12,7 @@ import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.SQLEscaper;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
+import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -2271,6 +2272,38 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 String decoded = new String(Base64.getDecoder().decode(((Element) object).element));
+                return new Element(decoded)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.hex_encode>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Encodes the element using hexadecimal encoding.
+        // -->
+        registerTag("hex_encode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                String encoded = DatatypeConverter.printHexBinary(((Element) object).element.getBytes());
+                return new Element(encoded)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.hex_decode>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Decodes the element using hexadecimal encoding. Must be valid hexadecimal input.
+        // -->
+        registerTag("hex_decode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                String decoded = new String(DatatypeConverter.parseHexBinary(((Element) object).element));
                 return new Element(decoded)
                         .getObjectAttribute(attribute.fulfill(1));
             }
