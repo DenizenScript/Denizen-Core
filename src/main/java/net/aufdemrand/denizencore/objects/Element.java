@@ -14,6 +14,8 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Base64;
@@ -2248,7 +2250,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // <--[tag]
         // @attribute <el@element.base64_encode>
         // @returns Element
-        // @group math
+        // @group conversion
         // @description
         // Encodes the element using Base64 encoding.
         // -->
@@ -2264,7 +2266,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // <--[tag]
         // @attribute <el@element.base64_decode>
         // @returns Element
-        // @group math
+        // @group conversion
         // @description
         // Decodes the element using Base64 encoding. Must be valid Base64 input.
         // -->
@@ -2306,6 +2308,50 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 String decoded = new String(DatatypeConverter.parseHexBinary(((Element) object).element));
                 return new Element(decoded)
                         .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.url_encode>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Encodes the element using URL encoding.
+        // -->
+        registerTag("url_encode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                try {
+                    String encoded = URLEncoder.encode(((Element) object).element, "UTF-8");
+                    return new Element(encoded)
+                            .getObjectAttribute(attribute.fulfill(1));
+                }
+                catch (Exception e) {
+                    dB.echoError(e);
+                    return null;
+                }
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.url_decode>
+        // @returns Element
+        // @group conversion
+        // @description
+        // Decodes the element using URL encoding. Must be valid URL-encoded input.
+        // -->
+        registerTag("url_decode", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                try {
+                    String decoded = URLDecoder.decode(((Element) object).element, "UTF-8");
+                    return new Element(decoded)
+                            .getObjectAttribute(attribute.fulfill(1));
+                }
+                catch (Exception e) {
+                    dB.echoError(e);
+                    return null;
+                }
             }
         });
 
