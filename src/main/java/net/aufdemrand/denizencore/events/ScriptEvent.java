@@ -61,12 +61,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public Boolean switch_cancelled;
         public Boolean switch_ignoreCancelled;
         public HashMap<String, String> switches = new HashMap<>();
+        public String[] eventArgs;
+        public String[] eventArgsLower;
 
         public ScriptPath(ScriptContainer container, String event) {
             this.container = container;
             this.event = event;
-            this.eventLower = CoreUtilities.toLowerCase(event);
-            for (String possible : CoreUtilities.split(event, ' ')) {
+            eventLower = CoreUtilities.toLowerCase(event);
+            eventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
+            eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
+            for (String possible : eventArgs) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
                 if (split.size() > 1) {
                     switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
@@ -175,7 +179,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // -->
     public void sort() {
         for (ScriptPath path : eventPaths) {
-            String gotten = getSwitch(path.event, "priority");
+            String gotten = path.switches.get("priority");
             path.priority = gotten == null ? 0 : aH.getIntegerFrom(gotten);
         }
         Collections.sort(eventPaths, new Comparator<ScriptPath>() {
