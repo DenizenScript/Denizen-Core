@@ -53,14 +53,27 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public static class ScriptPath {
 
-        ScriptContainer container;
-        String event;
-        int priority = 0;
-        ScriptEntrySet set;
+        public ScriptContainer container;
+        public String event;
+        public String eventLower;
+        public int priority = 0;
+        public ScriptEntrySet set;
+        public Boolean switch_cancelled;
+        public Boolean switch_ignoreCancelled;
+        public HashMap<String, String> switches = new HashMap<>();
 
         public ScriptPath(ScriptContainer container, String event) {
             this.container = container;
             this.event = event;
+            this.eventLower = CoreUtilities.toLowerCase(event);
+            for (String possible : CoreUtilities.split(event, ' ')) {
+                List<String> split = CoreUtilities.split(possible, ':', 2);
+                if (split.size() > 1) {
+                    switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
+                }
+            }
+            switch_cancelled = switches.containsKey("cancelled") ? switches.get("cancelled").equalsIgnoreCase("true") : null;
+            switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
         }
     }
 
@@ -129,18 +142,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // and, in some cases, can be used to stop the event itself from continuing.
     // A script event can at any time check the cancellation state of an event by accessing "<context.cancelled>".
     // -->
-    public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, String event) {
-        String cancelmode = getSwitch(event, "cancelled");
-        if (cancelmode != null && cancelmode.equalsIgnoreCase("false") && sEvent.cancelled) {
+    public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, ScriptPath path) {
+        if (path.switch_cancelled != null) {
+            if (path.switch_cancelled != sEvent.cancelled) {
+                return false;
+            }
+        }
+        if (path.switch_ignoreCancelled != null && !path.switch_ignoreCancelled && sEvent.cancelled) {
             return false;
         }
-        if (cancelmode != null && cancelmode.equalsIgnoreCase("true") && !sEvent.cancelled) {
-            return false;
-        }
-        if (checkSwitch(event, "ignorecancelled", "false") && sEvent.cancelled) {
-            return false;
-        }
-        return sEvent.matches(script, event);
+        return sEvent.matches(script, path);
     }
 
     public static boolean couldMatchScript(ScriptEvent sEvent, ScriptContainer script, String event) {
@@ -206,6 +217,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return applyDetermination(container, determination.identify());
     }
 
+    public static HashSet<String> defaultDeterminations = new HashSet<>(Arrays.asList("cancelled", "cancelled:true", "cancelled:false"));
+
+    public static boolean isDefaultDetermination(String determination) {
+        String low = CoreUtilities.toLowerCase(determination);
+        return defaultDeterminations.contains(low);
+    }
+
     public boolean applyDetermination(ScriptContainer container, String determination) {
         String low = CoreUtilities.toLowerCase(determination);
         if (low.equals("cancelled")) {
@@ -239,7 +257,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public abstract boolean couldMatch(ScriptContainer script, String event);
 
-    public abstract boolean matches(ScriptContainer script, String event);
+    public boolean matches(ScriptContainer script, ScriptPath path) {
+        return matches(script, path.event);
+    }
+
+    public boolean matches(ScriptContainer script, String event) {
+        throw new UnsupportedOperationException("Matches not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
+    }
 
     public abstract String getName();
 
@@ -258,7 +282,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         fires++;
         for (ScriptPath path : eventPaths) {
             try {
-                if (matchesScript(this, path.container, path.event)) {
+                if (matchesScript(this, path.container, path)) {
                     run(path);
                 }
             }
