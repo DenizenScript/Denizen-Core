@@ -146,7 +146,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // and, in some cases, can be used to stop the event itself from continuing.
     // A script event can at any time check the cancellation state of an event by accessing "<context.cancelled>".
     // -->
-    public static boolean matchesScript(ScriptEvent sEvent, ScriptContainer script, ScriptPath path) {
+    public static boolean matchesScript(ScriptEvent sEvent, ScriptPath path) {
         if (path.switch_cancelled != null) {
             if (path.switch_cancelled != sEvent.cancelled) {
                 return false;
@@ -155,7 +155,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (path.switch_ignoreCancelled != null && !path.switch_ignoreCancelled && sEvent.cancelled) {
             return false;
         }
-        return sEvent.matches(script, path);
+        return sEvent.matches(path);
     }
 
     public static boolean couldMatchScript(ScriptEvent sEvent, ScriptContainer script, String event) {
@@ -261,8 +261,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public abstract boolean couldMatch(ScriptContainer script, String event);
 
-    public boolean matches(ScriptContainer script, ScriptPath path) {
-        return matches(script, path.event);
+    public boolean matches(ScriptPath path) {
+        return matches(path.container, path.event);
     }
 
     public boolean matches(ScriptContainer script, String event) {
@@ -286,7 +286,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         fires++;
         for (ScriptPath path : eventPaths) {
             try {
-                if (matchesScript(this, path.container, path)) {
+                if (matchesScript(this, path)) {
                     run(path);
                 }
             }
