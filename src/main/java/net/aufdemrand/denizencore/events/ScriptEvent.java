@@ -66,6 +66,22 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public String[] eventArgs;
         public String[] eventArgsLower;
 
+        public String eventArgAt(int index) {
+            return index < eventArgs.length ? eventArgs[index] : "";
+        }
+
+        public String eventArgLowerAt(int index) {
+            return index < eventArgsLower.length ? eventArgsLower[index] : "";
+        }
+
+        public boolean checkSwitch(String key, String value) {
+            String pathValue = switches.get(key);
+            if (pathValue == null) {
+                return false;
+            }
+            return CoreUtilities.toLowerCase(pathValue).equals(value);
+        }
+
         public ScriptPath(ScriptContainer container, String event) {
             this.container = container;
             this.event = event;
@@ -199,6 +215,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void destroy() {
     }
 
+    @Deprecated
     public static boolean checkSwitch(String event, String switcher, String value) {
         for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);
@@ -209,6 +226,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return true;
     }
 
+    @Deprecated
     public static String getSwitch(String event, String switcher) {
         for (String possible : CoreUtilities.split(event, ' ')) {
             List<String> split = CoreUtilities.split(possible, ':', 2);

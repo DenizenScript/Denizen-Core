@@ -31,10 +31,9 @@ public class _templateScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean matches(ScriptContainer scriptContainer, String s) {
-        String lower = CoreUtilities.toLowerCase(s);
-        return lower.endsWith("example")
-                && checkSwitch(s, "example", "value");
+    public boolean matches(ScriptPath path) {
+        return path.eventLower.startsWith("template example")
+                && path.checkSwitch("example", "value");
     }
 
     @Override
@@ -55,7 +54,7 @@ public class _templateScriptEvent extends ScriptEvent {
     @Override
     public boolean applyDetermination(ScriptContainer container, String determination) {
         // Apply an input determination here.
-        // Return true if sucessful, false if there was an error.
+        // Return true if successful, false if there was an error.
         String lower = CoreUtilities.toLowerCase(determination);
         if (lower.startsWith("example:")) {
             objectOne = new Element(determination.substring(2));

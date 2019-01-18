@@ -82,10 +82,10 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean matches(ScriptContainer script, String event) {
-        return checkSwitch(event, "haderror", hadError ? "true" : "false")
-                && checkSwitch(event, "sender", sender.equalsIgnoreCase("console") ? "server" : "player")
-                && checkSwitch(event, "all", all ? "true" : "false");
+    public boolean matches(ScriptPath path) {
+        return path.checkSwitch("haderror", hadError ? "true" : "false")
+                && path.checkSwitch("sender", sender.equalsIgnoreCase("console") ? "server" : "player")
+                && path.checkSwitch("all", all ? "true" : "false");
     }
 
     @Override

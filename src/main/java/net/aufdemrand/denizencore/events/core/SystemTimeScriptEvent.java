@@ -49,8 +49,8 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean matches(ScriptContainer script, String event) {
-        String time = CoreUtilities.getXthArg(2, event);
+    public boolean matches(ScriptPath path) {
+        String time = path.eventArgLowerAt(2);
         return time.equals("minutely") || time.equals(hour.asString() + ":" + minute.asString()) || (minute.asString().equals("00") && time.equals("hourly"));
     }
 
