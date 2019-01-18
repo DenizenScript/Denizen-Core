@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore;
 
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.ScriptEvent;
+import net.aufdemrand.denizencore.events.core.DeltaTimeScriptEvent;
 import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
@@ -134,6 +135,7 @@ public class DenizenCore {
 
     static void oncePerSecond() {
         SystemTimeScriptEvent.instance.checkTime();
+        DeltaTimeScriptEvent.instance.checkTime();
     }
 
     static int tMS = 0;

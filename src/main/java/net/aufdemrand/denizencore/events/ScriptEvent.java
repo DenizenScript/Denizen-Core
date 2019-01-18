@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.events;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.events.core.DeltaTimeScriptEvent;
 import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
 import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
@@ -40,6 +41,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void registerCoreEvents() {
         registerScriptEvent(new ReloadScriptsScriptEvent());
         registerScriptEvent(new SystemTimeScriptEvent());
+        registerScriptEvent(new DeltaTimeScriptEvent());
     }
 
     public static void registerScriptEvent(ScriptEvent event) {
