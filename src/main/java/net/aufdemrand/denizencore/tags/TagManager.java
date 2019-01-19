@@ -260,8 +260,10 @@ public class TagManager {
         Class object_class = ObjectFetcher.getObjectClass(object_type);
 
         if (object_class == null) {
-            dB.echoError("Invalid object type! Could not fetch '" + object_type + "'!");
-            event.setReplaced("null");
+            if (!event.hasAlternative()) {
+                dB.echoError("Invalid object type! Could not fetch '" + object_type + "'!");
+                event.setReplaced("null");
+            }
             return;
         }
 
@@ -270,9 +272,11 @@ public class TagManager {
 
             if (!ObjectFetcher.checkMatch(object_class, event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
                     : event.getAttributes().attributes[0].rawKey)) {
-                dB.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
-                        + "' is an invalid " + object_class.getSimpleName() + ".");
-                event.setReplaced("null");
+                if (!event.hasAlternative()) {
+                    dB.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
+                            + "' is an invalid " + object_class.getSimpleName() + ".");
+                    event.setReplaced("null");
+                }
                 return;
             }
 
@@ -280,9 +284,11 @@ public class TagManager {
                     : event.getAttributes().attributes[0].rawKey, DenizenCore.getImplementation().getTagContext(event.getScriptEntry()));
 
             if (arg == null) {
-                dB.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                        : event.getAttributes().attributes[0].rawKey) + " is an invalid dObject!"));
-                event.setReplaced("null");
+                if (!event.hasAlternative()) {
+                    dB.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
+                            : event.getAttributes().attributes[0].rawKey) + " is an invalid dObject!"));
+                    event.setReplaced("null");
+                }
                 return;
             }
 
@@ -292,7 +298,9 @@ public class TagManager {
         catch (Exception e) {
             dB.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
             dB.echoError(e);
-            event.setReplaced("null");
+            if (!event.hasAlternative()) {
+                event.setReplaced("null");
+            }
         }
     }
 
