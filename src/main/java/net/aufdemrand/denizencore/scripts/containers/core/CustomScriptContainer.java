@@ -4,7 +4,6 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.CustomObject;
 import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;

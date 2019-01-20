@@ -1,7 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands;
 
 import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
-import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
