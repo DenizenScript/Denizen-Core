@@ -15,11 +15,11 @@ import java.util.regex.Pattern;
 public class ObjectFetcher {
 
     // Keep track of each Class keyed by its 'object identifier' --> i@, e@, etc.
-    private static Map<String, Class> objects = new HashMap<String, Class>();
+    private static Map<String, Class> objects = new HashMap<>();
 
     // Keep track of the static 'matches' and 'valueOf' methods for each dObject
-    static Map<Class, Method> matches = new WeakHashMap<Class, Method>();
-    static Map<Class, Method> valueof = new WeakHashMap<Class, Method>();
+    static Map<Class, Method> matches = new WeakHashMap<>();
+    static Map<Class, Method> valueof = new WeakHashMap<>();
 
     public static void _initialize() throws IOException, ClassNotFoundException {
 
@@ -27,7 +27,7 @@ public class ObjectFetcher {
             return;
         }
 
-        Map<String, Class> adding = new HashMap<String, Class>();
+        Map<String, Class> adding = new HashMap<>();
         for (Class dClass : fetchable_objects) {
             try {
                 Method method = dClass.getMethod("valueOf", String.class, TagContext.class);
@@ -68,7 +68,7 @@ public class ObjectFetcher {
 
     }
 
-    private static ArrayList<Class> fetchable_objects = new ArrayList<Class>();
+    private static ArrayList<Class> fetchable_objects = new ArrayList<>();
 
     public static void registerWithObjectFetcher(Class<? extends dObject> dObject) {
         try {
@@ -129,7 +129,7 @@ public class ObjectFetcher {
         if (input.indexOf('[') == -1 || input.lastIndexOf(']') != input.length() - 1) {
             return null;
         }
-        ArrayList<String> output = new ArrayList<String>();
+        ArrayList<String> output = new ArrayList<>();
         int start = 0;
         boolean needObject = true;
         int brackets = 0;
@@ -165,8 +165,8 @@ public class ObjectFetcher {
                         dB.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
                     }
-                    ((Adjustable) gotten).applyProperty(new Mechanism(new Element(data.get(0)),
-                            new Element((data.get(1)).replace((char) 0x2011, ';'))));
+                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new Element(data.get(0)),
+                            new Element((data.get(1)).replace((char) 0x2011, ';')), context));
                 }
             }
             return gotten;
@@ -190,6 +190,9 @@ public class ObjectFetcher {
     }
 
     public static dObject pickObjectFor(String value, TagContext context) {
+        if (value == null) {
+            return null;
+        }
         // While many inputs are valid as various object types
         // (EG, 'bob' could be a player or NPC's name)
         // Only use specific objects for input with @ notation

@@ -1,5 +1,7 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class Mechanism {
@@ -7,17 +9,24 @@ public class Mechanism {
     private boolean fulfilled;
     private String raw_mechanism;
     private Element value;
-    private String outcome = null;
+
+    public TagContext context;
+
+    public boolean isProperty = false;
 
     public Mechanism(Element mechanism, Element value) {
         fulfilled = false;
-        raw_mechanism = mechanism.asString();
+        raw_mechanism = CoreUtilities.toLowerCase(mechanism.asString());
         this.value = value;
     }
 
-    public void fulfill(String _outcome) {
+    public Mechanism(Element mechanism, Element value, TagContext context) {
+        this(mechanism, value);
+        this.context = context;
+    }
+
+    public void fulfill() {
         fulfilled = true;
-        outcome = _outcome; // TODO: Return outcome somewhere?
     }
 
     public boolean fulfilled() {
@@ -40,8 +49,8 @@ public class Mechanism {
     }
 
     public boolean matches(String string) {
-        if (string.equalsIgnoreCase(raw_mechanism)) {
-            fulfill("");
+        if (string.equals(raw_mechanism)) {
+            fulfill();
             return true;
         }
         return false;
@@ -52,7 +61,7 @@ public class Mechanism {
     }
 
     public boolean requireDouble() {
-        return requireDouble("Invalid double specified.");
+        return requireDouble("Invalid decimal number specified.");
     }
 
     public boolean requireEnum(boolean allowInt, Enum<?>... values) {
@@ -60,11 +69,11 @@ public class Mechanism {
     }
 
     public boolean requireFloat() {
-        return requireFloat("Invalid float specified.");
+        return requireFloat("Invalid decimal number specified.");
     }
 
     public boolean requireInteger() {
-        return requireInteger("Invalid integer specified.");
+        return requireInteger("Invalid integer number specified.");
     }
 
     public <T extends dObject> boolean requireObject(Class<T> type) {
@@ -75,15 +84,15 @@ public class Mechanism {
         if (hasValue() && value.isBoolean()) {
             return true;
         }
-        dB.echoError(error);
+        echoError(error);
         return false;
     }
 
     public boolean requireDouble(String error) {
-        if (value.isDouble()) {
+        if (hasValue() && value.isDouble()) {
             return true;
         }
-        dB.echoError(error);
+        echoError(error);
         return false;
     }
 
@@ -100,11 +109,11 @@ public class Mechanism {
             }
         }
         if (error == null) {
-            dB.echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
+            echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
                     + " Must specify a valid name" + (allowInt ? " or number" : "") + ".");
         }
         else {
-            dB.echoError(error);
+            echoError(error);
         }
         return false;
     }
@@ -113,7 +122,7 @@ public class Mechanism {
         if (hasValue() && value.isFloat()) {
             return true;
         }
-        dB.echoError(error);
+        echoError(error);
         return false;
     }
 
@@ -121,7 +130,7 @@ public class Mechanism {
         if (hasValue() && value.isInt()) {
             return true;
         }
-        dB.echoError(error);
+        echoError(error);
         return false;
     }
 
@@ -131,15 +140,30 @@ public class Mechanism {
         }
         if (error == null) {
             // TODO: Remove getSimpleName(), or simplify somehow.
-            dB.echoError("Invalid " + type.getSimpleName() + " specified.");
+            echoError("Invalid " + type.getSimpleName() + " specified.");
         }
         else {
-            dB.echoError(error);
+            echoError(error);
         }
         return false;
     }
 
+    public boolean shouldDebug() {
+        return context == null || context.debug;
+    }
+
+    public void echoError(String error) {
+        // TODO: Consider special cases of whether object properties with debug off should even show errors
+        dB.echoError(error);
+    }
+
     public void reportInvalid() {
-        dB.echoError("Invalid mechanism specified: " + raw_mechanism);
+        echoError("Invalid mechanism specified: " + raw_mechanism);
+    }
+
+    public void autoReport() {
+        if (!fulfilled()) {
+            reportInvalid();
+        }
     }
 }
