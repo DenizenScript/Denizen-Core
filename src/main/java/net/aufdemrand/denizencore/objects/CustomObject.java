@@ -172,5 +172,6 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
         else {
             vars.put(name, value);
         }
+        mechanism.fulfill();
     }
 }
