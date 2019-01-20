@@ -11,6 +11,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +46,13 @@ public class TagManager {
     public @interface TagEvents {
     }
 
-    private static List<Method> methods = new ArrayList<Method>();
-    private static List<Object> method_objects = new ArrayList<Object>();
+    public static HashMap<String, TagRunnable.RootForm> handlers = new HashMap<>();
+    public static List<OldTagRunner> oldRunners = new ArrayList<>();
 
-    public static HashMap<String, TagRunnable.RootForm> handlers = new HashMap<String, TagRunnable.RootForm>();
+    @FunctionalInterface
+    public interface OldTagRunner {
+        void run(ReplaceableTagEvent event);
+    }
 
     public static void registerTagEvents(Object o) {
         for (Method method : o.getClass().getMethods()) {
@@ -62,20 +69,21 @@ public class TagManager {
         }
     }
 
-    public static void unregisterTagEvents(Object o) {
-        for (int i = 0; i < methods.size(); i++) {
-            if (method_objects.get(i) == o) {
-                methods.remove(i);
-                method_objects.remove(i);
-                i--;
-            }
-        }
-    }
-
     public static void registerMethod(Method method, Object o) {
-        method.setAccessible(true); // Reduce invoke checks
-        methods.add(method);
-        method_objects.add(o);
+        try {
+            method.setAccessible(true); // Reduce invoke checks
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(lookup, "run", // OldTagRunner#run
+                    MethodType.methodType(OldTagRunner.class, o.getClass()), // Signature of invoke method
+                    MethodType.methodType(void.class, ReplaceableTagEvent.class), // signature of OldTagRunner#run
+                    lookup.unreflect(method), // tag event method
+                    MethodType.methodType(void.class, ReplaceableTagEvent.class)); // Signature of tag event method
+            OldTagRunner runner = (OldTagRunner) site.getTarget().invoke(o);
+            oldRunners.add(runner);
+        }
+        catch (Throwable ex) {
+            dB.echoError(ex);
+        }
     }
 
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
@@ -118,13 +126,12 @@ public class TagManager {
                 dB.echoError(ex);
             }
         }
-        for (int i = 0; i < methods.size(); i++) {
+        for (OldTagRunner runner : oldRunners) {
             try {
-                // TODO: non-reflection invocation option?! Maybe JIT a runnable?
-                methods.get(i).invoke(method_objects.get(i), event);
+                runner.run(event);
                 if (event.replaced()) {
                     if (dB.verbose) {
-                        dB.log("Tag alt-handle success: " + methods.get(i).getName() + " on " + methods.get(i).getDeclaringClass().getCanonicalName() + " : " + event.getReplaced());
+                        dB.log("Tag alt-handle success: " + event.getReplaced());
                     }
                     return;
                 }
@@ -141,7 +148,7 @@ public class TagManager {
     // INTERNAL MAPPING NOTE:
     // 0x01: <
     // 0x02: >
-    // 0x04: Exclusively For Utilities.talkToNPC()
+    // 0x04: Reserved for impl
     // 0x05: |
     // 0x2011: ;
 
