@@ -1,15 +1,21 @@
 package net.aufdemrand.denizencore.objects.properties;
 
 import net.aufdemrand.denizencore.objects.Mechanism;
+import net.aufdemrand.denizencore.objects.ObjectFetcher;
+import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.tags.Attribute;
 
 public interface Property {
 
-    public String getPropertyString();
+    String getPropertyString();
 
-    public String getPropertyId();
+    String getPropertyId();
 
-    public String getAttribute(Attribute attribute);
+    default dObject getObjectAttribute(Attribute attribute) {
+        return ObjectFetcher.pickObjectFor(getAttribute(attribute), attribute.context);
+    }
 
-    public void adjust(Mechanism mechanism);
+    String getAttribute(Attribute attribute);
+
+    void adjust(Mechanism mechanism);
 }

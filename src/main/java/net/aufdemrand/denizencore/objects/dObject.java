@@ -5,7 +5,7 @@ import net.aufdemrand.denizencore.tags.TagContext;
 
 public interface dObject {
 
-    /**
+    /*
      * dObjects should contain these two static methods, of which valueOf contains a valid
      * annotation for ObjectFetcher
      *
@@ -34,7 +34,7 @@ public interface dObject {
      *
      * @return the prefix
      */
-    public String getPrefix();
+    String getPrefix();
 
 
     /**
@@ -49,7 +49,7 @@ public interface dObject {
      *
      * @return the debug information
      */
-    public String debug();
+    String debug();
 
 
     /**
@@ -59,7 +59,7 @@ public interface dObject {
      *
      * @return true if this object is unique, false if it is a 'singleton generic argument/object'
      */
-    public boolean isUnique();
+    boolean isUnique();
 
 
     /**
@@ -68,7 +68,7 @@ public interface dObject {
      *
      * @return a straight-up string description of the type of dScriptArg. ie. dList, dLocation
      */
-    public String getObjectType();
+    String getObjectType();
 
 
     /**
@@ -78,7 +78,7 @@ public interface dObject {
      *
      * @return a single-line string representation of this argument
      */
-    public String identify();
+    String identify();
 
 
     /**
@@ -97,7 +97,7 @@ public interface dObject {
      *
      * @return a single-line, 'simple' string representation of this argument
      */
-    public String identifySimple();
+    String identifySimple();
 
 
     /**
@@ -105,8 +105,11 @@ public interface dObject {
      *
      * @return the dObject
      */
-    public dObject setPrefix(String prefix);
+    dObject setPrefix(String prefix);
 
+    default dObject getObjectAttribute(Attribute attribute) {
+        return ObjectFetcher.pickObjectFor(getAttribute(attribute), attribute.context);
+    }
 
     /**
      * Gets a specific attribute using this object to fetch the necessary data.
@@ -114,11 +117,9 @@ public interface dObject {
      * @param attribute the name of the attribute
      * @return a string result of the fetched attribute
      */
-    public String getAttribute(Attribute attribute);
+    String getAttribute(Attribute attribute);
 
-    interface ObjectAttributable {
-
-        dObject getObjectAttribute(Attribute attribute);
+    interface ObjectAttributable extends dObject {
 
         <T extends dObject> T asObjectType(Class<T> type, TagContext context);
     }
