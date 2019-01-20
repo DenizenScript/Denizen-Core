@@ -1,93 +1,111 @@
 package net.aufdemrand.denizencore.objects.properties;
 
 import net.aufdemrand.denizencore.objects.dObject;
-import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.invoke.*;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class PropertyParser {
 
-    public static abstract class PropertyGetter {
+    @FunctionalInterface
+    public interface PropertyGetter {
 
-        public abstract Property get(dObject obj);
+        Property get(dObject obj);
     }
 
-    static Map<Class<? extends dObject>, Map<String, List<PropertyGetter>>> propgetters = new HashMap<Class<? extends dObject>, Map<String, List<PropertyGetter>>>();
+    public static class ClassPropertiesInfo {
+        public List<PropertyGetter> allProperties = new ArrayList<>();
 
+        public List<PropertyGetter> propertiesAnyTags = new ArrayList<>();
 
-    public static void registerProperty(PropertyGetter getter, Class<? extends dObject> object) {
-        registerProperty(getter, object, (String) null);
+        public List<PropertyGetter> propertiesAnyMechs = new ArrayList<>();
+
+        public Map<String, PropertyGetter> propertiesByTag = new HashMap<>();
+
+        public Map<String, PropertyGetter> propertiesByMechanism = new HashMap<>();
     }
 
-    public static void insert(Map<String, List<PropertyGetter>> gettyByTag, String attrl, PropertyGetter getter) {
-        List<PropertyGetter> getters = gettyByTag.get(attrl);
-        if (getters == null) {
-            getters = new ArrayList<PropertyGetter>();
-            gettyByTag.put(attrl, getters);
+    public static Map<Class<? extends dObject>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
+
+    public static void registerPropertyGetter(PropertyGetter getter, Class<? extends dObject> object, String[] tags, String[] mechs) {
+        ClassPropertiesInfo propInfo = propertiesByClass.get(object);
+        if (propInfo == null) {
+            propInfo = new ClassPropertiesInfo();
+            propertiesByClass.put(object, propInfo);
         }
-        getters.add(getter);
+        propInfo.allProperties.add(getter);
+        if (tags != null) {
+            for (String tag : tags) {
+                propInfo.propertiesByTag.put(tag, getter);
+            }
+        }
+        else {
+            propInfo.propertiesAnyTags.add(getter);
+        }
+        if (mechs != null) {
+            for (String mech : mechs) {
+                propInfo.propertiesByMechanism.put(mech, getter);
+            }
+        }
+        else {
+            propInfo.propertiesAnyMechs.add(getter);
+        }
     }
 
-    public static void registerProperty(PropertyGetter getter, Class<? extends dObject> object, String... attrLow) {
-        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object);
-        if (gettyByTag == null) {
-            gettyByTag = new HashMap<String, List<PropertyGetter>>();
-            propgetters.put(object, gettyByTag);
+    public static String[] getStringField(Class property, String fieldName) {
+        try {
+            Field f = property.getDeclaredField(fieldName);
+            return (String[]) f.get(null);
         }
-        for (String attrl : attrLow) {
-            insert(gettyByTag, attrl, getter);
+        catch (IllegalAccessException e) {
+            dB.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a Set: " + e.getMessage() + "!");
         }
-        insert(gettyByTag, "_all_", getter);
+        catch (NoSuchFieldException e) {
+            // Ignore this exception.
+        }
+        return null;
+    }
+
+    public static void registerProperty(final Class property, Class<? extends dObject> object, PropertyGetter getter) {
+        registerPropertyGetter(getter, object, getStringField(property, "handledTags"), getStringField(property, "handledMechs"));
     }
 
     public static void registerProperty(final Class property, Class<? extends dObject> object) {
         try {
-            final Method getf = property.getMethod("getFrom", dObject.class);
-            getf.setAccessible(true);
-            PropertyGetter getter = new PropertyGetter() {
-                @Override
-                public Property get(dObject obj) {
-                    try {
-                        Object o = getf.invoke(null, obj);
-                        if (o instanceof Property) {
-                            return (Property) o;
-                        }
-                    }
-                    catch (IllegalAccessException e) {
-                        dB.echoError(e);
-                    }
-                    catch (InvocationTargetException e) {
-                        dB.echoError(e);
-                    }
-                    return null;
-                }
-            };
-            registerProperty(getter, object);
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(lookup, "get", // PropertyGetter#get
+                    MethodType.methodType(PropertyGetter.class), // Signature of invoke method
+                    MethodType.methodType(Property.class, dObject.class), // signature of PropertyGetter#get
+                    lookup.findStatic(property, "getFrom", MethodType.methodType(property, dObject.class)), // signature of getFrom
+                    MethodType.methodType(property, dObject.class)); // Signature of getFrom again
+            PropertyGetter getter = (PropertyGetter) site.getTarget().invoke();
+            registerProperty(property, object, getter);
         }
-        catch (NoSuchMethodException e) {
+        catch (Throwable e) {
             dB.echoError("Unable to register property '" + property.getSimpleName() + "'!");
+            dB.echoError(e);
         }
     }
 
     public static String getPropertiesString(dObject object) {
-        StringBuilder prop_string = new StringBuilder();
-
-        // Iterate through each property associated with the dObject type, invoke 'describes'
-        // and if 'true', add property string from the property to the prop_string.
-        for (Property property : getProperties(object)) {
-            String description = property.getPropertyString();
-            if (description != null) {
-                prop_string.append(property.getPropertyId()).append('=')
-                        .append(description.replace(';', (char) 0x2011)).append(';');
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return "";
+        }
+        StringBuilder prop_string = new StringBuilder(properties.allProperties.size() * 10);
+        for (PropertyGetter getter : properties.allProperties) {
+            Property property = getter.get(object);
+            if (property != null) {
+                String description = property.getPropertyString();
+                if (description != null) {
+                    prop_string.append(property.getPropertyId()).append('=')
+                            .append(description.replace(';', (char) 0x2011)).append(';');
+                }
             }
         }
-
-        // Return the list of properties
-        if (prop_string.length() > 0) // Remove final semicolon
-        {
+        if (prop_string.length() > 0) {
             return "[" + prop_string.substring(0, prop_string.length() - 1) + "]";
         }
         else {
@@ -95,54 +113,38 @@ public class PropertyParser {
         }
     }
 
-    public static List<Property> empty = new ArrayList<Property>();
+    public static List<Property> empty = new ArrayList<>();
 
     public static List<Property> getProperties(dObject object, String attribLow) {
-        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object.getClass());
-        if (gettyByTag != null) {
-            List<Property> returnMe = empty;
-            List<PropertyGetter> getty = gettyByTag.get(attribLow);
-            if (getty != null) {
-                returnMe = new ArrayList<Property>(getty.size());
-                for (PropertyGetter property : getty) {
-                    Property propGot = property.get(object);
-                    if (propGot != null) {
-                        returnMe.add(propGot);
-                    }
-                }
-            }
-            getty = gettyByTag.get(null);
-            if (getty != null) {
-                if (returnMe == empty) {
-                    returnMe = new ArrayList<Property>(getty.size());
-                }
-                for (PropertyGetter property : getty) {
-                    Property propGot = property.get(object);
-                    if (propGot != null) {
-                        returnMe.add(propGot);
-                    }
-                }
-            }
-            return returnMe;
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return empty;
         }
-        return empty;
+        PropertyGetter getter = properties.propertiesByTag.get(attribLow);
+        if (getter != null) {
+            Property prop = getter.get(object);
+            if (prop == null) {
+                return empty;
+            }
+            return Collections.singletonList(getter.get(object));
+        }
+        else {
+            return getProperties(object);
+        }
     }
 
     public static List<Property> getProperties(dObject object) {
-        Map<String, List<PropertyGetter>> gettyByTag = propgetters.get(object.getClass());
-        if (gettyByTag != null) {
-            List<PropertyGetter> getty = gettyByTag.get("_all_");
-            if (getty != null) {
-                List<Property> props = new ArrayList<Property>();
-                for (PropertyGetter property : getty) {
-                    Property propGot = property.get(object);
-                    if (propGot != null) {
-                        props.add(propGot);
-                    }
-                }
-                return props;
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return empty;
+        }
+        List<Property> props = new ArrayList<>(properties.allProperties.size());
+        for (PropertyGetter getter : properties.allProperties) {
+            Property prop = getter.get(object);
+            if (prop != null) {
+                props.add(prop);
             }
         }
-        return empty;
+        return props;
     }
 }

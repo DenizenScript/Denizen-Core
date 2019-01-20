@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.utilities;
 
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.objects.properties.Property;
+import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
@@ -25,18 +26,92 @@ public class CoreUtilities {
         return input;
     }
 
+    public static void autoPropertyMechanism(dObject object, Mechanism mechanism) {
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return;
+        }
+        PropertyParser.PropertyGetter specificGetter = properties.propertiesByMechanism.get(mechanism.getName());
+        if (specificGetter != null) {
+            Property prop = specificGetter.get(object);
+            if (prop == null) {
+                return;
+            }
+            prop.adjust(mechanism);
+            return;
+        }
+        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyMechs) {
+            Property prop = listGetter.get(object);
+            if (prop != null) {
+                prop.adjust(mechanism);
+                if (mechanism.fulfilled()) {
+                    return;
+                }
+            }
+        }
+    }
+
+    public static dObject autoPropertyTagObject(dObject object, Attribute attribute) {
+        if (attribute.isComplete()) {
+            return null;
+        }
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return null;
+        }
+        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(attribute.getAttributeWithoutContext(1));
+        if (specificGetter != null) {
+            Property prop = specificGetter.get(object);
+            if (prop == null) {
+                return null;
+            }
+            return prop.getObjectAttribute(attribute);
+        }
+        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyTags) {
+            Property prop = listGetter.get(object);
+            if (prop != null) {
+                dObject returned = prop.getObjectAttribute(attribute);
+                if (returned != null) {
+                    return returned;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String autoPropertyTag(dObject object, Attribute attribute) {
+        if (attribute.isComplete()) {
+            return null;
+        }
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        if (properties == null) {
+            return null;
+        }
+        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(attribute.getAttributeWithoutContext(1));
+        if (specificGetter != null) {
+            Property prop = specificGetter.get(object);
+            if (prop == null) {
+                return null;
+            }
+            return prop.getAttribute(attribute);
+        }
+        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyTags) {
+            Property prop = listGetter.get(object);
+            if (prop != null) {
+                String returned = prop.getAttribute(attribute);
+                if (returned != null) {
+                    return returned;
+                }
+            }
+        }
+        return null;
+    }
+
     public static dObject autoAttrib(Property inp, Attribute attribute) {
         if (attribute.isComplete()) {
             return null;
         }
-        if (inp instanceof dObject.ObjectAttributable) {
-            return ((dObject.ObjectAttributable) inp).getObjectAttribute(attribute);
-        }
-        String ret = inp.getAttribute(attribute);
-        if (ret == null) {
-            return null;
-        }
-        return new Element(ret);
+        return inp.getObjectAttribute(attribute);
     }
 
     public static dObject autoAttribTyped(dObject inp, Attribute attribute) {
@@ -51,14 +126,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return inp;
         }
-        if (inp instanceof dObject.ObjectAttributable) {
-            return ((dObject.ObjectAttributable) inp).getObjectAttribute(attribute);
-        }
-        String res = inp.getAttribute(attribute);
-        if (res == null) {
-            return null;
-        }
-        return new Element(res);
+        return inp.getObjectAttribute(attribute);
     }
 
     public static <T extends dObject> T asType(dObject inp, Class<T> type, TagContext context) {
@@ -81,7 +149,7 @@ public class CoreUtilities {
         public abstract boolean canBecome(dObject inp);
     }
 
-    public final static Map<Class<? extends dObject>, TypeComparisonRunnable> typeCheckers = new HashMap<Class<? extends dObject>, TypeComparisonRunnable>();
+    public final static Map<Class<? extends dObject>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
 
     static {
         registerTypeAsTrueAlways(Element.class);
@@ -173,7 +241,7 @@ public class CoreUtilities {
      * @return A {@link java.io.File} collection
      */
     public static List<File> listDScriptFiles(File dir) {
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         File[] entries = dir.listFiles();
 
         for (File file : entries) {
@@ -191,7 +259,7 @@ public class CoreUtilities {
     }
 
     public static List<String> split(String str, char c) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         int start = 0;
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == c) {
@@ -215,7 +283,7 @@ public class CoreUtilities {
     }
 
     public static List<String> split(String str, char c, int max) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         int start = 0;
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == c) {
@@ -314,9 +382,9 @@ public class CoreUtilities {
             return n;
         }
 
-        int p[] = new int[n + 1]; // 'previous' cost array, horizontally
-        int d[] = new int[n + 1]; // cost array, horizontally
-        int _d[]; // placeholder to assist in swapping p and d
+        int[] p = new int[n + 1]; // 'previous' cost array, horizontally
+        int[] d = new int[n + 1]; // cost array, horizontally
+        int[] _d; // placeholder to assist in swapping p and d
 
         // indexes into strings s and t
         int i; // iterates through s
