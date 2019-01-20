@@ -1,8 +1,6 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
@@ -541,7 +539,7 @@ public class dScript implements dObject, Adjustable {
         });
     }
 
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable runnable) {
         if (runnable.name == null) {
@@ -566,12 +564,9 @@ public class dScript implements dObject, Adjustable {
             return tr.run(attribute, this);
         }
 
-        // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this, attrLow)) {
-            String returned = property.getAttribute(attribute);
-            if (returned != null) {
-                return returned;
-            }
+        String returned = CoreUtilities.autoPropertyTag(this, attribute);
+        if (returned != null) {
+            return returned;
         }
 
         return new Element(identify()).getAttribute(attribute);

@@ -1,7 +1,5 @@
 package net.aufdemrand.denizencore.objects;
 
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -10,8 +8,6 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -200,7 +196,7 @@ public class Duration implements dObject {
      * @param ticks the number of ticks.
      */
     public Duration(long ticks) {
-        this.seconds = ticks / 20;
+        this.seconds = ticks / 20.0;
         if (this.seconds < 0) {
             this.seconds = 0;
         }
@@ -654,7 +650,7 @@ public class Duration implements dObject {
 
     }
 
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable runnable) {
         if (runnable.name == null) {
@@ -682,12 +678,9 @@ public class Duration implements dObject {
             return tr.run(attribute, this);
         }
 
-        // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this, attrLow)) {
-            String returned = property.getAttribute(attribute);
-            if (returned != null) {
-                return returned;
-            }
+        String returned = CoreUtilities.autoPropertyTag(this, attribute);
+        if (returned != null) {
+            return returned;
         }
 
         return new Element(identify()).getAttribute(attribute);

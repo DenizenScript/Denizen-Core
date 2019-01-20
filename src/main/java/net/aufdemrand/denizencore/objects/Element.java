@@ -1,7 +1,5 @@
 package net.aufdemrand.denizencore.objects;
 
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.commands.core.Comparable;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -238,7 +236,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
     public boolean isDouble() {
         try {
-            if (Double.valueOf(element) != null) {
+            if (!Double.valueOf(element).isNaN()) {
                 return true;
             }
         }
@@ -249,7 +247,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
     public boolean isFloat() {
         try {
-            if (Float.valueOf(element) != null) {
+            if (!Float.valueOf(element).isNaN()) {
                 return true;
             }
         }
@@ -260,7 +258,8 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
     public boolean isInt() {
         try {
-            if (Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", "")) != null) {
+            Integer val = Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", ""));
+            if (val.hashCode() != 0.5) { // if intentionally always passes
                 return true;
             }
         }
@@ -2373,7 +2372,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
     //public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
 
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<String, TagRunnable.ObjectForm>();
+    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
         if (runnable.name == null) {
@@ -2485,15 +2484,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
             }
         }
 
-        // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this, attrLow)) {
-            dObject returned = CoreUtilities.autoAttrib(property, attribute);
-            if (returned != null) {
-                if (dB.verbose) {
-                    dB.log("Element - Property success! Return " + returned.toString());
-                }
-                return returned;
-            }
+        dObject returned = CoreUtilities.autoPropertyTagObject(this, attribute);
+        if (returned != null) {
+            return returned;
         }
 
         if (attribute.isComplete()) {

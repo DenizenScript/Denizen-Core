@@ -4,8 +4,6 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.*;
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.queues.core.Delayable;
@@ -30,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider {
-    private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<Class<? extends ScriptQueue>, String>();
+    private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
 
     protected static long total_queues = 0;
 
@@ -119,7 +117,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     // Contains all currently active queues, keyed by a String id.
     protected static Map<String, ScriptQueue> _queues =
-            new ConcurrentHashMap<String, ScriptQueue>(8, 0.9f, 1);
+            new ConcurrentHashMap<>(8, 0.9f, 1);
 
 
     /**
@@ -164,7 +162,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
 
     // List of ScriptEntries in the queue
-    public final List<ScriptEntry> script_entries = new ArrayList<ScriptEntry>();
+    public final List<ScriptEntry> script_entries = new ArrayList<>();
 
 
     // The last script entry that was executed
@@ -178,10 +176,10 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     private long delay_time = 0;
 
 
-    private final HashMap<String, dObject> definitions = new HashMap<String, dObject>();
+    private final HashMap<String, dObject> definitions = new HashMap<>();
 
 
-    private final HashMap<String, ScriptEntry> held_entries = new HashMap<String, ScriptEntry>();
+    private final HashMap<String, ScriptEntry> held_entries = new HashMap<>();
 
 
     public dScript script;
@@ -277,7 +275,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     public void setContextSource(ContextSource source) {
         contextSource = source;
-        cachedContext = new HashMap<String, dObject>();
+        cachedContext = new HashMap<>();
     }
 
 
@@ -1028,7 +1026,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     }
 
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
+    public static HashMap<String, TagRunnable> registeredTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable runnable) {
         if (runnable.name == null) {
@@ -1037,7 +1035,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         registeredTags.put(name, runnable);
     }
 
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<String, TagRunnable.ObjectForm>();
+    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
         if (runnable.name == null) {
@@ -1086,12 +1084,9 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
             return new Element(tr.run(attribute, this));
         }
 
-        // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this, attrLow)) {
-            dObject returned = CoreUtilities.autoAttrib(property, attribute);
-            if (returned != null) {
-                return returned;
-            }
+        dObject returned = CoreUtilities.autoPropertyTagObject(this, attribute);
+        if (returned != null) {
+            return returned;
         }
 
         return new Element(identify()).getObjectAttribute(attribute);

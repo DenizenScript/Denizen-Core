@@ -1,8 +1,6 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.objects.properties.Property;
-import net.aufdemrand.denizencore.objects.properties.PropertyParser;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
@@ -117,7 +115,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     // A list of dObjects
     public dList(Collection<? extends dObject> dObjectList) {
-        objectForms = new ArrayList<dObject>(dObjectList);
+        objectForms = new ArrayList<>(dObjectList);
         for (dObject obj : dObjectList) {
             super.add(obj.identify());
         }
@@ -125,7 +123,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     // Empty dList
     public dList() {
-        objectForms = new ArrayList<dObject>();
+        objectForms = new ArrayList<>();
     }
 
     // A string of items, split by '|'
@@ -158,7 +156,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 super.add(items.substring(start, items.length()));
             }
         }
-        objectForms = new ArrayList<dObject>(size());
+        objectForms = new ArrayList<>(size());
         for (String str : this) {
             objectForms.add(new Element(str));
         }
@@ -171,14 +169,14 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         for (String it : flag_contents) {
             super.add(it);
         }
-        objectForms = new ArrayList<dObject>(size());
+        objectForms = new ArrayList<>(size());
         for (String str : this) {
             objectForms.add(new Element(str));
         }
     }
 
     public dList(dList input) {
-        objectForms = new ArrayList<dObject>(input.objectForms);
+        objectForms = new ArrayList<>(input.objectForms);
         super.ensureCapacity(input.size());
         for (String str : input) {
             super.add(str);
@@ -192,15 +190,15 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 super.add(it);
             }
         }
-        objectForms = new ArrayList<dObject>(size());
+        objectForms = new ArrayList<>(size());
         for (String str : this) {
             objectForms.add(new Element(str));
         }
     }
 
     // A Set<Object> of items
-    public dList(Set<? extends Object> items) {
-        objectForms = new ArrayList<dObject>();
+    public dList(Set<?> items) {
+        objectForms = new ArrayList<>();
         if (items != null) {
             for (Object o : items) {
                 String strd = o.toString();
@@ -220,7 +218,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         for (String element : items) {
             super.add(prefix + element);
         }
-        objectForms = new ArrayList<dObject>(size());
+        objectForms = new ArrayList<>(size());
         for (String str : this) {
             objectForms.add(new Element(str));
         }
@@ -255,7 +253,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
      * @return the array copy
      */
     public String[] toArray(int arraySize) { // TODO: Why does this exist?
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (String string : this) {
             list.add(string); // TODO: Why is this a manual copy?
@@ -287,7 +285,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
      * @return a filtered list
      */
     public List<String> filter(Enum[] values) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (String string : this) {
             for (Enum value : values) {
@@ -313,7 +311,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
 
     public <T extends dObject> List<T> filter(Class<T> dClass, ScriptEntry entry) {
-        List<T> results = new ArrayList<T>();
+        List<T> results = new ArrayList<>();
 
         TagContext context = (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
                 entry.entryData.getTagContext());
@@ -916,7 +914,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("reverse", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                ArrayList<dObject> objs = new ArrayList<dObject>(((dList) object).objectForms);
+                ArrayList<dObject> objs = new ArrayList<>(((dList) object).objectForms);
                 Collections.reverse(objs);
                 return new dList(objs).getObjectAttribute(attribute.fulfill(1));
             }
@@ -1273,7 +1271,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("numerical", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                ArrayList<String> sortable = new ArrayList<>((dList) object);
                 Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
@@ -1304,7 +1302,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("alphanumeric", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                ArrayList<String> sortable = new ArrayList<>((dList) object);
                 Collections.sort(sortable, new NaturalOrderComparator());
                 return new dList(sortable).getObjectAttribute(attribute.fulfill(1));
             }
@@ -1321,7 +1319,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("alphabetical", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
-                ArrayList<String> sortable = new ArrayList<String>((dList) object);
+                ArrayList<String> sortable = new ArrayList<>((dList) object);
                 Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
@@ -1412,7 +1410,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     attribute = attribute.fulfill(1);
                 }
                 final dList context_send = context;
-                List<String> list = new ArrayList<String>(obj);
+                List<String> list = new ArrayList<>(obj);
                 try {
                     Collections.sort(list, new Comparator<String>() {
                         @Override
@@ -1807,7 +1805,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 if (attribute.hasContext(1)) {
                     int count = Integer.valueOf(attribute.getContext(1));
                     int times = 0;
-                    ArrayList<dObject> available = new ArrayList<dObject>();
+                    ArrayList<dObject> available = new ArrayList<>();
                     available.addAll(obj.objectForms);
                     dList toReturn = new dList();
                     while (!available.isEmpty() && times < count) {
@@ -1901,7 +1899,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     //public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
 
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<String, TagRunnable.ObjectForm>();
+    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
         if (runnable.name == null) {
@@ -2010,12 +2008,10 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             return new dList(this).getObjectAttribute(attribute.fulfill(1));
         }
 
-        // Iterate through this object's properties' attributes
-        for (Property property : PropertyParser.getProperties(this, attrLow)) {
-            dObject returned = CoreUtilities.autoAttrib(property, attribute);
-            if (returned != null) {
-                return returned;
-            }
+
+        dObject returned = CoreUtilities.autoPropertyTagObject(this, attribute);
+        if (returned != null) {
+            return returned;
         }
 
         // If this is a flag, return the last element (this is how it has always worked...)
