@@ -7,7 +7,7 @@
     <groupId>net.aufdemrand</groupId>
     <artifactId>denizencore</artifactId>
     <packaging>jar</packaging>
-    <version>1.20</version>
+    <version>1.30</version>
     <name>DenizenCore</name>
     <description>A powerful scripting engine for games</description>
 
