@@ -99,9 +99,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
-    public static ArrayList<ScriptContainer> worldContainers = new ArrayList<ScriptContainer>();
+    public static ArrayList<ScriptContainer> worldContainers = new ArrayList<>();
 
-    public static ArrayList<ScriptEvent> events = new ArrayList<ScriptEvent>();
+    public static ArrayList<ScriptEvent> events = new ArrayList<>();
 
     public static void reload() {
         dB.log("Reloading script events...");
@@ -180,7 +180,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return sEvent.couldMatch(script, event);
     }
 
-    public ArrayList<ScriptPath> eventPaths = new ArrayList<ScriptPath>();
+    public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
 
     public boolean cancelled = false;
 
@@ -272,7 +272,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public HashMap<String, dObject> getContext() { // TODO: Delete
-        return new HashMap<String, dObject>();
+        return new HashMap<>();
     }
 
     public ScriptEntryData getScriptEntryData() {

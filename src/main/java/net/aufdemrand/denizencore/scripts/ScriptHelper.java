@@ -77,8 +77,8 @@ public class ScriptHelper {
         }
     }
 
-    private static HashMap<String, String> scriptSources = new HashMap<String, String>();
-    private static HashMap<String, String> scriptOriginalNames = new HashMap<String, String>();
+    private static HashMap<String, String> scriptSources = new HashMap<>();
+    private static HashMap<String, String> scriptOriginalNames = new HashMap<>();
 
     public static String getSource(String script) {
         return scriptSources.get(script.toUpperCase());
@@ -157,7 +157,7 @@ public class ScriptHelper {
 
             if (files.size() > 0) {
                 StringBuilder sb = new StringBuilder();
-                List<String> scriptNames = new ArrayList<String>();
+                List<String> scriptNames = new ArrayList<>();
 
                 YamlConfiguration yaml;
 

@@ -122,7 +122,7 @@ public class DenizenCore {
         loadScripts();
     }
 
-    public static final List<Schedulable> scheduled = new ArrayList<Schedulable>();
+    public static final List<Schedulable> scheduled = new ArrayList<>();
 
     /**
      * Schedule an item to be run automatically after a given period of time, optionally repeating.

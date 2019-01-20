@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class CustomScriptContainer extends ScriptContainer {
 
-    public HashMap<String, String> defaultVars = new HashMap<String, String>();
+    public HashMap<String, String> defaultVars = new HashMap<>();
 
     public HashMap<String, dObject> getVars() {
         HashMap<String, dObject> vars;
@@ -33,11 +33,11 @@ public class CustomScriptContainer extends ScriptContainer {
                 vars = ((CustomScriptContainer) sc).getVars();
             }
             else {
-                vars = new HashMap<String, dObject>();
+                vars = new HashMap<>();
             }
         }
         else {
-            vars = new HashMap<String, dObject>();
+            vars = new HashMap<>();
         }
         for (Map.Entry<String, String> str : defaultVars.entrySet()) {
             vars.put(str.getKey(), new Element(str.getValue()));

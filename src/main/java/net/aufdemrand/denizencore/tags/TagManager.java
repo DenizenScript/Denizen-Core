@@ -385,7 +385,7 @@ public class TagManager {
         return event.getReplacedObj();
     }
 
-    static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<String, List<ParseableTagPiece>>();
+    static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<>();
 
     public static class ParseableTagPiece {
         public String content;
@@ -471,7 +471,7 @@ public class TagManager {
         if (pieces != null) {
             return pieces;
         }
-        pieces = new ArrayList<ParseableTagPiece>();
+        pieces = new ArrayList<>();
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;
@@ -583,7 +583,7 @@ public class TagManager {
         if (dB.verbose) {
             dB.log("Fill argument objects (old): " + args + ", " + context.instant + "...");
         }
-        List<dObject> filledArgs = new ArrayList<dObject>();
+        List<dObject> filledArgs = new ArrayList<>();
 
         int nested_level = 0;
         if (args != null) {
@@ -640,7 +640,7 @@ public class TagManager {
     }
 
     public static List<String> fillArguments(List<String> args, TagContext context) {
-        List<String> filledArgs = new ArrayList<String>();
+        List<String> filledArgs = new ArrayList<>();
 
         int nested_level = 0;
         if (args != null) {
@@ -665,7 +665,7 @@ public class TagManager {
     }
 
     public static List<String> fillArguments(String[] args, TagContext context) {
-        List<String> filledArgs = new ArrayList<String>();
+        List<String> filledArgs = new ArrayList<>();
         if (args != null) {
             for (String argument : args) {
                 filledArgs.add(tag(argument, context));

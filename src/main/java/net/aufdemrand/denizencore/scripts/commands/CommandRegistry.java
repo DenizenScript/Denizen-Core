@@ -14,8 +14,8 @@ public abstract class CommandRegistry implements dRegistry {
     public CommandRegistry() {
     }
 
-    public final Map<String, AbstractCommand> instances = new HashMap<String, AbstractCommand>();
-    public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<Class<? extends AbstractCommand>, String>();
+    public final Map<String, AbstractCommand> instances = new HashMap<>();
+    public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<>();
 
     @Override
     public boolean register(String commandName, RegistrationableInstance commandInstance) {

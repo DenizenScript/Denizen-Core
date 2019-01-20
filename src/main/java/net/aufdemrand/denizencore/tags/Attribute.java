@@ -41,7 +41,7 @@ public class Attribute {
         }
     }
 
-    private static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<String, AttributeComponent[]>();
+    private static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<>();
 
     private static AttributeComponent[] separate_attributes(String attributes) {
 
@@ -51,7 +51,7 @@ public class Attribute {
             return matchesRes;
         }
 
-        ArrayList<AttributeComponent> matches = new ArrayList<AttributeComponent>();
+        ArrayList<AttributeComponent> matches = new ArrayList<>();
 
         int x1 = 0, x2 = -1;
         int braced = 0;

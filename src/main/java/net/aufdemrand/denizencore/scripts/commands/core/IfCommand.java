@@ -28,15 +28,15 @@ public class IfCommand extends BracedCommand {
 
         boolean in_elsecommand = false;
 
-        List<String> subcommand = new ArrayList<String>();
+        List<String> subcommand = new ArrayList<>();
 
-        List<String> elsecommand = new ArrayList<String>();
+        List<String> elsecommand = new ArrayList<>();
 
-        List<String> comparisons = new ArrayList<String>();
+        List<String> comparisons = new ArrayList<>();
 
         boolean has_brace = scriptEntry.getInsideList() != null;
         if (has_brace) {
-            List<BracedData> allData = new ArrayList<BracedData>();
+            List<BracedData> allData = new ArrayList<>();
             BracedData ifRef = getBracedCommands(scriptEntry).get(0);
             ifRef.key = scriptEntry.toString();
             ifRef.args = new ArrayList<>();

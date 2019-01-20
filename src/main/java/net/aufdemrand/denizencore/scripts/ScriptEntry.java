@@ -91,13 +91,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
         internal.bracedSet = set;
     }
 
-    private Map<String, Object> objects = new HashMap<String, Object>();
+    private Map<String, Object> objects = new HashMap<>();
 
     public void regenerateArgsCur() {
-        args_cur = new ArrayList<Argument>(internal.args_ref);
+        args_cur = new ArrayList<>(internal.args_ref);
         for (int i : internal.processArgs) {
             Argument arg = args_cur.get(i);
-            arg.value = new ArrayList<TagManager.ParseableTagPiece>(arg.value);
+            arg.value = new ArrayList<>(arg.value);
             arg.aHArg = aHArgs.get(i);
         }
     }
@@ -105,7 +105,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public final static aH.Argument NULL_ARGUMENT = new aH.Argument("null_trick", "null_trick");
 
     public void generateAHArgs() {
-        aHArgs = new ArrayList<aH.Argument>(internal.args_ref.size());
+        aHArgs = new ArrayList<>(internal.args_ref.size());
         for (int i = 0; i < internal.args_ref.size(); i++) {
             aHArgs.add(internal.args_ref.get(i) == null ? NULL_ARGUMENT : internal.args_ref.get(i).aHArg);
         }
@@ -118,9 +118,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
     @Override
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
-        se.objects = new HashMap<String, Object>();
-        se.processed_arguments = processed_arguments == null ? null : new ArrayList<dObject>(processed_arguments);
-        se.args = new ArrayList<String>(args);
+        se.objects = new HashMap<>();
+        se.processed_arguments = processed_arguments == null ? null : new ArrayList<>(processed_arguments);
+        se.args = new ArrayList<>(args);
         se.entryData = entryData.clone();
         return se;
     }
@@ -146,7 +146,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void crunchInto(Argument argVal, String arg, TagContext refContext) {
         if (arg.indexOf('%') != -1) {
             internal.hasOldDefs = true;
-            argVal.value = new LinkedList<TagManager.ParseableTagPiece>();
+            argVal.value = new LinkedList<>();
             TagManager.ParseableTagPiece piece = new TagManager.ParseableTagPiece();
             piece.content = arg;
             argVal.value.add(piece);
@@ -206,8 +206,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             internal.actualCommand = null;
         }
         if (arguments != null) {
-            args = new ArrayList<String>(arguments.length);
-            internal.preprocArgs = new ArrayList<aH.Argument>();
+            args = new ArrayList<>(arguments.length);
+            internal.preprocArgs = new ArrayList<>();
             int nested_depth = 0;
             for (String arg : arguments) {
                 if (arg.equals("{")) {
@@ -255,11 +255,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     }
                 }
             }
-            internal.pre_tagged_args = new ArrayList<String>(args);
+            internal.pre_tagged_args = new ArrayList<>(args);
             nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
-            internal.args_ref = new ArrayList<Argument>(args.size());
-            List<Integer> tempProcessArgs = new ArrayList<Integer>();
+            internal.args_ref = new ArrayList<>(args.size());
+            List<Integer> tempProcessArgs = new ArrayList<>();
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
                 if (arg.equals("{")) {
@@ -298,12 +298,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
             objectify();
         }
         else {
-            args = new ArrayList<String>();
-            internal.preprocArgs = new ArrayList<aH.Argument>();
-            internal.pre_tagged_args = new ArrayList<String>();
+            args = new ArrayList<>();
+            internal.preprocArgs = new ArrayList<>();
+            internal.pre_tagged_args = new ArrayList<>();
             internal.processArgs = new int[0];
-            internal.args_ref = new ArrayList<Argument>();
-            processed_arguments = new ArrayList<dObject>();
+            internal.args_ref = new ArrayList<>();
+            processed_arguments = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
             if (internal.actualCommand.getOptions().REQUIRED_ARGS > args.size()) {
@@ -405,7 +405,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ScriptEntry setArgumentsObjects(List<dObject> arguments) {
         processed_arguments = arguments;
-        args = new ArrayList<String>(arguments.size()); // TODO: Placeholder! Remove old string args entirely!
+        args = new ArrayList<>(arguments.size()); // TODO: Placeholder! Remove old string args entirely!
         for (dObject tmp : arguments) {
             args.add(TagManager.escapeOutput(tmp.toString()));
         }
@@ -413,7 +413,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public void objectify() {
-        processed_arguments = new ArrayList<dObject>(args.size());
+        processed_arguments = new ArrayList<>(args.size());
         for (String arg : args) {
             processed_arguments.add(new Element(arg));
         }
@@ -564,7 +564,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // This is ugly, but it will keep from breaking
     // previous versions of Denizen.
     // TODO: Get rid of this
-    public List<String> tracked_objects = new ArrayList<String>();
+    public List<String> tracked_objects = new ArrayList<>();
 
     public ScriptEntry trackObject(String key) {
         tracked_objects.add(CoreUtilities.toLowerCase(key));

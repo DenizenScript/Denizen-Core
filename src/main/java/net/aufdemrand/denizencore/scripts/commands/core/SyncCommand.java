@@ -35,7 +35,7 @@ public class SyncCommand extends BracedCommand implements Holdable {
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
         queue.getAllDefinitions().putAll(residingQueue.getAllDefinitions());
         if (residingQueue.cachedContext != null) {
-            queue.cachedContext = new HashMap<String, dObject>();
+            queue.cachedContext = new HashMap<>();
             queue.cachedContext.putAll(residingQueue.cachedContext);
         }
 

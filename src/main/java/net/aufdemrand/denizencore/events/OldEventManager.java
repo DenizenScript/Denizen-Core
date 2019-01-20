@@ -27,14 +27,14 @@ public class OldEventManager {
 
     // Map for keeping the WorldScriptContainers
     public static Map<String, WorldScriptContainer> world_scripts =
-            new ConcurrentHashMap<String, WorldScriptContainer>(8, 0.9f, 1);
+            new ConcurrentHashMap<>(8, 0.9f, 1);
 
     // Map for keeping the names of events
     public static Map<String, List<WorldScriptContainer>> events =
-            new HashMap<String, List<WorldScriptContainer>>();
+            new HashMap<>();
 
     // Map for keeping track of registered smart_events
-    public static Set<OldSmartEvent> smart_events = new HashSet<OldSmartEvent>();
+    public static Set<OldSmartEvent> smart_events = new HashSet<>();
 
     //////////////////
     // PERFORMANCE
@@ -72,7 +72,7 @@ public class OldEventManager {
                             list = events.get(eventName);
                         }
                         else {
-                            list = new ArrayList<WorldScriptContainer>();
+                            list = new ArrayList<>();
                         }
                         list.add(script);
                         events.put(eventName, list);
@@ -103,9 +103,9 @@ public class OldEventManager {
     }
 
     public static List<String> trimEvents(List<String> original) {
-        List<String> event = new ArrayList<String>();
+        List<String> event = new ArrayList<>();
         event.addAll(original);
-        List<String> parsed = new ArrayList<String>();
+        List<String> parsed = new ArrayList<>();
 
         if (dB.showEventsTrimming) {
             dB.echoApproval("Trimming world events '" + event.toString() + '\'');
@@ -143,7 +143,7 @@ public class OldEventManager {
         // Strip object identifiers from world event names and add the results
         // to the original list of world event names without any duplicates
 
-        Set<String> newEvents = new HashSet<String>();
+        Set<String> newEvents = new HashSet<>();
 
         for (String event : events) {
             // NOTE: The below code deletes [a-z]{1,2}\@
@@ -168,7 +168,7 @@ public class OldEventManager {
             }
         }
 
-        List<String> finalEvents = new ArrayList<String>();
+        List<String> finalEvents = new ArrayList<>();
         finalEvents.addAll(events);
         finalEvents.addAll(newEvents);
         return finalEvents;
@@ -195,7 +195,7 @@ public class OldEventManager {
     public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context) {
 
         try {
-            List<String> determinations = new ArrayList<String>();
+            List<String> determinations = new ArrayList<>();
 
             // Trim again to catch events that don't trim internally.
             eventNames = trimEvents(eventNames);
@@ -257,7 +257,7 @@ public class OldEventManager {
         }
         catch (Exception e) {
             dB.echoError(e);
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 

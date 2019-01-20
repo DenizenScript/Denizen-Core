@@ -50,21 +50,21 @@ public abstract class BracedCommand extends AbstractCommand {
         boolean hyperdebug = dB.verbose;
 
         // And a place to store all the final braces...
-        List<BracedData> bracedSections = new ArrayList<BracedData>();
+        List<BracedData> bracedSections = new ArrayList<>();
 
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
             if (!duplicate) {
                 return entryBracedSet;
             }
-            List<BracedData> res = new ArrayList<BracedData>(entryBracedSet);
+            List<BracedData> res = new ArrayList<>(entryBracedSet);
             try {
                 for (int i = 0; i < res.size(); i++) {
                     BracedData newbd = new BracedData();
                     BracedData bd = res.get(i);
                     res.set(i, newbd);
                     newbd.key = bd.key;
-                    newbd.value = new ArrayList<ScriptEntry>(bd.value.size());
+                    newbd.value = new ArrayList<>(bd.value.size());
                     newbd.needPatch = bd.needPatch;
                     for (ScriptEntry sEntry : bd.value) {
                         ScriptEntry newEntry = sEntry.clone();
@@ -75,7 +75,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         dB.echoDebug(scriptEntry, "Wrangling braced command args[" + bd.needPatch + "]: " + bd.key);
                     }
                     if (bd.needPatch) {
-                        newbd.args = new ArrayList<String>(bd.args.size());
+                        newbd.args = new ArrayList<>(bd.args.size());
                         for (int x = bd.aStart; x <= bd.aEnd; x++) {
                             newbd.args.add(CommandExecuter.parseDefsRaw(scriptEntry, scriptEntry.args.get(x)));
                         }
@@ -97,7 +97,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     scriptEntry.getScript() == null ? null : scriptEntry.getScript().getContainer(), scriptEntry.entryData);
             BracedData bd = new BracedData();
             bd.key = "base";
-            bd.args = new ArrayList<String>();
+            bd.args = new ArrayList<>();
             bd.value = entries;
             bracedSections.add(bd);
             scriptEntry.setBracedSet(bracedSections);
@@ -105,7 +105,7 @@ public abstract class BracedCommand extends AbstractCommand {
         }
 
         // We need a place to store the commands being built at...
-        TreeMap<Integer, ArrayList<String>> commandList = new TreeMap<Integer, ArrayList<String>>();
+        TreeMap<Integer, ArrayList<String>> commandList = new TreeMap<>();
 
         int bracesEntered = 0;
         boolean newCommand = true;
@@ -136,7 +136,7 @@ public abstract class BracedCommand extends AbstractCommand {
 
         // Set the variable to use for naming braced command lists; the first should be the command name
         String bracesName = scriptEntry.getCommandName().toUpperCase();
-        ArrayList<String> bracesArgs = new ArrayList<String>();
+        ArrayList<String> bracesArgs = new ArrayList<>();
         bracesArgs.add(bracesName);
 
         int startArg = 0;
@@ -194,7 +194,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         dB.echoError(scriptEntry.getResidingQueue(), "You may not have braced commands with the same arguments.");
                         break;
                     }
-                    ArrayList<ScriptEntry> bracesSection = new ArrayList<ScriptEntry>();
+                    ArrayList<ScriptEntry> bracesSection = new ArrayList<>();
                     for (ArrayList<String> command : commandList.values()) {
                         try {
                             if (command.isEmpty()) {
@@ -232,8 +232,8 @@ public abstract class BracedCommand extends AbstractCommand {
                     bd.value = bracesSection;
                     bracedSections.add(bd);
                     bracesName = "";
-                    bracesArgs = new ArrayList<String>();
-                    commandList = new TreeMap<Integer, ArrayList<String>>();
+                    bracesArgs = new ArrayList<>();
+                    commandList = new TreeMap<>();
                     tEnd = -1;
                     tStart = i + 1;
                     tPatchMe = false;
@@ -242,7 +242,7 @@ public abstract class BracedCommand extends AbstractCommand {
 
             // Finish building a command
             else if (newCommand && bracesEntered == 1) {
-                commandList.put(commandList.size(), new ArrayList<String>());
+                commandList.put(commandList.size(), new ArrayList<>());
                 commandList.get(commandList.lastKey()).add(arg);
                 newCommand = false;
                 if (hyperdebug) {

@@ -32,7 +32,7 @@ public class ScriptBuilder {
      */
 
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
-        List<ScriptEntry> scriptCommands = new ArrayList<ScriptEntry>();
+        List<ScriptEntry> scriptCommands = new ArrayList<>();
 
         if (contents == null || contents.isEmpty()) {
             if (dB.showScriptBuilder) {

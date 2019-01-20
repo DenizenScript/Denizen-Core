@@ -74,7 +74,7 @@ public class TaskScriptContainer extends ScriptContainer {
 
     public Map<String, Integer> getContextMap() {
         if (contains("CONTEXT")) {
-            Map<String, Integer> context = new HashMap<String, Integer>();
+            Map<String, Integer> context = new HashMap<>();
             int x = 1;
             for (String name : getString("CONTEXT").split("\\|")) {
                 context.put(name.toUpperCase(), x);

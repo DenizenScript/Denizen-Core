@@ -248,7 +248,7 @@ public class aH {
         }
 
         public static HashSet<String> precalcEnum(Enum<?>[] values) {
-            HashSet<String> toRet = new HashSet<String>(values.length);
+            HashSet<String> toRet = new HashSet<>(values.length);
             for (int i = 0; i < values.length; i++) {
                 toRet.add(values[i].name().toUpperCase().replace("_", ""));
             }
@@ -422,7 +422,7 @@ public class aH {
     ///////////////
 
     public static List<Argument> interpretObjects(List<dObject> args) {
-        List<Argument> arg_list = new ArrayList<Argument>(args.size());
+        List<Argument> arg_list = new ArrayList<>(args.size());
         for (dObject obj : args) {
             arg_list.add(new Argument(obj));
         }
@@ -460,7 +460,7 @@ public class aH {
         if (args == specialInterpretTrickStrings) {
             return interpretArguments(specialInterpretTrickObjects);
         }
-        List<Argument> arg_list = new ArrayList<Argument>(args.size());
+        List<Argument> arg_list = new ArrayList<>(args.size());
         for (String string : args) {
             arg_list.add(new Argument(string));
         }
@@ -481,7 +481,7 @@ public class aH {
         if (stringArgs == null) {
             return null;
         }
-        java.util.List<String> matchList = new ArrayList<String>();
+        java.util.List<String> matchList = new ArrayList<>();
         Matcher regexMatcher = argsRegex.matcher(stringArgs);
         while (regexMatcher.find()) {
             if (regexMatcher.group(1) != null) {
@@ -681,7 +681,7 @@ public class aH {
                 // return dScript.matches(string_arg);
                 return true;
 
-            /** TODO: MOVE OUT OF CORE:
+            /* TODO: MOVE OUT OF CORE:
              case Location:
              return dLocation.matches(string_arg);
 
@@ -807,7 +807,7 @@ public class aH {
 
     @Deprecated
     public static Map<String, String> getContextFrom(String arg) {
-        Map<String, String> context = new HashMap<String, String>();
+        Map<String, String> context = new HashMap<>();
         int x = 1;
         for (String ctxt : aH.getListFrom(arg)) {
             context.put(String.valueOf(x), ctxt.trim());

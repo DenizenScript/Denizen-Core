@@ -14,7 +14,7 @@ public class ScriptEntrySet {
     }
 
     public ScriptEntrySet duplicate() {
-        List<ScriptEntry> newEntries = new ArrayList<ScriptEntry>(entries.size());
+        List<ScriptEntry> newEntries = new ArrayList<>(entries.size());
         try {
             for (ScriptEntry entry : entries) {
                 newEntries.add(entry.clone());

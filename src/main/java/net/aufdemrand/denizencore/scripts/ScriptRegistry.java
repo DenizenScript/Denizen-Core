@@ -13,8 +13,8 @@ import java.util.*;
 public class ScriptRegistry {
 
     // Currently loaded 'script-containers'
-    private static Map<String, Object> scriptContainers = new HashMap<String, Object>();
-    private static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<String, Class<? extends ScriptContainer>>();
+    private static Map<String, Object> scriptContainers = new HashMap<>();
+    private static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<>();
 
     public static void _registerType(String typeName, Class<? extends ScriptContainer> scriptContainerClass) {
         scriptContainerTypes.put(typeName.toUpperCase(), scriptContainerClass);
@@ -91,7 +91,7 @@ public class ScriptRegistry {
         }
     }
 
-    public static List<YamlConfiguration> outside_scripts = new ArrayList<net.aufdemrand.denizencore.utilities.YamlConfiguration>();
+    public static List<YamlConfiguration> outside_scripts = new ArrayList<>();
 
     /**
      * Adds a YAML FileConfiguration to the list of scripts to be loaded. Adding a new

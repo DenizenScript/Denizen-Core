@@ -45,7 +45,7 @@ public class LogInterceptor extends PrintStream {
             return;
         }
         antiLoop = true;
-        HashMap<String, dObject> context = new HashMap<String, dObject>();
+        HashMap<String, dObject> context = new HashMap<>();
         context.put("message", new Element(DenizenCore.getImplementation().cleanseLogString(s)));
         List<String> Determinations = OldEventManager.doEvents(Arrays.asList("console output"), // TODO: ScriptEvent
                 DenizenCore.getImplementation().getEmptyScriptEntryData(), context);

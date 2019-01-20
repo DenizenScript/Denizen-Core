@@ -53,7 +53,7 @@ public class ReplaceableTagEvent {
 
     public ReferenceData mainRef = null;
 
-    public static HashMap<String, ReferenceData> refs = new HashMap<String, ReferenceData>();
+    public static HashMap<String, ReferenceData> refs = new HashMap<>();
 
     public ReplaceableTagEvent(ReferenceData ref, String tag, TagContext context) {
         // Reference context

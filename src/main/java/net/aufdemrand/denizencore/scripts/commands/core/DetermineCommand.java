@@ -25,7 +25,7 @@ public class DetermineCommand extends AbstractCommand {
 
     // Map for keeping track of cache
     // Key: ID, Value: outcome
-    private static Map<Long, dList> cache = new ConcurrentHashMap<Long, dList>(8, 0.9f, 1);
+    private static Map<Long, dList> cache = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     // Start at 0
     public static long uniqueId = 0;

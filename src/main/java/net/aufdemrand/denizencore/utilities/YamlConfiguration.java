@@ -23,7 +23,7 @@ public class YamlConfiguration {
             return null;
         }
         else if (obj instanceof String) {
-            config.contents = new HashMap<StringHolder, Object>();
+            config.contents = new HashMap<>();
             config.contents.put(null, obj);
         }
         else if (obj instanceof Map) {
@@ -59,7 +59,7 @@ public class YamlConfiguration {
     }
 
     private static Map<String, Object> reverse(Map<StringHolder, Object> objs) {
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             if (obj.getValue() instanceof Map) {
                 map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue()));
@@ -72,7 +72,7 @@ public class YamlConfiguration {
     }
 
     private static List<String> patchListNonsense(List<Object> objs) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Object o : objs) {
             if (o == null) {
                 list.add("null");
@@ -85,12 +85,12 @@ public class YamlConfiguration {
     }
 
     public YamlConfiguration() {
-        contents = new HashMap<StringHolder, Object>();
+        contents = new HashMap<>();
     }
 
     public Set<StringHolder> getKeys(boolean deep) {
         if (!deep) {
-            return new HashSet<StringHolder>(contents.keySet());
+            return new HashSet<>(contents.keySet());
         }
         else {
             return getKeysDeep(contents, "");
@@ -98,11 +98,11 @@ public class YamlConfiguration {
     }
 
     public Map<StringHolder, Object> getMap() {
-        return new HashMap<StringHolder, Object>(contents);
+        return new HashMap<>(contents);
     }
 
     private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs, String base) {
-        Set<StringHolder> strings = new HashSet<StringHolder>();
+        Set<StringHolder> strings = new HashSet<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             strings.add(new StringHolder(base + obj.getKey()));
             if (obj.getValue() instanceof Map) {
@@ -147,7 +147,7 @@ public class YamlConfiguration {
 
     public void set(String path, Object o) {
         if (o instanceof YamlConfiguration) {
-            o = new HashMap<StringHolder, Object>(((YamlConfiguration) o).contents);
+            o = new HashMap<>(((YamlConfiguration) o).contents);
         }
         List<String> parts = CoreUtilities.split(path, '.');
         Map<StringHolder, Object> portion = contents;
@@ -164,7 +164,7 @@ public class YamlConfiguration {
                 return;
             }
             else if (oPortion == null) {
-                Map<StringHolder, Object> map = new HashMap<StringHolder, Object>();
+                Map<StringHolder, Object> map = new HashMap<>();
                 portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }
@@ -172,7 +172,7 @@ public class YamlConfiguration {
                 portion = (Map<StringHolder, Object>) oPortion;
             }
             else {
-                Map<StringHolder, Object> map = new HashMap<StringHolder, Object>();
+                Map<StringHolder, Object> map = new HashMap<>();
                 portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }

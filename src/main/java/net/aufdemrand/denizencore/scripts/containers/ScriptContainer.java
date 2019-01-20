@@ -248,7 +248,7 @@ public class ScriptContainer implements Debuggable {
         return got;
     }
 
-    private Map<String, ScriptEntrySet> scriptsMap = new HashMap<String, ScriptEntrySet>();
+    private Map<String, ScriptEntrySet> scriptsMap = new HashMap<>();
 
     /////////////
     // DEBUGGABLE

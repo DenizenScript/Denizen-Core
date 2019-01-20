@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SimpleDefinitionProvider implements DefinitionProvider {
 
-    private final Map<String, dObject> definitions = new HashMap<String, dObject>();
+    private final Map<String, dObject> definitions = new HashMap<>();
 
     @Override
     public void addDefinition(String definition, String value) {

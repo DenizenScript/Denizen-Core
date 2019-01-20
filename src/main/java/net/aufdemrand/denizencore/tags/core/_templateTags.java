@@ -76,7 +76,7 @@ public class _templateTags {
             // will leave the .get[1] to be handled by the dList.
             attribute.fulfill(2);
 
-            List<String> skills = new ArrayList<String>();
+            List<String> skills = new ArrayList<>();
 
             // skills = Skills.getForPlayer(aH.getPlayerFrom(type_context)).list()
 

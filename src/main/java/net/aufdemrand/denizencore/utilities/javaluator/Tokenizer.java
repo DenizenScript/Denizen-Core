@@ -82,7 +82,7 @@ public class Tokenizer {
      */
     Iterator<String> tokenize(String string) {
         if (pattern != null) {
-            List<String> res = new ArrayList<String>();
+            List<String> res = new ArrayList<>();
             Matcher m = pattern.matcher(string);
             int pos = 0;
             while (m.find()) { // While there's a delimiter in the string

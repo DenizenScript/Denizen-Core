@@ -28,18 +28,18 @@ public abstract class AbstractEvaluator<T> {
      */
     protected AbstractEvaluator(Parameters parameters) {
         //TODO if constants, operators, functions are duplicated => error
-        final ArrayList<String> tokenDelimitersBuilder = new ArrayList<String>();
-        this.functions = new HashMap<String, Function>();
-        this.operators = new HashMap<String, List<Operator>>();
-        this.constants = new HashMap<String, Constant>();
-        this.functionBrackets = new HashMap<String, BracketPair>();
+        final ArrayList<String> tokenDelimitersBuilder = new ArrayList<>();
+        this.functions = new HashMap<>();
+        this.operators = new HashMap<>();
+        this.constants = new HashMap<>();
+        this.functionBrackets = new HashMap<>();
         for (final BracketPair pair : parameters.getFunctionBrackets()) {
             functionBrackets.put(pair.getOpen(), pair);
             functionBrackets.put(pair.getClose(), pair);
             tokenDelimitersBuilder.add(pair.getOpen());
             tokenDelimitersBuilder.add(pair.getClose());
         }
-        this.expressionBrackets = new HashMap<String, BracketPair>();
+        this.expressionBrackets = new HashMap<>();
         for (final BracketPair pair : parameters.getExpressionBrackets()) {
             expressionBrackets.put(pair.getOpen(), pair);
             expressionBrackets.put(pair.getClose(), pair);
@@ -51,7 +51,7 @@ public abstract class AbstractEvaluator<T> {
                 tokenDelimitersBuilder.add(ope.getSymbol());
                 List<Operator> known = this.operators.get(ope.getSymbol());
                 if (known == null) {
-                    known = new ArrayList<Operator>();
+                    known = new ArrayList<>();
                     this.operators.put(ope.getSymbol(), known);
                 }
                 known.add(ope);
@@ -198,7 +198,7 @@ public abstract class AbstractEvaluator<T> {
         if (values.size() < nb) {
             throw new IllegalArgumentException();
         }
-        LinkedList<T> result = new LinkedList<T>();
+        LinkedList<T> result = new LinkedList<>();
         for (int i = 0; i < nb; i++) {
             result.addFirst(values.pop());
         }
@@ -239,9 +239,9 @@ public abstract class AbstractEvaluator<T> {
      * @see AbstractVariableSet
      */
     public T evaluate(String expression, Object evaluationContext) {
-        final Stack<T> values = new Stack<T>(); // values stack
-        final Stack<Token> stack = new Stack<Token>(); // operator stack
-        final Stack<Integer> previousValuesSize = functions.size() == 0 ? null : new Stack<Integer>();
+        final Stack<T> values = new Stack<>(); // values stack
+        final Stack<Token> stack = new Stack<>(); // operator stack
+        final Stack<Integer> previousValuesSize = functions.size() == 0 ? null : new Stack<>();
         final Iterator<String> tokens = tokenize(expression);
         Token previous = null;
         while (tokens.hasNext()) {
@@ -429,7 +429,7 @@ public abstract class AbstractEvaluator<T> {
      * @return a collection of operators.
      */
     public Collection<Operator> getOperators() {
-        ArrayList<Operator> result = new ArrayList<Operator>();
+        ArrayList<Operator> result = new ArrayList<>();
         Collection<List<Operator>> values = this.operators.values();
         for (List<Operator> list : values) {
             result.addAll(list);
