@@ -277,8 +277,9 @@ public class TagManager {
         dObject arg;
         try {
 
-            if (!ObjectFetcher.checkMatch(object_class, event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                    : event.getAttributes().attributes[0].rawKey)) {
+            String tagObjectFull = event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
+                    : event.getAttributes().attributes[0].rawKey;
+            if (!ObjectFetcher.checkMatch(object_class, tagObjectFull)) {
                 if (!event.hasAlternative()) {
                     dB.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
                             + "' is an invalid " + object_class.getSimpleName() + ".");
@@ -287,8 +288,7 @@ public class TagManager {
                 return;
             }
 
-            arg = ObjectFetcher.getObjectFrom(object_class, event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                    : event.getAttributes().attributes[0].rawKey, DenizenCore.getImplementation().getTagContext(event.getScriptEntry()));
+            arg = ObjectFetcher.getObjectFrom(object_class, tagObjectFull, DenizenCore.getImplementation().getTagContext(event.getScriptEntry()));
 
             if (arg == null) {
                 if (!event.hasAlternative()) {

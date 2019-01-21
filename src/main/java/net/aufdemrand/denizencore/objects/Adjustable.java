@@ -32,6 +32,14 @@ public interface Adjustable extends dObject {
         mechanism.isProperty = true;
         if (mechanism.shouldDebug()) {
             dB.echoDebug(mechanism.context, "Applying property '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
+            if (dB.verbose) {
+                try {
+                    throw new Exception("Stack trace of property");
+                }
+                catch (Exception ex) {
+                    dB.echoError(ex);
+                }
+            }
         }
         applyProperty(mechanism);
         mechanism.autoReport();

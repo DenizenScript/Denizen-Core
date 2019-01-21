@@ -222,6 +222,7 @@ public class ScriptContainer implements Debuggable {
         set = set.duplicate();
         for (ScriptEntry entry : set.entries) {
             entry.entryData = data.clone();
+            entry.entryData.scriptEntry = entry;
         }
         return set.entries;
     }
