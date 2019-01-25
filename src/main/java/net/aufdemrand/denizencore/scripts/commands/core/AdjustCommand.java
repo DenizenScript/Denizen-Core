@@ -20,7 +20,16 @@ public class AdjustCommand extends AbstractCommand {
 
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
             if (!scriptEntry.hasObject("object")) {
-                scriptEntry.addObject("object", arg.asType(dList.class));
+                if (arg.object instanceof dList) {
+                    scriptEntry.addObject("object", arg.object);
+                }
+                else if (arg.object instanceof Element) {
+                    // Special parse to avoid prefixing issues
+                    scriptEntry.addObject("object", dList.valueOf(arg.raw_value));
+                }
+                else {
+                    scriptEntry.addObject("object", arg.asType(dList.class));
+                }
             }
             else if (!scriptEntry.hasObject("mechanism")) {
                 if (arg.hasPrefix()) {
@@ -54,12 +63,27 @@ public class AdjustCommand extends AbstractCommand {
 
     public dObject adjust(dObject object, Element mechanismName, Element value, ScriptEntry entry) {
         Mechanism mechanism = new Mechanism(mechanismName, value, entry.entryData.getTagContext());
+        return adjust(object, mechanism, entry);
+    }
+
+    public dObject adjust(dObject object, Mechanism mechanism, ScriptEntry entry) {
         String objectString = object.toString();
         String lowerObjectString = CoreUtilities.toLowerCase(objectString);
         Consumer<Mechanism> specialAdjustable = specialAdjustables.get(lowerObjectString);
         if (specialAdjustable != null) {
             specialAdjustable.accept(mechanism);
             return object;
+        }
+        if (lowerObjectString.startsWith("def:")) {
+            String defName = lowerObjectString.substring("def:".length());
+            dObject def = entry.getResidingQueue().getDefinitionObject(defName);
+            if (def == null) {
+                dB.echoError("Invalid definition name '" + defName + "', cannot adjust");
+                return object;
+            }
+            def = adjust(def, mechanism, entry);
+            entry.getResidingQueue().addDefinition(defName, def);
+            return def;
         }
         if (object instanceof Element) {
             object = ObjectFetcher.pickObjectFor(objectString, entry.entryData.getTagContext());

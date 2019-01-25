@@ -91,7 +91,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Adjust
-        // @Syntax adjust [<dObject>|...] [<mechanism>](:<value>)
+        // @Syntax adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)
         // @Required 2
         // @Stable stable
         // @Short Adjusts a dObjects mechanism.
@@ -104,7 +104,9 @@ public abstract class CommandRegistry implements dRegistry {
         // interface to deal with those adjustments. To easily accomplish this, use this command with a valid object
         // mechanism, and sometimes accompanying value.
         //
-        // To adjust an item, use <@link command inventory>, as '- inventory adjust slot:<#> <mechanism>:<value>'.
+        // Specify "def:<name>" as an input to adjust a definition and automatically save the result back to the definition.
+        //
+        // To adjust an item in an inventory, use <@link command inventory>, as '- inventory adjust slot:<#> <mechanism>:<value>'.
         //
         // @Tags
         // <entry[saveName].result> returns the adjusted object.
@@ -113,9 +115,18 @@ public abstract class CommandRegistry implements dRegistry {
         // @Usage
         // Use to set a custom display name on an entity.
         // - adjust e@1000 'custom_name:ANGRY!'
+        //
+        // @Usage
+        // Use to set the skin of every online player.
+        // - adjust <server.list_online_players> skin:mcmonkey4eva
+        //
+        // @Usage
+        // Use to modify an item held in a definition.
+        // - adjust def:stick "display_name:Fancy stick"
+        //
         // -->
         registerCoreMember(AdjustCommand.class,
-                "ADJUST", "adjust [<dObject>|...] [<mechanism>](:<value>)", 2);
+                "ADJUST", "adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)", 2);
 
         // <--[command]
         // @Name Async
