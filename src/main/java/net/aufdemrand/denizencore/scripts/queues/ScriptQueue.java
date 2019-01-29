@@ -749,7 +749,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     //
 
     @Override
-    public boolean shouldDebug() throws Exception {
+    public boolean shouldDebug() {
         return (lastEntryExecuted != null ? lastEntryExecuted.shouldDebug()
                 : script_entries.get(0).shouldDebug());
     }
