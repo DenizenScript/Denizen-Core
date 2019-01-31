@@ -77,7 +77,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public boolean checkSwitch(String key, String value) {
             String pathValue = switches.get(key);
             if (pathValue == null) {
-                return false;
+                return true;
             }
             return CoreUtilities.toLowerCase(pathValue).equals(value);
         }
