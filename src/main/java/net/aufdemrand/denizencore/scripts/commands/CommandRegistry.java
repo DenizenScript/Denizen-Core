@@ -93,9 +93,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Adjust
         // @Syntax adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)
         // @Required 2
-        // @Stable stable
         // @Short Adjusts a dObjects mechanism.
-        // @Author aufdemrand, mcmonkey
         // @Group core
         // @Video /denizen/vids/Properties%20and%20Mechanisms
         //
@@ -132,9 +130,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Async
         // @Syntax async [<commands>]
         // @Required 0
-        // @Stable unstable
         // @Short Runs commands asynchronously. Inverse of <@link command sync>. (WARNING: DO NOT USE. See description for safety warning!)
-        // @Author Morphan1
         // @Warning Do NOT use this. This is VERY dangerous. It is added purely as a tech experiment, not something to use in serious code!
         // @Group core
 
@@ -167,9 +163,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Choose
         // @Syntax choose [<option>] [<cases>]
         // @Required 1
-        // @Stable unstable
         // @Short Chooses an option from the list of cases.
-        // @Author mcmonkey
         // @Group core
 
         // @Description
@@ -222,9 +216,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Debug
         // @Syntax debug [<type>] [<message>] (name:<name>)
         // @Required 2
-        // @Stable stable
         // @Short Shows a debug message.
-        // @Author mcmonkey
         // @Group core
 
         // @Description
@@ -263,9 +255,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Define
         // @Syntax define [<id>] [<value>]
         // @Required 1
-        // @Stable stable
         // @Short Creates a temporary variable inside a script queue.
-        // @Author aufdemrand
         // @Group core
 
         // @Description
@@ -316,9 +306,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Determine
         // @Syntax determine (passively) [<value>]
         // @Required 1
-        // @Stable stable
         // @Short Sets the outcome of a world event.
-        // @Author aufdemrand
         // @Group core
         // @Description
         // TODO: Document Command Details
@@ -339,9 +327,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Else
         // @Syntax else (if <comparison logic>)
         // @Required 0
-        // @Stable stable
         // @Short Helper command for usage with the if command.
-        // @Author mcmonkey
         // @Group core
         // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
         // @Description
@@ -359,9 +345,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Foreach
         // @Syntax foreach [stop/next/<object>|...] [<commands>]
         // @Required 1
-        // @Stable stable
         // @Short Loops through a dList, running a set of commands for each item.
-        // @Author Morphan1, mcmonkey
         // @Group core
         // @Video /denizen/vids/Loops
 
@@ -397,9 +381,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Goto
         // @Syntax goto [<name>]
         // @Required 1
-        // @Stable stable
         // @Short Jump forward to a location marked by <@link command mark>.
-        // @Author mcmonkey
         // @Group core
         // @Description
         // Jumps forward to a marked location in the script.
@@ -422,9 +404,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name If
         // @Syntax if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)
         // @Required 1
-        // @Stable stable
         // @Short Compares values, and runs one script if they match, or a different script if they don't match.
-        // @Author aufdemrand, David Cernat, Morphan1, mcmonkey
         // @Group core
         // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
         // @Description
@@ -442,9 +422,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Mark
         // @Syntax mark [<name>]
         // @Required 1
-        // @Stable stable
         // @Short Marks a location for <@link command goto>.
-        // @Author mcmonkey
         // @Group core
         // @Description
         // Marks a location for the goto command. See <@link command goto> for details.
@@ -460,9 +438,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Sync
         // @Syntax sync [<commands>]
         // @Required 0
-        // @Stable unstable
         // @Short Runs commands synchronously. Inverse of <@link command async>.
-        // @Author Morphan1
         // @Group core
 
         // @Description
@@ -486,9 +462,7 @@ public abstract class CommandRegistry implements dRegistry {
         // @Name Webget
         // @Syntax webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s})
         // @Required 1
-        // @Stable unstable
         // @Short Gets the contents of a web page.
-        // @Author mcmonkey
         // @Group core
         //
         // @Description
