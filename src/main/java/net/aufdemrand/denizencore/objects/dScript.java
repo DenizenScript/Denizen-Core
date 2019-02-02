@@ -466,6 +466,24 @@ public class dScript implements dObject, Adjustable {
             }
         });
 
+        // <--[tag]
+        // @attribute <s@script.to_text>
+        // @returns Element
+        // @description
+        // Converts the YAML Script Container to raw YAML text.
+        // Best used with 'yaml data' type scripts.
+        // -->
+
+        registerTag("to_text", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                YamlConfiguration config = new YamlConfiguration();
+                config.addAll(((dScript) object).getContainer().getContents().getMap());
+                config.set("type", null);
+                return new Element(config.saveToString()).getAttribute(attribute.fulfill(1));
+            }
+        });
+
         /////////////////
         // dObject attributes
         ///////////////

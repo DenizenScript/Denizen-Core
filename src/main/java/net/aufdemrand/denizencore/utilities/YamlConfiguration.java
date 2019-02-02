@@ -101,6 +101,10 @@ public class YamlConfiguration {
         return new HashMap<>(contents);
     }
 
+    public void addAll(Map<StringHolder, Object> newContents) {
+        contents.putAll(newContents);
+    }
+
     private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs, String base) {
         Set<StringHolder> strings = new HashSet<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
