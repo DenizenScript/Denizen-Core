@@ -1,6 +1,7 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
+import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -88,6 +89,8 @@ public class aH {
 
         public boolean needsFill = false;
         public boolean hasSpecialPrefix = false;
+
+        public ScriptEntry scriptEntry = null;
 
         public String generateRaw() {
             return prefix == null ? value : prefix + ":" + value;
@@ -397,7 +400,7 @@ public class aH {
 
 
         public <T extends dObject> T asType(Class<T> clazz) {
-            T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(null));
+            T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
             if (arg != null) {
                 arg.setPrefix(prefix);
                 return arg;

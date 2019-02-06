@@ -280,6 +280,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
         return ObjectFetcher.getObjectFrom(dClass, element);
     }
 
+    public <T extends dObject> T asType(Class<T> dClass, TagContext context) {
+        return ObjectFetcher.getObjectFrom(dClass, element, context);
+    }
+
     public boolean matchesEnum(Enum[] values) {
         for (Enum value : values) {
             if (value.name().equalsIgnoreCase(element)) {

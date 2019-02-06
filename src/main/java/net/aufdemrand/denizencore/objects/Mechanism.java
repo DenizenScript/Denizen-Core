@@ -44,6 +44,10 @@ public class Mechanism {
         return value;
     }
 
+    public <T extends dObject> T valueAsType(Class<T> dClass) {
+        return ObjectFetcher.getObjectFrom(dClass, getValue().asString(), context);
+    }
+
     public boolean hasValue() {
         return value != null;
     }
