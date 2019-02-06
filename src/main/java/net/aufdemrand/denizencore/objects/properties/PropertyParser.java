@@ -22,6 +22,8 @@ public class PropertyParser {
 
         public List<PropertyGetter> propertiesAnyMechs = new ArrayList<>();
 
+        public List<PropertyGetter> propertiesWithMechs = new ArrayList<>();
+
         public Map<String, PropertyGetter> propertiesByTag = new HashMap<>();
 
         public Map<String, PropertyGetter> propertiesByMechanism = new HashMap<>();
@@ -48,9 +50,11 @@ public class PropertyParser {
             for (String mech : mechs) {
                 propInfo.propertiesByMechanism.put(mech, getter);
             }
+            propInfo.propertiesWithMechs.add(getter);
         }
         else {
             propInfo.propertiesAnyMechs.add(getter);
+            propInfo.propertiesWithMechs.add(getter);
         }
     }
 
@@ -94,8 +98,8 @@ public class PropertyParser {
         if (properties == null) {
             return "";
         }
-        StringBuilder prop_string = new StringBuilder(properties.propertiesAnyMechs.size() * 10);
-        for (PropertyGetter getter : properties.propertiesAnyMechs) {
+        StringBuilder prop_string = new StringBuilder(properties.propertiesWithMechs.size() * 10);
+        for (PropertyGetter getter : properties.propertiesWithMechs) {
             Property property = getter.get(object);
             if (property != null) {
                 String description = property.getPropertyString();
