@@ -94,8 +94,8 @@ public class PropertyParser {
         if (properties == null) {
             return "";
         }
-        StringBuilder prop_string = new StringBuilder(properties.allProperties.size() * 10);
-        for (PropertyGetter getter : properties.allProperties) {
+        StringBuilder prop_string = new StringBuilder(properties.propertiesAnyMechs.size() * 10);
+        for (PropertyGetter getter : properties.propertiesAnyMechs) {
             Property property = getter.get(object);
             if (property != null) {
                 String description = property.getPropertyString();
