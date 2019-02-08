@@ -18,6 +18,9 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     // @Regex ^on system time (\d\d\:\d\d|hourly|minutely)$
     //
     // @Triggers when the system time changes to the specified value.
+    // The system time is the real world time set in the server's operating system.
+    // It is not necessarily in sync with the game server time, which may vary (for example, when the server is lagging).
+    // For events based on in-game time passage, use <@link event delta time> or <@link command wait>.
     //
     // @Context
     // <context.hour> returns the exact hour of the system time.

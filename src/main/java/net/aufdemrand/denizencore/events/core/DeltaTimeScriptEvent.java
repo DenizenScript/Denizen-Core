@@ -16,6 +16,10 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
     // @Regex ^on delta time (hourly|minutely|secondly)$
     //
     // @Triggers every second, minute, or hour of game calculation time.
+    // This is specifically based on the rate of time advancement in the game server,
+    // which is not necessarily equivalent to the real passage of time
+    // (for example, this event may fire slower if the server is lagging).
+    // For real time, see <@link event system time>.
     //
     // @Context
     // <context.second> returns the exact delta time since system start.
