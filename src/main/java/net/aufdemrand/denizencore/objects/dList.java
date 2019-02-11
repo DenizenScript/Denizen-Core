@@ -12,6 +12,7 @@ import net.aufdemrand.denizencore.tags.TagContext;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
+import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.*;
@@ -306,15 +307,23 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     // Return a list that includes only elements belonging to a certain class
     public <T extends dObject> List<T> filter(Class<T> dClass) {
-        return filter(dClass, null);
+        return filter(dClass, DenizenCore.getImplementation().getTagContext(null));
     }
 
 
     public <T extends dObject> List<T> filter(Class<T> dClass, ScriptEntry entry) {
-        List<T> results = new ArrayList<>();
+        return filter(dClass, (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
+                entry.entryData.getTagContext()));
+    }
 
-        TagContext context = (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
-                entry.entryData.getTagContext());
+    public <T extends dObject> List<T> filter(Class<T> dClass, Debuggable debugger) {
+        TagContext context = DenizenCore.getImplementation().getTagContext(null);
+        context.debug = debugger.shouldDebug();
+        return filter(dClass, context);
+    }
+
+    public <T extends dObject> List<T> filter(Class<T> dClass, TagContext context) {
+        List<T> results = new ArrayList<>();
 
         for (dObject obj : objectForms) {
 

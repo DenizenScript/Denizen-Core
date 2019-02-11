@@ -8,8 +8,8 @@ import net.aufdemrand.denizencore.utilities.SimpleDefinitionProvider;
 import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 
 public abstract class TagContext implements Debuggable {
-    public final boolean instant;
-    public final boolean debug;
+    public boolean instant;
+    public boolean debug;
     public final ScriptEntry entry;
     public final dScript script;
     public final DefinitionProvider definitionProvider;
