@@ -125,26 +125,32 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
         }
         for (ScriptEvent event : events) {
-            event.destroy();
-            event.eventPaths.clear();
-            boolean matched = false;
-            for (ScriptContainer container : worldContainers) {
-                YamlConfiguration config = container.getConfigurationSection("events");
-                if (config == null) {
-                    continue;
-                }
-                for (StringHolder evt1 : config.getKeys(false)) {
-                    String evt = evt1.str.substring(3);
-                    if (couldMatchScript(event, container, evt)) {
-                        event.eventPaths.add(new ScriptPath(container, evt));
-                        dB.log("Event match, " + event.getName() + " matched for '" + evt + "'!");
-                        matched = true;
+            try {
+                event.destroy();
+                event.eventPaths.clear();
+                boolean matched = false;
+                for (ScriptContainer container : worldContainers) {
+                    YamlConfiguration config = container.getConfigurationSection("events");
+                    if (config == null) {
+                        continue;
+                    }
+                    for (StringHolder evt1 : config.getKeys(false)) {
+                        String evt = evt1.str.substring(3);
+                        if (couldMatchScript(event, container, evt)) {
+                            event.eventPaths.add(new ScriptPath(container, evt));
+                            dB.log("Event match, " + event.getName() + " matched for '" + evt + "'!");
+                            matched = true;
+                        }
                     }
                 }
+                if (matched) {
+                    event.sort();
+                    event.init();
+                }
             }
-            if (matched) {
-                event.sort();
-                event.init();
+            catch (Throwable ex) {
+                dB.echoError("Failed to reload event '" + event.getName() + "':");
+                dB.echoError(ex);
             }
         }
     }
