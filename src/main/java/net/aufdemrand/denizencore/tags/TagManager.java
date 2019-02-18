@@ -375,7 +375,7 @@ public class TagManager {
             event.setReplacedObject(event.getAlternative());
         }
         if (context.debug) {
-            DenizenCore.getImplementation().debugTagFill(context.entry, event.toString(), event.getReplaced());
+            DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplaced());
         }
         if (!event.replaced()) {
             dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
