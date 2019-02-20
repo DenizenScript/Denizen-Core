@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore.events.core;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
@@ -13,9 +14,11 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // system time [<HH:MM>/hourly/minutely]
+    // system time [<HH:MM>/hourly/minutely/secondly]
     //
-    // @Regex ^on system time (\d\d\:\d\d|hourly|minutely)$
+    // @Switch every <count>
+    //
+    // @Regex ^on system time (\d\d\:\d\d|hourly|minutely|secondly)$
     //
     // @Triggers when the system time changes to the specified value.
     // The system time is the real world time set in the server's operating system.
@@ -45,6 +48,8 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     public Element minute;
 
+    public long seconds;
+
     @Override
     public ScriptEntryData getScriptEntryData() {
         return data;
@@ -53,7 +58,26 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     @Override
     public boolean matches(ScriptPath path) {
         String time = path.eventArgLowerAt(2);
-        return time.equals("minutely") || time.equals(hour.asString() + ":" + minute.asString()) || (minute.asString().equals("00") && time.equals("hourly"));
+        String countString = path.switches.get("every");
+        int count = countString == null ? 1 : aH.getIntegerFrom(countString);
+        if (time.equals("secondly")) {
+            return seconds % count == 0;
+        }
+        if (time.equals("minutely")) {
+            if (!minuteChanged) {
+                return false;
+            }
+            long minutes = seconds / 60;
+            return minutes % count == 0;
+        }
+        if (time.equals("hourly")) {
+            if (!minuteChanged || lM != 0) {
+                return false;
+            }
+            long hours = seconds / 3600;
+            return hours % count == 0;
+        }
+        return minuteChanged && time.equals(hour.asString() + ":" + minute.asString());
     }
 
     @Override
@@ -86,17 +110,22 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     int lH = 0;
     int lM = 0;
+    long lS = 0;
+    boolean minuteChanged = true;
 
     public void checkTime() {
         if (!enab) {
             return;
         }
+        seconds = System.currentTimeMillis() / 1000;
+        if (lS == seconds) {
+            return;
+        }
+        lS = seconds;
         Calendar calendar = Calendar.getInstance();
         int h = calendar.get(Calendar.HOUR_OF_DAY);
         int m = calendar.get(Calendar.MINUTE);
-        if (lH == h && lM == m) {
-            return;
-        }
+        minuteChanged = lH != h || lM != m;
         lH = h;
         lM = m;
         if (h < 10) {
