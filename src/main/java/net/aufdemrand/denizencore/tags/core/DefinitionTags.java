@@ -32,6 +32,11 @@ public class DefinitionTags {
             return;
         }
 
+        if (event.matches("d")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
+        }
+
         if (!event.hasNameContext()) {
             dB.echoError("Invalid definition tag, no context specified!");
             return;

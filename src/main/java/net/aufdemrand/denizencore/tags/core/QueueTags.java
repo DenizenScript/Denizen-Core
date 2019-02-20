@@ -8,6 +8,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class QueueTags {
 
@@ -29,6 +30,11 @@ public class QueueTags {
 
         if (!event.matches("queue", "q")) {
             return;
+        }
+
+        if (event.matches("q")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
         }
 
         // Handle <queue[id]. ...> tags

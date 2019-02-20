@@ -50,6 +50,11 @@ public class ProcedureScriptTags {
             return;
         }
 
+        if (event.matches("pr")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
+        }
+
         Attribute attr = event.getAttributes();
         int attribs = 1;
 

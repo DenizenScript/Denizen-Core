@@ -6,6 +6,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class ScriptTags {
 
@@ -22,6 +23,11 @@ public class ScriptTags {
 
         if (!event.matches("script", "s") || event.replaced()) {
             return;
+        }
+
+        if (event.matches("s")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'script' instead of 's' as a root tag.");
         }
 
         // Stage the location

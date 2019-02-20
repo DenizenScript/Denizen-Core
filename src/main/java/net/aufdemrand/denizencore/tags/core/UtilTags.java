@@ -31,6 +31,11 @@ public class UtilTags {
             return;
         }
 
+        if (event.matches("u")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
+        }
+
         Attribute attribute = event.getAttributes().fulfill(1);
 
         if (attribute.startsWith("random")) {

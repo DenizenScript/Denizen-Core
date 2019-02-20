@@ -30,6 +30,10 @@ public class ContextTags {
         if (!event.matches("context", "c") || event.getScriptEntry() == null) {
             return;
         }
+        if (event.matches("c") && (event.getScriptEntry() == null || event.getScriptEntry().shouldDebug())) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'context' instead of 'c' as a root tag.");
+        }
         String object = event.getType();
         dObject obj = event.getScriptEntry().getResidingQueue().getContext(object);
         if (obj != null) {
@@ -47,6 +51,10 @@ public class ContextTags {
                 || event.getScriptEntry() == null
                 || !event.hasNameContext()) {
             return;
+        }
+        if (event.matches("e")) {
+            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
+                    "Short-named tags are hard to read. Please use 'entry' instead of 'e' as a root tag.");
         }
         if (event.getScriptEntry().getResidingQueue() != null) {
             String id = event.getNameContext();
