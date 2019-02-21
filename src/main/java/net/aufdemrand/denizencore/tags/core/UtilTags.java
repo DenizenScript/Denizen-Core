@@ -136,10 +136,11 @@ public class UtilTags {
             }
 
             // <--[tag]
-            // @attribute <util.random.duuid>
+            // @attribute <util.random.duuid[(<source>)]>
             // @returns Element
             // @description
             // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
+            // Optionally specify the source context to base the value on.
             // -->
             else if (attribute.startsWith("duuid")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue

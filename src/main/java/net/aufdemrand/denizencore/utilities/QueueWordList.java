@@ -104,8 +104,8 @@ public class QueueWordList {
     }
 
     static List<String> repeat(String str, int times) {
-        List<String> strs = new ArrayList<>();
-        for (int i = 0; i < times; i += 1) {
+        List<String> strs = new ArrayList<>(times);
+        for (int i = 0; i < times; i++) {
             strs.add(str);
         }
         return strs;
