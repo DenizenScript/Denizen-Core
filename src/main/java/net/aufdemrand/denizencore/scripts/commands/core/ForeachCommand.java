@@ -28,45 +28,47 @@ public class ForeachCommand extends BracedCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
+        boolean handled = false;
+
         for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
 
-            if (!scriptEntry.hasObject("stop")
-                    && arg.matchesOne("stop")) {
-                scriptEntry.addObject("stop", Element.TRUE);
-                break;
+            if (!handled
+                    && arg.matches("stop")) {
+                scriptEntry.addObject("stop", new Element(true));
+                handled = true;
+            }
+            else if (!handled
+                    && arg.matches("next")) {
+                scriptEntry.addObject("next", new Element(true));
+                handled = true;
+            }
+            else if (!handled
+                    && arg.matches("\0CALLBACK")) {
+                scriptEntry.addObject("callback", new Element(true));
+                handled = true;
+            }
+            else if (!scriptEntry.hasObject("as_name")
+                    && arg.matchesOnePrefix("as")) {
+                scriptEntry.addObject("as_name", arg.asElement());
             }
 
-            else if (!scriptEntry.hasObject("next")
-                    && arg.matchesOne("next")) {
-                scriptEntry.addObject("next", Element.TRUE);
-                break;
-            }
-
-            else if (!scriptEntry.hasObject("callback")
-                    && arg.matchesOne("\0CALLBACK")) {
-                scriptEntry.addObject("callback", Element.TRUE);
-                break;
-            }
-
-            else if (!scriptEntry.hasObject("list")) {
+            else if (!handled) {
                 scriptEntry.addObject("list", dList.valueOf(arg.raw_value));
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
-                break;
+                handled = true;
             }
 
             else {
                 arg.reportUnhandled();
-                break;
             }
 
         }
 
-        if (!scriptEntry.hasObject("list")
-                && !scriptEntry.hasObject("stop")
-                && !scriptEntry.hasObject("next")
-                && !scriptEntry.hasObject("callback")) {
+        if (!handled) {
             throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
         }
+
+        scriptEntry.defaultObject("as_name", "value");
     }
 
     @SuppressWarnings("unchecked")
@@ -77,6 +79,7 @@ public class ForeachCommand extends BracedCommand {
         Element next = scriptEntry.getElement("next");
         Element callback = scriptEntry.getElement("callback");
         dList list = (dList) scriptEntry.getObject("list");
+        Element as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
             // Report to dB
@@ -146,7 +149,7 @@ public class ForeachCommand extends BracedCommand {
                 if (data.index <= data.list.size()) {
                     dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
-                    scriptEntry.getResidingQueue().addDefinition("value", String.valueOf(data.list.get(data.index - 1)));
+                    scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.list.get(data.index - 1)));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = null;
                     try {
@@ -192,7 +195,7 @@ public class ForeachCommand extends BracedCommand {
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), list.debug());
+                dB.report(scriptEntry, getName(), list.debug() + as_name.asString());
             }
 
             int target = list.size();
@@ -215,7 +218,7 @@ public class ForeachCommand extends BracedCommand {
             }
             callbackEntry.setOwner(scriptEntry);
             bracedCommandsList.add(callbackEntry);
-            scriptEntry.getResidingQueue().addDefinition("value", list.get(0));
+            scriptEntry.getResidingQueue().addDefinition(as_name.asString(), list.get(0));
             scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);

@@ -343,7 +343,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Foreach
-        // @Syntax foreach [stop/next/<object>|...] [<commands>]
+        // @Syntax foreach [stop/next/<object>|...] [<commands>] (as:<name>)
         // @Required 1
         // @Short Loops through a dList, running a set of commands for each item.
         // @Group core
@@ -352,6 +352,8 @@ public abstract class CommandRegistry implements dRegistry {
         // @Description
         // Loops through a dList of any type. For each item in the dList, the specified commands will be ran for
         // that list entry. To call the value of the entry while in the loop, you can use <def[value]>.
+        //
+        // Optionally, specify "as:<name>" to change the definition name to something other than "value".
         //
         // To end a foreach loop, do - foreach stop
         //
@@ -374,7 +376,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(ForeachCommand.class,
-                "foreach", "foreach [stop/next/<object>|...] [<commands>]", 1);
+                "foreach", "foreach [stop/next/<object>|...] [<commands>] (as:<name>)", 1);
 
 
         // <--[command]
