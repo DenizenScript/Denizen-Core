@@ -68,7 +68,7 @@ public class ForeachCommand extends BracedCommand {
             throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
         }
 
-        scriptEntry.defaultObject("as_name", "value");
+        scriptEntry.defaultObject("as_name", new Element("value"));
     }
 
     @SuppressWarnings("unchecked")
@@ -153,7 +153,7 @@ public class ForeachCommand extends BracedCommand {
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = null;
                     try {
-                        callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
+                        callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
                                 (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                         callbackEntry.copyFrom(scriptEntry);
                     }
@@ -209,7 +209,7 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = null;
             try {
-                callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
+                callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
                         (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                 callbackEntry.copyFrom(scriptEntry);
             }
