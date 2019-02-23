@@ -51,13 +51,14 @@ public class ForeachCommand extends BracedCommand {
                     && arg.matchesOnePrefix("as")) {
                 scriptEntry.addObject("as_name", arg.asElement());
             }
-
             else if (!handled) {
                 scriptEntry.addObject("list", dList.valueOf(arg.raw_value));
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }
-
+            else if (arg.matchesOne("{")) {
+                break;
+            }
             else {
                 arg.reportUnhandled();
             }
