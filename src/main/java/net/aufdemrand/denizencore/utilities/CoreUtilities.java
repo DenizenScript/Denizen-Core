@@ -267,7 +267,7 @@ public class CoreUtilities {
                 start = i + 1;
             }
         }
-        strings.add(str.substring(start, str.length()));
+        strings.add(str.substring(start));
         return strings;
     }
 
@@ -294,7 +294,7 @@ public class CoreUtilities {
                 }
             }
         }
-        strings.add(str.substring(start, str.length()));
+        strings.add(str.substring(start));
         if (dB.verbose) {
             dB.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
         }

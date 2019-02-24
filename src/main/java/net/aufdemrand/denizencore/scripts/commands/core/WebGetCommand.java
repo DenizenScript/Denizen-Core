@@ -1,7 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.Element;
@@ -64,7 +63,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
 
     @Override
-    public void execute(final ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(final ScriptEntry scriptEntry) {
 
         if (!DenizenCore.getImplementation().allowedToWebget()) {
             dB.echoError(scriptEntry.getResidingQueue(), "WebGet disabled by config!");

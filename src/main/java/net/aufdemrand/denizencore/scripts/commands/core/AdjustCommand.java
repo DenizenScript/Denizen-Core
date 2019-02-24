@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -103,7 +102,7 @@ public class AdjustCommand extends AbstractCommand {
 
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         Element mechanism = scriptEntry.getElement("mechanism");
         Element value = scriptEntry.getElement("mechanism_value");

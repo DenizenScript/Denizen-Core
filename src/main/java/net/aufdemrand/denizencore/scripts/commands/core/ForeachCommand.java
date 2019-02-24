@@ -1,8 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
-import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dList;
@@ -74,7 +72,7 @@ public class ForeachCommand extends BracedCommand {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         Element stop = scriptEntry.getElement("stop");
         Element next = scriptEntry.getElement("next");
@@ -152,15 +150,9 @@ public class ForeachCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.list.get(data.index - 1)));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
-                    ScriptEntry callbackEntry = null;
-                    try {
-                        callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
-                                (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-                        callbackEntry.copyFrom(scriptEntry);
-                    }
-                    catch (ScriptEntryCreationException e) {
-                        dB.echoError(scriptEntry.getResidingQueue(), e);
-                    }
+                    ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
+                            (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+                    callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
                     bracedCommands.add(callbackEntry);
                     for (int i = 0; i < bracedCommands.size(); i++) {
@@ -208,15 +200,9 @@ public class ForeachCommand extends BracedCommand {
             datum.list = list;
             datum.index = 1;
             scriptEntry.setData(datum);
-            ScriptEntry callbackEntry = null;
-            try {
-                callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
-                        (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-                callbackEntry.copyFrom(scriptEntry);
-            }
-            catch (ScriptEntryCreationException e) {
-                dB.echoError(scriptEntry.getResidingQueue(), e);
-            }
+            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
+                    (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+            callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
             bracedCommandsList.add(callbackEntry);
             scriptEntry.getResidingQueue().addDefinition(as_name.asString(), list.get(0));

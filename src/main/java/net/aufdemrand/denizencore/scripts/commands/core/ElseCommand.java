@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
@@ -14,7 +13,7 @@ public class ElseCommand extends AbstractCommand {
 
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         // If this command executes normally, it's misplaced. It should always be skipped past under normal execution.
         dB.echoError(scriptEntry.getResidingQueue(), "Misplaced ELSE command.");

@@ -1378,10 +1378,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
                     String negative = "";
                     if (intform.startsWith("-")) {
                         negative = "-";
-                        intform = intform.substring(1, intform.length());
+                        intform = intform.substring(1);
                     }
                     for (int i = intform.length() - 3; i > 0; i -= 3) {
-                        intform = intform.substring(0, i) + "," + intform.substring(i, intform.length());
+                        intform = intform.substring(0, i) + "," + intform.substring(i);
                     }
                     return new Element(negative + intform + afterdecimal).getObjectAttribute(attribute.fulfill(1));
                 }

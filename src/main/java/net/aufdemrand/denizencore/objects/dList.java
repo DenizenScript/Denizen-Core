@@ -154,7 +154,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             }
             // If there is an item waiting, add it too
             if (start < items.length()) {
-                super.add(items.substring(start, items.length()));
+                super.add(items.substring(start));
             }
         }
         objectForms = new ArrayList<>(size());

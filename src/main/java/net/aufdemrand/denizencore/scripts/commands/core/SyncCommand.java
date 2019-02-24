@@ -1,9 +1,7 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
-import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.scripts.commands.Holdable;
@@ -27,7 +25,7 @@ public class SyncCommand extends BracedCommand implements Holdable {
     }
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         ScriptQueue residingQueue = scriptEntry.getResidingQueue();
 

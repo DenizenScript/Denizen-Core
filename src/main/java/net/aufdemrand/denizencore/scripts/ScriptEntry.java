@@ -2,7 +2,6 @@ package net.aufdemrand.denizencore.scripts;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
-import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
@@ -19,7 +18,6 @@ import net.aufdemrand.denizencore.utilities.debugging.Debuggable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.*;
-
 
 /**
  * ScriptEntry contain information about a single entry from a dScript. It is used
@@ -138,9 +136,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @param command   the name of the command this entry will be handed to
      * @param arguments an array of the arguments
      * @param script    optional ScriptContainer reference
-     * @throws ScriptEntryCreationException if 'command' is null
      */
-    public ScriptEntry(String command, String[] arguments, ScriptContainer script) throws ScriptEntryCreationException {
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script) {
         this(command, arguments, script, null);
     }
 
@@ -176,9 +173,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
 
-    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) throws ScriptEntryCreationException {
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) {
         if (command == null) {
-            throw new ScriptEntryCreationException("dCommand 'name' cannot be null!");
+            throw new RuntimeException("dCommand 'name' cannot be null!");
         }
         internal = new ScriptEntryInternal();
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
@@ -227,7 +224,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 String parg = arg;
                 String after = null;
-                if (parg.endsWith("{") && !parg.equals("{")) {
+                if (parg.endsWith("{")) {
                     after = "{";
                     parg = parg.substring(0, parg.length() - 1);
                     dB.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");

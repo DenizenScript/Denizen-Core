@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
@@ -46,7 +45,7 @@ public class DefineCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         Element definition = scriptEntry.getElement("definition");
         dObject value = scriptEntry.getdObject("value");

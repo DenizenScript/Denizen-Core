@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
@@ -23,7 +22,7 @@ public class AsyncCommand extends BracedCommand implements Holdable {
     }
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("ASYNC_COMMAND"));
         queue.run_async = true;

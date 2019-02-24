@@ -1,6 +1,5 @@
 package net.aufdemrand.denizencore.scripts.commands;
 
-import net.aufdemrand.denizencore.exceptions.ScriptEntryCreationException;
 import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
@@ -196,30 +195,25 @@ public abstract class BracedCommand extends AbstractCommand {
                     }
                     ArrayList<ScriptEntry> bracesSection = new ArrayList<>();
                     for (ArrayList<String> command : commandList.values()) {
-                        try {
-                            if (command.isEmpty()) {
-                                if (hyperdebug) {
-                                    dB.echoError(scriptEntry.getResidingQueue(), "Empty command?");
-                                }
-                                continue;
-                            }
-                            String cmd = command.get(0);
+                        if (command.isEmpty()) {
                             if (hyperdebug) {
-                                dB.echoDebug(scriptEntry, "Calculating " + cmd);
+                                dB.echoError(scriptEntry.getResidingQueue(), "Empty command?");
                             }
-                            command.remove(0);
-                            String[] args = new String[command.size()];
-                            args = command.toArray(args);
-                            bracesSection.add(new ScriptEntry(cmd,
-                                    args,
-                                    scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-                            bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
-                            if (hyperdebug) {
-                                dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
-                            }
+                            continue;
                         }
-                        catch (ScriptEntryCreationException e) {
-                            dB.echoError(scriptEntry.getResidingQueue(), e.getMessage());
+                        String cmd = command.get(0);
+                        if (hyperdebug) {
+                            dB.echoDebug(scriptEntry, "Calculating " + cmd);
+                        }
+                        command.remove(0);
+                        String[] args = new String[command.size()];
+                        args = command.toArray(args);
+                        bracesSection.add(new ScriptEntry(cmd,
+                                args,
+                                scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+                        bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
+                        if (hyperdebug) {
+                            dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
                         }
                     }
                     if (hyperdebug) {

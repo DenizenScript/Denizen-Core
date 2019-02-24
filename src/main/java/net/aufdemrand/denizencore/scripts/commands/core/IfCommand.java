@@ -1,7 +1,6 @@
 package net.aufdemrand.denizencore.scripts.commands.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.exceptions.CommandExecutionException;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -117,7 +116,7 @@ public class IfCommand extends BracedCommand {
 
 
     @Override
-    public void execute(ScriptEntry scriptEntry) throws CommandExecutionException {
+    public void execute(ScriptEntry scriptEntry) {
 
         List<String> subcommand = (List<String>) scriptEntry.getObject("subcommand");
         List<String> elsecommand = (List<String>) scriptEntry.getObject("elsecommand");
