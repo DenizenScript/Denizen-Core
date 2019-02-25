@@ -7,6 +7,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class ContextTags {
@@ -26,13 +27,15 @@ public class ContextTags {
         }, "entry", "e");
     }
 
+    public SlowWarning contextShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'context' instead of 'c' as a root tag.");
+    public SlowWarning entryShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'entry' instead of 'e' as a root tag.");
+
     public void contextTags(ReplaceableTagEvent event) {
         if (!event.matches("context", "c") || event.getScriptEntry() == null) {
             return;
         }
         if (event.matches("c") && (event.getScriptEntry() == null || event.getScriptEntry().shouldDebug())) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'context' instead of 'c' as a root tag.");
+            contextShorthand.warn(event.getScriptEntry());
         }
         String object = event.getType();
         dObject obj = event.getScriptEntry().getResidingQueue().getContext(object);
@@ -53,8 +56,7 @@ public class ContextTags {
             return;
         }
         if (event.matches("e")) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'entry' instead of 'e' as a root tag.");
+            entryShorthand.warn(event.getScriptEntry());
         }
         if (event.getScriptEntry().getResidingQueue() != null) {
             String id = event.getNameContext();

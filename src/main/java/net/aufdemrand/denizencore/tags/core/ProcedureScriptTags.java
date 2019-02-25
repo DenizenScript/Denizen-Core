@@ -14,6 +14,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public class ProcedureScriptTags {
             }
         }, "proc", "pr");
     }
+
+    public SlowWarning procShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
 
     public void procedureTag(ReplaceableTagEvent event) {
 
@@ -51,8 +54,7 @@ public class ProcedureScriptTags {
         }
 
         if (event.matches("pr")) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
+            procShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attr = event.getAttributes();

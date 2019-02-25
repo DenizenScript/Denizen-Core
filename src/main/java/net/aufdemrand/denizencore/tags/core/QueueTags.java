@@ -8,6 +8,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class QueueTags {
@@ -26,6 +27,8 @@ public class QueueTags {
     //  ReplaceableTagEvent handler
     ////////
 
+    public SlowWarning queueShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
+
     public void queueTag(ReplaceableTagEvent event) {
 
         if (!event.matches("queue", "q")) {
@@ -33,8 +36,7 @@ public class QueueTags {
         }
 
         if (event.matches("q")) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
+            queueShorthand.warn(event.getScriptEntry());
         }
 
         // Handle <queue[id]. ...> tags

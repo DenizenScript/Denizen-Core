@@ -8,6 +8,7 @@ import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.DefinitionProvider;
+import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class DefinitionTags {
@@ -26,6 +27,8 @@ public class DefinitionTags {
     //  ReplaceableTagEvent handler
     ////////
 
+    public SlowWarning defShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
+
     public void definitionTag(ReplaceableTagEvent event) {
 
         if (!event.matches("definition", "def", "d")) {
@@ -33,8 +36,7 @@ public class DefinitionTags {
         }
 
         if (event.matches("d")) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
+            defShorthand.warn(event.getScriptEntry());
         }
 
         if (!event.hasNameContext()) {

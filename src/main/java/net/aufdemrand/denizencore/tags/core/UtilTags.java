@@ -7,6 +7,7 @@ import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
+import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.text.SimpleDateFormat;
@@ -26,14 +27,15 @@ public class UtilTags {
         }, "util", "u");
     }
 
+    public SlowWarning utilShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
+
     public void utilTag(ReplaceableTagEvent event) {
         if (!event.matches("util", "u")) {
             return;
         }
 
         if (event.matches("u")) {
-            dB.echoError(event.getScriptEntry() == null ? null : event.getScriptEntry().getResidingQueue(),
-                    "Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
+            utilShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attribute = event.getAttributes().fulfill(1);
