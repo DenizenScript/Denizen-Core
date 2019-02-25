@@ -1632,7 +1632,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             public dObject run(Attribute attribute, dObject object) {
                 dList escaped = new dList();
                 for (String entry : (dList) object) {
-                    escaped.add(EscapeTags.Escape(entry));
+                    escaped.add(EscapeTags.escape(entry));
                 }
                 return escaped.getObjectAttribute(attribute.fulfill(1));
             }

@@ -67,7 +67,7 @@ public class EscapeTags {
      * @param input the unescaped data.
      * @return the escaped data.
      */
-    public static String Escape(String input) {
+    public static String escape(String input) {
         if (input == null) {
             return null;
         }
@@ -120,7 +120,7 @@ public class EscapeTags {
                 dB.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
                 return;
             }
-            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(Escape(event.getValue())), event.getAttributes().fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(escape(event.getValue())), event.getAttributes().fulfill(1)));
         }
     }
 
@@ -134,7 +134,7 @@ public class EscapeTags {
         // -->
         if (event.matches("unescape")) {
             if (!event.hasValue()) {
-                dB.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
+                dB.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");
                 return;
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(new Element(unEscape(event.getValue())), event.getAttributes().fulfill(1)));

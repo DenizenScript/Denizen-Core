@@ -642,7 +642,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 String element = ((Element) object).element;
-                return new Element(EscapeTags.Escape(element)).getObjectAttribute(attribute.fulfill(1));
+                return new Element(EscapeTags.escape(element)).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
