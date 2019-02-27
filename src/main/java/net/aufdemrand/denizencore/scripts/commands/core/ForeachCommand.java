@@ -188,7 +188,7 @@ public class ForeachCommand extends BracedCommand {
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), list.debug() + as_name.asString());
+                dB.report(scriptEntry, getName(), list.debug() + as_name.debug());
             }
 
             int target = list.size();
