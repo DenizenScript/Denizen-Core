@@ -9,6 +9,7 @@ import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;
+import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.tags.core.EscapeTags;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.NaturalOrderComparator;
@@ -1486,14 +1487,19 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         registerTag("filter", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
+                String tag = attribute.getContext(1);
+                boolean defaultValue = tag.endsWith("||true");
+                if (defaultValue) {
+                    tag = tag.substring(0, tag.length() - "||true".length());
+                }
                 dList newlist = new dList();
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        Attribute tempAttrib = new Attribute(attribute.getContext(1),
+                        Attribute tempAttrib = new Attribute(tag,
                                 attribute.getScriptEntry(), attribute.context);
                         tempAttrib.setHadAlternative(true);
                         dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
-                        if (objs != null && CoreUtilities.toLowerCase(objs.toString()).equals("true")) {
+                        if ((objs == null) ? defaultValue : CoreUtilities.toLowerCase(objs.toString()).equals("true")) {
                             newlist.addObject(obj);
                         }
                     }
@@ -1517,14 +1523,36 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 dList newlist = new dList();
+                String tag = attribute.getContext(1);
+                String defaultValue = "null";
+                boolean fallback = false;
+                if (tag.contains("||")) {
+                    int marks = 0;
+                    int lengthLimit = tag.length() - 1;
+                    for (int i = 0; i < lengthLimit; i++) {
+                        char c = tag.charAt(i);
+                        if (c == '<') {
+                            marks++;
+                        }
+                        else if (c == '>') {
+                            marks--;
+                        }
+                        else if (marks == 0 && c == '|' && tag.charAt(i + 1) == '|') {
+                            fallback = true;
+                            defaultValue = tag.substring(i + 2);
+                            tag = tag.substring(0, i);
+                            break;
+                        }
+                    }
+                }
                 try {
                     for (dObject obj : ((dList) object).objectForms) {
-                        Attribute tempAttrib = new Attribute(attribute.getContext(1),
+                        Attribute tempAttrib = new Attribute(tag,
                                 attribute.getScriptEntry(), attribute.context);
-                        tempAttrib.setHadAlternative(attribute.hasAlternative());
+                        tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
                         dObject objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                         if (objs == null) {
-                            objs = new Element("null");
+                            objs = new Element(defaultValue);
                         }
                         newlist.addObject(objs);
                     }
