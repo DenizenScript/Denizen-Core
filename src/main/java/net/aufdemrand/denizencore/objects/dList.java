@@ -424,6 +424,25 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
 
     public static void registerTags() {
         // <--[tag]
+        // @attribute <li@list.combine>
+        // @returns dList
+        // @description
+        // returns a list containing the contents of all sublists within this list.
+        // -->
+
+        registerTag("combine", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                dList list = (dList) object;
+                dList output = new dList();
+                for (dObject obj : list.objectForms) {
+                    output.addObjects(dList.getListFor(obj).objectForms);
+                }
+                return output.getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <li@list.space_separated>
         // @returns Element
         // @description
