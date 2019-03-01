@@ -740,13 +740,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns whether the element contains any of a list of specified elements, case sensitive.
         // -->
-        // <--[tag]
-        // @attribute <el@element.contains_any_case_sensitive[<element>|...]>
-        // @returns Element(Boolean)
-        // @group element checking
-        // @description
-        // Returns whether the element contains any of a list of specified elements, case sensitive.
-        // -->
         registerTag("contains_any_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
@@ -766,14 +759,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
         // <--[tag]
         // @attribute <el@element.contains_any_text[<element>|...]>
-        // @returns Element(Boolean)
-        // @group element checking
-        // @description
-        // Returns whether the element contains any of a list of specified elements, case insensitive.
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains_any[<element>|...]>
         // @returns Element(Boolean)
         // @group element checking
         // @description
@@ -804,14 +789,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns whether the element contains a specified element, case sensitive.
         // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains_case_sensitive[<element>]>
-        // @returns Element(Boolean)
-        // @group element checking
-        // @description
-        // Returns whether the element contains a specified element, case sensitive.
-        // -->
         registerTag("contains_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
@@ -831,15 +808,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
 
         // <--[tag]
         // @attribute <el@element.contains_text[<element>]>
-        // @returns Element(Boolean)
-        // @group element checking
-        // @description
-        // Returns whether the element contains a specified element, case insensitive. Can use
-        // regular expression by prefixing the element with regex:
-        // -->
-
-        // <--[tag]
-        // @attribute <el@element.contains[<element>]>
         // @returns Element(Boolean)
         // @group element checking
         // @description
@@ -874,7 +842,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         registerTag("contains_text", r);
 
         // <--[tag]
-        // @attribute <el@element.contains_all[<element>|...]>
+        // @attribute <el@element.contains_all_text[<element>|...]>
         // @returns Element(Boolean)
         // @group element checking
         // @description
@@ -899,7 +867,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         registerTag("contains_all_text", r);
 
         // <--[tag]
-        // @attribute <el@element.contains_all_case_sensitive[<element>|...]>
+        // @attribute <el@element.contains_all_case_sensitive_text[<element>|...]>
         // @returns Element(Boolean)
         // @group element checking
         // @description
