@@ -3,37 +3,39 @@ package net.aufdemrand.denizencore.events.core;
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-public class ConsoleOutputScriptEvent extends ScriptEvent {
+public class TickScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // console output
+    // tick
     //
-    // @Regex ^on console output$
+    // @Switch every <count>
     //
-    // @Cancellable true
+    // @Regex ^on tick$
     //
-    // @Triggers when any message is printed to console. (Requires <@link mechanism system.redirect_logging> be set true.)
+    // @Warning This event fires very rapidly and is usually not the most ideal way to handle things.
+    //
+    // @Triggers every single tick.
     //
     // @Context
-    // <context.message> returns the message that is being printed to console.
+    // <context.tick> how many ticks have passed since the server started.
     //
     // -->
 
-    public static ConsoleOutputScriptEvent instance;
+    public static TickScriptEvent instance;
 
-    public String message = null;
+    public long ticks = 0;
 
     public ScriptEntryData data = null;
 
     @Override
     public void reset() {
-        message = null;
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         super.reset();
     }
@@ -45,29 +47,43 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
 
     @Override
     public dObject getContext(String name) {
-        if (name.equals("message")) {
-            return new Element(message);
+        if (name.equals("tick")) {
+            return new Element(ticks);
         }
         return super.getContext(name);
     }
 
-    public ConsoleOutputScriptEvent() {
+    public TickScriptEvent() {
         instance = this;
     }
 
     @Override
     public boolean couldMatch(ScriptContainer script, String event) {
         String lower = CoreUtilities.toLowerCase(event);
-        return lower.startsWith("console output");
+        return lower.startsWith("tick");
     }
 
     @Override
     public boolean matches(ScriptPath path) {
-        return true;
+        String countString = path.switches.get("every");
+        int count = countString == null ? 1 : aH.getIntegerFrom(countString);
+        return ticks % count == 0;
     }
 
     @Override
     public String getName() {
-        return "ConsoleOutput";
+        return "Tick";
+    }
+
+    public boolean enabled = false;
+
+    @Override
+    public void init() {
+        enabled = true;
+    }
+
+    @Override
+    public void destroy() {
+        enabled = false;
     }
 }

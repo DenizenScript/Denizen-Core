@@ -4,6 +4,7 @@ import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.events.core.DeltaTimeScriptEvent;
 import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
+import net.aufdemrand.denizencore.events.core.TickScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
 import net.aufdemrand.denizencore.scripts.commands.CommandRegistry;
 import net.aufdemrand.denizencore.scripts.queues.ScriptEngine;
@@ -150,6 +151,10 @@ public class DenizenCore {
     public static void tick(int ms_elapsed) {
         serverTimeMillis += ms_elapsed;
         currentTimeMillis = System.currentTimeMillis();
+        TickScriptEvent.instance.ticks++;
+        if (TickScriptEvent.instance.enabled) {
+            TickScriptEvent.instance.fire();
+        }
         tMS += ms_elapsed;
         while (tMS > 1000) {
             tMS -= 1000;
