@@ -2,6 +2,7 @@ package net.aufdemrand.denizencore.utilities.debugging;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.events.OldEventManager;
+import net.aufdemrand.denizencore.events.core.ConsoleOutputScriptEvent;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.dObject;
 
@@ -22,22 +23,6 @@ public class LogInterceptor extends PrintStream {
         super(System.out, true);
     }
 
-    // <--[event]
-    // @Events
-    // console output
-    //
-    // @Regex ^(console output)$
-    //
-    // @Warning Disable debug on this event or you'll get an infinite loop!
-    //
-    // @Triggers when any message is printed to console. (Requires <@link mechanism system.redirect_logging> be set true.)
-    // @Context
-    // <context.message> returns the messsage that is being printed to console.
-    //
-    // @Determine
-    // "CANCELLED" to disable the output.
-    //
-    // -->
     @Override
     public void print(String s) {
         if (antiLoop) {
@@ -45,17 +30,13 @@ public class LogInterceptor extends PrintStream {
             return;
         }
         antiLoop = true;
-        HashMap<String, dObject> context = new HashMap<>();
-        context.put("message", new Element(DenizenCore.getImplementation().cleanseLogString(s)));
-        List<String> Determinations = OldEventManager.doEvents(Arrays.asList("console output"), // TODO: ScriptEvent
-                DenizenCore.getImplementation().getEmptyScriptEntryData(), context);
-        for (String str : Determinations) {
-            if (str.equalsIgnoreCase("cancelled")) {
-                antiLoop = false;
-                return;
-            }
+        ConsoleOutputScriptEvent event = ConsoleOutputScriptEvent.instance;
+        event.reset();
+        event.message = DenizenCore.getImplementation().cleanseLogString(s);
+        event.fire();
+        if (!event.cancelled) {
+            super.print(s);
         }
-        super.print(s);
         antiLoop = false;
     }
 
