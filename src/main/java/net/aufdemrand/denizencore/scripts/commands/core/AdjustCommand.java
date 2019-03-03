@@ -91,6 +91,15 @@ public class AdjustCommand extends AbstractCommand {
                 return object;
             }
         }
+        if (object instanceof dList) {
+            dList subList = (dList) object;
+            dList result = new dList();
+            for (dObject listObject : subList.objectForms) {
+                listObject = adjust(listObject, mechanism, entry);
+                result.addObject(listObject);
+            }
+            return result;
+        }
         // Make sure this object is Adjustable
         if (!(object instanceof Adjustable)) {
             dB.echoError("'" + objectString + "' is not an adjustable object type.");
