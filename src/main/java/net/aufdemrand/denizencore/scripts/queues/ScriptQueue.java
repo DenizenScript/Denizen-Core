@@ -1055,6 +1055,11 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     @Override
+    public Class<? extends dObject> getdObjectClass() {
+        return ScriptQueue.class;
+    }
+
+    @Override
     public dObject getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
             return null;

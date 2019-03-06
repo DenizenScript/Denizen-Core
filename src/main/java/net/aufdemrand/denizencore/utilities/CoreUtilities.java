@@ -27,7 +27,7 @@ public class CoreUtilities {
     }
 
     public static void autoPropertyMechanism(dObject object, Mechanism mechanism) {
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return;
         }
@@ -55,7 +55,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return null;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return null;
         }
@@ -83,7 +83,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return null;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return null;
         }
@@ -130,7 +130,7 @@ public class CoreUtilities {
     }
 
     public static <T extends dObject> T asType(dObject inp, Class<T> type, TagContext context) {
-        if (inp.getClass() == type) {
+        if (inp.getdObjectClass() == type) {
             return (T) inp;
         }
         if (type == Element.class) {
@@ -187,7 +187,7 @@ public class CoreUtilities {
     }
 
     public static boolean canPossiblyBeType(dObject inp, Class<? extends dObject> type) {
-        if (inp.getClass() == type) {
+        if (inp.getdObjectClass() == type) {
             return true;
         }
         TypeComparisonRunnable comp = typeCheckers.get(type);

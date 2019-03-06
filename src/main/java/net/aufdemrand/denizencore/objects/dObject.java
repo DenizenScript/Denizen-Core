@@ -107,6 +107,10 @@ public interface dObject {
      */
     dObject setPrefix(String prefix);
 
+    default Class<? extends dObject> getdObjectClass() {
+        return getClass();
+    }
+
     default dObject getObjectAttribute(Attribute attribute) {
         return ObjectFetcher.pickObjectFor(getAttribute(attribute), attribute.context);
     }

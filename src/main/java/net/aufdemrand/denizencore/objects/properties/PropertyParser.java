@@ -94,7 +94,7 @@ public class PropertyParser {
     }
 
     public static String getPropertiesString(dObject object) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return "";
         }
@@ -120,7 +120,7 @@ public class PropertyParser {
     public static List<Property> empty = new ArrayList<>();
 
     public static List<Property> getProperties(dObject object, String attribLow) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return empty;
         }
@@ -138,7 +138,7 @@ public class PropertyParser {
     }
 
     public static List<Property> getProperties(dObject object) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return empty;
         }
