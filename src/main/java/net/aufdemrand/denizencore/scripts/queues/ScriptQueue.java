@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to the CommandExecuter
  */
 
-public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider {
+public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider, Adjustable {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
 
     protected static long total_queues = 0;
@@ -1090,5 +1090,15 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         }
 
         return new Element(identify()).getObjectAttribute(attribute);
+    }
+
+    @Override
+    public void applyProperty(Mechanism mechanism) {
+        dB.echoError("ScriptQueues can not hold properties.");
+    }
+
+    @Override
+    public void adjust(Mechanism mechanism) {
+        CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }
