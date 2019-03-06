@@ -49,9 +49,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         events.add(event);
     }
 
-    public long fires = 0;
-    public long scriptFires = 0;
-    public long nanoTimes = 0;
+    public static class StatData {
+        public long fires = 0;
+        public long scriptFires = 0;
+        public long nanoTimes = 0;
+    }
+
+    public StatData stats = new StatData();
 
     public static class ScriptPath {
 
@@ -83,17 +87,21 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
 
         public ScriptPath(ScriptContainer container, String event) {
-            this.container = container;
             this.event = event;
-            eventLower = CoreUtilities.toLowerCase(event);
-            eventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
-            eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
-            for (String possible : eventArgs) {
+            this.container = container;
+            List<String> eventLabel = new ArrayList<>();
+            for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
                 if (split.size() > 1) {
                     switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
                 }
+                else {
+                    eventLabel.add(possible);
+                }
             }
+            eventLower = CoreUtilities.toLowerCase(String.join(" ", eventLabel));
+            eventArgs = eventLabel.toArray(new String[0]);
+            eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
             switch_cancelled = switches.containsKey("cancelled") ? switches.get("cancelled").equalsIgnoreCase("true") : null;
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
         }
@@ -309,7 +317,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     };
 
     public void fire() {
-        fires++;
+        stats.fires++;
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(this, path)) {
@@ -329,7 +337,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private String currentEvent;
 
     public void run(ScriptPath path) {
-        scriptFires++;
+        stats.scriptFires++;
         HashMap<String, dObject> context = getContext();
         if (path.container.shouldDebug()) {
             dB.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
@@ -358,7 +366,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             queue.setContextSource(this.clone());
         }
         queue.start();
-        nanoTimes += System.nanoTime() - queue.startTime;
+        stats.nanoTimes += System.nanoTime() - queue.startTime;
         dList outList = DetermineCommand.getOutcome(id);
         if (outList != null && !outList.isEmpty()) {
             List<dObject> determinations = outList.objectForms;
