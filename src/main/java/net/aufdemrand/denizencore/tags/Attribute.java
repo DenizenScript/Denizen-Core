@@ -157,7 +157,7 @@ public class Attribute {
         }
         if (string.contains(".")) {
             if (dB.verbose) {
-                dB.log("Trying tag startsWIth " + string + " on tag " + raw_tag);
+                dB.log("Trying tag startsWith " + string + " on tag " + raw_tag);
             }
             List<String> tmp = CoreUtilities.split(string, '.');
             if (tmp.size() + fulfilled > attributes.length) {
@@ -173,7 +173,7 @@ public class Attribute {
             //rebuild_raw_tag();
             //return raw_tag_low.startsWith(string);
         }
-        return attributes[fulfilled].key.startsWith(string);
+        return attributes[fulfilled].key.equalsIgnoreCase(string);
     }
 
     public boolean startsWith(String string, int attribute) {
