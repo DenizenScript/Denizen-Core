@@ -19,6 +19,10 @@ public class SlowWarning {
         warn(entry == null ? null : entry.getResidingQueue());
     }
 
+    public void warn() {
+        warn((ScriptQueue) null);
+    }
+
     public void warn(ScriptQueue queue) {
         long cTime = System.currentTimeMillis();
         if (lastWarning + WARNING_RATE > cTime) {
