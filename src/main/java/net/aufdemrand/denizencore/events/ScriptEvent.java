@@ -85,6 +85,24 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return index < eventArgsLower.length ? eventArgsLower[index] : "";
         }
 
+        // <--[language]
+        // @name script event switches
+        // @description
+        // Modern script events support the concept of 'switches'.
+        // A switch is a specification of additional requirements in an event line other than what's in the event label it.
+        //
+        // A switch consists of a name and a value input, and are can be added anywhere in an event line as "name:<value>"
+        // For example, "on delta time secondly every:5:" is a valid event, where "delta time secondly" is the event itself,
+        // and "every:<#>" is a switch available to the event.
+        //
+        // A traditional Denizen 1 event might look like "on <entity> damaged",
+        // where "<entity>" can be filled with "entity" or any entity type (like "player").
+        // A switch-using event would instead take the format "on entity damaged" with switch "type:<entity type>"
+        // meaning you can do "on entity damaged" for any entity, or "on entity damaged type:player:" for players specifically.
+        // This is both more efficient to process and more explicit in what's going on, however it is less
+        // clear/readable to the average user, so it is not often used.
+        // Some events may have switches for less-often specified data, and use the event line for other options.
+        // -->
         public boolean checkSwitch(String key, String value) {
             String pathValue = switches.get(key);
             if (pathValue == null) {
