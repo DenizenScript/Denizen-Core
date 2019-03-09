@@ -47,7 +47,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void registerScriptEvent(ScriptEvent event) {
         event.reset();
         events.add(event);
+        eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
     }
+
+    public static ArrayList<ScriptContainer> worldContainers = new ArrayList<>();
+
+    public static ArrayList<ScriptEvent> events = new ArrayList<>();
+
+    public static HashMap<String, ScriptEvent> eventLookup = new HashMap<>();
 
     public static class StatData {
         public long fires = 0;
@@ -106,10 +113,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
         }
     }
-
-    public static ArrayList<ScriptContainer> worldContainers = new ArrayList<>();
-
-    public static ArrayList<ScriptEvent> events = new ArrayList<>();
 
     public static void reload() {
         dB.log("Reloading script events...");
