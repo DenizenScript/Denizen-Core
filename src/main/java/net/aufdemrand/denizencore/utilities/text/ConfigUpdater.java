@@ -20,15 +20,15 @@ public class ConfigUpdater {
             changes++;
             FDSData data = new FDSData(changes, new ArrayList<>(Arrays.asList(
                     "----------- Important! -----------",
-                    "Your configuration file was outdated.",
-                    "It has been automatically updated.",
-                    "You may notice some duplicated comments or other minor inconsistencies,",
-                    "if these annoy you, you may remove the duplicate comments OR",
-                    "delete the config file to allow it to regenerate.",
+                    " Your configuration file was outdated.",
+                    " It has been automatically updated.",
+                    " You may notice some duplicated comments or other minor inconsistencies,",
+                    " if these annoy you, you may remove the duplicate comments OR",
+                    " delete the config file to allow it to regenerate.",
                     "",
-                    "The below value is how many times automatic updates have been applied",
-                    "since you last cleaned this file.",
-                    "----------- End Important! -----------"
+                    " The below value is how many times automatic updates have been applied",
+                    " since you last cleaned this file.",
+                    " ----------- End Important! -----------"
             )));
             fileSection.setRootData("times_changed", data);
             return fileSection.savetoString();
