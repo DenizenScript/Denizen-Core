@@ -1,4 +1,4 @@
-<!-- Denizen build file -->
+<!-- DenizenCore build file -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,7 +7,7 @@
     <groupId>net.aufdemrand</groupId>
     <artifactId>denizencore</artifactId>
     <packaging>jar</packaging>
-    <version>1.30</version>
+    <version>1.40</version>
     <name>DenizenCore</name>
     <description>A powerful scripting engine for games</description>
 
@@ -18,12 +18,17 @@
 
     <!-- Repositories -->
     <repositories>
-		<repository>
-			<id>Sonatype-public</id>
-			<name>SnakeYAML repository</name>
-			<url>http://repo1.maven.org/maven2/</url>
-			<!-- <url>http://oss.sonatype.org/content/groups/public/</url> -->
-		</repository>
+        <repository>
+            <id>Sonatype-public</id>
+            <name>SnakeYAML repository</name>
+            <url>http://repo1.maven.org/maven2/</url>
+            <!-- <url>http://oss.sonatype.org/content/groups/public/</url> -->
+        </repository>
+        <repository>
+            <id>FreneticLLC-public</id>
+            <name>FreneticLLC Maven Server</name>
+            <url>https://maven.freneticllc.com/</url>
+        </repository>
     </repositories>
 
     <!-- Dependencies -->
@@ -38,6 +43,12 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.14</version>
+        </dependency>
+        <dependency>
+            <groupId>com.freneticllc.freneticutilities</groupId>
+            <artifactId>freneticdatasyntax</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -60,7 +71,7 @@
             </resource>
         </resources>
         <plugins>
-			<!--
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -76,6 +87,27 @@
                 </configuration>
             </plugin>
             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>false</minimizeJar>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.freneticllc.freneticutilities:freneticdatasyntax</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
