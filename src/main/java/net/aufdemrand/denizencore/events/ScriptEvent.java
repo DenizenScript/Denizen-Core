@@ -384,6 +384,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
+    // <--[language]
+    // @name script event special contexts
+    // @description
+    // Every modern ScriptEvent has some special context tags available.
+    // The most noteworthy is "context.cancelled", which tracks whether the script event has been cancelled.
+    // You can also use "context.event_header", which returns the exact event header text that fired (which may be useful for some types of dynamic script).
+    // That returns, for example, "on player breaks stone".
+    // You can also use "context.event_name", which returns the internal name of the script event that fired (which may be useful for some debugging techniques).
+    // That returns, for example, "PlayerBreaksBlock".
+    // -->
+
     @Override
     public dObject getContext(String name) {
         if (name.equals("cancelled")) {
@@ -391,6 +402,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         else if (name.equals("event_header")) {
             return new Element(currentEvent);
+        }
+        else if (name.equals("event_name")) {
+            return new Element(getName());
         }
         return null;
     }
