@@ -205,8 +205,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 return false;
             }
         }
-        if (path.switch_ignoreCancelled != null && !path.switch_ignoreCancelled && sEvent.cancelled) {
-            return false;
+        else if (path.switch_ignoreCancelled != null) {
+            if (!path.switch_ignoreCancelled && sEvent.cancelled) {
+                return false;
+            }
+        }
+        else { // No cancelled status switches given
+            if (sEvent.cancelled) {
+                return false;
+            }
         }
         return sEvent.matches(path);
     }
