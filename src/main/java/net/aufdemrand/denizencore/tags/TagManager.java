@@ -29,6 +29,8 @@ public class TagManager {
 
     public void registerCoreTags() {
         // Objects
+        new DurationTags();
+        new ElementTags();
         new ListTags();
         new QueueTags();
         new ScriptTags();

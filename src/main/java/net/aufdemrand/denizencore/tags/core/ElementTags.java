@@ -1,43 +1,35 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.TagRunnable;
-import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-public class ListTags {
+public class ElementTags {
 
-    public ListTags() {
+    public ElementTags() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
-                listTags(event);
+                elementTags(event);
             }
-        }, "list");
+        }, "element");
     }
 
-    public void listTags(ReplaceableTagEvent event) {
+    public void elementTags(ReplaceableTagEvent event) {
 
-        if (!event.matches("list") || event.replaced()) {
+        if (!event.matches("element") || event.replaced()) {
             return;
         }
 
-        dList list = null;
-
-        if (event.hasNameContext()) {
-            list = dList.valueOf(event.getNameContext());
-        }
-
-        // Check if list is null, return null if it is
-        if (list == null) {
+        if (!event.hasNameContext()) {
             return;
         }
 
-        // Build and fill attributes
         Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(new Element(event.getNameContext()), attribute.fulfill(1)));
 
     }
 }

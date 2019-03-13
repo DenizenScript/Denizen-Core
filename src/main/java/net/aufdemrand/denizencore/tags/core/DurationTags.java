@@ -1,43 +1,41 @@
 package net.aufdemrand.denizencore.tags.core;
 
+import net.aufdemrand.denizencore.objects.Duration;
 import net.aufdemrand.denizencore.objects.TagRunnable;
-import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 
-public class ListTags {
+public class DurationTags {
 
-    public ListTags() {
+    public DurationTags() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
-                listTags(event);
+                durationTags(event);
             }
-        }, "list");
+        }, "duration");
     }
 
-    public void listTags(ReplaceableTagEvent event) {
+    public void durationTags(ReplaceableTagEvent event) {
 
-        if (!event.matches("list") || event.replaced()) {
+        if (!event.matches("duration") || event.replaced()) {
             return;
         }
 
-        dList list = null;
+        Duration duration = null;
 
         if (event.hasNameContext()) {
-            list = dList.valueOf(event.getNameContext());
+            duration = Duration.valueOf(event.getNameContext());
         }
 
-        // Check if list is null, return null if it is
-        if (list == null) {
+        if (duration == null) {
             return;
         }
 
-        // Build and fill attributes
         Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(duration, attribute.fulfill(1)));
 
     }
 }
