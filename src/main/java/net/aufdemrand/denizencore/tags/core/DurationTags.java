@@ -27,7 +27,7 @@ public class DurationTags {
         Duration duration = null;
 
         if (event.hasNameContext()) {
-            duration = Duration.valueOf(event.getNameContext());
+            duration = Duration.valueOf(event.getNameContext(), event.getAttributes().context);
         }
 
         if (duration == null) {

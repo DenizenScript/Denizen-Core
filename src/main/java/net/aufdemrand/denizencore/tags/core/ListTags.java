@@ -27,7 +27,7 @@ public class ListTags {
         dList list = null;
 
         if (event.hasNameContext()) {
-            list = dList.valueOf(event.getNameContext());
+            list = dList.valueOf(event.getNameContext(), event.getAttributes().context);
         }
 
         // Check if list is null, return null if it is

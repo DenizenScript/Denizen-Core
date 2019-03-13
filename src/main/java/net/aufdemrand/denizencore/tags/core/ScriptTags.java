@@ -38,7 +38,7 @@ public class ScriptTags {
         // Check name context for a specified script, or check
         // the ScriptEntry for a 'script' context
         if (event.hasNameContext() && dScript.matches(event.getNameContext())) {
-            script = dScript.valueOf(event.getNameContext());
+            script = dScript.valueOf(event.getNameContext(), event.getAttributes().context);
         }
         else if (event.getScript() != null) {
             script = event.getScript();
