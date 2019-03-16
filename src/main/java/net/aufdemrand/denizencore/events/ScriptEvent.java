@@ -76,6 +76,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public HashMap<String, String> switches = new HashMap<>();
         public String[] eventArgs;
         public String[] eventArgsLower;
+        public String[] rawEventArgs;
+
+        public String rawEventArgAt(int index) {
+            return index < rawEventArgs.length ? rawEventArgs[index] : "";
+        }
 
         public String eventArgAt(int index) {
             return index < eventArgs.length ? eventArgs[index] : "";
@@ -113,6 +118,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
         public ScriptPath(ScriptContainer container, String event) {
             this.event = event;
+            rawEventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
             this.container = container;
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {

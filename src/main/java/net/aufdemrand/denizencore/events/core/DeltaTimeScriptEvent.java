@@ -40,7 +40,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
     }
 
     public boolean matches(ScriptPath path) {
-        String time = path.eventArgLowerAt(2);
+        String time = path.rawEventArgAt(2);
         long seconds = DenizenCore.serverTimeMillis / 1000;
         String countString = path.switches.get("every");
         int count = countString == null ? 1 : aH.getIntegerFrom(countString);

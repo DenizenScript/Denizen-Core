@@ -57,7 +57,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     @Override
     public boolean matches(ScriptPath path) {
-        String time = path.eventArgLowerAt(2);
+        String time = path.rawEventArgAt(2);
         String countString = path.switches.get("every");
         int count = countString == null ? 1 : aH.getIntegerFrom(countString);
         if (time.equals("secondly")) {
