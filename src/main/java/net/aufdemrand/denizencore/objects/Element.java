@@ -2219,6 +2219,81 @@ public class Element implements dObject, dObject.ObjectAttributable {
         });
 
         // <--[tag]
+        // @attribute <el@element.round_to_precision[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Rounds a decimal to the specified precision.
+        // -->
+        registerTag("round_to_precision", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag el@element.round_to_precision[...] must have a value.");
+                    return null;
+                }
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                double precision = attribute.getDoubleContext(1);
+                return new Element(((double) Math.round(ele.asDouble() / precision)) * precision)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.round_down_to_precision[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Rounds a decimal downward to the specified precision.
+        // -->
+        registerTag("round_down_to_precision", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag el@element.round_down_to_precision[...] must have a value.");
+                    return null;
+                }
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                double precision = attribute.getDoubleContext(1);
+                return new Element(Math.floor(ele.asDouble() / precision) * precision)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <el@element.round_up_to_precision[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Rounds a decimal upward to the specified precision.
+        // -->
+        registerTag("round_up_to_precision", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag el@element.round_up_to_precision[...] must have a value.");
+                    return null;
+                }
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                double precision = attribute.getDoubleContext(1);
+                return new Element(Math.ceil(ele.asDouble() / precision) * precision)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <el@element.base64_encode>
         // @returns Element
         // @group conversion
