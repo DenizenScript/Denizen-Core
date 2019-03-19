@@ -50,9 +50,13 @@ import java.util.regex.Pattern;
 
 public class Element implements dObject, dObject.ObjectAttributable {
 
+    @Deprecated
     public final static Element TRUE = new Element(Boolean.TRUE);
+    @Deprecated
     public final static Element FALSE = new Element(Boolean.FALSE);
+    @Deprecated
     public final static Element SERVER = new Element("server");
+    @Deprecated
     public final static Element NULL = new Element("null");
 
     final static Pattern VALUE_PATTERN =
@@ -747,10 +751,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 dList list = dList.valueOf(attribute.getContext(1));
                 for (String list_element : list) {
                     if (element.contains(list_element)) {
-                        return Element.TRUE.getObjectAttribute(attribute.fulfill(1));
+                        return new Element(true).getObjectAttribute(attribute.fulfill(1));
                     }
                 }
-                return Element.FALSE.getObjectAttribute(attribute.fulfill(1));
+                return new Element(false).getObjectAttribute(attribute.fulfill(1));
             }
         });
         TagRunnable.ObjectForm r = registeredObjectTags.get("contains_any_case_sensitive").clone();
@@ -772,10 +776,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 String ellow = CoreUtilities.toLowerCase(element);
                 for (String list_element : list) {
                     if (ellow.contains(list_element)) {
-                        return Element.TRUE.getObjectAttribute(attribute.fulfill(1));
+                        return new Element(true).getObjectAttribute(attribute.fulfill(1));
                     }
                 }
-                return Element.FALSE.getObjectAttribute(attribute.fulfill(1));
+                return new Element(false).getObjectAttribute(attribute.fulfill(1));
             }
         });
         r = registeredObjectTags.get("contains_any").clone();
