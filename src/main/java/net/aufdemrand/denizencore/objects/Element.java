@@ -2009,6 +2009,31 @@ public class Element implements dObject, dObject.ObjectAttributable {
         });
 
         // <--[tag]
+        // @attribute <el@element.atan2[<#.#>]>
+        // @returns Element(Decimal)
+        // @group math
+        // @description
+        // Interprets the element to be a Y value and the input value to be an X value (meaning: <Y.atan2[X]>),
+        // and returns an angle representing the vector of (X,Y).
+        // -->
+        registerTag("atan2", new TagRunnable.ObjectForm() {
+            @Override
+            public dObject run(Attribute attribute, dObject object) {
+                if (!attribute.hasContext(1)) {
+                    dB.echoError("The tag el@element.atan2[...] must have a value.");
+                    return null;
+                }
+                Element ele = (Element) object;
+                if (!ele.isDouble()) {
+                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    return null;
+                }
+                return new Element(Math.atan2(ele.asDouble(), attribute.getDoubleContext(1)))
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <el@element.cos>
         // @returns Element(Decimal)
         // @group math
@@ -2149,36 +2174,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
         });
 
         // <--[tag]
-        // @attribute <el@element.atan2[<#.#>]>
-        // @returns Element(Decimal)
-        // @group math
-        // @description
-        // Interprets the element to be a Y value and the input value to be an X value (meaning: <Y.atan2[X]>),
-        // and returns an angle representing the vector of (X,Y).
-        // -->
-        registerTag("atan2", new TagRunnable.ObjectForm() {
-            @Override
-            public dObject run(Attribute attribute, dObject object) {
-                if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.atan2[...] must have a value.");
-                    return null;
-                }
-                Element ele = (Element) object;
-                if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
-                    return null;
-                }
-                return new Element(Math.atan2(ele.asDouble(), attribute.getDoubleContext(1)))
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
         // @attribute <el@element.round_to[<#>]>
         // @returns Element(Decimal)
         // @group math
         // @description
         // Rounds a decimal to the specified place.
+        // For example, 0.12345 .round_to[3] returns "0.123".
         // -->
         registerTag("round_to", new TagRunnable.ObjectForm() {
             @Override
@@ -2224,6 +2225,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @group math
         // @description
         // Rounds a decimal to the specified precision.
+        // For example, 0.12345 .round_to_precision[0.005] returns "0.125".
         // -->
         registerTag("round_to_precision", new TagRunnable.ObjectForm() {
             @Override
