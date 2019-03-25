@@ -2504,6 +2504,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns a list of portions of this element, split by the specified string,
         // and capped at the specified number of max list items.
+        // If a split string is unspecified, splits by space.
         // -->
         if (attribute.startsWith("split") && attribute.startsWith("limit", 2)) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
@@ -2524,6 +2525,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @group string manipulation
         // @description
         // Returns a list of portions of this element, split by the specified string.
+        // If a split string is unspecified, splits by space.
         // -->
         if (attribute.startsWith("split")) {
             String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
