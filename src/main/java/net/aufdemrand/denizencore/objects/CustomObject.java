@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.objects;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
 import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
@@ -134,7 +135,8 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
             String taggo = attribute.getAttributeWithoutContext(1);
             if (container.hasPath("tags." + taggo)) {
                 long ID = container.runTagScript(taggo, attribute.getContextObject(1), this,
-                        attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData : null);
+                        attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
+                                DenizenCore.getImplementation().getEmptyScriptEntryData());
                 dList outcomes = DetermineCommand.getOutcome(ID);
                 if (outcomes == null) {
                     return null;
