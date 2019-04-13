@@ -446,4 +446,42 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         return null;
     }
+
+    // <--[language]
+    // @name Advanced Script Event Matching
+    // @group Script Events
+    // @description
+    // Script event lines often include specific 'matchable' keywords.
+    // For example, while you can write "on player breaks block:" as a script event line,
+    // you can also instead write "on player breaks stone:" to listen to a much more specific event.
+    // This is general in-line matching.
+    // This is made available to avoid needing to do things like "- if <context.material.name> == stone"
+    // just to validate whether an event is even relevant to you.
+    //
+    // Of course, there are times when you want to more than one specific thing to be handled by the event, so what do you do?
+    // The Denizen script event system provides a few 'advanced' options to get more detailed matching.
+    //
+    // One option is to use wildcards.
+    // For example, there are several 'log' materials, such as 'oak_log', 'birch_log', and more for the rest of the tree types.
+    // So how can you match a player breaking any of these? Use "on player breaks *_log:"
+    // The asterisk is a generic wildcard, it means any text at all will match. So an asterisk followed by '_log' means
+    // any material at all that has a name ending with '_log', including 'birch_log' and the rest.
+    //
+    // You can also specify lists. For example, if you want an event to work with certain tool types,
+    // the 'on player breaks block:' event supports a switch named 'with', like 'on player breaks block with:iron_pickaxe:'
+    // So lets match multiple tools for our event...
+    // 'on player breaks block with:iron_pickaxe|gold_pickaxe|diamond_axe|wood_shovel:'
+    //
+    // You can also combine wildcards and lists... note that lists are the 'wider' option.
+    // That is, if you have wildcards and lists together, you will have a list of possible matches, where each entry
+    // may contain wildcards. You do not have a a wildcard match with a list.
+    // As a specific example,
+    // '*_pickaxe|*_axe' will match any pickaxe or any axe.
+    // '*_pickaxe|stone' will match any pickaxe or specifically stone. It will NOT match other types of stone, as it interprets
+    // the match to be a list of "*_pickaxe" and "stone", NOT "*" followed by a list of "pickaxe" or "stone".
+    //
+    // Additionally, when you're really deseparate for a good matcher, you may use 'regex:'
+    // For example, "on player breaks regex:(?i)\d+_customitem:"
+    // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance.
+    // -->
 }

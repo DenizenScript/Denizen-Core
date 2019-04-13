@@ -37,19 +37,50 @@ public class dScript implements dObject, Adjustable {
     // <--[language]
     // @name dScript
     // @group Denizen Scripting Language
+    // @description
+    // The overall 'scripting language' that Denizen implements is referred to as 'dScripting', or 'dScript'.
+    // dScripts use a YAML-styled layout + Denizen's Scripting API to parse scripts that are stored as .yml files. Scripts
+    // go in the .../plugins/Denizen/scripts folder.
+    //
+    // -->
+
+    // <--[language]
+    // @name Script Syntax
+    // @group Denizen Scripting Language
+    // @description
+    // The syntax of Denizen is broken into multiple abstraction layers.
+    //
+    // At the highest level, Denizen scripts are stored in YAML-like files, which use the '.yml' suffix but do not
+    // fully conform to the YAML specification. In particular, there are several changes made to support looser syntax rules
+    // and avoid some of the issues that would result from writing code directly into a plain YAML file.
+    //
+    // Within those YAML files are 'script containers', which is the actual unit of separating individual scripts apart.
+    // (Whereas putting containers across different files results in no actual difference - file and folder separation
+    // is purely for your own organization, and doesn't matter to the Denizen parser).
+    // Each script container has a 'type' such as 'task' or 'world' that defines how it functions.
+    //
+    // Within a script container are individual script paths, such as 'script:' in a 'task' script container,
+    // or 'on player breaks block:' which might be found within the 'events:' section of a 'world' script container.
+    // These paths are the points that might actually be executed at any given time.
+    // When a path is executed, a 'script queue' is formed to process the contents of that script path.
+    //
+    // Within any script path is a list of 'script entries', which are the commands to be executed.
+    // These can be raw commands themselves (like 'narrate') with their arguments, or commands that contain
+    // additional commands within their entry (as 'if' and 'foreach' for example both do).
+    //
+    // -->
+
+    // <--[language]
+    // @name dScript Objects
     // @group Object System
     // @description
-    // 1) A dObject that represents a script container. dScripts contain all information inside the script, and can be
+    // A dObject that represents a script container. dScripts contain all information inside the script, and can be
     // used in a variety of commands that require script arguments. For example, run and inject will 'execute'
     // script entries inside of a script container when given a matching dScript object.
     //
     // dScripts also provide a way to access attributes accessed by the replaceable tag system by using the object
     // fetcher or any other entry point to a dScript object. dScript objects have the object identifier of 's@'.
     // For example: s@script_name
-    //
-    // 2) The overall 'scripting language' that Denizen implements is referred to as 'dScripting', or 'dScript'.
-    // dScripts use YAML + Denizen's Scripting API to parse scripts that are stored as .yml or .dscript files. Scripts
-    // go in the .../plugins/Denizen/scripts folder.
     //
     // -->
 

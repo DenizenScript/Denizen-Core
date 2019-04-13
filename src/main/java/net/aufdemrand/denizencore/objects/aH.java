@@ -31,10 +31,12 @@ public class aH {
     // @name Number and Decimal
     // @group Common Terminology
     // @description
-    // Many arguments in Denizen require the use of a 'number', or 'double'. Sometimes referred to as #.# or <number>,
-    // this kind of hint can generally be filled with any reasonable positive or negative number with or without a
-    // decimal point. Numbers can be verified with the 'if' commands' 'matches' functionality.
-    // For example: - if <number> matches double ... will return true if <number> is a valid number.
+    // Many arguments in Denizen require the use of a 'number', or 'decimal'. Sometimes shorthanded to '#' or '#.#',
+    // this kind of input can generally be filled with any reasonable positive or negative number.
+    // 'decimal' inputs allow (but don't require) a decimal point in the number.
+    // 'number' inputs will be rounded, so avoided a decimal point is better. For example, '3.1' will be interpreted as just '3'.
+    // Numbers can be verified with the 'if' commands' 'matches' functionality.
+    // For example: "- if <number> matches number" ... will return true if <number> is a valid number.
     // -->
     final static Pattern doublePrimitive = floatPrimitive;
 
@@ -45,11 +47,16 @@ public class aH {
     // Promotes the usage of a 'percentage' format to be used in applicable arguments. The 'percentage' in Denizen is
     // much like the 'number', except arguments which utilize percentages instead of numbers can also include a %.
     // Percentage arguments can generally be filled with any reasonable positive or negative number with or without a
-    // decimal point and/or percentage sign. Argument hints and other usages will typically refer to a percentage as
+    // decimal point and/or percentage sign. Arguments and other usages will typically refer to a percentage as
     // #.#% or <percentage>. Percentages can be verified with the 'if' commands' 'matches' functionality.
     // For example: - if <percentage> matches percentage ... will return true if <percentage> is a valid percentage.
     //
-    // Denizen uses the regular expression pattern -?(?:\d+)?(\.\d+)?(%)? for percentage matching.
+    // Generally it's best to not include the '%' symbol, and some percentage inputs will actually not accept a '%'.
+    //
+    // While most things explicitly labeled as being a percentage scale from zero to one hundred (0 - 100)
+    // others may go from zero to one (0.0 - 1.0).
+    // To translate between the two formats, you only need to multiply or divide by one hundred (100).
+    //
     // -->
     final static Pattern percentagePrimitive =
             Pattern.compile("-?(?:\\d+)?(\\.\\d+)?(%)?");
