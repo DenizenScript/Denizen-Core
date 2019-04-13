@@ -33,13 +33,6 @@ public class Duration implements dObject {
     // See 'd@duration' tags for an explanation of duration attributes.
     // -->
 
-    // <--[language]
-    // @name Tick
-    // @description
-    // A 'tick' is usually referred to as 1/20th of a second, the speed at which CraftBukkit updates
-    // its various server events.
-    // -->
-
 
     /////////////////////
     //   STATIC METHODS AND FIELDS

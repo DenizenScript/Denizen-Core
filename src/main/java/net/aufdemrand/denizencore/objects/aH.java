@@ -28,7 +28,8 @@ public class aH {
             Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
 
     // <--[language]
-    // @name number
+    // @name Number and Decimal
+    // @group Common Terminology
     // @description
     // Many arguments in Denizen require the use of a 'number', or 'double'. Sometimes referred to as #.# or <number>,
     // this kind of hint can generally be filled with any reasonable positive or negative number with or without a
@@ -38,7 +39,8 @@ public class aH {
     final static Pattern doublePrimitive = floatPrimitive;
 
     // <--[language]
-    // @name percentage
+    // @name Percentage
+    // @group Common Terminology
     // @description
     // Promotes the usage of a 'percentage' format to be used in applicable arguments. The 'percentage' in Denizen is
     // much like the 'number', except arguments which utilize percentages instead of numbers can also include a %.

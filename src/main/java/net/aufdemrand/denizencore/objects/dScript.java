@@ -19,6 +19,7 @@ public class dScript implements dObject, Adjustable {
 
     // <--[language]
     // @name Script
+    // @group Denizen Scripting Language
     // @description
     // A somewhat vague term used to describe a collection of script entries and other script parts.
     //
@@ -35,6 +36,7 @@ public class dScript implements dObject, Adjustable {
 
     // <--[language]
     // @name dScript
+    // @group Denizen Scripting Language
     // @group Object System
     // @description
     // 1) A dObject that represents a script container. dScripts contain all information inside the script, and can be

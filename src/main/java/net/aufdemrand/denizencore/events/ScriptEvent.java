@@ -22,6 +22,7 @@ import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public abstract class ScriptEvent implements ContextSource, Cloneable {
 
@@ -91,7 +92,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
 
         // <--[language]
-        // @name script event switches
+        // @name Script Event Switches
+        // @group Script Events
         // @description
         // Modern script events support the concept of 'switches'.
         // A switch is a specification of additional requirements in an event line other than what's in the event label it.
@@ -108,6 +110,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // clear/readable to the average user, so it is not often used.
         // Some events may have switches for less-often specified data, and use the event line for other options.
         // -->
+
         public boolean checkSwitch(String key, String value) {
             String pathValue = switches.get(key);
             if (pathValue == null) {
@@ -191,7 +194,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     // <--[language]
-    // @name script event cancellation
+    // @name Script Event Cancellation
+    // @group Script Events
     // @description
     // Any modern ScriptEvent can take a "cancelled:<true/false>" argument and a "ignorecancelled:true" argument.
     // For example: "on object does something ignorecancelled:true:"
@@ -205,6 +209,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // and, in some cases, can be used to stop the event itself from continuing.
     // A script event can at any time check the cancellation state of an event by accessing "<context.cancelled>".
     // -->
+
     public static boolean matchesScript(ScriptEvent sEvent, ScriptPath path) {
         if (path.switch_cancelled != null) {
             if (path.switch_cancelled != sEvent.cancelled) {
@@ -233,7 +238,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public boolean cancelled = false;
 
     // <--[language]
-    // @name script event priority
+    // @name Script Event Priority
+    // @group Script Events
     // @description
     // Any modern ScriptEvent can take a "priority:#" argument.
     // For example: "on object does something priority:3:"
@@ -416,7 +422,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     // <--[language]
-    // @name script event special contexts
+    // @name Script Event Special Contexts
+    // @group Script Events
     // @description
     // Every modern ScriptEvent has some special context tags available.
     // The most noteworthy is "context.cancelled", which tracks whether the script event has been cancelled.
