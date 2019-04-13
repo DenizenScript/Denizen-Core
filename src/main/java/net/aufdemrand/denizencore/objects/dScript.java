@@ -98,7 +98,6 @@ public class dScript implements dObject, Adjustable {
     // would be able to be referenced (fetched) with s@cool_script.
     // -->
 
-
     public static dScript valueOf(String string) {
         return valueOf(string, null);
     }
