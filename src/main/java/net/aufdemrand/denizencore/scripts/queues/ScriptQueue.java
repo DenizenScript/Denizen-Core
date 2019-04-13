@@ -30,6 +30,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider, Adjustable {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
 
+    // <--[language]
+    // @name ScriptQueue
+    // @group Object System
+    // @description
+    // A ScriptQueue is a single currently running set of script commands.
+    // This is not to be confused with a script path, which is a single set of script commands that can be run.
+    // There can be one, multiple, or zero queues running at any time for any given path.
+    //
+    // -->
+
+    // <--[language]
+    // @name q@
+    // @group Object Fetcher System
+    // @description
+    // q@ refers to the 'object identifier' of a ScriptQueue. The 'q@' is notation for Denizen's Object
+    // Fetcher. The constructor for a ScriptQueue is the queue ID.
+    //
+    // -->
+
     protected static long total_queues = 0;
 
 
