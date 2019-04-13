@@ -23,7 +23,7 @@ public class Duration implements dObject {
     // Many commands and features that require a duration can be satisfied by specifying a number
     // and unit of time, especially command arguments that are prefixed 'duration:', etc. The d@
     // object fetcher notation can also be used, and is encouraged. The unit of time can be specified
-    // by using one of the following: T=ticks, M=minutes, S=seconds, H=hours, D=days, W = Weeks.
+    // by using one of the following: T=ticks, M=minutes, S=seconds, H=hours, D=days, W=Weeks.
     // Not using a unit will imply seconds. Examples: d@10s, d@50m, d@1d, d@20.
     //
     // Specifying a range of duration will result in a randomly selected duration that is
@@ -87,13 +87,19 @@ public class Duration implements dObject {
 
             // Make sure 'low' and 'high' returned valid Durations,
             // and that 'low' is less time than 'high'.
-            if (low != null && high != null
-                    && low.getSecondsAsInt() < high.getSecondsAsInt()) {
+            if (low != null && high != null) {
+                if (high.getSecondsAsInt() < low.getSecondsAsInt()) {
+                    Duration temp = low;
+                    low = high;
+                    high = temp;
+                }
                 int seconds = CoreUtilities.getRandom()
                         .nextInt((high.getSecondsAsInt() - low.getSecondsAsInt() + 1))
                         + low.getSecondsAsInt();
-                // dB.log("Getting random duration between " + low.identify()
-                //        + " and " + high.identify() + "... " + seconds + "s");
+                if (dB.verbose) {
+                    dB.log("Getting random duration between " + low.identify()
+                            + " and " + high.identify() + "... " + seconds + "s");
+                }
 
                 return new Duration(seconds);
 
