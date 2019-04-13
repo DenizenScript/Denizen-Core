@@ -484,4 +484,54 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // For example, "on player breaks regex:(?i)\d+_customitem:"
     // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance.
     // -->
+
+    public static final HashMap<String, Pattern> knownPatterns = new HashMap<>();
+
+    public static String quotify(String input) {
+        StringBuilder output = new StringBuilder(input.length());
+        int last = 0;
+        int index = input.indexOf('*');
+        while (index >= 0) {
+            output.append(Pattern.quote(input.substring(last, index))).append("(.*)");
+            last = index + 1;
+            index = input.indexOf('*', last);
+        }
+        output.append(Pattern.quote(input.substring(last)));
+        return output.toString();
+    }
+
+    public static Pattern regexHandle(String input) {
+        Pattern result = knownPatterns.get(input);
+        if (result != null) {
+            return result;
+        }
+        String output;
+        if (input.startsWith("regex:")) {
+            output = input.substring("regex:".length());
+        }
+        else if (input.contains("|")) {
+            String[] split = input.split("\\|");
+            for (int i = 0; i < split.length; i++) {
+                split[i] = quotify(split[i]);
+            }
+            output = String.join("|", split);
+        }
+        else if (input.contains("*")) {
+            output = quotify(input);
+        }
+        else {
+            return null;
+        }
+        if (dB.verbose) {
+            dB.log("Event regex compile: " + output);
+        }
+        result = Pattern.compile(output);
+        knownPatterns.put(input, result);
+        return result;
+    }
+
+    public static boolean equalityCheck(String input, String compared, Pattern regexed) {
+        input = CoreUtilities.toLowerCase(input);
+        return input.equals(compared) || (regexed != null && regexed.matcher(input).matches());
+    }
 }
