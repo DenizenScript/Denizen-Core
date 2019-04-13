@@ -68,6 +68,19 @@ public class Element implements dObject, dObject.ObjectAttributable {
         return valueOf(string, null);
     }
 
+    // <--[language]
+    // @name el@
+    // @group Object Fetcher System
+    // @description
+    // el@ refers to the 'object identifier' of an Element. The 'el@' is notation for Denizen's Object
+    // Fetcher. The constructor for an Element is just any text.
+    //
+    // For example 'el@hello' forms an element with text 'hello'.
+    //
+    // Elements do not output with 'el@' visible. The 'el@' is only for use as a shorthanded constructor.
+    // If you need an element constructor, consider using the '<element[text here]>' tag base instead.
+    // -->
+
     /**
      * @param string the string or dScript argument String
      * @return a dScript dList

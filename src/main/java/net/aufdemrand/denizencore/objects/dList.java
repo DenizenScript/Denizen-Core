@@ -21,6 +21,29 @@ import java.util.regex.Pattern;
 
 public class dList extends ArrayList<String> implements dObject, dObject.ObjectAttributable {
 
+    // <--[language]
+    // @name dList
+    // @group Object System
+    // @description
+    // A dList is a list of any data. It can hold any number of objects in any order.
+    // The objects can be of any basic Denizen object type, including another list
+    // (escaping sub-lists is strongly recommended).
+    //
+    // -->
+
+    // <--[language]
+    // @name li@
+    // @group Object Fetcher System
+    // @description
+    // li@ refers to the 'object identifier' of a dList. The 'li@' is notation for Denizen's Object
+    // Fetcher. The constructor for a dList is the content items of a list separated by a pipe '|' symbol.
+    // For example, if I had a list of 'taco', 'potatoes', and 'cheese', I would use
+    // 'li@taco|potatoes|cheese'
+    //
+    // A list with zero items in it is simply 'li@'
+    // and a list with one item is just the one item and no pipes.
+    // -->
+
     public final ArrayList<dObject> objectForms;
 
     @Override

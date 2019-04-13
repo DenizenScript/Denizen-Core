@@ -15,6 +15,26 @@ import java.util.regex.Matcher;
 
 public class CustomObject implements dObject, dObject.ObjectAttributable, Adjustable {
 
+    // <--[language]
+    // @name Custom Objects
+    // @group Object System
+    // @description
+    // Custom objects are custom object types. They use a script basis to create an object
+    // similar to the base object types (dLists, dPlayers, etc).
+    //
+    // Usage of these should generally be avoided, as they can be considered 'over-engineering'...
+    // That is, using a very complicated solution to solve a problem that can be solved much more simply.
+    //
+    // -->
+
+    // <--[language]
+    // @name custom@
+    // @group Object Fetcher System
+    // @description
+    // custom@ refers to the 'object identifier' of a Custom Object. The 'custom@' is notation for Denizen's Object
+    // Fetcher. The constructor for an Custom Object is the name of the custom script, with any relevant properties specified.
+    // -->
+
     @Fetchable("custom")
     public static CustomObject valueOf(String string, TagContext context) {
         Matcher m;
