@@ -1,5 +1,6 @@
 package net.aufdemrand.denizencore.scripts.containers;
 
+import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.dScript;
 import net.aufdemrand.denizencore.scripts.*;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
@@ -261,7 +262,12 @@ public class ScriptContainer implements Debuggable {
     @Override
     public boolean shouldDebug() {
         if (shouldDebug == null) {
-            shouldDebug = (!(contents.contains("debug") && contents.getString("debug").equalsIgnoreCase("false")));
+            if (!contents.contains("debug")) {
+                shouldDebug = DenizenCore.getImplementation().getDefaultDebugMode();
+            }
+            else {
+                shouldDebug = !contents.getString("debug").equalsIgnoreCase("false");
+            }
         }
         return shouldDebug;
     }

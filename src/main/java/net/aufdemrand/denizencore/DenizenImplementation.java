@@ -154,4 +154,6 @@ public interface DenizenImplementation {
     public abstract void debugTagFill(Debuggable entry, String tag, String result);
 
     public abstract boolean tagTimeoutWhenSilent();
+
+    public abstract boolean getDefaultDebugMode();
 }
