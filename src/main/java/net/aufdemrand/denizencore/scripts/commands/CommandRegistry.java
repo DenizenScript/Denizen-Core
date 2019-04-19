@@ -436,6 +436,30 @@ public abstract class CommandRegistry implements dRegistry {
         // -->
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
 
+
+        // <--[command]
+        // @Name Reload
+        // @Syntax reload
+        // @Required 0
+        // @Short Reloads all Denizen scripts. Primarily for use as an in-game command.
+        // @Group core
+
+        // @Description
+        // Reloads all Denizen scripts.
+        // Primarily for use as an in-game command, like "/ex reload".
+
+        // @Tags
+        // None
+
+        // @Usage
+        // Use to reload scripts automatically
+        // - reload
+
+        // -->
+        registerCoreMember(ReloadCommand.class,
+                "reload", "reload", 0);
+
+
         // <--[command]
         // @Name Sync
         // @Syntax sync [<commands>]
@@ -459,6 +483,7 @@ public abstract class CommandRegistry implements dRegistry {
         // -->
         registerCoreMember(SyncCommand.class,
                 "sync", "sync [<commands>]", 0);
+
 
         // <--[command]
         // @Name Webget
