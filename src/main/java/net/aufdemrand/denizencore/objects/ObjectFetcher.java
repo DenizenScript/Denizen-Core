@@ -7,6 +7,10 @@ import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 import java.io.IOException;
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -14,12 +18,23 @@ import java.util.regex.Pattern;
 
 public class ObjectFetcher {
 
+    @FunctionalInterface
+    public interface MatchesInterface {
+
+        boolean matches(String str);
+    }
+
+    public interface ValueOfInterface {
+
+        dObject valueOf(String str, TagContext context);
+    }
+
     // Keep track of each Class keyed by its 'object identifier' --> i@, e@, etc.
     private static Map<String, Class> objects = new HashMap<>();
 
     // Keep track of the static 'matches' and 'valueOf' methods for each dObject
-    static Map<Class, Method> matches = new WeakHashMap<>();
-    static Map<Class, Method> valueof = new WeakHashMap<>();
+    static Map<Class, MatchesInterface> matches = new HashMap<>();
+    static Map<Class, ValueOfInterface> valueof = new HashMap<>();
 
     public static void _initialize() throws IOException, ClassNotFoundException {
 
@@ -70,15 +85,49 @@ public class ObjectFetcher {
 
     private static ArrayList<Class> fetchable_objects = new ArrayList<>();
 
+    public static MatchesInterface getMatchesFor(Class clazz) {
+
+        try {
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(lookup, "matches", // MatchesInterface#matches
+                    MethodType.methodType(MatchesInterface.class), // Signature of invoke method
+                    MethodType.methodType(Boolean.class, String.class).unwrap(), // signature of MatchesInterface#matches
+                    lookup.findStatic(clazz, "matches", MethodType.methodType(Boolean.class, String.class).unwrap()), // signature of original matches method
+                    MethodType.methodType(Boolean.class, String.class).unwrap()); // Signature of original matches again
+            return (MatchesInterface) site.getTarget().invoke();
+        }
+        catch (Throwable ex) {
+            System.err.println("Failed to get matches for " + clazz.getCanonicalName());
+            ex.printStackTrace();
+            dB.echoError(ex);
+            return null;
+        }
+    }
+
+    public static ValueOfInterface getValueOfFor(Class clazz) {
+
+        try {
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(lookup, "valueOf", // ValueOfInterface#valueOf
+                    MethodType.methodType(ValueOfInterface.class), // Signature of invoke method
+                    MethodType.methodType(dObject.class, String.class, TagContext.class), // signature of ValueOfInterface#valueOf
+                    lookup.findStatic(clazz, "valueOf", MethodType.methodType(clazz, String.class, TagContext.class)), // signature of original valueOf method
+                    MethodType.methodType(clazz, String.class, TagContext.class)); // Signature of original valueOf again
+            return (ValueOfInterface) site.getTarget().invoke();
+        }
+        catch (Throwable ex) {
+            System.err.println("Failed to get valueOf for " + clazz.getCanonicalName());
+            ex.printStackTrace();
+            dB.echoError(ex);
+            return null;
+        }
+    }
+
     public static void registerWithObjectFetcher(Class<? extends dObject> dObject) {
         try {
             fetchable_objects.add(dObject);
-            Method method_matches = dObject.getMethod("matches", String.class);
-            method_matches.setAccessible(true);
-            Method method_valueof = dObject.getMethod("valueOf", String.class, TagContext.class);
-            method_valueof.setAccessible(true);
-            matches.put(dObject, method_matches);
-            valueof.put(dObject, method_valueof);
+            matches.put(dObject, getMatchesFor(dObject));
+            valueof.put(dObject, getValueOfFor(dObject));
         }
         catch (Throwable e) {
             dB.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");
@@ -110,7 +159,7 @@ public class ObjectFetcher {
         }
         Matcher m = PROPERTIES_PATTERN.matcher(value);
         try {
-            return (Boolean) matches.get(dClass).invoke(null, m.matches() ? m.group(1) : value);
+            return matches.get(dClass).matches(m.matches() ? m.group(1) : value);
         }
         catch (Exception e) {
             dB.echoError(e);
@@ -157,7 +206,7 @@ public class ObjectFetcher {
         try {
             List<String> matches = separateProperties(value);
             boolean matched = matches != null && Adjustable.class.isAssignableFrom(dClass);
-            T gotten = (T) valueof.get(dClass).invoke(null, matched ? matches.get(0) : value, context);
+            T gotten = (T) valueof.get(dClass).valueOf(matched ? matches.get(0) : value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {
                     List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
