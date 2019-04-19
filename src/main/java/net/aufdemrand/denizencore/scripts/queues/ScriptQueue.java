@@ -21,6 +21,7 @@ import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * ScriptQueues hold/control ScriptEntries while being sent
@@ -173,6 +174,11 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     // Whether the queue should run asynchronously
     public boolean run_async = false;
+
+    /**
+     * Optional secondary debug output method.
+     */
+    public Consumer<String> debugOutput = null;
 
 
     /////////////////////
@@ -429,6 +435,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         stop();
         TimedQueue newQueue = new TimedQueue(id, 0);
         newQueue.run_async = this.run_async;
+        newQueue.debugOutput = this.debugOutput;
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
         }
