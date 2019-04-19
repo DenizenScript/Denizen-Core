@@ -19,6 +19,30 @@ import java.util.Map;
 
 public class TaskScriptContainer extends ScriptContainer {
 
+    // <--[language]
+    // @name Task Script Containers
+    // @group Script Container System
+    // @description
+    // Task script containers are generic script containers for commands that can be run at
+    // any time by command.
+    //
+    // Generally tasks will be ran by <@link command run> or <@link command inject>.
+    //
+    // The only required key on a task script container is the 'script:' key.
+    //
+    // <code>
+    // Task_Script_Name:
+    //
+    //   type: task
+    //
+    //   script:
+    //
+    //   - your commands here
+    //
+    // </code>
+    //
+    // -->
+
     public TaskScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
     }

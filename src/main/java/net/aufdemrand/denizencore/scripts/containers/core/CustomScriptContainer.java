@@ -23,6 +23,61 @@ import java.util.Map;
 
 public class CustomScriptContainer extends ScriptContainer {
 
+    // <--[language]
+    // @name Custom Script Containers
+    // @group Script Container System
+    // @description
+    // Custom script containers are used to define a template type for a custom object.
+    //
+    // Custom script containers have no required keys but several optional ones.
+    // Use 'tags' key to define scripted tags,
+    // 'mechanisms' to define scripted mechanisms,
+    // 'inherit' to define what other custom script to inherit from,
+    // and any other key name to define a default object field.
+    //
+    // <code>
+    // Custom_Script_Name:
+    //
+    //   type: custom
+    //
+    //   # Use 'inherit' to make this custom script container inherit from another custom object.
+    //   inherit: some_object
+    //
+    //   # This adds default field 'some_field' with initial value of 'some_value'.
+    //   some_field: some_value
+    //
+    //   # List additional fields here...
+    //
+    //   # Use 'tags' to define scripted tags on the object.
+    //   # Tags are subject to the same rules as procedure scripts:
+    //   # NEVER change any external state. Just determine a value. Nothing else should change from the script.
+    //   tags:
+    //
+    //     # This would be read like <def[my_object].my_tag>
+    //     my_tag:
+    //     # Perform any logic here, and 'determine' the result.
+    //     - determine 3
+    //
+    //     # list additional tags here...
+    //
+    //   # Use 'mechanisms' to define scripted mechanisms on the object.
+    //   # Note that these should only ever determine a new object,
+    //   # with NO CHANGES AT ALL outside the replacement determined object.
+    //   # (Same rules as tags and procedure scripts).
+    //   mechanisms:
+    //
+    //     # This would be used like custom@Custom_Script_Name[my_mech=3]
+    //     my_mech:
+    //     - adjust <context.this> true_value:<context.value.mul[2]> save:new_val
+    //     - determine <entry[new_val].result>
+    //
+    //     # list additional mechanisms here...
+    //
+    //
+    // </code>
+    //
+    // -->
+
     public HashMap<String, String> defaultVars = new HashMap<>();
 
     public HashMap<String, dObject> getVars() {
