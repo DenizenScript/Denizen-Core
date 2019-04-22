@@ -185,6 +185,41 @@ public class UtilTags {
         }
 
         // <--[tag]
+        // @attribute <util.time_at[<year>/<month>/<day> (<hour>:<minute>:<second>(:<millisecond>))]>
+        // @returns Duration
+        // @description
+        // Returns the Duration time object for the input date/time.
+        // Specify input as y/m/d, or as y/m/d h:m:s, or as y/m/d h:m:s:ms
+        // All input values must be numbers (including the month, as a number from 1 to 12).
+        // Note that unspecified hour:minute:second will be handled as 00:00:00
+        // Note that 00:00:00 is midnight, the morning of the date given.
+        // Day is day of month (from 1 to 28-31 depending on month).
+        // Hour is hour of day, from 0 (midnight) to 23 (11 PM).
+        // Be cautious with potential inconsistencies due to time zone variation.
+        // -->
+        else if (attribute.matches("time_at") && attribute.hasContext(1)) {
+            String[] dateComponents = attribute.getContext(1).split(" ");
+            String[] ymd = dateComponents[0].split("/");
+            int year = Integer.parseInt(ymd[0]);
+            int month = Integer.parseInt(ymd[1]) - 1;
+            int day = Integer.parseInt(ymd[2]);
+            int hour = 0, minute = 0, second = 0, millisecond = 0;
+            if (dateComponents.length > 1) {
+                String[] hms = dateComponents[1].split(":");
+                hour = Integer.parseInt(hms[0]);
+                minute = Integer.parseInt(hms[1]);
+                second = Integer.parseInt(hms[2]);
+                if (hms.length > 3) {
+                    millisecond = Integer.parseInt(hms[3]);
+                }
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, day, hour, minute, second);
+            Duration result = new Duration((calendar.getTimeInMillis() + millisecond) / 1000.0);
+            event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.date>
         // @returns Element
         // @description

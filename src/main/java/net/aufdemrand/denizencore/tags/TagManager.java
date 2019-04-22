@@ -148,6 +148,7 @@ public class TagManager {
     }
 
     // INTERNAL MAPPING NOTE:
+    // 0x00: Null, reserved for special handlers
     // 0x01: <
     // 0x02: >
     // 0x04: Reserved for impl
