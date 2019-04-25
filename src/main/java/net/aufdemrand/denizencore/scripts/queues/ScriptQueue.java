@@ -39,6 +39,8 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     // This is not to be confused with a script path, which is a single set of script commands that can be run.
     // There can be one, multiple, or zero queues running at any time for any given path.
     //
+    // For format info, see <@link language q@>
+    //
     // -->
 
     // <--[language]
@@ -47,6 +49,8 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     // @description
     // q@ refers to the 'object identifier' of a ScriptQueue. The 'q@' is notation for Denizen's Object
     // Fetcher. The constructor for a ScriptQueue is the queue ID.
+    //
+    // For general info, see <@link language ScriptQueue>
     //
     // -->
 

@@ -82,6 +82,8 @@ public class dScript implements dObject, Adjustable {
     // fetcher or any other entry point to a dScript object. dScript objects have the object identifier of 's@'.
     // For example: s@script_name
     //
+    // For format info, see <@link language s@>
+    //
     // -->
 
     ///////////////
@@ -96,6 +98,8 @@ public class dScript implements dObject, Adjustable {
     // Fetcher. The only valid constructor for a dScript is the name of the script container that it should be
     // associated with. For example, if my script container is called 'cool_script', the dScript object for that script
     // would be able to be referenced (fetched) with s@cool_script.
+    //
+    // For general info, see <@link language dScript>
     // -->
 
     public static dScript valueOf(String string) {

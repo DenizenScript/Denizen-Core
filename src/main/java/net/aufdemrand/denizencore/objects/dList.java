@@ -29,6 +29,8 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     // The objects can be of any basic Denizen object type, including another list
     // (escaping sub-lists is strongly recommended).
     //
+    // For format info, see <@link language li@>
+    //
     // -->
 
     // <--[language]
@@ -42,6 +44,8 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     //
     // A list with zero items in it is simply 'li@'
     // and a list with one item is just the one item and no pipes.
+    //
+    // For general info, see <@link language dList>
     // -->
 
     public final ArrayList<dObject> objectForms;

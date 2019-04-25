@@ -47,7 +47,8 @@ public class Element implements dObject, dObject.ObjectAttributable {
     // creation of a new element. For example: <el@val[This_is_a_test.].to_uppercase>
     // will result in the value 'THIS_IS_A_TEST.' Note that while other objects often
     // return their object identifier (el@, li@, e@, etc.), elements do not.
-
+    //
+    // For format info, see <@link language el@>
     // -->
 
     @Deprecated
@@ -79,6 +80,8 @@ public class Element implements dObject, dObject.ObjectAttributable {
     //
     // Elements do not output with 'el@' visible. The 'el@' is only for use as a shorthanded constructor.
     // If you need an element constructor, consider using the '<element[text here]>' tag base instead.
+    //
+    // For general info, see <@link language Element>
     // -->
 
     /**

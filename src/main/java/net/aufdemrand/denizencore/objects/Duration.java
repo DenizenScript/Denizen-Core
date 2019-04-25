@@ -30,7 +30,7 @@ public class Duration implements dObject {
     // in between the range specified. The smaller value should be first. Examples:
     // d@10s-25s, d@1m-2m.
     //
-    // See 'd@duration' tags for an explanation of duration attributes.
+    // For format info, see <@link language d@>
     // -->
 
 
@@ -54,7 +54,8 @@ public class Duration implements dObject {
     // Fetcher. Durations must be a positive number or range of numbers followed optionally by
     // a unit of time, and prefixed by d@. Examples: d@3s, d@1d, d@10s-20s.
     //
-    // See also 'Duration'
+    //
+    // For general info, see <@link language Duration>
     // -->
 
     public static Duration valueOf(String string) {
