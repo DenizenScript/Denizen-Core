@@ -762,10 +762,15 @@ public class aH {
 
     public static long getLongFrom(String arg) {
         try {
-            return Double.valueOf(getStringFrom(arg)).longValue();
+            return Long.valueOf(arg);
         }
-        catch (NumberFormatException e) {
-            return 0;
+        catch (NumberFormatException ex) {
+            try {
+                return Double.valueOf(getStringFrom(arg)).longValue();
+            }
+            catch (NumberFormatException e) {
+                return 0;
+            }
         }
     }
 
