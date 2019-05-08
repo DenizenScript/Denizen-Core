@@ -213,7 +213,11 @@ public class CoreUtilities {
                 }
 
                 String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-                return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSCRIPT");
+                if (ext.equalsIgnoreCase("DSCRIPT")) {
+                    dB.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
+                    return true;
+                }
+                return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSC");
             }
         };
     }
