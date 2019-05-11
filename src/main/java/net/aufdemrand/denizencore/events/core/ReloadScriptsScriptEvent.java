@@ -16,7 +16,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // script reload
     //
     // @Switch haderror true|false
-    // @Switch sender player|server
     // @Switch all true|false
     //
     // @Regex ^on ((reload scripts)|(script reload))$
@@ -24,7 +23,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // @Triggers when Denizen scripts are reloaded.
     //
     // @Context
-    // <context.sender> returns an Element of the name of the sender who triggered the reload.
     // <context.all> returns an Element(Boolean) of whether 'reload -a' was used.
     // <context.haderror> returns an Element(Boolean) whether there was an error.
     //
@@ -36,14 +34,11 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     public boolean all = false;
 
-    public String sender = null;
-
     public ScriptEntryData data = null;
 
     @Override
     public void reset() {
         hadError = false;
-        sender = null;
         all = false;
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         super.reset();
@@ -62,9 +57,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
         else if (name.equals("all")) {
             return new Element(all);
         }
-        else if (name.equals("sender")) {
-            return new Element(sender);
-        }
         return super.getContext(name);
     }
 
@@ -81,7 +73,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     @Override
     public boolean matches(ScriptPath path) {
         return path.checkSwitch("haderror", hadError ? "true" : "false")
-                && path.checkSwitch("sender", sender.equalsIgnoreCase("console") ? "server" : "player")
                 && path.checkSwitch("all", all ? "true" : "false");
     }
 

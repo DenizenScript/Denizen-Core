@@ -3,6 +3,7 @@ package net.aufdemrand.denizencore;
 import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.events.core.DeltaTimeScriptEvent;
+import net.aufdemrand.denizencore.events.core.ReloadScriptsScriptEvent;
 import net.aufdemrand.denizencore.events.core.SystemTimeScriptEvent;
 import net.aufdemrand.denizencore.events.core.TickScriptEvent;
 import net.aufdemrand.denizencore.scripts.ScriptHelper;
@@ -108,6 +109,11 @@ public class DenizenCore {
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
+            ReloadScriptsScriptEvent.instance.reset();
+            ReloadScriptsScriptEvent.instance.all = true;
+            ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
+            ReloadScriptsScriptEvent.instance.data = DenizenCore.getImplementation().getEmptyScriptEntryData();
+            ReloadScriptsScriptEvent.instance.fire();
 
         }
         catch (Exception ex) {
