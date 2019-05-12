@@ -43,6 +43,10 @@ public class Attribute {
 
     private static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<>();
 
+    private static boolean isNumber(char c) {
+        return c >= '0' && c <= '9';
+    }
+
     private static AttributeComponent[] separate_attributes(String attributes) {
 
         AttributeComponent[] matchesRes = attribsLookup.get(attributes);
@@ -77,7 +81,7 @@ public class Attribute {
             }
 
             else if (chr == '.'
-                    && !(attrInp[x + 1] >= '0' && attrInp[x + 1] <= '9')
+                    && !(x > 0 && isNumber(attrInp[x + 1]) && isNumber(attrInp[x - 1]))
                     && braced == 0) {
                 x2 = x;
             }
@@ -88,6 +92,10 @@ public class Attribute {
                 x1 = x + 1;
             }
 
+        }
+
+        if (dB.verbose) {
+            dB.log("attribute splitter: '" + attributes + "' becomes: " + matches);
         }
 
         matchesRes = new AttributeComponent[matches.size()];

@@ -2051,6 +2051,24 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             }
             return otr.run(attribute, this);
         }
+
+        if (dB.verbose) {
+            dB.log("dList alternate attribute " + attrLow);
+        }
+        if (aH.matchesInteger(attrLow)) {
+            int index = aH.getIntegerFrom(attrLow);
+            if (index != 0) {
+                if (index < 1 || index > size()) {
+                    if (!attribute.hasAlternative()) {
+                        dB.echoError("dList index " + index + " is out of range");
+                    }
+                    attribute.fulfill(1);
+                    return null;
+                }
+                return getObject(index - 1).getObjectAttribute(attribute.fulfill(1));
+            }
+        }
+
         /*
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
