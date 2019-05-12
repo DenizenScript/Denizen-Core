@@ -1743,7 +1743,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the element plus a number.
         // -->
-        registerTag("add", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm addRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1764,7 +1764,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
-        });
+        };
+        registerTag("add", addRunnable.clone());
+        registerTag("+", addRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.div[<#.#>]>
@@ -1773,7 +1775,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the element divided by a number.
         // -->
-        registerTag("div", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm divRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1794,7 +1796,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
-        });
+        };
+        registerTag("div", divRunnable.clone());
+        registerTag("/", divRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.mod[<#.#>]>
@@ -1803,7 +1807,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the remainder of the element divided by a number.
         // -->
-        registerTag("mod", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm modRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1818,7 +1822,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 return new Element(ele.asDouble() % (aH.getDoubleFrom(attribute.getContext(1))))
                         .getObjectAttribute(attribute.fulfill(1));
             }
-        });
+        };
+        registerTag("mod", modRunnable.clone());
+        registerTag("%", modRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.mul[<#.#>]>
@@ -1827,7 +1833,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the element multiplied by a number.
         // -->
-        registerTag("mul", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm mulRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1848,7 +1854,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
-        });
+        };
+        registerTag("mul", mulRunnable.clone());
+        registerTag("*", mulRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.sub[<#.#>]>
@@ -1857,7 +1865,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the element minus a number.
         // -->
-        registerTag("sub", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm subRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1878,7 +1886,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
-        });
+        };
+        registerTag("sub", subRunnable.clone());
+        registerTag("-", subRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.sqrt>
@@ -1951,7 +1961,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // @description
         // Returns the element to the power of a number.
         // -->
-        registerTag("power", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm powerRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1966,7 +1976,9 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 return new Element(Math.pow(ele.asDouble(), aH.getDoubleFrom(attribute.getContext(1))))
                         .getObjectAttribute(attribute.fulfill(1));
             }
-        });
+        };
+        registerTag("power", powerRunnable.clone());
+        registerTag("^", powerRunnable.clone());
 
         // <--[tag]
         // @attribute <el@element.asin>
