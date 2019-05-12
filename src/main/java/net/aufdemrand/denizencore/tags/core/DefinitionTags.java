@@ -19,7 +19,7 @@ public class DefinitionTags {
             public void run(ReplaceableTagEvent event) {
                 definitionTag(event);
             }
-        }, "definition", "def", "d");
+        }, "definition", "def", "d", "");
     }
 
 
@@ -31,7 +31,7 @@ public class DefinitionTags {
 
     public void definitionTag(ReplaceableTagEvent event) {
 
-        if (!event.matches("definition", "def", "d")) {
+        if (!event.matches("definition", "def", "d", "")) {
             return;
         }
 

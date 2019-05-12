@@ -1015,8 +1015,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
         // -->
-
-        registerTag("get", new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm getRunnable = new TagRunnable.ObjectForm() {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
@@ -1081,7 +1080,9 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 }
                 return null;
             }
-        });
+        };
+        registerTag("get", getRunnable.clone());
+        registerTag("", getRunnable.clone());
 
         // <--[tag]
         // @attribute <li@list.find_all_partial[<element>]>
