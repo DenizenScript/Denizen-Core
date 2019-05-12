@@ -15,7 +15,7 @@ public class GotoCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         // Interpret arguments
-        for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
+        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("m_name")) {
                 scriptEntry.addObject("m_name", arg.asElement());

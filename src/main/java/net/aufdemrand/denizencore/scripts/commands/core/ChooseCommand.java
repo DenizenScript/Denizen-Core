@@ -21,7 +21,7 @@ public class ChooseCommand extends BracedCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpret(scriptEntry.getArguments())) {
+        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("choice")) {
                 scriptEntry.addObject("choice", arg.asElement());
