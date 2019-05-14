@@ -145,6 +145,8 @@ public interface DenizenImplementation {
 
     public abstract void preTagExecute();
 
+    public abstract void postTagExecute();
+
     public abstract boolean needsHandleArgPrefix(String prefix);
 
     public abstract boolean shouldDebug(Debuggable debug);

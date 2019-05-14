@@ -317,33 +317,37 @@ public class TagManager {
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
 
         DenizenCore.getImplementation().preTagExecute();
-
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-
-        Future<?> future = executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                fireEvent(event);
-            }
-        });
-
-        executor.shutdown();
-
         try {
-            future.get(seconds, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException e) {
-            dB.echoError("Tag filling was interrupted!");
-        }
-        catch (ExecutionException e) {
-            dB.echoError(e);
-        }
-        catch (TimeoutException e) {
-            future.cancel(true);
-            dB.echoError("Tag filling timed out!");
-        }
+            ExecutorService executor = Executors.newFixedThreadPool(4);
 
-        executor.shutdownNow();
+            Future<?> future = executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    fireEvent(event);
+                }
+            });
+
+            executor.shutdown();
+
+            try {
+                future.get(seconds, TimeUnit.SECONDS);
+            }
+            catch (InterruptedException e) {
+                dB.echoError("Tag filling was interrupted!");
+            }
+            catch (ExecutionException e) {
+                dB.echoError(e);
+            }
+            catch (TimeoutException e) {
+                future.cancel(true);
+                dB.echoError("Tag filling timed out!");
+            }
+
+            executor.shutdownNow();
+        }
+        finally {
+            DenizenCore.getImplementation().postTagExecute();
+        }
     }
 
     public static String readSingleTag(String str, TagContext context) {
