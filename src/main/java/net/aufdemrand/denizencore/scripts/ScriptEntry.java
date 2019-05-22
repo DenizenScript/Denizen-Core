@@ -65,6 +65,14 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public List<TagManager.ParseableTagPiece> value = null;
 
         public aH.Argument aHArg = null;
+
+        public Argument duplicate() {
+            Argument newArg = new Argument();
+            newArg.prefix = prefix == null ? null : prefix.duplicate();
+            newArg.value = new ArrayList<>(value);
+            newArg.aHArg = aHArg == null ? null : aHArg.clone();
+            return newArg;
+        }
     }
 
     public List<Argument> args_cur = null;
@@ -94,8 +102,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void regenerateArgsCur() {
         args_cur = new ArrayList<>(internal.args_ref);
         for (int i : internal.processArgs) {
-            Argument arg = args_cur.get(i);
-            arg.value = new ArrayList<>(arg.value);
+            Argument arg = args_cur.get(i).duplicate();
+            args_cur.set(i, arg);
             arg.aHArg = aHArgs.get(i);
         }
     }
@@ -150,7 +158,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             argVal.value.add(piece);
         }
         else {
-            argVal.value = TagManager.genChain(arg, refContext);
+            argVal.value = TagManager.dupChain(TagManager.genChain(arg, refContext));
         }
         boolean isTag = false;
         int indStart = arg.indexOf('<');

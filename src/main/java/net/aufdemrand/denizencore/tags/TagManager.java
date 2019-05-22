@@ -395,6 +395,7 @@ public class TagManager {
     static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<>();
 
     public static class ParseableTagPiece {
+
         public String content;
 
         public dObject objResult = null;
@@ -409,6 +410,16 @@ public class TagManager {
         public String toString() {
             return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.isInstant + ", " + tagData.rawTag : "") + ", " + content + "," + objResult + ")";
         }
+
+        public ParseableTagPiece duplicate() {
+            ParseableTagPiece newPiece = new ParseableTagPiece();
+            newPiece.content = content;
+            newPiece.objResult = objResult;
+            newPiece.isTag = isTag;
+            newPiece.isError = isError;
+            newPiece.tagData = tagData;
+            return newPiece;
+        }
     }
 
     public static dObject parseChainObject(List<ParseableTagPiece> pieces, TagContext context, boolean repush) {
@@ -420,9 +431,12 @@ public class TagManager {
                 return new Element("");
             }
             ParseableTagPiece pzero = pieces.get(0);
-            if (pzero.isTag) {
+            if (pzero.isError) {
+                dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null, pzero.content);
+            }
+            else if (pzero.isTag) {
                 dObject objt = readSingleTagObject(pzero, context);
-                if (repush) {
+                if (repush && (!pzero.isTag || pzero.tagData.isInstant == context.instant)) {
                     ParseableTagPiece piece = new ParseableTagPiece();
                     piece.objResult = objt;
                     pieces.set(0, piece);
@@ -440,22 +454,20 @@ public class TagManager {
             if (p.isError) {
                 dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null, p.content);
             }
+            else if (p.isTag) {
+                dObject objt = readSingleTagObject(p, context);
+                if (repush && (!p.isTag || p.tagData.isInstant == context.instant)) {
+                    ParseableTagPiece piece = new ParseableTagPiece();
+                    piece.objResult = objt;
+                    pieces.set(i, piece);
+                }
+                helpy.append(objt.toString());
+            }
+            else if (p.objResult != null) {
+                helpy.append(p.objResult.toString());
+            }
             else {
-                if (p.isTag) {
-                    dObject objt = readSingleTagObject(p, context);
-                    if (repush) {
-                        ParseableTagPiece piece = new ParseableTagPiece();
-                        piece.objResult = objt;
-                        pieces.set(i, piece);
-                    }
-                    helpy.append(objt.toString());
-                }
-                else if (p.objResult != null) {
-                    helpy.append(p.objResult.toString());
-                }
-                else {
-                    helpy.append(p.content);
-                }
+                helpy.append(p.content);
             }
         }
         return new Element(helpy.toString());
@@ -463,6 +475,14 @@ public class TagManager {
 
     public static String tag(String arg, TagContext context) {
         return cleanOutput(tagObject(arg, context).toString());
+    }
+
+    public static List<ParseableTagPiece> dupChain(List<ParseableTagPiece> chain) {
+        List<ParseableTagPiece> newPieces = new ArrayList<>(chain.size());
+        for (TagManager.ParseableTagPiece piece : chain) {
+            newPieces.add(piece.duplicate());
+        }
+        return newPieces;
     }
 
     public static List<ParseableTagPiece> genChain(String arg, ScriptEntry entry) {

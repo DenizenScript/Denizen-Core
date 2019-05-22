@@ -78,7 +78,7 @@ public class CommandExecuter {
                     aharg.hasSpecialPrefix = false;
                     scriptEntry.aHArgs.set(argId, aharg);
                     ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
-                    argse.value = TagManager.genChain(parsed, scriptEntry);
+                    argse.value = TagManager.dupChain(TagManager.genChain(parsed, scriptEntry));
                     argse.prefix = null;
                 }
             }
