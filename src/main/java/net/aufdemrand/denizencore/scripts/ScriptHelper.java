@@ -6,13 +6,12 @@ import net.aufdemrand.denizencore.utilities.YamlConfiguration;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.text.StringHolder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Reloads and retrieves information from the scripts folder.
@@ -122,8 +121,17 @@ public class ScriptHelper {
         return result.toString();
     }
 
+    public static CharsetDecoder encoding = null;
+
     public static String convertStreamToString(InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        Scanner s;
+        if (encoding == null) {
+            s = new Scanner(is);
+        }
+        else {
+            s = new Scanner(new InputStreamReader(is, encoding));
+        }
+        s.useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
 
