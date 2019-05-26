@@ -479,9 +479,6 @@ public class aH {
         return arg_list;
     }
 
-    private static final Pattern argsRegex = Pattern.compile("[^\\s\"'¨]+|\"([^\"]*)\"|'([^']*)'|¨([^¨]*)¨");
-
-
     /**
      * Builds an arguments array, recognizing items in quotes as a single item, but
      * otherwise splitting on a space.
@@ -493,18 +490,40 @@ public class aH {
         if (stringArgs == null) {
             return null;
         }
-        java.util.List<String> matchList = new ArrayList<>();
-        Matcher regexMatcher = argsRegex.matcher(stringArgs);
-        while (regexMatcher.find()) {
-            if (regexMatcher.group(1) != null) {
-                matchList.add(regexMatcher.group(1));
+        stringArgs = stringArgs.trim();
+        ArrayList<String> matchList = new ArrayList<>();
+        int start = 0;
+        int len = stringArgs.length();
+        char currentQuote = 0;
+        for (int i = 0; i < len; i++) {
+            char c = stringArgs.charAt(i);
+            if (c == ' ' && currentQuote == 0) {
+                if (i > start + 1) {
+                    matchList.add(stringArgs.substring(start, i));
+                }
+                start = i + 1;
             }
-            else if (regexMatcher.group(2) != null) {
-                matchList.add(regexMatcher.group(2));
+            else if (c == '"' || c == '\'') {
+                if (currentQuote == 0) {
+                    if (i - 1 < 0 || stringArgs.charAt(i - 1) == ' ') {
+                        currentQuote = c;
+                        start = i + 1;
+                    }
+                }
+                else if (currentQuote == c) {
+                    if (i + 1 >= len || stringArgs.charAt(i + 1) == ' ') {
+                        currentQuote = 0;
+                        if (i > start + 1) {
+                            matchList.add(stringArgs.substring(start, i));
+                        }
+                        i++;
+                        start = i + 1;
+                    }
+                }
             }
-            else {
-                matchList.add(regexMatcher.group());
-            }
+        }
+        if (start < len) {
+            matchList.add(stringArgs.substring(start));
         }
 
         if (dB.showScriptBuilder) {
