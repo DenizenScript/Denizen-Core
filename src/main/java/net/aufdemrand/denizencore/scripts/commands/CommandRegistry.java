@@ -497,7 +497,7 @@ public abstract class CommandRegistry implements dRegistry {
         // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding. You may want to use the element.url_encode tag for this.
         // Optionally, specify a set of data to post to the server (changes the message from GET to POST).
         // Optionally specify a list of headers as list of key/value pairs separated by slashes.
-        // Optionally specify a path to save the gotten file to. This will remove the 'result' entry savedata. Path is relative to server base direction.
+        // Optionally specify a path to save the gotten file to. This will remove the 'result' entry savedata. Path is relative to server base directory.
         //
         // @Tags
         // <entry[saveName].failed> returns whether the webget failed.
