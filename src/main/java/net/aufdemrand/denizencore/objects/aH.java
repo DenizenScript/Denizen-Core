@@ -498,7 +498,7 @@ public class aH {
         for (int i = 0; i < len; i++) {
             char c = stringArgs.charAt(i);
             if (c == ' ' && currentQuote == 0) {
-                if (i > start + 1) {
+                if (i > start) {
                     matchList.add(stringArgs.substring(start, i));
                 }
                 start = i + 1;
@@ -513,7 +513,7 @@ public class aH {
                 else if (currentQuote == c) {
                     if (i + 1 >= len || stringArgs.charAt(i + 1) == ' ') {
                         currentQuote = 0;
-                        if (i > start + 1) {
+                        if (i > start) {
                             matchList.add(stringArgs.substring(start, i));
                         }
                         i++;
