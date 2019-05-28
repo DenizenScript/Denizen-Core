@@ -21,141 +21,143 @@ public interface DenizenImplementation {
     /**
      * Return a list of all folders that the implementation has scripts within.
      */
-    public abstract File getScriptFolder();
+    File getScriptFolder();
 
     /**
      * Return the current version of the implementation.
      * EG, "Gamey Game 1.0 Denizen 0.9"
      */
-    public abstract String getImplementationVersion();
+    String getImplementationVersion();
 
     /**
      * Output a debug message to console.
      */
-    public abstract void debugMessage(String message);
+    void debugMessage(String message);
 
     /**
      * Output an exception to console.
      */
-    public abstract void debugException(Throwable ex);
+    void debugException(Throwable ex);
 
     /**
      * Output an error to console.
      */
-    public abstract void debugError(String error);
+    void debugError(String error);
 
     /**
      * Output an error to console, specific to a script queue.
      */
-    public abstract void debugError(ScriptQueue queue, String error);
+    void debugError(ScriptQueue queue, String error);
 
     /**
      * Output an error to console, specific to a script queue.
      */
-    public abstract void debugError(ScriptQueue queue, Throwable error);
+    void debugError(ScriptQueue queue, Throwable error);
 
     /**
      * Output a command information report.
      */
-    public abstract void debugReport(Debuggable caller, String name, String message);
+    void debugReport(Debuggable caller, String name, String message);
 
     /**
      * Output an 'Okay!' message.
      */
-    public abstract void debugApproval(String message);
+    void debugApproval(String message);
 
     /**
      * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(Debuggable entry, String message);
+    void debugEntry(Debuggable entry, String message);
 
     /**
      * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(Debuggable entry, DebugElement element, String message);
+    void debugEntry(Debuggable entry, DebugElement element, String message);
 
     /**
      * Outputs a message specific to a debuggable object.
      */
-    public abstract void debugEntry(Debuggable entry, DebugElement element);
+    void debugEntry(Debuggable entry, DebugElement element);
 
     /**
      * Return the name of the implementation.
      * EG, "Gamey Game".
      */
-    public abstract String getImplementationName();
+    String getImplementationName();
 
     /**
      * Run any code that fires before a script reload goes through,
      * EG, clearing custom data.
      */
-    public abstract void preScriptReload();
+    void preScriptReload();
 
     /**
      * Run any code that fires after a script reload goes through,
      * EG, running a public Reload event.
      */
-    public abstract void onScriptReload();
+    void onScriptReload();
 
     /**
      * Return an empty ScriptEntryData object of the implementation's variety.
      * This is to avoid casting issues when ScriptEntry's use generic data objects.
      */
-    public abstract ScriptEntryData getEmptyScriptEntryData();
+    ScriptEntryData getEmptyScriptEntryData();
 
     /**
      * Temporary.
      */
-    public abstract void buildCoreContainers(YamlConfiguration yamlScripts);
+    void buildCoreContainers(YamlConfiguration yamlScripts);
 
     /**
      * Temporary.
      */
-    public abstract List<YamlConfiguration> getOutsideScripts();
+    List<YamlConfiguration> getOutsideScripts();
 
-    public abstract void debugCommandHeader(ScriptEntry entry);
+    void debugCommandHeader(ScriptEntry entry);
 
-    public abstract TagContext getTagContextFor(ScriptEntry entry, boolean instant);
+    TagContext getTagContextFor(ScriptEntry entry, boolean instant);
 
-    public abstract boolean handleCustomArgs(ScriptEntry entry, aH.Argument arg, boolean if_ignore);
+    boolean handleCustomArgs(ScriptEntry entry, aH.Argument arg, boolean if_ignore);
 
-    public abstract void refreshScriptContainers();
+    void refreshScriptContainers();
 
-    public abstract String scriptQueueSpeed();
+    String scriptQueueSpeed();
 
-    public abstract dList valueOfFlagdList(String input);
+    dList valueOfFlagdList(String input);
 
-    public abstract boolean matchesFlagdList(String input);
+    boolean matchesFlagdList(String input);
 
-    public abstract String getLastEntryFromFlag(String flag);
+    String getLastEntryFromFlag(String flag);
 
-    public abstract TagContext getTagContext(ScriptEntry entry);
+    TagContext getTagContext(ScriptEntry entry);
 
-    public abstract int getTagTimeout();
+    int getTagTimeout();
 
-    public abstract boolean allowConsoleRedirection();
+    boolean allowConsoleRedirection();
 
-    public abstract String cleanseLogString(String str);
+    String cleanseLogString(String str);
 
-    public abstract boolean matchesType(String comparable, String comparedTo);
+    boolean matchesType(String comparable, String comparedTo);
 
-    public abstract Thread getMainThread();
+    Thread getMainThread();
 
-    public abstract boolean allowedToWebget();
+    boolean allowedToWebget();
 
-    public abstract void preTagExecute();
+    void preTagExecute();
 
-    public abstract void postTagExecute();
+    void postTagExecute();
 
-    public abstract boolean needsHandleArgPrefix(String prefix);
+    boolean needsHandleArgPrefix(String prefix);
 
-    public abstract boolean shouldDebug(Debuggable debug);
+    boolean shouldDebug(Debuggable debug);
 
-    public abstract void debugQueueExecute(ScriptEntry entry, String queue, String execute);
+    void debugQueueExecute(ScriptEntry entry, String queue, String execute);
 
-    public abstract void debugTagFill(Debuggable entry, String tag, String result);
+    void debugTagFill(Debuggable entry, String tag, String result);
 
-    public abstract boolean tagTimeoutWhenSilent();
+    boolean tagTimeoutWhenSilent();
 
-    public abstract boolean getDefaultDebugMode();
+    boolean getDefaultDebugMode();
+
+    boolean canWriteToFile(File f);
 }

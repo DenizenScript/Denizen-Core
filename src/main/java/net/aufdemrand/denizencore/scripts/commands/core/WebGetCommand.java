@@ -12,8 +12,7 @@ import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 import net.aufdemrand.denizencore.utilities.scheduling.Schedulable;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -41,6 +40,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             else if (!scriptEntry.hasObject("headers")
                     && arg.matchesPrefix("headers")) {
                 scriptEntry.addObject("headers", arg.asType(dList.class));
+            }
+
+            else if (!scriptEntry.hasObject("savefile")
+                    && arg.matchesPrefix("savefile")) {
+                scriptEntry.addObject("savefile", arg.asElement());
             }
 
             else {
@@ -71,33 +75,31 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
 
         final Element url = scriptEntry.getElement("url");
-
         final Element postData = scriptEntry.getElement("post");
-
         final Duration timeout = scriptEntry.getdObject("timeout");
-
         final dList headers = scriptEntry.getdObject("headers");
+        final Element saveFile = scriptEntry.getElement("savefile");
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(),
-                    url.debug()
-                    + (postData != null ? postData.debug() : "")
-                    + (timeout != null ? timeout.debug() : "")
-                    + (headers != null ? headers.debug() : ""));
+            dB.report(scriptEntry, getName(), url.debug()
+                            + (postData != null ? postData.debug() : "")
+                            + (timeout != null ? timeout.debug() : "")
+                            + (saveFile != null ? saveFile.debug() : "")
+                            + (headers != null ? headers.debug() : ""));
         }
 
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, postData, url, timeout, headers);
+                webGet(scriptEntry, postData, url, timeout, headers, saveFile);
             }
         });
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final Element postData, Element urlp, Duration timeout, dList headers) {
+    public void webGet(final ScriptEntry scriptEntry, final Element postData, Element urlp, Duration timeout, dList headers, Element saveFile) {
 
-        BufferedReader in = null;
+        BufferedReader buffIn = null;
         try {
             URL url = new URL(urlp.asString().replace(" ", "%20"));
             final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
@@ -119,22 +121,42 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             if (postData != null) {
                 uc.getOutputStream().write(postData.asString().getBytes("UTF-8"));
             }
-            in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             final StringBuilder sb = new StringBuilder();
-            // Probably a better way to do this bit.
-            while (true) {
-                try {
-                    String temp = in.readLine();
-                    if (temp == null) {
-                        break;
-                    }
-                    sb.append(temp).append("\n");
+            if (saveFile != null) {
+                File file = new File(saveFile.asString());
+                if (!DenizenCore.getImplementation().canWriteToFile(file)) {
+                    dB.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
                 }
-                catch (Exception ex) {
-                    break;
+                else {
+                    InputStream in = uc.getInputStream();
+                    FileOutputStream fout = new FileOutputStream(file);
+                    byte[] buffer = new byte[8 * 1024];
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        fout.write(buffer, 0, len);
+                    }
+                    fout.flush();
+                    fout.close();
                 }
             }
-            in.close();
+            else {
+                buffIn = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+                // Probably a better way to do this bit.
+                while (true) {
+                    try {
+                        String temp = buffIn.readLine();
+                        if (temp == null) {
+                            break;
+                        }
+                        sb.append(temp).append("\n");
+                    }
+                    catch (Exception ex) {
+                        break;
+                    }
+                }
+                buffIn.close();
+                buffIn = null;
+            }
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
@@ -144,7 +166,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     catch (Exception e) {
                         dB.echoError(e);
                     }
-                    scriptEntry.addObject("result", new Element(sb.toString()));
+                    if (saveFile == null) {
+                        scriptEntry.addObject("result", new Element(sb.toString()));
+                    }
                     scriptEntry.setFinished(true);
                     return false;
                 }
@@ -168,8 +192,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
         finally {
             try {
-                if (in != null) {
-                    in.close();
+                if (buffIn != null) {
+                    buffIn.close();
                 }
             }
             catch (Exception e) {
