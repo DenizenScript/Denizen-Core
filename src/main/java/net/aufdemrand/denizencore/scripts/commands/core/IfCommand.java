@@ -134,9 +134,11 @@ public class IfCommand extends BracedCommand {
         boolean first_set = new ArgComparer().compare(comparisons, scriptEntry);
         if (first_set && subcommand != null && subcommand.size() > 0) {
             executeCommandList(subcommand, scriptEntry);
+            return;
         }
         if (!first_set && elsecommand != null && elsecommand.size() > 0) {
             executeCommandList(elsecommand, scriptEntry);
+            return;
         }
         if (braces != null) {
             if (braces.isEmpty()) {
@@ -147,6 +149,7 @@ public class IfCommand extends BracedCommand {
                 if (dB.verbose) {
                     dB.log("Running the first set");
                 }
+                dB.echoDebug(scriptEntry, "If command passed, running block.");
                 scriptEntry.setInstant(true);
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
@@ -154,6 +157,7 @@ public class IfCommand extends BracedCommand {
                     bracedCommandsList.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
                 }
                 scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
+                return;
             }
             else {
                 for (int z = 1; z < braces.size(); z++) {
@@ -182,6 +186,12 @@ public class IfCommand extends BracedCommand {
                         }
                     }
                     if (should_fire) {
+                        if (key.size() == 1 && key.get(0).equals("else")) {
+                            dB.echoDebug(scriptEntry, "No part of the if command passed, running ELSE block.");
+                        }
+                        else {
+                            dB.echoDebug(scriptEntry, "If sub-command " + z + " passed, running block.");
+                        }
                         scriptEntry.setInstant(true);
                         List<ScriptEntry> bracedCommandsList = braceSet.value;
                         for (int i = 0; i < bracedCommandsList.size(); i++) {
@@ -189,11 +199,12 @@ public class IfCommand extends BracedCommand {
                             bracedCommandsList.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
                         }
                         scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
-                        break;
+                        return;
                     }
                 }
             }
         }
+        dB.echoDebug(scriptEntry, "No part of the if command passed, no block will run.");
     }
 
     public void executeCommandList(List<String> subcommand, ScriptEntry scriptEntry) {
