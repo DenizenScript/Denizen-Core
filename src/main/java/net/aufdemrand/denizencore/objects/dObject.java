@@ -112,7 +112,7 @@ public interface dObject {
     }
 
     default dObject getObjectAttribute(Attribute attribute) {
-        return ObjectFetcher.pickObjectFor(getAttribute(attribute), attribute.context);
+        return new Element(getAttribute(attribute));
     }
 
     /**

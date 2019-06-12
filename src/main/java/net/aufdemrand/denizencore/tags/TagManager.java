@@ -425,6 +425,12 @@ public class TagManager {
     public static dObject parseChainObject(List<ParseableTagPiece> pieces, TagContext context, boolean repush) {
         if (dB.verbose) {
             dB.log("Tag parse chain: " + pieces + "...");
+            try {
+                throw new RuntimeException("Stack");
+            }
+            catch (Exception ex) {
+                dB.echoError(ex);
+            }
         }
         if (pieces.size() < 2) {
             if (pieces.size() == 0) {
