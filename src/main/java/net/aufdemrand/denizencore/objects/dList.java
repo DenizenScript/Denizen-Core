@@ -95,6 +95,11 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         super.add(index, obj.toString());
     }
 
+    public void setObject(int index, dObject obj) {
+        objectForms.set(index, obj);
+        super.set(index, obj.toString());
+    }
+
     public dObject getObject(int id) {
         return objectForms.get(id);
     }
