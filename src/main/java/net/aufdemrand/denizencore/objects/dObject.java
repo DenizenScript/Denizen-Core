@@ -112,7 +112,8 @@ public interface dObject {
     }
 
     default dObject getObjectAttribute(Attribute attribute) {
-        return new Element(getAttribute(attribute));
+        String res = getAttribute(attribute);
+        return res == null ? null : new Element(res);
     }
 
     /**

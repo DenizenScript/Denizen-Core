@@ -12,7 +12,8 @@ public interface Property {
     String getPropertyId();
 
     default dObject getObjectAttribute(Attribute attribute) {
-        return new Element(getAttribute(attribute));
+        String res = getAttribute(attribute);
+        return res == null ? null : new Element(res);
     }
 
     String getAttribute(Attribute attribute);
