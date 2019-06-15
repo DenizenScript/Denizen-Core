@@ -39,7 +39,6 @@ public class ProcedureScriptTags {
         // @returns dObject
         // @description
         // Returns the 'determine' result of a procedure script with the given context.
-        // See <@link example Using Procedure Scripts>.
         // -->
 
         // <--[tag]
@@ -47,7 +46,6 @@ public class ProcedureScriptTags {
         // @returns dObject
         // @description
         // Returns the 'determine' result of a procedure script.
-        // See <@link example Using Procedure Scripts>.
         // -->
         if (!event.matches("proc", "pr")) {
             return;
