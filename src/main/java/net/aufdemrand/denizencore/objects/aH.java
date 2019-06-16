@@ -491,6 +491,7 @@ public class aH {
             return null;
         }
         stringArgs = stringArgs.trim();
+        stringArgs = stringArgs.replace('\r', '\n').replace("\n", "");
         ArrayList<String> matchList = new ArrayList<>();
         int start = 0;
         int len = stringArgs.length();
