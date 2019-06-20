@@ -514,7 +514,7 @@ public class aH {
                 else if (currentQuote == c) {
                     if (i + 1 >= len || stringArgs.charAt(i + 1) == ' ') {
                         currentQuote = 0;
-                        if (i > start) {
+                        if (i >= start) {
                             matchList.add(stringArgs.substring(start, i));
                         }
                         i++;
