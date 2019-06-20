@@ -392,7 +392,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         long id = DetermineCommand.getNewId();
         ScriptBuilder.addObjectToEntries(entries, "reqid", id);
-        ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(path.container.getName())).addEntries(entries).setReqId(id);
+        ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries).setReqId(id);
         HashMap<String, dObject> oldStyleContext = getContext();
         currentEvent = path.event;
         if (oldStyleContext.size() > 0) {

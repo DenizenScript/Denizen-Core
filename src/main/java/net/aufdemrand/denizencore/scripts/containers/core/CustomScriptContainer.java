@@ -133,7 +133,7 @@ public class CustomScriptContainer extends ScriptContainer {
         while (csc != null) {
             if (csc.contains("tags." + path)) {
                 dB.echoDebug(this, "[CustomObject] Calculating tag: " + path + " for " + csc.getName());
-                ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("TAG_" + csc.getName() + "_" + path + "__"));
+                ScriptQueue queue = new InstantQueue("TAG_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
                 long id = DetermineCommand.getNewId();
                 ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);
@@ -156,7 +156,7 @@ public class CustomScriptContainer extends ScriptContainer {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("mechanisms." + path)) {
-                ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("MECH_" + csc.getName() + "_" + path + "__"));
+                ScriptQueue queue = new InstantQueue("MECH_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
                 long id = DetermineCommand.getNewId();
                 ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);

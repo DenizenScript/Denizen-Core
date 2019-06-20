@@ -100,7 +100,7 @@ public class CommandExecuter {
                     output.append(" \"").append(arg).append("\"");
                 }
             }
-            DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().id, output.toString());
+            DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
             DenizenCore.getImplementation().debugCommandHeader(scriptEntry);
         }
         AbstractCommand command = scriptEntry.internal.actualCommand;

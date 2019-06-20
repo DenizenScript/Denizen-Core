@@ -75,16 +75,16 @@ public class TaskScriptContainer extends ScriptContainer {
     }
 
     public ScriptQueue runTaskScript(ScriptEntryData data, Map<String, String> context) {
-        return runTaskScript(ScriptQueue.getNextId(getName()), data, context);
+        return runTaskScript(getName(), data, context);
     }
 
     public ScriptQueue runTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
         ScriptQueue queue;
         if (getSpeed().getSeconds() == 0) {
-            queue = InstantQueue.getQueue(queueId);
+            queue = new InstantQueue(queueId);
         }
         else {
-            queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+            queue = new TimedQueue(queueId).setSpeed(getSpeed().getTicks());
         }
 
         List<ScriptEntry> listOfEntries = getBaseEntries(data);
@@ -112,10 +112,10 @@ public class TaskScriptContainer extends ScriptContainer {
     public ScriptQueue runTaskScriptWithDelay(String queueId, ScriptEntryData data, Map<String, String> context, Duration delay) {
         ScriptQueue queue;
         if (getSpeed().getSeconds() == 0) {
-            queue = InstantQueue.getQueue(queueId);
+            queue = new InstantQueue(queueId);
         }
         else {
-            queue = TimedQueue.getQueue(queueId).setSpeed(getSpeed().getTicks());
+            queue = new TimedQueue(queueId).setSpeed(getSpeed().getTicks());
         }
 
         List<ScriptEntry> listOfEntries = getBaseEntries(data);

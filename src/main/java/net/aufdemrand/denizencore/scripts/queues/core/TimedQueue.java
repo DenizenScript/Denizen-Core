@@ -83,6 +83,10 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         return (delay_ticks > DenizenCore.serverTimeMillis);
     }
 
+    public TimedQueue(String id) {
+        this(id, Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
+    }
+
     public TimedQueue(String id, long ticks) {
         super(id);
         this.ticks = ticks;

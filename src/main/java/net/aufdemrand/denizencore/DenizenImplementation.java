@@ -160,4 +160,6 @@ public interface DenizenImplementation {
     boolean getDefaultDebugMode();
 
     boolean canWriteToFile(File f);
+
+    String getRandomColor();
 }

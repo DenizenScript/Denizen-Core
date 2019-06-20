@@ -234,7 +234,7 @@ public class OldEventManager {
                         ScriptBuilder.addObjectToEntries(entries, "reqid", id);
 
                         // Add entries and context to the queue
-                        ScriptQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId(script.getName())).addEntries(entries).setReqId(id);
+                        ScriptQueue queue = new InstantQueue(script.getName()).addEntries(entries).setReqId(id);
 
                         if (context != null) {
                             OldEventContextSource oecs = new OldEventContextSource();

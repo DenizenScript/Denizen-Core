@@ -100,12 +100,6 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         return strings[CoreUtilities.getRandom().nextInt(strings.length)];
     }*/
 
-    /**
-     * Gets a random id for use in creating a 'nameless' queue.
-     *
-     * @param prefix the name of the script running the new queue.
-     * @return String value of a random id
-     */
     public static String getNextId(String prefix) {
         // DUUIDs v2.1
         int size = QueueWordList.FinalWordList.size();
@@ -169,14 +163,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     /////////////////////
 
 
-    // Name of the queue -- this identifies
-    // the ScriptQueue when using _getQueue()
     public String id;
 
-    // Whether the queue was cleared
+    public String debugId;
+
     public boolean was_cleared = false;
 
-    // Whether the queue should run asynchronously
     public boolean run_async = false;
 
     /**
@@ -190,18 +182,17 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     /////////////////////
 
 
-    // List of ScriptEntries in the queue
     public final List<ScriptEntry> script_entries = new ArrayList<>();
 
 
-    // The last script entry that was executed
-    // in this queue.
     private ScriptEntry lastEntryExecuted = null;
 
 
-    // If this number is larger than
-    // DenizenCore.serverTimeMillis, the queue will
-    // delay execution of the next ScriptEntry
+    /**
+     If this number is larger than
+     DenizenCore.serverTimeMillis, the queue will
+     delay execution of the next ScriptEntry
+     */
     private long delay_time = 0;
 
 
@@ -223,6 +214,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     protected ScriptQueue(String id) {
         // Remember the 'id'
         this.id = id;
+        generateId(id);
         // Increment the stats
         total_queues++;
     }
@@ -426,6 +418,28 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     // Public 'functional' methods
     //////////////////
 
+    public void generateId(String prefix) {
+        if (prefix.startsWith("FORCE:")) {
+            id = prefix.substring("FORCE:".length());
+            debugId = id;
+            return;
+        }
+        // DUUIDs v2.1
+        int size = QueueWordList.FinalWordList.size();
+        String wordOne = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
+        String wordTwo = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
+        String wordThree = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
+        id = prefix + "_" + wordOne + wordTwo + wordThree;
+        if (_queueExists(id)) {
+            generateId(prefix);
+            return;
+        }
+        String colorOne = DenizenCore.getImplementation().getRandomColor();
+        String colorTwo = DenizenCore.getImplementation().getRandomColor();
+        String colorThree = DenizenCore.getImplementation().getRandomColor();
+        debugId = prefix + "_" + colorOne + wordOne + colorTwo + wordTwo + colorThree + wordThree;
+    }
+
 
     /**
      * Converts any queue type to a timed queue.
@@ -438,6 +452,8 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         callback = null;
         stop();
         TimedQueue newQueue = new TimedQueue(id, 0);
+        newQueue.id = id;
+        newQueue.debugId = debugId;
         newQueue.run_async = this.run_async;
         newQueue.debugOutput = this.debugOutput;
         for (ScriptEntry entry : getEntries()) {
@@ -493,6 +509,10 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         onStart(); /* Start the engine */
     }
 
+    public void queueDebug(String message) {
+        dB.echoDebug(this, "<O>" + message.replace("<QUEUE>", debugId + "<O>"));
+    }
+
     /**
      * Starts the script queue.
      */
@@ -517,11 +537,11 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         // Debug info
         String name = getName();
         if (is_delayed) {
-            dB.echoDebug(this, "Delaying " + name + " '" + id + "'" + " for '"
+            queueDebug("Delaying " + name + " '<QUEUE>'" + " for '"
                     + new Duration(((double) delay) / 1000f).identify() + "'...");
         }
         else {
-            dB.echoDebug(this, "Starting " + name + " '" + id + "'...");
+            queueDebug("Starting " + name + " '<QUEUE>'...");
         }
 
         // If it's delayed, schedule it for later
@@ -633,13 +653,13 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
             // Add the 'finishing' entries back into the queue (if not empty)
             if (entries != null && !entries.isEmpty()) {
                 script_entries.addAll(entries);
-                dB.echoDebug(this, "Finishing up queue '" + id + "'...");
+                queueDebug("Finishing up queue '<QUEUE>'...");
             }
             else /* if empty, just stop the queue like normal */ {
                 if (_queues.get(id) == this) {
                     _queues.remove(id);
                 }
-                dB.echoDebug(this, "Completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
+                queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null) {
                     callback.run();
                 }
@@ -654,7 +674,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         else {
             if (_queues.get(id) == this) {
                 _queues.remove(id);
-                dB.echoDebug(this, "Re-completing queue '" + id + "' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
+                queueDebug("Re-completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null) {
                     callback.run();
                 }

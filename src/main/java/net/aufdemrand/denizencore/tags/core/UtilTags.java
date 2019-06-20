@@ -145,8 +145,8 @@ public class UtilTags {
             // Optionally specify the source context to base the value on.
             // -->
             else if (attribute.startsWith("duuid")) {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue
-                                .getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
+                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(
+                        attribute.hasContext(1) ? attribute.getContext(1) : "DUUID"),
                         attribute.fulfill(1)));
             }
         }

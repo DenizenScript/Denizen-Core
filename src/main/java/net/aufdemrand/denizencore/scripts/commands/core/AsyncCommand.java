@@ -24,7 +24,7 @@ public class AsyncCommand extends BracedCommand implements Holdable {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        InstantQueue queue = InstantQueue.getQueue(ScriptQueue.getNextId("ASYNC_COMMAND"));
+        InstantQueue queue = new InstantQueue("ASYNC_COMMAND");
         queue.run_async = true;
         queue.addEntries(((List<BracedData>) scriptEntry.getObject("braces")).get(0).value);
         queue.getAllDefinitions().putAll(scriptEntry.getResidingQueue().getAllDefinitions());
