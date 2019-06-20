@@ -920,6 +920,20 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         });
 
         // <--[tag]
+        // @attribute <q@queue.time_ran>
+        // @returns Duration
+        // @description
+        // Returns the time this queue has ran for (the length of time between now and when the queue started) as a duration.
+        // -->
+        registerTag("time_ran", new TagRunnable() {
+            @Override
+            public String run(Attribute attribute, dObject object) {
+                long timeNano = System.nanoTime() - ((ScriptQueue) object).startTime;
+                return new Duration(timeNano / (1000000 * 1000.0)).getAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <q@queue.state>
         // @returns Element
         // @description
