@@ -62,7 +62,12 @@ public class DataAction {
             }
             obj = subList.getObject(index - 1);
         }
-        return autoNumber(obj);
+        try {
+            return autoNumber(obj);
+        }
+        catch (NumberFormatException ex) {
+            return BigDecimal.ZERO;
+        }
     }
 
     public BigDecimal autoNumber(dObject obj) {
