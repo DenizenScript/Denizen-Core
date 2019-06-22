@@ -220,6 +220,9 @@ public class aH {
 
         // TODO: REMOVE IN 1.0
         public boolean matches(String values) {
+            if (!CoreUtilities.contains(values, ',')) {
+                return CoreUtilities.toLowerCase(value).equals(lower_value);
+            }
             for (String value : CoreUtilities.split(values, ',')) {
                 if (CoreUtilities.toLowerCase(value.replace(" ", "")).equals(lower_value)) {
                     return true;
@@ -311,6 +314,9 @@ public class aH {
         public boolean matchesPrefix(String values) {
             if (!hasPrefix()) {
                 return false;
+            }
+            if (!CoreUtilities.contains(values, ',')) {
+                return CoreUtilities.toLowerCase(value).equals(lower_prefix);
             }
             for (String value : CoreUtilities.split(values, ',')) {
                 if (CoreUtilities.toLowerCase(value.trim()).equals(lower_prefix)) {

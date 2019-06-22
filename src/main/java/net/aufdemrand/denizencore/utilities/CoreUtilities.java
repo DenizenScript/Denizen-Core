@@ -262,17 +262,8 @@ public class CoreUtilities {
         return files;
     }
 
-    public static List<String> split(String str, char c) {
-        List<String> strings = new ArrayList<>();
-        int start = 0;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == c) {
-                strings.add(str.substring(start, i));
-                start = i + 1;
-            }
-        }
-        strings.add(str.substring(start));
-        return strings;
+    public static boolean contains(String str, char c) {
+        return str.indexOf(c) >= 0;
     }
 
     public static String concat(List<String> str, String split) {
@@ -284,6 +275,19 @@ public class CoreUtilities {
             sb.append(split).append(str.get(i));
         }
         return sb.toString();
+    }
+
+    public static List<String> split(String str, char c) {
+        List<String> strings = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == c) {
+                strings.add(str.substring(start, i));
+                start = i + 1;
+            }
+        }
+        strings.add(str.substring(start));
+        return strings;
     }
 
     public static List<String> split(String str, char c, int max) {
