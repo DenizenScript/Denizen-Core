@@ -76,68 +76,67 @@ public class Duration implements dObject {
             return null;
         }
 
-        string = string.replace("d@", "");
+        string = CoreUtilities.toLowerCase(string.replace("d@", ""));
 
-        // Pick a duration between a high and low number if there is a '-' present.
-        String[] split = string.split("-", 2);
-        if (split.length == 2
-                && Duration.matches(split[0])
-                && Duration.matches(split[1])) {
-            Duration low = Duration.valueOf(split[0]);
-            Duration high = Duration.valueOf(split[1]);
+        // Pick a duration between a high and low number if there is a '-' present, but it's not "E-2" style scientific notation.
+        if (string.contains("-") && !string.contains("e-")) {
+            String[] split = string.split("-", 2);
+            if (split.length == 2) {
+                Duration low = Duration.valueOf(split[0]);
+                Duration high = Duration.valueOf(split[1]);
 
-            // Make sure 'low' and 'high' returned valid Durations,
-            // and that 'low' is less time than 'high'.
-            if (low != null && high != null) {
-                if (high.getSecondsAsInt() < low.getSecondsAsInt()) {
-                    Duration temp = low;
-                    low = high;
-                    high = temp;
+                // Make sure 'low' and 'high' returned valid Durations,
+                // and that 'low' is less time than 'high'.
+                if (low != null && high != null) {
+                    if (high.getSecondsAsInt() < low.getSecondsAsInt()) {
+                        Duration temp = low;
+                        low = high;
+                        high = temp;
+                    }
+                    int seconds = CoreUtilities.getRandom()
+                            .nextInt((high.getSecondsAsInt() - low.getSecondsAsInt() + 1))
+                            + low.getSecondsAsInt();
+                    if (dB.verbose) {
+                        dB.log("Getting random duration between " + low.identify()
+                                + " and " + high.identify() + "... " + seconds + "s");
+                    }
+
+                    return new Duration(seconds);
+
                 }
-                int seconds = CoreUtilities.getRandom()
-                        .nextInt((high.getSecondsAsInt() - low.getSecondsAsInt() + 1))
-                        + low.getSecondsAsInt();
-                if (dB.verbose) {
-                    dB.log("Getting random duration between " + low.identify()
-                            + " and " + high.identify() + "... " + seconds + "s");
+                else {
+                    return null;
                 }
-
-                return new Duration(seconds);
-
-            }
-            else {
-                return null;
             }
         }
 
-        String mg1 = CoreUtilities.toLowerCase(string);
-        String mg2 = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
+        String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
 
         // Standard Duration. Check the type and create new Duration object accordingly.
         try {
-            if (mg1.endsWith("t")) {
+            if (string.endsWith("t")) {
                 // Matches TICKS, so 1 tick = .05 seconds
-                return new Duration(Double.valueOf(mg2) * 0.05);
+                return new Duration(Double.valueOf(numericString) * 0.05);
             }
-            else if (mg1.endsWith("d")) {
+            else if (string.endsWith("d")) {
                 // Matches DAYS, so 1 day = 86400 seconds
-                return new Duration(Double.valueOf(mg2) * 86400);
+                return new Duration(Double.valueOf(numericString) * 86400);
             }
-            else if (mg1.endsWith("w")) {
+            else if (string.endsWith("w")) {
                 // Matches WEEKS, so 1 week = 604800 seconds
-                return new Duration(Double.valueOf(mg2) * 604800);
+                return new Duration(Double.valueOf(numericString) * 604800);
             }
-            else if (mg1.endsWith("m")) {
+            else if (string.endsWith("m")) {
                 // Matches MINUTES, so 1 minute = 60 seconds
-                return new Duration(Double.valueOf(mg2) * 60);
+                return new Duration(Double.valueOf(numericString) * 60);
             }
-            else if (mg1.endsWith("h")) {
+            else if (string.endsWith("h")) {
                 // Matches HOURS, so 1 hour = 3600 seconds
-                return new Duration(Double.valueOf(mg2) * 3600);
+                return new Duration(Double.valueOf(numericString) * 3600);
             }
             else {
                 // seconds
-                return new Duration(Double.valueOf(mg2));
+                return new Duration(Double.valueOf(numericString));
             }
         }
         catch (Exception e) {
