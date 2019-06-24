@@ -66,11 +66,13 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     public static String _getStats() {
         StringBuilder stats = new StringBuilder();
         for (ScriptEvent event : ScriptEvent.events) {
-            stats.append("Event '" + event.getName() + "' ran "
-                    + event.stats.fires + " times (" + event.stats.scriptFires + " script fires)"
-                    + ", totalling " + ((float) event.stats.nanoTimes / 1000000f) + "ms, averaging "
-                    + ((float) event.stats.nanoTimes / 1000000f / (float) event.stats.fires) + "ms per event or " +
-                    +((float) event.stats.nanoTimes / 1000000f / (float) event.stats.scriptFires) + "ms per script.\n");
+            if (event.stats.fires > 0) {
+                stats.append("Event '" + event.getName() + "' ran "
+                        + event.stats.fires + " times (" + event.stats.scriptFires + " script fires)"
+                        + ", totalling " + ((float) event.stats.nanoTimes / 1000000f) + "ms, averaging "
+                        + ((float) event.stats.nanoTimes / 1000000f / (float) event.stats.fires) + "ms per event or " +
+                        +((float) event.stats.nanoTimes / 1000000f / (float) event.stats.scriptFires) + "ms per script.\n");
+            }
         }
         return "Total number of queues created: "
                 + total_queues
