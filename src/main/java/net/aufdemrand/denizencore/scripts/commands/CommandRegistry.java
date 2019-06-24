@@ -340,7 +340,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // <--[command]
         // @Name Foreach
-        // @Syntax foreach [stop/next/<object>|...] [<commands>] (as:<name>)
+        // @Syntax foreach [stop/next/<object>|...] (as:<name>) [<commands>]
         // @Required 1
         // @Short Loops through a dList, running a set of commands for each item.
         // @Group core
@@ -373,7 +373,7 @@ public abstract class CommandRegistry implements dRegistry {
 
         // -->
         registerCoreMember(ForeachCommand.class,
-                "foreach", "foreach [stop/next/<object>|...] [<commands>] (as:<name>)", 1);
+                "foreach", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
 
 
         // <--[command]
