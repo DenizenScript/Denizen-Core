@@ -56,6 +56,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public List<aH.Argument> preprocArgs = null;
 
         public Object specialProcessedData = null;
+
+        public String originalLine = null;
     }
 
     public static class Argument {
@@ -611,10 +613,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String str : getOriginalArguments()) {
-            sb.append(" \"").append(str).append("\"");
+            sb.append(" \"").append(str.replace("\"", "<&dq>")).append("\"");
         }
         for (aH.Argument arg : internal.preprocArgs) {
-            sb.append(" \"").append(arg.toString()).append("\"");
+            sb.append(" \"").append(arg.toString().replace("\"", "<&dq>")).append("\"");
         }
         return internal.command + sb.toString();
     }

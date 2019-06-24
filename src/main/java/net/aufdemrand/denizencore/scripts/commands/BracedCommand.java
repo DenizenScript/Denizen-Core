@@ -208,9 +208,9 @@ public abstract class BracedCommand extends AbstractCommand {
                         command.remove(0);
                         String[] args = new String[command.size()];
                         args = command.toArray(args);
-                        bracesSection.add(new ScriptEntry(cmd,
-                                args,
-                                scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+                        ScriptEntry newEntry = new ScriptEntry(cmd, args, scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
+                        newEntry.internal.originalLine = newEntry.toString();
+                        bracesSection.add(newEntry);
                         bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
                         if (hyperdebug) {
                             dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");

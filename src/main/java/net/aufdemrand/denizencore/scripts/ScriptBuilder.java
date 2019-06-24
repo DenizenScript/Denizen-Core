@@ -84,6 +84,7 @@ public class ScriptBuilder {
                     dB.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 }
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside);
+                newEntry.internal.originalLine = entry;
                 newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);
             }
