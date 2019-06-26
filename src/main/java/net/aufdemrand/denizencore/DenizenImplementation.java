@@ -172,4 +172,6 @@ public interface DenizenImplementation {
     boolean allowFileCopy();
 
     File getDataFolder();
+
+    boolean allowStrangeYAMLSaves();
 }
