@@ -164,4 +164,6 @@ public interface DenizenImplementation {
     String getRandomColor();
 
     int whileMaxLoops();
+
+    boolean allowLogging();
 }
