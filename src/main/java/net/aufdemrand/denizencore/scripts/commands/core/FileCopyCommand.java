@@ -6,13 +6,16 @@ import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.AbstractCommand;
+import net.aufdemrand.denizencore.scripts.commands.Holdable;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.scheduling.AsyncSchedulable;
+import net.aufdemrand.denizencore.utilities.scheduling.OneTimeSchedulable;
 
 import java.io.File;
 import java.nio.file.Files;
 
-public class FileCopyCommand extends AbstractCommand {
+public class FileCopyCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name FileCopy
@@ -25,13 +28,14 @@ public class FileCopyCommand extends AbstractCommand {
     // Copies a file from one location to another.
     // The starting directory is server/plugins/Denizen.
     // May overwrite existing copies of files.
+    // Note that in most cases this command should be ~waited for (like "- ~filecopy ...")
     //
     // @Tags
     // <entry[saveName].success> returns whether the copy succeeded (if not, either an error or occurred, or there is an existing file in the destination.)
     //
     // @Usage
     // Use to copy a custom YAML data file to a backup folder, overwriting any old backup of it that exists.
-    // - filecopy o:data/custom.yml d:data/backup.yml overwrite save:copy
+    // - ~filecopy o:data/custom.yml d:data/backup.yml overwrite save:copy
     // - narrate "Copy success<&co> <entry[copy].success>"
     //
     // -->
@@ -77,14 +81,13 @@ public class FileCopyCommand extends AbstractCommand {
         Element overwrite = scriptEntry.getElement("overwrite");
 
         if (scriptEntry.dbCallShouldDebug()) {
-
             dB.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
-
         }
 
         if (!DenizenCore.getImplementation().allowFileCopy()) {
             dB.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
             scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.setFinished(true);
             return;
         }
 
@@ -96,44 +99,61 @@ public class FileCopyCommand extends AbstractCommand {
 
         if (!DenizenCore.getImplementation().canReadFile(o)) {
             dB.echoError("Server config denies reading files in that location.");
+            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.setFinished(true);
             return;
         }
         if (!o.exists()) {
             dB.echoError(scriptEntry.getResidingQueue(), "File copy failed, origin does not exist!");
             scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.setFinished(true);
             return;
         }
 
         if (!DenizenCore.getImplementation().canWriteToFile(d)) {
             dB.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
             scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.setFinished(true);
             return;
         }
 
         if (dexists && !disdir && !ow) {
             dB.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
             scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.setFinished(true);
             return;
         }
-        try {
-            if (dexists && !disdir) {
-                d.delete();
+        Runnable runme = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (dexists && !disdir) {
+                        d.delete();
+                    }
+                    if (disdir && !dexists) {
+                        d.mkdirs();
+                    }
+                    if (o.isDirectory()) {
+                        CoreUtilities.copyDirectory(o, d);
+                    }
+                    else {
+                        Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
+                    }
+                    scriptEntry.addObject("success", new Element("true"));
+                    scriptEntry.setFinished(true);
+                }
+                catch (Exception e) {
+                    dB.echoError(scriptEntry.getResidingQueue(), e);
+                    scriptEntry.addObject("success", new Element("false"));
+                    scriptEntry.setFinished(true);
+                }
             }
-            if (disdir && !dexists) {
-                d.mkdirs();
-            }
-            if (o.isDirectory()) {
-                CoreUtilities.copyDirectory(o, d);
-            }
-            else {
-                Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
-            }
-            scriptEntry.addObject("success", new Element("true"));
+        };
+        if (scriptEntry.shouldWaitFor()) {
+            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runme, 0)));
         }
-        catch (Exception e) {
-            dB.echoError(scriptEntry.getResidingQueue(), e);
-            scriptEntry.addObject("success", new Element("false"));
-            return;
+        else {
+            runme.run();
         }
     }
 }

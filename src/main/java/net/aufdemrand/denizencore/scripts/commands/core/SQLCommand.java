@@ -218,7 +218,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                         dB.echoError(scriptEntry.getResidingQueue(), e);
                                     }
                                 }
-                            }, 1));
+                            }, 0));
                         }
                         if (dB.verbose) {
                             dB.echoDebug(scriptEntry, "Connection did not error");
@@ -232,7 +232,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                     dB.echoDebug(scriptEntry, "Successfully connected to " + server);
                                     scriptEntry.setFinished(true);
                                 }
-                            }, 1));
+                            }, 0));
                         }
                         else {
                             DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
@@ -243,10 +243,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                         dB.echoDebug(scriptEntry, "Connecting errored!");
                                     }
                                 }
-                            }, 1));
+                            }, 0));
                         }
                     }
-                }, 1)));
+                }, 0)));
             }
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 Connection con = connections.get(sqlID.asString().toUpperCase());
@@ -283,7 +283,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                     public void run() {
                                         dB.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                                     }
-                                }, 1));
+                                }, 0));
                                 int count = 0;
                                 dList rows = new dList();
                                 while (set.next()) {
@@ -302,7 +302,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                         dB.echoDebug(scriptEntry, "Got a query result of " + finalCount + " rows");
                                         scriptEntry.setFinished(true);
                                     }
-                                }, 1));
+                                }, 0));
                             }
                             catch (final Exception e) {
                                 DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
@@ -314,10 +314,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                             dB.echoError(scriptEntry.getResidingQueue(), e);
                                         }
                                     }
-                                }, 1));
+                                }, 0));
                             }
                         }
-                    }, 1)));
+                    }, 0)));
                 }
                 else {
                     Statement statement = con.createStatement();
