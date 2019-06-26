@@ -102,6 +102,7 @@ public abstract class CommandRegistry implements dRegistry {
         registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 1);
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
         registerCoreMember(ReloadCommand.class, "reload", "reload", 0);
+        registerCoreMember(SQLCommand.class, "SQL", "sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]", 2);
         registerCoreMember(SyncCommand.class, "sync", "sync [<commands>]", 0);
         registerCoreMember(WebGetCommand.class, "webget", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
     }
