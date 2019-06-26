@@ -106,6 +106,7 @@ public abstract class CommandRegistry implements dRegistry {
         registerCoreMember(QueueCommand.class, "QUEUE", "queue (<queue>) [clear/stop/pause/resume/delay:<#>]", 1);
         registerCoreMember(RandomCommand.class, "RANDOM", "random [<#>/<commands>]", 0);
         registerCoreMember(ReloadCommand.class, "RELOAD", "reload", 0);
+        registerCoreMember(RepeatCommand.class, "REPEAT", "repeat [stop/next/<amount>] [<commands>] (as:<name>)", 1);
         registerCoreMember(SQLCommand.class, "SQL", "sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]", 2);
         registerCoreMember(SyncCommand.class, "SYNC", "sync [<commands>]", 0);
         registerCoreMember(WaitCommand.class, "WAIT", "wait (<duration>) (queue:<name>)", 0);
