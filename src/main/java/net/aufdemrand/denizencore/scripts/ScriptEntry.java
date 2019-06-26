@@ -209,6 +209,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
             }
             internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
+            if (internal.actualCommand.forceHold) {
+                internal.waitfor = true;
+            }
         }
         else {
             internal.actualCommand = null;

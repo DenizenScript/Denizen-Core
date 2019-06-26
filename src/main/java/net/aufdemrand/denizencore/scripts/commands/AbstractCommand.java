@@ -36,6 +36,8 @@ public abstract class AbstractCommand implements RegistrationableInstance {
 
     private boolean preparseArgs = true;
 
+    public boolean forceHold = false;
+
     public void setParseArgs(boolean parse) {
         preparseArgs = parse;
     }

@@ -2,9 +2,9 @@ package net.aufdemrand.denizencore.utilities.scheduling;
 
 public abstract class Schedulable {
 
-    protected Runnable run;
-    protected boolean cancelled;
-    protected float secondsLeft;
+    public Runnable run;
+    public boolean cancelled;
+    public float secondsLeft;
 
     public void cancel() {
         cancelled = true;
