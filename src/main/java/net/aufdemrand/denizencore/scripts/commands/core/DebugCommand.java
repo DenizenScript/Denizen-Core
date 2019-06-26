@@ -11,6 +11,42 @@ import java.util.HashSet;
 
 public class DebugCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Debug
+    // @Syntax debug [<type>] [<message>] (name:<name>)
+    // @Required 2
+    // @Short Shows a debug message.
+    // @Group core
+    //
+    // @Description
+    // Use to quickly output debug information to console.
+    //
+    // Valid types include:
+    // DEBUG: standard hideable debug.
+    // HEADER: standard hideable debug inside a header line.
+    // FOOTER: a footer line.
+    // SPACER: a spacer line.
+    // LOG: global output, non-hideable.
+    // APPROVAL: "Okay!" output, non-hideable.
+    // ERROR: "Error!" output, non-hideable.
+    // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
+    // EXCEPTION: outputs a full java stacktrace.
+    //
+    // TODO: Should [<type>] be required? Perhaps default to 'debug' mode?
+    //
+    // @Tags
+    // None
+    //
+    // @Usage
+    // Use to show an error
+    // - debug error "Something went wrong!"
+    //
+    // @Usage
+    // Use to add some information to help your own ability to read debug output from you script
+    // - debug debug "Time is currently <def[milliseconds].div[1000].round> seconds!"
+    //
+    // -->
+
     public enum DebugType {
         DEBUG,
         HEADER,

@@ -13,6 +13,41 @@ import java.util.List;
 
 public class ForeachCommand extends BracedCommand {
 
+    // <--[command]
+    // @Name Foreach
+    // @Syntax foreach [stop/next/<object>|...] (as:<name>) [<commands>]
+    // @Required 1
+    // @Short Loops through a dList, running a set of commands for each item.
+    // @Group core
+    // @Video /denizen/vids/Loops
+    //
+    // @Description
+    // Loops through a dList of any type. For each item in the dList, the specified commands will be ran for
+    // that list entry. To call the value of the entry while in the loop, you can use <def[value]>.
+    //
+    // Optionally, specify "as:<name>" to change the definition name to something other than "value".
+    //
+    // To end a foreach loop, do - foreach stop
+    //
+    // To jump immediately to the next entry in the loop, do - foreach next
+    //
+    // @Tags
+    // <def[value]> to get the current item in the loop
+    // <def[loop_index]> to get the current loop iteration number
+    //
+    // @Usage
+    // Use to run commands for 'each entry' in a list of objects/elements.
+    // - foreach li@e@123|n@424|p@BobBarker:
+    //     - announce "There's something at <def[value].location>!"
+    //
+    // @Usage
+    // Use to iterate through entries in any tag that returns a list
+    // - foreach <server.list_online_players>:
+    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
+    //     - give <def[value]> money qty:50
+    //
+    // -->
+
     private class ForeachData {
         public int index;
         public dList list;

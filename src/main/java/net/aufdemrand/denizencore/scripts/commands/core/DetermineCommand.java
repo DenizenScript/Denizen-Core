@@ -14,10 +14,28 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DetermineCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Determine
+    // @Syntax determine (passively) [<value>]
+    // @Required 1
+    // @Short Sets the outcome of a world event.
+    // @Group core
     //
-    // Static helpers
+    // @Description
+    // TODO: Document Command Details
     //
-
+    // @Tags
+    // TODO: Document Command Details
+    //
+    // @Usage
+    // Use to modify the result of an event
+    // - determine <context.message.substring[5]>
+    //
+    // @Usage
+    // Use to cancel an event, but continue running script commands
+    // - determine passively cancelled
+    //
+    // -->
 
     // Default 'DETERMINE_NONE' value.
     public static String DETERMINE_NONE = "none";

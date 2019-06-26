@@ -14,6 +14,25 @@ import java.util.List;
 
 public class IfCommand extends BracedCommand {
 
+    // <--[command]
+    // @Name If
+    // @Syntax if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)
+    // @Required 1
+    // @Short Compares values, and runs one script if they match, or a different script if they don't match.
+    // @Group core
+    // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
+    //
+    // @Description
+    // TODO: Document Command Details
+    //
+    // @Tags
+    // <el@element.is[<operator>].to[<element>]>
+    // <el@element.is[<operator>].than[<element>]>
+    //
+    // @Usage
+    // TODO: Document Command Details
+    // -->
+
     @Override
     public void onEnable() {
         setBraced();

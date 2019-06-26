@@ -9,6 +9,26 @@ import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class MarkCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Mark
+    // @Syntax mark [<name>]
+    // @Required 1
+    // @Short Marks a location for <@link command goto>.
+    // @Group core
+    //
+    // @Description
+    // Marks a location for the goto command. See <@link command goto> for details.
+    //
+    // @Tags
+    //
+    // None
+    //
+    // @Usage
+    // Use to mark a location.
+    // - mark potato
+    //
+    // -->
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 

@@ -6,7 +6,6 @@ import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.interfaces.RegistrationableInstance;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 
-// TODO: merge with BaseAbstractCommand
 public abstract class AbstractCommand implements RegistrationableInstance {
 
     /**

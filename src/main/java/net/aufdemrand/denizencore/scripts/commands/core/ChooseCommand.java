@@ -13,6 +13,56 @@ import java.util.List;
 
 public class ChooseCommand extends BracedCommand {
 
+    // <--[command]
+    // @Name Choose
+    // @Syntax choose [<option>] [<cases>]
+    // @Required 1
+    // @Short Chooses an option from the list of cases.
+    // @Group core
+
+    // @Description
+    // Chooses an option from the list of cases.
+    // Intended to replace a long chain of simplistic if/else if or complicated script path selection systems.
+    // Simply input the selected option, and the system will automatically jump to the most relevant case input.
+    // Cases are given as a sub-set of commands inside the current command (see Usage for samples).
+    //
+    // Optionally, specify "default" in place of a case to give a result when all other cases fail to match.
+    //
+    // Cases must be static text. They may not contain tags. For multi-tag comparison, consider the IF command.
+    //
+    // @Tags
+    // None
+    //
+    // @Usage
+    // Use to choose the only case.
+    // - choose "1":
+    //   - case "1":
+    //     - debug LOG "Success!"
+    //
+    // @Usage
+    // Use to choose the default case.
+    // - choose "2":
+    //   - case "1":
+    //     - debug log "Failure!"
+    //   - default:
+    //     - debug log "Success!"
+    //
+    // @Usage
+    // Use for dynamically choosing a case.
+    // - choose "<def[entity_type]>":
+    //   - case "zombie":
+    //     - narrate "You slayed an undead zombie!"
+    //   - case "skeleton":
+    //     - narrate "You knocked the bones out of a skeleton!"
+    //   - case "creeper":
+    //     - narrate "You didn't give that creeper a chance to explode!"
+    //   - case "pig" "cow" "chicken":
+    //     - narrate "You killed an innocent farm animal!"
+    //   - default:
+    //     - narrate "You killed a <def[entity_type].to_titlecase>!"
+    //
+    // -->
+
     @Override
     public void onEnable() {
         setBraced();

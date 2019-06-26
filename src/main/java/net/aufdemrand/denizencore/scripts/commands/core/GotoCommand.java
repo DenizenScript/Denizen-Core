@@ -11,6 +11,31 @@ import java.util.List;
 
 public class GotoCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Goto
+    // @Syntax goto [<name>]
+    // @Required 1
+    // @Short Jump forward to a location marked by <@link command mark>.
+    // @Group core
+    //
+    // @Description
+    // Jumps forward to a marked location in the script.
+    // For example:
+    // <code>
+    // - goto potato
+    // - narrate "This will never show"
+    // - mark potato
+    // </code>
+    //
+    // @Tags
+    //
+    // None
+    //
+    // @Usage
+    // Use to jump forward to a location.
+    // - goto potato
+    // -->
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 

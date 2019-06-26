@@ -14,6 +14,28 @@ import java.util.List;
 
 public class SyncCommand extends BracedCommand implements Holdable {
 
+    // <--[command]
+    // @Name Sync
+    // @Syntax sync [<commands>]
+    // @Required 0
+    // @Short Runs commands synchronously. Inverse of <@link command async>.
+    // @Group core
+    //
+    // @Description
+    // Runs commands synchronously. This means that anything executed within will run on the
+    // main server thread, without the possibility of corrupting anything that an asynchronous
+    // queue could theoretically do. This is only needed for use alongside <@link command async>.
+    //
+    // @Tags
+    // None
+    //
+    // @Usage
+    // Use to perform possibly not thread-safe commands.
+    // - sync:
+    //   - edit the world, etc
+    //
+    // -->
+
     @Override
     public void onEnable() {
         setBraced();

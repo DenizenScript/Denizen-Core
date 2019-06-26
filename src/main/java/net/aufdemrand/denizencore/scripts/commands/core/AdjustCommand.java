@@ -14,6 +14,41 @@ import java.util.function.Consumer;
 
 public class AdjustCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Adjust
+    // @Syntax adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)
+    // @Required 2
+    // @Short Adjusts a dObjects mechanism.
+    // @Group core
+    // @Video /denizen/vids/Properties%20and%20Mechanisms
+    //
+    // @Description
+    // Many dObjects contains options and properties that need to be adjusted. Denizen employs a mechanism
+    // interface to deal with those adjustments. To easily accomplish this, use this command with a valid object
+    // mechanism, and sometimes accompanying value.
+    //
+    // Specify "def:<name>" as an input to adjust a definition and automatically save the result back to the definition.
+    //
+    // To adjust an item in an inventory, use <@link command inventory>, as '- inventory adjust slot:<#> <mechanism>:<value>'.
+    //
+    // @Tags
+    // <entry[saveName].result> returns the adjusted object.
+    // <entry[saveName].result_list> returns a dList of adjusted objects.
+    //
+    // @Usage
+    // Use to set a custom display name on an entity.
+    // - adjust e@1000 'custom_name:ANGRY!'
+    //
+    // @Usage
+    // Use to set the skin of every online player.
+    // - adjust <server.list_online_players> skin:mcmonkey4eva
+    //
+    // @Usage
+    // Use to modify an item held in a definition.
+    // - adjust def:stick "display_name:Fancy stick"
+    //
+    // -->
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 

@@ -17,6 +17,33 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class WebGetCommand extends AbstractCommand implements Holdable {
+
+    // <--[command]
+    // @Name Webget
+    // @Syntax webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)
+    // @Required 1
+    // @Short Gets the contents of a web page.
+    // @Group core
+    //
+    // @Description
+    // TODO: Document Command Details
+    // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding. You may want to use the element.url_encode tag for this.
+    // Optionally, specify a set of data to post to the server (changes the message from GET to POST).
+    // Optionally specify a list of headers as list of key/value pairs separated by slashes.
+    // Optionally specify a path to save the gotten file to. This will remove the 'result' entry savedata. Path is relative to server base directory.
+    //
+    // @Tags
+    // <entry[saveName].failed> returns whether the webget failed.
+    // <entry[saveName].result> returns the result of the webget, if it did not fail.
+    // <el@element.url_encode>
+    //
+    // @Usage
+    // Use to download the google home page.
+    // - ~webget "http://google.com" save:google
+    // - narrate "<entry[google].result>"
+    //
+    // -->
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
