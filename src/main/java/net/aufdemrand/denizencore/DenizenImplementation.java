@@ -162,4 +162,6 @@ public interface DenizenImplementation {
     boolean canWriteToFile(File f);
 
     String getRandomColor();
+
+    int whileMaxLoops();
 }
