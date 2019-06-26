@@ -96,6 +96,7 @@ public abstract class CommandRegistry implements dRegistry {
         registerCoreMember(DefineCommand.class, "define", "define [<id>] [<value>]", 1);
         registerCoreMember(DetermineCommand.class, "determine", "determine (passively) [<value>]", 1);
         registerCoreMember(ElseCommand.class, "ELSE", "else (if <comparison logic>)", 0);
+        registerCoreMember(EventCommand.class, "EVENT", "event [<event name>|...] (context:<name>|<object>|...)", 1);
         registerCoreMember(ForeachCommand.class, "foreach", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
         registerCoreMember(GotoCommand.class, "GOTO", "goto [<name>]", 1);
         registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 1);
