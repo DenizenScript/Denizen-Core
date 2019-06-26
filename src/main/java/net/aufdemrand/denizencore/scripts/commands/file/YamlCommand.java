@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.file;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -29,7 +29,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // @Syntax yaml [create]/[load:<file> (fix_formatting)]/[loadtext:<text> (fix_formatting)]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
     // @Required 2
     // @Short Edits a YAML configuration file.
-    // @Group core
+    // @Group file
     //
     // @Description
     // Edits a YAML configuration file.

@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -21,7 +21,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // @Required 1
     // @Short Runs a script in a new ScriptQueue.
     // @Video /denizen/vids/Run%20And%20Inject
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Runs a new script queue, either in the local script or in a different task script.

@@ -3,6 +3,10 @@ package net.aufdemrand.denizencore.scripts.commands;
 import net.aufdemrand.denizencore.interfaces.RegistrationableInstance;
 import net.aufdemrand.denizencore.interfaces.dRegistry;
 import net.aufdemrand.denizencore.scripts.commands.core.*;
+import net.aufdemrand.denizencore.scripts.commands.file.FileCopyCommand;
+import net.aufdemrand.denizencore.scripts.commands.file.LogCommand;
+import net.aufdemrand.denizencore.scripts.commands.file.YamlCommand;
+import net.aufdemrand.denizencore.scripts.commands.queue.*;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
 

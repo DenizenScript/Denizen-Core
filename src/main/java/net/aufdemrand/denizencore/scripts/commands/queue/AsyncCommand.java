@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -16,7 +16,7 @@ public class AsyncCommand extends BracedCommand implements Holdable {
     // @Required 0
     // @Short Runs commands asynchronously. Inverse of <@link command sync>. (WARNING: DO NOT USE. See description for safety warning!)
     // @Warning Do NOT use this. This is VERY dangerous. It is added purely as a tech experiment, not something to use in serious code!
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Runs commands asynchronously. This means that anything executed within will run off the main

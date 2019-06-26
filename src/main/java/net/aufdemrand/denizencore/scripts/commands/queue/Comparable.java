@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.Duration;
@@ -72,12 +72,12 @@ public class Comparable {
         REGULAR, NEGATIVE
     }
 
-    Logic logic = Logic.REGULAR;
-    Bridge bridge = Bridge.FIRST;
-    Object comparable = null;
-    Operator operator = Operator.EQUALS;
-    Object comparedto = "true";
-    Boolean outcome = null;
+    public Logic logic = Logic.REGULAR;
+    public Bridge bridge = Bridge.FIRST;
+    public Object comparable = null;
+    public Operator operator = Operator.EQUALS;
+    public Object comparedto = "true";
+    public Boolean outcome = null;
 
 
     public void setNegativeLogic() {

@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -16,7 +16,7 @@ public class GotoCommand extends AbstractCommand {
     // @Syntax goto [<name>]
     // @Required 1
     // @Short Jump forward to a location marked by <@link command mark>.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Jumps forward to a marked location in the script.

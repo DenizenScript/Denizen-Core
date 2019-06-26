@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -16,7 +16,7 @@ public class DetermineCommand extends AbstractCommand {
     // @Syntax determine (passively) [<value>]
     // @Required 1
     // @Short Sets the outcome of a world event.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // TODO: Document Command Details

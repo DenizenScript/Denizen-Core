@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -19,7 +19,7 @@ public class IfCommand extends BracedCommand {
     // @Syntax if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)
     // @Required 1
     // @Short Compares values, and runs one script if they match, or a different script if they don't match.
-    // @Group core
+    // @Group queue
     // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
     //
     // @Description

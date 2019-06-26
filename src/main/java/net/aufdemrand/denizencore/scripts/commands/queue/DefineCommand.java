@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -23,7 +23,7 @@ public class DefineCommand extends AbstractCommand {
     // @Syntax define [<id>](:<action>)[:<value>]
     // @Required 1
     // @Short Creates a temporary variable inside a script queue.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Definitions are queue-level (or script-level) 'variables' that can be used throughout a script, once

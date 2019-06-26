@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.file;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -22,7 +22,7 @@ public class LogCommand extends AbstractCommand {
     // @Syntax log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]
     // @Required 2
     // @Short Logs some debugging info to a file.
-    // @Group core
+    // @Group file
     //
     // @Description
     // This is a quick and simple way to store debugging information for admins to read.

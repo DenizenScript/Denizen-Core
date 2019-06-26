@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -18,7 +18,7 @@ public class RandomCommand extends BracedCommand {
     // @Syntax random [<#>/<commands>]
     // @Required 0
     // @Short Selects a random choice from the following script commands.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // The random command picks one of the following script command

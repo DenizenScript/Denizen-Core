@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.file;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -22,7 +22,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     // @Syntax filecopy [origin:<origin>] [destination:<destination>] (overwrite)
     // @Required 2
     // @Short Copies a file from one location to another.
-    // @Group core
+    // @Group file
     //
     // @Description
     // Copies a file from one location to another.

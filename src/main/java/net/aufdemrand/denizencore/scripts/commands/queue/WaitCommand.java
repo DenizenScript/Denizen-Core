@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Duration;
@@ -16,7 +16,7 @@ public class WaitCommand extends AbstractCommand {
     // @Syntax wait (<duration>) (queue:<name>)
     // @Required 0
     // @Short Delays a script for a specified amount of time.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Pauses the script queue for the duration specified. If no duration is specified it defaults to 3 seconds.

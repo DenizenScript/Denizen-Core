@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
@@ -12,13 +12,16 @@ public class ElseCommand extends AbstractCommand {
     // @Syntax else (if <comparison logic>)
     // @Required 0
     // @Short Helper command for usage with the if command.
-    // @Group core
+    // @Group queue
     // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
+    //
     // @Description
     // A helper command for ':' syntax if commands.
     // See IF command documentation.
+    //
     // @Tags
     // See IF command documentation.
+    //
     // @Usage
     // See IF command documentation.
     // -->

@@ -1,6 +1,6 @@
 package net.aufdemrand.denizencore.objects;
 
-import net.aufdemrand.denizencore.scripts.commands.core.Comparable;
+import net.aufdemrand.denizencore.scripts.commands.queue.Comparable;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.TagContext;

@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -18,7 +18,7 @@ public class ChooseCommand extends BracedCommand {
     // @Syntax choose [<option>] [<cases>]
     // @Required 1
     // @Short Chooses an option from the list of cases.
-    // @Group core
+    // @Group queue
 
     // @Description
     // Chooses an option from the list of cases.

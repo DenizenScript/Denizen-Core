@@ -1,86 +1,108 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
-import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
+import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.commands.BracedCommand;
 import net.aufdemrand.denizencore.utilities.debugging.dB;
+import net.aufdemrand.denizencore.utilities.debugging.dB.DebugElement;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class WhileCommand extends BracedCommand {
+public class ForeachCommand extends BracedCommand {
 
     // <--[command]
-    // @Name While
-    // @Syntax while [stop/next/[<value>] (!)(<operator> <value>) (&&/|| ...)] [<commands>]
+    // @Name Foreach
+    // @Syntax foreach [stop/next/<object>|...] (as:<name>) [<commands>]
     // @Required 1
-    // @Short Runs a series of braced commands until the tag returns false.
-    // @Group core
+    // @Short Loops through a dList, running a set of commands for each item.
+    // @Group queue
     // @Video /denizen/vids/Loops
     //
     // @Description
-    // Runs a series of braced commands until the tag returns false.
-    // To end a while loop, use the 'stop' argument.
-    // To jump to the next entry in the loop, use the 'next' argument.
+    // Loops through a dList of any type. For each item in the dList, the specified commands will be ran for
+    // that list entry. To call the value of the entry while in the loop, you can use <def[value]>.
+    //
+    // Optionally, specify "as:<name>" to change the definition name to something other than "value".
+    //
+    // To end a foreach loop, do - foreach stop
+    //
+    // To jump immediately to the next entry in the loop, do - foreach next
     //
     // @Tags
-    // <def[loop_index]> to get the number of loops so far.
+    // <def[value]> to get the current item in the loop
+    // <def[loop_index]> to get the current loop iteration number
     //
     // @Usage
-    // Use to loop until a player sneaks, or the player goes offline.
-    // - while !<player.is_sneaking> && <player.is_online> {
-    //     - narrate "Waiting for you to sneak..."
-    //     - wait 1s
-    //   }
+    // Use to run commands for 'each entry' in a list of objects/elements.
+    // - foreach li@e@123|n@424|p@BobBarker:
+    //     - announce "There's something at <def[value].location>!"
+    //
+    // @Usage
+    // Use to iterate through entries in any tag that returns a list
+    // - foreach <server.list_online_players>:
+    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
+    //     - give <def[value]> money qty:50
     //
     // -->
 
-    private class WhileData {
+    private class ForeachData {
         public int index;
-        public List<String> value;
-        public long LastChecked;
-        int instaTicks;
+        public dList list;
     }
 
     @Override
     public void onEnable() {
         setBraced();
-        setParseArgs(false);
     }
-
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        List<String> comparisons = new ArrayList<>();
+        boolean handled = false;
 
-        if (scriptEntry.getArguments().size() == 1) {
-            String arg = scriptEntry.getArguments().get(0);
-            if (arg.equalsIgnoreCase("stop")) {
+        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+
+            if (!handled
+                    && arg.matches("stop")) {
                 scriptEntry.addObject("stop", new Element(true));
+                handled = true;
             }
-            else if (arg.equalsIgnoreCase("next")) {
+            else if (!handled
+                    && arg.matches("next")) {
                 scriptEntry.addObject("next", new Element(true));
+                handled = true;
             }
-            else if (arg.equals("\0CALLBACK")) {
+            else if (!handled
+                    && arg.matches("\0CALLBACK")) {
                 scriptEntry.addObject("callback", new Element(true));
+                handled = true;
             }
-        }
-        for (String arg : scriptEntry.getArguments()) {
-            if (arg.equals("{")) {
+            else if (!scriptEntry.hasObject("as_name")
+                    && arg.matchesOnePrefix("as")) {
+                scriptEntry.addObject("as_name", arg.asElement());
+            }
+            else if (!handled) {
+                scriptEntry.addObject("list", dList.valueOf(arg.raw_value));
+                scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
+                handled = true;
+            }
+            else if (arg.matchesOne("{")) {
                 break;
             }
-            comparisons.add(arg);
-        }
-        if (comparisons.isEmpty() && !scriptEntry.hasObject("stop") && !scriptEntry.hasObject("next") && !scriptEntry.hasObject("callback")) {
-            throw new InvalidArgumentsException("Must specify a comparison value or 'stop' or 'next'!");
-        }
-        scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
-        scriptEntry.addObject("comparisons", comparisons);
+            else {
+                arg.reportUnhandled();
+            }
 
+        }
+
+        if (!handled) {
+            throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
+        }
+
+        scriptEntry.defaultObject("as_name", new Element("value"));
     }
 
     @SuppressWarnings("unchecked")
@@ -90,6 +112,8 @@ public class WhileCommand extends BracedCommand {
         Element stop = scriptEntry.getElement("stop");
         Element next = scriptEntry.getElement("next");
         Element callback = scriptEntry.getElement("callback");
+        dList list = (dList) scriptEntry.getObject("list");
+        Element as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
             // Report to dB
@@ -100,7 +124,7 @@ public class WhileCommand extends BracedCommand {
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
                 ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
                 List<String> args = entry.getOriginalArguments();
-                if (entry.getCommandName().equalsIgnoreCase("while") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
+                if (entry.getCommandName().equalsIgnoreCase("foreach") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
                     hasnext = true;
                     break;
                 }
@@ -109,7 +133,7 @@ public class WhileCommand extends BracedCommand {
                 while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
                     ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
                     List<String> args = entry.getOriginalArguments();
-                    if (entry.getCommandName().equalsIgnoreCase("while") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
+                    if (entry.getCommandName().equalsIgnoreCase("foreach") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
                         scriptEntry.getResidingQueue().removeEntry(0);
                         break;
                     }
@@ -117,7 +141,7 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
@@ -130,7 +154,7 @@ public class WhileCommand extends BracedCommand {
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
                 ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
                 List<String> args = entry.getOriginalArguments();
-                if (entry.getCommandName().equalsIgnoreCase("while") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
+                if (entry.getCommandName().equalsIgnoreCase("foreach") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
                     hasnext = true;
                     break;
                 }
@@ -139,40 +163,29 @@ public class WhileCommand extends BracedCommand {
                 while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
                     ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
                     List<String> args = entry.getOriginalArguments();
-                    if (entry.getCommandName().equalsIgnoreCase("while") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
+                    if (entry.getCommandName().equalsIgnoreCase("foreach") && args.size() > 0 && args.get(0).equalsIgnoreCase("\0CALLBACK")) {
                         break;
                     }
                     scriptEntry.getResidingQueue().removeEntry(0);
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
         else if (callback != null && callback.asBoolean()) {
-            if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equalsIgnoreCase("while") ||
+            if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equalsIgnoreCase("foreach") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().size() == 0 ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
-                WhileData data = (WhileData) scriptEntry.getOwner().getData();
+                ForeachData data = (ForeachData) scriptEntry.getOwner().getData();
                 data.index++;
-                if (System.currentTimeMillis() - data.LastChecked < 50) {
-                    data.instaTicks++;
-                    int max = DenizenCore.getImplementation().whileMaxLoops();
-                    if (data.instaTicks > max && max != 0) {
-                        return;
-                    }
-                }
-                else {
-                    data.instaTicks = 0;
-                }
-                data.LastChecked = System.currentTimeMillis();
-                boolean run = new IfCommand.ArgComparer().compare(new ArrayList(data.value), scriptEntry);
-                if (run) {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "While loop " + data.index);
+                if (data.index <= data.list.size()) {
+                    dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
+                    scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.list.get(data.index - 1)));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
-                    ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},
+                    ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
                             (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
                     callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
@@ -183,48 +196,50 @@ public class WhileCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "While loop complete");
+                    dB.echoDebug(scriptEntry, DebugElement.Header, "Foreach loop complete");
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "While CALLBACK invalid: not a real callback!");
+                dB.echoError(scriptEntry.getResidingQueue(), "Foreach CALLBACK invalid: not a real callback!");
             }
         }
+
         else {
-            List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
-            List<BracedData> data = ((List<BracedData>) scriptEntry.getObject("braces"));
-            if (data == null || data.isEmpty()) {
+
+            // Get objects
+            List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
+            if (bdlist == null || bdlist.isEmpty()) {
                 dB.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
                 return;
             }
-            List<ScriptEntry> bracedCommandsList = data.get(0).value;
+
+            List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
                 dB.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
                 return;
             }
-            boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), aH.debugObj("run_first_loop", run));
+                dB.report(scriptEntry, getName(), list.debug() + as_name.debug());
             }
 
-            if (!run) {
+            int target = list.size();
+            if (target <= 0) {
+                dB.echoDebug(scriptEntry, "Empty list, not looping...");
                 return;
             }
-
-            WhileData datum = new WhileData();
+            ForeachData datum = new ForeachData();
+            datum.list = list;
             datum.index = 1;
-            datum.value = comparisons;
-            datum.LastChecked = System.currentTimeMillis();
-            datum.instaTicks = 1;
             scriptEntry.setData(datum);
-            ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},
+            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString()},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
             bracedCommandsList.add(callbackEntry);
+            scriptEntry.getResidingQueue().addDefinition(as_name.asString(), list.get(0));
             scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);

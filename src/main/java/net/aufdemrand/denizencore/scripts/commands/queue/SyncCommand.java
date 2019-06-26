@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
@@ -19,7 +19,7 @@ public class SyncCommand extends BracedCommand implements Holdable {
     // @Syntax sync [<commands>]
     // @Required 0
     // @Short Runs commands synchronously. Inverse of <@link command async>.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Runs commands synchronously. This means that anything executed within will run on the

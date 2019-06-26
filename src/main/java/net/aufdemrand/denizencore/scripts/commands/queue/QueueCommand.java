@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Duration;
@@ -16,7 +16,7 @@ public class QueueCommand extends AbstractCommand {
     // @Syntax queue (<queue>) [clear/stop/pause/resume/delay:<#>]
     // @Required 1
     // @Short Modifies the current state of a script queue.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Allows queues to be modified during their run. It can also be used to modify other queues currently running

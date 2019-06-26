@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -18,7 +18,7 @@ public class InjectCommand extends AbstractCommand {
     // @Required 1
     // @Short Runs a script in the current ScriptQueue.
     // @Video /denizen/vids/Run%20And%20Inject
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Injects a script into the current ScriptQueue.

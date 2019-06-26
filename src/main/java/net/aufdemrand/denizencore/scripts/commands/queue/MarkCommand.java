@@ -1,4 +1,4 @@
-package net.aufdemrand.denizencore.scripts.commands.core;
+package net.aufdemrand.denizencore.scripts.commands.queue;
 
 import net.aufdemrand.denizencore.exceptions.InvalidArgumentsException;
 import net.aufdemrand.denizencore.objects.Element;
@@ -14,7 +14,7 @@ public class MarkCommand extends AbstractCommand {
     // @Syntax mark [<name>]
     // @Required 1
     // @Short Marks a location for <@link command goto>.
-    // @Group core
+    // @Group queue
     //
     // @Description
     // Marks a location for the goto command. See <@link command goto> for details.
