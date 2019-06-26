@@ -2,7 +2,6 @@ package net.aufdemrand.denizencore.tags.core;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.objects.*;
-import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
 import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;

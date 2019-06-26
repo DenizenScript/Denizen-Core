@@ -9,7 +9,6 @@ import net.aufdemrand.denizencore.tags.ReplaceableTagEvent;
 import net.aufdemrand.denizencore.tags.TagManager;
 import net.aufdemrand.denizencore.utilities.CoreUtilities;
 import net.aufdemrand.denizencore.utilities.debugging.SlowWarning;
-import net.aufdemrand.denizencore.utilities.debugging.dB;
 
 public class QueueTags {
 

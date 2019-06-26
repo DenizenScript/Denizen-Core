@@ -1,15 +1,9 @@
 package net.aufdemrand.denizencore.utilities.debugging;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.events.OldEventManager;
 import net.aufdemrand.denizencore.events.core.ConsoleOutputScriptEvent;
-import net.aufdemrand.denizencore.objects.Element;
-import net.aufdemrand.denizencore.objects.dObject;
 
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Intercepts system.out operations for the sake of blocking messages at request.
