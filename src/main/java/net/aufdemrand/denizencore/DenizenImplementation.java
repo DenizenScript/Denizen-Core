@@ -166,4 +166,10 @@ public interface DenizenImplementation {
     int whileMaxLoops();
 
     boolean allowLogging();
+
+    boolean canReadFile(File f);
+
+    boolean allowFileCopy();
+
+    File getDataFolder();
 }
