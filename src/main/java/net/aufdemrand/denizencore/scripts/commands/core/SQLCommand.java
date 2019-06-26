@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class SQLCommand extends AbstractCommand implements Holdable {
+
     // <--[command]
     // @Name SQL
     // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]
