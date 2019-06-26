@@ -5,7 +5,6 @@ import net.aufdemrand.denizencore.events.ScriptEvent;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.*;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.queues.core.Delayable;
 import net.aufdemrand.denizencore.scripts.queues.core.TimedQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -200,6 +199,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     private final HashMap<String, dObject> definitions = new HashMap<>();
 
+    public dList determinations = null;
 
     private final HashMap<String, ScriptEntry> held_entries = new HashMap<>();
 
@@ -299,20 +299,6 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     public void setContextSource(ContextSource source) {
         contextSource = source;
         cachedContext = new HashMap<>();
-    }
-
-
-    private long reqId = -1L;
-
-    /**
-     * Sets the instant-queue ID for usage by the determine command.
-     *
-     * @param ID the ID to use.
-     * @return the queue for re-use.
-     */
-    public ScriptQueue setReqId(long ID) {
-        reqId = ID;
-        return this;
     }
 
     @Override
@@ -1052,40 +1038,19 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // <--[tag]
         // @attribute <q@queue.determination>
-        // @returns dObject
+        // @returns dList
         // @description
-        // Returns the value that has been determined via <@link command Determine>
+        // Returns the values that have been determined via <@link command Determine>
         // for this queue, or null if there is none.
-        // The object will be returned as the most-valid type based on the input.
         // -->
         registerTag("determination", new TagRunnable() {
             @Override
             public String run(Attribute attribute, dObject object) {
-                Long rID = ((ScriptQueue) object).reqId;
-                if (rID < 0 || !DetermineCommand.hasOutcome(rID)) {
+                if (((ScriptQueue) object).determinations == null) {
                     return null;
                 }
                 else {
-                    return ObjectFetcher.pickObjectFor(DetermineCommand.readOutcome(rID)).getAttribute(attribute.fulfill(1));
-                }
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.determinable>
-        // @returns Element(Boolean)
-        // @description
-        // Returns true if this queue currently supports using the Determine command.
-        // -->
-        registerTag("determinable", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                ScriptEntry entry = ((ScriptQueue) object).getEntries().get(0);
-                if (entry != null) {
-                    return new Element(entry.getObject("reqid") != null).getAttribute(attribute.fulfill(1));
-                }
-                else {
-                    return new Element(false).getAttribute(attribute.fulfill(1));
+                    return ((ScriptQueue) object).determinations.getAttribute(attribute.fulfill(1));
                 }
             }
         });

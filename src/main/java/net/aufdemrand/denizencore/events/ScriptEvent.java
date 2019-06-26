@@ -7,11 +7,9 @@ import net.aufdemrand.denizencore.objects.Element;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dObject;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.ScriptEntrySet;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
@@ -390,9 +388,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             path.set = path.container.getSetFor("events.on " + path.event);
         }
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
-        long id = DetermineCommand.getNewId();
-        ScriptBuilder.addObjectToEntries(entries, "reqid", id);
-        ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries).setReqId(id);
+        ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
         HashMap<String, dObject> oldStyleContext = getContext();
         currentEvent = path.event;
         if (oldStyleContext.size() > 0) {
@@ -407,7 +403,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         queue.start();
         stats.nanoTimes += System.nanoTime() - queue.startTime;
-        dList outList = DetermineCommand.getOutcome(id);
+        dList outList = queue.determinations;
         if (outList != null && !outList.isEmpty()) {
             List<dObject> determinations = outList.objectForms;
             for (dObject determination : determinations) {

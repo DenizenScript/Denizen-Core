@@ -4,12 +4,11 @@ import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.CustomObject;
 import net.aufdemrand.denizencore.objects.Element;
+import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dObject;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
@@ -128,49 +127,45 @@ public class CustomScriptContainer extends ScriptContainer {
         return false;
     }
 
-    public long runTagScript(String path, dObject val, CustomObject obj, ScriptEntryData data) {
+    public dList runTagScript(String path, dObject val, CustomObject obj, ScriptEntryData data) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("tags." + path)) {
                 dB.echoDebug(this, "[CustomObject] Calculating tag: " + path + " for " + csc.getName());
                 ScriptQueue queue = new InstantQueue("TAG_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
-                long id = DetermineCommand.getNewId();
-                ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
                 cscs.value = val;
                 queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
-                return id;
+                return queue.determinations;
             }
             dB.echoDebug(this, "[CustomObject] Grabbing parent of " + csc.getName());
             csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
         }
         dB.echoDebug(this, "Unable to find tag handler for " + path + " for " + this.getName());
-        return -1;
+        return null;
     }
 
-    public long runMechScript(String path, CustomObject obj, dObject value) {
+    public dList runMechScript(String path, CustomObject obj, dObject value) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("mechanisms." + path)) {
                 ScriptQueue queue = new InstantQueue("MECH_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
-                long id = DetermineCommand.getNewId();
-                ScriptBuilder.addObjectToEntries(listOfEntries, "reqid", id);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
                 cscs.value = value;
                 queue.setContextSource(cscs);
                 queue.addEntries(listOfEntries);
                 queue.start();
-                return id;
+                return queue.determinations;
             }
             csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
         }
-        return -1;
+        return null;
     }
 
     public static class CustomScriptContextSource implements ContextSource {

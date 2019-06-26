@@ -1,12 +1,9 @@
 package net.aufdemrand.denizencore.tags.core;
 
-import net.aufdemrand.denizencore.objects.ObjectFetcher;
 import net.aufdemrand.denizencore.objects.TagRunnable;
 import net.aufdemrand.denizencore.objects.dList;
 import net.aufdemrand.denizencore.objects.dScript;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -105,15 +102,8 @@ public class ProcedureScriptTags {
             return;
         }
 
-        // Create new ID -- this is what we will look for when determining an outcome
-        long id = DetermineCommand.getNewId();
-
-        // Add the reqId to each of the entries for referencing
-        ScriptBuilder.addObjectToEntries(entries, "reqid", id);
-
         InstantQueue queue = new InstantQueue(script.getContainer().getName());
         queue.addEntries(entries);
-        queue.setReqId(id);
         if (event.hasType() &&
                 event.getType().equalsIgnoreCase("context") &&
                 event.hasTypeContext()) {
@@ -139,8 +129,8 @@ public class ProcedureScriptTags {
 
         queue.start();
 
-        if (DetermineCommand.hasOutcome(id)) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(ObjectFetcher.pickObjectFor(DetermineCommand.getOutcome(id).get(0))
+        if (queue.determinations != null && queue.determinations.size() > 0) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(queue.determinations.getObject(0)
                     , attr.fulfill(attribs)));
         }
     }

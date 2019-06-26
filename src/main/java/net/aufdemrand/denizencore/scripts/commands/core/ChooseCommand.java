@@ -162,7 +162,6 @@ public class ChooseCommand extends BracedCommand {
 
         for (ScriptEntry newEntry : new_command_list) {
             newEntry.setInstant(true);
-            newEntry.addObject("reqid", scriptEntry.getObject("reqid"));
             newEntry.entryData.transferDataFrom(scriptEntry.entryData);
             newEntry.entryData.scriptEntry = newEntry;
         }

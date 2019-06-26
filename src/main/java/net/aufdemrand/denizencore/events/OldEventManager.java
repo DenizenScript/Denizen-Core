@@ -3,10 +3,8 @@ package net.aufdemrand.denizencore.events;
 import net.aufdemrand.denizencore.interfaces.ContextSource;
 import net.aufdemrand.denizencore.objects.aH;
 import net.aufdemrand.denizencore.objects.dObject;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
 import net.aufdemrand.denizencore.scripts.ScriptEntryData;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.WorldScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.ScriptQueue;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
@@ -227,14 +225,8 @@ public class OldEventManager {
                         dB.echoDebug(script, DebugElement.Header, "Building event 'ON " + eventName.toUpperCase()
                                 + "' for " + script.getName());
 
-                        // Create new ID -- this is what we will look for when determining an outcome
-                        long id = DetermineCommand.getNewId();
-
-                        // Add the reqId to each of the entries for the determine command
-                        ScriptBuilder.addObjectToEntries(entries, "reqid", id);
-
                         // Add entries and context to the queue
-                        ScriptQueue queue = new InstantQueue(script.getName()).addEntries(entries).setReqId(id);
+                        ScriptQueue queue = new InstantQueue(script.getName()).addEntries(entries);
 
                         if (context != null) {
                             OldEventContextSource oecs = new OldEventContextSource();
@@ -246,8 +238,8 @@ public class OldEventManager {
                         queue.start();
 
                         // Check the determination
-                        if (DetermineCommand.hasOutcome(id)) {
-                            determinations = DetermineCommand.getOutcome(id);
+                        if (queue.determinations != null) {
+                            determinations = queue.determinations;
                         }
                     }
                 }

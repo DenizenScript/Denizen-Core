@@ -192,7 +192,6 @@ public class ForeachCommand extends BracedCommand {
                     bracedCommands.add(callbackEntry);
                     for (int i = 0; i < bracedCommands.size(); i++) {
                         bracedCommands.get(i).setInstant(true);
-                        bracedCommands.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
                     }
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
@@ -244,7 +243,6 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);
-                bracedCommandsList.get(i).addObject("reqid", scriptEntry.getObject("reqid"));
             }
             scriptEntry.setInstant(true);
             scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);

@@ -1,9 +1,7 @@
 package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
-import net.aufdemrand.denizencore.scripts.ScriptBuilder;
 import net.aufdemrand.denizencore.scripts.ScriptEntry;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import net.aufdemrand.denizencore.scripts.queues.core.InstantQueue;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -1480,11 +1478,8 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                             if (entries.isEmpty()) {
                                 return 0;
                             }
-                            long id = DetermineCommand.getNewId();
-                            ScriptBuilder.addObjectToEntries(entries, "reqid", id);
                             InstantQueue queue = new InstantQueue("DLIST_SORT");
                             queue.addEntries(entries);
-                            queue.setReqId(id);
                             int x = 1;
                             dList definitions = new dList();
                             definitions.add(o1);
@@ -1504,8 +1499,8 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                             }
                             queue.start();
                             int res = 0;
-                            if (DetermineCommand.hasOutcome(id)) {
-                                res = new Element(DetermineCommand.getOutcome(id).get(0)).asInt();
+                            if (queue.determinations != null && queue.determinations.size() > 0) {
+                                res = new Element(queue.determinations.get(0)).asInt();
                             }
                             if (res < 0) {
                                 return -1;

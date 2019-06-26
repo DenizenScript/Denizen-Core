@@ -2,7 +2,6 @@ package net.aufdemrand.denizencore.objects;
 
 import net.aufdemrand.denizencore.DenizenCore;
 import net.aufdemrand.denizencore.scripts.ScriptRegistry;
-import net.aufdemrand.denizencore.scripts.commands.core.DetermineCommand;
 import net.aufdemrand.denizencore.scripts.containers.ScriptContainer;
 import net.aufdemrand.denizencore.scripts.containers.core.CustomScriptContainer;
 import net.aufdemrand.denizencore.tags.Attribute;
@@ -154,10 +153,9 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
         if (res == null) {
             String taggo = attribute.getAttributeWithoutContext(1);
             if (container.hasPath("tags." + taggo)) {
-                long ID = container.runTagScript(taggo, attribute.getContextObject(1), this,
+                dList outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
                         attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
                                 DenizenCore.getImplementation().getEmptyScriptEntryData());
-                dList outcomes = DetermineCommand.getOutcome(ID);
                 if (outcomes == null) {
                     return null;
                 }
@@ -182,8 +180,7 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
         }
         dObject value = mechanism.getValue();
         if (container.hasPath("mechanisms." + name)) {
-            long ID = container.runMechScript(name, this, value);
-            dList outcomes = DetermineCommand.getOutcome(ID);
+            dList outcomes = container.runMechScript(name, this, value);
             if (outcomes == null) {
                 return;
             }
