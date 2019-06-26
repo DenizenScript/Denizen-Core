@@ -50,6 +50,7 @@ public class CommandExecuter {
                 dB.log("(Attempted: " + scriptEntry.toString() + ")");
                 definition = "null";
             }
+            dB.echoError(scriptEntry.getResidingQueue(), "Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
             dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
             m.appendReplacement(sb, Matcher.quoteReplacement(definition));
         }
