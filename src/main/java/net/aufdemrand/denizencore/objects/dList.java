@@ -53,6 +53,12 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     }
 
     @Override
+    public void add(int index, String addMe) {
+        objectForms.add(index, new Element(addMe));
+        super.add(index, addMe);
+    }
+
+    @Override
     public boolean addAll(Collection<? extends String> addMe) {
         for (String str : addMe) {
             add(str);
@@ -744,7 +750,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                         index = result.size();
                     }
                     for (int i = 0; i < items.size(); i++) {
-                        result.add(index + i, items.get(i));
+                        result.addObject(index + i, items.getObject(i));
                     }
                     return result.getObjectAttribute(attribute.fulfill(1));
                 }
