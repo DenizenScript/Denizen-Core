@@ -90,25 +90,26 @@ public abstract class CommandRegistry implements dRegistry {
     public void registerCoreCommands() {
 
         registerCoreMember(AdjustCommand.class, "ADJUST", "adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)", 2);
-        registerCoreMember(AsyncCommand.class, "async", "async [<commands>]", 0);
-        registerCoreMember(ChooseCommand.class, "choose", "choose [<option>] [<cases>]", 1);
-        registerCoreMember(DebugCommand.class, "debug", "debug [<type>] [<message>] (name:<name>)", 2);
-        registerCoreMember(DefineCommand.class, "define", "define [<id>] [<value>]", 1);
-        registerCoreMember(DetermineCommand.class, "determine", "determine (passively) [<value>]", 1);
+        registerCoreMember(AsyncCommand.class, "ASYNC", "async [<commands>]", 0);
+        registerCoreMember(ChooseCommand.class, "CHOOSE", "choose [<option>] [<cases>]", 1);
+        registerCoreMember(DebugCommand.class, "DEBUG", "debug [<type>] [<message>] (name:<name>)", 2);
+        registerCoreMember(DefineCommand.class, "DEFINE", "define [<id>] [<value>]", 1);
+        registerCoreMember(DetermineCommand.class, "DETERMINE", "determine (passively) [<value>]", 1);
         registerCoreMember(ElseCommand.class, "ELSE", "else (if <comparison logic>)", 0);
         registerCoreMember(EventCommand.class, "EVENT", "event [<event name>|...] (context:<name>|<object>|...)", 1);
-        registerCoreMember(FileCopyCommand.class, "filecopy", "filecopy [origin:<origin>] [destination:<destination>] (overwrite)", 2);
-        registerCoreMember(ForeachCommand.class, "foreach", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
+        registerCoreMember(FileCopyCommand.class, "FILECOPY", "filecopy [origin:<origin>] [destination:<destination>] (overwrite)", 2);
+        registerCoreMember(ForeachCommand.class, "FOREACH", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
         registerCoreMember(GotoCommand.class, "GOTO", "goto [<name>]", 1);
         registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 1);
         registerCoreMember(LogCommand.class, "LOG", "log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]", 2);
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
         registerCoreMember(QueueCommand.class, "QUEUE", "queue (<queue>) [clear/stop/pause/resume/delay:<#>]", 1);
-        registerCoreMember(ReloadCommand.class, "reload", "reload", 0);
+        registerCoreMember(RandomCommand.class, "RANDOM", "random [<#>/<commands>]", 0);
+        registerCoreMember(ReloadCommand.class, "RELOAD", "reload", 0);
         registerCoreMember(SQLCommand.class, "SQL", "sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]", 2);
-        registerCoreMember(SyncCommand.class, "sync", "sync [<commands>]", 0);
+        registerCoreMember(SyncCommand.class, "SYNC", "sync [<commands>]", 0);
         registerCoreMember(WaitCommand.class, "WAIT", "wait (<duration>) (queue:<name>)", 0);
-        registerCoreMember(WebGetCommand.class, "webget", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
+        registerCoreMember(WebGetCommand.class, "WEBGET", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
         registerCoreMember(WhileCommand.class, "WHILE", "while [stop/next/<comparison tag>] [<commands>]", 1);
     }
 
