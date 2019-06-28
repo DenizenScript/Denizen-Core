@@ -102,7 +102,6 @@ public class CommandExecuter {
                 }
             }
             DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
-            DenizenCore.getImplementation().debugCommandHeader(scriptEntry);
         }
         AbstractCommand command = scriptEntry.internal.actualCommand;
         if (command == null) {

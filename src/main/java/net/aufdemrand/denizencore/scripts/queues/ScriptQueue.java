@@ -509,6 +509,11 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
             return;
         }
 
+        if (script_entries.isEmpty()) {
+            // Nothing to execute
+            return;
+        }
+
         // Save the instance to the _queues static map
         _queues.put(id, this);
 
@@ -518,9 +523,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         boolean is_delayed = delay > 0;
 
         // Record what script generated the first entry in the queue
-        if (script_entries.size() > 0) {
-            script = script_entries.get(0).getScript();
-        }
+        script = script_entries.get(0).getScript();
 
         // Debug info
         String name = getName();
@@ -529,7 +532,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
                     + new Duration(((double) delay) / 1000f).identify() + "'...");
         }
         else {
-            queueDebug("Starting " + name + " '<QUEUE>'...");
+            queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
         }
 
         // If it's delayed, schedule it for later

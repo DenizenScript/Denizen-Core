@@ -113,8 +113,6 @@ public interface DenizenImplementation {
      */
     List<YamlConfiguration> getOutsideScripts();
 
-    void debugCommandHeader(ScriptEntry entry);
-
     TagContext getTagContextFor(ScriptEntry entry, boolean instant);
 
     boolean handleCustomArgs(ScriptEntry entry, aH.Argument arg, boolean if_ignore);
@@ -174,4 +172,6 @@ public interface DenizenImplementation {
     File getDataFolder();
 
     boolean allowStrangeYAMLSaves();
+
+    String queueHeaderInfo(ScriptEntry entry);
 }
