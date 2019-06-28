@@ -168,7 +168,7 @@ public class IfCommand extends BracedCommand {
                 if (dB.verbose) {
                     dB.log("Running the first set");
                 }
-                dB.echoDebug(scriptEntry, "If command passed, running block.");
+                dB.echoDebug(scriptEntry, "<Y>If command passed, running block.");
                 scriptEntry.setInstant(true);
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
                 for (int i = 0; i < bracedCommandsList.size(); i++) {
@@ -205,10 +205,10 @@ public class IfCommand extends BracedCommand {
                     }
                     if (should_fire) {
                         if (key.size() == 1 && key.get(0).equals("else")) {
-                            dB.echoDebug(scriptEntry, "No part of the if command passed, running ELSE block.");
+                            dB.echoDebug(scriptEntry, "<Y>No part of the if command passed, running ELSE block.");
                         }
                         else {
-                            dB.echoDebug(scriptEntry, "If sub-command " + z + " passed, running block.");
+                            dB.echoDebug(scriptEntry, "<Y>If sub-command " + z + " passed, running block.");
                         }
                         scriptEntry.setInstant(true);
                         List<ScriptEntry> bracedCommandsList = braceSet.value;
@@ -221,7 +221,7 @@ public class IfCommand extends BracedCommand {
                 }
             }
         }
-        dB.echoDebug(scriptEntry, "No part of the if command passed, no block will run.");
+        dB.echoDebug(scriptEntry, "<Y>No part of the if command passed, no block will run.");
     }
 
     public void executeCommandList(List<String> subcommand, ScriptEntry scriptEntry) {

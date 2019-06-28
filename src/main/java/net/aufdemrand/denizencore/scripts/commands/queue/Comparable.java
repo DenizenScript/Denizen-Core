@@ -400,14 +400,14 @@ public class Comparable {
 
     @Override
     public String toString() {
-        return (logic != Logic.REGULAR ? "Logic='" + logic.toString() + "', " : "")
-                + "Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal" :
+        return (logic != Logic.REGULAR ? "<G>Logic='<A>" + logic.toString() + "<G>', " : "")
+                + "<G>Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal" :
                 comparable instanceof String ? "Element" : (comparable instanceof Long ? "Number" : (comparable instanceof dList ? "dList" : log(comparable.getClass().getSimpleName()))))
-                + "(<A>" + comparable + "<W>)'")
-                + ", Operator='" + operator.toString()
-                + "', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal" :
+                + "<G>(<A>" + comparable + "<G>)'")
+                + "<G>, Operator='<A>" + operator.toString()
+                + "<G>', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal" :
                 comparedto instanceof String ? "Element" : (comparedto instanceof Long ? "Number" : (comparedto instanceof dList ? "dList" : log(comparedto.getClass().getSimpleName()))))
-                + "(<A>" + comparedto + "<W>)' ")
+                + "<G>(<A>" + comparedto + "<G>)' ")
                 + "<Y>--> OUTCOME='" + outcome + "'";
     }
 }
