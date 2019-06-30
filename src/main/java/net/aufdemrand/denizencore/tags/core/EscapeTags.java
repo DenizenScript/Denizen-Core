@@ -108,13 +108,6 @@ public class EscapeTags {
     }
 
     public void escapeTags(ReplaceableTagEvent event) {
-        // <--[tag]
-        // @attribute <escape:<text_to_escape>>
-        // @returns Element
-        // @description
-        // Returns the text simply escaped to prevent tagging conflicts.
-        // See <@link language Property Escaping>
-        // -->
         if (event.matches("escape")) {
             if (!event.hasValue()) {
                 dB.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
@@ -125,13 +118,6 @@ public class EscapeTags {
     }
 
     public void unEscapeTags(ReplaceableTagEvent event) {
-        // <--[tag]
-        // @attribute <unescape:<escaped_text>>
-        // @returns Element
-        // @description
-        // Returns the text with escaping removed.
-        // See <@link language Property Escaping>
-        // -->
         if (event.matches("unescape")) {
             if (!event.hasValue()) {
                 dB.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");
