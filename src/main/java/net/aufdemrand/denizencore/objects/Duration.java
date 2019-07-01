@@ -578,40 +578,6 @@ public class Duration implements dObject {
             }
         });
 
-        /////////////////////
-        //   DEBUG ATTRIBUTES
-        /////////////////
-
-        // <--[tag]
-        // @attribute <d@duration.prefix>
-        // @returns Element
-        // @description
-        // Returns the prefix for this object. By default this will return 'Duration', however certain situations will
-        // return a finer scope. All objects fetchable by the Object Fetcher will return a valid prefix for the object
-        // that is fulfilling this attribute.
-        // -->
-        registerTag("prefix", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).prefix).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <d@duration.debug>
-        // @returns Element
-        // @description
-        // Returns the debug entry for this object. This contains the prefix, the name of the dList object, and the
-        // data that is held within. All objects fetchable by the Object Fetcher will return a valid
-        // debug entry for the object that is fulfilling this attribute.
-        // -->
-        registerTag("debug", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(object.debug()).getAttribute(attribute.fulfill(1));
-            }
-        });
-
         // <--[tag]
         // @attribute <d@duration.type>
         // @returns Element

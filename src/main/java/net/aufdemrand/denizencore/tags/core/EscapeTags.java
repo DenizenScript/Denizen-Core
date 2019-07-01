@@ -108,6 +108,7 @@ public class EscapeTags {
     }
 
     public void escapeTags(ReplaceableTagEvent event) {
+        // TODO: Deprecate (in favor of element.escaped)
         if (event.matches("escape")) {
             if (!event.hasValue()) {
                 dB.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
@@ -118,6 +119,7 @@ public class EscapeTags {
     }
 
     public void unEscapeTags(ReplaceableTagEvent event) {
+        // TODO: Deprecate (in favor of element.unescaped)
         if (event.matches("unescape")) {
             if (!event.hasValue()) {
                 dB.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");

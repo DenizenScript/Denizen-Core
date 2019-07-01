@@ -520,42 +520,6 @@ public class dScript implements dObject, Adjustable {
             }
         });
 
-        /////////////////
-        // dObject attributes
-        ///////////////
-
-        // <--[tag]
-        // @attribute <s@script.debug>
-        // @returns Element
-        // @description
-        // Returns the debug entry for this object. This contains the prefix, the name of the dScript object, and the
-        // type of ScriptContainer is held within. All objects fetchable by the Object Fetcher will return a valid
-        // debug entry for the object that is fulfilling this attribute.
-        // -->
-
-        registerTag("debug", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(object.debug()).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <s@script.prefix>
-        // @returns Element
-        // @description
-        // Returns the prefix for this object. By default this will return 'Script', however certain situations will
-        // return a finer scope. All objects fetchable by the Object Fetcher will return a valid prefix for the object
-        // that is fulfilling this attribute.
-        // -->
-
-        registerTag("prefix", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript) object).prefix).getAttribute(attribute.fulfill(1));
-            }
-        });
-
         // <--[tag]
         // @attribute <s@script.type>
         // @returns Element

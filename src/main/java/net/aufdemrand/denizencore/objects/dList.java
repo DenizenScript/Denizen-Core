@@ -1932,42 +1932,6 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         });
 
 
-        /////////////////
-        // dObject attributes
-        ///////////////
-
-        // <--[tag]
-        // @attribute <li@list.prefix>
-        // @returns Element
-        // @description
-        // Returns the prefix for this object. By default this will return 'List', however certain situations will
-        // return a finer scope. All objects fetchable by the Object Fetcher will return a valid prefix for the object
-        // that is fulfilling this attribute.
-        // -->
-
-        registerTag("prefix", new TagRunnable.ObjectForm() {
-            @Override
-            public dObject run(Attribute attribute, dObject object) {
-                return new Element(((dList) object).prefix).getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <li@list.debug>
-        // @returns Element
-        // @description
-        // Returns the debug entry for this object. This contains the prefix, the name of the dList object, and the
-        // data that is held within. All objects fetchable by the Object Fetcher will return a valid
-        // debug entry for the object that is fulfilling this attribute.
-        // -->
-
-        registerTag("debug", new TagRunnable.ObjectForm() {
-            @Override
-            public dObject run(Attribute attribute, dObject object) {
-                return new Element(object.debug()).getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
         // <--[tag]
         // @attribute <li@list.type>
         // @returns Element

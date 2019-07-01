@@ -699,40 +699,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
         });
 
         /////////////////////
-        //   DEBUG ATTRIBUTES
-        /////////////////
-
-        // <--[tag]
-        // @attribute <el@element.debug>
-        // @returns Element
-        // @group debug
-        // @description
-        // Returns a standard debug representation of the Element.
-        // -->
-        registerTag("debug", new TagRunnable.ObjectForm() {
-            @Override
-            public dObject run(Attribute attribute, dObject object) {
-                return new Element(object.debug())
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <el@element.prefix>
-        // @returns Element
-        // @group debug
-        // @description
-        // Returns the prefix of the element.
-        // -->
-        registerTag("prefix", new TagRunnable.ObjectForm() {
-            @Override
-            public dObject run(Attribute attribute, dObject object) {
-                return new Element(object.getPrefix())
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        /////////////////////
         //   ELEMENT CHECKING ATTRIBUTES
         /////////////////
 
