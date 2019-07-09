@@ -120,11 +120,6 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     }
 
     @Override
-    public String debug() {
-        return String.format("<G>%s='<A>%s<G>'  ", prefix, identify());
-    }
-
-    @Override
     public boolean isUnique() {
         return false;
     }

@@ -333,11 +333,6 @@ public class Element implements dObject, dObject.ObjectAttributable {
     }
 
     @Override
-    public String debug() {
-        return (prefix + "='<A>" + identify() + "<G>'  ");
-    }
-
-    @Override
     public String identify() {
         return element;
     }

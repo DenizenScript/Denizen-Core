@@ -295,8 +295,8 @@ public class Duration implements dObject {
     }
 
     @Override
-    public String debug() {
-        return (prefix + "='<A>" + identify() + "<G>'  ");
+    public String debuggable() {
+        return "d@" + seconds + "s (" + formatted() + ")";
     }
 
     @Override

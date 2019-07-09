@@ -254,8 +254,8 @@ public class dScript implements dObject, Adjustable {
     }
 
     @Override
-    public String debug() {
-        return String.format("<G>%s='<A>%s<Y>(%s)<G>'  ", prefix, name, getType());
+    public String debuggable() {
+        return "s@" + name + " (" + getType() + ")";
     }
 
     @Override

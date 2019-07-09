@@ -858,12 +858,6 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         return this;
     }
 
-
-    @Override
-    public String debug() {
-        return "<G>" + prefix + "='<Y>" + identify() + "<G>'  ";
-    }
-
     @Override
     public boolean isUnique() {
         return true;
