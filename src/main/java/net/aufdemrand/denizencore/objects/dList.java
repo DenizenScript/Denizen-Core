@@ -405,8 +405,16 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
     }
 
     @Override
-    public String debug() {
-        return "<G>" + prefix + "='<Y>" + identify() + "<G>'  ";
+    public String debuggable() {
+        if (isEmpty()) {
+            return "li@";
+        }
+        StringBuilder debugText = new StringBuilder();
+        debugText.append("li@");
+        for (dObject item : objectForms) {
+            debugText.append(item.debuggable()).append(" <G>|<Y> ");
+        }
+        return debugText.substring(0, debugText.length() - 1);
     }
 
     public String flag = null;

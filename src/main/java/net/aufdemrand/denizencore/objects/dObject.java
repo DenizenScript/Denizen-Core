@@ -49,7 +49,16 @@ public interface dObject {
      *
      * @return the debug information
      */
-    String debug();
+    default String debug() {
+        return "<G>" + getPrefix() + "='<Y>" + debuggable() + "<G>'  ";
+    }
+
+    /**
+     * Gets a debuggable format of the object. Like identify, but for console output.
+     */
+    default String debuggable() {
+        return identify();
+    }
 
 
     /**

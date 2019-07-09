@@ -549,7 +549,7 @@ public class aH {
      * @return color coded debug report
      */
     public static String debugObj(String prefix, Object value) {
-        return "<G>" + prefix + "='<Y>" + (value != null ? value.toString() : "null") + "<G>'  ";
+        return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof dObject ? ((dObject) value).debuggable() : value.toString()) : "null") + "<G>'  ";
     }
 
     public static <T extends dObject> String debugList(String prefix, Collection<T> objects) {
