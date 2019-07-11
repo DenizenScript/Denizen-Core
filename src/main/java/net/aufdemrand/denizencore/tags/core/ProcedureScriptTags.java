@@ -118,7 +118,7 @@ public class ProcedureScriptTags {
                 String name = definition_names != null && definition_names.size() >= x ?
                         definition_names.get(x - 1).trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? null :
+                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? script.getContainer() :
                                 event.getScript().getContainer()) : event.getScriptEntry(),
                         "Adding definition '" + name + "' as " + definition);
                 x++;
