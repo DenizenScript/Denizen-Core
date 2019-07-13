@@ -31,7 +31,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
     // string, or number value. Their main usage is within the replaceable tag
     // system, often times returned from the use of another tag that isn't returning
     // a specific object type, such as a location or entity. For example,
-    // <player.name> or <li@item|item2|item3.as_cslist> will both return Elements.
+    // <player.name> or <lItemTag|item2|item3.as_cslist> will both return Elements.
     //
     // Pluses to the ElementTag system is the ability to utilize its attributes that
     // can provide a range of functionality that should be familiar from any other
@@ -83,10 +83,6 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
     // For general info, see <@link language Element>
     // -->
 
-    /**
-     * @param string the string or dScript argument String
-     * @return a dScript ListTag
-     */
     @Fetchable("el")
     public static ElementTag valueOf(String string, TagContext context) {
         if (string == null) {
@@ -585,7 +581,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         // @returns ScriptTag
         // @group conversion
         // @description
-        // Returns the element as a dScript.
+        // Returns the element as a ScriptTag.
         // Note: the value must be a valid script.
         // -->
         registerTag("as_script", new TagRunnable.ObjectForm() {

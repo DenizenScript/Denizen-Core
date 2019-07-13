@@ -1946,7 +1946,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @attribute <ListTag.type>
         // @returns ElementTag
         // @description
-        // Always returns 'List' for dScript objects. All objects fetchable by the Object Fetcher will return the
+        // Always returns 'List' for ListTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
 

@@ -130,9 +130,9 @@ public class ScriptContainer implements Debuggable {
 
 
     /**
-     * Gets a dScript object that represents this container.
+     * Gets a ScriptTag object that represents this container.
      *
-     * @return a dScript object linking this script container.
+     * @return a ScriptTag object linking this script container.
      */
     public ScriptTag getAsScriptArg() {
         return ScriptTag.valueOf(name);

@@ -72,15 +72,15 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // -->
 
     // <--[language]
-    // @name dScript Objects
+    // @name ScriptTag Objects
     // @group Object System
     // @description
-    // A ObjectTag that represents a script container. dScripts contain all information inside the script, and can be
+    // A ObjectTag that represents a script container. ScriptTags contain all information inside the script, and can be
     // used in a variety of commands that require script arguments. For example, run and inject will 'execute'
-    // script entries inside of a script container when given a matching dScript object.
+    // script entries inside of a script container when given a matching ScriptTag object.
     //
-    // dScripts also provide a way to access attributes accessed by the replaceable tag system by using the object
-    // fetcher or any other entry point to a dScript object. dScript objects have the object identifier of 's@'.
+    // ScriptTags also provide a way to access attributes accessed by the replaceable tag system by using the object
+    // fetcher or any other entry point to a ScriptTag object. ScriptTag objects have the object identifier of 's@'.
     // For example: ScriptTag_name
     //
     // For format info, see <@link language s@>
@@ -95,24 +95,18 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // @name s@
     // @group Object Fetcher System
     // @description
-    // s@ refers to the 'object identifier' of a dScript. The 's@' is notation for Denizen's Object
-    // Fetcher. The only valid constructor for a dScript is the name of the script container that it should be
-    // associated with. For example, if my script container is called 'cool_script', the dScript object for that script
+    // s@ refers to the 'object identifier' of a ScriptTag. The 's@' is notation for Denizen's Object
+    // Fetcher. The only valid constructor for a ScriptTag is the name of the script container that it should be
+    // associated with. For example, if my script container is called 'cool_script', the ScriptTag object for that script
     // would be able to be referenced (fetched) with s@cool_script.
     //
-    // For general info, see <@link language dScript>
+    // For general info, see <@link language ScriptTag>
     // -->
 
     public static ScriptTag valueOf(String string) {
         return valueOf(string, null);
     }
 
-    /**
-     * Gets a dContainer Object from a dScript argument.
-     *
-     * @param string the dScript argument String
-     * @return a Script, or null if incorrectly formatted
-     */
     @Fetchable("s")
     public static ScriptTag valueOf(String string, TagContext context) {
 
@@ -270,7 +264,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
         // @attribute <ScriptTag.container_type>
         // @returns ElementTag
         // @description
-        // Returns the type of script container that is associated with this dScript object. For example: 'task', or
+        // Returns the type of script container that is associated with this ScriptTag object. For example: 'task', or
         // 'world'.
         // -->
 
@@ -525,7 +519,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
         // @attribute <ScriptTag.type>
         // @returns ElementTag
         // @description
-        // Always returns 'Script' for dScript objects. All objects fetchable by the Object Fetcher will return the
+        // Always returns 'Script' for ScriptTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
 

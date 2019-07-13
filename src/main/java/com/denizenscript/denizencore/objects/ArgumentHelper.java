@@ -352,18 +352,18 @@ public class ArgumentHelper {
                 return booleanPrimitive.matcher(string_arg).matches();
 
             case Script:
-                // return dScript.matches(string_arg);
+                // return ScriptTag.matches(string_arg);
                 return true;
 
             /* TODO: MOVE OUT OF CORE:
              case Location:
-             return dLocation.matches(string_arg);
+             return LocationTag.matches(string_arg);
 
              case Item:
-             return dItem.matches(string_arg);
+             return ItemTag.matches(string_arg);
 
              case LivingEntity:
-             return dEntity.matches(string_arg);
+             return EntityTag.matches(string_arg);
 
              case Duration:
              return Duration.matches(string_arg);

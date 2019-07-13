@@ -109,7 +109,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      * Gets the speed of the queue. This is the
      * time in between each revolution.
      *
-     * @return a Duration of the speed.
+     * @return a DurationTag of the speed.
      */
     public DurationTag getSpeed() {
         return new DurationTag(ticks);

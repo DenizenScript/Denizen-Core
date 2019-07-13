@@ -20,7 +20,7 @@ public class CustomObjectTag implements ObjectTag, ObjectTag.ObjectAttributable,
     // @group Object System
     // @description
     // Custom objects are custom object types. They use a script basis to create an object
-    // similar to the base object types (dLists, dPlayers, etc).
+    // similar to the base object types (dLists, PlayerTags, etc).
     //
     // Usage of these should generally be avoided, as they can be considered 'over-engineering'...
     // That is, using a very complicated solution to solve a problem that can be solved much more simply.

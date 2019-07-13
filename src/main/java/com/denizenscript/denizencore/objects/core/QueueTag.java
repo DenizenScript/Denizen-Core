@@ -41,12 +41,6 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
         return valueOf(string, null);
     }
 
-    /**
-     * Gets a Queue Object from a string form of QueueTag_name.
-     *
-     * @param string the string or dScript argument String
-     * @return a ScriptQueue, or null if incorrectly formatted
-     */
     @Fetchable("q")
     public static QueueTag valueOf(String string, TagContext context) {
         if (string == null) {

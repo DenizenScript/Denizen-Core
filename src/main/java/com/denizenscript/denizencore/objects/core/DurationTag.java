@@ -65,14 +65,6 @@ public class DurationTag implements ObjectTag {
         return valueOf(string, null);
     }
 
-    /**
-     * Gets a Duration Object from a dScript argument. Durations must be a positive
-     * number. Can specify the unit of time by using one of the following: T=ticks, M=minutes,
-     * S=seconds, H=hours, D=days. Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 50.
-     *
-     * @param string the Argument value.
-     * @return a Duration, or null if incorrectly formatted.
-     */
     @Fetchable("d")
     public static DurationTag valueOf(String string, TagContext context) {
         if (string == null) {
@@ -115,7 +107,7 @@ public class DurationTag implements ObjectTag {
 
         String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
 
-        // Standard Duration. Check the type and create new Duration object accordingly.
+        // Standard Duration. Check the type and create new DurationTag object accordingly.
         try {
             if (string.endsWith("t")) {
                 // Matches TICKS, so 1 tick = .05 seconds
@@ -585,7 +577,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.type>
         // @returns ElementTag
         // @description
-        // Always returns 'Duration' for Duration objects. All objects fetchable by the Object Fetcher will return the
+        // Always returns 'Duration' for DurationTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
         registerTag("type", new TagRunnable() {

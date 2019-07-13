@@ -189,7 +189,7 @@ public class UtilTags {
         // @attribute <util.time_at[<year>/<month>/<day> (<hour>:<minute>:<second>(:<millisecond>))]>
         // @returns DurationTag
         // @description
-        // Returns the Duration time object for the input date/time.
+        // Returns the DurationTag time object for the input date/time.
         // Specify input as y/m/d, or as y/m/d h:m:s, or as y/m/d h:m:s:ms
         // All input values must be numbers (including the month, as a number from 1 to 12).
         // Note that unspecified hour:minute:second will be handled as 00:00:00
