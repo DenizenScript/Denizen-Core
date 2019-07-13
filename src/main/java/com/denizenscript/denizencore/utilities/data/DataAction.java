@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.utilities.data;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.objects.dObject;
 
@@ -26,7 +26,7 @@ public class DataAction {
     public dObject inputValue = null;
 
     public String debug() {
-        return aH.debugObj("action", "(" + key + "[" + index + "]:" + type + ":" + inputValue + ")");
+        return ArgumentHelper.debugObj("action", "(" + key + "[" + index + "]:" + type + ":" + inputValue + ")");
     }
 
     public dList autoList(String key) {

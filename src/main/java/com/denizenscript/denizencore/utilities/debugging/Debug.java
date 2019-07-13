@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.utilities.debugging;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
-public class dB {
+public class Debug {
 
     public static boolean showScriptBuilder = false;
 

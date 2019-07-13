@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.events;
 
-import com.denizenscript.denizencore.interfaces.ContextSource;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.scripts.queues.ContextSource;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dObject;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
@@ -9,7 +9,7 @@ import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContaine
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
@@ -43,10 +43,10 @@ public class OldEventManager {
             // Build a Map of scripts keyed by 'world events name'.
 
             // Loop through each world script
-            dB.log("Scanning " + world_scripts.size() + " world scripts...");
+            Debug.log("Scanning " + world_scripts.size() + " world scripts...");
             for (WorldScriptContainer script : world_scripts.values()) {
                 if (script == null) {
-                    dB.echoError("Null world script?!");
+                    Debug.echoError("Null world script?!");
                     continue;
                 }
 
@@ -54,12 +54,12 @@ public class OldEventManager {
                 if (script.contains("EVENTS")) {
                     YamlConfiguration configSection = script.getConfigurationSection("EVENTS");
                     if (configSection == null) {
-                        dB.echoError("Script '" + script.getName() + "' has an invalid events block!");
+                        Debug.echoError("Script '" + script.getName() + "' has an invalid events block!");
                         break;
                     }
                     Set<StringHolder> keys = configSection.getKeys(false);
                     if (keys == null) {
-                        dB.echoError("Script '" + script.getName() + "' has an empty events block!");
+                        Debug.echoError("Script '" + script.getName() + "' has an empty events block!");
                         break;
                     }
                     for (StringHolder eventName1 : keys) {
@@ -76,7 +76,7 @@ public class OldEventManager {
                     }
                 }
                 else {
-                    dB.echoError("Script '" + script.getName() + "' does not have an events block!");
+                    Debug.echoError("Script '" + script.getName() + "' does not have an events block!");
                 }
             }
             // dB.echoApproval("Built events map: " + events);
@@ -95,7 +95,7 @@ public class OldEventManager {
             }
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
         }
     }
 
@@ -104,8 +104,8 @@ public class OldEventManager {
         event.addAll(original);
         List<String> parsed = new ArrayList<>();
 
-        if (dB.showEventsTrimming) {
-            dB.echoApproval("Trimming world events '" + event.toString() + '\'');
+        if (Debug.showEventsTrimming) {
+            Debug.echoApproval("Trimming world events '" + event.toString() + '\'');
         }
 
         // Remove any duplicate event names
@@ -215,13 +215,13 @@ public class OldEventManager {
                             continue;
                         }
 
-                        dB.report(script, "Event",
-                                aH.debugObj("Type", "on " + eventName)
+                        Debug.report(script, "Event",
+                                ArgumentHelper.debugObj("Type", "on " + eventName)
                                         + script.getAsScriptArg().debug()
                                         + data.toString()
-                                        + (context != null ? aH.debugObj("Context", context.toString()) : ""));
+                                        + (context != null ? ArgumentHelper.debugObj("Context", context.toString()) : ""));
 
-                        dB.echoDebug(script, dB.DebugElement.Header, "Building event 'ON " + eventName.toUpperCase()
+                        Debug.echoDebug(script, Debug.DebugElement.Header, "Building event 'ON " + eventName.toUpperCase()
                                 + "' for " + script.getName());
 
                         // Add entries and context to the queue
@@ -247,7 +247,7 @@ public class OldEventManager {
             return determinations;
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
             return new ArrayList<>();
         }
     }

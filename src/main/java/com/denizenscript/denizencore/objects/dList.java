@@ -6,7 +6,7 @@ import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -372,7 +372,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 }
             }
             catch (Exception e) {
-                dB.echoError(e);
+                Debug.echoError(e);
             }
         }
 
@@ -575,7 +575,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 int index = -1;
-                if (aH.matchesInteger(attribute.getContext(1))) {
+                if (ArgumentHelper.matchesInteger(attribute.getContext(1))) {
                     index = attribute.getIntContext(1) - 1;
                 }
                 attribute.fulfill(1);
@@ -743,7 +743,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.insert[...] must have a value.");
+                    Debug.echoError("The tag li@list.insert[...] must have a value.");
                     return null;
                 }
                 dList items = getListFor(attribute.getContextObject(1));
@@ -763,7 +763,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     return result.getObjectAttribute(attribute.fulfill(1));
                 }
                 else {
-                    dB.echoError("The tag li@list.insert[...] must be followed by .at[#]!");
+                    Debug.echoError("The tag li@list.insert[...] must be followed by .at[#]!");
                     return null;
                 }
             }
@@ -782,7 +782,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.set[...] must have a value.");
+                    Debug.echoError("The tag li@list.set[...] must have a value.");
                     return null;
                 }
                 if (((dList) object).isEmpty()) {
@@ -793,7 +793,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 if (attribute.startsWith("at")
                         && attribute.hasContext(1)) {
                     dList result = new dList((dList) object);
-                    int index = aH.getIntegerFrom(attribute.getContext(1)) - 1;
+                    int index = ArgumentHelper.getIntegerFrom(attribute.getContext(1)) - 1;
                     if (index < 0) {
                         index = 0;
                     }
@@ -807,7 +807,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     return result.getObjectAttribute(attribute.fulfill(1));
                 }
                 else {
-                    dB.echoError("The tag li@list.set[...] must be followed by .at[#]!");
+                    Debug.echoError("The tag li@list.set[...] must be followed by .at[#]!");
                     return null;
                 }
             }
@@ -825,7 +825,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.include[...] must have a value.");
+                    Debug.echoError("The tag li@list.include[...] must have a value.");
                     return null;
                 }
                 dList copy = new dList((dList) object);
@@ -846,7 +846,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.exclude[...] must have a value.");
+                    Debug.echoError("The tag li@list.exclude[...] must have a value.");
                     return null;
                 }
                 dList exclusions = getListFor(attribute.getContextObject(1));
@@ -878,7 +878,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.remove[#] must have a value.");
+                    Debug.echoError("The tag li@list.remove[#] must have a value.");
                     return null;
                 }
                 dList indices = getListFor(attribute.getContextObject(1));
@@ -926,7 +926,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.replace[...] must have a value.");
+                    Debug.echoError("The tag li@list.replace[...] must have a value.");
                     return null;
                 }
                 String replace = attribute.getContext(1);
@@ -1034,13 +1034,13 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.get[...] must have a value.");
+                    Debug.echoError("The tag li@list.get[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
                 if (list.isEmpty()) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("Can't get from an empty list.");
+                        Debug.echoError("Can't get from an empty list.");
                     }
                     return null;
                 }
@@ -1048,7 +1048,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 if (indices.size() > 1) {
                     dList results = new dList();
                     for (String index : indices) {
-                        int ind = aH.getIntegerFrom(index);
+                        int ind = ArgumentHelper.getIntegerFrom(index);
                         if (ind > 0 && ind <= list.size()) {
                             results.add(list.get(ind - 1));
                         }
@@ -1056,10 +1056,10 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     return results.getObjectAttribute(attribute.fulfill(1));
                 }
                 if (indices.size() > 0) {
-                    int index = aH.getIntegerFrom(indices.get(0)) - 1;
+                    int index = ArgumentHelper.getIntegerFrom(indices.get(0)) - 1;
                     if (index >= list.size()) {
                         if (!attribute.hasAlternative()) {
-                            dB.echoError("Invalid list.get index.");
+                            Debug.echoError("Invalid list.get index.");
                         }
                         return null;
                     }
@@ -1113,7 +1113,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.find_all_partial[...] must have a value.");
+                    Debug.echoError("The tag li@list.find_all_partial[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
@@ -1142,7 +1142,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.find_all[...] must have a value.");
+                    Debug.echoError("The tag li@list.find_all[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
@@ -1170,7 +1170,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.find_partial[...] must have a value.");
+                    Debug.echoError("The tag li@list.find_partial[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
@@ -1198,7 +1198,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.find[...] must have a value.");
+                    Debug.echoError("The tag li@list.find[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
@@ -1230,7 +1230,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.count[...] must have a value.");
+                    Debug.echoError("The tag li@list.count[...] must have a value.");
                     return null;
                 }
                 dList list = (dList) object;
@@ -1258,7 +1258,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList list = (dList) object;
                 double sum = 0;
                 for (String entry : list) {
-                    sum += aH.getDoubleFrom(entry);
+                    sum += ArgumentHelper.getDoubleFrom(entry);
                 }
                 return new Element(sum).getObjectAttribute(attribute.fulfill(1));
             }
@@ -1280,7 +1280,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 }
                 double sum = 0;
                 for (String entry : list) {
-                    sum += aH.getDoubleFrom(entry);
+                    sum += ArgumentHelper.getDoubleFrom(entry);
                 }
                 return new Element(sum / list.size()).getObjectAttribute(attribute.fulfill(1));
             }
@@ -1421,8 +1421,8 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                         public int compare(dObject o1, dObject o2) {
                             dObject or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
                             dObject or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
-                            double r1 = aH.getDoubleFrom(or1.toString());
-                            double r2 = aH.getDoubleFrom(or2.toString());
+                            double r1 = ArgumentHelper.getDoubleFrom(or1.toString());
+                            double r2 = ArgumentHelper.getDoubleFrom(or2.toString());
                             double value = r1 - r2;
                             if (value == 0) {
                                 return 0;
@@ -1438,7 +1438,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     return new dList(newlist.objectForms).getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
                 return newlist.getObjectAttribute(attribute.fulfill(1));
             }
@@ -1465,7 +1465,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                 dList obj = new dList((dList) object);
                 final ProcedureScriptContainer script = (ProcedureScriptContainer) dScript.valueOf(attribute.getContext(1)).getContainer();
                 if (script == null) {
-                    dB.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
+                    Debug.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
                     return obj.getObjectAttribute(attribute.fulfill(1));
                 }
                 final ScriptEntry entry = attribute.getScriptEntry();
@@ -1508,7 +1508,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                                 String name = definition_names != null && definition_names.length >= x ?
                                         definition_names[x - 1].trim() : String.valueOf(x);
                                 queue.addDefinition(name, definition);
-                                dB.echoDebug(entries.get(0), "Adding definition %" + name + "% as " + definition);
+                                Debug.echoDebug(entries.get(0), "Adding definition %" + name + "% as " + definition);
                                 x++;
                             }
                             queue.start();
@@ -1529,7 +1529,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     });
                 }
                 catch (Exception e) {
-                    dB.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
+                    Debug.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
                 }
                 return new dList(list).getObjectAttribute(attribute);
             }
@@ -1564,7 +1564,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     }
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
                 return newlist.getObjectAttribute(attribute.fulfill(1));
             }
@@ -1617,7 +1617,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
                     }
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
                 return newlist.getObjectAttribute(attribute.fulfill(1));
             }
@@ -1635,7 +1635,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.pad_left[...] must have a value.");
+                    Debug.echoError("The tag li@list.pad_left[...] must have a value.");
                     return null;
                 }
                 dObject with = new Element("");
@@ -1676,7 +1676,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.pad_right[...] must have a value.");
+                    Debug.echoError("The tag li@list.pad_right[...] must have a value.");
                     return null;
                 }
                 dObject with = new Element("");
@@ -1756,7 +1756,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.contains_any_case_sensitive[...] must have a value.");
+                    Debug.echoError("The tag li@list.contains_any_case_sensitive[...] must have a value.");
                     return null;
                 }
                 dList list = getListFor(attribute.getContextObject(1));
@@ -1787,7 +1787,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.contains_any[...] must have a value.");
+                    Debug.echoError("The tag li@list.contains_any[...] must have a value.");
                     return null;
                 }
                 dList list = getListFor(attribute.getContextObject(1));
@@ -1818,7 +1818,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.contains_case_sensitive[...] must have a value.");
+                    Debug.echoError("The tag li@list.contains_case_sensitive[...] must have a value.");
                     return null;
                 }
                 boolean state = false;
@@ -1845,7 +1845,7 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag li@list.contains[...] must have a value.");
+                    Debug.echoError("The tag li@list.contains[...] must have a value.");
                     return null;
                 }
                 dList needed = getListFor(attribute.getContextObject(1));
@@ -2022,21 +2022,21 @@ public class dList extends ArrayList<String> implements dObject, dObject.ObjectA
         TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             if (!otr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
             }
             return otr.run(attribute, this);
         }
 
-        if (dB.verbose) {
-            dB.log("dList alternate attribute " + attrLow);
+        if (Debug.verbose) {
+            Debug.log("dList alternate attribute " + attrLow);
         }
-        if (aH.matchesInteger(attrLow)) {
-            int index = aH.getIntegerFrom(attrLow);
+        if (ArgumentHelper.matchesInteger(attrLow)) {
+            int index = ArgumentHelper.getIntegerFrom(attrLow);
             if (index != 0) {
                 if (index < 1 || index > size()) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("dList index " + index + " is out of range");
+                        Debug.echoError("dList index " + index + " is out of range");
                     }
                     attribute.fulfill(1);
                     return null;

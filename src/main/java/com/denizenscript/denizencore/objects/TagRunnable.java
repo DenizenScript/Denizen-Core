@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 
@@ -14,7 +14,7 @@ public abstract class TagRunnable implements Cloneable {
                 return (ObjectForm) super.clone();
             }
             catch (Exception ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
                 return null;
             }
         }
@@ -32,7 +32,7 @@ public abstract class TagRunnable implements Cloneable {
                 return (RootForm) super.clone();
             }
             catch (Exception ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
                 return null;
             }
         }
@@ -48,7 +48,7 @@ public abstract class TagRunnable implements Cloneable {
             return (TagRunnable) super.clone();
         }
         catch (Exception ex) {
-            dB.echoError(ex);
+            Debug.echoError(ex);
             return null;
         }
     }

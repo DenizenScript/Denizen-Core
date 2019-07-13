@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.objects.dObject;
 import com.denizenscript.denizencore.objects.dScript;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
 import java.util.List;
@@ -364,14 +364,14 @@ public class ReplaceableTagEvent {
     }
 
     public void setReplaced(String string) {
-        if (dB.verbose) {
+        if (Debug.verbose) {
             try {
                 throw new RuntimeException("Trace");
             }
             catch (Exception ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
             }
-            dB.log("Tag " + raw_tag + " updating to value: " + string);
+            Debug.log("Tag " + raw_tag + " updating to value: " + string);
         }
         replaced = string;
         replaced_obj = null;

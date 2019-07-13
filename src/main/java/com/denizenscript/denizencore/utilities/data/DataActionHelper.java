@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.utilities.data;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class DataActionHelper {
         if (bracketIndex >= 0) {
             String index = toReturn.key.substring(bracketIndex + 1, toReturn.key.lastIndexOf(']'));
             toReturn.key = toReturn.key.substring(bracketIndex);
-            toReturn.index = aH.getIntegerFrom(index);
+            toReturn.index = ArgumentHelper.getIntegerFrom(index);
         }
         if (split.size() == 1) {
             toReturn.type = DataActionType.AUTO_SET;

@@ -1,15 +1,16 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("origin")
                     && arg.matchesPrefix("origin", "o")) {
@@ -81,11 +82,11 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         Element overwrite = scriptEntry.getElement("overwrite");
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
+            Debug.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
         }
 
         if (!DenizenCore.getImplementation().allowFileCopy()) {
-            dB.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
+            Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
             scriptEntry.addObject("success", new Element("false"));
             scriptEntry.setFinished(true);
             return;
@@ -98,27 +99,27 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
 
         if (!DenizenCore.getImplementation().canReadFile(o)) {
-            dB.echoError("Server config denies reading files in that location.");
+            Debug.echoError("Server config denies reading files in that location.");
             scriptEntry.addObject("success", new Element("false"));
             scriptEntry.setFinished(true);
             return;
         }
         if (!o.exists()) {
-            dB.echoError(scriptEntry.getResidingQueue(), "File copy failed, origin does not exist!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "File copy failed, origin does not exist!");
             scriptEntry.addObject("success", new Element("false"));
             scriptEntry.setFinished(true);
             return;
         }
 
         if (!DenizenCore.getImplementation().canWriteToFile(d)) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
             scriptEntry.addObject("success", new Element("false"));
             scriptEntry.setFinished(true);
             return;
         }
 
         if (dexists && !disdir && !ow) {
-            dB.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
+            Debug.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
             scriptEntry.addObject("success", new Element("false"));
             scriptEntry.setFinished(true);
             return;
@@ -143,7 +144,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                 }
                 catch (Exception e) {
-                    dB.echoError(scriptEntry.getResidingQueue(), e);
+                    Debug.echoError(scriptEntry.getResidingQueue(), e);
                     scriptEntry.addObject("success", new Element("false"));
                     scriptEntry.setFinished(true);
                 }

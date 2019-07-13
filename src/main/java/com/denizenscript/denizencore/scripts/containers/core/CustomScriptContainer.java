@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.scripts.containers.core;
 
-import com.denizenscript.denizencore.interfaces.ContextSource;
+import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.CustomObject;
@@ -131,7 +131,7 @@ public class CustomScriptContainer extends ScriptContainer {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("tags." + path)) {
-                dB.echoDebug(this, "[CustomObject] Calculating tag: " + path + " for " + csc.getName());
+                Debug.echoDebug(this, "[CustomObject] Calculating tag: " + path + " for " + csc.getName());
                 ScriptQueue queue = new InstantQueue("TAG_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
@@ -142,10 +142,10 @@ public class CustomScriptContainer extends ScriptContainer {
                 queue.start();
                 return queue.determinations;
             }
-            dB.echoDebug(this, "[CustomObject] Grabbing parent of " + csc.getName());
+            Debug.echoDebug(this, "[CustomObject] Grabbing parent of " + csc.getName());
             csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
         }
-        dB.echoDebug(this, "Unable to find tag handler for " + path + " for " + this.getName());
+        Debug.echoDebug(this, "Unable to find tag handler for " + path + " for " + this.getName());
         return null;
     }
 

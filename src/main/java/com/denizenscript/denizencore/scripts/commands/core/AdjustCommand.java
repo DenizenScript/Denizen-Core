@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.UtilTags;
 
@@ -52,7 +52,7 @@ public class AdjustCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
             if (!scriptEntry.hasObject("object")) {
                 if (arg.object instanceof dList) {
                     scriptEntry.addObject("object", arg.object);
@@ -112,7 +112,7 @@ public class AdjustCommand extends AbstractCommand {
             String defName = lowerObjectString.substring("def:".length());
             dObject def = entry.getResidingQueue().getDefinitionObject(defName);
             if (def == null) {
-                dB.echoError("Invalid definition name '" + defName + "', cannot adjust");
+                Debug.echoError("Invalid definition name '" + defName + "', cannot adjust");
                 return object;
             }
             def = adjust(def, mechanism, entry);
@@ -122,7 +122,7 @@ public class AdjustCommand extends AbstractCommand {
         if (object instanceof Element) {
             object = ObjectFetcher.pickObjectFor(objectString, entry.entryData.getTagContext());
             if (object instanceof Element) {
-                dB.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
+                Debug.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
                 return object;
             }
         }
@@ -137,7 +137,7 @@ public class AdjustCommand extends AbstractCommand {
         }
         // Make sure this object is Adjustable
         if (!(object instanceof Adjustable)) {
-            dB.echoError("'" + objectString + "' is not an adjustable object type.");
+            Debug.echoError("'" + objectString + "' is not an adjustable object type.");
             return object;
         }
         ((Adjustable) object).safeAdjust(mechanism);
@@ -154,7 +154,7 @@ public class AdjustCommand extends AbstractCommand {
         dList objects = scriptEntry.getdObject("object");
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(),
+            Debug.report(scriptEntry, getName(),
                     objects.debug()
                             + mechanism.debug()
                             + (value == null ? "" : value.debug()));

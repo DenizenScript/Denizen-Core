@@ -1,4 +1,4 @@
-package com.denizenscript.denizencore.interfaces;
+package com.denizenscript.denizencore.scripts.queues;
 
 import com.denizenscript.denizencore.objects.dObject;
 

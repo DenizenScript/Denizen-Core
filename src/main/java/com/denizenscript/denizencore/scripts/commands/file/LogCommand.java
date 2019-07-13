@@ -1,11 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.DebugLog;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -70,7 +71,7 @@ public class LogCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
             if (!scriptEntry.hasObject("type")
                     && arg.matchesPrefix("type")
                     && arg.matchesEnum(Type.values())) {
@@ -104,7 +105,7 @@ public class LogCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         if (!DenizenCore.getImplementation().allowLogging()) {
-            dB.echoError("Logging disabled by administrator.");
+            Debug.echoError("Logging disabled by administrator.");
             return;
         }
         Element message = scriptEntry.getElement("message");
@@ -113,7 +114,7 @@ public class LogCommand extends AbstractCommand {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(),
+            Debug.report(scriptEntry, getName(),
                     message.debug() + fileName.debug() + typeElement.debug());
 
         }
@@ -125,7 +126,7 @@ public class LogCommand extends AbstractCommand {
 
         file.getParentFile().mkdirs();
         if (!DenizenCore.getImplementation().canWriteToFile(file)) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Cannot log into that file!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot log into that file!");
             return;
         }
 
@@ -139,8 +140,8 @@ public class LogCommand extends AbstractCommand {
                 fw.close();
             }
             catch (IOException e) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Error logging to file...");
-                dB.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry.getResidingQueue(), "Error logging to file...");
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
             return;
         }
@@ -153,8 +154,8 @@ public class LogCommand extends AbstractCommand {
                 fw.close();
             }
             catch (IOException e) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Error logging to file...");
-                dB.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry.getResidingQueue(), "Error logging to file...");
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
             return;
         }

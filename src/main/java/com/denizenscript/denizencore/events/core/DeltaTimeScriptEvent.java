@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.events.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dObject;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -43,7 +43,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         String time = path.rawEventArgAt(2);
         long seconds = DenizenCore.serverTimeMillis / 1000;
         String countString = path.switches.get("every");
-        int count = countString == null ? 1 : aH.getIntegerFrom(countString);
+        int count = countString == null ? 1 : ArgumentHelper.getIntegerFrom(countString);
         if (time.equals("secondly")) {
             return seconds % count == 0;
         }

@@ -1,14 +1,15 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.EscapeTags;
@@ -88,7 +89,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 entry.getValue().close();
             }
             catch (SQLException e) {
-                dB.echoError(e);
+                Debug.echoError(e);
             }
         }
         connections.clear();
@@ -97,7 +98,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("sqlid")
                     && arg.matchesPrefix("id")) {
@@ -166,11 +167,11 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(), sqlID.debug()
+            Debug.report(scriptEntry, getName(), sqlID.debug()
                     + action.debug()
                     + (server != null ? server.debug() : "")
                     + (username != null ? username.debug() : "")
-                    + (password != null ? aH.debugObj("password", "NotLogged") : "")
+                    + (password != null ? ArgumentHelper.debugObj("password", "NotLogged") : "")
                     + (query != null ? query.debug() : ""));
 
         }
@@ -183,27 +184,27 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         try {
             if (action.asString().equalsIgnoreCase("connect")) {
                 if (server == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Must specify a server!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a server!");
                     return;
                 }
                 if (username == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Must specify a username!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a username!");
                     return;
                 }
                 if (password == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Must specify a password!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a password!");
                     return;
                 }
                 if (connections.containsKey(sqlID.asString().toUpperCase())) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + sqlID.asString() + "'!");
                     return;
                 }
                 DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(new Runnable() {
                     @Override
                     public void run() {
                         Connection con = null;
-                        if (dB.verbose) {
-                            dB.echoDebug(scriptEntry, "Connecting to " + server.asString());
+                        if (Debug.verbose) {
+                            Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
                         }
                         try {
                             con = getConnection(username.asString(), password.asString(), server.asString(), ssl.asString());
@@ -212,16 +213,16 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dB.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
+                                    Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
                                     scriptEntry.setFinished(true);
-                                    if (dB.verbose) {
-                                        dB.echoError(scriptEntry.getResidingQueue(), e);
+                                    if (Debug.verbose) {
+                                        Debug.echoError(scriptEntry.getResidingQueue(), e);
                                     }
                                 }
                             }, 0));
                         }
-                        if (dB.verbose) {
-                            dB.echoDebug(scriptEntry, "Connection did not error");
+                        if (Debug.verbose) {
+                            Debug.echoDebug(scriptEntry, "Connection did not error");
                         }
                         final Connection conn = con;
                         if (con != null) {
@@ -229,7 +230,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                 @Override
                                 public void run() {
                                     connections.put(sqlID.asString().toUpperCase(), conn);
-                                    dB.echoDebug(scriptEntry, "Successfully connected to " + server);
+                                    Debug.echoDebug(scriptEntry, "Successfully connected to " + server);
                                     scriptEntry.setFinished(true);
                                 }
                             }, 0));
@@ -239,8 +240,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                 @Override
                                 public void run() {
                                     scriptEntry.setFinished(true);
-                                    if (dB.verbose) {
-                                        dB.echoDebug(scriptEntry, "Connecting errored!");
+                                    if (Debug.verbose) {
+                                        Debug.echoDebug(scriptEntry, "Connecting errored!");
                                     }
                                 }
                             }, 0));
@@ -251,24 +252,24 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
                     return;
                 }
                 con.close();
                 connections.remove(sqlID.asString().toUpperCase());
-                dB.echoDebug(scriptEntry, "Disconnected from '" + sqlID.asString() + "'.");
+                Debug.echoDebug(scriptEntry, "Disconnected from '" + sqlID.asString() + "'.");
             }
             else if (action.asString().equalsIgnoreCase("query")) {
                 if (query == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Must specify a query!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a query!");
                     return;
                 }
                 final Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
                     return;
                 }
-                dB.echoDebug(scriptEntry, "Running query " + query.asString());
+                Debug.echoDebug(scriptEntry, "Running query " + query.asString());
                 if (scriptEntry.shouldWaitFor()) {
                     DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(new Runnable() {
                         @Override
@@ -281,7 +282,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                 DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
                                     @Override
                                     public void run() {
-                                        dB.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
+                                        Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                                     }
                                 }, 0));
                                 int count = 0;
@@ -299,7 +300,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                 DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
                                     @Override
                                     public void run() {
-                                        dB.echoDebug(scriptEntry, "Got a query result of " + finalCount + " rows");
+                                        Debug.echoDebug(scriptEntry, "Got a query result of " + finalCount + " rows");
                                         scriptEntry.setFinished(true);
                                     }
                                 }, 0));
@@ -308,10 +309,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                 DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
                                     @Override
                                     public void run() {
-                                        dB.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
+                                        Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
                                         scriptEntry.setFinished(true);
-                                        if (dB.verbose) {
-                                            dB.echoError(scriptEntry.getResidingQueue(), e);
+                                        if (Debug.verbose) {
+                                            Debug.echoError(scriptEntry.getResidingQueue(), e);
                                         }
                                     }
                                 }, 0));
@@ -324,7 +325,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     ResultSet set = statement.executeQuery(query.asString());
                     ResultSetMetaData rsmd = set.getMetaData();
                     final int columns = rsmd.getColumnCount();
-                    dB.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
+                    Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                     int count = 0;
                     dList rows = new dList();
                     while (set.next()) {
@@ -337,27 +338,27 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     }
                     scriptEntry.addObject("result", rows);
                     final int finalCount = count;
-                    dB.echoDebug(scriptEntry, "Got a query result of " + finalCount + " rows");
+                    Debug.echoDebug(scriptEntry, "Got a query result of " + finalCount + " rows");
                 }
             }
             else if (action.asString().equalsIgnoreCase("update")) {
                 if (query == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Must specify an update query!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify an update query!");
                     return;
                 }
                 Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
                     return;
                 }
-                dB.echoDebug(scriptEntry, "Running update " + query.asString());
+                Debug.echoDebug(scriptEntry, "Running update " + query.asString());
                 Statement statement = con.createStatement();
                 int affected = statement.executeUpdate(query.asString(), Statement.RETURN_GENERATED_KEYS);
                 scriptEntry.addObject("affected_rows", new Element(affected));
                 ResultSet set = statement.getGeneratedKeys();
                 ResultSetMetaData rsmd = set.getMetaData();
                 int columns = rsmd.getColumnCount();
-                dB.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
+                Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                 dList rows = new dList();
                 while (set.next()) {
                     StringBuilder current = new StringBuilder();
@@ -367,16 +368,16 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     rows.add(current.toString());
                 }
                 scriptEntry.addObject("result", rows);
-                dB.echoDebug(scriptEntry, "Updated " + affected + " rows");
+                Debug.echoDebug(scriptEntry, "Updated " + affected + " rows");
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Unknown action '" + action.asString() + "'");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Unknown action '" + action.asString() + "'");
             }
         }
         catch (SQLException e) {
-            dB.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
-            if (dB.verbose) {
-                dB.echoError(scriptEntry.getResidingQueue(), e);
+            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
+            if (Debug.verbose) {
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
         }
     }

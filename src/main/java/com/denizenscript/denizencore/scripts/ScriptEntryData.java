@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.scripts;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
 
 public abstract class ScriptEntryData implements Cloneable {
@@ -13,7 +13,7 @@ public abstract class ScriptEntryData implements Cloneable {
             return (ScriptEntryData) super.clone();
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
             return null;
         }
     }

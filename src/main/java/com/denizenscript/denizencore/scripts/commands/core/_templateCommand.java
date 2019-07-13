@@ -1,10 +1,11 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 /**
@@ -21,10 +22,10 @@ public class _templateCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         // Interpret arguments
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("required_integer")
-                    && arg.matchesPrimitive(aH.PrimitiveType.Integer)) {
+                    && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
                 scriptEntry.addObject("required_integer", arg.asElement());
             }
 
@@ -52,7 +53,7 @@ public class _templateCommand extends AbstractCommand {
 
         // Debug the execution
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), required_integer.debug());
+            Debug.report(scriptEntry, getName(), required_integer.debug());
         }
 
         // Do the execution

@@ -1,12 +1,9 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.events.OldEventManager;
-import com.denizenscript.denizencore.objects.ObjectFetcher;
-import com.denizenscript.denizencore.objects.aH;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dObject;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -52,7 +49,7 @@ public class EventCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("context")
                     && arg.matchesPrefix("context", "c")) {
@@ -82,7 +79,7 @@ public class EventCommand extends AbstractCommand {
         dList context = (dList) scriptEntry.getObject("context");
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), events.debug() + context.debug());
+            Debug.report(scriptEntry, getName(), events.debug() + context.debug());
         }
 
         if (context.size() % 2 == 1) { // Size is uneven!

@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dScript;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -37,7 +38,7 @@ public class InjectCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matches("instant", "instantly")) {
                 scriptEntry.addObject("instant", new Element(true));
@@ -85,7 +86,7 @@ public class InjectCommand extends AbstractCommand {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(),
+            Debug.report(scriptEntry, getName(),
                     (scriptEntry.hasObject("script") ? scriptEntry.getdObject("script").debug() : scriptEntry.getScript().debug())
                             + (scriptEntry.hasObject("instant") ? scriptEntry.getdObject("instant").debug() : "")
                             + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
@@ -116,7 +117,7 @@ public class InjectCommand extends AbstractCommand {
         }
 
         if (entries == null) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid path or script name)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid path or script name)!");
             return;
         }
 

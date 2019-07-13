@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.scripts.queues;
 
 import com.denizenscript.denizencore.scripts.commands.CommandExecuter;
 import com.denizenscript.denizencore.scripts.queues.core.Delayable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 public class ScriptEngine {
@@ -24,7 +24,7 @@ public class ScriptEngine {
         if (scriptQueue.getLastEntryExecuted() != null
                 && scriptQueue.getLastEntryExecuted().shouldWaitFor()) {
             if (!(scriptQueue instanceof Delayable)) {
-                dB.echoDebug(scriptQueue.getLastEntryExecuted(), "Forcing queue " + scriptQueue.id + " into a timed queue...");
+                Debug.echoDebug(scriptQueue.getLastEntryExecuted(), "Forcing queue " + scriptQueue.id + " into a timed queue...");
                 scriptQueue.forceToTimed(null);
                 return true;
             }
@@ -45,8 +45,8 @@ public class ScriptEngine {
             getScriptExecuter().execute(scriptEntry);
         }
         catch (Throwable e) {
-            dB.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
-            dB.echoError(scriptEntry.getResidingQueue(), e);
+            Debug.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), e);
         }
         scriptQueue.setLastEntryExecuted(scriptEntry);
     }
@@ -71,8 +71,8 @@ public class ScriptEngine {
             }
             // Absolutely NO errors beyond this point!
             catch (Throwable e) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while revolving the queue)!");
-                dB.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while revolving the queue)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
             // Set as last entry executed
             scriptQueue.setLastEntryExecuted(scriptEntry);

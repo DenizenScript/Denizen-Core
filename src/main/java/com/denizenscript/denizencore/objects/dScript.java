@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -314,7 +314,7 @@ public class dScript implements dObject, Adjustable {
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Exception e) {
-                    dB.echoError(e);
+                    Debug.echoError(e);
                 }
                 return null;
             }
@@ -365,7 +365,7 @@ public class dScript implements dObject, Adjustable {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag s@script.constant[...] must have a value.");
+                    Debug.echoError("The tag s@script.constant[...] must have a value.");
                     return null;
                 }
                 YamlConfiguration section = ((dScript) object).getContainer().getConfigurationSection("default constants");
@@ -408,18 +408,18 @@ public class dScript implements dObject, Adjustable {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag s@script.constant[...] must have a value.");
+                    Debug.echoError("The tag s@script.constant[...] must have a value.");
                     return null;
                 }
                 dScript scr = (dScript) object;
                 ScriptContainer container = scr.getContainer();
                 if (container == null) {
-                    dB.echoError("Missing script container?!");
+                    Debug.echoError("Missing script container?!");
                     return new Element(scr.identify()).getAttribute(attribute);
                 }
                 YamlConfiguration section = container.getConfigurationSection("");
                 if (section == null) {
-                    dB.echoError("Missing YAML section?!");
+                    Debug.echoError("Missing YAML section?!");
                     return new Element(scr.identify()).getAttribute(attribute);
                 }
                 Object obj = section.get(attribute.getContext(1).toUpperCase());
@@ -576,7 +576,7 @@ public class dScript implements dObject, Adjustable {
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);
@@ -592,7 +592,7 @@ public class dScript implements dObject, Adjustable {
 
     @Override
     public void applyProperty(Mechanism mechanism) {
-        dB.echoError("Cannot apply properties to a script!");
+        Debug.echoError("Cannot apply properties to a script!");
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 
@@ -96,8 +96,8 @@ public class Duration implements dObject {
                     int seconds = CoreUtilities.getRandom()
                             .nextInt((high.getSecondsAsInt() - low.getSecondsAsInt() + 1))
                             + low.getSecondsAsInt();
-                    if (dB.verbose) {
-                        dB.log("Getting random duration between " + low.identify()
+                    if (Debug.verbose) {
+                        Debug.log("Getting random duration between " + low.identify()
                                 + " and " + high.identify() + "... " + seconds + "s");
                     }
 
@@ -459,7 +459,7 @@ public class Duration implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag d@duration.sub[...] must have a value.");
+                    Debug.echoError("The tag d@duration.sub[...] must have a value.");
                     return null;
                 }
                 return new Duration(((Duration) object).getTicks() - Duration.valueOf(attribute.getContext(1)).getTicks())
@@ -477,7 +477,7 @@ public class Duration implements dObject {
             @Override
             public String run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag d@duration.add[...] must have a value.");
+                    Debug.echoError("The tag d@duration.add[...] must have a value.");
                     return null;
                 }
                 return new Duration(((Duration) object).getTicks() + Duration.valueOf(attribute.getContext(1)).getTicks())
@@ -637,7 +637,7 @@ public class Duration implements dObject {
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return tr.run(attribute, this);

@@ -1,11 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -49,7 +46,7 @@ public class DetermineCommand extends AbstractCommand {
         // Parse the arguments
         //
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matches("passive", "passively")) {
                 scriptEntry.addObject("passively", new Element(true));
@@ -81,7 +78,7 @@ public class DetermineCommand extends AbstractCommand {
 
         // Report!
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug());
+            Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug());
         }
 
         // Store the outcome in the cache

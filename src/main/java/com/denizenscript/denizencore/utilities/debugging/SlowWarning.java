@@ -29,6 +29,6 @@ public class SlowWarning {
             return;
         }
         lastWarning = cTime;
-        dB.echoError(queue, message);
+        Debug.echoError(queue, message);
     }
 }

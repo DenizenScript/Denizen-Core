@@ -1,19 +1,17 @@
 package com.denizenscript.denizencore.scripts.commands;
 
-import com.denizenscript.denizencore.interfaces.RegistrationableInstance;
-import com.denizenscript.denizencore.interfaces.dRegistry;
 import com.denizenscript.denizencore.scripts.commands.core.*;
 import com.denizenscript.denizencore.scripts.commands.file.LogCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.commands.file.FileCopyCommand;
 import com.denizenscript.denizencore.scripts.commands.file.YamlCommand;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CommandRegistry implements dRegistry {
+public abstract class CommandRegistry {
 
     public CommandRegistry() {
     }
@@ -21,25 +19,21 @@ public abstract class CommandRegistry implements dRegistry {
     public final Map<String, AbstractCommand> instances = new HashMap<>();
     public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<>();
 
-    @Override
-    public boolean register(String commandName, RegistrationableInstance commandInstance) {
-        this.instances.put(CoreUtilities.toLowerCase(commandName), (AbstractCommand) commandInstance);
+    public boolean register(String commandName, AbstractCommand commandInstance) {
+        this.instances.put(CoreUtilities.toLowerCase(commandName), commandInstance);
         this.classes.put(((AbstractCommand) commandInstance).getClass(), CoreUtilities.toLowerCase(commandName));
         return true;
     }
 
-    @Override
     public Map<String, AbstractCommand> list() {
         return instances;
     }
 
-    @Override
     public AbstractCommand get(String commandName) {
         return instances.get(CoreUtilities.toLowerCase(commandName));
     }
 
-    @Override
-    public <T extends RegistrationableInstance> T get(Class<T> clazz) {
+    public <T extends AbstractCommand> T get(Class<T> clazz) {
         String command = classes.get(clazz);
         if (command != null) {
             return clazz.cast(instances.get(command));
@@ -130,21 +124,20 @@ public abstract class CommandRegistry implements dRegistry {
                 cmd.newInstance().activate().as(name).withOptions(hint, args);
             }
             catch (Throwable e) {
-                dB.echoError("Could not register command " + name + ": " + e.getMessage());
-                dB.echoError(e);
+                Debug.echoError("Could not register command " + name + ": " + e.getMessage());
+                Debug.echoError(e);
             }
         }
     }
 
-    @Override
     public void disableCoreMembers() {
-        for (RegistrationableInstance member : instances.values()) {
+        for (AbstractCommand member : instances.values()) {
             try {
                 member.onDisable();
             }
             catch (Exception e) {
-                dB.echoError("Unable to disable '" + member.getClass().getName() + "'!");
-                dB.echoError(e);
+                Debug.echoError("Unable to disable '" + member.getClass().getName() + "'!");
+                Debug.echoError(e);
             }
         }
     }

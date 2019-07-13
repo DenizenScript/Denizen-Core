@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -33,7 +34,7 @@ public class MarkCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         // Interpret arguments
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("m_name")) {
                 scriptEntry.addObject("m_name", arg.asElement());
@@ -60,7 +61,7 @@ public class MarkCommand extends AbstractCommand {
 
         // Debug the execution
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), mName.debug());
+            Debug.report(scriptEntry, getName(), mName.debug());
         }
     }
 }

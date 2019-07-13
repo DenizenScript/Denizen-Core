@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
 
 public class Mechanism {
@@ -158,7 +158,7 @@ public class Mechanism {
 
     public void echoError(String error) {
         // TODO: Consider special cases of whether object properties with debug off should even show errors
-        dB.echoError(error);
+        Debug.echoError(error);
     }
 
     public void reportInvalid() {

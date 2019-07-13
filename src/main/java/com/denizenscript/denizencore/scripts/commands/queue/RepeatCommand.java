@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 
@@ -55,10 +56,10 @@ public class RepeatCommand extends BracedCommand {
 
         boolean handled = false;
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!handled
-                    && arg.matchesPrimitive(aH.PrimitiveType.Integer)) {
+                    && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
                 scriptEntry.addObject("qty", arg.asElement());
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
@@ -111,7 +112,7 @@ public class RepeatCommand extends BracedCommand {
         if (stop != null && stop.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), stop.debug());
+                Debug.report(scriptEntry, getName(), stop.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -134,14 +135,14 @@ public class RepeatCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError("Cannot stop repeat: not in one!");
+                Debug.echoError("Cannot stop repeat: not in one!");
             }
             return;
         }
         else if (next != null && next.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), next.debug());
+                Debug.report(scriptEntry, getName(), next.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -163,7 +164,7 @@ public class RepeatCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError("Cannot stop repeat: not in one!");
+                Debug.echoError("Cannot stop repeat: not in one!");
             }
             return;
         }
@@ -174,7 +175,7 @@ public class RepeatCommand extends BracedCommand {
                 RepeatData data = (RepeatData) scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.target) {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "Repeat loop " + data.index);
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.index));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK", "as:" + as_name.asString()},
@@ -188,35 +189,35 @@ public class RepeatCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "Repeat loop complete");
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop complete");
                 }
             }
             else {
-                dB.echoError("Repeat CALLBACK invalid: not a real callback!");
+                Debug.echoError("Repeat CALLBACK invalid: not a real callback!");
             }
         }
         else {
             List<BracedCommand.BracedData> data = ((List<BracedCommand.BracedData>) scriptEntry.getObject("braces"));
             if (data == null || data.isEmpty()) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = data.get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                dB.echoError("Empty braces!");
+                Debug.echoError("Empty braces!");
                 return;
             }
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), quantity.debug() + as_name.debug());
+                Debug.report(scriptEntry, getName(), quantity.debug() + as_name.debug());
             }
 
             int target = quantity.asInt();
             if (target <= 0) {
-                dB.echoDebug(scriptEntry, "Zero count, not looping...");
+                Debug.echoDebug(scriptEntry, "Zero count, not looping...");
                 return;
             }
             RepeatData datum = new RepeatData();

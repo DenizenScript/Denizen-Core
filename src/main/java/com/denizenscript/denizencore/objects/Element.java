@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.scripts.commands.queue.Comparable;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.SQLEscaper;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -121,7 +121,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
     public static <T extends dObject> T handleNull(String tag, T object, String type, boolean has_fallback) {
         if (object == null) {
             if (!has_fallback) {
-                dB.echoError("'" + tag + "' is an invalid " + type + "!");
+                Debug.echoError("'" + tag + "' is an invalid " + type + "!");
             }
             return null;
         }
@@ -133,14 +133,14 @@ public class Element implements dObject, dObject.ObjectAttributable {
     public Element(String string) {
         this.prefix = "element";
         if (string == null) {
-            if (dB.verbose) {
+            if (Debug.verbose) {
                 try {
                     throw new RuntimeException("Trace");
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
-                dB.log("Element - Null construction!");
+                Debug.log("Element - Null construction!");
             }
             this.element = "null";
         }
@@ -204,7 +204,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
     private BigDecimal getBD(String text) {
         BigDecimal bd = new BigDecimal(text);
         if (bd.compareTo(max) >= 1) {
-            dB.echoError("Unreasonably large number detected!");
+            Debug.echoError("Unreasonably large number detected!");
             return max;
         }
         return bd;
@@ -227,7 +227,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             return Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", ""));
         }
         catch (NumberFormatException ex) {
-            dB.echoError("'" + element + "' is not a valid integer!");
+            Debug.echoError("'" + element + "' is not a valid integer!");
             return 0;
         }
     }
@@ -237,7 +237,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             return Long.valueOf(element.replaceAll("(%)|(\\.\\d+)", ""));
         }
         catch (NumberFormatException ex) {
-            dB.echoError("'" + element + "' is not a valid integer!");
+            Debug.echoError("'" + element + "' is not a valid integer!");
             return 0;
         }
     }
@@ -421,7 +421,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                         return new Element(com.determineOutcome()).getObjectAttribute(attribute.fulfill(2));
                     }
                     else {
-                        dB.echoError("Unknown operator '" + operator + "'.");
+                        Debug.echoError("Unknown operator '" + operator + "'.");
                     }
                 }
 
@@ -480,7 +480,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 }
                 catch (NumberFormatException e) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                        Debug.echoError("'" + element + "' is not a valid decimal number.");
                     }
                     return null;
                 }
@@ -507,7 +507,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 }
                 catch (NumberFormatException e) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                        Debug.echoError("'" + element + "' is not a valid decimal number.");
                     }
                     return null;
                 }
@@ -533,7 +533,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                 }
                 catch (NumberFormatException e) {
                     if (!attribute.hasAlternative()) {
-                        dB.echoError("'" + element + "' is not a valid decimal number.");
+                        Debug.echoError("'" + element + "' is not a valid decimal number.");
                     }
                     return null;
                 }
@@ -899,7 +899,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.equals_case_sensitive[...] must have a value.");
+                    Debug.echoError("The tag el@element.equals_case_sensitive[...] must have a value.");
                     return null;
                 }
                 return new Element(((Element) object).element.equals(attribute.getContext(1)))
@@ -919,7 +919,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.matches[...] must have a value.");
+                    Debug.echoError("The tag el@element.matches[...] must have a value.");
                     return null;
                 }
                 return new Element(((Element) object).element.matches(attribute.getContext(1))).getObjectAttribute(attribute.fulfill(1));
@@ -939,7 +939,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1) || !attribute.hasContext(2)) {
-                    dB.echoError("The tag el@element.regex[...] must have a value.");
+                    Debug.echoError("The tag el@element.regex[...] must have a value.");
                     return null;
                 }
                 String regex = attribute.getContext(1);
@@ -1060,7 +1060,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.index_of[...] must have a value.");
+                    Debug.echoError("The tag el@element.index_of[...] must have a value.");
                     return null;
                 }
                 return new Element(CoreUtilities.toLowerCase(((Element) object).element)
@@ -1081,7 +1081,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.last_index_of[...] must have a value.");
+                    Debug.echoError("The tag el@element.last_index_of[...] must have a value.");
                     return null;
                 }
                 return new Element(CoreUtilities.toLowerCase(((Element) object).element)
@@ -1102,7 +1102,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.char_at[...] must have a value.");
+                    Debug.echoError("The tag el@element.char_at[...] must have a value.");
                     return null;
                 }
                 int index = attribute.getIntContext(1) - 1;
@@ -1132,7 +1132,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.after_last[...] must have a value.");
+                    Debug.echoError("The tag el@element.after_last[...] must have a value.");
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
@@ -1159,7 +1159,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.after[...] must have a value.");
+                    Debug.echoError("The tag el@element.after[...] must have a value.");
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
@@ -1186,7 +1186,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.before_last[...] must have a value.");
+                    Debug.echoError("The tag el@element.before_last[...] must have a value.");
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
@@ -1213,7 +1213,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.before[...] must have a value.");
+                    Debug.echoError("The tag el@element.before[...] must have a value.");
                     return null;
                 }
                 String delimiter = attribute.getContext(1);
@@ -1249,7 +1249,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.replace[...] must have a value.");
+                    Debug.echoError("The tag el@element.replace[...] must have a value.");
                     return null;
                 }
                 String replace = attribute.getContext(1);
@@ -1335,7 +1335,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                     return new Element(negative + intform + afterdecimal).getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
                 return null;
             }
@@ -1446,7 +1446,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.substring[...] must have a value.");
+                    Debug.echoError("The tag el@element.substring[...] must have a value.");
                     return null;
                 }
                 int beginning_index = new Element(attribute.getContext(1).split(",")[0]).asInt() - 1;
@@ -1487,7 +1487,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.pad_left[...] must have a value.");
+                    Debug.echoError("The tag el@element.pad_left[...] must have a value.");
                     return null;
                 }
                 String with = String.valueOf((char) 0x00A0);
@@ -1526,7 +1526,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.pad_right[...] must have a value.");
+                    Debug.echoError("The tag el@element.pad_right[...] must have a value.");
                     return null;
                 }
                 String with = String.valueOf((char) 0x00A0);
@@ -1569,7 +1569,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.abs(ele.asDouble()))
@@ -1589,7 +1589,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.max(ele.asDouble(), new Element(attribute.getContext(1)).asDouble()))
@@ -1609,7 +1609,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.min(ele.asDouble(), new Element(attribute.getContext(1)).asDouble()))
@@ -1629,10 +1629,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(ele.asLong() + aH.getLongFrom(attribute.getContext(1)))
+                return new Element(ele.asLong() + ArgumentHelper.getLongFrom(attribute.getContext(1)))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
@@ -1649,10 +1649,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(ele.asLong() / aH.getLongFrom(attribute.getContext(1)))
+                return new Element(ele.asLong() / ArgumentHelper.getLongFrom(attribute.getContext(1)))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
@@ -1669,10 +1669,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(ele.asLong() * aH.getLongFrom(attribute.getContext(1)))
+                return new Element(ele.asLong() * ArgumentHelper.getLongFrom(attribute.getContext(1)))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
@@ -1689,10 +1689,10 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(ele.asLong() - aH.getLongFrom(attribute.getContext(1)))
+                return new Element(ele.asLong() - ArgumentHelper.getLongFrom(attribute.getContext(1)))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
@@ -1708,12 +1708,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.add[...] must have a value.");
+                    Debug.echoError("The tag el@element.add[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 try {
@@ -1721,7 +1721,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
-                    return new Element(ele.asDouble() + (aH.getDoubleFrom(attribute.getContext(1))))
+                    return new Element(ele.asDouble() + (ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
@@ -1740,12 +1740,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.div[...] must have a value.");
+                    Debug.echoError("The tag el@element.div[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 try {
@@ -1753,7 +1753,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
-                    return new Element(ele.asDouble() / (aH.getDoubleFrom(attribute.getContext(1))))
+                    return new Element(ele.asDouble() / (ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
@@ -1772,15 +1772,15 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.mod[...] must have a value.");
+                    Debug.echoError("The tag el@element.mod[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(ele.asDouble() % (aH.getDoubleFrom(attribute.getContext(1))))
+                return new Element(ele.asDouble() % (ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         };
@@ -1798,12 +1798,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.mul[...] must have a value.");
+                    Debug.echoError("The tag el@element.mul[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 try {
@@ -1811,7 +1811,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
-                    return new Element(ele.asDouble() * (aH.getDoubleFrom(attribute.getContext(1))))
+                    return new Element(ele.asDouble() * (ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
@@ -1830,12 +1830,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.sub[...] must have a value.");
+                    Debug.echoError("The tag el@element.sub[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 try {
@@ -1843,7 +1843,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
-                    return new Element(ele.asDouble() - (aH.getDoubleFrom(attribute.getContext(1))))
+                    return new Element(ele.asDouble() - (ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
             }
@@ -1863,7 +1863,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.sqrt(ele.asDouble()))
@@ -1882,15 +1882,15 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.log[...] must have a value.");
+                    Debug.echoError("The tag el@element.log[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(Math.log(ele.asDouble()) / Math.log(aH.getDoubleFrom(attribute.getContext(1))))
+                return new Element(Math.log(ele.asDouble()) / Math.log(ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
@@ -1907,7 +1907,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.log(ele.asDouble()))
@@ -1926,15 +1926,15 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.power[...] must have a value.");
+                    Debug.echoError("The tag el@element.power[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
-                return new Element(Math.pow(ele.asDouble(), aH.getDoubleFrom(attribute.getContext(1))))
+                return new Element(Math.pow(ele.asDouble(), ArgumentHelper.getDoubleFrom(attribute.getContext(1))))
                         .getObjectAttribute(attribute.fulfill(1));
             }
         };
@@ -1953,7 +1953,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.asin(ele.asDouble()))
@@ -1973,7 +1973,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.acos(ele.asDouble()))
@@ -1993,7 +1993,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.atan(ele.asDouble()))
@@ -2013,12 +2013,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.atan2[...] must have a value.");
+                    Debug.echoError("The tag el@element.atan2[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.atan2(ele.asDouble(), attribute.getDoubleContext(1)))
@@ -2038,7 +2038,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.cos(ele.asDouble()))
@@ -2058,7 +2058,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.sin(ele.asDouble()))
@@ -2078,7 +2078,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.tan(ele.asDouble()))
@@ -2098,7 +2098,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.toDegrees(ele.asDouble()))
@@ -2118,7 +2118,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element(Math.toRadians(ele.asDouble()))
@@ -2138,7 +2138,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element((long) Math.ceil(ele.asDouble()))
@@ -2158,7 +2158,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element((long) Math.floor(ele.asDouble()))
@@ -2178,12 +2178,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.round_to[...] must have a value.");
+                    Debug.echoError("The tag el@element.round_to[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 int ten = (int) Math.pow(10, attribute.getIntContext(1));
@@ -2204,7 +2204,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
             public dObject run(Attribute attribute, dObject object) {
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 return new Element((long) Math.round(ele.asDouble()))
@@ -2224,12 +2224,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.round_to_precision[...] must have a value.");
+                    Debug.echoError("The tag el@element.round_to_precision[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 double precision = attribute.getDoubleContext(1);
@@ -2249,12 +2249,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.round_down_to_precision[...] must have a value.");
+                    Debug.echoError("The tag el@element.round_down_to_precision[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 double precision = attribute.getDoubleContext(1);
@@ -2274,12 +2274,12 @@ public class Element implements dObject, dObject.ObjectAttributable {
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag el@element.round_up_to_precision[...] must have a value.");
+                    Debug.echoError("The tag el@element.round_up_to_precision[...] must have a value.");
                     return null;
                 }
                 Element ele = (Element) object;
                 if (!ele.isDouble()) {
-                    dB.echoError("Element '" + ele + "' is not a valid decimal number!");
+                    Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
                     return null;
                 }
                 double precision = attribute.getDoubleContext(1);
@@ -2368,7 +2368,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Exception e) {
-                    dB.echoError(e);
+                    Debug.echoError(e);
                     return null;
                 }
             }
@@ -2390,7 +2390,7 @@ public class Element implements dObject, dObject.ObjectAttributable {
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Exception e) {
-                    dB.echoError(e);
+                    Debug.echoError(e);
                     return null;
                 }
             }
@@ -2449,15 +2449,15 @@ public class Element implements dObject, dObject.ObjectAttributable {
     public dObject getObjectAttribute(Attribute attribute) {
 
         if (attribute == null) {
-            if (dB.verbose) {
-                dB.log("Element - Attribute null!");
+            if (Debug.verbose) {
+                Debug.log("Element - Attribute null!");
             }
             return null;
         }
 
         if (attribute.isComplete()) {
-            if (dB.verbose) {
-                dB.log("Element - Attribute complete! Self return! " + element);
+            if (Debug.verbose) {
+                Debug.log("Element - Attribute complete! Self return! " + element);
             }
             return this;
         }
@@ -2467,11 +2467,11 @@ public class Element implements dObject, dObject.ObjectAttributable {
         TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             if (!otr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
             }
-            if (dB.verbose) {
-                dB.log("Element - run tag " + otr.name);
+            if (Debug.verbose) {
+                Debug.log("Element - run tag " + otr.name);
             }
             return otr.run(attribute, this);
         }
@@ -2534,8 +2534,8 @@ public class Element implements dObject, dObject.ObjectAttributable {
         }
 
         if (attribute.isComplete()) {
-            if (dB.verbose) {
-                dB.log("Element - Secondary complete! Self return! " + element);
+            if (Debug.verbose) {
+                Debug.log("Element - Secondary complete! Self return! " + element);
             }
             return this;
         }
@@ -2545,11 +2545,11 @@ public class Element implements dObject, dObject.ObjectAttributable {
         // so far, 'null' shall be returned with a debug message.
 
         if (!attribute.hasAlternative()) {
-            dB.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.unfilledString() +
+            Debug.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.unfilledString() +
                     "' for tag <" + attribute.getOrigin() + ">!");
         }
-        if (dB.verbose) {
-            dB.log("Element - Unfilled! Null!");
+        if (Debug.verbose) {
+            Debug.log("Element - Unfilled! Null!");
         }
         return null;
     }

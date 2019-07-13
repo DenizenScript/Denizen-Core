@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -30,7 +30,7 @@ public class YamlConfiguration {
             config.contents = (Map<StringHolder, Object>) obj;
         }
         else {
-            dB.echoError("Invalid YAML object type: " + obj.toString() + " is " + obj.getClass().getSimpleName());
+            Debug.echoError("Invalid YAML object type: " + obj.toString() + " is " + obj.getClass().getSimpleName());
             return null;
         }
         switchKeys(config.contents);
@@ -122,8 +122,8 @@ public class YamlConfiguration {
         options.setAllowUnicode(true);
         Yaml yaml = new Yaml(options);
         String dumped = yaml.dump(reverse(contents));
-        if (dB.verbose) {
-            dB.log("Outputting " + dumped);
+        if (Debug.verbose) {
+            Debug.log("Outputting " + dumped);
         }
         return dumped;
     }
@@ -181,7 +181,7 @@ public class YamlConfiguration {
                 portion = map;
             }
         }
-        dB.echoError("Failed to set somehow?");
+        Debug.echoError("Failed to set somehow?");
     }
 
     void emptyEmptyMaps(List<String> parts) {
@@ -284,7 +284,7 @@ public class YamlConfiguration {
             }
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
         }
         return null;
     }

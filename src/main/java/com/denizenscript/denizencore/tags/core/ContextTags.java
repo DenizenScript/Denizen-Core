@@ -7,7 +7,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
 public class ContextTags {
@@ -45,7 +45,7 @@ public class ContextTags {
             return;
         }
         if (!event.hasAlternative()) {
-            dB.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + object + "'!");
+            Debug.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + object + "'!");
         }
     }
 
@@ -64,7 +64,7 @@ public class ContextTags {
             ScriptEntry held = event.getScriptEntry().getResidingQueue().getHeldScriptEntry(id);
             if (held == null) {
                 if (!event.hasAlternative()) {
-                    dB.echoDebug(event.getScriptEntry(), "Bad saved entry ID '" + id + "'");
+                    Debug.echoDebug(event.getScriptEntry(), "Bad saved entry ID '" + id + "'");
                 }
             }
             else {
@@ -72,9 +72,9 @@ public class ContextTags {
                 dObject got = held.getdObject(attrib);
                 if (got == null) {
                     if (!event.hasAlternative()) {
-                        dB.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
-                        if (dB.verbose) {
-                            dB.log("Option set is: " + held.getObjects().keySet());
+                        Debug.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
+                        if (Debug.verbose) {
+                            Debug.log("Option set is: " + held.getObjects().keySet());
                         }
                     }
                 }

@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.scripts.queues;
 
-import com.denizenscript.denizencore.interfaces.ContextSource;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
@@ -8,7 +7,7 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
@@ -498,7 +497,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     public void queueDebug(String message) {
-        dB.echoDebug(this, "<O>" + message.replace("<QUEUE>", debugId + "<O>"));
+        Debug.echoDebug(this, "<O>" + message.replace("<QUEUE>", debugId + "<O>"));
     }
 
     /**
@@ -1026,7 +1025,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
             @Override
             public dObject run(Attribute attribute, dObject object) {
                 if (!attribute.hasContext(1)) {
-                    dB.echoError("The tag q@queue.definition[...] must have a value.");
+                    Debug.echoError("The tag q@queue.definition[...] must have a value.");
                     return null;
                 }
                 return CoreUtilities.autoAttrib(((ScriptQueue) object).getDefinitionObject(attribute.getContext(1)), attribute.fulfill(1));
@@ -1102,7 +1101,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             if (!otr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
             }
             return otr.run(attribute, this);
@@ -1111,7 +1110,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         TagRunnable tr = registeredTags.get(attrLow);
         if (tr != null) {
             if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
             return new Element(tr.run(attribute, this));
@@ -1127,7 +1126,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     @Override
     public void applyProperty(Mechanism mechanism) {
-        dB.echoError("ScriptQueues can not hold properties.");
+        Debug.echoError("ScriptQueues can not hold properties.");
     }
 
     @Override

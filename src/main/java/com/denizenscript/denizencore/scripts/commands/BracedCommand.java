@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.scripts.commands;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
@@ -46,7 +46,7 @@ public abstract class BracedCommand extends AbstractCommand {
             return null;
         }
 
-        boolean hyperdebug = dB.verbose;
+        boolean hyperdebug = Debug.verbose;
 
         // And a place to store all the final braces...
         List<BracedData> bracedSections = new ArrayList<>();
@@ -70,8 +70,8 @@ public abstract class BracedCommand extends AbstractCommand {
                         newEntry.entryData.transferDataFrom(scriptEntry.entryData);
                         newbd.value.add(newEntry);
                     }
-                    if (dB.verbose) {
-                        dB.echoDebug(scriptEntry, "Wrangling braced command args[" + bd.needPatch + "]: " + bd.key);
+                    if (Debug.verbose) {
+                        Debug.echoDebug(scriptEntry, "Wrangling braced command args[" + bd.needPatch + "]: " + bd.key);
                     }
                     if (bd.needPatch) {
                         newbd.args = new ArrayList<>(bd.args.size());
@@ -85,7 +85,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 }
             }
             catch (Exception e) {
-                dB.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
             return res;
         }
@@ -114,20 +114,20 @@ public abstract class BracedCommand extends AbstractCommand {
         //scriptEntry.getResidingQueue().injectEntry(scriptEntry, 0);
         // Send info to debug
         if (hyperdebug) {
-            dB.echoDebug(scriptEntry, "Starting getBracedCommands...");
+            Debug.echoDebug(scriptEntry, "Starting getBracedCommands...");
         }
 
         // If the specified amount of possible entries is less than the queue size, print that instead
         //if (hyperdebug) dB.echoDebug(scriptEntry, "...with queue size: " + scriptEntry.getResidingQueue().getQueueSize());
         if (hyperdebug) {
-            dB.echoDebug(scriptEntry, "...with first command name: " + scriptEntry.getCommandName());
+            Debug.echoDebug(scriptEntry, "...with first command name: " + scriptEntry.getCommandName());
         }
         if (hyperdebug) {
-            dB.echoDebug(scriptEntry, "...with first command arguments: " + scriptEntry.getArguments());
+            Debug.echoDebug(scriptEntry, "...with first command arguments: " + scriptEntry.getArguments());
         }
 
         if (hyperdebug) {
-            dB.echoDebug(scriptEntry, "Entry found: " + scriptEntry.getCommandName());
+            Debug.echoDebug(scriptEntry, "Entry found: " + scriptEntry.getCommandName());
         }
 
         // Loop through the arguments of each entry
@@ -154,7 +154,7 @@ public abstract class BracedCommand extends AbstractCommand {
         for (int i = startArg; i < argList.size(); i++) {
             String arg = argList.get(i);
             if (hyperdebug) {
-                dB.echoDebug(scriptEntry, "Arg found: " + arg);
+                Debug.echoDebug(scriptEntry, "Arg found: " + arg);
             }
 
             // Listen for opened braces
@@ -169,7 +169,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 newCommand = false;
                 waitingForDash = bracesEntered == 1;
                 if (hyperdebug) {
-                    dB.echoDebug(scriptEntry, "Opened brace; " + String.valueOf(bracesEntered) + " now");
+                    Debug.echoDebug(scriptEntry, "Opened brace; " + String.valueOf(bracesEntered) + " now");
                 }
                 if (bracesEntered > 1) {
                     commandList.get(commandList.lastKey()).add(arg);
@@ -181,7 +181,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 bracesEntered--;
                 newCommand = false;
                 if (hyperdebug) {
-                    dB.echoDebug(scriptEntry, "Closed brace; " + String.valueOf(bracesEntered) + " now");
+                    Debug.echoDebug(scriptEntry, "Closed brace; " + String.valueOf(bracesEntered) + " now");
                 }
                 if (bracesEntered > 0) {
                     commandList.get(commandList.lastKey()).add(arg);
@@ -190,20 +190,20 @@ public abstract class BracedCommand extends AbstractCommand {
                     BracedData bd = new BracedData();
                     bd.key = bracesName;
                     if (bracedSections.contains(bd)) {
-                        dB.echoError(scriptEntry.getResidingQueue(), "You may not have braced commands with the same arguments.");
+                        Debug.echoError(scriptEntry.getResidingQueue(), "You may not have braced commands with the same arguments.");
                         break;
                     }
                     ArrayList<ScriptEntry> bracesSection = new ArrayList<>();
                     for (ArrayList<String> command : commandList.values()) {
                         if (command.isEmpty()) {
                             if (hyperdebug) {
-                                dB.echoError(scriptEntry.getResidingQueue(), "Empty command?");
+                                Debug.echoError(scriptEntry.getResidingQueue(), "Empty command?");
                             }
                             continue;
                         }
                         String cmd = command.get(0);
                         if (hyperdebug) {
-                            dB.echoDebug(scriptEntry, "Calculating " + cmd);
+                            Debug.echoDebug(scriptEntry, "Calculating " + cmd);
                         }
                         command.remove(0);
                         String[] args = new String[command.size()];
@@ -213,11 +213,11 @@ public abstract class BracedCommand extends AbstractCommand {
                         bracesSection.add(newEntry);
                         bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
                         if (hyperdebug) {
-                            dB.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
+                            Debug.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
                         }
                     }
                     if (hyperdebug) {
-                        dB.echoDebug(scriptEntry, "Adding section " + bracesName + " with " + tStart + " to " + tEnd);
+                        Debug.echoDebug(scriptEntry, "Adding section " + bracesName + " with " + tStart + " to " + tEnd);
                     }
                     bd.args = bracesArgs;
                     bd.aStart = tStart;
@@ -240,7 +240,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 commandList.get(commandList.lastKey()).add(arg);
                 newCommand = false;
                 if (hyperdebug) {
-                    dB.echoDebug(scriptEntry, "Treating as new command");
+                    Debug.echoDebug(scriptEntry, "Treating as new command");
                 }
             }
 
@@ -249,7 +249,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 newCommand = true;
                 waitingForDash = false;
                 if (hyperdebug) {
-                    dB.echoDebug(scriptEntry, "Assuming following is a new command");
+                    Debug.echoDebug(scriptEntry, "Assuming following is a new command");
                 }
             }
 
@@ -265,13 +265,13 @@ public abstract class BracedCommand extends AbstractCommand {
             // Continue building the current command
             else {
                 if (waitingForDash) {
-                    dB.echoError(scriptEntry.getResidingQueue(), "Malformed braced section! Missing a - symbol!");
+                    Debug.echoError(scriptEntry.getResidingQueue(), "Malformed braced section! Missing a - symbol!");
                     break;
                 }
                 newCommand = false;
                 commandList.get(commandList.lastKey()).add(arg);
                 if (hyperdebug) {
-                    dB.echoDebug(scriptEntry, "Adding to the command");
+                    Debug.echoDebug(scriptEntry, "Adding to the command");
                 }
             }
         }

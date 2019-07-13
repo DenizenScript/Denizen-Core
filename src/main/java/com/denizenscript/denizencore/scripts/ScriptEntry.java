@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
@@ -8,12 +9,8 @@ import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
-import com.denizenscript.denizencore.objects.dObject;
-import com.denizenscript.denizencore.objects.dScript;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 
@@ -53,7 +50,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public int[] processArgs = null;
 
-        public List<aH.Argument> preprocArgs = null;
+        public List<com.denizenscript.denizencore.objects.Argument> preprocArgs = null;
 
         public Object specialProcessedData = null;
 
@@ -66,7 +63,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public List<TagManager.ParseableTagPiece> value = null;
 
-        public aH.Argument aHArg = null;
+        public com.denizenscript.denizencore.objects.Argument aHArg = null;
 
         public Argument duplicate() {
             Argument newArg = new Argument();
@@ -79,7 +76,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public List<Argument> args_cur = null;
 
-    public List<aH.Argument> aHArgs = null;
+    public List<com.denizenscript.denizencore.objects.Argument> aHArgs = null;
 
     public List<String> args = null;
 
@@ -110,7 +107,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public final static aH.Argument NULL_ARGUMENT = new aH.Argument("null_trick", "null_trick");
+    public final static com.denizenscript.denizencore.objects.Argument NULL_ARGUMENT = new com.denizenscript.denizencore.objects.Argument("null_trick", "null_trick");
 
     public void generateAHArgs() {
         aHArgs = new ArrayList<>(internal.args_ref.size());
@@ -178,7 +175,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
             }
         }
-        argVal.aHArg = new aH.Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
+        argVal.aHArg = new com.denizenscript.denizencore.objects.Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
         argVal.aHArg.needsFill = isTag;
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
@@ -205,7 +202,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     internal.waitfor = true;
                 }
                 else {
-                    dB.echoError("The command '" + internal.command + "' cannot be waited for!");
+                    Debug.echoError("The command '" + internal.command + "' cannot be waited for!");
                 }
             }
             internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
@@ -240,9 +237,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 if (parg.endsWith("{")) {
                     after = "{";
                     parg = parg.substring(0, parg.length() - 1);
-                    dB.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
+                    Debug.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
                 }
-                aH.Argument argObj = new aH.Argument(arg);
+                com.denizenscript.denizencore.objects.Argument argObj = new com.denizenscript.denizencore.objects.Argument(arg);
                 if (argObj.hasPrefix()) {
                     if (argObj.matchesOnePrefix("unparsed")) {
                         args.add(TagManager.escapeOutput(argObj.getValue()));
@@ -275,14 +272,14 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 String arg = args.get(i);
                 if (arg.equals("{")) {
                     Argument brace = new Argument();
-                    brace.aHArg = new aH.Argument("", "{");
+                    brace.aHArg = new com.denizenscript.denizencore.objects.Argument("", "{");
                     internal.args_ref.add(brace);
                     nested_depth++;
                     continue;
                 }
                 if (arg.equals("}")) {
                     Argument brace = new Argument();
-                    brace.aHArg = new aH.Argument("", "}");
+                    brace.aHArg = new com.denizenscript.denizencore.objects.Argument("", "}");
                     internal.args_ref.add(brace);
                     nested_depth--;
                     continue;
@@ -470,8 +467,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             return objects.get(key);
         }
         catch (Exception ex) {
-            if (dB.verbose) {
-                dB.echoError(ex);
+            if (Debug.verbose) {
+                Debug.echoError(ex);
             }
             return null;
         }
@@ -489,8 +486,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             // If not a dObject, return null
         }
         catch (Exception ex) {
-            if (dB.verbose) {
-                dB.echoError(ex);
+            if (Debug.verbose) {
+                Debug.echoError(ex);
             }
             return null;
         }
@@ -501,8 +498,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             return (Element) objects.get(key);
         }
         catch (Exception ex) {
-            if (dB.verbose) {
-                dB.echoError(ex);
+            if (Debug.verbose) {
+                Debug.echoError(ex);
             }
             return null;
         }
@@ -618,7 +615,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         for (String str : getOriginalArguments()) {
             sb.append(" \"").append(str.replace("\"", "<&dq>")).append("\"");
         }
-        for (aH.Argument arg : internal.preprocArgs) {
+        for (com.denizenscript.denizencore.objects.Argument arg : internal.preprocArgs) {
             sb.append(" \"").append(arg.toString().replace("\"", "<&dq>")).append("\"");
         }
         return internal.command + sb.toString();

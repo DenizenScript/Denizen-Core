@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -69,7 +69,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matchesPrefix("i", "id")) {
                 scriptEntry.addObject("id", arg.asElement());
@@ -131,7 +131,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     public void execute(ScriptEntry scriptEntry) {
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(),
+            Debug.report(scriptEntry, getName(),
                     (scriptEntry.hasObject("script") ? scriptEntry.getdObject("script").debug() : scriptEntry.getScript().debug())
                             + (scriptEntry.hasObject("instant") ? scriptEntry.getdObject("instant").debug() : "")
                             + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
@@ -166,7 +166,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         }
 
         if (entries == null) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path or script name)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path or script name)!");
             return;
         }
 
@@ -229,7 +229,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 String name = definition_names != null && definition_names.length >= x ?
                         definition_names[x - 1].trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                dB.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
+                Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
                 x++;
             }
             queue.addDefinition("raw_context", raw_defintions.asString());

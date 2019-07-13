@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -54,9 +54,9 @@ public class UtilTags {
                 String stc = attribute.getContext(1);
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
-                    if (aH.matchesInteger(stc) && aH.matchesInteger(attribute.getContext(1))) {
-                        int min = aH.getIntegerFrom(stc);
-                        int max = aH.getIntegerFrom(attribute.getContext(1));
+                    if (ArgumentHelper.matchesInteger(stc) && ArgumentHelper.matchesInteger(attribute.getContext(1))) {
+                        int min = ArgumentHelper.getIntegerFrom(stc);
+                        int max = ArgumentHelper.getIntegerFrom(attribute.getContext(1));
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -84,9 +84,9 @@ public class UtilTags {
                 String stc = attribute.getContext(1);
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
-                    if (aH.matchesDouble(stc) && aH.matchesDouble(attribute.getContext(1))) {
-                        double min = aH.getDoubleFrom(stc);
-                        double max = aH.getDoubleFrom(attribute.getContext(1));
+                    if (ArgumentHelper.matchesDouble(stc) && ArgumentHelper.matchesDouble(attribute.getContext(1))) {
+                        double min = ArgumentHelper.getDoubleFrom(stc);
+                        double max = ArgumentHelper.getDoubleFrom(attribute.getContext(1));
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -398,8 +398,8 @@ public class UtilTags {
                     event.setReplacedObject(CoreUtilities.autoAttrib(new Element(format.format(currentDate)), attribute.fulfill(1)));
                 }
                 catch (Exception ex) {
-                    dB.echoError("Error: invalid pattern '" + attribute.getContext(1) + "'");
-                    dB.echoError(ex);
+                    Debug.echoError("Error: invalid pattern '" + attribute.getContext(1) + "'");
+                    Debug.echoError(ex);
                 }
             }
             else {
@@ -427,7 +427,7 @@ public class UtilTags {
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
             if (!DenizenCore.getImplementation().allowConsoleRedirection()) {
-                dB.echoError("Console redirection disabled by administrator.");
+                Debug.echoError("Console redirection disabled by administrator.");
                 return;
             }
             if (mechanism.getValue().asBoolean()) {

@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.scripts;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class ScriptEntrySet {
             }
         }
         catch (CloneNotSupportedException e) {
-            dB.echoError(e); // This should never happen
+            Debug.echoError(e); // This should never happen
         }
         return new ScriptEntrySet(newEntries);
     }

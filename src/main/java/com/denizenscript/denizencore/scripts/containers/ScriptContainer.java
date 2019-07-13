@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.scripts.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.dScript;
 
@@ -55,7 +55,7 @@ public class ScriptContainer implements Debuggable {
 
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {
-            dB.echoError("Null configuration section while generating a ScriptContainer?!");
+            Debug.echoError("Null configuration section while generating a ScriptContainer?!");
         }
         contents = configurationSection;
         this.name = scriptContainerName.toUpperCase();

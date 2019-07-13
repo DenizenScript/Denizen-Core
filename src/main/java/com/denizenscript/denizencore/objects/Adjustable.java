@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public interface Adjustable extends dObject {
 
@@ -14,7 +14,7 @@ public interface Adjustable extends dObject {
     default void safeAdjust(Mechanism mechanism) {
         mechanism.isProperty = false;
         if (mechanism.shouldDebug()) {
-            dB.echoDebug(mechanism.context, "Adjust mechanism '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
+            Debug.echoDebug(mechanism.context, "Adjust mechanism '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
         }
         adjust(mechanism);
         mechanism.autoReport();
@@ -31,13 +31,13 @@ public interface Adjustable extends dObject {
     default void safeApplyProperty(Mechanism mechanism) {
         mechanism.isProperty = true;
         if (mechanism.shouldDebug()) {
-            dB.echoDebug(mechanism.context, "Applying property '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
-            if (dB.verbose) {
+            Debug.echoDebug(mechanism.context, "Applying property '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
+            if (Debug.verbose) {
                 try {
                     throw new Exception("Stack trace of property");
                 }
                 catch (Exception ex) {
-                    dB.echoError(ex);
+                    Debug.echoError(ex);
                 }
             }
         }

@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.objects.dScript;
 
@@ -93,8 +93,8 @@ public class Comparable {
     public void setComparable(String arg) {
 
         // If a Number
-        if (arg.length() > 0 && aH.matchesDouble(arg)) {
-            comparable = aH.getDoubleFrom(arg);
+        if (arg.length() > 0 && ArgumentHelper.matchesDouble(arg)) {
+            comparable = ArgumentHelper.getDoubleFrom(arg);
         }
 
         // If a List<Object>
@@ -124,8 +124,8 @@ public class Comparable {
 
         // Comparable is a Number, return Double
         else if (comparable instanceof Double || comparable instanceof Long) {
-            if (aH.matchesDouble(arg)) {
-                comparedto = aH.getDoubleFrom(arg);
+            if (ArgumentHelper.matchesDouble(arg)) {
+                comparedto = ArgumentHelper.getDoubleFrom(arg);
             }
             else {
                 comparable = String.valueOf(comparable);
@@ -134,7 +134,7 @@ public class Comparable {
         }
 
         else if (comparable instanceof Boolean) {
-            comparedto = aH.getBooleanFrom(arg);
+            comparedto = ArgumentHelper.getBooleanFrom(arg);
         }
 
         else if (comparable instanceof dList) {
@@ -252,15 +252,15 @@ public class Comparable {
             case CONTAINS:
                 for (String string : comparable) {
                     if (comparedto instanceof Long) {
-                        if (aH.matchesInteger(string)
-                                && aH.getLongFrom(string) == (Long) comparedto) {
+                        if (ArgumentHelper.matchesInteger(string)
+                                && ArgumentHelper.getLongFrom(string) == (Long) comparedto) {
                             outcome = true;
                             break;
                         }
                     }
                     else if (comparedto instanceof Double) {
-                        if (aH.matchesDouble(string) &&
-                                aH.getDoubleFrom(string) == (Double) comparedto) {
+                        if (ArgumentHelper.matchesDouble(string) &&
+                                ArgumentHelper.getDoubleFrom(string) == (Double) comparedto) {
                             outcome = true;
                             break;
                         }
@@ -344,7 +344,7 @@ public class Comparable {
             case OR_LESS:
             case MORE:
             case LESS:
-                dB.echoError("Comparing text as if it were a number - comparison automatically false");
+                Debug.echoError("Comparing text as if it were a number - comparison automatically false");
                 outcome = false;
                 break;
 
@@ -363,22 +363,22 @@ public class Comparable {
 
                 else if (comparedto.equalsIgnoreCase("double")
                         || comparedto.equalsIgnoreCase("decimal")) {
-                    outcome = aH.matchesDouble(comparable);
+                    outcome = ArgumentHelper.matchesDouble(comparable);
                 }
 
                 else if (comparedto.equalsIgnoreCase("integer")
                         || comparedto.equalsIgnoreCase("number")) {
-                    outcome = aH.matchesInteger(comparable);
+                    outcome = ArgumentHelper.matchesInteger(comparable);
                 }
 
                 else if (comparedto.equalsIgnoreCase("even integer")
                         || comparedto.equalsIgnoreCase("even number")) {
-                    outcome = aH.matchesInteger(comparable) && (aH.getLongFrom(comparable) % 2) == 0;
+                    outcome = ArgumentHelper.matchesInteger(comparable) && (ArgumentHelper.getLongFrom(comparable) % 2) == 0;
                 }
 
                 else if (comparedto.equalsIgnoreCase("odd integer")
                         || comparedto.equalsIgnoreCase("odd number")) {
-                    outcome = aH.matchesInteger(comparable) && (aH.getLongFrom(comparable) % 2) == 1;
+                    outcome = ArgumentHelper.matchesInteger(comparable) && (ArgumentHelper.getLongFrom(comparable) % 2) == 1;
                 }
 
                 else if (comparedto.equalsIgnoreCase("boolean")) {
@@ -394,7 +394,7 @@ public class Comparable {
     }
 
     public String log(String str) {
-        dB.log("Warning: Unknown comparable type: " + str);
+        Debug.log("Warning: Unknown comparable type: " + str);
         return str;
     }
 

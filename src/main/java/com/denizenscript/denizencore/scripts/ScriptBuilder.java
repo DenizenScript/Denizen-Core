@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
-import com.denizenscript.denizencore.utilities.debugging.dB;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,14 +35,14 @@ public class ScriptBuilder {
         List<ScriptEntry> scriptCommands = new ArrayList<>();
 
         if (contents == null || contents.isEmpty()) {
-            if (dB.showScriptBuilder) {
-                dB.echoError("Building script entries... no entries to build!");
+            if (Debug.showScriptBuilder) {
+                Debug.echoError("Building script entries... no entries to build!");
             }
             return null;
         }
 
-        if (dB.showScriptBuilder) {
-            dB.echoDebug(parent, "Building script entries:");
+        if (Debug.showScriptBuilder) {
+            Debug.echoDebug(parent, "Building script entries:");
         }
 
         for (Object ientry : contents) {
@@ -79,9 +79,9 @@ public class ScriptBuilder {
 
             try {
                 /* Build new script commands */
-                String[] args = aH.buildArgs(scriptEntry[1]);
-                if (dB.showScriptBuilder) {
-                    dB.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
+                String[] args = ArgumentHelper.buildArgs(scriptEntry[1]);
+                if (Debug.showScriptBuilder) {
+                    Debug.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 }
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside);
                 newEntry.internal.originalLine = entry;
@@ -89,7 +89,7 @@ public class ScriptBuilder {
                 scriptCommands.add(newEntry);
             }
             catch (Exception e) {
-                dB.echoError(e);
+                Debug.echoError(e);
             }
         }
 

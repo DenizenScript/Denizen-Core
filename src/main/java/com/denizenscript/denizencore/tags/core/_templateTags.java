@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class _templateTags {
         }
 
         // Got here? No attributes were handled! Probably should let the dBugger know.
-        dB.echoError("Example skills tag '" + event.raw_tag
+        Debug.echoError("Example skills tag '" + event.raw_tag
                 + "' was unable to match an attribute. Replacement has been cancelled...");
 
     }

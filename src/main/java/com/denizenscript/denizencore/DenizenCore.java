@@ -10,7 +10,7 @@ import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
 import java.io.FileNotFoundException;
@@ -82,7 +82,7 @@ public class DenizenCore {
         currentTimeMillis = System.currentTimeMillis();
         DenizenCore.implementation = implementation;
         MAIN_THREAD = implementation.getMainThread();
-        dB.log("Initializing Denizen Core v" + VERSION +
+        Debug.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
         scriptEngine = new ScriptEngine();

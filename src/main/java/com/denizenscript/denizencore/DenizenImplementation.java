@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore;
 
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
 import java.util.List;
@@ -72,12 +72,12 @@ public interface DenizenImplementation {
     /**
      * Outputs a message specific to a debuggable object.
      */
-    void debugEntry(Debuggable entry, dB.DebugElement element, String message);
+    void debugEntry(Debuggable entry, Debug.DebugElement element, String message);
 
     /**
      * Outputs a message specific to a debuggable object.
      */
-    void debugEntry(Debuggable entry, dB.DebugElement element);
+    void debugEntry(Debuggable entry, Debug.DebugElement element);
 
     /**
      * Return the name of the implementation.
@@ -115,7 +115,7 @@ public interface DenizenImplementation {
 
     TagContext getTagContextFor(ScriptEntry entry, boolean instant);
 
-    boolean handleCustomArgs(ScriptEntry entry, aH.Argument arg, boolean if_ignore);
+    boolean handleCustomArgs(ScriptEntry entry, Argument arg, boolean if_ignore);
 
     void refreshScriptContainers();
 

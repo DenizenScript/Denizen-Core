@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -45,12 +46,12 @@ public class CommandExecuter {
                 definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
             }
             if (defval == null) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
-                dB.log("(Attempted: " + scriptEntry.toString() + ")");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
+                Debug.log("(Attempted: " + scriptEntry.toString() + ")");
                 definition = "null";
             }
-            dB.echoError(scriptEntry.getResidingQueue(), "Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
-            dB.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
+            Debug.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
             m.appendReplacement(sb, Matcher.quoteReplacement(definition));
         }
         m.appendTail(sb);
@@ -72,8 +73,8 @@ public class CommandExecuter {
                 if (hasDef(arg)) {
                     String parsed = parseDefsRaw(scriptEntry, arg);
                     scriptEntry.setArgument(argId, parsed);
-                    aH.Argument aharg = new aH.Argument(parsed);
-                    aH.Argument oldaharg = scriptEntry.aHArgs.get(argId);
+                    Argument aharg = new Argument(parsed);
+                    Argument oldaharg = scriptEntry.aHArgs.get(argId);
                     aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
                     aharg.hasSpecialPrefix = false;
                     scriptEntry.aHArgs.set(argId, aharg);
@@ -93,7 +94,7 @@ public class CommandExecuter {
             StringBuilder output = new StringBuilder();
             output.append(scriptEntry.getCommandName());
             if (scriptEntry.getOriginalArguments() == null) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
+                Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
             }
             else {
                 for (String arg : scriptEntry.getOriginalArguments()) {
@@ -111,14 +112,14 @@ public class CommandExecuter {
             }
         }
         if (scriptEntry.broken) {
-            dB.echoDebug(scriptEntry, dB.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
+            Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
             if (command == null) {
-                dB.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid dCommand! Are you sure it loaded?");
+                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid dCommand! Are you sure it loaded?");
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?");
+                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?");
             }
-            dB.echoDebug(scriptEntry, dB.DebugElement.Footer);
+            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             return false;
         }
         currentQueue = scriptEntry.getResidingQueue();
@@ -134,13 +135,13 @@ public class CommandExecuter {
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs);
             }
             genned = handleDefs(scriptEntry, genned);
-            for (aH.Argument arg : scriptEntry.internal.preprocArgs) {
+            for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
                 else if (arg.matchesOnePrefix("save")) {
                     saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
-                    dB.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
+                    Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
@@ -148,29 +149,29 @@ public class CommandExecuter {
                         genned ? scriptEntry.args_cur : scriptEntry.internal.args_ref, scriptEntry.aHArgs, false,
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, false), scriptEntry.internal.processArgs);
                 // TODO: Fix this weird interpreter efficiency hack (remove string dependence)
-                aH.specialInterpretTrickStrings = scriptEntry.args;
-                aH.specialInterpretTrickObjects = scriptEntry.aHArgs;
+                ArgumentHelper.specialInterpretTrickStrings = scriptEntry.args;
+                ArgumentHelper.specialInterpretTrickObjects = scriptEntry.aHArgs;
             }
             command.parseArgs(scriptEntry);
         }
         catch (InvalidArgumentsException e) {
             // Give usage hint if InvalidArgumentsException was called.
-            dB.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0) {
-                dB.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
+                Debug.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             }
-            dB.log("Usage: " + command.getUsageHint());
-            dB.log("(Attempted: " + scriptEntry.toString() + ")");
-            dB.echoDebug(scriptEntry, dB.DebugElement.Footer);
+            Debug.log("Usage: " + command.getUsageHint());
+            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
+            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);
             currentQueue = null;
             return false;
         }
         catch (Exception e) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while preparing it)!");
-            dB.echoError(scriptEntry.getResidingQueue(), e);
-            dB.log("(Attempted: " + scriptEntry.toString() + ")");
-            dB.echoDebug(scriptEntry, dB.DebugElement.Footer);
+            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while preparing it)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), e);
+            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
+            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);
             currentQueue = null;
             return false;
@@ -184,10 +185,10 @@ public class CommandExecuter {
             return true;
         }
         catch (Exception e) {
-            dB.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command (while executing it)!");
-            dB.echoError(scriptEntry.getResidingQueue(), e);
-            dB.log("(Attempted: " + scriptEntry.toString() + ")");
-            dB.echoDebug(scriptEntry, dB.DebugElement.Footer);
+            Debug.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command (while executing it)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), e);
+            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
+            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);
             currentQueue = null;
             return false;

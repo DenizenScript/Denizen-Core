@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -41,12 +41,12 @@ public class WaitCommand extends AbstractCommand {
         for (String arg : scriptEntry.getArguments()) {
 
             // Set duration
-            if (aH.matchesDuration(arg)) {
+            if (ArgumentHelper.matchesDuration(arg)) {
                 delay = Duration.valueOf(arg);
             }
 
             // Specify queue
-            if (aH.matchesQueue(arg)) {
+            if (ArgumentHelper.matchesQueue(arg)) {
                 queue = ScriptQueue._getExistingQueue(arg);
             }
         }
@@ -64,8 +64,8 @@ public class WaitCommand extends AbstractCommand {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(),
-                    aH.debugObj("queue", queue.id) + delay.debug());
+            Debug.report(scriptEntry, getName(),
+                    ArgumentHelper.debugObj("queue", queue.id) + delay.debug());
 
         }
 
@@ -75,7 +75,7 @@ public class WaitCommand extends AbstractCommand {
         }
         else {
             scriptEntry.setInstant(false);
-            dB.echoDebug(scriptEntry, "Forcing queue " + queue.id + " into a timed queue...");
+            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.id + " into a timed queue...");
             queue.forceToTimed(delay);
         }
     }

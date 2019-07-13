@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.objects.properties;
 
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.dObject;
 
 import java.lang.invoke.*;
@@ -64,7 +64,7 @@ public class PropertyParser {
             return (String[]) f.get(null);
         }
         catch (IllegalAccessException e) {
-            dB.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a Set: " + e.getMessage() + "!");
+            Debug.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a Set: " + e.getMessage() + "!");
         }
         catch (NoSuchFieldException e) {
             // Ignore this exception.
@@ -88,8 +88,8 @@ public class PropertyParser {
             registerProperty(property, object, getter);
         }
         catch (Throwable e) {
-            dB.echoError("Unable to register property '" + property.getSimpleName() + "'!");
-            dB.echoError(e);
+            Debug.echoError("Unable to register property '" + property.getSimpleName() + "'!");
+            Debug.echoError(e);
         }
     }
 

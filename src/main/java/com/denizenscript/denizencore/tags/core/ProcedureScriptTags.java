@@ -10,7 +10,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
 import java.util.List;
@@ -74,17 +74,17 @@ public class ProcedureScriptTags {
 
         }
         else {
-            dB.echoError("Invalid procedure script tag '" + event.getValue() + "'!");
+            Debug.echoError("Invalid procedure script tag '" + event.getValue() + "'!");
             return;
         }
 
         if (script == null) {
-            dB.echoError("Missing script for procedure script tag '" + event.getValue() + "'!");
+            Debug.echoError("Missing script for procedure script tag '" + event.getValue() + "'!");
             return;
         }
 
         if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
-            dB.echoError("Chosen script is not a procedure script!");
+            Debug.echoError("Chosen script is not a procedure script!");
             return;
         }
 
@@ -118,7 +118,7 @@ public class ProcedureScriptTags {
                 String name = definition_names != null && definition_names.size() >= x ?
                         definition_names.get(x - 1).trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                dB.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? script.getContainer() :
+                Debug.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? script.getContainer() :
                                 event.getScript().getContainer()) : event.getScriptEntry(),
                         "Adding definition '" + name + "' as " + definition);
                 x++;

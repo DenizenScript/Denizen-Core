@@ -1,10 +1,11 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -72,13 +73,13 @@ public class RandomCommand extends BracedCommand {
             scriptEntry.addObject("braces", bdat);
         }
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matches("{")) {
                 break;
             }
             else if (!scriptEntry.hasObject("possibilities")
-                    && arg.matchesPrimitive(aH.PrimitiveType.Integer)) {
+                    && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
                 scriptEntry.addObject("possibilities", arg.asElement());
             }
             else {
@@ -139,7 +140,7 @@ public class RandomCommand extends BracedCommand {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(), aH.debugObj("possibilities", possibilities) + aH.debugObj("choice", selected + 1));
+            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("possibilities", possibilities) + ArgumentHelper.debugObj("choice", selected + 1));
 
         }
 
@@ -155,7 +156,7 @@ public class RandomCommand extends BracedCommand {
                     queue.removeEntry(0);
                 }
                 else {
-                    dB.echoDebug(scriptEntry, "...selected '" + queue.getEntry(0).getCommandName() + ": "
+                    Debug.echoDebug(scriptEntry, "...selected '" + queue.getEntry(0).getCommandName() + ": "
                             + queue.getEntry(0).getArguments() + "'.");
                     keeping = queue.getEntry(0);
                     queue.removeEntry(0);

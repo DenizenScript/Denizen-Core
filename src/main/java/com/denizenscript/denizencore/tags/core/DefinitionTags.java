@@ -9,7 +9,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class DefinitionTags {
 
@@ -40,7 +40,7 @@ public class DefinitionTags {
         }
 
         if (!event.hasNameContext()) {
-            dB.echoError("Invalid definition tag, no context specified!");
+            Debug.echoError("Invalid definition tag, no context specified!");
             return;
         }
 
@@ -56,7 +56,7 @@ public class DefinitionTags {
 
         DefinitionProvider definitionProvider = event.getContext().definitionProvider;
         if (definitionProvider == null) {
-            dB.echoError("No definitions are provided at this moment!");
+            Debug.echoError("No definitions are provided at this moment!");
             return;
         }
         dObject def = definitionProvider.getDefinitionObject(defName);
@@ -82,7 +82,7 @@ public class DefinitionTags {
         // No invalid definitions!
         if (def == null) {
             if (!event.hasAlternative()) {
-                dB.echoError("Invalid definition name '" + defName + "'.");
+                Debug.echoError("Invalid definition name '" + defName + "'.");
             }
             return;
         }

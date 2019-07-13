@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -59,7 +60,7 @@ public class QueueCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("action")
                     && arg.matchesEnum(Action.values())) {
@@ -107,8 +108,8 @@ public class QueueCommand extends AbstractCommand {
 
         // Debugger
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), queue.debug()
-                    + aH.debugObj("Action", action.toString())
+            Debug.report(scriptEntry, getName(), queue.debug()
+                    + ArgumentHelper.debugObj("Action", action.toString())
                     + (action == Action.DELAY ? delay.debug() : ""));
         }
 

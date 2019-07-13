@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.properties.Property;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -126,7 +126,7 @@ public class CoreUtilities {
 
     public static dObject autoAttrib(dObject inp, Attribute attribute) {
         if (inp == null) {
-            dB.echoError("Tag parse failed (null return) for tag <" + attribute.toString() + ">!");
+            Debug.echoError("Tag parse failed (null return) for tag <" + attribute.toString() + ">!");
             return null;
         }
         if (attribute.isComplete()) {
@@ -252,7 +252,7 @@ public class CoreUtilities {
 
                 String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
                 if (ext.equalsIgnoreCase("DSCRIPT")) {
-                    dB.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
+                    Debug.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
                     return true;
                 }
                 return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSC");
@@ -341,8 +341,8 @@ public class CoreUtilities {
             }
         }
         strings.add(str.substring(start));
-        if (dB.verbose) {
-            dB.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
+        if (Debug.verbose) {
+            Debug.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
         }
         return strings;
     }

@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 
@@ -94,7 +94,7 @@ public class WhileCommand extends BracedCommand {
         if (stop != null && stop.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), stop.debug());
+                Debug.report(scriptEntry, getName(), stop.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -117,14 +117,14 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
             }
             return;
         }
         else if (next != null && next.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), next.debug());
+                Debug.report(scriptEntry, getName(), next.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -146,7 +146,7 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop while: not in one!");
             }
             return;
         }
@@ -169,7 +169,7 @@ public class WhileCommand extends BracedCommand {
                 data.LastChecked = System.currentTimeMillis();
                 boolean run = new IfCommand.ArgComparer().compare(new ArrayList(data.value), scriptEntry);
                 if (run) {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "While loop " + data.index);
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},
@@ -183,31 +183,31 @@ public class WhileCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "While loop complete");
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop complete");
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "While CALLBACK invalid: not a real callback!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "While CALLBACK invalid: not a real callback!");
             }
         }
         else {
             List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
             List<BracedData> data = ((List<BracedData>) scriptEntry.getObject("braces"));
             if (data == null || data.isEmpty()) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = data.get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
                 return;
             }
             boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), aH.debugObj("run_first_loop", run));
+                Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_loop", run));
             }
 
             if (!run) {

@@ -1,10 +1,11 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 import java.util.HashSet;
@@ -59,12 +60,12 @@ public class DebugCommand extends AbstractCommand {
         EXCEPTION
     }
 
-    public static HashSet<String> DBINFO = aH.Argument.precalcEnum(DebugType.values());
+    public static HashSet<String> DBINFO = Argument.precalcEnum(DebugType.values());
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("type")
                     && arg.matchesEnum(DBINFO)) {
@@ -103,33 +104,33 @@ public class DebugCommand extends AbstractCommand {
 
         switch (DebugType.valueOf(type.asString().toUpperCase())) {
             case DEBUG:
-                dB.echoDebug(scriptEntry, debug.asString());
+                Debug.echoDebug(scriptEntry, debug.asString());
                 break;
             case HEADER:
-                dB.echoDebug(scriptEntry, dB.DebugElement.Header, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug.asString());
                 break;
             case FOOTER:
-                dB.echoDebug(scriptEntry, dB.DebugElement.Footer, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug.asString());
                 break;
             case SPACER:
-                dB.echoDebug(scriptEntry, dB.DebugElement.Spacer, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug.asString());
                 break;
             case LOG:
-                dB.log(debug.asString());
+                Debug.log(debug.asString());
                 break;
             case APPROVAL:
-                dB.echoApproval(debug.asString());
+                Debug.echoApproval(debug.asString());
                 break;
             case ERROR:
-                dB.echoError(scriptEntry.getResidingQueue(), debug.asString());
+                Debug.echoError(scriptEntry.getResidingQueue(), debug.asString());
                 break;
             case REPORT:
                 if (scriptEntry.dbCallShouldDebug()) {
-                    dB.report(scriptEntry, name.asString(), debug.asString());
+                    Debug.report(scriptEntry, name.asString(), debug.asString());
                 }
                 break;
             case EXCEPTION:
-                dB.echoError(scriptEntry.getResidingQueue(), new RuntimeException(debug.asString()));
+                Debug.echoError(scriptEntry.getResidingQueue(), new RuntimeException(debug.asString()));
         }
     }
 }

@@ -1,9 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -62,7 +63,7 @@ public class ForeachCommand extends BracedCommand {
 
         boolean handled = false;
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!handled
                     && arg.matches("stop")) {
@@ -117,7 +118,7 @@ public class ForeachCommand extends BracedCommand {
         if (stop != null && stop.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), stop.debug());
+                Debug.report(scriptEntry, getName(), stop.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -140,14 +141,14 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
         else if (next != null && next.asBoolean()) {
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), next.debug());
+                Debug.report(scriptEntry, getName(), next.debug());
             }
             boolean hasnext = false;
             for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
@@ -169,7 +170,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
             }
             return;
         }
@@ -180,7 +181,7 @@ public class ForeachCommand extends BracedCommand {
                 ForeachData data = (ForeachData) scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.list.size()) {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "Foreach loop " + data.index);
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop " + data.index);
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.list.get(data.index - 1)));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
@@ -195,11 +196,11 @@ public class ForeachCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    dB.echoDebug(scriptEntry, dB.DebugElement.Header, "Foreach loop complete");
+                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop complete");
                 }
             }
             else {
-                dB.echoError(scriptEntry.getResidingQueue(), "Foreach CALLBACK invalid: not a real callback!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Foreach CALLBACK invalid: not a real callback!");
             }
         }
 
@@ -208,25 +209,25 @@ public class ForeachCommand extends BracedCommand {
             // Get objects
             List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
             if (bdlist == null || bdlist.isEmpty()) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
                 return;
             }
 
             List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                dB.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
                 return;
             }
 
             // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
-                dB.report(scriptEntry, getName(), list.debug() + as_name.debug());
+                Debug.report(scriptEntry, getName(), list.debug() + as_name.debug());
             }
 
             int target = list.size();
             if (target <= 0) {
-                dB.echoDebug(scriptEntry, "Empty list, not looping...");
+                Debug.echoDebug(scriptEntry, "Empty list, not looping...");
                 return;
             }
             ForeachData datum = new ForeachData();

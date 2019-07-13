@@ -1,15 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.aH;
-import com.denizenscript.denizencore.objects.dList;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 import java.io.*;
@@ -47,7 +44,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("url")) {
                 scriptEntry.addObject("url", new Element(arg.raw_value));
@@ -97,7 +94,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     public void execute(final ScriptEntry scriptEntry) {
 
         if (!DenizenCore.getImplementation().allowedToWebget()) {
-            dB.echoError(scriptEntry.getResidingQueue(), "WebGet disabled by config!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "WebGet disabled by config!");
             return;
         }
 
@@ -108,7 +105,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         final Element saveFile = scriptEntry.getElement("savefile");
 
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), url.debug()
+            Debug.report(scriptEntry, getName(), url.debug()
                             + (postData != null ? postData.debug() : "")
                             + (timeout != null ? timeout.debug() : "")
                             + (saveFile != null ? saveFile.debug() : "")
@@ -152,7 +149,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             if (saveFile != null) {
                 File file = new File(saveFile.asString());
                 if (!DenizenCore.getImplementation().canWriteToFile(file)) {
-                    dB.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
+                    Debug.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
                 }
                 else {
                     InputStream in = uc.getInputStream();
@@ -191,7 +188,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                         scriptEntry.addObject("failed", new Element(uc.getResponseCode() == 200 ? "false" : "true"));
                     }
                     catch (Exception e) {
-                        dB.echoError(e);
+                        Debug.echoError(e);
                     }
                     if (saveFile == null) {
                         scriptEntry.addObject("result", new Element(sb.toString()));
@@ -202,7 +199,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             });
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
             try {
                 DenizenCore.schedule(new Schedulable() {
                     @Override
@@ -214,7 +211,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 });
             }
             catch (Exception e2) {
-                dB.echoError(e2);
+                Debug.echoError(e2);
             }
         }
         finally {
@@ -224,7 +221,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
             }
             catch (Exception e) {
-                dB.echoError(e);
+                Debug.echoError(e);
             }
         }
     }

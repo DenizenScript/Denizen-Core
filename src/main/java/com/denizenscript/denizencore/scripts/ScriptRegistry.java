@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.scripts;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.*;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.OldEventManager;
@@ -68,24 +68,24 @@ public class ScriptRegistry {
                 String type = yamlScripts.getString(scriptName + ".TYPE");
                 // Check that types is a registered type
                 if (!scriptContainerTypes.containsKey(type.toUpperCase())) {
-                    dB.log("<G>Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")'<G> is an unknown type.");
+                    Debug.log("<G>Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")'<G> is an unknown type.");
                     ScriptHelper.setHadError();
                     continue;
                 }
                 // Instantiate a new scriptContainer of specified type.
                 Class typeClass = scriptContainerTypes.get(type.toUpperCase());
-                dB.log("Adding script " + scriptName + " as type " + type.toUpperCase());
+                Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
                 try {
                     scriptContainers.put(scriptName, typeClass.getConstructor(YamlConfiguration.class, String.class)
                             .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
                 }
                 catch (Exception e) {
-                    dB.echoError(e);
+                    Debug.echoError(e);
                     ScriptHelper.setHadError();
                 }
             }
             else {
-                dB.echoError("Found type-less container: '" + scriptName + "'.");
+                Debug.echoError("Found type-less container: '" + scriptName + "'.");
                 ScriptHelper.setHadError();
             }
         }

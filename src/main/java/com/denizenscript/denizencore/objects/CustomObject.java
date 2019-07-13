@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.CustomScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -53,13 +53,13 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
         ScriptContainer sc = ScriptRegistry.getScriptContainer(typeData);
         if (sc == null) {
             if (context == null || context.debug) {
-                dB.echoError("Null script container for " + typeData);
+                Debug.echoError("Null script container for " + typeData);
             }
             return null;
         }
         if (!(sc instanceof CustomScriptContainer)) {
             if (context == null || context.debug) {
-                dB.echoError("Wrong-typed script container for " + typeData);
+                Debug.echoError("Wrong-typed script container for " + typeData);
             }
             return null;
         }

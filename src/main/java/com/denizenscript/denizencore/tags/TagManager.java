@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 
 import java.lang.annotation.ElementType;
@@ -63,7 +63,7 @@ public class TagManager {
             }
             Class[] parameters = method.getParameterTypes();
             if (parameters.length != 1 || parameters[0] != ReplaceableTagEvent.class) {
-                dB.echoError("Class " + o.getClass().getCanonicalName() + " has a method "
+                Debug.echoError("Class " + o.getClass().getCanonicalName() + " has a method "
                         + method.getName() + " that is targeted at the event manager but has invalid parameters.");
                 break;
             }
@@ -84,7 +84,7 @@ public class TagManager {
             oldRunners.add(runner);
         }
         catch (Throwable ex) {
-            dB.echoError(ex);
+            Debug.echoError(ex);
         }
     }
 
@@ -103,8 +103,8 @@ public class TagManager {
     }
 
     public static void fireEvent(ReplaceableTagEvent event) {
-        if (dB.verbose) {
-            dB.log("Tag fire: " + event.raw_tag + ", " + event.isInstant() + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
+        if (Debug.verbose) {
+            Debug.log("Tag fire: " + event.raw_tag + ", " + event.isInstant() + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
         if (event.getAttributes().attributes[0].rawKey.contains("@")) {
             fetchObject(event);
@@ -113,37 +113,37 @@ public class TagManager {
         TagRunnable.RootForm handler = handlers.get(event.getName());
         if (handler != null) {
             try {
-                if (dB.verbose) {
-                    dB.log("Tag handle: " + event.raw_tag + " " + handler.name + "...");
+                if (Debug.verbose) {
+                    Debug.log("Tag handle: " + event.raw_tag + " " + handler.name + "...");
                 }
                 handler.run(event);
                 if (event.replaced()) {
-                    if (dB.verbose) {
-                        dB.log("Tag handle success: " + event.getReplaced());
+                    if (Debug.verbose) {
+                        Debug.log("Tag handle success: " + event.getReplaced());
                     }
                     return;
                 }
             }
             catch (Throwable ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
             }
         }
         for (OldTagRunner runner : oldRunners) {
             try {
                 runner.run(event);
                 if (event.replaced()) {
-                    if (dB.verbose) {
-                        dB.log("Tag alt-handle success: " + event.getReplaced());
+                    if (Debug.verbose) {
+                        Debug.log("Tag alt-handle success: " + event.getReplaced());
                     }
                     return;
                 }
             }
             catch (Throwable ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
             }
         }
-        if (dB.verbose) {
-            dB.log("Tag unhandled!");
+        if (Debug.verbose) {
+            Debug.log("Tag unhandled!");
         }
     }
 
@@ -271,7 +271,7 @@ public class TagManager {
 
         if (object_class == null) {
             if (!event.hasAlternative()) {
-                dB.echoError("Invalid object type! Could not fetch '" + object_type + "'!");
+                Debug.echoError("Invalid object type! Could not fetch '" + object_type + "'!");
                 event.setReplaced("null");
             }
             return;
@@ -284,7 +284,7 @@ public class TagManager {
                     : event.getAttributes().attributes[0].rawKey;
             if (!ObjectFetcher.checkMatch(object_class, tagObjectFull)) {
                 if (!event.hasAlternative()) {
-                    dB.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
+                    Debug.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
                             + "' is an invalid " + object_class.getSimpleName() + ".");
                     event.setReplaced("null");
                 }
@@ -295,7 +295,7 @@ public class TagManager {
 
             if (arg == null) {
                 if (!event.hasAlternative()) {
-                    dB.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
+                    Debug.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
                             : event.getAttributes().attributes[0].rawKey) + " is an invalid dObject!"));
                     event.setReplaced("null");
                 }
@@ -306,8 +306,8 @@ public class TagManager {
             event.setReplacedObject(CoreUtilities.autoAttrib(arg, attribute.fulfill(1)));
         }
         catch (Exception e) {
-            dB.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
-            dB.echoError(e);
+            Debug.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
+            Debug.echoError(e);
             if (!event.hasAlternative()) {
                 event.setReplaced("null");
             }
@@ -333,14 +333,14 @@ public class TagManager {
                 future.get(seconds, TimeUnit.SECONDS);
             }
             catch (InterruptedException e) {
-                dB.echoError("Tag filling was interrupted!");
+                Debug.echoError("Tag filling was interrupted!");
             }
             catch (ExecutionException e) {
-                dB.echoError(e);
+                Debug.echoError(e);
             }
             catch (TimeoutException e) {
                 future.cancel(true);
-                dB.echoError("Tag filling timed out!");
+                Debug.echoError("Tag filling timed out!");
             }
 
             executor.shutdownNow();
@@ -369,8 +369,8 @@ public class TagManager {
     public static dObject readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         // Call Event
         int tT = DenizenCore.getImplementation().getTagTimeout();
-        if (dB.verbose) {
-            dB.log("Tag read: " + event.raw_tag + ", " + event.isInstant() + ", " + tT + "...");
+        if (Debug.verbose) {
+            Debug.log("Tag read: " + event.raw_tag + ", " + event.isInstant() + ", " + tT + "...");
         }
         if (tT <= 0 || (!DenizenCore.getImplementation().shouldDebug(context) && !DenizenCore.getImplementation().tagTimeoutWhenSilent())) {
             fireEvent(event);
@@ -385,7 +385,7 @@ public class TagManager {
             DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplaced());
         }
         if (!event.replaced()) {
-            dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
+            Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
                     "Tag <" + event.toString() + "> is invalid!");
             return new Element(event.raw_tag);
         }
@@ -423,13 +423,13 @@ public class TagManager {
     }
 
     public static dObject parseChainObject(List<ParseableTagPiece> pieces, TagContext context, boolean repush) {
-        if (dB.verbose) {
-            dB.log("Tag parse chain: " + pieces + "...");
+        if (Debug.verbose) {
+            Debug.log("Tag parse chain: " + pieces + "...");
             try {
                 throw new RuntimeException("Stack");
             }
             catch (Exception ex) {
-                dB.echoError(ex);
+                Debug.echoError(ex);
             }
         }
         if (pieces.size() < 2) {
@@ -438,7 +438,7 @@ public class TagManager {
             }
             ParseableTagPiece pzero = pieces.get(0);
             if (pzero.isError) {
-                dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null, pzero.content);
+                Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, pzero.content);
             }
             else if (pzero.isTag) {
                 dObject objt = readSingleTagObject(pzero, context);
@@ -458,7 +458,7 @@ public class TagManager {
         for (int i = 0; i < pieces.size(); i++) {
             ParseableTagPiece p = pieces.get(i);
             if (p.isError) {
-                dB.echoError(context.entry != null ? context.entry.getResidingQueue() : null, p.content);
+                Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, p.content);
             }
             else if (p.isTag) {
                 dObject objt = readSingleTagObject(p, context);
@@ -534,8 +534,8 @@ public class TagManager {
             midTag.isTag = true;
             midTag.tagData = new ReplaceableTagEvent(tagToProc, context).mainRef;
             pieces.add(midTag);
-            if (dB.verbose) {
-                dB.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
+            if (Debug.verbose) {
+                Debug.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
             }
             arg = arg.substring(positions[1] + 1);
             locateTag(arg, positions);
@@ -551,8 +551,8 @@ public class TagManager {
             postText.content = arg;
             pieces.add(postText);
         }
-        if (dB.verbose) {
-            dB.log("Tag chainify complete: " + arg);
+        if (Debug.verbose) {
+            Debug.log("Tag chainify complete: " + arg);
         }
         return pieces;
     }
@@ -613,8 +613,8 @@ public class TagManager {
     }
 
     public static List<dObject> fillArgumentsObjects(List<String> args, TagContext context) {
-        if (dB.verbose) {
-            dB.log("Fill argument objects (old): " + args + ", " + context.instant + "...");
+        if (Debug.verbose) {
+            Debug.log("Fill argument objects (old): " + args + ", " + context.instant + "...");
         }
         List<dObject> filledArgs = new ArrayList<>();
 
@@ -640,12 +640,12 @@ public class TagManager {
         return filledArgs;
     }
 
-    public static void fillArgumentsObjects(List<dObject> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<aH.Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
-        if (dB.verbose) {
-            dB.log("Fill argument objects: " + args + ", " + context.instant + ", " + targets.length + "...");
+    public static void fillArgumentsObjects(List<dObject> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
+        if (Debug.verbose) {
+            Debug.log("Fill argument objects: " + args + ", " + context.instant + ", " + targets.length + "...");
         }
         for (int argId : targets) {
-            aH.Argument aharg = aHArgs.get(argId);
+            Argument aharg = aHArgs.get(argId);
             if (aharg.needsFill || aharg.hasSpecialPrefix) {
                 ScriptEntry.Argument piece = pieceHelp.get(argId);
                 if (piece.prefix != null) {

@@ -6,7 +6,7 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -101,7 +101,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     private YamlConfiguration getYaml(String id) {
         if (id == null) {
-            dB.echoError("Trying to get YAML file with NULL ID!");
+            Debug.echoError("Trying to get YAML file with NULL ID!");
             return null;
         }
         return yamls.get(id.toUpperCase());
@@ -119,7 +119,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         boolean isSet = false;
 
-        for (aH.Argument arg : aH.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
             if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("load")) {
                 scriptEntry.addObject("action", new Element("LOAD"));
@@ -156,7 +156,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("write")) {
-                dB.echoError(scriptEntry.getResidingQueue(), "YAML write is deprecated, use YAML set!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "YAML write is deprecated, use YAML set!");
                 scriptEntry.addObject("action", new Element("WRITE"));
                 scriptEntry.addObject("key", arg.asElement());
             }
@@ -298,11 +298,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         if (scriptEntry.dbCallShouldDebug()) {
 
-            dB.report(scriptEntry, getName(),
+            Debug.report(scriptEntry, getName(),
                     idElement.debug()
                             + actionElement.debug()
                             + (filename != null ? filename.debug() : "")
-                            + (yaml_action != null ? aH.debugObj("yaml_action", yaml_action.name()) : "")
+                            + (yaml_action != null ? ArgumentHelper.debugObj("yaml_action", yaml_action.name()) : "")
                             + (key != null ? key.debug() : "")
                             + (value != null ? value.debug() : "")
                             + (split != null ? split.debug() : "")
@@ -324,12 +324,12 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case LOAD:
                 File file = new File(DenizenCore.getImplementation().getDataFolder(), filename.asString());
                 if (!DenizenCore.getImplementation().canReadFile(file)) {
-                    dB.echoError("Server config denies reading files in that location.");
+                    Debug.echoError("Server config denies reading files in that location.");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 if (!file.exists()) {
-                    dB.echoError("File cannot be found!");
+                    Debug.echoError("File cannot be found!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -366,7 +366,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             }
                         }
                         catch (Exception e) {
-                            dB.echoError("Failed to load yaml file: " + e);
+                            Debug.echoError("Failed to load yaml file: " + e);
                         }
                     }
                 };
@@ -396,7 +396,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     yamls.remove(id);
                 }
                 else {
-                    dB.echoError("Unknown YAML ID '" + id + "'");
+                    Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
 
@@ -408,7 +408,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                     getDataFolder().getAbsolutePath() + "/" + filename.asString());
                             String directory = URLDecoder.decode(System.getProperty("user.dir"));
                             if (!fileObj.getCanonicalPath().startsWith(directory)) {
-                                dB.echoError("Outside-the-main-folder YAML saves disabled by administrator.");
+                                Debug.echoError("Outside-the-main-folder YAML saves disabled by administrator.");
                                 scriptEntry.setFinished(true);
                                 return;
                             }
@@ -416,7 +416,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         File fileObj = new File(DenizenCore.getImplementation().
                                 getDataFolder().getAbsolutePath() + "/" + filename.asString());
                         if (!DenizenCore.getImplementation().canWriteToFile(fileObj)) {
-                            dB.echoError(scriptEntry.getResidingQueue(), "Cannot edit that file!");
+                            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot edit that file!");
                             scriptEntry.setFinished(true);
                             return;
                         }
@@ -433,7 +433,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                     fw.close();
                                 }
                                 catch (IOException e) {
-                                    dB.echoError(e);
+                                    Debug.echoError(e);
                                 }
                                 scriptEntry.setFinished(true);
                             }
@@ -446,11 +446,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         }
                     }
                     catch (IOException e) {
-                        dB.echoError(e);
+                        Debug.echoError(e);
                     }
                 }
                 else {
-                    dB.echoError("Unknown YAML ID '" + id + "'");
+                    Debug.echoError("Unknown YAML ID '" + id + "'");
                     scriptEntry.setFinished(true);
                 }
                 break;
@@ -468,7 +468,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else {
-                    dB.echoError("Unknown YAML ID '" + id + "'");
+                    Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
 
@@ -483,7 +483,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         destYaml = yamls.get(toId.toString().toUpperCase());
                     }
                     else {
-                        dB.echoError("Unknown YAML TO-ID '" + id + "'");
+                        Debug.echoError("Unknown YAML TO-ID '" + id + "'");
                         break;
                     }
                 }
@@ -496,7 +496,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case SET:
                 if (yamls.containsKey(id)) {
                     if (yaml_action == null || key == null || value == null) {
-                        dB.echoError("Must specify a YAML action and value!");
+                        Debug.echoError("Must specify a YAML action and value!");
                         return;
                     }
                     YamlConfiguration yaml = yamls.get(id);
@@ -504,14 +504,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     int index = -1;
                     if (key.asString().contains("[")) {
                         try {
-                            if (dB.verbose) {
-                                dB.echoDebug(scriptEntry, "Try index: " + key.asString().split("\\[")[1].replace("]", ""));
+                            if (Debug.verbose) {
+                                Debug.echoDebug(scriptEntry, "Try index: " + key.asString().split("\\[")[1].replace("]", ""));
                             }
                             index = Integer.valueOf(key.asString().split("\\[")[1].replace("]", "")) - 1;
                         }
                         catch (Exception e) {
-                            if (dB.verbose) {
-                                dB.echoError(scriptEntry.getResidingQueue(), e);
+                            if (Debug.verbose) {
+                                Debug.echoError(scriptEntry.getResidingQueue(), e);
                             }
                             index = -1;
                         }
@@ -523,16 +523,16 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
                     switch (yaml_action) {
                         case INCREASE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(aH.getDoubleFrom(Get(yaml, index, keyStr, "0")) + aH.getDoubleFrom(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "0")) + ArgumentHelper.getDoubleFrom(valueStr)));
                             break;
                         case DECREASE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(aH.getDoubleFrom(Get(yaml, index, keyStr, "0")) - aH.getDoubleFrom(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "0")) - ArgumentHelper.getDoubleFrom(valueStr)));
                             break;
                         case MULTIPLY:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(aH.getDoubleFrom(Get(yaml, index, keyStr, "1")) * aH.getDoubleFrom(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "1")) * ArgumentHelper.getDoubleFrom(valueStr)));
                             break;
                         case DIVIDE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(aH.getDoubleFrom(Get(yaml, index, keyStr, "1")) / aH.getDoubleFrom(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "1")) / ArgumentHelper.getDoubleFrom(valueStr)));
                             break;
                         case DELETE:
                             yaml.set(keyStr, null);
@@ -552,21 +552,21 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         case REMOVE: {
                             List<String> list = yaml.getStringList(keyStr);
                             if (list == null) {
-                                if (dB.verbose) {
-                                    dB.echoDebug(scriptEntry, "List null!");
+                                if (Debug.verbose) {
+                                    Debug.echoDebug(scriptEntry, "List null!");
                                 }
                                 break;
                             }
                             if (index > -1 && index < list.size()) {
-                                if (dB.verbose) {
-                                    dB.echoDebug(scriptEntry, "Remove ind: " + index);
+                                if (Debug.verbose) {
+                                    Debug.echoDebug(scriptEntry, "Remove ind: " + index);
                                 }
                                 list.remove(index);
                                 yaml.set(keyStr, list);
                             }
                             else {
-                                if (dB.verbose) {
-                                    dB.echoDebug(scriptEntry, "Remvoe value: " + valueStr);
+                                if (Debug.verbose) {
+                                    Debug.echoDebug(scriptEntry, "Remvoe value: " + valueStr);
                                 }
                                 for (int i = 0; i < list.size(); i++) {
                                     if (list.get(i).equalsIgnoreCase(valueStr)) {
@@ -595,7 +595,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else {
-                    dB.echoError("Unknown YAML ID '" + id + "'");
+                    Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
 
@@ -687,7 +687,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // YAML tag requires name context and type context.
         if ((!event.hasNameContext() || !(event.hasTypeContext() || attribute.getAttribute(2).equalsIgnoreCase("to_json")))
                 && !attribute.hasAlternative()) {
-            dB.echoError("YAML tag '" + event.raw_tag + "' is missing required context. Tag replacement aborted.");
+            Debug.echoError("YAML tag '" + event.raw_tag + "' is missing required context. Tag replacement aborted.");
             return;
         }
 
@@ -698,7 +698,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Check if there is a yaml file loaded with the specified id
         if (!yamls.containsKey(id)) {
             if (!attribute.hasAlternative()) {
-                dB.echoError("YAML tag '" + event.raw_tag + "' has specified an invalid ID, or the specified id has already" +
+                Debug.echoError("YAML tag '" + event.raw_tag + "' has specified an invalid ID, or the specified id has already" +
                         " been closed. Tag replacement aborted. ID given: '" + id + "'.");
             }
             return;

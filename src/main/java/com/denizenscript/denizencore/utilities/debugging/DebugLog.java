@@ -20,7 +20,7 @@ public class DebugLog extends Logger {
         }
         catch (Exception e) {
             System.out.println("Error creating logger '" + l + "': ");
-            dB.echoError(e);
+            Debug.echoError(e);
         }
     }
 

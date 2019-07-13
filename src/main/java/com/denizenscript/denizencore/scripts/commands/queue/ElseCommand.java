@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -35,6 +35,6 @@ public class ElseCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) {
 
         // If this command executes normally, it's misplaced. It should always be skipped past under normal execution.
-        dB.echoError(scriptEntry.getResidingQueue(), "Misplaced ELSE command.");
+        Debug.echoError(scriptEntry.getResidingQueue(), "Misplaced ELSE command.");
     }
 }

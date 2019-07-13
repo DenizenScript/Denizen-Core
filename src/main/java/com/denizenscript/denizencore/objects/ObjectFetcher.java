@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.TagContext;
 
@@ -50,18 +50,18 @@ public class ObjectFetcher {
                     String[] identifiers = method.getAnnotation(Fetchable.class).value().split(",");
                     for (String identifier : identifiers) {
                         adding.put(CoreUtilities.toLowerCase(identifier.trim()), dClass);
-                        dB.log("Registered: " + dClass.getSimpleName() + " as " + identifier);
+                        Debug.log("Registered: " + dClass.getSimpleName() + " as " + identifier);
                     }
                 }
             }
             catch (Throwable e) {
-                dB.echoError("Failed to initialize an object type(" + dClass.getSimpleName() + "): ");
-                dB.echoError(e);
+                Debug.echoError("Failed to initialize an object type(" + dClass.getSimpleName() + "): ");
+                Debug.echoError(e);
             }
         }
 
         objects.putAll(adding);
-        dB.echoApproval("Added objects to the ObjectFetcher " + adding.keySet().toString());
+        Debug.echoApproval("Added objects to the ObjectFetcher " + adding.keySet().toString());
         fetchable_objects.clear();
     }
 
@@ -99,7 +99,7 @@ public class ObjectFetcher {
         catch (Throwable ex) {
             System.err.println("Failed to get matches for " + clazz.getCanonicalName());
             ex.printStackTrace();
-            dB.echoError(ex);
+            Debug.echoError(ex);
             return null;
         }
     }
@@ -118,7 +118,7 @@ public class ObjectFetcher {
         catch (Throwable ex) {
             System.err.println("Failed to get valueOf for " + clazz.getCanonicalName());
             ex.printStackTrace();
-            dB.echoError(ex);
+            Debug.echoError(ex);
             return null;
         }
     }
@@ -130,8 +130,8 @@ public class ObjectFetcher {
             valueof.put(dObject, getValueOfFor(dObject));
         }
         catch (Throwable e) {
-            dB.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");
-            dB.echoError(e);
+            Debug.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");
+            Debug.echoError(e);
         }
     }
 
@@ -162,7 +162,7 @@ public class ObjectFetcher {
             return matches.get(dClass).matches(m.matches() ? m.group(1) : value);
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
         }
 
         return false;
@@ -211,7 +211,7 @@ public class ObjectFetcher {
                 for (int i = 1; i < matches.size(); i++) {
                     List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
                     if (data.size() != 2) {
-                        dB.echoError("Invalid property string '" + matches.get(i) + "'!");
+                        Debug.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
                     }
                     ((Adjustable) gotten).safeApplyProperty(new Mechanism(new Element(data.get(0)),
@@ -221,7 +221,7 @@ public class ObjectFetcher {
             return gotten;
         }
         catch (Exception e) {
-            dB.echoError(e);
+            Debug.echoError(e);
         }
 
         return null;

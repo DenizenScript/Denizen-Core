@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 
@@ -68,7 +68,7 @@ public class ScriptHelper {
             String up = str.str.toUpperCase();
             if (list.contains(up)) {
                 hadError = true;
-                dB.echoError("There is more than one script named '" + up + "'!");
+                Debug.echoError("There is more than one script named '" + up + "'!");
             }
             else {
                 list.add(up);
@@ -154,7 +154,7 @@ public class ScriptHelper {
 
             // Check if the directory exists
             if (!file.exists()) {
-                dB.echoError("No script folder found, please create one.");
+                Debug.echoError("No script folder found, please create one.");
                 hadError = true;
                 return "";
             }
@@ -169,21 +169,21 @@ public class ScriptHelper {
 
                 YamlConfiguration yaml;
 
-                dB.log("Processing outside scripts... ");
+                Debug.log("Processing outside scripts... ");
                 for (YamlConfiguration outsideConfig : DenizenCore.getImplementation().getOutsideScripts()) {
                     try {
-                        dB.log("Processing unnamed script...");
+                        Debug.log("Processing unnamed script...");
                         sb.append(outsideConfig.saveToString()).append("\r\n");
                     }
                     catch (Exception e) {
-                        dB.echoError("Woah! Error parsing outside scripts!");
+                        Debug.echoError("Woah! Error parsing outside scripts!");
                         hadError = true;
                     }
                 }
 
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
-                    dB.log("Processing '" + fileName + "'... ");
+                    Debug.log("Processing '" + fileName + "'... ");
 
                     try {
                         yaml = loadConfig(f.getAbsolutePath(), new FileInputStream(f));
@@ -193,31 +193,31 @@ public class ScriptHelper {
                             sb.append(saved).append("\r\n");
                         }
                         else {
-                            dB.echoError("Woah! Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
+                            Debug.echoError("Woah! Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
                             hadError = true;
                         }
 
                     }
                     catch (Exception e) {
-                        dB.echoError("Woah! Error parsing " + fileName + "!");
+                        Debug.echoError("Woah! Error parsing " + fileName + "!");
                         hadError = true;
-                        dB.echoError(e);
+                        Debug.echoError(e);
                     }
                 }
 
-                dB.echoApproval("All scripts loaded!");
+                Debug.echoApproval("All scripts loaded!");
                 return sb.toString();
             }
             else {
-                dB.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
+                Debug.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
                 hadError = true;
             }
 
         }
         catch (Exception e) {
-            dB.echoError("Woah! No script folder found in /plugins/Denizen/scripts/");
+            Debug.echoError("Woah! No script folder found in /plugins/Denizen/scripts/");
             hadError = true;
-            dB.echoError(e);
+            Debug.echoError(e);
         }
 
         return "";

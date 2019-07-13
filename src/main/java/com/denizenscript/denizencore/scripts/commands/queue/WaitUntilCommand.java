@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.aH;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
@@ -64,7 +64,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
         // Report to dB
         if (scriptEntry.dbCallShouldDebug()) {
-            dB.report(scriptEntry, getName(), aH.debugObj("run_first_check", run));
+            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run));
         }
 
         if (run) {
@@ -80,7 +80,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
             public void run() {
                 counter++;
                 if (new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry)) {
-                    dB.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
+                    Debug.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();
                 }

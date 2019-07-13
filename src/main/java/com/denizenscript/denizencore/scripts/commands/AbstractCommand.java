@@ -2,11 +2,10 @@ package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.CommandExecutionException;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.interfaces.RegistrationableInstance;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
-public abstract class AbstractCommand implements RegistrationableInstance {
+public abstract class AbstractCommand {
 
     /**
      * Contains required options for a Command in a single class for the
@@ -46,12 +45,10 @@ public abstract class AbstractCommand implements RegistrationableInstance {
         return preparseArgs;
     }
 
-    @Override
     public AbstractCommand activate() {
         return this;
     }
 
-    @Override
     public AbstractCommand as(String commandName) {
         // Register command with Registry with a Name
         name = commandName.toUpperCase();
@@ -64,7 +61,6 @@ public abstract class AbstractCommand implements RegistrationableInstance {
 
     public CommandOptions commandOptions;
 
-    @Override
     public String getName() {
         return name;
     }

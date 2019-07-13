@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.tags;
 import com.denizenscript.denizencore.objects.dObject;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.dB;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,8 +94,8 @@ public class Attribute {
 
         }
 
-        if (dB.verbose) {
-            dB.log("attribute splitter: '" + attributes + "' becomes: " + matches);
+        if (Debug.verbose) {
+            Debug.log("attribute splitter: '" + attributes + "' becomes: " + matches);
         }
 
         matchesRes = new AttributeComponent[matches.size()];
@@ -164,8 +164,8 @@ public class Attribute {
             return false;
         }
         if (string.contains(".")) {
-            if (dB.verbose) {
-                dB.log("Trying tag startsWith " + string + " on tag " + raw_tag);
+            if (Debug.verbose) {
+                Debug.log("Trying tag startsWith " + string + " on tag " + raw_tag);
             }
             List<String> tmp = CoreUtilities.split(string, '.');
             if (tmp.size() + fulfilled > attributes.length) {
