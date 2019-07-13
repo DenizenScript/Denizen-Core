@@ -7,7 +7,7 @@
     <groupId>net.aufdemrand</groupId>
     <artifactId>denizencore</artifactId>
     <packaging>jar</packaging>
-    <version>1.40-SNAPSHOT</version>
+    <version>1.50-SNAPSHOT</version>
     <name>DenizenCore</name>
     <description>A powerful scripting engine for games</description>
 
@@ -119,5 +119,5 @@
         </plugins>
     </build>
 
-    <url>https://wiki.citizensnpcs.co/Denizen</url>
+    <url>https://denizenscript.com/</url>
 </project>
