@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.objects.DurationTag;
-import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.core.DurationTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 

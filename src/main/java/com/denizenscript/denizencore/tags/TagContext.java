@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.objects.ScriptTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;

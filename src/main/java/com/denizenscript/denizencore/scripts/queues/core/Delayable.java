@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.objects.DurationTag;
+import com.denizenscript.denizencore.objects.core.DurationTag;
 
 public interface Delayable {
 

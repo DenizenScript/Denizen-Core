@@ -1,5 +1,6 @@
-package com.denizenscript.denizencore.objects;
+package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.CustomScriptContainer;

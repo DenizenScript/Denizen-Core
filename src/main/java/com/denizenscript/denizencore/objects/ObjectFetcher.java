@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -123,14 +124,14 @@ public class ObjectFetcher {
         }
     }
 
-    public static void registerWithObjectFetcher(Class<? extends ObjectTag> ObjectTag) {
+    public static void registerWithObjectFetcher(Class<? extends ObjectTag> objectTag) {
         try {
-            fetchable_objects.add(dObject);
-            matches.put(dObject, getMatchesFor(dObject));
-            valueof.put(dObject, getValueOfFor(dObject));
+            fetchable_objects.add(objectTag);
+            matches.put(objectTag, getMatchesFor(objectTag));
+            valueof.put(objectTag, getValueOfFor(objectTag));
         }
         catch (Throwable e) {
-            Debug.echoError("Failed to register an object type (" + ObjectTag.getSimpleName() + "): ");
+            Debug.echoError("Failed to register an object type (" + objectTag.getSimpleName() + "): ");
             Debug.echoError(e);
         }
     }

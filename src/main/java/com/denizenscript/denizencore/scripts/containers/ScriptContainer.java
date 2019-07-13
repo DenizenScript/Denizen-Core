@@ -6,7 +6,7 @@ import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.ScriptTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 
 import java.util.HashMap;
 import java.util.List;

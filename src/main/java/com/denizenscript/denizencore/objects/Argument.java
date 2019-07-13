@@ -1,6 +1,8 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;

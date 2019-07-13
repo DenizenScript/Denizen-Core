@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.utilities.data;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 
 import java.util.List;

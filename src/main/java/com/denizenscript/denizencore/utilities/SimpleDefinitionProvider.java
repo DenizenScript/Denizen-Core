@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 
 import java.util.HashMap;
