@@ -42,6 +42,7 @@ public class TagManager {
         new DefinitionTags();
         new EscapeTags();
         new ProcedureScriptTags();
+        new TernaryTags();
         new UtilTags();
     }
 

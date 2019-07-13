@@ -69,17 +69,13 @@ public class ProcedureScriptTags {
             }
 
         }
-        else if (event.getValue() != null) {
-            script = ScriptTag.valueOf(event.getValue());
-
-        }
         else {
-            Debug.echoError("Invalid procedure script tag '" + event.getValue() + "'!");
+            Debug.echoError("Invalid procedure script tag!");
             return;
         }
 
         if (script == null) {
-            Debug.echoError("Missing script for procedure script tag '" + event.getValue() + "'!");
+            Debug.echoError("Missing script for procedure script tag '" + event.getNameContext() + "'!");
             return;
         }
 
