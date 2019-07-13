@@ -33,6 +33,7 @@ public class WaitCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
+        // TODO: Modernize
 
         // Initialize required fields
         ScriptQueue queue = scriptEntry.getResidingQueue();
@@ -52,7 +53,7 @@ public class WaitCommand extends AbstractCommand {
             }
         }
 
-        scriptEntry.addObject("queue", queue);
+        scriptEntry.addObject("queue", new QueueTag(queue));
         scriptEntry.addObject("delay", delay);
     }
 
