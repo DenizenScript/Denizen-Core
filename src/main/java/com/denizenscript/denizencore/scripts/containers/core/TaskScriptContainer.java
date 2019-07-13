@@ -129,7 +129,7 @@ public class TaskScriptContainer extends ScriptContainer {
     }
 
     public ScriptQueue injectTaskScript(String queueId, ScriptEntryData data, Map<String, String> context) {
-        ScriptQueue queue = ScriptQueue._getExistingQueue(queueId);
+        ScriptQueue queue = ScriptQueue.getExistingQueue(queueId);
         List<ScriptEntry> listOfEntries = getBaseEntries(data);
         if (context != null) {
             ScriptBuilder.addObjectToEntries(listOfEntries, "context", context);

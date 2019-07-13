@@ -1,9 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.tags.Attribute;
 
 public class InstantQueue extends ScriptQueue {
 
@@ -32,8 +29,8 @@ public class InstantQueue extends ScriptQueue {
         }
         InstantQueue scriptQueue;
         // Does the queue already exist?
-        if (_queueExists(id)) {
-            scriptQueue = (InstantQueue) _queues.get(id);
+        if (queueExists(id)) {
+            scriptQueue = (InstantQueue) allQueues.get(id);
         }
         // If not, create a new one.
         else {
@@ -75,24 +72,5 @@ public class InstantQueue extends ScriptQueue {
     protected boolean shouldRevolve() {
         // Instant queues aren't picky!
         return true;
-    }
-
-
-    @Override
-    public String getAttribute(Attribute attribute) {
-
-        // Meta defined in TimedQueue
-        if (attribute.startsWith("speed")) {
-            return new DurationTag(0).getAttribute(attribute.fulfill(1));
-        }
-
-        // Meta defined in TimedQueue
-        if (attribute.startsWith("type")) {
-
-            return new ElementTag("Instant").getAttribute(attribute.fulfill(1));
-        }
-
-        return super.getAttribute(attribute);
-
     }
 }

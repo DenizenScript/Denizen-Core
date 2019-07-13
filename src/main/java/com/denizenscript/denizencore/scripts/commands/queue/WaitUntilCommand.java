@@ -27,7 +27,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // Will be checked as often as the queue updates (based on queue speed).
     //
     // @Tags
-    // <q@queue.speed>
+    // <QueueTag.speed>
     //
     // @Usage
     // Use to delay the current queue until the player respawns (useful in a death event, for example).

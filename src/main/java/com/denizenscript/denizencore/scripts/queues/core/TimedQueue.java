@@ -5,9 +5,7 @@ import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.tags.Attribute;
 
 public class TimedQueue extends ScriptQueue implements Delayable {
 
@@ -36,8 +34,8 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         }
         TimedQueue scriptQueue;
         // Does the queue already exist? Get it if it does.
-        if (_queueExists(id)) {
-            scriptQueue = (TimedQueue) ScriptQueue._queues.get(id);
+        if (queueExists(id)) {
+            scriptQueue = (TimedQueue) ScriptQueue.allQueues.get(id);
         }
         // If not, create a new one.
         else {
@@ -198,33 +196,5 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
         // If it's delayed, schedule it for later
         return !isDelayed();
-    }
-
-
-    @Override
-    public String getAttribute(Attribute attribute) {
-
-        // <--[tag]
-        // @attribute <q@queue.speed>
-        // @returns DurationTag
-        // @description
-        // Returns the speed of the queue as a Duration. A return of '0' implies it is 'instant'.
-        // -->
-        if (attribute.startsWith("speed")) {
-            return getSpeed().getAttribute(attribute.fulfill(1));
-        }
-
-        // <--[tag]
-        // @attribute <q@queue.type>
-        // @returns ElementTag
-        // @description
-        // Returns the type of queue.
-        // -->
-        if (attribute.startsWith("type")) {
-            return new ElementTag("Timed").getAttribute(attribute.fulfill(1));
-        }
-
-        return super.getAttribute(attribute);
-
     }
 }

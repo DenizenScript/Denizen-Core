@@ -2,12 +2,12 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 
 public class QueueCommand extends AbstractCommand {
@@ -72,10 +72,10 @@ public class QueueCommand extends AbstractCommand {
             }
 
             // No prefix required to specify the queue
-            else if ((arg.matchesArgumentType(ScriptQueue.class)
+            else if ((arg.matchesArgumentType(QueueTag.class)
                     || arg.matchesPrefix("queue"))
                     && !scriptEntry.hasObject("queue")) {
-                scriptEntry.addObject("queue", arg.asType(ScriptQueue.class));
+                scriptEntry.addObject("queue", arg.asType(QueueTag.class));
             }
 
             // ...but we also need to error out this command if the queue was not found.
@@ -102,7 +102,7 @@ public class QueueCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        ScriptQueue queue = (ScriptQueue) scriptEntry.getObject("queue");
+        QueueTag queue = (QueueTag) scriptEntry.getObject("queue");
         Action action = (Action) scriptEntry.getObject("action");
         DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
 
@@ -116,12 +116,12 @@ public class QueueCommand extends AbstractCommand {
         switch (action) {
 
             case CLEAR:
-                queue.clear();
+                queue.queue.clear();
                 return;
 
             case STOP:
-                queue.clear();
-                queue.stop();
+                queue.queue.clear();
+                queue.queue.stop();
                 return;
 
             case PAUSE:
@@ -129,7 +129,7 @@ public class QueueCommand extends AbstractCommand {
                     ((Delayable) queue).setPaused(true);
                 }
                 else {
-                    queue.forceToTimed(new DurationTag(1L)).setPaused(true);
+                    queue.queue.forceToTimed(new DurationTag(1L)).setPaused(true);
                 }
                 return;
 
@@ -144,7 +144,7 @@ public class QueueCommand extends AbstractCommand {
                     ((Delayable) queue).delayFor(delay);
                 }
                 else {
-                    queue.forceToTimed(delay);
+                    queue.queue.forceToTimed(delay);
                 }
                 return;
         }

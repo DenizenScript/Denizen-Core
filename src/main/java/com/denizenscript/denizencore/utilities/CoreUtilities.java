@@ -164,7 +164,7 @@ public class CoreUtilities {
         registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
         registerTypeAsNoOtherTypeCode(DurationTag.class, "d");
         registerTypeAsNoOtherTypeCode(CustomObjectTag.class, "custom");
-        registerTypeAsNoOtherTypeCode(ScriptQueue.class, "q");
+        registerTypeAsNoOtherTypeCode(QueueTag.class, "q");
     }
 
     public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {

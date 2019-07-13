@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.queue.Comparable;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.SQLEscaper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -21,7 +20,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
@@ -605,7 +603,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
         // <--[tag]
         // @attribute <ElementTag.as_queue>
-        // @returns ScriptQueue
+        // @returns QueueTag
         // @group conversion
         // @description
         // Returns the element as a ScriptQueue.
@@ -615,7 +613,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 String element = ((ElementTag) object).element;
-                ScriptQueue obj = handleNull(element, ScriptQueue.valueOf(element), "ScriptQueue", attribute.hasAlternative());
+                QueueTag obj = handleNull(element, QueueTag.valueOf(element), "ScriptQueue", attribute.hasAlternative());
                 if (obj != null) {
                     return CoreUtilities.autoAttrib(obj, attribute.fulfill(1));
                 }

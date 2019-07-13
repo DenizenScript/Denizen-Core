@@ -5,7 +5,6 @@ import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
-import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
@@ -18,8 +17,6 @@ import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.TagContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,31 +27,8 @@ import java.util.function.Consumer;
  * to the CommandExecuter
  */
 
-public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.ObjectAttributable, DefinitionProvider, Adjustable {
+public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
-
-    // <--[language]
-    // @name ScriptQueue
-    // @group Object System
-    // @description
-    // A ScriptQueue is a single currently running set of script commands.
-    // This is not to be confused with a script path, which is a single set of script commands that can be run.
-    // There can be one, multiple, or zero queues running at any time for any given path.
-    //
-    // For format info, see <@link language q@>
-    //
-    // -->
-
-    // <--[language]
-    // @name q@
-    // @group Object Fetcher System
-    // @description
-    // q@ refers to the 'object identifier' of a ScriptQueue. The 'q@' is notation for Denizen's Object
-    // Fetcher. The constructor for a ScriptQueue is the queue ID.
-    //
-    // For general info, see <@link language ScriptQueue>
-    //
-    // -->
 
     protected static long total_queues = 0;
 
@@ -65,7 +39,7 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
      *
      * @return stats
      */
-    public static String _getStats() {
+    public static String getStats() {
         StringBuilder stats = new StringBuilder();
         for (ScriptEvent event : ScriptEvent.events) {
             if (event.stats.fires > 0) {
@@ -79,7 +53,7 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
         return "Total number of queues created: "
                 + total_queues
                 + ", currently active queues: "
-                + _queues.size() + ",\n" + stats.toString();
+                + allQueues.size() + ",\n" + stats.toString();
     }
 
 
@@ -90,12 +64,12 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
      * @param id the id of the queue
      * @return a ScriptQueue instance, or null
      */
-    public static ScriptQueue _getExistingQueue(String id) {
-        if (!_queueExists(id)) {
+    public static ScriptQueue getExistingQueue(String id) {
+        if (!queueExists(id)) {
             return null;
         }
         else {
-            return _queues.get(id);
+            return allQueues.get(id);
         }
     }
 
@@ -120,25 +94,12 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
                 + randomEntry(QueueWordList.Modifiers)
                 + randomEntry(QueueWordList.Adjectives)
                 + randomEntry(QueueWordList.Nouns);*/
-        return _queues.containsKey(id) ? getNextId(prefix) : id;
-    }
-
-
-    /**
-     * Checks the type of an existing queue with the type given.
-     *
-     * @param queue id of the queue
-     * @param type  class of the queue type
-     * @return true if they match, false if the queue
-     * doesn't exist or does not match
-     */
-    public static boolean _matchesType(String queue, Class type) {
-        return (_queueExists(queue)) && _queues.get(queue).getClass() == type;
+        return allQueues.containsKey(id) ? getNextId(prefix) : id;
     }
 
 
     // Contains all currently active queues, keyed by a String id.
-    protected static Map<String, ScriptQueue> _queues =
+    protected static Map<String, ScriptQueue> allQueues =
             new ConcurrentHashMap<>(8, 0.9f, 1);
 
 
@@ -147,8 +108,8 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
      *
      * @return a collection of ScriptQueues
      */
-    public static Collection<ScriptQueue> _getQueues() {
-        return _queues.values();
+    public static Collection<ScriptQueue> getQueues() {
+        return allQueues.values();
     }
 
 
@@ -158,8 +119,8 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
      * @param id the String ID of the queue to check.
      * @return true if it exists.
      */
-    public static boolean _queueExists(String id) {
-        return _queues.containsKey(id);
+    public static boolean queueExists(String id) {
+        return allQueues.containsKey(id);
     }
 
     /////////////////////
@@ -421,7 +382,7 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
         String wordTwo = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
         String wordThree = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
         id = prefix + "_" + wordOne + wordTwo + wordThree;
-        if (_queueExists(id)) {
+        if (queueExists(id)) {
             generateId(prefix);
             return;
         }
@@ -477,13 +438,13 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
     protected abstract void onStart();
 
 
-    protected boolean is_started;
+    public boolean is_started;
 
     private Class<? extends ScriptQueue> cachedClass;
 
     public long startTime = 0;
 
-    private long startTimeMilli = 0;
+    public long startTimeMilli = 0;
 
     public String getName() {
         Class<? extends ScriptQueue> clazz = this.cachedClass == null ? this.cachedClass = getClass() : this.cachedClass;
@@ -517,8 +478,8 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
             return;
         }
 
-        // Save the instance to the _queues static map
-        _queues.put(id, this);
+        // Save the instance to the allQueues static map
+        allQueues.put(id, this);
 
         // Set as started, and check for a valid delay_time.
         is_started = true;
@@ -628,7 +589,7 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
     protected abstract void onStop();
 
 
-    protected boolean is_stopping = false;
+    public boolean is_stopping = false;
 
 
     public void stop() {
@@ -650,8 +611,8 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
                 queueDebug("Finishing up queue '<QUEUE>'...");
             }
             else /* if empty, just stop the queue like normal */ {
-                if (_queues.get(id) == this) {
-                    _queues.remove(id);
+                if (allQueues.get(id) == this) {
+                    allQueues.remove(id);
                 }
                 queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null) {
@@ -666,8 +627,8 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
         // 1) Remove the id from active queue list
         // 2) Cancel the corresponding task_id
         else {
-            if (_queues.get(id) == this) {
-                _queues.remove(id);
+            if (allQueues.get(id) == this) {
+                allQueues.remove(id);
                 queueDebug("Re-completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
                 if (callback != null) {
                     callback.run();
@@ -802,339 +763,5 @@ public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.Ob
     public boolean shouldFilter(String criteria) throws Exception {
         return (lastEntryExecuted != null ? lastEntryExecuted.getScript().getName().equalsIgnoreCase(criteria.replace("s@", ""))
                 : script_entries.get(0).getScript().getName().equalsIgnoreCase(criteria.replace("s@", "")));
-    }
-
-
-    // dOBJECT
-    //
-
-    public static ScriptQueue valueOf(String string) {
-        return valueOf(string, null);
-    }
-
-    /**
-     * Gets a Queue Object from a string form of q@queue_name.
-     *
-     * @param string the string or dScript argument String
-     * @return a ScriptQueue, or null if incorrectly formatted
-     */
-    @Fetchable("q")
-    public static ScriptQueue valueOf(String string, TagContext context) {
-        if (string == null) {
-            return null;
-        }
-
-        if (string.startsWith("q@") && string.length() > 2) {
-            string = string.substring(2);
-        }
-
-        if (_queueExists(string)) {
-            return _getExistingQueue(string);
-        }
-
-        return null;
-    }
-
-
-    public static boolean matches(String string) {
-        // Starts with q@? Assume match.
-        if (CoreUtilities.toLowerCase(string).startsWith("q@")) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    String prefix = "Queue";
-
-
-    @Override
-    public String getPrefix() {
-        return prefix;
-    }
-
-
-    @Override
-    public ScriptQueue setPrefix(String prefix) {
-        this.prefix = prefix;
-        return this;
-    }
-
-    @Override
-    public boolean isUnique() {
-        return true;
-    }
-
-    @Override
-    public String getObjectType() {
-        return "queue";
-    }
-
-    @Override
-    public String identify() {
-        return "q@" + id;
-    }
-
-    @Override
-    public String identifySimple() {
-        return identify();
-    }
-
-    @Override
-    public String toString() {
-        return identify();
-    }
-
-    public static void registerTags() {
-
-        // <--[tag]
-        // @attribute <q@queue.id>
-        // @returns ElementTag
-        // @description
-        // Returns the id of the queue.
-        // -->
-        registerTag("id", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((ScriptQueue) object).id).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.size>
-        // @returns ElementTag
-        // @description
-        // Returns the number of script entries in the queue.
-        // -->
-        registerTag("size", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((ScriptQueue) object).script_entries.size()).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.start_time>
-        // @returns DurationTag
-        // @description
-        // Returns the time this queue started as a duration.
-        // -->
-        registerTag("start_time", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new DurationTag(((ScriptQueue) object).startTimeMilli / 50).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.time_ran>
-        // @returns DurationTag
-        // @description
-        // Returns the time this queue has ran for (the length of time between now and when the queue started) as a duration.
-        // -->
-        registerTag("time_ran", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                long timeNano = System.nanoTime() - ((ScriptQueue) object).startTime;
-                return new DurationTag(timeNano / (1000000 * 1000.0)).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.state>
-        // @returns ElementTag
-        // @description
-        // Returns 'stopping', 'running', 'paused', or 'unknown'.
-        // -->
-        registerTag("state", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                String state;
-                if ((object instanceof Delayable) && ((Delayable) object).isPaused()) {
-                    state = "paused";
-                }
-                else if (((ScriptQueue) object).is_started) {
-                    state = "running";
-                }
-                else if (((ScriptQueue) object).is_stopping) {
-                    state = "stopping";
-                }
-                else {
-                    state = "unknown";
-                }
-                return new ElementTag(state).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.script>
-        // @returns ScriptTag
-        // @description
-        // Returns the script that started this queue.
-        // -->
-        registerTag("script", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                if (((ScriptQueue) object).script == null) {
-                    return null;
-                }
-                return ((ScriptQueue) object).script.getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.commands>
-        // @returns ListTag
-        // @description
-        // Returns a list of commands waiting in the queue.
-        // -->
-        registerTag("commands", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                ListTag commands = new ListTag();
-                for (ScriptEntry entry : ((ScriptQueue) object).script_entries) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(entry.getCommandName()).append(" ");
-                    for (String arg : entry.getOriginalArguments()) {
-                        sb.append(arg).append(" ");
-                    }
-                    commands.add(sb.substring(0, sb.length() - 1));
-                }
-                return commands.getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.definitions>
-        // @returns ListTag
-        // @description
-        // Returns the names of all definitions that were passed to the current queue.
-        // -->
-        registerTag("definitions", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ListTag(((ScriptQueue) object).getAllDefinitions().keySet()).getAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.definition[<definition>]>
-        // @returns ObjectTag
-        // @description
-        // Returns the value of the specified definition.
-        // Returns null if the queue lacks the definition.
-        // -->
-        registerTag("definition", new TagRunnable.ObjectForm() {
-            @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag q@queue.definition[...] must have a value.");
-                    return null;
-                }
-                return CoreUtilities.autoAttrib(((ScriptQueue) object).getDefinitionObject(attribute.getContext(1)), attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
-        // @attribute <q@queue.determination>
-        // @returns ListTag
-        // @description
-        // Returns the values that have been determined via <@link command Determine>
-        // for this queue, or null if there is none.
-        // -->
-        registerTag("determination", new TagRunnable() {
-            @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                if (((ScriptQueue) object).determinations == null) {
-                    return null;
-                }
-                else {
-                    return ((ScriptQueue) object).determinations.getAttribute(attribute.fulfill(1));
-                }
-            }
-        });
-
-    }
-
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<>();
-
-    public static void registerTag(String name, TagRunnable runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredTags.put(name, runnable);
-    }
-
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
-
-    public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredObjectTags.put(name, runnable);
-    }
-
-    @Override
-    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
-        return null;
-    }
-
-    @Override
-    public String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
-    }
-
-    @Override
-    public Class<? extends ObjectTag> getdObjectClass() {
-        return ScriptQueue.class;
-    }
-
-    @Override
-    public ObjectTag getObjectAttribute(Attribute attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        if (attribute.isComplete()) {
-            return this;
-        }
-
-        // TODO: Scrap getAttribute, make this functionality a core system
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
-        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
-        if (otr != null) {
-            if (!otr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
-            }
-            return otr.run(attribute, this);
-        }
-
-        TagRunnable tr = registeredTags.get(attrLow);
-        if (tr != null) {
-            if (!tr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
-            }
-            return new ElementTag(tr.run(attribute, this));
-        }
-
-        ObjectTag returned = CoreUtilities.autoPropertyTagObject(this, attribute);
-        if (returned != null) {
-            return returned;
-        }
-
-        return new ElementTag(identify()).getObjectAttribute(attribute);
-    }
-
-    @Override
-    public void applyProperty(Mechanism mechanism) {
-        Debug.echoError("ScriptQueues can not hold properties.");
-    }
-
-    @Override
-    public void adjust(Mechanism mechanism) {
-        CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }

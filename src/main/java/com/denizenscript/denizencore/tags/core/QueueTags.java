@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -41,12 +42,12 @@ public class QueueTags {
         // Handle <queue[id]. ...> tags
 
         if (event.hasNameContext()) {
-            if (!ScriptQueue._queueExists(event.getNameContext())) {
+            if (!ScriptQueue.queueExists(event.getNameContext())) {
                 return;
             }
             else {
-                event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue._getExistingQueue(event.getNameContext())
-                        , event.getAttributes().fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(ScriptQueue.getExistingQueue(event.getNameContext())),
+                        event.getAttributes().fulfill(1)));
             }
             return;
         }
@@ -64,8 +65,8 @@ public class QueueTags {
         // -->
         if (attribute.startsWith("exists")
                 && attribute.hasContext(1)) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue._queueExists(attribute.getContext(1)))
-                    , attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.queueExists(attribute.getContext(1))),
+                    attribute.fulfill(1)));
             return;
         }
 
@@ -76,8 +77,8 @@ public class QueueTags {
         // Returns stats for all queues during this server session
         // -->
         if (attribute.startsWith("stats")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue._getStats())
-                    , attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()),
+                    attribute.fulfill(1)));
             return;
         }
 
@@ -88,8 +89,12 @@ public class QueueTags {
         // Returns a list of all currently running queues on the server.
         // -->
         if (attribute.startsWith("list")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(ScriptQueue._getQueues())
-                    , attribute.fulfill(1)));
+            ListTag list = new ListTag();
+            for (ScriptQueue queue : ScriptQueue.getQueues()) {
+                list.addObject(new QueueTag(queue));
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(list,
+                    attribute.fulfill(1)));
             return;
         }
 
@@ -97,8 +102,8 @@ public class QueueTags {
         // Else,
         // Use current queue
 
-        event.setReplacedObject(CoreUtilities.autoAttrib(event.getScriptEntry().getResidingQueue()
-                , attribute));
+        event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(event.getScriptEntry().getResidingQueue()),
+                attribute));
     }
 }
 

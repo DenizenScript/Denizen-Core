@@ -548,9 +548,9 @@ public class ScriptTag implements ObjectTag, Adjustable {
             public String run(Attribute attribute, ObjectTag object) {
                 ScriptTag script = (ScriptTag) object;
                 ListTag queues = new ListTag();
-                for (ScriptQueue queue : ScriptQueue._getQueues()) {
+                for (ScriptQueue queue : ScriptQueue.getQueues()) {
                     if (queue.script != null && queue.script.getName().equals(script.getName())) {
-                        queues.add(queue.identify());
+                        queues.addObject(new QueueTag(queue));
                     }
                 }
                 return queues.getAttribute(attribute.fulfill(1));

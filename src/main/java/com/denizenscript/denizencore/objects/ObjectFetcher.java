@@ -1,7 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.objects.core.*;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -78,8 +77,8 @@ public class ObjectFetcher {
         ElementTag.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(DurationTag.class);     // d@
         DurationTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(ScriptQueue.class);  // q@
-        ScriptQueue.registerTags(); // TODO: Automate this once all classes have tag registries
+        registerWithObjectFetcher(QueueTag.class);  // q@
+        QueueTag.registerTags(); // TODO: Automate this once all classes have tag registries
         _initialize();
 
     }

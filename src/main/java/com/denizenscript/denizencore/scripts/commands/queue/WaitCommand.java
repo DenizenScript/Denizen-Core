@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -23,7 +24,7 @@ public class WaitCommand extends AbstractCommand {
     // Accepts the 'queue:<name>' argument which allows the delay of a different queue.
     //
     // @Tags
-    // <q@queue.speed>
+    // <QueueTag.speed>
     //
     // @Usage
     // Use to delay the current queue for 1 minute.
@@ -47,7 +48,7 @@ public class WaitCommand extends AbstractCommand {
 
             // Specify queue
             if (ArgumentHelper.matchesQueue(arg)) {
-                queue = ScriptQueue._getExistingQueue(arg);
+                queue = ScriptQueue.getExistingQueue(arg);
             }
         }
 
@@ -59,13 +60,13 @@ public class WaitCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        ScriptQueue queue = (ScriptQueue) scriptEntry.getObject("queue");
+        QueueTag queue = (QueueTag) scriptEntry.getObject("queue");
         DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
 
         if (scriptEntry.dbCallShouldDebug()) {
 
             Debug.report(scriptEntry, getName(),
-                    ArgumentHelper.debugObj("queue", queue.id) + delay.debug());
+                    queue.debug() + delay.debug());
 
         }
 
@@ -75,8 +76,8 @@ public class WaitCommand extends AbstractCommand {
         }
         else {
             scriptEntry.setInstant(false);
-            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.id + " into a timed queue...");
-            queue.forceToTimed(delay);
+            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue + " into a timed queue...");
+            queue.queue.forceToTimed(delay);
         }
     }
 }
