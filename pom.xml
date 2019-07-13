@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.aufdemrand</groupId>
+    <groupId>com.denizenscript</groupId>
     <artifactId>denizencore</artifactId>
     <packaging>jar</packaging>
     <version>1.50-SNAPSHOT</version>
     <name>DenizenCore</name>
-    <description>A powerful scripting engine for games</description>
+    <description>A powerful scripting engine for Java-based games</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
