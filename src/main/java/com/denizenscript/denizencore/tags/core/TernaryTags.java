@@ -23,13 +23,12 @@ public class TernaryTags {
     public SlowWarning ternShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'tern' instead of 't' as a root tag.");
 
     // <--[tag]
-    // @attribute <tern[<condition>].pass[<element>]||<element>>
-    // @returns ElementTag
+    // @attribute <tern[<condition>].pass[<result>].fail[<result>]>
+    // @returns ObjectTag
     // @description
-    // Returns either the 'pasas' element, or fallback element depending on
-    // the outcome of the condition. The 'pass' element will show when the condition returns 'true',
-    // otherwise the fallback element will show.
-    // Example: '<tern[<player.is_spawned>].pass[Player is spawned!] || Player is not spawned!>'
+    // Returns either the 'pass' input, or 'fail' input depending on the outcome of the condition.
+    // The 'pass' input will be returned when the condition returns 'true', otherwise the 'fail' input will be returned.
+    // Example: '<tern[<player.is_spawned>].pass[Player is spawned!].fail[Player is not spawned!]>'
     // -->
     public void ternaryTag(ReplaceableTagEvent event) {
         if (!event.matches("ternary", "tern", "t")) {
@@ -46,7 +45,10 @@ public class TernaryTags {
             return;
         }
 
-        if (attribute.getContext(1).equalsIgnoreCase("true")) {
+        String result = attribute.getContext(1);
+
+
+        if (result.equalsIgnoreCase("true")) {
             ObjectTag passValue;
             if (event.hasValue()) {
                 passValue = new ElementTag(event.getValue().trim());
@@ -54,13 +56,31 @@ public class TernaryTags {
             }
             else if (attribute.hasContext(2)) {
                 passValue = attribute.getContextObject(2);
-                attribute = attribute.fulfill(2);
+                attribute = attribute.fulfill(3);
             }
             else {
                 Debug.echoError("Ternary tag missing 'pass' value!");
                 return;
             }
             event.setReplacedObject(passValue.getObjectAttribute(attribute));
+        }
+        else {
+            ObjectTag failValue;
+            if (event.hasValue()) {
+                failValue = null;
+                attribute = attribute.fulfill(1);
+            }
+            else if (attribute.hasContext(3)) {
+                failValue = attribute.getContextObject(3);
+                attribute = attribute.fulfill(3);
+            }
+            else {
+                Debug.echoError("Ternary tag missing 'fail' value!");
+                return;
+            }
+            if (failValue != null) {
+                event.setReplacedObject(failValue.getObjectAttribute(attribute));
+            }
         }
     }
 
