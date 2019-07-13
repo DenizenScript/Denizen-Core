@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.objects.notable;
 
 public interface Notable {
 
-    public boolean isUnique();
+    boolean isUnique();
 
     /**
      * Gets the object to be saved to the notables.yml.
@@ -10,7 +10,7 @@ public interface Notable {
      *
      * @return the object to be saved
      */
-    public Object getSaveObject();
+    Object getSaveObject();
 
     /**
      * Saves the object in the NotableManager. Notable objects are saved through
@@ -18,7 +18,7 @@ public interface Notable {
      *
      * @param id the id of the notable
      */
-    public void makeUnique(String id);
+    void makeUnique(String id);
 
-    public void forget();
+    void forget();
 }

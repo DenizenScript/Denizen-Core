@@ -7,7 +7,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
  */
 public interface ContextSource {
 
-    public boolean getShouldCache();
+    boolean getShouldCache();
 
-    public ObjectTag getContext(String name);
+    ObjectTag getContext(String name);
 }

@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.utilities.debugging;
 
 public interface Debuggable {
 
-    public boolean shouldDebug();
+    boolean shouldDebug();
 
-    public boolean shouldFilter(String criteria) throws Exception;
+    boolean shouldFilter(String criteria) throws Exception;
 }

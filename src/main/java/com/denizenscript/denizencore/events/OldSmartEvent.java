@@ -18,7 +18,7 @@ public interface OldSmartEvent {
      * @param events A list of events to test
      * @return Whether they should initialize
      */
-    public boolean shouldInitialize(Set<String> events);
+    boolean shouldInitialize(Set<String> events);
 
 
     /**
@@ -26,7 +26,7 @@ public interface OldSmartEvent {
      * required to make this event, or set of events, function. No code should reach the
      * doEvents(...) call unless this method is invoked.
      */
-    public void _initialize();
+    void _initialize();
 
 
     /**
@@ -35,5 +35,5 @@ public interface OldSmartEvent {
      * it should breakDown, and re-initialize via shouldInitialize(), and if  that returns true,
      * intitialize().
      */
-    public void breakDown();
+    void breakDown();
 }

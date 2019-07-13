@@ -12,6 +12,7 @@ import com.denizenscript.denizencore.tags.core.EscapeTags;
 
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
@@ -1744,7 +1745,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                     return null;
                 }
                 try {
-                    return new ElementTag(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1))))
+                    return new ElementTag(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1)), RoundingMode.HALF_UP))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {

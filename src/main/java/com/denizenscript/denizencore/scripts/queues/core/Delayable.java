@@ -4,13 +4,13 @@ import com.denizenscript.denizencore.objects.core.DurationTag;
 
 public interface Delayable {
 
-    public Delayable setPaused(boolean paused);
+    Delayable setPaused(boolean paused);
 
-    public boolean isPaused();
+    boolean isPaused();
 
-    public void delayFor(DurationTag duration);
+    void delayFor(DurationTag duration);
 
-    public boolean isDelayed();
+    boolean isDelayed();
 
-    public boolean isInstantSpeed();
+    boolean isInstantSpeed();
 }

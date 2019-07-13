@@ -15,6 +15,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class WebGetCommand extends AbstractCommand implements Holdable {
 
@@ -146,7 +147,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             uc.setConnectTimeout((int) timeout.getMillis());
             uc.connect();
             if (postData != null) {
-                uc.getOutputStream().write(postData.asString().getBytes("UTF-8"));
+                uc.getOutputStream().write(postData.asString().getBytes(StandardCharsets.UTF_8));
             }
             final StringBuilder sb = new StringBuilder();
             if (saveFile != null) {
