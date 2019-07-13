@@ -156,14 +156,14 @@ public class Attribute {
         if (fulfilled >= attributes.length) {
             return false;
         }
-        return attributes[fulfilled].key.equalsIgnoreCase(string);
+        return attributes[fulfilled].key.equals(string);
     }
 
     public boolean startsWith(String string) {
         if (fulfilled >= attributes.length) {
             return false;
         }
-        if (string.contains(".")) {
+        if (string.indexOf('.') >= 0) {
             if (Debug.verbose) {
                 Debug.log("Trying tag startsWith " + string + " on tag " + raw_tag);
             }
@@ -177,11 +177,8 @@ public class Attribute {
                 }
             }
             return true;
-            // TODO: ...? This should probably just never happen.
-            //rebuild_raw_tag();
-            //return raw_tag_low.startsWith(string);
         }
-        return attributes[fulfilled].key.equalsIgnoreCase(string);
+        return attributes[fulfilled].key.equals(string);
     }
 
     public boolean startsWith(String string, int attribute) {
@@ -296,7 +293,7 @@ public class Attribute {
         if (num < 0 || num >= attributes.length) {
             return "";
         }
-        return CoreUtilities.toLowerCase(attributes[num].key);
+        return attributes[num].key;
     }
 
     public String unfilledString() {

@@ -28,8 +28,6 @@ public class StopCommand extends AbstractCommand {
     // - stop
     // -->
 
-    private enum Action {CLEAR, DELAY, PAUSE, RESUME, STOP}
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
