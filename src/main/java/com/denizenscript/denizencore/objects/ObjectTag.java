@@ -3,20 +3,20 @@ package com.denizenscript.denizencore.objects;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 
-public interface dObject {
+public interface ObjectTag {
 
     /*
-     * dObjects should contain these two static methods, of which valueOf contains a valid
+     * ObjectTags should contain these two static methods, of which valueOf contains a valid
      * annotation for ObjectFetcher
      *
-     * public static dObject valueOf(String string);
+     * public static ObjectTag valueOf(String string);
      *
      * valueOf() should take a string representation of the object, preferably with a valid object
-     * notation (x@), and turn it into a new instance of the dObject. Care has to be taken to
+     * notation (x@), and turn it into a new instance of the ObjectTag. Care has to be taken to
      * ensure that it is compatible with the tag system (ie. no periods (.) outside of square brackets),
      * and other parts of Denizen.
      *
-     * Since your object may be using the dObject Attributes System, valueOf should take that into
+     * Since your object may be using the ObjectTag Attributes System, valueOf should take that into
      * account as well.
      *
      *
@@ -29,7 +29,7 @@ public interface dObject {
 
 
     /**
-     * Retrieves the dScript argument prefix. dObjects should provide a default
+     * Retrieves the dScript argument prefix. ObjectTags should provide a default
      * prefix if nothing else has been specified.
      *
      * @return the prefix
@@ -38,7 +38,7 @@ public interface dObject {
 
 
     /**
-     * <p>Gets a standard dB representation of this argument. All dObjects should follow
+     * <p>Gets a standard dB representation of this argument. All ObjectTags should follow
      * suit.</p>
      * <p/>
      * Example: <br/>
@@ -75,14 +75,14 @@ public interface dObject {
      * Returns the string type of the object. This is fairly verbose and crude, but used with
      * a basic dScriptArg attribute.
      *
-     * @return a straight-up string description of the type of dScriptArg. ie. dList, dLocation
+     * @return a straight-up string description of the type of dScriptArg. ie. ListTag, dLocation
      */
     String getObjectType();
 
 
     /**
-     * Gets an ugly, but exact, string representation of this dObject.
-     * While not specified in the dObject Interface, this value should be
+     * Gets an ugly, but exact, string representation of this ObjectTag.
+     * While not specified in the ObjectTag Interface, this value should be
      * able to be used with a static valueOf(String) method to reconstruct the object.
      *
      * @return a single-line string representation of this argument
@@ -91,7 +91,7 @@ public interface dObject {
 
 
     /**
-     * Gets an overall string representation of this dObject.
+     * Gets an overall string representation of this ObjectTag.
      * This should give the basic jist of the object being identified, but
      * won't include the exactness that identify() uses.
      * <p/>
@@ -112,17 +112,17 @@ public interface dObject {
     /**
      * Sets the prefix for this argument, otherwise uses the default.
      *
-     * @return the dObject
+     * @return the ObjectTag
      */
-    dObject setPrefix(String prefix);
+    ObjectTag setPrefix(String prefix);
 
-    default Class<? extends dObject> getdObjectClass() {
+    default Class<? extends ObjectTag> getdObjectClass() {
         return getClass();
     }
 
-    default dObject getObjectAttribute(Attribute attribute) {
+    default ObjectTag getObjectAttribute(Attribute attribute) {
         String res = getAttribute(attribute);
-        return res == null ? null : new Element(res);
+        return res == null ? null : new ElementTag(res);
     }
 
     /**
@@ -133,8 +133,8 @@ public interface dObject {
      */
     String getAttribute(Attribute attribute);
 
-    interface ObjectAttributable extends dObject {
+    interface ObjectAttributable extends ObjectTag {
 
-        <T extends dObject> T asObjectType(Class<T> type, TagContext context);
+        <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context);
     }
 }

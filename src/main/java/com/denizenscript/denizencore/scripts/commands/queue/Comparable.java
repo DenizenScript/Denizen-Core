@@ -3,10 +3,10 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Duration;
+import com.denizenscript.denizencore.objects.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ListTag;
+import com.denizenscript.denizencore.objects.ScriptTag;
 
 public class Comparable {
 
@@ -16,7 +16,7 @@ public class Comparable {
     // @name Comparable
     // @group Comparables
     // @description
-    // A Comparable is a method that the IF command and Element dObject uses to compare objects.
+    // A Comparable is a method that the IF command and ElementTag ObjectTag uses to compare objects.
     // (This lang is TODO! )
     // See <@link language operator>
     // -->
@@ -47,7 +47,7 @@ public class Comparable {
     // npc, player, offlineplayer, onlineplayer, item, pose, duration, cuboid, decimal,
     // number, even number, odd number, boolean.
     //
-    // Note: When using an operator in a replaceable tag (such as <el@element.is[...].than[...]>),
+    // Note: When using an operator in a replaceable tag (such as <ElementTag.is[...].than[...]>),
     // keep in mind that < and >, and even >= and <= must be either escaped, or referred to by name.
     // Example: "<player.health.is[<&lt>].than[10]>" or "<player.health.is[LESS].than[10]>",
     // but <player.health.is[<].than[10]> will produce undesired results. <>'s must be escaped or replaced since
@@ -98,8 +98,8 @@ public class Comparable {
         }
 
         // If a List<Object>
-        else if (arg.length() > 0 && dList.matches(arg)) {
-            comparable = dList.valueOf(arg);
+        else if (arg.length() > 0 && ListTag.matches(arg)) {
+            comparable = ListTag.valueOf(arg);
         }
 
         // If none of the above, must be a String! :D
@@ -137,9 +137,9 @@ public class Comparable {
             comparedto = ArgumentHelper.getBooleanFrom(arg);
         }
 
-        else if (comparable instanceof dList) {
-            if (dList.matches(arg)) {
-                comparedto = dList.valueOf(arg);
+        else if (comparable instanceof ListTag) {
+            if (ListTag.matches(arg)) {
+                comparedto = ListTag.valueOf(arg);
             }
             else {
                 comparedto = arg;
@@ -161,7 +161,7 @@ public class Comparable {
             compare_as_strings();
         }
 
-        else if (comparable instanceof dList) {
+        else if (comparable instanceof ListTag) {
             compare_as_list();
         }
 
@@ -245,7 +245,7 @@ public class Comparable {
     private void compare_as_list() {
         outcome = false;
 
-        dList comparable = (dList) this.comparable;
+        ListTag comparable = (ListTag) this.comparable;
 
         switch (operator) {
 
@@ -303,8 +303,8 @@ public class Comparable {
                 break;
 
             case EQUALS:
-                if (comparedto instanceof dList) {
-                    dList list2 = (dList) comparedto;
+                if (comparedto instanceof ListTag) {
+                    ListTag list2 = (ListTag) comparedto;
                     outcome = list2.identify().equalsIgnoreCase(comparable.identify());
                 }
                 break;
@@ -354,11 +354,11 @@ public class Comparable {
                 comparedto = comparedto.replace("_", "");
 
                 if (comparedto.equalsIgnoreCase("script")) {
-                    outcome = dScript.matches(comparable);
+                    outcome = ScriptTag.matches(comparable);
                 }
 
                 else if (comparedto.equalsIgnoreCase("duration")) {
-                    outcome = Duration.matches(comparable);
+                    outcome = DurationTag.matches(comparable);
                 }
 
                 else if (comparedto.equalsIgnoreCase("double")
@@ -402,11 +402,11 @@ public class Comparable {
     public String toString() {
         return (logic != Logic.REGULAR ? "<G>Logic='<A>" + logic.toString() + "<G>', " : "")
                 + "<G>Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal" :
-                comparable instanceof String ? "Element" : (comparable instanceof Long ? "Number" : (comparable instanceof dList ? "dList" : log(comparable.getClass().getSimpleName()))))
+                comparable instanceof String ? "Element" : (comparable instanceof Long ? "Number" : (comparable instanceof ListTag ? "dList" : log(comparable.getClass().getSimpleName()))))
                 + "<G>(<A>" + comparable + "<G>)'")
                 + "<G>, Operator='<A>" + operator.toString()
                 + "<G>', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal" :
-                comparedto instanceof String ? "Element" : (comparedto instanceof Long ? "Number" : (comparedto instanceof dList ? "dList" : log(comparedto.getClass().getSimpleName()))))
+                comparedto instanceof String ? "Element" : (comparedto instanceof Long ? "Number" : (comparedto instanceof ListTag ? "dList" : log(comparedto.getClass().getSimpleName()))))
                 + "<G>(<A>" + comparedto + "<G>)' ")
                 + "<Y>--> OUTCOME='" + outcome + "'";
     }

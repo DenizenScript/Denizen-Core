@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -107,7 +107,7 @@ public class Attribute {
     }
 
     public AttributeComponent[] attributes;
-    public dObject[] contexts;
+    public ObjectTag[] contexts;
 
     ScriptEntry scriptEntry;
     public TagContext context;
@@ -140,7 +140,7 @@ public class Attribute {
         this.scriptEntry = scriptEntry;
         this.context = context;
         attributes = ref.attributes;
-        contexts = new dObject[attributes.length];
+        contexts = new ObjectTag[attributes.length];
         hadAlternative = ref.hadAlternative;
     }
 
@@ -149,7 +149,7 @@ public class Attribute {
         this.scriptEntry = scriptEntry;
         this.context = context;
         this.attributes = separate_attributes(attributes);
-        contexts = new dObject[this.attributes.length];
+        contexts = new ObjectTag[this.attributes.length];
     }
 
     public boolean matches(String string) {
@@ -228,12 +228,12 @@ public class Attribute {
         return attributes[attribute].context != null;
     }
 
-    public dObject getContextObject(int attribute) {
+    public ObjectTag getContextObject(int attribute) {
         attribute += fulfilled - 1;
         if (attribute < 0 || attribute >= attributes.length) {
             return null;
         }
-        dObject tagged = contexts[attribute];
+        ObjectTag tagged = contexts[attribute];
         if (tagged != null) {
             return tagged;
         }

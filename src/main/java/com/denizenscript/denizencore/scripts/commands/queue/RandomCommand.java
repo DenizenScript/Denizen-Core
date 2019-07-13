@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -36,8 +36,8 @@ public class RandomCommand extends BracedCommand {
     // and the rest, in the brace, will be skipped.
     //
     // @Tags
-    // <entry[saveName].possibilities> returns an Element of the possibility count.
-    // <entry[saveName].selected> returns an Element of the selected number.
+    // <entry[saveName].possibilities> returns an ElementTag of the possibility count.
+    // <entry[saveName].selected> returns an ElementTag of the selected number.
     //
     // @Usage
     // Use to choose randomly from the following commands
@@ -135,8 +135,8 @@ public class RandomCommand extends BracedCommand {
         previous3 = previous2;
         previous2 = previous;
         previous = selected;
-        scriptEntry.addObject("possibilities", new Element(possibilities));
-        scriptEntry.addObject("selected", new Element(selected));
+        scriptEntry.addObject("possibilities", new ElementTag(possibilities));
+        scriptEntry.addObject("selected", new ElementTag(selected));
 
         if (scriptEntry.dbCallShouldDebug()) {
 

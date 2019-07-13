@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -57,7 +57,7 @@ public class MarkCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) {
 
         // Fetch required objects
-        Element mName = scriptEntry.getElement("m_name");
+        ElementTag mName = scriptEntry.getElement("m_name");
 
         // Debug the execution
         if (scriptEntry.dbCallShouldDebug()) {

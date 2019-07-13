@@ -6,7 +6,7 @@ import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ScriptTag;
 
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +93,7 @@ public class ScriptContainer implements Debuggable {
     // @group Script Container System
     // @description
     // Typically refers to the name of a script container. When using the object fetcher with dScript objects,
-    // (s@script_name), the script_name referred to is the name of the container.
+    // (ScriptTag_name), the script_name referred to is the name of the container.
     //
     // <code>
     // script name:         <--- script name
@@ -134,8 +134,8 @@ public class ScriptContainer implements Debuggable {
      *
      * @return a dScript object linking this script container.
      */
-    public dScript getAsScriptArg() {
-        return dScript.valueOf(name);
+    public ScriptTag getAsScriptArg() {
+        return ScriptTag.valueOf(name);
     }
 
 

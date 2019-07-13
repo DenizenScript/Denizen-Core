@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.events.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.DenizenCore;
@@ -42,11 +42,11 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         return event.startsWith("system time");
     }
 
-    public Element hour;
+    public ElementTag hour;
 
     public ScriptEntryData data = null;
 
-    public Element minute;
+    public ElementTag minute;
 
     public long seconds;
 
@@ -86,7 +86,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public dObject getContext(String name) {
+    public ObjectTag getContext(String name) {
         if (name.equals("hour")) {
             return hour;
         }
@@ -129,16 +129,16 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         lH = h;
         lM = m;
         if (h < 10) {
-            hour = new Element("0" + h);
+            hour = new ElementTag("0" + h);
         }
         else {
-            hour = new Element(h);
+            hour = new ElementTag(h);
         }
         if (m < 10) {
-            minute = new Element("0" + m);
+            minute = new ElementTag("0" + m);
         }
         else {
-            minute = new Element(m);
+            minute = new ElementTag(m);
         }
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         fire();

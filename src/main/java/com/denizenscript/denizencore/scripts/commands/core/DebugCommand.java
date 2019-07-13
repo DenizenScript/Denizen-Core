@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
@@ -73,7 +73,7 @@ public class DebugCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("debug")) {
-                scriptEntry.addObject("debug", new Element(arg.raw_value));
+                scriptEntry.addObject("debug", new ElementTag(arg.raw_value));
             }
 
             else if (!scriptEntry.hasObject("name")
@@ -89,16 +89,16 @@ public class DebugCommand extends AbstractCommand {
         if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {
             throw new InvalidArgumentsException("Must specify a definition and value!");
         }
-        scriptEntry.defaultObject("name", new Element("name"));
+        scriptEntry.defaultObject("name", new ElementTag("name"));
 
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        Element debug = scriptEntry.getElement("debug");
-        Element type = scriptEntry.getElement("type");
-        Element name = scriptEntry.getElement("name");
+        ElementTag debug = scriptEntry.getElement("debug");
+        ElementTag type = scriptEntry.getElement("type");
+        ElementTag name = scriptEntry.getElement("name");
 
         // Intentionally do not DB REPORT - we're making our own debug output!
 

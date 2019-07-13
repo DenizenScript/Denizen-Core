@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
-public class dScript implements dObject, Adjustable {
+public class ScriptTag implements ObjectTag, Adjustable {
 
     // <--[language]
     // @name Script
@@ -74,13 +74,13 @@ public class dScript implements dObject, Adjustable {
     // @name dScript Objects
     // @group Object System
     // @description
-    // A dObject that represents a script container. dScripts contain all information inside the script, and can be
+    // A ObjectTag that represents a script container. dScripts contain all information inside the script, and can be
     // used in a variety of commands that require script arguments. For example, run and inject will 'execute'
     // script entries inside of a script container when given a matching dScript object.
     //
     // dScripts also provide a way to access attributes accessed by the replaceable tag system by using the object
     // fetcher or any other entry point to a dScript object. dScript objects have the object identifier of 's@'.
-    // For example: s@script_name
+    // For example: ScriptTag_name
     //
     // For format info, see <@link language s@>
     //
@@ -102,7 +102,7 @@ public class dScript implements dObject, Adjustable {
     // For general info, see <@link language dScript>
     // -->
 
-    public static dScript valueOf(String string) {
+    public static ScriptTag valueOf(String string) {
         return valueOf(string, null);
     }
 
@@ -113,13 +113,13 @@ public class dScript implements dObject, Adjustable {
      * @return a Script, or null if incorrectly formatted
      */
     @Fetchable("s")
-    public static dScript valueOf(String string, TagContext context) {
+    public static ScriptTag valueOf(String string, TagContext context) {
 
         if (string.startsWith("s@")) {
             string = string.substring(2);
         }
 
-        dScript script = new dScript(string);
+        ScriptTag script = new ScriptTag(string);
         // Make sure it's valid.
         if (script.isValid()) {
             return script;
@@ -136,7 +136,7 @@ public class dScript implements dObject, Adjustable {
             return true;
         }
 
-        dScript script = new dScript(string);
+        ScriptTag script = new ScriptTag(string);
         // Make sure it's valid.
         return script.isValid();
     }
@@ -151,7 +151,7 @@ public class dScript implements dObject, Adjustable {
      *
      * @param scriptName the name of the script
      */
-    public dScript(String scriptName) {
+    public ScriptTag(String scriptName) {
         if (ScriptRegistry.getScriptContainer(scriptName) != null) {
             container = ScriptRegistry.getScriptContainer(scriptName);
             name = scriptName.toUpperCase();
@@ -159,7 +159,7 @@ public class dScript implements dObject, Adjustable {
         }
     }
 
-    public dScript(ScriptContainer container) {
+    public ScriptTag(ScriptContainer container) {
         this.container = container;
         name = container.getName().toUpperCase();
         valid = true;
@@ -219,7 +219,7 @@ public class dScript implements dObject, Adjustable {
     }
 
     ///////////////
-    // dObject Methods
+    // ObjectTag Methods
     ////////////
 
     @Override
@@ -248,7 +248,7 @@ public class dScript implements dObject, Adjustable {
     }
 
     @Override
-    public dObject setPrefix(String prefix) {
+    public ObjectTag setPrefix(String prefix) {
         this.prefix = prefix;
         return this;
     }
@@ -266,8 +266,8 @@ public class dScript implements dObject, Adjustable {
     public static void registerTags() {
 
         // <--[tag]
-        // @attribute <s@script.container_type>
-        // @returns Element
+        // @attribute <ScriptTag.container_type>
+        // @returns ElementTag
         // @description
         // Returns the type of script container that is associated with this dScript object. For example: 'task', or
         // 'world'.
@@ -275,42 +275,42 @@ public class dScript implements dObject, Adjustable {
 
         registerTag("container_type", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript) object).container.getContainerType()).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptTag) object).container.getContainerType()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.name>
-        // @returns Element
+        // @attribute <ScriptTag.name>
+        // @returns ElementTag
         // @description
         // Returns the name of the script container.
         // -->
 
         registerTag("name", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript) object).name).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptTag) object).name).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.relative_filename>
-        // @returns Element
+        // @attribute <ScriptTag.relative_filename>
+        // @returns ElementTag
         // @description
         // Returns the filename that contains the script, relative to the denizen/ folder.
         // -->
 
         registerTag("relative_filename", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 try {
-                    String fn = ((dScript) object).container.getFileName().replace(DenizenCore.getImplementation()
+                    String fn = ((ScriptTag) object).container.getFileName().replace(DenizenCore.getImplementation()
                             .getScriptFolder().getParentFile().getCanonicalPath(), "").replace("\\", "/");
                     while (fn.startsWith("/")) {
                         fn = fn.substring(1);
                     }
-                    return new Element(fn)
+                    return new ElementTag(fn)
                             .getAttribute(attribute.fulfill(1));
                 }
                 catch (Exception e) {
@@ -321,38 +321,38 @@ public class dScript implements dObject, Adjustable {
         });
 
         // <--[tag]
-        // @attribute <s@script.filename>
-        // @returns Element
+        // @attribute <ScriptTag.filename>
+        // @returns ElementTag
         // @description
         // Returns the absolute filename that contains the script.
         // -->
 
         registerTag("filename", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript) object).container.getFileName().replace("\\", "/")).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptTag) object).container.getFileName().replace("\\", "/")).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.original_name>
-        // @returns Element
+        // @attribute <ScriptTag.original_name>
+        // @returns ElementTag
         // @description
         // Returns the originally cased script name.
         // -->
 
         registerTag("original_name", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((dScript) object).container.getOriginalName()).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptTag) object).container.getOriginalName()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.constant[<constant_name>]>
-        // @returns Element or dList
+        // @attribute <ScriptTag.constant[<constant_name>]>
+        // @returns ElementTag or ListTag
         // @description
-        // Returns the value of the constant as either an Element or dList.
+        // Returns the value of the constant as either an ElementTag or ListTag.
         // A constant is a script key under the 'default constants' node.
         // For example:
         // myscript:
@@ -363,12 +363,12 @@ public class dScript implements dObject, Adjustable {
 
         registerTag("constant", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag s@script.constant[...] must have a value.");
+                    Debug.echoError("The tag ScriptTag.constant[...] must have a value.");
                     return null;
                 }
-                YamlConfiguration section = ((dScript) object).getContainer().getConfigurationSection("default constants");
+                YamlConfiguration section = ((ScriptTag) object).getContainer().getConfigurationSection("default constants");
                 if (section == null) {
                     return null;
                 }
@@ -378,7 +378,7 @@ public class dScript implements dObject, Adjustable {
                 }
 
                 if (obj instanceof List) {
-                    dList list = new dList();
+                    ListTag list = new ListTag();
                     for (Object each : (List<Object>) obj) {
                         if (each == null) {
                             each = "null";
@@ -391,36 +391,36 @@ public class dScript implements dObject, Adjustable {
                 }
                 // TODO
                 else {
-                    return new Element(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
+                    return new ElementTag(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())))
                             .getAttribute(attribute.fulfill(1));
                 }
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.yaml_key[<constant_name>]>
-        // @returns dObject
+        // @attribute <ScriptTag.yaml_key[<constant_name>]>
+        // @returns ObjectTag
         // @description
-        // Returns the value of the script's YAML as either an Element or dList.
+        // Returns the value of the script's YAML as either an ElementTag or ListTag.
         // -->
 
         registerTag("yaml_key", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag s@script.constant[...] must have a value.");
+                    Debug.echoError("The tag ScriptTag.constant[...] must have a value.");
                     return null;
                 }
-                dScript scr = (dScript) object;
+                ScriptTag scr = (ScriptTag) object;
                 ScriptContainer container = scr.getContainer();
                 if (container == null) {
                     Debug.echoError("Missing script container?!");
-                    return new Element(scr.identify()).getAttribute(attribute);
+                    return new ElementTag(scr.identify()).getAttribute(attribute);
                 }
                 YamlConfiguration section = container.getConfigurationSection("");
                 if (section == null) {
                     Debug.echoError("Missing YAML section?!");
-                    return new Element(scr.identify()).getAttribute(attribute);
+                    return new ElementTag(scr.identify()).getAttribute(attribute);
                 }
                 Object obj = section.get(attribute.getContext(1).toUpperCase());
                 if (obj == null) {
@@ -428,7 +428,7 @@ public class dScript implements dObject, Adjustable {
                 }
 
                 if (obj instanceof List) {
-                    dList list = new dList();
+                    ListTag list = new ListTag();
                     for (Object each : (List<Object>) obj) {
                         if (each == null) {
                             each = "null";
@@ -439,55 +439,55 @@ public class dScript implements dObject, Adjustable {
 
                 }
                 else {
-                    return new Element(obj.toString())
+                    return new ElementTag(obj.toString())
                             .getAttribute(attribute.fulfill(1));
                 }
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.list_keys[<constant_name>]>
-        // @returns dList
+        // @attribute <ScriptTag.list_keys[<constant_name>]>
+        // @returns ListTag
         // @description
         // Returns a list of all keys within a script.
         // -->
 
         registerTag("list_keys", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                YamlConfiguration conf = ((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
+            public String run(Attribute attribute, ObjectTag object) {
+                YamlConfiguration conf = ((ScriptTag) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
                         attribute.getContext(1) : "");
                 if (conf == null) {
                     return null;
                 }
-                return new dList(conf.getKeys(false))
+                return new ListTag(conf.getKeys(false))
                         .getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.list_deep_keys[<constant_name>]>
-        // @returns dList
+        // @attribute <ScriptTag.list_deep_keys[<constant_name>]>
+        // @returns ListTag
         // @description
         // Returns a list of all keys within a script, searching recursively.
         // -->
 
         registerTag("list_deep_keys", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                YamlConfiguration conf = ((dScript) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
+            public String run(Attribute attribute, ObjectTag object) {
+                YamlConfiguration conf = ((ScriptTag) object).getContainer().getConfigurationSection(attribute.hasContext(1) ?
                         attribute.getContext(1) : "");
                 if (conf == null) {
                     return null;
                 }
-                return new dList(conf.getKeys(true))
+                return new ListTag(conf.getKeys(true))
                         .getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.to_json>
-        // @returns Element
+        // @attribute <ScriptTag.to_json>
+        // @returns ElementTag
         // @description
         // Converts the YAML Script Container to a JSON array.
         // Best used with 'yaml data' type scripts.
@@ -495,16 +495,16 @@ public class dScript implements dObject, Adjustable {
 
         registerTag("to_json", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                JSONObject jsobj = new JSONObject(((dScript) object).container.getConfigurationSection("").getMap());
+            public String run(Attribute attribute, ObjectTag object) {
+                JSONObject jsobj = new JSONObject(((ScriptTag) object).container.getConfigurationSection("").getMap());
                 jsobj.remove("TYPE");
-                return new Element(jsobj.toString()).getAttribute(attribute.fulfill(1));
+                return new ElementTag(jsobj.toString()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.to_text>
-        // @returns Element
+        // @attribute <ScriptTag.to_text>
+        // @returns ElementTag
         // @description
         // Converts the YAML Script Container to raw YAML text.
         // Best used with 'yaml data' type scripts.
@@ -512,17 +512,17 @@ public class dScript implements dObject, Adjustable {
 
         registerTag("to_text", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 YamlConfiguration config = new YamlConfiguration();
-                config.addAll(((dScript) object).getContainer().getContents().getMap());
+                config.addAll(((ScriptTag) object).getContainer().getContents().getMap());
                 config.set("type", null);
-                return new Element(config.saveToString()).getAttribute(attribute.fulfill(1));
+                return new ElementTag(config.saveToString()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.type>
-        // @returns Element
+        // @attribute <ScriptTag.type>
+        // @returns ElementTag
         // @description
         // Always returns 'Script' for dScript objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
@@ -530,23 +530,23 @@ public class dScript implements dObject, Adjustable {
 
         registerTag("type", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element("Script").getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag("Script").getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <s@script.list_queues>
-        // @returns dList(Queue)
+        // @attribute <ScriptTag.list_queues>
+        // @returns ListTag(Queue)
         // @description
         // Returns all queues which are running for this script.
         // -->
 
         registerTag("list_queues", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dScript script = (dScript) object;
-                dList queues = new dList();
+            public String run(Attribute attribute, ObjectTag object) {
+                ScriptTag script = (ScriptTag) object;
+                ListTag queues = new ListTag();
                 for (ScriptQueue queue : ScriptQueue._getQueues()) {
                     if (queue.script != null && queue.script.getName().equals(script.getName())) {
                         queues.add(queue.identify());
@@ -587,7 +587,7 @@ public class dScript implements dObject, Adjustable {
             return returned;
         }
 
-        return new Element(identify()).getAttribute(attribute);
+        return new ElementTag(identify()).getAttribute(attribute);
     }
 
     @Override

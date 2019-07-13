@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -114,7 +114,7 @@ public class EscapeTags {
                 Debug.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
                 return;
             }
-            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(escape(event.getValue())), event.getAttributes().fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(escape(event.getValue())), event.getAttributes().fulfill(1)));
         }
     }
 
@@ -125,7 +125,7 @@ public class EscapeTags {
                 Debug.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");
                 return;
             }
-            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(unEscape(event.getValue())), event.getAttributes().fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(unEscape(event.getValue())), event.getAttributes().fulfill(1)));
         }
     }
 }

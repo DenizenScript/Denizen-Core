@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ListTag;
+import com.denizenscript.denizencore.objects.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
@@ -32,14 +32,14 @@ public class ProcedureScriptTags {
 
         // <--[tag]
         // @attribute <proc[ProcedureScript].context[<element>|...]>
-        // @returns dObject
+        // @returns ObjectTag
         // @description
         // Returns the 'determine' result of a procedure script with the given context.
         // -->
 
         // <--[tag]
         // @attribute <proc[ProcedureScript]>
-        // @returns dObject
+        // @returns ObjectTag
         // @description
         // Returns the 'determine' result of a procedure script.
         // -->
@@ -54,23 +54,23 @@ public class ProcedureScriptTags {
         Attribute attr = event.getAttributes();
         int attribs = 1;
 
-        dScript script = null;
+        ScriptTag script = null;
         String path = null;
 
         if (event.hasNameContext()) {
             if (event.getNameContext().indexOf('.') > 0) {
                 String[] split = event.getNameContext().split("\\.", 2);
                 path = split[1];
-                script = dScript.valueOf(split[0]);
+                script = ScriptTag.valueOf(split[0]);
 
             }
             else {
-                script = dScript.valueOf(event.getNameContext());
+                script = ScriptTag.valueOf(event.getNameContext());
             }
 
         }
         else if (event.getValue() != null) {
-            script = dScript.valueOf(event.getValue());
+            script = ScriptTag.valueOf(event.getValue());
 
         }
         else {
@@ -109,7 +109,7 @@ public class ProcedureScriptTags {
                 event.hasTypeContext()) {
             attribs = 2;
             int x = 1;
-            dList definitions = new dList(event.getTypeContext());
+            ListTag definitions = new ListTag(event.getTypeContext());
             List<String> definition_names = null;
             if (script.getContainer().getContents().contains("definitions")) {
                 definition_names = CoreUtilities.split(script.getContainer().getString("definitions"), '|');

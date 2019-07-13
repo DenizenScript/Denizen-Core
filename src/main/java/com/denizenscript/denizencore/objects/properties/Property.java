@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.objects.properties;
 
 import com.denizenscript.denizencore.objects.Mechanism;
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.Attribute;
 
 public interface Property {
@@ -11,9 +11,9 @@ public interface Property {
 
     String getPropertyId();
 
-    default dObject getObjectAttribute(Attribute attribute) {
+    default ObjectTag getObjectAttribute(Attribute attribute) {
         String res = getAttribute(attribute);
-        return res == null ? null : new Element(res);
+        return res == null ? null : new ElementTag(res);
     }
 
     String getAttribute(Attribute attribute);

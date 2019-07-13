@@ -1,27 +1,27 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.ObjectTag;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleDefinitionProvider implements DefinitionProvider {
 
-    private final Map<String, dObject> definitions = new HashMap<>();
+    private final Map<String, ObjectTag> definitions = new HashMap<>();
 
     @Override
     public void addDefinition(String definition, String value) {
-        this.definitions.put(CoreUtilities.toLowerCase(definition), new Element(value));
+        this.definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
     }
 
     @Override
-    public Map<String, dObject> getAllDefinitions() {
+    public Map<String, ObjectTag> getAllDefinitions() {
         return this.definitions;
     }
 
     @Override
-    public dObject getDefinitionObject(String definition) {
+    public ObjectTag getDefinitionObject(String definition) {
         if (definition == null) {
             return null;
         }

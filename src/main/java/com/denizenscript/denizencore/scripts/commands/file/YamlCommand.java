@@ -122,48 +122,48 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
             if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("load")) {
-                scriptEntry.addObject("action", new Element("LOAD"));
+                scriptEntry.addObject("action", new ElementTag("LOAD"));
                 scriptEntry.addObject("filename", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("loadtext")) {
-                scriptEntry.addObject("action", new Element("LOADTEXT"));
+                scriptEntry.addObject("action", new ElementTag("LOADTEXT"));
                 scriptEntry.addObject("raw_text", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("savefile", "filesave")) {
-                scriptEntry.addObject("action", new Element("SAVE"));
+                scriptEntry.addObject("action", new ElementTag("SAVE"));
                 scriptEntry.addObject("filename", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matches("create")) {
-                scriptEntry.addObject("action", new Element("CREATE"));
+                scriptEntry.addObject("action", new ElementTag("CREATE"));
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matches("set")) {
-                scriptEntry.addObject("action", new Element("SET"));
+                scriptEntry.addObject("action", new ElementTag("SET"));
                 isSet = true;
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("copykey")) {
-                scriptEntry.addObject("action", new Element("COPYKEY"));
+                scriptEntry.addObject("action", new ElementTag("COPYKEY"));
                 scriptEntry.addObject("key", arg.asElement());
                 isSet = true;
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matches("unload")) {
-                scriptEntry.addObject("action", new Element("UNLOAD"));
+                scriptEntry.addObject("action", new ElementTag("UNLOAD"));
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("write")) {
                 Debug.echoError(scriptEntry.getResidingQueue(), "YAML write is deprecated, use YAML set!");
-                scriptEntry.addObject("action", new Element("WRITE"));
+                scriptEntry.addObject("action", new ElementTag("WRITE"));
                 scriptEntry.addObject("key", arg.asElement());
             }
             else if (!scriptEntry.hasObject("value") &&
                     arg.matchesPrefix("value")) {
-                if (arg.matchesArgumentType(dList.class)) {
-                    scriptEntry.addObject("value", arg.asType(dList.class));
+                if (arg.matchesArgumentType(ListTag.class)) {
+                    scriptEntry.addObject("value", arg.asType(ListTag.class));
                 }
                 else {
                     scriptEntry.addObject("value", arg.asElement());
@@ -179,11 +179,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("split") &&
                     arg.matches("split_list")) {
-                scriptEntry.addObject("split", new Element("true"));
+                scriptEntry.addObject("split", new ElementTag("true"));
             }
             else if (!scriptEntry.hasObject("fix_formatting") &&
                     arg.matches("fix_formatting")) {
-                scriptEntry.addObject("fix_formatting", new Element("true"));
+                scriptEntry.addObject("fix_formatting", new ElementTag("true"));
             }
 
             // Check for key:value/action
@@ -192,28 +192,28 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     arg.raw_value.split(":", 3).length == 2) {
 
                 String[] flagArgs = arg.raw_value.split(":", 2);
-                scriptEntry.addObject("key", new Element(flagArgs[0]));
+                scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
                 if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
                     scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                    scriptEntry.addObject("value", new Element(1));
+                    scriptEntry.addObject("value", new ElementTag(1));
                 }
                 else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
                     scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                    scriptEntry.addObject("value", new Element(1));
+                    scriptEntry.addObject("value", new ElementTag(1));
                 }
                 else if (flagArgs[1].equals("!")) {
                     scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
-                    scriptEntry.addObject("value", new Element(false));
+                    scriptEntry.addObject("value", new ElementTag(false));
                 }
                 else if (flagArgs[1].equals("<-")) {
                     scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                    scriptEntry.addObject("value", new Element(false));
+                    scriptEntry.addObject("value", new ElementTag(false));
                 }
                 else {
                     // No ACTION, we're just setting a value...
                     scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("value", new Element(flagArgs[1]));
+                    scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
                 }
             }
 
@@ -222,7 +222,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     !scriptEntry.hasObject("value") &&
                     arg.raw_value.split(":", 3).length == 3) {
                 String[] flagArgs = arg.raw_value.split(":", 3);
-                scriptEntry.addObject("key", new Element(flagArgs[0]));
+                scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
                 if (flagArgs[1].equals("->")) {
                     scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
@@ -250,10 +250,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 }
                 else {
                     scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("value", new Element(arg.raw_value.split(":", 2)[1]));
+                    scriptEntry.addObject("value", new ElementTag(arg.raw_value.split(":", 2)[1]));
                     continue;
                 }
-                scriptEntry.addObject("value", new Element(flagArgs[2]));
+                scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
             }
             else {
                 arg.reportUnhandled();
@@ -275,24 +275,24 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             throw new InvalidArgumentsException("Must specify a key!");
         }
 
-        scriptEntry.defaultObject("value", new Element(""));
-        scriptEntry.defaultObject("fix_formatting", new Element("false"));
+        scriptEntry.defaultObject("value", new ElementTag(""));
+        scriptEntry.defaultObject("fix_formatting", new ElementTag("false"));
     }
 
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
 
-        Element filename = scriptEntry.getElement("filename");
-        Element rawText = scriptEntry.getElement("raw_text");
-        Element key = scriptEntry.getElement("key");
-        dObject value = scriptEntry.getdObject("value");
-        Element split = scriptEntry.getElement("split");
+        ElementTag filename = scriptEntry.getElement("filename");
+        ElementTag rawText = scriptEntry.getElement("raw_text");
+        ElementTag key = scriptEntry.getElement("key");
+        ObjectTag value = scriptEntry.getdObject("value");
+        ElementTag split = scriptEntry.getElement("split");
         YAML_Action yaml_action = (YAML_Action) scriptEntry.getObject("yaml_action");
-        Element actionElement = scriptEntry.getElement("action");
-        Element idElement = scriptEntry.getElement("id");
-        Element fixFormatting = scriptEntry.getElement("fix_formatting");
-        Element toId = scriptEntry.getElement("to_id");
+        ElementTag actionElement = scriptEntry.getElement("action");
+        ElementTag idElement = scriptEntry.getElement("id");
+        ElementTag fixFormatting = scriptEntry.getElement("fix_formatting");
+        ElementTag toId = scriptEntry.getElement("to_id");
 
         YamlConfiguration yamlConfiguration;
 
@@ -457,8 +457,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             case WRITE:
                 if (yamls.containsKey(id)) {
-                    if (value instanceof Element) {
-                        yamls.get(id).set(key.asString(), ((Element) value).asString());
+                    if (value instanceof ElementTag) {
+                        yamls.get(id).set(key.asString(), ((ElementTag) value).asString());
                     }
                     else if (split != null && split.asBoolean()) {
                         yamls.get(id).set(key.asString(), value);
@@ -515,7 +515,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             }
                             index = -1;
                         }
-                        key = Element.valueOf(key.asString().split("\\[")[0]);
+                        key = ElementTag.valueOf(key.asString().split("\\[")[0]);
                     }
 
                     String keyStr = key.asString();
@@ -580,7 +580,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             break;
                         }
                         case SPLIT_NEW: {
-                            yaml.set(keyStr, new ArrayList<>(dList.valueOf(valueStr)));
+                            yaml.set(keyStr, new ArrayList<>(ListTag.valueOf(valueStr)));
                             break;
                         }
                         case SPLIT: {
@@ -588,7 +588,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             if (list == null) {
                                 list = new ArrayList<>();
                             }
-                            list.addAll(dList.valueOf(valueStr));
+                            list.addAll(ListTag.valueOf(valueStr));
                             yaml.set(keyStr, list);
                             break;
                         }
@@ -673,12 +673,12 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         // <--[tag]
         // @attribute <yaml.list>
-        // @returns dList
+        // @returns ListTag
         // @description
         // Returns a list of all currently loaded YAML ID's.
         // -->
         if (attribute.getAttribute(2).equalsIgnoreCase("list")) {
-            dList list = new dList();
+            ListTag list = new ListTag();
             list.addAll(yamls.keySet());
             event.setReplaced(list.getAttribute(attribute.fulfill(2)));
             return;
@@ -713,35 +713,35 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         // <--[tag]
         // @attribute <yaml[<id>].contains[<path>]>
-        // @returns Element(Boolean)
+        // @returns ElementTag(Boolean)
         // @description
         // Returns true if the file has the specified path.
         // Otherwise, returns false.
         // -->
         if (attribute.startsWith("contains")) {
-            event.setReplaced(new Element(getYaml(id).contains(path))
+            event.setReplaced(new ElementTag(getYaml(id).contains(path))
                     .getAttribute(attribute.fulfill(1)));
             return;
         }
 
         // <--[tag]
         // @attribute <yaml[<id>].is_list[<path>]>
-        // @returns Element(Boolean)
+        // @returns ElementTag(Boolean)
         // @description
         // Returns true if the specified path results in a list.
         // -->
         if (attribute.startsWith("is_list")) {
-            event.setReplaced(new Element(getYaml(id).isList(path))
+            event.setReplaced(new ElementTag(getYaml(id).isList(path))
                     .getAttribute(attribute.fulfill(1)));
             return;
         }
 
         // <--[tag]
         // @attribute <yaml[<id>].read[<path>]>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns the value of the key at the path.
-        // If the key is a list, returns a dList instead.
+        // If the key is a list, returns a ListTag instead.
         // -->
         if (attribute.startsWith("read")) {
             attribute.fulfill(1);
@@ -753,7 +753,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 else {
-                    event.setReplaced(new dList(value).getAttribute(attribute));
+                    event.setReplaced(new ListTag(value).getAttribute(attribute));
                     return;
                 }
             }
@@ -764,7 +764,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 else {
-                    event.setReplaced(new Element(value).getAttribute(attribute));
+                    event.setReplaced(new ElementTag(value).getAttribute(attribute));
                     return;
                 }
             }
@@ -772,9 +772,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         // <--[tag]
         // @attribute <yaml[<id>].list_deep_keys[<path>]>
-        // @returns dList
+        // @returns ListTag
         // @description
-        // Returns a dList of all the keys at the path and all subpaths.
+        // Returns a ListTag of all the keys at the path and all subpaths.
         // -->
         if (attribute.startsWith("list_deep_keys")) {
             Set<StringHolder> keys;
@@ -793,16 +793,16 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                event.setReplaced(new dList(keys).getAttribute(attribute.fulfill(1)));
+                event.setReplaced(new ListTag(keys).getAttribute(attribute.fulfill(1)));
                 return;
             }
         }
 
         // <--[tag]
         // @attribute <yaml[<id>].list_keys[<path>]>
-        // @returns dList
+        // @returns ListTag
         // @description
-        // Returns a dList of all the keys at the path.
+        // Returns a ListTag of all the keys at the path.
         // -->
         if (attribute.startsWith("list_keys")) {
             Set<StringHolder> keys;
@@ -821,31 +821,31 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                event.setReplaced(new dList(keys).getAttribute(attribute.fulfill(1)));
+                event.setReplaced(new ListTag(keys).getAttribute(attribute.fulfill(1)));
                 return;
             }
         }
 
         // <--[tag]
         // @attribute <yaml[<id>].to_json>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Converts the YAML container to a JSON array.
         // -->
         if (attribute.startsWith("to_json")) {
             JSONObject jsobj = new JSONObject(getYaml(id).getMap());
-            event.setReplaced(new Element(jsobj.toString()).getAttribute(attribute.fulfill(1)));
+            event.setReplaced(new ElementTag(jsobj.toString()).getAttribute(attribute.fulfill(1)));
             return;
         }
 
         // <--[tag]
         // @attribute <yaml[<id>].to_text>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Converts the YAML container to raw YAML text.
         // -->
         if (attribute.startsWith("to_text")) {
-            event.setReplaced(new Element(getYaml(id).saveToString()).getAttribute(attribute.fulfill(1)));
+            event.setReplaced(new ElementTag(getYaml(id).saveToString()).getAttribute(attribute.fulfill(1)));
             return;
         }
     }

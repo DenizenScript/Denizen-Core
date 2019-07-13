@@ -26,13 +26,13 @@ public class ObjectFetcher {
 
     public interface ValueOfInterface {
 
-        dObject valueOf(String str, TagContext context);
+        ObjectTag valueOf(String str, TagContext context);
     }
 
     // Keep track of each Class keyed by its 'object identifier' --> i@, e@, etc.
     private static Map<String, Class> objects = new HashMap<>();
 
-    // Keep track of the static 'matches' and 'valueOf' methods for each dObject
+    // Keep track of the static 'matches' and 'valueOf' methods for each ObjectTag
     static Map<Class, MatchesInterface> matches = new HashMap<>();
     static Map<Class, ValueOfInterface> valueof = new HashMap<>();
 
@@ -68,15 +68,15 @@ public class ObjectFetcher {
     public static void _registerCoreObjects() throws NoSuchMethodException, ClassNotFoundException, IOException {
 
         // Initialize the ObjectFetcher
-        registerWithObjectFetcher(CustomObject.class); // custom@
-        registerWithObjectFetcher(dList.class);        // li@/fl@
-        dList.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(dScript.class);      // s@
-        dScript.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(Element.class);      // el@
-        Element.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(Duration.class);     // d@
-        Duration.registerTags(); // TODO: Automate this once all classes have tag registries
+        registerWithObjectFetcher(CustomObjectTag.class); // custom@
+        registerWithObjectFetcher(ListTag.class);        // li@/fl@
+        ListTag.registerTags(); // TODO: Automate this once all classes have tag registries
+        registerWithObjectFetcher(ScriptTag.class);      // s@
+        ScriptTag.registerTags(); // TODO: Automate this once all classes have tag registries
+        registerWithObjectFetcher(ElementTag.class);      // el@
+        ElementTag.registerTags(); // TODO: Automate this once all classes have tag registries
+        registerWithObjectFetcher(DurationTag.class);     // d@
+        DurationTag.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(ScriptQueue.class);  // q@
         ScriptQueue.registerTags(); // TODO: Automate this once all classes have tag registries
         _initialize();
@@ -110,7 +110,7 @@ public class ObjectFetcher {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "valueOf", // ValueOfInterface#valueOf
                     MethodType.methodType(ValueOfInterface.class), // Signature of invoke method
-                    MethodType.methodType(dObject.class, String.class, TagContext.class), // signature of ValueOfInterface#valueOf
+                    MethodType.methodType(ObjectTag.class, String.class, TagContext.class), // signature of ValueOfInterface#valueOf
                     lookup.findStatic(clazz, "valueOf", MethodType.methodType(clazz, String.class, TagContext.class)), // signature of original valueOf method
                     MethodType.methodType(clazz, String.class, TagContext.class)); // Signature of original valueOf again
             return (ValueOfInterface) site.getTarget().invoke();
@@ -123,14 +123,14 @@ public class ObjectFetcher {
         }
     }
 
-    public static void registerWithObjectFetcher(Class<? extends dObject> dObject) {
+    public static void registerWithObjectFetcher(Class<? extends ObjectTag> ObjectTag) {
         try {
             fetchable_objects.add(dObject);
             matches.put(dObject, getMatchesFor(dObject));
             valueof.put(dObject, getValueOfFor(dObject));
         }
         catch (Throwable e) {
-            Debug.echoError("Failed to register an object type (" + dObject.getSimpleName() + "): ");
+            Debug.echoError("Failed to register an object type (" + ObjectTag.getSimpleName() + "): ");
             Debug.echoError(e);
         }
     }
@@ -153,7 +153,7 @@ public class ObjectFetcher {
     public final static Pattern DESCRIBED_PATTERN =
             Pattern.compile("[^\\[]+\\[.+=.+\\]", Pattern.DOTALL | Pattern.MULTILINE);
 
-    public static boolean checkMatch(Class<? extends dObject> dClass, String value) {
+    public static boolean checkMatch(Class<? extends ObjectTag> dClass, String value) {
         if (value == null || dClass == null) {
             return false;
         }
@@ -170,7 +170,7 @@ public class ObjectFetcher {
     }
 
     @Deprecated
-    public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value) {
+    public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value) {
         return getObjectFrom(dClass, value, DenizenCore.getImplementation().getTagContext(null));
     }
 
@@ -202,7 +202,7 @@ public class ObjectFetcher {
         return output;
     }
 
-    public static <T extends dObject> T getObjectFrom(Class<T> dClass, String value, TagContext context) {
+    public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value, TagContext context) {
         try {
             List<String> matches = separateProperties(value);
             boolean matched = matches != null && Adjustable.class.isAssignableFrom(dClass);
@@ -214,8 +214,8 @@ public class ObjectFetcher {
                         Debug.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
                     }
-                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new Element(data.get(0)),
-                            new Element((data.get(1)).replace((char) 0x2011, ';')), context));
+                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)),
+                            new ElementTag((data.get(1)).replace((char) 0x2011, ';')), context));
                 }
             }
             return gotten;
@@ -228,17 +228,17 @@ public class ObjectFetcher {
     }
 
     /**
-     * This function will return the most-valid dObject for the input string.
-     * If the input lacks @ notation or is not a valid object, an Element will be returned.
+     * This function will return the most-valid ObjectTag for the input string.
+     * If the input lacks @ notation or is not a valid object, an ElementTag will be returned.
      *
      * @param value the input string.
-     * @return the most-valid dObject available.
+     * @return the most-valid ObjectTag available.
      */
-    public static dObject pickObjectFor(String value) {
+    public static ObjectTag pickObjectFor(String value) {
         return pickObjectFor(value, DenizenCore.getImplementation().getEmptyScriptEntryData().getTagContext());
     }
 
-    public static dObject pickObjectFor(String value, TagContext context) {
+    public static ObjectTag pickObjectFor(String value, TagContext context) {
         if (value == null) {
             return null;
         }
@@ -250,7 +250,7 @@ public class ObjectFetcher {
             // Of course, ensure the @ notation is valid first
             if (canFetch(type)) {
                 Class toFetch = getObjectClass(type);
-                dObject fetched = getObjectFrom(toFetch, value, context);
+                ObjectTag fetched = getObjectFrom(toFetch, value, context);
                 // Only return if a valid object is born... otherwise, use an element.
                 if (fetched != null) {
                     return fetched;
@@ -258,6 +258,6 @@ public class ObjectFetcher {
             }
         }
         // If all else fails, just use a simple Element!
-        return new Element(value);
+        return new ElementTag(value);
     }
 }

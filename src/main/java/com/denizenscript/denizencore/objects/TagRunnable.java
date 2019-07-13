@@ -21,7 +21,7 @@ public abstract class TagRunnable implements Cloneable {
 
         public String name = null;
 
-        public abstract dObject run(Attribute attribute, dObject object);
+        public abstract ObjectTag run(Attribute attribute, ObjectTag object);
     }
 
     public static abstract class RootForm implements Cloneable {
@@ -62,5 +62,5 @@ public abstract class TagRunnable implements Cloneable {
      * @param object    the object being calculated against.
      * @return null if this tag is invalid or a string of the return value if it is valid.
      */
-    public abstract String run(Attribute attribute, dObject object);
+    public abstract String run(Attribute attribute, ObjectTag object);
 }

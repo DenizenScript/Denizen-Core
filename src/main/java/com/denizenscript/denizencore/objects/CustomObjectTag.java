@@ -12,7 +12,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-public class CustomObject implements dObject, dObject.ObjectAttributable, Adjustable {
+public class CustomObjectTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjustable {
 
     // <--[language]
     // @name Custom Objects
@@ -35,14 +35,14 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     // -->
 
     @Fetchable("custom")
-    public static CustomObject valueOf(String string, TagContext context) {
+    public static CustomObjectTag valueOf(String string, TagContext context) {
         Matcher m;
 
         ///////
         // Handle objects with properties through the object fetcher
         m = ObjectFetcher.DESCRIBED_PATTERN.matcher(string);
         if (m.matches()) {
-            return ObjectFetcher.getObjectFrom(CustomObject.class, string, context);
+            return ObjectFetcher.getObjectFrom(CustomObjectTag.class, string, context);
         }
 
         if (string.startsWith("custom@")) {
@@ -63,11 +63,11 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
             }
             return null;
         }
-        return new CustomObject((CustomScriptContainer) sc, ((CustomScriptContainer) sc).getVars());
+        return new CustomObjectTag((CustomScriptContainer) sc, ((CustomScriptContainer) sc).getVars());
     }
 
-    public static CustomObject getFor(dObject obj, TagContext context) {
-        return obj instanceof CustomObject ? (CustomObject) obj : valueOf(obj.toString(), context);
+    public static CustomObjectTag getFor(ObjectTag obj, TagContext context) {
+        return obj instanceof CustomObjectTag ? (CustomObjectTag) obj : valueOf(obj.toString(), context);
     }
 
     public static boolean matches(String string) {
@@ -75,9 +75,9 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     }
 
     public CustomScriptContainer container;
-    public Map<String, dObject> vars;
+    public Map<String, ObjectTag> vars;
 
-    public CustomObject(CustomScriptContainer type, Map<String, dObject> values) {
+    public CustomObjectTag(CustomScriptContainer type, Map<String, ObjectTag> values) {
         container = type;
         vars = values;
     }
@@ -92,7 +92,7 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     @Override
     public String identify() {
         StringBuilder outp = new StringBuilder();
-        for (Map.Entry<String, dObject> var : vars.entrySet()) {
+        for (Map.Entry<String, ObjectTag> var : vars.entrySet()) {
             outp.append(var.getKey() + "=" + var.getValue().toString().replace(';', (char) 0x2011) + ";");
         }
         return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1) : "") + "]";
@@ -114,7 +114,7 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     }
 
     @Override
-    public dObject setPrefix(String prefix) {
+    public ObjectTag setPrefix(String prefix) {
         this.prefix = prefix;
         return this;
     }
@@ -130,12 +130,12 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
     }
 
     @Override
-    public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
+    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
         return null;
     }
 
     @Override
-    public dObject getObjectAttribute(Attribute attribute) {
+    public ObjectTag getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
             return null;
         }
@@ -144,11 +144,11 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
             return this;
         }
 
-        dObject res = vars.get(attribute.getAttribute(1));
+        ObjectTag res = vars.get(attribute.getAttribute(1));
         if (res == null) {
             String taggo = attribute.getAttributeWithoutContext(1);
             if (container.hasPath("tags." + taggo)) {
-                dList outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
+                ListTag outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
                         attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
                                 DenizenCore.getImplementation().getEmptyScriptEntryData());
                 if (outcomes == null) {
@@ -156,7 +156,7 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
                 }
                 return CoreUtilities.autoAttribTyped(outcomes.getObject(0), attribute.fulfill(1));
             }
-            return new Element(identify()).getObjectAttribute(attribute);
+            return new ElementTag(identify()).getObjectAttribute(attribute);
         }
         return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
     }
@@ -173,13 +173,13 @@ public class CustomObject implements dObject, dObject.ObjectAttributable, Adjust
             vars.remove(name);
             return;
         }
-        dObject value = mechanism.getValue();
+        ObjectTag value = mechanism.getValue();
         if (container.hasPath("mechanisms." + name)) {
-            dList outcomes = container.runMechScript(name, this, value);
+            ListTag outcomes = container.runMechScript(name, this, value);
             if (outcomes == null) {
                 return;
             }
-            CustomObject co = CustomObject.getFor(outcomes.getObject(0), null);
+            CustomObjectTag co = CustomObjectTag.getFor(outcomes.getObject(0), null);
             container = co.container;
             vars = co.vars;
         }

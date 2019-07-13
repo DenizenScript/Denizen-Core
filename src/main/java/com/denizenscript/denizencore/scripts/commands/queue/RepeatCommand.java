@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -66,17 +66,17 @@ public class RepeatCommand extends BracedCommand {
             }
             else if (!handled
                     && arg.matches("stop")) {
-                scriptEntry.addObject("stop", new Element(true));
+                scriptEntry.addObject("stop", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
                     && arg.matches("next")) {
-                scriptEntry.addObject("next", new Element(true));
+                scriptEntry.addObject("next", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
                     && arg.matches("\0CALLBACK")) {
-                scriptEntry.addObject("callback", new Element(true));
+                scriptEntry.addObject("callback", new ElementTag(true));
                 handled = true;
             }
             else if (!scriptEntry.hasObject("as_name")
@@ -95,7 +95,7 @@ public class RepeatCommand extends BracedCommand {
             throw new InvalidArgumentsException("Must specify a quantity or 'stop' or 'next'!");
         }
 
-        scriptEntry.defaultObject("as_name", new Element("value"));
+        scriptEntry.defaultObject("as_name", new ElementTag("value"));
 
     }
 
@@ -103,11 +103,11 @@ public class RepeatCommand extends BracedCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        Element stop = scriptEntry.getElement("stop");
-        Element next = scriptEntry.getElement("next");
-        Element callback = scriptEntry.getElement("callback");
-        Element quantity = scriptEntry.getElement("qty");
-        Element as_name = scriptEntry.getElement("as_name");
+        ElementTag stop = scriptEntry.getElement("stop");
+        ElementTag next = scriptEntry.getElement("next");
+        ElementTag callback = scriptEntry.getElement("callback");
+        ElementTag quantity = scriptEntry.getElement("qty");
+        ElementTag as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
             // Report to dB

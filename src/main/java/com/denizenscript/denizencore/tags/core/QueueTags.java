@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dList;
+import com.denizenscript.denizencore.objects.ListTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -58,37 +58,37 @@ public class QueueTags {
 
         // <--[tag]
         // @attribute <queue.exists[<queue_id>]>
-        // @returns Element(Boolean)
+        // @returns ElementTag(Boolean)
         // @description
         // Returns whether the specified queue exists.
         // -->
         if (attribute.startsWith("exists")
                 && attribute.hasContext(1)) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue._queueExists(attribute.getContext(1)))
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue._queueExists(attribute.getContext(1)))
                     , attribute.fulfill(1)));
             return;
         }
 
         // <--[tag]
         // @attribute <queue.stats>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns stats for all queues during this server session
         // -->
         if (attribute.startsWith("stats")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new Element(ScriptQueue._getStats())
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue._getStats())
                     , attribute.fulfill(1)));
             return;
         }
 
         // <--[tag]
         // @attribute <queue.list>
-        // @returns dList(Queue)
+        // @returns ListTag(Queue)
         // @description
         // Returns a list of all currently running queues on the server.
         // -->
         if (attribute.startsWith("list")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new dList(ScriptQueue._getQueues())
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(ScriptQueue._getQueues())
                     , attribute.fulfill(1)));
             return;
         }

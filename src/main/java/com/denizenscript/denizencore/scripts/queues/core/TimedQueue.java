@@ -4,8 +4,8 @@ import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.DurationTag;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 
@@ -42,7 +42,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         // If not, create a new one.
         else {
             scriptQueue = new TimedQueue(id,
-                    Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
+                    DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
         }
         // Return the queue
         return scriptQueue;
@@ -74,7 +74,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
 
     @Override
-    public void delayFor(Duration duration) {
+    public void delayFor(DurationTag duration) {
         delay_ticks = DenizenCore.serverTimeMillis + duration.getMillis();
     }
 
@@ -84,7 +84,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     }
 
     public TimedQueue(String id) {
-        this(id, Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
+        this(id, DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
     }
 
     public TimedQueue(String id, long ticks) {
@@ -92,7 +92,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         this.ticks = ticks;
     }
 
-    public TimedQueue(String id, Duration timing) {
+    public TimedQueue(String id, DurationTag timing) {
         super(id);
         ticks = timing.getTicks();
     }
@@ -113,8 +113,8 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      *
      * @return a Duration of the speed.
      */
-    public Duration getSpeed() {
-        return new Duration(ticks);
+    public DurationTag getSpeed() {
+        return new DurationTag(ticks);
     }
 
 
@@ -206,7 +206,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
         // <--[tag]
         // @attribute <q@queue.speed>
-        // @returns Duration
+        // @returns DurationTag
         // @description
         // Returns the speed of the queue as a Duration. A return of '0' implies it is 'instant'.
         // -->
@@ -216,12 +216,12 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
         // <--[tag]
         // @attribute <q@queue.type>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns the type of queue.
         // -->
         if (attribute.startsWith("type")) {
-            return new Element("Timed").getAttribute(attribute.fulfill(1));
+            return new ElementTag("Timed").getAttribute(attribute.fulfill(1));
         }
 
         return super.getAttribute(attribute);

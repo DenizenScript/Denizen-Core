@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dList;
+import com.denizenscript.denizencore.objects.ListTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -24,10 +24,10 @@ public class ListTags {
             return;
         }
 
-        dList list = null;
+        ListTag list = null;
 
         if (event.hasNameContext()) {
-            list = dList.valueOf(event.getNameContext(), event.getAttributes().context);
+            list = ListTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
 
         // Check if list is null, return null if it is

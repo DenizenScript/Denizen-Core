@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.Duration;
+import com.denizenscript.denizencore.objects.DurationTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -24,10 +24,10 @@ public class DurationTags {
             return;
         }
 
-        Duration duration = null;
+        DurationTag duration = null;
 
         if (event.hasNameContext()) {
-            duration = Duration.valueOf(event.getNameContext(), event.getAttributes().context);
+            duration = DurationTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
 
         if (duration == null) {

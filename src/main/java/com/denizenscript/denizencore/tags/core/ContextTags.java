@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -38,7 +38,7 @@ public class ContextTags {
             contextShorthand.warn(event.getScriptEntry());
         }
         String object = event.getType();
-        dObject obj = event.getScriptEntry().getResidingQueue().getContext(object);
+        ObjectTag obj = event.getScriptEntry().getResidingQueue().getContext(object);
         if (obj != null) {
             Attribute attribute = event.getAttributes();
             event.setReplacedObject(CoreUtilities.autoAttrib(obj, attribute.fulfill(2)));
@@ -69,7 +69,7 @@ public class ContextTags {
             }
             else {
                 String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(2));
-                dObject got = held.getdObject(attrib);
+                ObjectTag got = held.getdObject(attrib);
                 if (got == null) {
                     if (!event.hasAlternative()) {
                         Debug.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");

@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.events.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.DenizenCore;
@@ -74,10 +74,10 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         return "DeltaTime";
     }
 
-    public Element second;
+    public ElementTag second;
 
     @Override
-    public dObject getContext(String name) {
+    public ObjectTag getContext(String name) {
         if (name.equals("second")) {
             return second;
         }
@@ -98,7 +98,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         if (!enabled) {
             return;
         }
-        second = new Element(DenizenCore.serverTimeMillis / 1000);
+        second = new ElementTag(DenizenCore.serverTimeMillis / 1000);
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         fire();
     }

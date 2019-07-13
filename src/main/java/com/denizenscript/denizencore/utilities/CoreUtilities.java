@@ -25,14 +25,14 @@ public class CoreUtilities {
         return obj == null ? null : obj.toString();
     }
 
-    public static dObject fixType(dObject input, TagContext context) {
-        if (input instanceof Element) {
+    public static ObjectTag fixType(ObjectTag input, TagContext context) {
+        if (input instanceof ElementTag) {
             return ObjectFetcher.pickObjectFor(input.toString(), context);
         }
         return input;
     }
 
-    public static void autoPropertyMechanism(dObject object, Mechanism mechanism) {
+    public static void autoPropertyMechanism(ObjectTag object, Mechanism mechanism) {
         PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return;
@@ -57,7 +57,7 @@ public class CoreUtilities {
         }
     }
 
-    public static dObject autoPropertyTagObject(dObject object, Attribute attribute) {
+    public static ObjectTag autoPropertyTagObject(ObjectTag object, Attribute attribute) {
         if (attribute.isComplete()) {
             return null;
         }
@@ -76,7 +76,7 @@ public class CoreUtilities {
         for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyTags) {
             Property prop = listGetter.get(object);
             if (prop != null) {
-                dObject returned = prop.getObjectAttribute(attribute);
+                ObjectTag returned = prop.getObjectAttribute(attribute);
                 if (returned != null) {
                     return returned;
                 }
@@ -85,7 +85,7 @@ public class CoreUtilities {
         return null;
     }
 
-    public static String autoPropertyTag(dObject object, Attribute attribute) {
+    public static String autoPropertyTag(ObjectTag object, Attribute attribute) {
         if (attribute.isComplete()) {
             return null;
         }
@@ -113,18 +113,18 @@ public class CoreUtilities {
         return null;
     }
 
-    public static dObject autoAttrib(Property inp, Attribute attribute) {
+    public static ObjectTag autoAttrib(Property inp, Attribute attribute) {
         if (attribute.isComplete()) {
             return null;
         }
         return inp.getObjectAttribute(attribute);
     }
 
-    public static dObject autoAttribTyped(dObject inp, Attribute attribute) {
+    public static ObjectTag autoAttribTyped(ObjectTag inp, Attribute attribute) {
         return autoAttrib(fixType(inp, attribute.context), attribute);
     }
 
-    public static dObject autoAttrib(dObject inp, Attribute attribute) {
+    public static ObjectTag autoAttrib(ObjectTag inp, Attribute attribute) {
         if (inp == null) {
             Debug.echoError("Tag parse failed (null return) for tag <" + attribute.toString() + ">!");
             return null;
@@ -135,15 +135,15 @@ public class CoreUtilities {
         return inp.getObjectAttribute(attribute);
     }
 
-    public static <T extends dObject> T asType(dObject inp, Class<T> type, TagContext context) {
+    public static <T extends ObjectTag> T asType(ObjectTag inp, Class<T> type, TagContext context) {
         if (inp.getdObjectClass() == type) {
             return (T) inp;
         }
-        if (type == Element.class) {
-            return (T) new Element(inp.toString());
+        if (type == ElementTag.class) {
+            return (T) new ElementTag(inp.toString());
         }
-        if (inp instanceof dObject.ObjectAttributable) {
-            T temp = ((dObject.ObjectAttributable) inp).asObjectType(type, context);
+        if (inp instanceof ObjectTag.ObjectAttributable) {
+            T temp = ((ObjectTag.ObjectAttributable) inp).asObjectType(type, context);
             if (temp != null) {
                 return temp;
             }
@@ -152,24 +152,24 @@ public class CoreUtilities {
     }
 
     public static abstract class TypeComparisonRunnable {
-        public abstract boolean canBecome(dObject inp);
+        public abstract boolean canBecome(ObjectTag inp);
     }
 
-    public final static Map<Class<? extends dObject>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
+    public final static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
 
     static {
-        registerTypeAsTrueAlways(Element.class);
-        registerTypeAsTrueAlways(dList.class);
-        registerTypeAsNoOtherTypeCode(dScript.class, "s");
-        registerTypeAsNoOtherTypeCode(Duration.class, "d");
-        registerTypeAsNoOtherTypeCode(CustomObject.class, "custom");
+        registerTypeAsTrueAlways(ElementTag.class);
+        registerTypeAsTrueAlways(ListTag.class);
+        registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
+        registerTypeAsNoOtherTypeCode(DurationTag.class, "d");
+        registerTypeAsNoOtherTypeCode(CustomObjectTag.class, "custom");
         registerTypeAsNoOtherTypeCode(ScriptQueue.class, "q");
     }
 
-    public static void registerTypeAsNoOtherTypeCode(Class<? extends dObject> type, final String knownCode) {
+    public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {
         typeCheckers.put(type, new TypeComparisonRunnable() {
             @Override
-            public boolean canBecome(dObject inp) {
+            public boolean canBecome(ObjectTag inp) {
                 String simple = inp.identifySimple();
                 int atIndex = simple.indexOf('@');
                 if (atIndex != -1) {
@@ -183,16 +183,16 @@ public class CoreUtilities {
         });
     }
 
-    public static void registerTypeAsTrueAlways(Class<? extends dObject> type) {
+    public static void registerTypeAsTrueAlways(Class<? extends ObjectTag> type) {
         typeCheckers.put(type, new TypeComparisonRunnable() {
             @Override
-            public boolean canBecome(dObject inp) {
+            public boolean canBecome(ObjectTag inp) {
                 return true;
             }
         });
     }
 
-    public static boolean canPossiblyBeType(dObject inp, Class<? extends dObject> type) {
+    public static boolean canPossiblyBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
         if (inp.getdObjectClass() == type) {
             return true;
         }

@@ -6,10 +6,10 @@ import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.CustomObject;
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.CustomObjectTag;
+import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.ListTag;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
@@ -79,8 +79,8 @@ public class CustomScriptContainer extends ScriptContainer {
 
     public HashMap<String, String> defaultVars = new HashMap<>();
 
-    public HashMap<String, dObject> getVars() {
-        HashMap<String, dObject> vars;
+    public HashMap<String, ObjectTag> getVars() {
+        HashMap<String, ObjectTag> vars;
         if (inherit != null) {
             ScriptContainer sc = ScriptRegistry.getScriptContainer(inherit);
             if (sc != null && sc instanceof CustomScriptContainer) {
@@ -94,7 +94,7 @@ public class CustomScriptContainer extends ScriptContainer {
             vars = new HashMap<>();
         }
         for (Map.Entry<String, String> str : defaultVars.entrySet()) {
-            vars.put(str.getKey(), new Element(str.getValue()));
+            vars.put(str.getKey(), new ElementTag(str.getValue()));
         }
         return vars;
     }
@@ -127,7 +127,7 @@ public class CustomScriptContainer extends ScriptContainer {
         return false;
     }
 
-    public dList runTagScript(String path, dObject val, CustomObject obj, ScriptEntryData data) {
+    public ListTag runTagScript(String path, ObjectTag val, CustomObjectTag obj, ScriptEntryData data) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("tags." + path)) {
@@ -149,7 +149,7 @@ public class CustomScriptContainer extends ScriptContainer {
         return null;
     }
 
-    public dList runMechScript(String path, CustomObject obj, dObject value) {
+    public ListTag runMechScript(String path, CustomObjectTag obj, ObjectTag value) {
         CustomScriptContainer csc = this;
         while (csc != null) {
             if (csc.contains("mechanisms." + path)) {
@@ -170,9 +170,9 @@ public class CustomScriptContainer extends ScriptContainer {
 
     public static class CustomScriptContextSource implements ContextSource {
 
-        public CustomObject obj;
+        public CustomObjectTag obj;
 
-        public dObject value;
+        public ObjectTag value;
 
         @Override
         public boolean getShouldCache() {
@@ -180,7 +180,7 @@ public class CustomScriptContainer extends ScriptContainer {
         }
 
         @Override
-        public dObject getContext(String name) {
+        public ObjectTag getContext(String name) {
             if (name.equals("this")) {
                 return obj;
             }

@@ -7,9 +7,9 @@ import com.denizenscript.denizencore.utilities.data.ActionableDataProvider;
 import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -69,12 +69,12 @@ public class DefineCommand extends AbstractCommand {
         public ScriptQueue queue;
 
         @Override
-        public dObject getValueAt(String keyName) {
+        public ObjectTag getValueAt(String keyName) {
             return queue.getDefinitionObject(keyName);
         }
 
         @Override
-        public void setValueAt(String keyName, dObject value) {
+        public void setValueAt(String keyName, ObjectTag value) {
             queue.addDefinition(keyName, value);
         }
     }
@@ -91,12 +91,12 @@ public class DefineCommand extends AbstractCommand {
                     scriptEntry.addObject("action", DataActionHelper.parse(provider, arg.raw_value));
                 }
                 else {
-                    scriptEntry.addObject("definition", new Element(CoreUtilities.toLowerCase(arg.getValue())));
+                    scriptEntry.addObject("definition", new ElementTag(CoreUtilities.toLowerCase(arg.getValue())));
                 }
             }
 
             else if (!scriptEntry.hasObject("value")) {
-                scriptEntry.addObject("value", arg.object instanceof Element ? new Element(arg.raw_value) : arg.object);
+                scriptEntry.addObject("value", arg.object instanceof ElementTag ? new ElementTag(arg.raw_value) : arg.object);
             }
 
             else {
@@ -112,9 +112,9 @@ public class DefineCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        Element definition = scriptEntry.getElement("definition");
-        dObject value = scriptEntry.getdObject("value");
-        Element remove = scriptEntry.getElement("remove");
+        ElementTag definition = scriptEntry.getElement("definition");
+        ObjectTag value = scriptEntry.getdObject("value");
+        ElementTag remove = scriptEntry.getElement("remove");
         Object actionObj = scriptEntry.getObject("action");
         DataAction action = actionObj == null ? null : (DataAction) actionObj;
 

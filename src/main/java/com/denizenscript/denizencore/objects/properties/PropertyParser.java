@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.objects.properties;
 
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
@@ -12,7 +12,7 @@ public class PropertyParser {
     @FunctionalInterface
     public interface PropertyGetter {
 
-        Property get(dObject obj);
+        Property get(ObjectTag obj);
     }
 
     public static class ClassPropertiesInfo {
@@ -29,9 +29,9 @@ public class PropertyParser {
         public Map<String, PropertyGetter> propertiesByMechanism = new HashMap<>();
     }
 
-    public static Map<Class<? extends dObject>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
+    public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
-    public static void registerPropertyGetter(PropertyGetter getter, Class<? extends dObject> object, String[] tags, String[] mechs) {
+    public static void registerPropertyGetter(PropertyGetter getter, Class<? extends ObjectTag> object, String[] tags, String[] mechs) {
         ClassPropertiesInfo propInfo = propertiesByClass.get(object);
         if (propInfo == null) {
             propInfo = new ClassPropertiesInfo();
@@ -72,18 +72,18 @@ public class PropertyParser {
         return null;
     }
 
-    public static void registerProperty(final Class property, Class<? extends dObject> object, PropertyGetter getter) {
+    public static void registerProperty(final Class property, Class<? extends ObjectTag> object, PropertyGetter getter) {
         registerPropertyGetter(getter, object, getStringField(property, "handledTags"), getStringField(property, "handledMechs"));
     }
 
-    public static void registerProperty(final Class property, Class<? extends dObject> object) {
+    public static void registerProperty(final Class property, Class<? extends ObjectTag> object) {
         try {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "get", // PropertyGetter#get
                     MethodType.methodType(PropertyGetter.class), // Signature of invoke method
-                    MethodType.methodType(Property.class, dObject.class), // signature of PropertyGetter#get
-                    lookup.findStatic(property, "getFrom", MethodType.methodType(property, dObject.class)), // signature of getFrom
-                    MethodType.methodType(property, dObject.class)); // Signature of getFrom again
+                    MethodType.methodType(Property.class, ObjectTag.class), // signature of PropertyGetter#get
+                    lookup.findStatic(property, "getFrom", MethodType.methodType(property, ObjectTag.class)), // signature of getFrom
+                    MethodType.methodType(property, ObjectTag.class)); // Signature of getFrom again
             PropertyGetter getter = (PropertyGetter) site.getTarget().invoke();
             registerProperty(property, object, getter);
         }
@@ -93,7 +93,7 @@ public class PropertyParser {
         }
     }
 
-    public static String getPropertiesString(dObject object) {
+    public static String getPropertiesString(ObjectTag object) {
         ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return "";
@@ -119,7 +119,7 @@ public class PropertyParser {
 
     public static List<Property> empty = new ArrayList<>();
 
-    public static List<Property> getProperties(dObject object, String attribLow) {
+    public static List<Property> getProperties(ObjectTag object, String attribLow) {
         ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return empty;
@@ -137,7 +137,7 @@ public class PropertyParser {
         }
     }
 
-    public static List<Property> getProperties(dObject object) {
+    public static List<Property> getProperties(ObjectTag object) {
         ClassPropertiesInfo properties = propertiesByClass.get(object.getdObjectClass());
         if (properties == null) {
             return empty;

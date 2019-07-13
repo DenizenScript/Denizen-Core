@@ -32,7 +32,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed.
     // <entry[saveName].result> returns the result of the webget, if it did not fail.
-    // <el@element.url_encode>
+    // <ElementTag.url_encode>
     //
     // @Usage
     // Use to download the google home page.
@@ -47,7 +47,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (!scriptEntry.hasObject("url")) {
-                scriptEntry.addObject("url", new Element(arg.raw_value));
+                scriptEntry.addObject("url", new ElementTag(arg.raw_value));
             }
 
             else if (!scriptEntry.hasObject("post")
@@ -57,13 +57,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
             else if (!scriptEntry.hasObject("timeout")
                     && arg.matchesPrefix("timeout", "t")
-                    && arg.matchesArgumentType(Duration.class)) {
-                scriptEntry.addObject("timeout", arg.asType(Duration.class));
+                    && arg.matchesArgumentType(DurationTag.class)) {
+                scriptEntry.addObject("timeout", arg.asType(DurationTag.class));
             }
 
             else if (!scriptEntry.hasObject("headers")
                     && arg.matchesPrefix("headers")) {
-                scriptEntry.addObject("headers", arg.asType(dList.class));
+                scriptEntry.addObject("headers", arg.asType(ListTag.class));
             }
 
             else if (!scriptEntry.hasObject("savefile")
@@ -80,12 +80,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             throw new InvalidArgumentsException("Must have a valid URL!");
         }
 
-        Element url = scriptEntry.getElement("url");
+        ElementTag url = scriptEntry.getElement("url");
         if (!url.asString().startsWith("http://") && !url.asString().startsWith("https://")) {
             throw new InvalidArgumentsException("Must have a valid (HTTP/HTTPS) URL! Attempted: " + url.asString());
         }
 
-        scriptEntry.defaultObject("timeout", new Duration(10));
+        scriptEntry.defaultObject("timeout", new DurationTag(10));
 
     }
 
@@ -98,11 +98,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             return;
         }
 
-        final Element url = scriptEntry.getElement("url");
-        final Element postData = scriptEntry.getElement("post");
-        final Duration timeout = scriptEntry.getdObject("timeout");
-        final dList headers = scriptEntry.getdObject("headers");
-        final Element saveFile = scriptEntry.getElement("savefile");
+        final ElementTag url = scriptEntry.getElement("url");
+        final ElementTag postData = scriptEntry.getElement("post");
+        final DurationTag timeout = scriptEntry.getdObject("timeout");
+        final ListTag headers = scriptEntry.getdObject("headers");
+        final ElementTag saveFile = scriptEntry.getElement("savefile");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), url.debug()
@@ -121,7 +121,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final Element postData, Element urlp, Duration timeout, dList headers, Element saveFile) {
+    public void webGet(final ScriptEntry scriptEntry, final ElementTag postData, ElementTag urlp, DurationTag timeout, ListTag headers, ElementTag saveFile) {
 
         BufferedReader buffIn = null;
         try {
@@ -185,13 +185,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 @Override
                 public boolean tick(float seconds) {
                     try {
-                        scriptEntry.addObject("failed", new Element(uc.getResponseCode() == 200 ? "false" : "true"));
+                        scriptEntry.addObject("failed", new ElementTag(uc.getResponseCode() == 200 ? "false" : "true"));
                     }
                     catch (Exception e) {
                         Debug.echoError(e);
                     }
                     if (saveFile == null) {
-                        scriptEntry.addObject("result", new Element(sb.toString()));
+                        scriptEntry.addObject("result", new ElementTag(sb.toString()));
                     }
                     scriptEntry.setFinished(true);
                     return false;
@@ -204,7 +204,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 DenizenCore.schedule(new Schedulable() {
                     @Override
                     public boolean tick(float seconds) {
-                        scriptEntry.addObject("failed", new Element("true"));
+                        scriptEntry.addObject("failed", new ElementTag("true"));
                         scriptEntry.setFinished(true);
                         return false;
                     }

@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.DebugLog;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -82,7 +82,7 @@ public class LogCommand extends AbstractCommand {
                 scriptEntry.addObject("file", arg.asElement());
             }
             else if (!scriptEntry.hasObject("message")) {
-                scriptEntry.addObject("message", new Element(arg.raw_value));
+                scriptEntry.addObject("message", new ElementTag(arg.raw_value));
             }
             else {
                 arg.reportUnhandled();
@@ -98,7 +98,7 @@ public class LogCommand extends AbstractCommand {
         }
 
         if (!scriptEntry.hasObject("type")) {
-            scriptEntry.addObject("type", new Element("INFO"));
+            scriptEntry.addObject("type", new ElementTag("INFO"));
         }
     }
 
@@ -108,9 +108,9 @@ public class LogCommand extends AbstractCommand {
             Debug.echoError("Logging disabled by administrator.");
             return;
         }
-        Element message = scriptEntry.getElement("message");
-        Element fileName = scriptEntry.getElement("file");
-        Element typeElement = scriptEntry.getElement("type");
+        ElementTag message = scriptEntry.getElement("message");
+        ElementTag fileName = scriptEntry.getElement("file");
+        ElementTag typeElement = scriptEntry.getElement("type");
 
         if (scriptEntry.dbCallShouldDebug()) {
 

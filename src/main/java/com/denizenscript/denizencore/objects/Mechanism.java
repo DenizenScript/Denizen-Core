@@ -8,19 +8,19 @@ public class Mechanism {
 
     private boolean fulfilled;
     private String raw_mechanism;
-    private Element value;
+    private ElementTag value;
 
     public TagContext context;
 
     public boolean isProperty = false;
 
-    public Mechanism(Element mechanism, Element value) {
+    public Mechanism(ElementTag mechanism, ElementTag value) {
         fulfilled = false;
         raw_mechanism = CoreUtilities.toLowerCase(mechanism.asString());
         this.value = value;
     }
 
-    public Mechanism(Element mechanism, Element value, TagContext context) {
+    public Mechanism(ElementTag mechanism, ElementTag value, TagContext context) {
         this(mechanism, value);
         this.context = context;
     }
@@ -37,14 +37,14 @@ public class Mechanism {
         return raw_mechanism;
     }
 
-    public Element getValue() {
+    public ElementTag getValue() {
         if (value == null) {
-            return new Element("");
+            return new ElementTag("");
         }
         return value;
     }
 
-    public <T extends dObject> T valueAsType(Class<T> dClass) {
+    public <T extends ObjectTag> T valueAsType(Class<T> dClass) {
         return ObjectFetcher.getObjectFrom(dClass, getValue().asString(), context);
     }
 
@@ -80,7 +80,7 @@ public class Mechanism {
         return requireInteger("Invalid integer number specified.");
     }
 
-    public <T extends dObject> boolean requireObject(Class<T> type) {
+    public <T extends ObjectTag> boolean requireObject(Class<T> type) {
         return requireObject(null, type);
     }
 
@@ -138,7 +138,7 @@ public class Mechanism {
         return false;
     }
 
-    public <T extends dObject> boolean requireObject(String error, Class<T> type) {
+    public <T extends ObjectTag> boolean requireObject(String error, Class<T> type) {
         if (hasValue() && value.matchesType(type)) {
             return true;
         }

@@ -181,7 +181,7 @@ public class TagManager {
                 case 0x09:
                     data[i] = ']';
                     break;
-                case dList.internal_escape_char:
+                case ListTag.internal_escape_char:
                     data[i] = '|';
                     break;
                 default:
@@ -223,7 +223,7 @@ public class TagManager {
                 case 0x09:
                     data[i] = ']';
                     break;
-                case dList.internal_escape_char:
+                case ListTag.internal_escape_char:
                     data[i] = '|';
                     break;
                 case 0x00A0:
@@ -256,7 +256,7 @@ public class TagManager {
                     data[i] = 0x09;
                     break;
                 case '|':
-                    data[i] = dList.internal_escape_char;
+                    data[i] = ListTag.internal_escape_char;
                     break;
                 default:
                     break;
@@ -277,7 +277,7 @@ public class TagManager {
             return;
         }
 
-        dObject arg;
+        ObjectTag arg;
         try {
 
             String tagObjectFull = event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
@@ -296,7 +296,7 @@ public class TagManager {
             if (arg == null) {
                 if (!event.hasAlternative()) {
                     Debug.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                            : event.getAttributes().attributes[0].rawKey) + " is an invalid dObject!"));
+                            : event.getAttributes().attributes[0].rawKey) + " is an invalid ObjectTag!"));
                     event.setReplaced("null");
                 }
                 return;
@@ -358,15 +358,15 @@ public class TagManager {
         return escapeOutput(readSingleTagObject(context, event).toString());
     }
 
-    public static dObject readSingleTagObject(ParseableTagPiece tag, TagContext context) {
+    public static ObjectTag readSingleTagObject(ParseableTagPiece tag, TagContext context) {
         if (tag.tagData.isInstant != context.instant) {
-            return new Element("<" + tag.content + ">");
+            return new ElementTag("<" + tag.content + ">");
         }
         ReplaceableTagEvent event = new ReplaceableTagEvent(tag.tagData, tag.content, context);
         return readSingleTagObject(context, event);
     }
 
-    public static dObject readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
+    public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         // Call Event
         int tT = DenizenCore.getImplementation().getTagTimeout();
         if (Debug.verbose) {
@@ -387,7 +387,7 @@ public class TagManager {
         if (!event.replaced()) {
             Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
                     "Tag <" + event.toString() + "> is invalid!");
-            return new Element(event.raw_tag);
+            return new ElementTag(event.raw_tag);
         }
         return event.getReplacedObj();
     }
@@ -398,7 +398,7 @@ public class TagManager {
 
         public String content;
 
-        public dObject objResult = null;
+        public ObjectTag objResult = null;
 
         public boolean isTag = false;
 
@@ -422,7 +422,7 @@ public class TagManager {
         }
     }
 
-    public static dObject parseChainObject(List<ParseableTagPiece> pieces, TagContext context, boolean repush) {
+    public static ObjectTag parseChainObject(List<ParseableTagPiece> pieces, TagContext context, boolean repush) {
         if (Debug.verbose) {
             Debug.log("Tag parse chain: " + pieces + "...");
             try {
@@ -434,14 +434,14 @@ public class TagManager {
         }
         if (pieces.size() < 2) {
             if (pieces.size() == 0) {
-                return new Element("");
+                return new ElementTag("");
             }
             ParseableTagPiece pzero = pieces.get(0);
             if (pzero.isError) {
                 Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, pzero.content);
             }
             else if (pzero.isTag) {
-                dObject objt = readSingleTagObject(pzero, context);
+                ObjectTag objt = readSingleTagObject(pzero, context);
                 if (repush && (!pzero.isTag || pzero.tagData.isInstant == context.instant)) {
                     ParseableTagPiece piece = new ParseableTagPiece();
                     piece.objResult = objt;
@@ -452,7 +452,7 @@ public class TagManager {
             else if (pzero.objResult != null) {
                 return pzero.objResult;
             }
-            return new Element(pieces.get(0).content);
+            return new ElementTag(pieces.get(0).content);
         }
         StringBuilder helpy = new StringBuilder();
         for (int i = 0; i < pieces.size(); i++) {
@@ -461,7 +461,7 @@ public class TagManager {
                 Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, p.content);
             }
             else if (p.isTag) {
-                dObject objt = readSingleTagObject(p, context);
+                ObjectTag objt = readSingleTagObject(p, context);
                 if (repush && (!p.isTag || p.tagData.isInstant == context.instant)) {
                     ParseableTagPiece piece = new ParseableTagPiece();
                     piece.objResult = objt;
@@ -476,7 +476,7 @@ public class TagManager {
                 helpy.append(p.content);
             }
         }
-        return new Element(helpy.toString());
+        return new ElementTag(helpy.toString());
     }
 
     public static String tag(String arg, TagContext context) {
@@ -557,7 +557,7 @@ public class TagManager {
         return pieces;
     }
 
-    public static dObject tagObject(String arg, TagContext context) {
+    public static ObjectTag tagObject(String arg, TagContext context) {
         return parseChainObject(genChain(arg, context), context, false);
     }
 
@@ -612,11 +612,11 @@ public class TagManager {
         holder[0] = -1;
     }
 
-    public static List<dObject> fillArgumentsObjects(List<String> args, TagContext context) {
+    public static List<ObjectTag> fillArgumentsObjects(List<String> args, TagContext context) {
         if (Debug.verbose) {
             Debug.log("Fill argument objects (old): " + args + ", " + context.instant + "...");
         }
-        List<dObject> filledArgs = new ArrayList<>();
+        List<ObjectTag> filledArgs = new ArrayList<>();
 
         int nested_level = 0;
         if (args != null) {
@@ -633,14 +633,14 @@ public class TagManager {
                     filledArgs.add(tagObject(argument, context));
                 }
                 else {
-                    filledArgs.add(new Element(argument));
+                    filledArgs.add(new ElementTag(argument));
                 }
             }
         }
         return filledArgs;
     }
 
-    public static void fillArgumentsObjects(List<dObject> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
+    public static void fillArgumentsObjects(List<ObjectTag> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
         if (Debug.verbose) {
             Debug.log("Fill argument objects: " + args + ", " + context.instant + ", " + targets.length + "...");
         }
@@ -657,11 +657,11 @@ public class TagManager {
                         aharg.object = parseChainObject(piece.value, context, repush);
                     }
                     String fullx = aharg.prefix + ":" + aharg.object.toString();
-                    args.set(argId, new Element(fullx));
+                    args.set(argId, new ElementTag(fullx));
                     strArgs.set(argId, fullx);
                 }
                 else {
-                    dObject created = parseChainObject(piece.value, context, repush);
+                    ObjectTag created = parseChainObject(piece.value, context, repush);
                     args.set(argId, created);
                     strArgs.set(argId, created.toString());
                     aharg.object = created;

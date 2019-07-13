@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
@@ -11,7 +11,7 @@ public abstract class TagContext implements Debuggable {
     public boolean instant;
     public boolean debug;
     public final ScriptEntry entry;
-    public final dScript script;
+    public final ScriptTag script;
     public final DefinitionProvider definitionProvider;
 
     @Override
@@ -24,11 +24,11 @@ public abstract class TagContext implements Debuggable {
         return false;
     }
 
-    public TagContext(boolean instant, boolean debug, ScriptEntry entry, dScript script) {
+    public TagContext(boolean instant, boolean debug, ScriptEntry entry, ScriptTag script) {
         this(instant, debug, entry, script, null);
     }
 
-    public TagContext(boolean instant, boolean debug, ScriptEntry entry, dScript script, DefinitionProvider definitionProvider) {
+    public TagContext(boolean instant, boolean debug, ScriptEntry entry, ScriptTag script, DefinitionProvider definitionProvider) {
         this.instant = instant;
         this.debug = debug;
         this.entry = entry;

@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * to the CommandExecuter
  */
 
-public abstract class ScriptQueue implements Debuggable, dObject, dObject.ObjectAttributable, DefinitionProvider, Adjustable {
+public abstract class ScriptQueue implements Debuggable, ObjectTag, ObjectTag.ObjectAttributable, DefinitionProvider, Adjustable {
     private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
 
     // <--[language]
@@ -196,14 +196,14 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     private long delay_time = 0;
 
 
-    private final HashMap<String, dObject> definitions = new HashMap<>();
+    private final HashMap<String, ObjectTag> definitions = new HashMap<>();
 
-    public dList determinations = null;
+    public ListTag determinations = null;
 
     private final HashMap<String, ScriptEntry> held_entries = new HashMap<>();
 
 
-    public dScript script;
+    public ScriptTag script;
 
     /**
      * Creates a ScriptQueue instance. Users of
@@ -274,12 +274,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
      * @param id The name of the definitions
      * @return The value of the definitions, or null
      */
-    public dObject getContext(String id) {
+    public ObjectTag getContext(String id) {
         id = CoreUtilities.toLowerCase(id);
         if (contextSource == null) {
             return null;
         }
-        dObject obj = cachedContext.get(id);
+        ObjectTag obj = cachedContext.get(id);
         if (obj != null) {
             return obj;
         }
@@ -293,7 +293,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
     public ContextSource contextSource = null;
 
-    public HashMap<String, dObject> cachedContext;
+    public HashMap<String, ObjectTag> cachedContext;
 
     public void setContextSource(ContextSource source) {
         contextSource = source;
@@ -301,7 +301,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     @Override
-    public dObject getDefinitionObject(String definition) {
+    public ObjectTag getDefinitionObject(String definition) {
         if (definition == null) {
             return null;
         }
@@ -329,14 +329,14 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
 
-    public void addDefinition(String definition, dObject value) {
+    public void addDefinition(String definition, ObjectTag value) {
         definitions.put(CoreUtilities.toLowerCase(definition), value);
     }
 
 
     @Override
     public void addDefinition(String definition, String value) {
-        definitions.put(CoreUtilities.toLowerCase(definition), new Element(value));
+        definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
     }
 
 
@@ -360,7 +360,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
      * @return all current definitions, empty if none.
      */
     @Override
-    public Map<String, dObject> getAllDefinitions() {
+    public Map<String, ObjectTag> getAllDefinitions() {
         return definitions;
     }
 
@@ -434,7 +434,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
      * @param delay how long to delay initially.
      * @return the newly created queue.
      */
-    public TimedQueue forceToTimed(Duration delay) {
+    public TimedQueue forceToTimed(DurationTag delay) {
         Runnable r = callback;
         callback = null;
         stop();
@@ -447,7 +447,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
             entry.setInstant(true);
         }
         newQueue.addEntries(getEntries());
-        for (Map.Entry<String, dObject> def : getAllDefinitions().entrySet()) {
+        for (Map.Entry<String, ObjectTag> def : getAllDefinitions().entrySet()) {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
         newQueue.setContextSource(contextSource);
@@ -528,7 +528,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
         String name = getName();
         if (is_delayed) {
             queueDebug("Delaying " + name + " '<QUEUE>'" + " for '"
-                    + new Duration(((double) delay) / 1000f).identify() + "'...");
+                    + new DurationTag(((double) delay) / 1000f).identify() + "'...");
         }
         else {
             queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
@@ -886,66 +886,66 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // <--[tag]
         // @attribute <q@queue.id>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns the id of the queue.
         // -->
         registerTag("id", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((ScriptQueue) object).id).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptQueue) object).id).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.size>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns the number of script entries in the queue.
         // -->
         registerTag("size", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((ScriptQueue) object).script_entries.size()).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((ScriptQueue) object).script_entries.size()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.start_time>
-        // @returns Duration
+        // @returns DurationTag
         // @description
         // Returns the time this queue started as a duration.
         // -->
         registerTag("start_time", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Duration(((ScriptQueue) object).startTimeMilli / 50).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new DurationTag(((ScriptQueue) object).startTimeMilli / 50).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.time_ran>
-        // @returns Duration
+        // @returns DurationTag
         // @description
         // Returns the time this queue has ran for (the length of time between now and when the queue started) as a duration.
         // -->
         registerTag("time_ran", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 long timeNano = System.nanoTime() - ((ScriptQueue) object).startTime;
-                return new Duration(timeNano / (1000000 * 1000.0)).getAttribute(attribute.fulfill(1));
+                return new DurationTag(timeNano / (1000000 * 1000.0)).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.state>
-        // @returns Element
+        // @returns ElementTag
         // @description
         // Returns 'stopping', 'running', 'paused', or 'unknown'.
         // -->
         registerTag("state", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 String state;
                 if ((object instanceof Delayable) && ((Delayable) object).isPaused()) {
                     state = "paused";
@@ -959,19 +959,19 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
                 else {
                     state = "unknown";
                 }
-                return new Element(state).getAttribute(attribute.fulfill(1));
+                return new ElementTag(state).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.script>
-        // @returns dScript
+        // @returns ScriptTag
         // @description
         // Returns the script that started this queue.
         // -->
         registerTag("script", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (((ScriptQueue) object).script == null) {
                     return null;
                 }
@@ -981,14 +981,14 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // <--[tag]
         // @attribute <q@queue.commands>
-        // @returns dList
+        // @returns ListTag
         // @description
         // Returns a list of commands waiting in the queue.
         // -->
         registerTag("commands", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                dList commands = new dList();
+            public String run(Attribute attribute, ObjectTag object) {
+                ListTag commands = new ListTag();
                 for (ScriptEntry entry : ((ScriptQueue) object).script_entries) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(entry.getCommandName()).append(" ");
@@ -1003,27 +1003,27 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // <--[tag]
         // @attribute <q@queue.definitions>
-        // @returns dList
+        // @returns ListTag
         // @description
         // Returns the names of all definitions that were passed to the current queue.
         // -->
         registerTag("definitions", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new dList(((ScriptQueue) object).getAllDefinitions().keySet()).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ListTag(((ScriptQueue) object).getAllDefinitions().keySet()).getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
         // @attribute <q@queue.definition[<definition>]>
-        // @returns dObject
+        // @returns ObjectTag
         // @description
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
         registerTag("definition", new TagRunnable.ObjectForm() {
             @Override
-            public dObject run(Attribute attribute, dObject object) {
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag q@queue.definition[...] must have a value.");
                     return null;
@@ -1034,14 +1034,14 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
 
         // <--[tag]
         // @attribute <q@queue.determination>
-        // @returns dList
+        // @returns ListTag
         // @description
         // Returns the values that have been determined via <@link command Determine>
         // for this queue, or null if there is none.
         // -->
         registerTag("determination", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (((ScriptQueue) object).determinations == null) {
                     return null;
                 }
@@ -1072,7 +1072,7 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     @Override
-    public <T extends dObject> T asObjectType(Class<T> type, TagContext context) {
+    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
         return null;
     }
 
@@ -1082,12 +1082,12 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
     }
 
     @Override
-    public Class<? extends dObject> getdObjectClass() {
+    public Class<? extends ObjectTag> getdObjectClass() {
         return ScriptQueue.class;
     }
 
     @Override
-    public dObject getObjectAttribute(Attribute attribute) {
+    public ObjectTag getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
             return null;
         }
@@ -1113,15 +1113,15 @@ public abstract class ScriptQueue implements Debuggable, dObject, dObject.Object
                 Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                         "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
             }
-            return new Element(tr.run(attribute, this));
+            return new ElementTag(tr.run(attribute, this));
         }
 
-        dObject returned = CoreUtilities.autoPropertyTagObject(this, attribute);
+        ObjectTag returned = CoreUtilities.autoPropertyTagObject(this, attribute);
         if (returned != null) {
             return returned;
         }
 
-        return new Element(identify()).getObjectAttribute(attribute);
+        return new ElementTag(identify()).getObjectAttribute(attribute);
     }
 
     @Override

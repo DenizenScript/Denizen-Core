@@ -27,7 +27,7 @@ public class Argument implements Cloneable {
     public String value;
     public String lower_value;
 
-    public dObject object = null;
+    public ObjectTag object = null;
 
     public boolean needsFill = false;
     public boolean hasSpecialPrefix = false;
@@ -55,10 +55,10 @@ public class Argument implements Cloneable {
             raw_value = this.value;
         }
         lower_value = CoreUtilities.toLowerCase(this.value);
-        object = new Element(this.value);
+        object = new ElementTag(this.value);
     }
 
-    public Argument(String prefix, dObject value) {
+    public Argument(String prefix, ObjectTag value) {
         this.prefix = prefix;
         this.value = TagManager.cleanOutputFully(value.toString());
         if (prefix != null) {
@@ -75,17 +75,17 @@ public class Argument implements Cloneable {
             raw_value = this.value;
         }
         lower_value = CoreUtilities.toLowerCase(this.value);
-        if (value instanceof Element) {
-            object = new Element(this.value);
+        if (value instanceof ElementTag) {
+            object = new ElementTag(this.value);
         }
         else {
             object = value;
         }
     }
 
-    public Argument(dObject obj) {
+    public Argument(ObjectTag obj) {
         object = obj;
-        if (obj instanceof Element) {
+        if (obj instanceof ElementTag) {
             fillStr(obj.toString());
         }
         else {
@@ -105,7 +105,7 @@ public class Argument implements Cloneable {
         if ((first_space > -1 && first_space < first_colon) || first_colon == -1) {
             value = string;
             if (object == null) {
-                object = new Element(value);
+                object = new ElementTag(value);
             }
         }
         else {
@@ -117,7 +117,7 @@ public class Argument implements Cloneable {
                 lower_prefix = CoreUtilities.toLowerCase(prefix);
             }
             value = string.substring(first_colon + 1);
-            object = new Element(value);
+            object = new ElementTag(value);
         }
         lower_value = CoreUtilities.toLowerCase(value);
     }
@@ -188,11 +188,11 @@ public class Argument implements Cloneable {
         return value;
     }
 
-    public dList getList() {
-        if (object instanceof dList) {
-            return (dList) object;
+    public ListTag getList() {
+        if (object instanceof ListTag) {
+            return (ListTag) object;
         }
-        return dList.valueOf(value);
+        return ListTag.valueOf(value);
     }
 
     public static HashSet<String> precalcEnum(Enum<?>[] values) {
@@ -209,7 +209,7 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesEnumList(HashSet<String> values) {
-        dList list = getList();
+        ListTag list = getList();
         for (String string : list) {
             String tval = string.replace("_", "").toUpperCase();
             if (values.contains(tval)) {
@@ -230,7 +230,7 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesEnumList(Enum<?>[] values) {
-        dList list = getList();
+        ListTag list = getList();
         for (String string : list) {
             String tval = string.replace("_", "").toUpperCase();
             for (Enum<?> value : values) {
@@ -311,16 +311,16 @@ public class Argument implements Cloneable {
     }
 
 
-    // Check if this argument matches a certain dObject type
-    public boolean matchesArgumentType(Class<? extends dObject> dClass) {
+    // Check if this argument matches a certain ObjectTag type
+    public boolean matchesArgumentType(Class<? extends ObjectTag> dClass) {
         return CoreUtilities.canPossiblyBeType(object, dClass);
     }
 
 
-    // Check if this argument matches any of multiple dObject types
-    public boolean matchesArgumentTypes(Class<? extends dObject>... dClasses) {
+    // Check if this argument matches any of multiple ObjectTag types
+    public boolean matchesArgumentTypes(Class<? extends ObjectTag>... dClasses) {
 
-        for (Class<? extends dObject> c : dClasses) {
+        for (Class<? extends ObjectTag> c : dClasses) {
             if (matchesArgumentType(c)) {
                 return true;
             }
@@ -330,24 +330,24 @@ public class Argument implements Cloneable {
     }
 
 
-    // Check if this argument matches a dList of a certain dObject
-    public boolean matchesArgumentList(Class<? extends dObject> dClass) {
+    // Check if this argument matches a ListTag of a certain ObjectTag
+    public boolean matchesArgumentList(Class<? extends ObjectTag> dClass) {
 
-        dList list = getList();
+        ListTag list = getList();
 
         return list.isEmpty() || list.containsObjectsFrom(dClass);
     }
 
 
-    public Element asElement() {
-        if (object instanceof Element) {
-            return (Element) object;
+    public ElementTag asElement() {
+        if (object instanceof ElementTag) {
+            return (ElementTag) object;
         }
-        return new Element(prefix, value);
+        return new ElementTag(prefix, value);
     }
 
 
-    public <T extends dObject> T asType(Class<T> clazz) {
+    public <T extends ObjectTag> T asType(Class<T> clazz) {
         T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
         if (arg != null) {
             arg.setPrefix(prefix);

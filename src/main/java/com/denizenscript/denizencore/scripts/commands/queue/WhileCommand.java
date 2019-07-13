@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -60,13 +60,13 @@ public class WhileCommand extends BracedCommand {
         if (scriptEntry.getArguments().size() == 1) {
             String arg = scriptEntry.getArguments().get(0);
             if (arg.equalsIgnoreCase("stop")) {
-                scriptEntry.addObject("stop", new Element(true));
+                scriptEntry.addObject("stop", new ElementTag(true));
             }
             else if (arg.equalsIgnoreCase("next")) {
-                scriptEntry.addObject("next", new Element(true));
+                scriptEntry.addObject("next", new ElementTag(true));
             }
             else if (arg.equals("\0CALLBACK")) {
-                scriptEntry.addObject("callback", new Element(true));
+                scriptEntry.addObject("callback", new ElementTag(true));
             }
         }
         for (String arg : scriptEntry.getArguments()) {
@@ -87,9 +87,9 @@ public class WhileCommand extends BracedCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        Element stop = scriptEntry.getElement("stop");
-        Element next = scriptEntry.getElement("next");
-        Element callback = scriptEntry.getElement("callback");
+        ElementTag stop = scriptEntry.getElement("stop");
+        ElementTag next = scriptEntry.getElement("next");
+        ElementTag callback = scriptEntry.getElement("callback");
 
         if (stop != null && stop.asBoolean()) {
             // Report to dB

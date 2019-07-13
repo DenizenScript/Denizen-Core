@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ScriptTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -32,12 +32,12 @@ public class ScriptTags {
         }
 
         // Stage the location
-        dScript script = null;
+        ScriptTag script = null;
 
         // Check name context for a specified script, or check
         // the ScriptEntry for a 'script' context
-        if (event.hasNameContext() && dScript.matches(event.getNameContext())) {
-            script = dScript.valueOf(event.getNameContext(), event.getAttributes().context);
+        if (event.hasNameContext() && ScriptTag.matches(event.getNameContext())) {
+            script = ScriptTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
         else if (event.getScript() != null) {
             script = event.getScript();
@@ -49,7 +49,7 @@ public class ScriptTags {
             script = event.getScriptEntry().getScript();
         }
         else if (event.getScriptEntry().hasObject("script")) {
-            script = (dScript) event.getScriptEntry().getObject("script");
+            script = (ScriptTag) event.getScriptEntry().getObject("script");
         }
 
         // Build and fill attributes

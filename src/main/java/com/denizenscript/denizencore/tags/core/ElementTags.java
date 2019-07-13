@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -29,7 +29,7 @@ public class ElementTags {
         }
 
         Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(new Element(event.getNameContext()), attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(event.getNameContext()), attribute.fulfill(1)));
 
     }
 }

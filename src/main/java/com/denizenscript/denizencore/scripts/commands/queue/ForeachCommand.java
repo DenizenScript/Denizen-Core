@@ -3,9 +3,9 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dList;
+import com.denizenscript.denizencore.objects.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 
@@ -17,12 +17,12 @@ public class ForeachCommand extends BracedCommand {
     // @Name Foreach
     // @Syntax foreach [stop/next/<object>|...] (as:<name>) [<commands>]
     // @Required 1
-    // @Short Loops through a dList, running a set of commands for each item.
+    // @Short Loops through a ListTag, running a set of commands for each item.
     // @Group queue
     // @Video /denizen/vids/Loops
     //
     // @Description
-    // Loops through a dList of any type. For each item in the dList, the specified commands will be ran for
+    // Loops through a ListTag of any type. For each item in the ListTag, the specified commands will be ran for
     // that list entry. To call the value of the entry while in the loop, you can use <def[value]>.
     //
     // Optionally, specify "as:<name>" to change the definition name to something other than "value".
@@ -50,7 +50,7 @@ public class ForeachCommand extends BracedCommand {
 
     private class ForeachData {
         public int index;
-        public dList list;
+        public ListTag list;
     }
 
     @Override
@@ -67,17 +67,17 @@ public class ForeachCommand extends BracedCommand {
 
             if (!handled
                     && arg.matches("stop")) {
-                scriptEntry.addObject("stop", new Element(true));
+                scriptEntry.addObject("stop", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
                     && arg.matches("next")) {
-                scriptEntry.addObject("next", new Element(true));
+                scriptEntry.addObject("next", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
                     && arg.matches("\0CALLBACK")) {
-                scriptEntry.addObject("callback", new Element(true));
+                scriptEntry.addObject("callback", new ElementTag(true));
                 handled = true;
             }
             else if (!scriptEntry.hasObject("as_name")
@@ -85,7 +85,7 @@ public class ForeachCommand extends BracedCommand {
                 scriptEntry.addObject("as_name", arg.asElement());
             }
             else if (!handled) {
-                scriptEntry.addObject("list", dList.valueOf(arg.raw_value));
+                scriptEntry.addObject("list", ListTag.valueOf(arg.raw_value));
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }
@@ -102,18 +102,18 @@ public class ForeachCommand extends BracedCommand {
             throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
         }
 
-        scriptEntry.defaultObject("as_name", new Element("value"));
+        scriptEntry.defaultObject("as_name", new ElementTag("value"));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        Element stop = scriptEntry.getElement("stop");
-        Element next = scriptEntry.getElement("next");
-        Element callback = scriptEntry.getElement("callback");
-        dList list = (dList) scriptEntry.getObject("list");
-        Element as_name = scriptEntry.getElement("as_name");
+        ElementTag stop = scriptEntry.getElement("stop");
+        ElementTag next = scriptEntry.getElement("next");
+        ElementTag callback = scriptEntry.getElement("callback");
+        ListTag list = (ListTag) scriptEntry.getObject("list");
+        ElementTag as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
             // Report to dB

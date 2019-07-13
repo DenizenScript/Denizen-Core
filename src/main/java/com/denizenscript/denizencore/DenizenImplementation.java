@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore;
 
 import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.dList;
+import com.denizenscript.denizencore.objects.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -121,9 +121,9 @@ public interface DenizenImplementation {
 
     String scriptQueueSpeed();
 
-    dList valueOfFlagdList(String input);
+    ListTag valueOfFlagListTag(String input);
 
-    boolean matchesFlagdList(String input);
+    boolean matchesFlagListTag(String input);
 
     String getLastEntryFromFlag(String flag);
 

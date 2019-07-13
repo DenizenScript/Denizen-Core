@@ -34,7 +34,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public List<Argument> args_ref = null;
 
-        public dScript script = null;
+        public ScriptTag script = null;
 
         public List<Object> insideList = null;
 
@@ -80,7 +80,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public List<String> args = null;
 
-    public List<dObject> processed_arguments = null;
+    public List<ObjectTag> processed_arguments = null;
 
     public ScriptEntryData entryData = null;
 
@@ -325,18 +325,18 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     /**
      * Adds a context object to the script entry. Just provide a key and an object.
-     * Technically any type of object can be stored, however providing dObjects
+     * Technically any type of object can be stored, however providing ObjectTags
      * is preferred.
      *
      * @param key    the name of the object
-     * @param object the object, preferably a dObject
+     * @param object the object, preferably a ObjectTag
      */
     public ScriptEntry addObject(String key, Object object) {
         if (object == null) {
             return this;
         }
-        if (object instanceof dObject) {
-            ((dObject) object).setPrefix(key);
+        if (object instanceof ObjectTag) {
+            ((ObjectTag) object).setPrefix(key);
         }
         objects.put(CoreUtilities.toLowerCase(key), object);
         return this;
@@ -402,7 +402,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void setArgument(int ind, String val) {
         args.set(ind, val);
         if (processed_arguments != null) {
-            processed_arguments.set(ind, new Element(val));
+            processed_arguments.set(ind, new ElementTag(val));
         }
     }
 
@@ -411,10 +411,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return this;
     }
 
-    public ScriptEntry setArgumentsObjects(List<dObject> arguments) {
+    public ScriptEntry setArgumentsObjects(List<ObjectTag> arguments) {
         processed_arguments = arguments;
         args = new ArrayList<>(arguments.size()); // TODO: Placeholder! Remove old string args entirely!
-        for (dObject tmp : arguments) {
+        for (ObjectTag tmp : arguments) {
             args.add(TagManager.escapeOutput(tmp.toString()));
         }
         return this;
@@ -423,7 +423,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void objectify() {
         processed_arguments = new ArrayList<>(args.size());
         for (String arg : args) {
-            processed_arguments.add(new Element(arg));
+            processed_arguments.add(new ElementTag(arg));
         }
     }
 
@@ -474,16 +474,16 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public <T extends dObject> T getdObject(String key) {
+    public <T extends ObjectTag> T getdObject(String key) {
         try {
             // If an ENUM, return as an Element
             Object gotten = objects.get(key);
             if (gotten instanceof Enum) {
-                return (T) new Element(((Enum) gotten).name());
+                return (T) new ElementTag(((Enum) gotten).name());
             }
-            // Otherwise, just return the stored dObject
+            // Otherwise, just return the stored ObjectTag
             return (T) gotten;
-            // If not a dObject, return null
+            // If not a ObjectTag, return null
         }
         catch (Exception ex) {
             if (Debug.verbose) {
@@ -493,9 +493,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public Element getElement(String key) {
+    public ElementTag getElement(String key) {
         try {
-            return (Element) objects.get(key);
+            return (ElementTag) objects.get(key);
         }
         catch (Exception ex) {
             if (Debug.verbose) {
@@ -514,13 +514,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // CORE LINKED OBJECTS
     ///////
 
-    public dScript getScript() {
+    public ScriptTag getScript() {
         return internal.script;
     }
 
 
     public ScriptEntry setScript(String scriptName) {
-        internal.script = dScript.valueOf(scriptName);
+        internal.script = ScriptTag.valueOf(scriptName);
         return this;
     }
 

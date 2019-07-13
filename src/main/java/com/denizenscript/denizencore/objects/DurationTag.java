@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
  */
-public class Duration implements dObject {
+public class DurationTag implements ObjectTag {
 
     // <--[language]
     // @name Duration
@@ -39,7 +39,7 @@ public class Duration implements dObject {
     /////////////////
 
     // Define a 'ZERO' Duration
-    final public static Duration ZERO = new Duration(0);
+    final public static DurationTag ZERO = new DurationTag(0);
 
 
     /////////////////////
@@ -58,7 +58,7 @@ public class Duration implements dObject {
     // For general info, see <@link language Duration>
     // -->
 
-    public static Duration valueOf(String string) {
+    public static DurationTag valueOf(String string) {
         return valueOf(string, null);
     }
 
@@ -71,7 +71,7 @@ public class Duration implements dObject {
      * @return a Duration, or null if incorrectly formatted.
      */
     @Fetchable("d")
-    public static Duration valueOf(String string, TagContext context) {
+    public static DurationTag valueOf(String string, TagContext context) {
         if (string == null) {
             return null;
         }
@@ -82,14 +82,14 @@ public class Duration implements dObject {
         if (string.contains("-") && !string.contains("e-")) {
             String[] split = string.split("-", 2);
             if (split.length == 2) {
-                Duration low = Duration.valueOf(split[0]);
-                Duration high = Duration.valueOf(split[1]);
+                DurationTag low = DurationTag.valueOf(split[0]);
+                DurationTag high = DurationTag.valueOf(split[1]);
 
                 // Make sure 'low' and 'high' returned valid Durations,
                 // and that 'low' is less time than 'high'.
                 if (low != null && high != null) {
                     if (high.getSecondsAsInt() < low.getSecondsAsInt()) {
-                        Duration temp = low;
+                        DurationTag temp = low;
                         low = high;
                         high = temp;
                     }
@@ -101,7 +101,7 @@ public class Duration implements dObject {
                                 + " and " + high.identify() + "... " + seconds + "s");
                     }
 
-                    return new Duration(seconds);
+                    return new DurationTag(seconds);
 
                 }
                 else {
@@ -116,27 +116,27 @@ public class Duration implements dObject {
         try {
             if (string.endsWith("t")) {
                 // Matches TICKS, so 1 tick = .05 seconds
-                return new Duration(Double.valueOf(numericString) * 0.05);
+                return new DurationTag(Double.valueOf(numericString) * 0.05);
             }
             else if (string.endsWith("d")) {
                 // Matches DAYS, so 1 day = 86400 seconds
-                return new Duration(Double.valueOf(numericString) * 86400);
+                return new DurationTag(Double.valueOf(numericString) * 86400);
             }
             else if (string.endsWith("w")) {
                 // Matches WEEKS, so 1 week = 604800 seconds
-                return new Duration(Double.valueOf(numericString) * 604800);
+                return new DurationTag(Double.valueOf(numericString) * 604800);
             }
             else if (string.endsWith("m")) {
                 // Matches MINUTES, so 1 minute = 60 seconds
-                return new Duration(Double.valueOf(numericString) * 60);
+                return new DurationTag(Double.valueOf(numericString) * 60);
             }
             else if (string.endsWith("h")) {
                 // Matches HOURS, so 1 hour = 3600 seconds
-                return new Duration(Double.valueOf(numericString) * 3600);
+                return new DurationTag(Double.valueOf(numericString) * 3600);
             }
             else {
                 // seconds
-                return new Duration(Double.valueOf(numericString));
+                return new DurationTag(Double.valueOf(numericString));
             }
         }
         catch (Exception e) {
@@ -170,7 +170,7 @@ public class Duration implements dObject {
      *
      * @param seconds the number of seconds.
      */
-    public Duration(double seconds) {
+    public DurationTag(double seconds) {
         this.seconds = seconds;
         if (this.seconds < 0) {
             this.seconds = 0;
@@ -182,7 +182,7 @@ public class Duration implements dObject {
      *
      * @param seconds the number of seconds.
      */
-    public Duration(int seconds) {
+    public DurationTag(int seconds) {
         this.seconds = seconds;
         if (this.seconds < 0) {
             this.seconds = 0;
@@ -194,7 +194,7 @@ public class Duration implements dObject {
      *
      * @param ticks the number of ticks.
      */
-    public Duration(long ticks) {
+    public DurationTag(long ticks) {
         this.seconds = ticks / 20.0;
         if (this.seconds < 0) {
             this.seconds = 0;
@@ -211,7 +211,7 @@ public class Duration implements dObject {
     private double seconds;
 
 
-    // Duration's default dObject prefix.
+    // Duration's default ObjectTag prefix.
     private String prefix = "Duration";
 
 
@@ -286,7 +286,7 @@ public class Duration implements dObject {
 
 
     /////////////////////
-    //   dObject Methods
+    //   ObjectTag Methods
     /////////////////
 
     @Override
@@ -326,7 +326,7 @@ public class Duration implements dObject {
     }
 
     @Override
-    public dObject setPrefix(String prefix) {
+    public ObjectTag setPrefix(String prefix) {
         this.prefix = prefix;
         return this;
     }
@@ -338,257 +338,257 @@ public class Duration implements dObject {
         /////////////////
 
         // <--[tag]
-        // @attribute <d@duration.in_years>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_years>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of years in the Duration.
         // -->
         registerTag("in_years", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds / (86400 * 365)).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / (86400 * 365)).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("years", registeredTags.get("in_years"));
 
         // <--[tag]
-        // @attribute <d@duration.in_weeks>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_weeks>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of weeks in the Duration.
         // -->
         registerTag("in_weeks", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds / 604800).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 604800).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("weeks", registeredTags.get("in_weeks"));
 
         // <--[tag]
-        // @attribute <d@duration.in_days>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_days>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of days in the Duration.
         // -->
         registerTag("in_days", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds / 86400).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 86400).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("days", registeredTags.get("in_days"));
 
         // <--[tag]
-        // @attribute <d@duration.in_hours>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_hours>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of hours in the Duration.
         // -->
         registerTag("in_hours", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds / 3600).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 3600).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("hours", registeredTags.get("in_hours"));
 
         // <--[tag]
-        // @attribute <d@duration.in_minutes>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_minutes>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of minutes in the Duration.
         // -->
         registerTag("in_minutes", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds / 60).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 60).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("minutes", registeredTags.get("in_minutes"));
 
         // <--[tag]
-        // @attribute <d@duration.in_seconds>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_seconds>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of seconds in the Duration.
         // -->
         registerTag("in_seconds", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("seconds", registeredTags.get("in_seconds"));
 
         // <--[tag]
-        // @attribute <d@duration.in_milliseconds>
-        // @returns Element(Decimal)
+        // @attribute <DurationTag.in_milliseconds>
+        // @returns ElementTag(Decimal)
         // @description
         // returns the number of milliseconds in the Duration.
         // -->
         registerTag("in_milliseconds", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).seconds * 1000).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds * 1000).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("milliseconds", registeredTags.get("in_milliseconds"));
 
         // <--[tag]
-        // @attribute <d@duration.in_ticks>
-        // @returns Element(Number)
+        // @attribute <DurationTag.in_ticks>
+        // @returns ElementTag(Number)
         // @description
         // returns the number of ticks in the Duration. (20t/second)
         // -->
         registerTag("in_ticks", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element((long) (((Duration) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag((long) (((DurationTag) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("ticks", registeredTags.get("in_ticks"));
 
         // <--[tag]
-        // @attribute <d@duration.sub[<duration>]>
-        // @returns Element(Number)
+        // @attribute <DurationTag.sub[<duration>]>
+        // @returns ElementTag(Number)
         // @description
         // returns this duration minus another.
         // -->
         registerTag("sub", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag d@duration.sub[...] must have a value.");
+                    Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                     return null;
                 }
-                return new Duration(((Duration) object).getTicks() - Duration.valueOf(attribute.getContext(1)).getTicks())
+                return new DurationTag(((DurationTag) object).getTicks() - DurationTag.valueOf(attribute.getContext(1)).getTicks())
                         .getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <d@duration.add[<duration>]>
-        // @returns Element(Number)
+        // @attribute <DurationTag.add[<duration>]>
+        // @returns ElementTag(Number)
         // @description
         // returns this duration plus another.
         // -->
         registerTag("add", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
+            public String run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag d@duration.add[...] must have a value.");
+                    Debug.echoError("The tag DurationTag.add[...] must have a value.");
                     return null;
                 }
-                return new Duration(((Duration) object).getTicks() + Duration.valueOf(attribute.getContext(1)).getTicks())
+                return new DurationTag(((DurationTag) object).getTicks() + DurationTag.valueOf(attribute.getContext(1)).getTicks())
                         .getAttribute(attribute.fulfill(1));
             }
         });
 
         // <--[tag]
-        // @attribute <d@duration.time>
-        // @returns Element
+        // @attribute <DurationTag.time>
+        // @returns ElementTag
         // @description
         // returns the date-time specified by the duration object.
         // -->
         registerTag("time", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                Date currentDate = new Date(((Duration) object).getTicks() * 50);
+            public String run(Attribute attribute, ObjectTag object) {
+                Date currentDate = new Date(((DurationTag) object).getTicks() * 50);
                 SimpleDateFormat format = new SimpleDateFormat();
 
                 attribute = attribute.fulfill(1);
 
                 // <--[tag]
-                // @attribute <d@duration.time.year>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.year>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current year of the time specified by the duration object.
                 // -->
                 if (attribute.startsWith("year")) {
-                    return new Element(currentDate.getYear() + 1900 /* ??? */).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getYear() + 1900 /* ??? */).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.month>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.month>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current month of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("month")) {
-                    return new Element(currentDate.getMonth() + 1).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getMonth() + 1).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.day>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.day>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current day of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("day")) {
-                    return new Element(currentDate.getDate()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getDate()).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.day_of_week>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.day_of_week>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current day-of-the-week of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("day_of_week")) {
-                    return new Element(currentDate.getDay()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getDay()).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.hour>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.hour>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current hour of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("hour")) {
-                    return new Element(currentDate.getHours()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getHours()).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.minute>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.minute>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current minute of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("minute")) {
-                    return new Element(currentDate.getMinutes()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getMinutes()).getAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
-                // @attribute <d@duration.time.second>
-                // @returns Element(Number)
+                // @attribute <DurationTag.time.second>
+                // @returns ElementTag(Number)
                 // @description
                 // Returns the current second of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("second")) {
-                    return new Element(currentDate.getSeconds()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getSeconds()).getAttribute(attribute.fulfill(1));
                 }
 
                 // TODO: Custom format option
                 else {
                     format.applyPattern("EEE, d MMM yyyy HH:mm:ss");
-                    return new Element(format.format(currentDate))
+                    return new ElementTag(format.format(currentDate))
                             .getAttribute(attribute);
                 }
             }
         });
 
         // <--[tag]
-        // @attribute <d@duration.type>
-        // @returns Element
+        // @attribute <DurationTag.type>
+        // @returns ElementTag
         // @description
         // Always returns 'Duration' for Duration objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
         registerTag("type", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element("Duration").getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag("Duration").getAttribute(attribute.fulfill(1));
             }
         });
 
@@ -597,8 +597,8 @@ public class Duration implements dObject {
         /////////////////
 
         // <--[tag]
-        // @attribute <d@duration.formatted>
-        // @returns Element
+        // @attribute <DurationTag.formatted>
+        // @returns ElementTag
         // @description
         // returns the value of the duration in an easily readable
         // format like 2h 30m, where minutes are only shown if there
@@ -607,8 +607,8 @@ public class Duration implements dObject {
         // -->
         registerTag("formatted", new TagRunnable() {
             @Override
-            public String run(Attribute attribute, dObject object) {
-                return new Element(((Duration) object).formatted()).getAttribute(attribute.fulfill(1));
+            public String run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).formatted()).getAttribute(attribute.fulfill(1));
             }
         });
         registerTag("value", registeredTags.get("formatted"));
@@ -648,7 +648,7 @@ public class Duration implements dObject {
             return returned;
         }
 
-        return new Element(identify()).getAttribute(attribute);
+        return new ElementTag(identify()).getAttribute(attribute);
     }
 
     public String formatted() {

@@ -9,7 +9,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
@@ -57,7 +57,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("overwrite")
                     && arg.matches("overwrite")) {
-                scriptEntry.addObject("overwrite", new Element("true"));
+                scriptEntry.addObject("overwrite", new ElementTag("true"));
             }
             else {
                 arg.reportUnhandled();
@@ -72,14 +72,14 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             throw new InvalidArgumentsException("Must have a valid destination!");
         }
 
-        scriptEntry.defaultObject("overwrite", new Element("false"));
+        scriptEntry.defaultObject("overwrite", new ElementTag("false"));
     }
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        Element origin = scriptEntry.getElement("origin");
-        Element destination = scriptEntry.getElement("destination");
-        Element overwrite = scriptEntry.getElement("overwrite");
+        ElementTag origin = scriptEntry.getElement("origin");
+        ElementTag destination = scriptEntry.getElement("destination");
+        ElementTag overwrite = scriptEntry.getElement("overwrite");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
@@ -87,7 +87,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
 
         if (!DenizenCore.getImplementation().allowFileCopy()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
-            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
@@ -100,27 +100,27 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
 
         if (!DenizenCore.getImplementation().canReadFile(o)) {
             Debug.echoError("Server config denies reading files in that location.");
-            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
         if (!o.exists()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "File copy failed, origin does not exist!");
-            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
 
         if (!DenizenCore.getImplementation().canWriteToFile(d)) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
-            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
 
         if (dexists && !disdir && !ow) {
             Debug.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
-            scriptEntry.addObject("success", new Element("false"));
+            scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
@@ -140,12 +140,12 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                     else {
                         Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
                     }
-                    scriptEntry.addObject("success", new Element("true"));
+                    scriptEntry.addObject("success", new ElementTag("true"));
                     scriptEntry.setFinished(true);
                 }
                 catch (Exception e) {
                     Debug.echoError(scriptEntry.getResidingQueue(), e);
-                    scriptEntry.addObject("success", new Element("false"));
+                    scriptEntry.addObject("success", new ElementTag("false"));
                     scriptEntry.setFinished(true);
                 }
             }

@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.utilities.data;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 
 import java.util.List;
@@ -39,11 +39,11 @@ public class DataActionHelper {
             }
             else {
                 toReturn.type = DataActionType.SET;
-                toReturn.inputValue = new Element(action);
+                toReturn.inputValue = new ElementTag(action);
             }
             return toReturn;
         }
-        toReturn.inputValue = new Element(split.get(2));
+        toReturn.inputValue = new ElementTag(split.get(2));
         if (action.equals("->")) {
             toReturn.type = DataActionType.INSERT;
         }
@@ -70,7 +70,7 @@ public class DataActionHelper {
         }
         else {
             toReturn.type = DataActionType.SET;
-            toReturn.inputValue = new Element(split.get(1) + ":" + split.get(2));
+            toReturn.inputValue = new ElementTag(split.get(1) + ":" + split.get(2));
         }
         return toReturn;
     }

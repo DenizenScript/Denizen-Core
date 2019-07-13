@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-public interface Adjustable extends dObject {
+public interface Adjustable extends ObjectTag {
 
     /**
      * Sets a specific attribute using this object to modify the necessary data.

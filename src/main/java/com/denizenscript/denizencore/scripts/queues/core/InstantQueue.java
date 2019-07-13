@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.objects.Duration;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.DurationTag;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 
@@ -83,13 +83,13 @@ public class InstantQueue extends ScriptQueue {
 
         // Meta defined in TimedQueue
         if (attribute.startsWith("speed")) {
-            return new Duration(0).getAttribute(attribute.fulfill(1));
+            return new DurationTag(0).getAttribute(attribute.fulfill(1));
         }
 
         // Meta defined in TimedQueue
         if (attribute.startsWith("type")) {
 
-            return new Element("Instant").getAttribute(attribute.fulfill(1));
+            return new ElementTag("Instant").getAttribute(attribute.fulfill(1));
         }
 
         return super.getAttribute(attribute);

@@ -8,9 +8,9 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dList;
+import com.denizenscript.denizencore.objects.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.EscapeTags;
 
@@ -42,7 +42,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // as this will delay the commands following the connect command until after the connection is established.
     //
     // @Tags
-    // <entry[saveName].result> returns a dList of all rows from a query or update command, of the form li@escaped_text/escaped_text|escaped_text/escaped_text
+    // <entry[saveName].result> returns a ListTag of all rows from a query or update command, of the form li@escaped_text/escaped_text|escaped_text/escaped_text
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
     //
     // @Usage
@@ -106,21 +106,21 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("connect")) {
-                scriptEntry.addObject("action", new Element("CONNECT"));
+                scriptEntry.addObject("action", new ElementTag("CONNECT"));
                 scriptEntry.addObject("server", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matches("disconnect")) {
-                scriptEntry.addObject("action", new Element("DISCONNECT"));
+                scriptEntry.addObject("action", new ElementTag("DISCONNECT"));
             }
             else if (!scriptEntry.hasObject("query")
                     && arg.matchesPrefix("query")) {
-                scriptEntry.addObject("action", new Element("QUERY"));
+                scriptEntry.addObject("action", new ElementTag("QUERY"));
                 scriptEntry.addObject("query", arg.asElement());
             }
             else if (!scriptEntry.hasObject("query")
                     && arg.matchesPrefix("update")) {
-                scriptEntry.addObject("action", new Element("UPDATE"));
+                scriptEntry.addObject("action", new ElementTag("UPDATE"));
                 scriptEntry.addObject("query", arg.asElement());
             }
             else if (!scriptEntry.hasObject("username")
@@ -146,7 +146,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         }
 
         if (!scriptEntry.hasObject("ssl")) {
-            scriptEntry.defaultObject("ssl", new Element("false"));
+            scriptEntry.defaultObject("ssl", new ElementTag("false"));
         }
 
         if (!scriptEntry.hasObject("action")) {
@@ -157,13 +157,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     @Override
     public void execute(final ScriptEntry scriptEntry) {
 
-        Element action = scriptEntry.getElement("action");
-        final Element server = scriptEntry.getElement("server");
-        final Element username = scriptEntry.getElement("username");
-        final Element password = scriptEntry.getElement("password");
-        final Element ssl = scriptEntry.getElement("ssl");
-        final Element sqlID = scriptEntry.getElement("sqlid");
-        final Element query = scriptEntry.getElement("query");
+        ElementTag action = scriptEntry.getElement("action");
+        final ElementTag server = scriptEntry.getElement("server");
+        final ElementTag username = scriptEntry.getElement("username");
+        final ElementTag password = scriptEntry.getElement("password");
+        final ElementTag ssl = scriptEntry.getElement("ssl");
+        final ElementTag sqlID = scriptEntry.getElement("sqlid");
+        final ElementTag query = scriptEntry.getElement("query");
 
         if (scriptEntry.dbCallShouldDebug()) {
 
@@ -286,7 +286,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                     }
                                 }, 0));
                                 int count = 0;
-                                dList rows = new dList();
+                                ListTag rows = new ListTag();
                                 while (set.next()) {
                                     count++;
                                     StringBuilder current = new StringBuilder();
@@ -327,7 +327,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     final int columns = rsmd.getColumnCount();
                     Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                     int count = 0;
-                    dList rows = new dList();
+                    ListTag rows = new ListTag();
                     while (set.next()) {
                         count++;
                         StringBuilder current = new StringBuilder();
@@ -354,12 +354,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 Debug.echoDebug(scriptEntry, "Running update " + query.asString());
                 Statement statement = con.createStatement();
                 int affected = statement.executeUpdate(query.asString(), Statement.RETURN_GENERATED_KEYS);
-                scriptEntry.addObject("affected_rows", new Element(affected));
+                scriptEntry.addObject("affected_rows", new ElementTag(affected));
                 ResultSet set = statement.getGeneratedKeys();
                 ResultSetMetaData rsmd = set.getMetaData();
                 int columns = rsmd.getColumnCount();
                 Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
-                dList rows = new dList();
+                ListTag rows = new ListTag();
                 while (set.next()) {
                     StringBuilder current = new StringBuilder();
                     for (int i = 0; i < columns; i++) {

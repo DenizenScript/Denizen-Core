@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -132,7 +132,7 @@ public class ChooseCommand extends BracedCommand {
             scriptEntry.internal.specialProcessedData = lookupTable;
         }
 
-        Element choice = scriptEntry.getElement("choice");
+        ElementTag choice = scriptEntry.getElement("choice");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), choice.debug());

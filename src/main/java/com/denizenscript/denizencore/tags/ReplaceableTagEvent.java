@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.objects.Element;
-import com.denizenscript.denizencore.objects.dObject;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ElementTag;
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -16,21 +16,21 @@ public class ReplaceableTagEvent {
 
     private boolean wasReplaced = false;
 
-    private dObject alternative_tagged = null;
+    private ObjectTag alternative_tagged = null;
     private String replaced = null;
     private String value_tagged = null;
     private Attribute core_attributes = null;
 
     public String raw_tag;
 
-    public dObject replaced_obj = null;
+    public ObjectTag replaced_obj = null;
 
-    public dObject getReplacedObj() {
+    public ObjectTag getReplacedObj() {
         if (replaced_obj == null) {
             if (replaced == null) {
                 return null;
             }
-            replaced_obj = new Element(replaced);
+            replaced_obj = new ElementTag(replaced);
         }
         return replaced_obj;
     }
@@ -317,7 +317,7 @@ public class ReplaceableTagEvent {
 
     // Alternative
 
-    public dObject getAlternative() {
+    public ObjectTag getAlternative() {
         if (!hasAlternative()) {
             return null;
         }
@@ -349,7 +349,7 @@ public class ReplaceableTagEvent {
         return mainRef.isInstant;
     }
 
-    public dScript getScript() {
+    public ScriptTag getScript() {
         return context.script;
     }
 
@@ -357,7 +357,7 @@ public class ReplaceableTagEvent {
         return wasReplaced && (replaced != null || replaced_obj != null);
     }
 
-    public void setReplacedObject(dObject obj) {
+    public void setReplacedObject(ObjectTag obj) {
         replaced_obj = obj;
         replaced = null;
         wasReplaced = obj != null;

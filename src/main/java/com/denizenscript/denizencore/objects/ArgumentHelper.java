@@ -71,9 +71,9 @@ public class ArgumentHelper {
     // Static Methods
     ///////////////
 
-    public static List<Argument> interpretObjects(List<dObject> args) {
+    public static List<Argument> interpretObjects(List<ObjectTag> args) {
         List<Argument> arg_list = new ArrayList<>(args.size());
-        for (dObject obj : args) {
+        for (ObjectTag obj : args) {
             arg_list.add(new Argument(obj));
         }
         return arg_list;
@@ -86,7 +86,7 @@ public class ArgumentHelper {
     public static List<Argument> interpretArguments(List<Argument> args) {
         for (Argument arg : args) {
             if (arg.needsFill || arg.hasSpecialPrefix) {
-                if (arg.object instanceof Element && arg.prefix == null) {
+                if (arg.object instanceof ElementTag && arg.prefix == null) {
                     arg.fillStr(arg.object.toString());
                 }
                 else {
@@ -101,7 +101,7 @@ public class ArgumentHelper {
 
     /**
      * Turns a list of string arguments (separated by buildArgs) into Argument
-     * Objects for easy matching and dObject creation throughout Denizen.
+     * Objects for easy matching and ObjectTag creation throughout Denizen.
      *
      * @param args a list of string arguments
      * @return a list of Arguments
@@ -174,22 +174,22 @@ public class ArgumentHelper {
 
     /**
      * To be used with the dBuggers' .report to provide debug output for
-     * objects that don't extend dObject.
+     * objects that don't extend ObjectTag.
      *
      * @param prefix name/type/simple description of the object being reported
      * @param value  object being reported will report the value of toString()
      * @return color coded debug report
      */
     public static String debugObj(String prefix, Object value) {
-        return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof dObject ? ((dObject) value).debuggable() : value.toString()) : "null") + "<G>'  ";
+        return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null") + "<G>'  ";
     }
 
-    public static <T extends dObject> String debugList(String prefix, Collection<T> objects) {
+    public static <T extends ObjectTag> String debugList(String prefix, Collection<T> objects) {
         if (objects == null) {
             return debugObj(prefix, null);
         }
         StringBuilder sb = new StringBuilder();
-        for (dObject obj : objects) {
+        for (ObjectTag obj : objects) {
             String output = obj.debug();
             sb.append(output.substring((obj.getPrefix() + "='<A>").length(), output.length() - 6)).append(", ");
         }
@@ -414,8 +414,8 @@ public class ArgumentHelper {
     }
 
     @Deprecated
-    public static dList getListFrom(String arg) {
-        return dList.valueOf(ArgumentHelper.getStringFrom(arg));
+    public static ListTag getListFrom(String arg) {
+        return ListTag.valueOf(ArgumentHelper.getStringFrom(arg));
     }
 
     public static long getLongFrom(String arg) {
@@ -433,9 +433,9 @@ public class ArgumentHelper {
     }
 
     @Deprecated
-    public static dScript getScriptFrom(String arg) {
+    public static ScriptTag getScriptFrom(String arg) {
         arg = CoreUtilities.toLowerCase(arg).replace("script:", "");
-        return dScript.valueOf(arg);
+        return ScriptTag.valueOf(arg);
     }
 
     public static String getStringFrom(String arg) {
@@ -444,9 +444,9 @@ public class ArgumentHelper {
     }
 
     @Deprecated
-    public static Duration getDurationFrom(String arg) {
+    public static DurationTag getDurationFrom(String arg) {
         arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
-        return Duration.valueOf(arg);
+        return DurationTag.valueOf(arg);
     }
 
     public static boolean matchesDouble(String arg) {
@@ -456,7 +456,7 @@ public class ArgumentHelper {
     @Deprecated
     public static boolean matchesDuration(String arg) {
         arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
-        return Duration.matches(arg);
+        return DurationTag.matches(arg);
     }
 
     public static boolean matchesInteger(String arg) {

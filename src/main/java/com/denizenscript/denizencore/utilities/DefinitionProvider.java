@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 
 import java.util.Map;
 
@@ -8,9 +8,9 @@ public interface DefinitionProvider {
 
     void addDefinition(String definition, String value);
 
-    Map<String, dObject> getAllDefinitions();
+    Map<String, ObjectTag> getAllDefinitions();
 
-    dObject getDefinitionObject(String definition);
+    ObjectTag getDefinitionObject(String definition);
 
     String getDefinition(String definition);
 

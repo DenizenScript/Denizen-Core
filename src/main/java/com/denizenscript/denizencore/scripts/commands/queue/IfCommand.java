@@ -26,8 +26,8 @@ public class IfCommand extends BracedCommand {
     // TODO: Document Command Details
     //
     // @Tags
-    // <el@element.is[<operator>].to[<element>]>
-    // <el@element.is[<operator>].than[<element>]>
+    // <ElementTag.is[<operator>].to[<element>]>
+    // <ElementTag.is[<operator>].than[<element>]>
     //
     // @Usage
     // TODO: Document Command Details

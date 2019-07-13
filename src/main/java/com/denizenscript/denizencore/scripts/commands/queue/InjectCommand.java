@@ -3,9 +3,9 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dScript;
+import com.denizenscript.denizencore.objects.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -41,29 +41,29 @@ public class InjectCommand extends AbstractCommand {
         for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matches("instant", "instantly")) {
-                scriptEntry.addObject("instant", new Element(true));
+                scriptEntry.addObject("instant", new ElementTag(true));
             }
             else if (arg.matches("local", "locally")) {
-                scriptEntry.addObject("local", new Element(true));
+                scriptEntry.addObject("local", new ElementTag(true));
             }
             else if (!scriptEntry.hasObject("script")
-                    && arg.matchesArgumentType(dScript.class)
+                    && arg.matchesArgumentType(ScriptTag.class)
                     && !arg.matchesPrefix("p", "path")) {
-                scriptEntry.addObject("script", arg.asType(dScript.class));
+                scriptEntry.addObject("script", arg.asType(ScriptTag.class));
             }
             else if (!scriptEntry.hasObject("path")) {
                 String path = arg.asElement().asString();
                 if (!scriptEntry.hasObject("script")) {
                     int dotIndex = path.indexOf('.');
                     if (dotIndex > 0) {
-                        dScript script = new dScript(path.substring(0, dotIndex));
+                        ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
                         if (script.isValid()) {
                             scriptEntry.addObject("script", script);
                             path = path.substring(dotIndex + 1);
                         }
                     }
                 }
-                scriptEntry.addObject("path", new Element(path));
+                scriptEntry.addObject("path", new ElementTag(path));
             }
             else {
                 arg.reportUnhandled();
@@ -95,7 +95,7 @@ public class InjectCommand extends AbstractCommand {
         }
 
         // Get the script
-        dScript script = scriptEntry.getdObject("script");
+        ScriptTag script = scriptEntry.getdObject("script");
 
         // Get the entries
         List<ScriptEntry> entries;

@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.Duration;
+import com.denizenscript.denizencore.objects.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -32,7 +32,7 @@ public class QueueCommand extends AbstractCommand {
     // <queue.list>
     // <queue.stats>
     // <queue.exists[queue_id]>
-    // <s@script.list_queues>
+    // <ScriptTag.list_queues>
     //
     // @Usage
     // Use to clear the current queue.
@@ -66,8 +66,8 @@ public class QueueCommand extends AbstractCommand {
                     && arg.matchesEnum(Action.values())) {
                 scriptEntry.addObject("action", Action.valueOf(arg.getValue().toUpperCase()));
                 if (scriptEntry.getObject("action") == Action.DELAY
-                        && arg.matchesArgumentType(Duration.class)) {
-                    scriptEntry.addObject("delay", arg.asType(Duration.class));
+                        && arg.matchesArgumentType(DurationTag.class)) {
+                    scriptEntry.addObject("delay", arg.asType(DurationTag.class));
                 }
             }
 
@@ -104,7 +104,7 @@ public class QueueCommand extends AbstractCommand {
 
         ScriptQueue queue = (ScriptQueue) scriptEntry.getObject("queue");
         Action action = (Action) scriptEntry.getObject("action");
-        Duration delay = (Duration) scriptEntry.getObject("delay");
+        DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
 
         // Debugger
         if (scriptEntry.dbCallShouldDebug()) {
@@ -129,7 +129,7 @@ public class QueueCommand extends AbstractCommand {
                     ((Delayable) queue).setPaused(true);
                 }
                 else {
-                    queue.forceToTimed(new Duration(1L)).setPaused(true);
+                    queue.forceToTimed(new DurationTag(1L)).setPaused(true);
                 }
                 return;
 

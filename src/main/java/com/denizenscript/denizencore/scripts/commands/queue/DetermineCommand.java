@@ -49,11 +49,11 @@ public class DetermineCommand extends AbstractCommand {
         for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
 
             if (arg.matches("passive", "passively")) {
-                scriptEntry.addObject("passively", new Element(true));
+                scriptEntry.addObject("passively", new ElementTag(true));
             }
 
             else if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", arg.hasPrefix() ? new Element(arg.raw_value) : arg.object);
+                scriptEntry.addObject("outcome", arg.hasPrefix() ? new ElementTag(arg.raw_value) : arg.object);
             }
 
             else {
@@ -65,16 +65,16 @@ public class DetermineCommand extends AbstractCommand {
         // Set defaults
         //
 
-        scriptEntry.defaultObject("passively", new Element(false));
-        scriptEntry.defaultObject("outcome", new Element(DETERMINE_NONE));
+        scriptEntry.defaultObject("passively", new ElementTag(false));
+        scriptEntry.defaultObject("outcome", new ElementTag(DETERMINE_NONE));
     }
 
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        dObject outcomeObj = scriptEntry.getdObject("outcome");
-        Element passively = scriptEntry.getElement("passively");
+        ObjectTag outcomeObj = scriptEntry.getdObject("outcome");
+        ElementTag passively = scriptEntry.getElement("passively");
 
         // Report!
         if (scriptEntry.dbCallShouldDebug()) {
@@ -82,9 +82,9 @@ public class DetermineCommand extends AbstractCommand {
         }
 
         // Store the outcome in the cache
-        dList strs = scriptEntry.getResidingQueue().determinations;
+        ListTag strs = scriptEntry.getResidingQueue().determinations;
         if (strs == null) {
-            strs = new dList();
+            strs = new ListTag();
             scriptEntry.getResidingQueue().determinations = strs;
         }
         strs.addObject(outcomeObj);

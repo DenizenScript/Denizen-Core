@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.events;
 
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
@@ -185,11 +185,11 @@ public class OldEventManager {
     //  MECHANICS
     ///////////////
 
-    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context, boolean strip_ids) {
+    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, ObjectTag> context, boolean strip_ids) {
         return doEvents(addAlternates(eventNames), data, context);
     }
 
-    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, dObject> context) {
+    public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, ObjectTag> context) {
 
         try {
             List<String> determinations = new ArrayList<>();
@@ -254,7 +254,7 @@ public class OldEventManager {
 
     public static class OldEventContextSource implements ContextSource {
 
-        public Map<String, dObject> contexts;
+        public Map<String, ObjectTag> contexts;
 
         @Override
         public boolean getShouldCache() {
@@ -262,7 +262,7 @@ public class OldEventManager {
         }
 
         @Override
-        public dObject getContext(String name) {
+        public ObjectTag getContext(String name) {
             return contexts.get(name);
         }
     }

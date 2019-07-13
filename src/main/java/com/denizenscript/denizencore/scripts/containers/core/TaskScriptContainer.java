@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.Duration;
+import com.denizenscript.denizencore.objects.DurationTag;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
@@ -47,28 +47,28 @@ public class TaskScriptContainer extends ScriptContainer {
         super(configurationSection, scriptContainerName);
     }
 
-    Duration speed = null;
+    DurationTag speed = null;
 
-    public Duration getSpeed() {
+    public DurationTag getSpeed() {
         if (speed != null) {
             return speed;
         }
         if (contains("speed")) {
             String tmp = getString("speed", "0t");
             if (CoreUtilities.toLowerCase(tmp).equals("instant")) {
-                speed = Duration.valueOf("0t");
+                speed = DurationTag.valueOf("0t");
             }
             else {
-                speed = Duration.valueOf(tmp);
+                speed = DurationTag.valueOf(tmp);
             }
         }
         else {
-            speed = Duration.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
+            speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
         }
         return speed;
     }
 
-    public TaskScriptContainer setSpeed(Duration speed) {
+    public TaskScriptContainer setSpeed(DurationTag speed) {
         //  TODO: Remove with RunTask
         this.speed = speed;
         return this;
@@ -109,7 +109,7 @@ public class TaskScriptContainer extends ScriptContainer {
         return Collections.emptyMap();
     }
 
-    public ScriptQueue runTaskScriptWithDelay(String queueId, ScriptEntryData data, Map<String, String> context, Duration delay) {
+    public ScriptQueue runTaskScriptWithDelay(String queueId, ScriptEntryData data, Map<String, String> context, DurationTag delay) {
         ScriptQueue queue;
         if (getSpeed().getSeconds() == 0) {
             queue = new InstantQueue(queueId);

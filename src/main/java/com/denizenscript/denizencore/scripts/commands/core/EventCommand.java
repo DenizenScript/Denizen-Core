@@ -53,10 +53,10 @@ public class EventCommand extends AbstractCommand {
 
             if (!scriptEntry.hasObject("context")
                     && arg.matchesPrefix("context", "c")) {
-                scriptEntry.addObject("context", arg.asType(dList.class));
+                scriptEntry.addObject("context", arg.asType(ListTag.class));
             }
             else if (!scriptEntry.hasObject("events")) {
-                scriptEntry.addObject("events", arg.asType(dList.class));
+                scriptEntry.addObject("events", arg.asType(ListTag.class));
             }
             else {
                 arg.reportUnhandled();
@@ -67,7 +67,7 @@ public class EventCommand extends AbstractCommand {
             throw new InvalidArgumentsException("Must specify a list of event names!");
         }
 
-        scriptEntry.defaultObject("context", new dList());
+        scriptEntry.defaultObject("context", new ListTag());
 
     }
 
@@ -75,8 +75,8 @@ public class EventCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        dList events = (dList) scriptEntry.getObject("events");
-        dList context = (dList) scriptEntry.getObject("context");
+        ListTag events = (ListTag) scriptEntry.getObject("events");
+        ListTag context = (ListTag) scriptEntry.getObject("context");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), events.debug() + context.debug());
@@ -87,13 +87,13 @@ public class EventCommand extends AbstractCommand {
         }
 
         // Change the context input to a list of objects
-        Map<String, dObject> context_map = new HashMap<>();
+        Map<String, ObjectTag> context_map = new HashMap<>();
         for (int i = 0; i < context.size(); i += 2) {
             context_map.put(context.get(i), ObjectFetcher.pickObjectFor(context.get(i + 1), scriptEntry.entryData.getTagContext()));
         }
 
         List<String> Determination = OldEventManager.doEvents(events,
                 scriptEntry.entryData, context_map, true);
-        scriptEntry.addObject("determinations", new dList(Determination));
+        scriptEntry.addObject("determinations", new ListTag(Determination));
     }
 }

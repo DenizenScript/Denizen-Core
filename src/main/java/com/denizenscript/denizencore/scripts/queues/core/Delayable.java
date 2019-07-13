@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.objects.Duration;
+import com.denizenscript.denizencore.objects.DurationTag;
 
 public interface Delayable {
 
@@ -8,7 +8,7 @@ public interface Delayable {
 
     public boolean isPaused();
 
-    public void delayFor(Duration duration);
+    public void delayFor(DurationTag duration);
 
     public boolean isDelayed();
 

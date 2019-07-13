@@ -2,10 +2,10 @@ package com.denizenscript.denizencore.events;
 
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.dList;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ListTag;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.ScriptEntrySet;
@@ -289,7 +289,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return null;
     }
 
-    public boolean applyDetermination(ScriptContainer container, dObject determination) {
+    public boolean applyDetermination(ScriptContainer container, ObjectTag determination) {
         return applyDetermination(container, determination.identify());
     }
 
@@ -323,7 +323,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
-    public HashMap<String, dObject> getContext() { // TODO: Delete
+    public HashMap<String, ObjectTag> getContext() { // TODO: Delete
         return new HashMap<>();
     }
 
@@ -376,11 +376,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public void run(ScriptPath path) {
         stats.scriptFires++;
-        HashMap<String, dObject> context = getContext();
+        HashMap<String, ObjectTag> context = getContext();
         if (path.container.shouldDebug()) {
             Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
                     + " for script '<A>" + path.container.getName() + "<Y>'");
-            for (Map.Entry<String, dObject> obj : context.entrySet()) {
+            for (Map.Entry<String, ObjectTag> obj : context.entrySet()) {
                 Debug.echoDebug(path.container, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
             }
         }
@@ -389,13 +389,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
-        HashMap<String, dObject> oldStyleContext = getContext();
+        HashMap<String, ObjectTag> oldStyleContext = getContext();
         currentEvent = path.event;
         if (oldStyleContext.size() > 0) {
             OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
             oecs.contexts = oldStyleContext;
-            oecs.contexts.put("cancelled", new Element(cancelled));
-            oecs.contexts.put("event_header", new Element(currentEvent));
+            oecs.contexts.put("cancelled", new ElementTag(cancelled));
+            oecs.contexts.put("event_header", new ElementTag(currentEvent));
             queue.setContextSource(oecs);
         }
         else {
@@ -403,10 +403,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         queue.start();
         stats.nanoTimes += System.nanoTime() - queue.startTime;
-        dList outList = queue.determinations;
+        ListTag outList = queue.determinations;
         if (outList != null && !outList.isEmpty()) {
-            List<dObject> determinations = outList.objectForms;
-            for (dObject determination : determinations) {
+            List<ObjectTag> determinations = outList.objectForms;
+            for (ObjectTag determination : determinations) {
                 applyDetermination(path.container, determination);
             }
         }
@@ -430,15 +430,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // -->
 
     @Override
-    public dObject getContext(String name) {
+    public ObjectTag getContext(String name) {
         if (name.equals("cancelled")) {
-            return new Element(cancelled);
+            return new ElementTag(cancelled);
         }
         else if (name.equals("event_header")) {
-            return new Element(currentEvent);
+            return new ElementTag(currentEvent);
         }
         else if (name.equals("event_name")) {
-            return new Element(getName());
+            return new ElementTag(getName());
         }
         return null;
     }

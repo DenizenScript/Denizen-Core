@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.Element;
+import com.denizenscript.denizencore.objects.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.dObject;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -46,7 +46,7 @@ public class DefinitionTags {
 
         // <--[tag]
         // @attribute <definition[<name>]>
-        // @returns dObject
+        // @returns ObjectTag
         // @description
         // Returns a definition from the current queue.
         // The object will be returned as the most-valid type based on the input.
@@ -59,22 +59,22 @@ public class DefinitionTags {
             Debug.echoError("No definitions are provided at this moment!");
             return;
         }
-        dObject def = definitionProvider.getDefinitionObject(defName);
+        ObjectTag def = definitionProvider.getDefinitionObject(defName);
 
         Attribute atttribute = event.getAttributes().fulfill(1);
 
         // <--[tag]
         // @attribute <definition[<name>].exists>
-        // @returns Element(Boolean)
+        // @returns ElementTag(Boolean)
         // @description
         // Returns whether a definition exists for the given definition name.
         // -->
         if (atttribute.startsWith("exists")) {
             if (def == null) {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(false), atttribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(false), atttribute.fulfill(1)));
             }
             else {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new Element(true), atttribute.fulfill(1)));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(true), atttribute.fulfill(1)));
             }
             return;
         }

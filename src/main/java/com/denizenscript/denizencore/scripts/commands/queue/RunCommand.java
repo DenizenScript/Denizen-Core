@@ -78,38 +78,38 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("definitions", arg.asElement());
             }
             else if (arg.matches("instant", "instantly")) {
-                scriptEntry.addObject("instant", new Element(true));
+                scriptEntry.addObject("instant", new ElementTag(true));
             }
             else if (arg.matchesPrefix("delay")
-                    && arg.matchesArgumentType(Duration.class)) {
-                scriptEntry.addObject("delay", arg.asType(Duration.class));
+                    && arg.matchesArgumentType(DurationTag.class)) {
+                scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
             else if (arg.matches("local", "locally")) {
-                scriptEntry.addObject("local", new Element("true"));
+                scriptEntry.addObject("local", new ElementTag("true"));
                 scriptEntry.addObject("script", scriptEntry.getScript());
             }
             else if (!scriptEntry.hasObject("script")
-                    && arg.matchesArgumentType(dScript.class)
+                    && arg.matchesArgumentType(ScriptTag.class)
                     && !arg.matchesPrefix("p", "path")) {
-                scriptEntry.addObject("script", arg.asType(dScript.class));
+                scriptEntry.addObject("script", arg.asType(ScriptTag.class));
             }
             else if (!scriptEntry.hasObject("speed") && arg.matchesPrefix("speed")
-                    && arg.matchesArgumentType(Duration.class)) {
-                scriptEntry.addObject("speed", arg.asType(Duration.class));
+                    && arg.matchesArgumentType(DurationTag.class)) {
+                scriptEntry.addObject("speed", arg.asType(DurationTag.class));
             }
             else if (!scriptEntry.hasObject("path")) {
                 String path = arg.asElement().asString();
                 if (!scriptEntry.hasObject("script")) {
                     int dotIndex = path.indexOf('.');
                     if (dotIndex > 0) {
-                        dScript script = new dScript(path.substring(0, dotIndex));
+                        ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
                         if (script.isValid()) {
                             scriptEntry.addObject("script", script);
                             path = path.substring(dotIndex + 1);
                         }
                     }
                 }
-                scriptEntry.addObject("path", new Element(path));
+                scriptEntry.addObject("path", new ElementTag(path));
             }
             else {
                 arg.reportUnhandled();
@@ -143,7 +143,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         }
 
         // Get the script
-        dScript script = scriptEntry.getdObject("script");
+        ScriptTag script = scriptEntry.getdObject("script");
 
         // Get the entries
         List<ScriptEntry> entries;
@@ -182,13 +182,13 @@ public class RunCommand extends AbstractCommand implements Holdable {
         else {
 
             if (scriptEntry.hasObject("speed")) {
-                Duration speed = scriptEntry.getdObject("speed");
+                DurationTag speed = scriptEntry.getdObject("speed");
                 queue = ((TimedQueue) new TimedQueue(id).addEntries(entries)).setSpeed(speed.getTicks());
             }
             else {
                 // Check speed of the script if a TimedQueue -- if identified, use the speed from the script.
                 if (script != null && script.getContainer().contains("SPEED")) {
-                    long ticks = Duration.valueOf(script.getContainer().getString("SPEED", "0")).getTicks();
+                    long ticks = DurationTag.valueOf(script.getContainer().getString("SPEED", "0")).getTicks();
                     if (ticks > 0) {
                         queue = ((TimedQueue) new TimedQueue(id).addEntries(entries)).setSpeed(ticks);
                     }
@@ -205,14 +205,14 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
         // Set any delay
         if (scriptEntry.hasObject("delay")) {
-            queue.delayUntil(DenizenCore.serverTimeMillis + ((Duration) scriptEntry.getObject("delay")).getMillis());
+            queue.delayUntil(DenizenCore.serverTimeMillis + ((DurationTag) scriptEntry.getObject("delay")).getMillis());
         }
 
         // Set any definitions
         if (scriptEntry.hasObject("definitions")) {
             int x = 1;
-            Element raw_defintions = scriptEntry.getElement("definitions");
-            dList definitions = dList.valueOf(raw_defintions.asString());
+            ElementTag raw_defintions = scriptEntry.getElement("definitions");
+            ListTag definitions = ListTag.valueOf(raw_defintions.asString());
             String[] definition_names = null;
             try {
                 if (script != null && script.getContainer() != null) {

@@ -16,7 +16,7 @@ public class YamlDataScriptContainer extends ScriptContainer {
     //
     // There are no required keys.
     //
-    // Generally, data is read using the <@link tag s@script.yaml_key> tag.
+    // Generally, data is read using the <@link tag ScriptTag.yaml_key> tag.
     //
     // <code>
     // Yaml_Data_Script_Name:
