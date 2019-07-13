@@ -689,6 +689,23 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             }
         });
 
+        // <--[tag]
+        // @attribute <ElementTag.parsed>
+        // @returns ElementTag
+        // @group conversion
+        // @description
+        // Returns the element, with any contained tags parsed.
+        // WARNING: THIS TAG IS DANGEROUS TO USE, DO NOT USE IT UNLESS
+        // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
+        // -->
+        registerTag("parsed", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                ObjectTag read = TagManager.tagObject(TagManager.cleanOutputFully(((ElementTag) object).element), attribute.context);
+                return CoreUtilities.autoAttrib(read, attribute.fulfill(1));
+            }
+        });
+
         /////////////////////
         //   ELEMENT CHECKING ATTRIBUTES
         /////////////////
