@@ -18,14 +18,14 @@ public class AdjustCommand extends AbstractCommand {
 
     // <--[command]
     // @Name Adjust
-    // @Syntax adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)
+    // @Syntax adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)
     // @Required 2
-    // @Short Adjusts a ObjectTags mechanism.
+    // @Short Adjusts an object's mechanism.
     // @Group core
     // @Video /denizen/vids/Properties%20and%20Mechanisms
     //
     // @Description
-    // Many ObjectTags contains options and properties that need to be adjusted. Denizen employs a mechanism
+    // Many object tag types contains options and properties that need to be adjusted. Denizen employs a mechanism
     // interface to deal with those adjustments. To easily accomplish this, use this command with a valid object
     // mechanism, and sometimes accompanying value.
     //

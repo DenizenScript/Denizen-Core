@@ -87,7 +87,7 @@ public abstract class CommandRegistry {
 
     public void registerCoreCommands() {
 
-        registerCoreMember(AdjustCommand.class, "ADJUST", "adjust [<dObject>/def:<name>|...] [<mechanism>](:<value>)", 2);
+        registerCoreMember(AdjustCommand.class, "ADJUST", "adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)", 2);
         registerCoreMember(AsyncCommand.class, "ASYNC", "async [<commands>]", 0);
         registerCoreMember(ChooseCommand.class, "CHOOSE", "choose [<option>] [<cases>]", 1);
         registerCoreMember(DebugCommand.class, "DEBUG", "debug [<type>] [<message>] (name:<name>)", 2);
