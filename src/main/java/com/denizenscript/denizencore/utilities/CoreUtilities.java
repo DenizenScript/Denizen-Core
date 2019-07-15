@@ -262,8 +262,12 @@ public class CoreUtilities {
 
     public static String bigDecToString(BigDecimal input) {
         String temp = input.toString();
-        if (temp.endsWith(".0")) {
-            return temp.substring(0, temp.length() - 2);
+        if (temp.contains(".")) {
+            for (int i = temp.length() - 1; i >= 0; i--) {
+                if (temp.charAt(i) != '0') {
+                    return temp.substring(0, i + 1);
+                }
+            }
         }
         return temp;
     }

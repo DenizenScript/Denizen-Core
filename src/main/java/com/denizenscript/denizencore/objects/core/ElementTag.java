@@ -1762,7 +1762,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                     return null;
                 }
                 try {
-                    return new ElementTag(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1)), RoundingMode.HALF_UP))
+                    return new ElementTag(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1)), 64, RoundingMode.HALF_UP))
                             .getObjectAttribute(attribute.fulfill(1));
                 }
                 catch (Throwable e) {
