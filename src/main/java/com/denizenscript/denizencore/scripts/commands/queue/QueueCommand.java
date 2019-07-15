@@ -86,7 +86,7 @@ public class QueueCommand extends AbstractCommand {
         }
 
         // If no queues have been added, assume 'residing queue'
-        scriptEntry.defaultObject("queue", scriptEntry.getResidingQueue());
+        scriptEntry.defaultObject("queue", new QueueTag(scriptEntry.getResidingQueue()));
 
         // Check required args
         if (!scriptEntry.hasObject("action")) {
