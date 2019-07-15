@@ -27,8 +27,8 @@ public class QueueCommand extends AbstractCommand {
     //
     // @Tags
     // <queue>
-    // <queue.id>
-    // <queue.size>
+    // <QueueTag.id>
+    // <QueueTag.size>
     // <queue.list>
     // <queue.stats>
     // <queue.exists[queue_id]>

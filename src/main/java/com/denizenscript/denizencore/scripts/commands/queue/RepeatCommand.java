@@ -31,13 +31,12 @@ public class RepeatCommand extends BracedCommand {
     // To jump immediately to the next number in the loop, do - repeat next
     //
     // @Tags
-    // <def[value]> to get the number of loops so far
+    // <[value]> to get the number of loops so far
     //
     // @Usage
     // Use to loop through a command several times
-    // - repeat 5 {
-    //     - announce "Announce Number <def[value]>"
-    //   }
+    // - repeat 5:
+    //     - announce "Announce Number <[value]>"
     // -->
 
     private class RepeatData {

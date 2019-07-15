@@ -32,19 +32,19 @@ public class ForeachCommand extends BracedCommand {
     // To jump immediately to the next entry in the loop, do - foreach next
     //
     // @Tags
-    // <def[value]> to get the current item in the loop
-    // <def[loop_index]> to get the current loop iteration number
+    // <[value]> to get the current item in the loop
+    // <[loop_index]> to get the current loop iteration number
     //
     // @Usage
-    // Use to run commands for 'each entry' in a list of objects/elements.
+    // Use to run commands 'for each entry' in a list of objects/elements.
     // - foreach li@e@123|n@424|p@BobBarker:
-    //     - announce "There's something at <def[value].location>!"
+    //     - announce "There's something at <[value].location>!"
     //
     // @Usage
     // Use to iterate through entries in any tag that returns a list
-    // - foreach <server.list_online_players>:
-    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
-    //     - give <def[value]> money qty:50
+    // - foreach <server.list_online_players> as:player:
+    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!" player:<[player]>
+    //     - give <[player]> money qty:50
     //
     // -->
 

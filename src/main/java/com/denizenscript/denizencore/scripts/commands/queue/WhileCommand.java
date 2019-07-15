@@ -27,14 +27,13 @@ public class WhileCommand extends BracedCommand {
     // To jump to the next entry in the loop, use the 'next' argument.
     //
     // @Tags
-    // <def[loop_index]> to get the number of loops so far.
+    // <[loop_index]> to get the number of loops so far.
     //
     // @Usage
-    // Use to loop until a player sneaks, or the player goes offline.
-    // - while !<player.is_sneaking> && <player.is_online> {
+    // Use to loop until a player sneaks, or the player goes offline. (Note: generally use 'waituntil' for this instead)
+    // - while !<player.is_sneaking> && <player.is_online>:
     //     - narrate "Waiting for you to sneak..."
     //     - wait 1s
-    //   }
     //
     // -->
 
