@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -36,13 +37,22 @@ public class ScriptTags {
 
         // Check name context for a specified script, or check
         // the ScriptEntry for a 'script' context
-        if (event.hasNameContext() && ScriptTag.matches(event.getNameContext())) {
+        if (event.hasNameContext()) {
+            if (!ScriptTag.matches(event.getNameContext())) {
+                if (!event.hasAlternative()) {
+                    Debug.echoError("Script '" + event.getNameContext() + "' does not exist.");
+                }
+                return;
+            }
             script = ScriptTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
         else if (event.getScript() != null) {
             script = event.getScript();
         }
         else if (event.getScriptEntry() == null) {
+            if (!event.hasAlternative()) {
+                Debug.echoError("No applicable script for <script> tag.");
+            }
             return;
         }
         else if (event.getScriptEntry().getScript() != null) {
@@ -55,8 +65,10 @@ public class ScriptTags {
         // Build and fill attributes
         Attribute attribute = event.getAttributes();
 
-        // Check if location is null, return null if it is
         if (script == null) {
+            if (!event.hasAlternative()) {
+                Debug.echoError("No applicable script for <script> tag.");
+            }
             return;
         }
 
