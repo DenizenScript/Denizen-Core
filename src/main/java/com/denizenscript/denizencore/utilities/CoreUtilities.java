@@ -265,6 +265,9 @@ public class CoreUtilities {
         if (temp.contains(".")) {
             for (int i = temp.length() - 1; i >= 0; i--) {
                 if (temp.charAt(i) != '0') {
+                    if (temp.charAt(i) == '.') {
+                        return temp.substring(0, i);
+                    }
                     return temp.substring(0, i + 1);
                 }
             }
