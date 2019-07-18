@@ -31,19 +31,19 @@ public class TagManager {
 
     public void registerCoreTags() {
         // Objects
-        new DurationTags();
-        new ElementTags();
-        new ListTags();
-        new QueueTags();
-        new ScriptTags();
+        new DurationTagBase();
+        new ElementTagBase();
+        new ListTagBase();
+        new QueueTagBase();
+        new ScriptTagBase();
 
         // Utilities
-        new ContextTags();
-        new DefinitionTags();
-        new EscapeTags();
-        new ProcedureScriptTags();
-        new TernaryTags();
-        new UtilTags();
+        new ContextTagBase();
+        new DefinitionTagBase();
+        new EscapeTagBase();
+        new ProcedureScriptTagBase();
+        new TernaryTagBase();
+        new UtilTagBase();
     }
 
     @Target(ElementType.METHOD)

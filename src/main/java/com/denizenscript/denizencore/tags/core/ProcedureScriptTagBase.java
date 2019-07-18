@@ -15,9 +15,9 @@ import com.denizenscript.denizencore.tags.TagManager;
 
 import java.util.List;
 
-public class ProcedureScriptTags {
+public class ProcedureScriptTagBase {
 
-    public ProcedureScriptTags() {
+    public ProcedureScriptTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

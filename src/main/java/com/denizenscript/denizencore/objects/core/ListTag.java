@@ -14,7 +14,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.tags.core.EscapeTags;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -1721,7 +1721,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 ListTag escaped = new ListTag();
                 for (String entry : (ListTag) object) {
-                    escaped.add(EscapeTags.escape(entry));
+                    escaped.add(EscapeTagBase.escape(entry));
                 }
                 return escaped.getObjectAttribute(attribute.fulfill(1));
             }
@@ -1741,7 +1741,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 ListTag escaped = new ListTag();
                 for (String entry : (ListTag) object) {
-                    escaped.add(EscapeTags.unEscape(entry));
+                    escaped.add(EscapeTagBase.unEscape(entry));
                 }
                 return escaped.getObjectAttribute(attribute.fulfill(1));
             }

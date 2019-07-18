@@ -8,9 +8,9 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 
-public class EscapeTags {
+public class EscapeTagBase {
 
-    public EscapeTags() {
+    public EscapeTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

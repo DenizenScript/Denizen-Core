@@ -1,43 +1,41 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
-import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 
-public class ListTags {
+public class DurationTagBase {
 
-    public ListTags() {
+    public DurationTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
-                listTags(event);
+                durationTags(event);
             }
-        }, "list");
+        }, "duration");
     }
 
-    public void listTags(ReplaceableTagEvent event) {
+    public void durationTags(ReplaceableTagEvent event) {
 
-        if (!event.matches("list") || event.replaced()) {
+        if (!event.matches("duration") || event.replaced()) {
             return;
         }
 
-        ListTag list = null;
+        DurationTag duration = null;
 
         if (event.hasNameContext()) {
-            list = ListTag.valueOf(event.getNameContext(), event.getAttributes().context);
+            duration = DurationTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
 
-        // Check if list is null, return null if it is
-        if (list == null) {
+        if (duration == null) {
             return;
         }
 
-        // Build and fill attributes
         Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+        event.setReplacedObject(CoreUtilities.autoAttrib(duration, attribute.fulfill(1)));
 
     }
 }

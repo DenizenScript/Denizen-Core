@@ -10,9 +10,9 @@ import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
-public class ContextTags {
+public class ContextTagBase {
 
-    public ContextTags() {
+    public ContextTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

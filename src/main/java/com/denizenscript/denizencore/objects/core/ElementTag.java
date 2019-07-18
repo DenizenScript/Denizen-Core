@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
-import com.denizenscript.denizencore.tags.core.EscapeTags;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
@@ -653,7 +653,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 String element = ((ElementTag) object).element;
-                return new ElementTag(EscapeTags.escape(element)).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(EscapeTagBase.escape(element)).getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -685,7 +685,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 String element = ((ElementTag) object).element;
-                return new ElementTag(EscapeTags.unEscape(element)).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(EscapeTagBase.unEscape(element)).getObjectAttribute(attribute.fulfill(1));
             }
         });
 

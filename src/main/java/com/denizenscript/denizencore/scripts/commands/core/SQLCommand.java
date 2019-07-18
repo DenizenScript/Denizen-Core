@@ -12,7 +12,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.tags.core.EscapeTags;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -291,7 +291,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                                     count++;
                                     StringBuilder current = new StringBuilder();
                                     for (int i = 0; i < columns; i++) {
-                                        current.append(EscapeTags.escape(set.getString(i + 1))).append("/");
+                                        current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
                                     }
                                     rows.add(current.toString());
                                 }
@@ -332,7 +332,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         count++;
                         StringBuilder current = new StringBuilder();
                         for (int i = 0; i < columns; i++) {
-                            current.append(EscapeTags.escape(set.getString(i + 1))).append("/");
+                            current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
                         }
                         rows.add(current.toString());
                     }
@@ -363,7 +363,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 while (set.next()) {
                     StringBuilder current = new StringBuilder();
                     for (int i = 0; i < columns; i++) {
-                        current.append(EscapeTags.escape(set.getString(i + 1))).append("/");
+                        current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
                     }
                     rows.add(current.toString());
                 }

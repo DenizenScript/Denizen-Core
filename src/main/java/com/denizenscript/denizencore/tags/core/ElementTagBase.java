@@ -7,9 +7,9 @@ import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.TagManager;
 
-public class ElementTags {
+public class ElementTagBase {
 
-    public ElementTags() {
+    public ElementTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

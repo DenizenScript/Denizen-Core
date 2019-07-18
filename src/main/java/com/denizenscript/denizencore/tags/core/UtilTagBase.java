@@ -17,9 +17,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
-public class UtilTags {
+public class UtilTagBase {
 
-    public UtilTags() {
+    public UtilTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

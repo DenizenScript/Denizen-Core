@@ -11,9 +11,9 @@ import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-public class DefinitionTags {
+public class DefinitionTagBase {
 
-    public DefinitionTags() {
+    public DefinitionTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

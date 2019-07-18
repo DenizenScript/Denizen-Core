@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.tags.core.UtilTags;
+import com.denizenscript.denizencore.tags.core.UtilTagBase;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -94,7 +94,7 @@ public class AdjustCommand extends AbstractCommand {
     public static HashMap<String, Consumer<Mechanism>> specialAdjustables = new HashMap<>();
 
     static {
-        specialAdjustables.put("system", UtilTags::adjustSystem);
+        specialAdjustables.put("system", UtilTagBase::adjustSystem);
     }
 
     public ObjectTag adjust(ObjectTag object, ElementTag mechanismName, ElementTag value, ScriptEntry entry) {

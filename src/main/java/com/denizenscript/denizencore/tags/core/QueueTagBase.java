@@ -11,9 +11,9 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.tags.TagManager;
 
-public class QueueTags {
+public class QueueTagBase {
 
-    public QueueTags() {
+    public QueueTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

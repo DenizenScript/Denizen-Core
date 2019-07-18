@@ -9,9 +9,9 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 
-public class TernaryTags {
+public class TernaryTagBase {
 
-    public TernaryTags() {
+    public TernaryTagBase() {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
