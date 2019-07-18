@@ -104,6 +104,7 @@ public abstract class CommandRegistry {
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
         registerCoreMember(QueueCommand.class, "QUEUE", "queue (<queue>) [clear/stop/pause/resume/delay:<#>]", 1);
         registerCoreMember(RandomCommand.class, "RANDOM", "random [<#>/<commands>]", 0);
+        registerCoreMember(RateLimitCommand.class, "RATELIMIT", "ratelimit [<object>] [<duration>]", 2);
         registerCoreMember(ReloadCommand.class, "RELOAD", "reload", 0);
         registerCoreMember(RepeatCommand.class, "REPEAT", "repeat [stop/next/<amount>] [<commands>] (as:<name>)", 1);
         registerCoreMember(RunCommand.class, "RUN", "run (locally) [<script>] (path:<name>) (def:<element>|...) (id:<name>) (instantly) (speed:<value>) (delay:<value>)", 1);
