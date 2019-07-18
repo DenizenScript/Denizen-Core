@@ -153,7 +153,7 @@ public class AdjustCommand extends AbstractCommand {
         ElementTag mechanism = scriptEntry.getElement("mechanism");
         ElementTag value = scriptEntry.getElement("mechanism_value");
 
-        ListTag objects = scriptEntry.getdObject("object");
+        ListTag objects = scriptEntry.getObjectTag("object");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(),

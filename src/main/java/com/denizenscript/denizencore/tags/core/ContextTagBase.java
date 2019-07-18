@@ -69,7 +69,7 @@ public class ContextTagBase {
             }
             else {
                 String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(2));
-                ObjectTag got = held.getdObject(attrib);
+                ObjectTag got = held.getObjectTag(attrib);
                 if (got == null) {
                     if (!event.hasAlternative()) {
                         Debug.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");

@@ -113,7 +113,7 @@ public class DefineCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) {
 
         ElementTag definition = scriptEntry.getElement("definition");
-        ObjectTag value = scriptEntry.getdObject("value");
+        ObjectTag value = scriptEntry.getObjectTag("value");
         ElementTag remove = scriptEntry.getElement("remove");
         Object actionObj = scriptEntry.getObject("action");
         DataAction action = actionObj == null ? null : (DataAction) actionObj;

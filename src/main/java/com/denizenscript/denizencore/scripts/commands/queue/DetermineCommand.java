@@ -75,7 +75,7 @@ public class DetermineCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        ObjectTag outcomeObj = scriptEntry.getdObject("outcome");
+        ObjectTag outcomeObj = scriptEntry.getObjectTag("outcome");
         ElementTag passively = scriptEntry.getElement("passively");
 
         // Report!

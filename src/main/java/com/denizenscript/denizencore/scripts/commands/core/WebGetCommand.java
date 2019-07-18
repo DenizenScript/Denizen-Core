@@ -104,8 +104,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
         final ElementTag url = scriptEntry.getElement("url");
         final ElementTag postData = scriptEntry.getElement("post");
-        final DurationTag timeout = scriptEntry.getdObject("timeout");
-        final ListTag headers = scriptEntry.getdObject("headers");
+        final DurationTag timeout = scriptEntry.getObjectTag("timeout");
+        final ListTag headers = scriptEntry.getObjectTag("headers");
         final ElementTag saveFile = scriptEntry.getElement("savefile");
 
         if (scriptEntry.dbCallShouldDebug()) {

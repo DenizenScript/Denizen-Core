@@ -136,18 +136,18 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(),
-                    (scriptEntry.hasObject("script") ? scriptEntry.getdObject("script").debug() : scriptEntry.getScript().debug())
-                            + (scriptEntry.hasObject("instant") ? scriptEntry.getdObject("instant").debug() : "")
+                    (scriptEntry.hasObject("script") ? scriptEntry.getObjectTag("script").debug() : scriptEntry.getScript().debug())
+                            + (scriptEntry.hasObject("instant") ? scriptEntry.getObjectTag("instant").debug() : "")
                             + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
                             + (scriptEntry.hasObject("local") ? scriptEntry.getElement("local").debug() : "")
-                            + (scriptEntry.hasObject("delay") ? scriptEntry.getdObject("delay").debug() : "")
-                            + (scriptEntry.hasObject("id") ? scriptEntry.getdObject("id").debug() : "")
-                            + (scriptEntry.hasObject("definitions") ? scriptEntry.getdObject("definitions").debug() : "")
-                            + (scriptEntry.hasObject("speed") ? scriptEntry.getdObject("speed").debug() : ""));
+                            + (scriptEntry.hasObject("delay") ? scriptEntry.getObjectTag("delay").debug() : "")
+                            + (scriptEntry.hasObject("id") ? scriptEntry.getObjectTag("id").debug() : "")
+                            + (scriptEntry.hasObject("definitions") ? scriptEntry.getObjectTag("definitions").debug() : "")
+                            + (scriptEntry.hasObject("speed") ? scriptEntry.getObjectTag("speed").debug() : ""));
         }
 
         // Get the script
-        ScriptTag script = scriptEntry.getdObject("script");
+        ScriptTag script = scriptEntry.getObjectTag("script");
 
         // Get the entries
         List<ScriptEntry> entries;
@@ -186,7 +186,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         else {
 
             if (scriptEntry.hasObject("speed")) {
-                DurationTag speed = scriptEntry.getdObject("speed");
+                DurationTag speed = scriptEntry.getObjectTag("speed");
                 queue = ((TimedQueue) new TimedQueue(id).addEntries(entries)).setSpeed(speed.getTicks());
             }
             else {

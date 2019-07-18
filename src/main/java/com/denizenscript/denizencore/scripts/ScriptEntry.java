@@ -476,7 +476,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public <T extends ObjectTag> T getdObject(String key) {
+    public <T extends ObjectTag> T getObjectTag(String key) {
         try {
             // If an ENUM, return as an Element
             Object gotten = objects.get(key);

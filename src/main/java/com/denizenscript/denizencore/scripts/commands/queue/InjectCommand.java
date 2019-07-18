@@ -87,15 +87,15 @@ public class InjectCommand extends AbstractCommand {
         if (scriptEntry.dbCallShouldDebug()) {
 
             Debug.report(scriptEntry, getName(),
-                    (scriptEntry.hasObject("script") ? scriptEntry.getdObject("script").debug() : scriptEntry.getScript().debug())
-                            + (scriptEntry.hasObject("instant") ? scriptEntry.getdObject("instant").debug() : "")
+                    (scriptEntry.hasObject("script") ? scriptEntry.getObjectTag("script").debug() : scriptEntry.getScript().debug())
+                            + (scriptEntry.hasObject("instant") ? scriptEntry.getObjectTag("instant").debug() : "")
                             + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
                             + (scriptEntry.hasObject("local") ? scriptEntry.getElement("local").debug() : ""));
 
         }
 
         // Get the script
-        ScriptTag script = scriptEntry.getdObject("script");
+        ScriptTag script = scriptEntry.getObjectTag("script");
 
         // Get the entries
         List<ScriptEntry> entries;

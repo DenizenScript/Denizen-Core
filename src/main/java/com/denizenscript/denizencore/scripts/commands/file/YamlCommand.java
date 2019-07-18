@@ -288,7 +288,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         ElementTag filename = scriptEntry.getElement("filename");
         ElementTag rawText = scriptEntry.getElement("raw_text");
         ElementTag key = scriptEntry.getElement("key");
-        ObjectTag value = scriptEntry.getdObject("value");
+        ObjectTag value = scriptEntry.getObjectTag("value");
         ElementTag split = scriptEntry.getElement("split");
         YAML_Action yaml_action = (YAML_Action) scriptEntry.getObject("yaml_action");
         ElementTag actionElement = scriptEntry.getElement("action");
