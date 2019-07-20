@@ -4,8 +4,6 @@ import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
-import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.DenizenCore;
 
 public class ReloadScriptsScriptEvent extends ScriptEvent {
@@ -65,9 +63,8 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean couldMatch(ScriptContainer script, String event) {
-        String lower = CoreUtilities.toLowerCase(event);
-        return lower.startsWith("reload scripts") || lower.startsWith("script reload");
+    public boolean couldMatch(ScriptPath path) {
+        return path.event.startsWith("reload scripts") || path.event.startsWith("script reload");
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
-import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.DenizenCore;
 
 public class DeltaTimeScriptEvent extends ScriptEvent {
@@ -35,8 +34,9 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         instance = this;
     }
 
-    public boolean couldMatch(ScriptContainer script, String event) {
-        return event.startsWith("delta time");
+    @Override
+    public boolean couldMatch(ScriptPath path) {
+        return path.event.startsWith("delta time");
     }
 
     public boolean matches(ScriptPath path) {

@@ -76,6 +76,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public String[] eventArgs;
         public String[] eventArgsLower;
         public String[] rawEventArgs;
+        public int matches = 0;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -137,6 +138,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             switch_cancelled = switches.containsKey("cancelled") ? switches.get("cancelled").equalsIgnoreCase("true") : null;
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
         }
+
+        @Override
+        public String toString() {
+            return container.getName() + ".events.on " + event;
+        }
     }
 
     public static void reload() {
@@ -160,23 +166,28 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 }
             }
         }
+        List<ScriptPath> paths = new ArrayList<>(worldContainers.size() * 3);
+        for (ScriptContainer container : worldContainers) {
+            YamlConfiguration config = container.getConfigurationSection("events");
+            if (config == null) {
+                continue;
+            }
+            for (StringHolder evt1 : config.getKeys(false)) {
+                String evt = evt1.str.substring(3);
+                paths.add(new ScriptPath(container, evt));
+            }
+        }
         for (ScriptEvent event : events) {
             try {
                 event.destroy();
                 event.eventPaths.clear();
                 boolean matched = false;
-                for (ScriptContainer container : worldContainers) {
-                    YamlConfiguration config = container.getConfigurationSection("events");
-                    if (config == null) {
-                        continue;
-                    }
-                    for (StringHolder evt1 : config.getKeys(false)) {
-                        String evt = evt1.str.substring(3);
-                        if (couldMatchScript(event, container, evt)) {
-                            event.eventPaths.add(new ScriptPath(container, evt));
-                            Debug.log("Event match, " + event.getName() + " matched for '" + evt + "'!");
-                            matched = true;
-                        }
+                for (ScriptPath path : paths) {
+                    if (event.couldMatch(path)) {
+                        event.eventPaths.add(path);
+                        path.matches++;
+                        Debug.log("Event match, " + event.getName() + " matched for '" + path + "'!");
+                        matched = true;
                     }
                 }
                 if (matched) {
@@ -187,6 +198,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             catch (Throwable ex) {
                 Debug.echoError("Failed to reload event '" + event.getName() + "':");
                 Debug.echoError(ex);
+            }
+        }
+        for (ScriptPath path : paths) {
+            if (path.matches > 1) {
+                Debug.log("Event " + path + " is matched to multiple ScriptEvents.");
+            }
+            else if (path.matches == 0) {
+                Debug.log("Event " + path + " is not matched to any ScriptEvents.");
             }
         }
     }
@@ -225,10 +244,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
         }
         return sEvent.matches(path);
-    }
-
-    public static boolean couldMatchScript(ScriptEvent sEvent, ScriptContainer script, String event) {
-        return sEvent.couldMatch(script, event);
     }
 
     public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
@@ -331,7 +346,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return DenizenCore.getImplementation().getEmptyScriptEntryData();
     }
 
-    public abstract boolean couldMatch(ScriptContainer script, String event);
+    public boolean couldMatch(ScriptPath path) {
+        return couldMatch(path.container, path.event);
+    }
+
+    public boolean couldMatch(ScriptContainer script, String event) {
+        return false;
+    }
 
     public boolean matches(ScriptPath path) {
         return matches(path.container, path.event);

@@ -5,7 +5,6 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
-import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.Calendar;
@@ -38,8 +37,8 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean couldMatch(ScriptContainer script, String event) {
-        return event.startsWith("system time");
+    public boolean couldMatch(ScriptPath path) {
+        return path.event.startsWith("system time");
     }
 
     public ElementTag hour;
