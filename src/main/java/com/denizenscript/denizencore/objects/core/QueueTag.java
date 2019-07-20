@@ -180,7 +180,7 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
                 String state;
-                if ((object instanceof Delayable) && ((Delayable) object).isPaused()) {
+                if ((((QueueTag) object).queue instanceof Delayable) && ((Delayable) ((QueueTag) object).queue).isPaused()) {
                     state = "paused";
                 }
                 else if (((QueueTag) object).queue.is_started) {
@@ -328,6 +328,12 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
         return QueueTag.class;
     }
 
+    public void ensure() {
+        while (queue.replacementQueue != null) {
+            queue = queue.replacementQueue;
+        }
+    }
+
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
@@ -337,6 +343,7 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
         if (attribute.isComplete()) {
             return this;
         }
+        ensure();
 
         // TODO: Scrap getAttribute, make this functionality a core system
         String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
@@ -364,6 +371,7 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
 
     @Override
     public void adjust(Mechanism mechanism) {
+        ensure();
         CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }

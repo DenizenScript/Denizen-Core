@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -80,7 +81,7 @@ public class DetermineCommand extends AbstractCommand {
 
         // Report!
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug());
+            Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug() + new QueueTag(scriptEntry.getResidingQueue()).debug());
         }
 
         // Store the outcome in the cache

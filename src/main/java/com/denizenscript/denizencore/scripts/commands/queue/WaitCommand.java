@@ -72,12 +72,12 @@ public class WaitCommand extends AbstractCommand {
         }
 
         // Tell the queue to delay
-        if (queue instanceof Delayable) {
-            ((Delayable) queue).delayFor(delay);
+        if (queue.queue instanceof Delayable) {
+            ((Delayable) queue.queue).delayFor(delay);
         }
         else {
             scriptEntry.setInstant(false);
-            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue + " into a timed queue...");
+            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue.id + " into a timed queue...");
             queue.queue.forceToTimed(delay);
         }
     }

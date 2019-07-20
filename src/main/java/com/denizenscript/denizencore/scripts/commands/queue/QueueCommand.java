@@ -125,8 +125,8 @@ public class QueueCommand extends AbstractCommand {
                 return;
 
             case PAUSE:
-                if (queue instanceof Delayable) {
-                    ((Delayable) queue).setPaused(true);
+                if (queue.queue instanceof Delayable) {
+                    ((Delayable) queue.queue).setPaused(true);
                 }
                 else {
                     queue.queue.forceToTimed(new DurationTag(1L)).setPaused(true);
@@ -134,14 +134,14 @@ public class QueueCommand extends AbstractCommand {
                 return;
 
             case RESUME:
-                if (queue instanceof Delayable) {
-                    ((Delayable) queue).setPaused(false);
+                if (queue.queue instanceof Delayable) {
+                    ((Delayable) queue.queue).setPaused(false);
                 }
                 return;
 
             case DELAY:
-                if (queue instanceof Delayable) {
-                    ((Delayable) queue).delayFor(delay);
+                if (queue.queue instanceof Delayable) {
+                    ((Delayable) queue.queue).delayFor(delay);
                 }
                 else {
                     queue.queue.forceToTimed(delay);

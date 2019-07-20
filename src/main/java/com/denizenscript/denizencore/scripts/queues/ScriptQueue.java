@@ -392,6 +392,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         debugId = prefix + "_" + colorOne + wordOne + colorTwo + wordTwo + colorThree + wordThree;
     }
 
+    public ScriptQueue replacementQueue = null;
 
     /**
      * Converts any queue type to a timed queue.
@@ -404,12 +405,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         callback = null;
         stop();
         TimedQueue newQueue = new TimedQueue(id, 0);
+        replacementQueue = newQueue;
         newQueue.id = id;
         newQueue.debugId = debugId;
         newQueue.run_async = this.run_async;
         newQueue.debugOutput = this.debugOutput;
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
+            entry.setSendingQueue(newQueue);
         }
         newQueue.addEntries(getEntries());
         for (Map.Entry<String, ObjectTag> def : getAllDefinitions().entrySet()) {
@@ -763,5 +766,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public boolean shouldFilter(String criteria) throws Exception {
         return (lastEntryExecuted != null ? lastEntryExecuted.getScript().getName().equalsIgnoreCase(criteria.replace("s@", ""))
                 : script_entries.get(0).getScript().getName().equalsIgnoreCase(criteria.replace("s@", "")));
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }
