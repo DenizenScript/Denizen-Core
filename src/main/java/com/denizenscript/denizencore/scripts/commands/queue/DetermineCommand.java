@@ -49,7 +49,7 @@ public class DetermineCommand extends AbstractCommand {
         // Parse the arguments
         //
 
-        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : scriptEntry.getProcessedArgs()) {
 
             if (arg.matches("passive", "passively")) {
                 scriptEntry.addObject("passively", new ElementTag(true));

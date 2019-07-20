@@ -76,6 +76,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
+    public List<Argument> getProcessedArgs() {
+        return ArgumentHelper.interpretArguments(aHArgs);
+    }
+
     public List<InternalArgument> args_cur = null;
 
     public List<Argument> aHArgs = null;

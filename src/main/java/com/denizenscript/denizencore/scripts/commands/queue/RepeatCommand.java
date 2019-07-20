@@ -55,7 +55,7 @@ public class RepeatCommand extends BracedCommand {
 
         boolean handled = false;
 
-        for (Argument arg : ArgumentHelper.interpretArguments(scriptEntry.aHArgs)) {
+        for (Argument arg : scriptEntry.getProcessedArgs()) {
 
             if (!handled
                     && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
