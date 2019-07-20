@@ -416,7 +416,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         for (ObjectTag item : objectForms) {
             debugText.append(item.debuggable()).append(" <G>|<Y> ");
         }
-        return debugText.substring(0, debugText.length() - 1);
+        return debugText.substring(0, debugText.length() - " <G>|<Y> ".length());
     }
 
     public String flag = null;
@@ -1968,18 +1968,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
             runnable.name = name;
         }
         registeredObjectTags.put(name, runnable);
-    }
-
-    public static void registerTag(String name, final TagRunnable runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registerTag(name, new TagRunnable.ObjectForm() {
-            @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(runnable.run(attribute, object)).getObjectAttribute(attribute);
-            }
-        });
     }
 
     private static String parseString(ListTag obj, String spacer) {

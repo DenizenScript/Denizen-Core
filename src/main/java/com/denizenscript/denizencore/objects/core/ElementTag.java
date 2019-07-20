@@ -2436,18 +2436,6 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         registeredObjectTags.put(name, runnable);
     }
 
-    public static void registerTag(String name, final TagRunnable runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registerTag(name, new TagRunnable.ObjectForm() {
-            @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(runnable.run(attribute, object)).getObjectAttribute(attribute);
-            }
-        });
-    }
-
     @Override
     public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
         return null;
