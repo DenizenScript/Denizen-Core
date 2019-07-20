@@ -57,7 +57,7 @@ public class TickScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptPath path) {
-        return path.event.startsWith("tick");
+        return path.eventLower.startsWith("tick");
     }
 
     @Override

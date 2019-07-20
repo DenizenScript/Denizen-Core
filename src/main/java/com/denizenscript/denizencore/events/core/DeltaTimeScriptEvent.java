@@ -36,7 +36,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptPath path) {
-        return path.event.startsWith("delta time");
+        return path.eventLower.startsWith("delta time");
     }
 
     public boolean matches(ScriptPath path) {

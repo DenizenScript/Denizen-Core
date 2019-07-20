@@ -55,7 +55,7 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptPath path) {
-        return path.event.startsWith("console output");
+        return path.eventLower.startsWith("console output");
     }
 
     @Override

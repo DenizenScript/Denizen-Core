@@ -38,7 +38,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptPath path) {
-        return path.event.startsWith("system time");
+        return path.eventLower.startsWith("system time");
     }
 
     public ElementTag hour;

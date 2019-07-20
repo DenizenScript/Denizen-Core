@@ -64,7 +64,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public boolean couldMatch(ScriptPath path) {
-        return path.event.startsWith("reload scripts") || path.event.startsWith("script reload");
+        return path.eventLower.startsWith("reload scripts") || path.eventLower.startsWith("script reload");
     }
 
     @Override
