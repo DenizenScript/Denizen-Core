@@ -184,7 +184,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) {
         if (command == null) {
-            throw new RuntimeException("dCommand 'name' cannot be null!");
+            throw new RuntimeException("Command name cannot be null!");
         }
         internal = new ScriptEntryInternal();
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
