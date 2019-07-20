@@ -1,13 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 
 public class WaitCommand extends AbstractCommand {
@@ -33,28 +32,24 @@ public class WaitCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        // TODO: Modernize
 
-        // Initialize required fields
-        ScriptQueue queue = scriptEntry.getResidingQueue();
-        DurationTag delay = new DurationTag(3);
+        for (Argument arg : scriptEntry.getProcessedArgs()) {
 
-        // Iterate through arguments
-        for (String arg : scriptEntry.getArguments()) {
-
-            // Set duration
-            if (ArgumentHelper.matchesDuration(arg)) {
-                delay = DurationTag.valueOf(arg);
+            if (arg.matchesArgumentType(DurationTag.class)
+                    && !scriptEntry.hasObject("delay")) {
+                scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
-
-            // Specify queue
-            if (ArgumentHelper.matchesQueue(arg)) {
-                queue = ScriptQueue.getExistingQueue(arg);
+            else if (arg.matchesArgumentType(QueueTag.class)
+                    && !scriptEntry.hasObject("queue")) {
+                scriptEntry.addObject("delay", arg.asType(QueueTag.class));
+            }
+            else {
+                arg.reportUnhandled();
             }
         }
 
-        scriptEntry.addObject("queue", new QueueTag(queue));
-        scriptEntry.addObject("delay", delay);
+        scriptEntry.defaultObject("queue", new QueueTag(scriptEntry.getResidingQueue()));
+        scriptEntry.defaultObject("delay", new DurationTag(3));
     }
 
 
@@ -65,10 +60,8 @@ public class WaitCommand extends AbstractCommand {
         DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
 
         if (scriptEntry.dbCallShouldDebug()) {
-
             Debug.report(scriptEntry, getName(),
                     queue.debug() + delay.debug());
-
         }
 
         // Tell the queue to delay
