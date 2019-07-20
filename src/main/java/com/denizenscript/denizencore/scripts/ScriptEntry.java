@@ -34,7 +34,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public List<BracedCommand.BracedData> bracedSet = null;
 
-        public List<Argument> args_ref = null;
+        public List<InternalArgument> args_ref = null;
 
         public ScriptTag script = null;
 
@@ -52,23 +52,23 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public int[] processArgs = null;
 
-        public List<com.denizenscript.denizencore.objects.Argument> preprocArgs = null;
+        public List<Argument> preprocArgs = null;
 
         public Object specialProcessedData = null;
 
         public String originalLine = null;
     }
 
-    public static class Argument {
+    public static class InternalArgument {
 
-        public Argument prefix = null;
+        public InternalArgument prefix = null;
 
         public List<TagManager.ParseableTagPiece> value = null;
 
-        public com.denizenscript.denizencore.objects.Argument aHArg = null;
+        public Argument aHArg = null;
 
-        public Argument duplicate() {
-            Argument newArg = new Argument();
+        public InternalArgument duplicate() {
+            InternalArgument newArg = new InternalArgument();
             newArg.prefix = prefix == null ? null : prefix.duplicate();
             newArg.value = new ArrayList<>(value);
             newArg.aHArg = aHArg == null ? null : aHArg.clone();
@@ -76,9 +76,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public List<Argument> args_cur = null;
+    public List<InternalArgument> args_cur = null;
 
-    public List<com.denizenscript.denizencore.objects.Argument> aHArgs = null;
+    public List<Argument> aHArgs = null;
 
     public List<String> args = null;
 
@@ -103,13 +103,13 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void regenerateArgsCur() {
         args_cur = new ArrayList<>(internal.args_ref);
         for (int i : internal.processArgs) {
-            Argument arg = args_cur.get(i).duplicate();
+            InternalArgument arg = args_cur.get(i).duplicate();
             args_cur.set(i, arg);
             arg.aHArg = aHArgs.get(i);
         }
     }
 
-    public final static com.denizenscript.denizencore.objects.Argument NULL_ARGUMENT = new com.denizenscript.denizencore.objects.Argument("null_trick", "null_trick");
+    public final static Argument NULL_ARGUMENT = new Argument("null_trick", "null_trick");
 
     public void generateAHArgs() {
         aHArgs = new ArrayList<>(internal.args_ref.size());
@@ -117,7 +117,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             aHArgs.add(internal.args_ref.get(i) == null ? NULL_ARGUMENT : internal.args_ref.get(i).aHArg);
         }
         for (int i : internal.processArgs) {
-            Argument arg = internal.args_ref.get(i);
+            InternalArgument arg = internal.args_ref.get(i);
             arg.aHArg.scriptEntry = this;
             aHArgs.set(i, arg.aHArg.needsFill || arg.aHArg.hasSpecialPrefix || (internal.hasOldDefs && arg.aHArg.raw_value.indexOf('%') != -1) ? arg.aHArg.clone() : arg.aHArg);
         }
@@ -150,7 +150,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         this(command, arguments, script, null);
     }
 
-    public void crunchInto(Argument argVal, String arg, TagContext refContext) {
+    public void crunchInto(InternalArgument argVal, String arg, TagContext refContext) {
         if (arg.indexOf('%') != -1) {
             internal.hasOldDefs = true;
             argVal.value = new LinkedList<>();
@@ -177,7 +177,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
             }
         }
-        argVal.aHArg = new com.denizenscript.denizencore.objects.Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
+        argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
         argVal.aHArg.needsFill = isTag;
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
@@ -241,7 +241,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     parg = parg.substring(0, parg.length() - 1);
                     Debug.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
                 }
-                com.denizenscript.denizencore.objects.Argument argObj = new com.denizenscript.denizencore.objects.Argument(arg);
+                Argument argObj = new Argument(arg);
                 if (argObj.hasPrefix()) {
                     if (argObj.matchesOnePrefix("unparsed")) {
                         args.add(TagManager.escapeOutput(argObj.getValue()));
@@ -273,15 +273,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
                 if (arg.equals("{")) {
-                    Argument brace = new Argument();
-                    brace.aHArg = new com.denizenscript.denizencore.objects.Argument("", "{");
+                    InternalArgument brace = new InternalArgument();
+                    brace.aHArg = new Argument("", "{");
                     internal.args_ref.add(brace);
                     nested_depth++;
                     continue;
                 }
                 if (arg.equals("}")) {
-                    Argument brace = new Argument();
-                    brace.aHArg = new com.denizenscript.denizencore.objects.Argument("", "}");
+                    InternalArgument brace = new InternalArgument();
+                    brace.aHArg = new Argument("", "}");
                     internal.args_ref.add(brace);
                     nested_depth--;
                     continue;
@@ -291,11 +291,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     continue;
                 }
                 tempProcessArgs.add(i);
-                Argument argVal = new Argument();
+                InternalArgument argVal = new InternalArgument();
                 internal.args_ref.set(i, argVal);
                 int colon = TagManager.findColonNotTagNorSpace(arg);
                 if (colon > 0) {
-                    argVal.prefix = new Argument();
+                    argVal.prefix = new InternalArgument();
                     crunchInto(argVal.prefix, arg.substring(0, colon), refContext);
                     arg = arg.substring(colon + 1);
                 }
@@ -617,7 +617,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         for (String str : getOriginalArguments()) {
             sb.append(" \"").append(str.replace("\"", "<&dq>")).append("\"");
         }
-        for (com.denizenscript.denizencore.objects.Argument arg : internal.preprocArgs) {
+        for (Argument arg : internal.preprocArgs) {
             sb.append(" \"").append(arg.toString().replace("\"", "<&dq>")).append("\"");
         }
         return internal.command + sb.toString();

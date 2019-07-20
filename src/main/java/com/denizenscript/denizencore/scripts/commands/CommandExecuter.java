@@ -78,7 +78,7 @@ public class CommandExecuter {
                     aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
                     aharg.hasSpecialPrefix = false;
                     scriptEntry.aHArgs.set(argId, aharg);
-                    ScriptEntry.Argument argse = scriptEntry.args_cur.get(argId);
+                    ScriptEntry.InternalArgument argse = scriptEntry.args_cur.get(argId);
                     argse.value = TagManager.dupChain(TagManager.genChain(parsed, scriptEntry));
                     argse.prefix = null;
                 }

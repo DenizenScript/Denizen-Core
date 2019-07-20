@@ -643,14 +643,14 @@ public class TagManager {
         return filledArgs;
     }
 
-    public static void fillArgumentsObjects(List<ObjectTag> args, List<String> strArgs, List<ScriptEntry.Argument> pieceHelp, List<Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
+    public static void fillArgumentsObjects(List<ObjectTag> args, List<String> strArgs, List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, boolean repush, TagContext context, int[] targets) {
         if (Debug.verbose) {
             Debug.log("Fill argument objects: " + args + ", " + context.instant + ", " + targets.length + "...");
         }
         for (int argId : targets) {
             Argument aharg = aHArgs.get(argId);
             if (aharg.needsFill || aharg.hasSpecialPrefix) {
-                ScriptEntry.Argument piece = pieceHelp.get(argId);
+                ScriptEntry.InternalArgument piece = pieceHelp.get(argId);
                 if (piece.prefix != null) {
                     if (piece.prefix.aHArg.needsFill) {
                         aharg.prefix = parseChainObject(piece.prefix.value, context, repush).toString();
