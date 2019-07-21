@@ -126,7 +126,7 @@ public class ProcedureScriptTagBase {
         queue.start();
 
         if (queue.determinations != null && queue.determinations.size() > 0) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(queue.determinations.getObject(0)
+            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0)
                     , attr.fulfill(attribs)));
         }
     }
