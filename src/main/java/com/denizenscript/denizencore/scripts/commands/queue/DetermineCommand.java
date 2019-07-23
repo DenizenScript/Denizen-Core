@@ -85,12 +85,12 @@ public class DetermineCommand extends AbstractCommand {
         }
 
         // Store the outcome in the cache
-        ListTag strs = scriptEntry.getResidingQueue().determinations;
-        if (strs == null) {
-            strs = new ListTag();
-            scriptEntry.getResidingQueue().determinations = strs;
+        ListTag determines = scriptEntry.getResidingQueue().determinations;
+        if (determines == null) {
+            determines = new ListTag();
+            scriptEntry.getResidingQueue().determinations = determines;
         }
-        strs.addObject(outcomeObj);
+        determines.addObject(outcomeObj);
 
         if (!passively.asBoolean()) {
             // Stop the queue by clearing the remainder of it.

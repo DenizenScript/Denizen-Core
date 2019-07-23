@@ -304,31 +304,30 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return null;
     }
 
-    public boolean applyDetermination(ScriptContainer container, ObjectTag determination) {
-        return applyDetermination(container, determination.identify());
-    }
-
     public static HashSet<String> defaultDeterminations = new HashSet<>(Arrays.asList("cancelled", "cancelled:true", "cancelled:false"));
 
-    public static boolean isDefaultDetermination(String determination) {
-        String low = CoreUtilities.toLowerCase(determination);
+    public static boolean isDefaultDetermination(ObjectTag determination) {
+        if (!(determination instanceof ElementTag)) {
+            return false;
+        }
+        String low = CoreUtilities.toLowerCase(determination.toString());
         return defaultDeterminations.contains(low);
     }
 
-    public boolean applyDetermination(ScriptContainer container, String determination) {
-        String low = CoreUtilities.toLowerCase(determination);
+    public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
+        String low = CoreUtilities.toLowerCase(determination.toString());
         if (low.equals("cancelled")) {
-            Debug.echoDebug(container, "Event cancelled!");
+            Debug.echoDebug(path.container, "Event cancelled!");
             cancelled = true;
             return true;
         }
         else if (low.equals("cancelled:true")) {
-            Debug.echoDebug(container, "Event cancelled!");
+            Debug.echoDebug(path.container, "Event cancelled!");
             cancelled = true;
             return true;
         }
         else if (low.equals("cancelled:false")) {
-            Debug.echoDebug(container, "Event uncancelled!");
+            Debug.echoDebug(path.container, "Event uncancelled!");
             cancelled = false;
             return true;
         }
@@ -428,7 +427,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (outList != null && !outList.isEmpty()) {
             List<ObjectTag> determinations = outList.objectForms;
             for (ObjectTag determination : determinations) {
-                applyDetermination(path.container, determination);
+                applyDetermination(path, determination);
             }
         }
     }
