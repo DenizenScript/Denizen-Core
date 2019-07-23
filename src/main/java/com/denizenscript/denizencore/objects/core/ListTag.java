@@ -117,7 +117,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         return valueOf(string, null);
     }
 
-    @Fetchable("li, fl")
+    @Fetchable("li,fl")
     public static ListTag valueOf(String string, TagContext context) {
         if (string == null) {
             return null;

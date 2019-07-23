@@ -65,6 +65,8 @@ public class ScriptEngine {
             // Mark script entry with Queue that is sending it to the executor
             scriptEntry.setSendingQueue(scriptQueue);
 
+            // Set as last entry executed
+            scriptQueue.setLastEntryExecuted(scriptEntry);
             try {
                 // Execute the scriptEntry
                 getScriptExecuter().execute(scriptEntry);
@@ -74,8 +76,6 @@ public class ScriptEngine {
                 Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while revolving the queue)!");
                 Debug.echoError(scriptEntry.getResidingQueue(), e);
             }
-            // Set as last entry executed
-            scriptQueue.setLastEntryExecuted(scriptEntry);
 
             // Check if the scriptQueue is delayed (EG, via wait)
             if (scriptQueue instanceof Delayable) {
