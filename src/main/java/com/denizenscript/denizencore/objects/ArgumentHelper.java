@@ -194,14 +194,13 @@ public class ArgumentHelper {
         }
         StringBuilder sb = new StringBuilder();
         for (ObjectTag obj : objects) {
-            String output = obj.debug();
-            sb.append(output.substring((obj.getPrefix() + "='<A>").length(), output.length() - 6)).append(", ");
+            sb.append(obj.debuggable()).append("<G>, ");
         }
         if (sb.length() == 0) {
             return debugObj(prefix, sb);
         }
         else {
-            return debugObj(prefix, "[" + sb.substring(0, sb.length() - 2) + "]");
+            return debugObj(prefix, "[" + sb.substring(0, sb.length() - "<G>, ".length()) + "<Y>]");
         }
     }
 

@@ -295,7 +295,7 @@ public class DurationTag implements ObjectTag {
 
     @Override
     public String debuggable() {
-        return "d@" + seconds + "s (" + formatted() + ")";
+        return "d@" + seconds + "s <GR>(" + formatted() + ")";
     }
 
     @Override

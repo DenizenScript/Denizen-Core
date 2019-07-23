@@ -251,7 +251,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
 
     @Override
     public String debuggable() {
-        return "s@" + name + " (" + getType() + ")";
+        return "s@" + name + "<GR> (" + getType() + ")";
     }
 
     @Override
