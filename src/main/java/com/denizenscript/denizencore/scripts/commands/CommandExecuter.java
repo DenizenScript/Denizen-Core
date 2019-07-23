@@ -92,6 +92,7 @@ public class CommandExecuter {
     public boolean execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
             StringBuilder output = new StringBuilder();
+            output.append("<G>(line ").append(scriptEntry.internal.lineNumber).append(")<W> ");
             output.append(scriptEntry.getCommandName());
             if (scriptEntry.getOriginalArguments() == null) {
                 Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());

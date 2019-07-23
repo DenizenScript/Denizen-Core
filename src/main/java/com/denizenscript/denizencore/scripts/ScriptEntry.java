@@ -57,6 +57,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public Object specialProcessedData = null;
 
         public String originalLine = null;
+
+        public int lineNumber;
     }
 
     public static class InternalArgument {

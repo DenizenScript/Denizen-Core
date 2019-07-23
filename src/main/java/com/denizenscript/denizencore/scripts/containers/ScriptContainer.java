@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,6 +125,20 @@ public class ScriptContainer implements Debuggable {
         return ScriptHelper.getSource(getName());
     }
 
+    public String getRelativeFileName() {
+        try {
+            String fn = getFileName().replace(DenizenCore.getImplementation().getScriptFolder().getParentFile().getCanonicalPath(), "");
+            while (fn.startsWith("/")) {
+                fn = fn.substring(1);
+            }
+            return fn;
+        }
+        catch (Exception e) {
+            Debug.echoError(e);
+            return getFileName();
+        }
+    }
+
     public String getOriginalName() {
         return ScriptHelper.getOriginalName(getName());
     }
@@ -190,7 +205,15 @@ public class ScriptContainer implements Debuggable {
 
 
     public List<String> getStringList(String path) {
-        return contents.getStringList(path.toUpperCase());
+        List<String> strs = contents.getStringList(path.toUpperCase());
+        if (strs == null) {
+            return null;
+        }
+        ArrayList<String> output = new ArrayList<>(strs.size());
+        for (String str : strs) {
+            output.add(ScriptBuilder.stripLinePrefix(str));
+        }
+        return output;
     }
 
 

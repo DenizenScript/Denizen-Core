@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -299,19 +300,8 @@ public class ScriptTag implements ObjectTag, Adjustable {
         registerTag("relative_filename", new TagRunnable() {
             @Override
             public String run(Attribute attribute, ObjectTag object) {
-                try {
-                    String fn = ((ScriptTag) object).container.getFileName().replace(DenizenCore.getImplementation()
-                            .getScriptFolder().getParentFile().getCanonicalPath(), "").replace("\\", "/");
-                    while (fn.startsWith("/")) {
-                        fn = fn.substring(1);
-                    }
-                    return new ElementTag(fn)
-                            .getAttribute(attribute.fulfill(1));
-                }
-                catch (Exception e) {
-                    Debug.echoError(e);
-                }
-                return null;
+                return new ElementTag(((ScriptTag) object).container.getRelativeFileName())
+                        .getAttribute(attribute.fulfill(1));
             }
         });
 
@@ -428,7 +418,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
                         if (each == null) {
                             each = "null";
                         }
-                        list.add(each.toString());
+                        list.add(ScriptBuilder.stripLinePrefix(each.toString()));
                     }
                     return list.getAttribute(attribute.fulfill(1));
 

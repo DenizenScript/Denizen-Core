@@ -27,6 +27,16 @@ public class ScriptBuilder {
         return scriptEntryList;
     }
 
+    public static char LINE_PREFIX_CHAR = '^'; // This would be an invisible special character... if SnakeYAML allowed them!
+
+    public static String stripLinePrefix(String rawLine) {
+        if (!rawLine.startsWith(String.valueOf(LINE_PREFIX_CHAR))) {
+            return rawLine;
+        }
+        int infoEnd = rawLine.indexOf(LINE_PREFIX_CHAR, 1);
+        return rawLine.substring(infoEnd + 2); // Skip the symbol and the space after.
+    }
+
     /*
      * Builds ScriptEntry(ies) of items read from a script
      */
@@ -64,26 +74,24 @@ public class ScriptBuilder {
                 inside = null;
             }
 
-
-            String[] scriptEntry;
-            String[] splitEntry = entry.split(" ", 2);
-
-            if (splitEntry.length == 1) {
-                scriptEntry = new String[2];
-                scriptEntry[0] = entry;
-                scriptEntry[1] = null;
+            int lineNum = 1;
+            if (entry.startsWith(String.valueOf(LINE_PREFIX_CHAR))) {
+                int infoEnd = entry.indexOf(LINE_PREFIX_CHAR, 1);
+                String lineNumStr = entry.substring(1, infoEnd);
+                entry = entry.substring(infoEnd + 2); // Skip the symbol and the space after.
+                lineNum = Integer.valueOf(lineNumStr);
             }
-            else {
-                scriptEntry = splitEntry;
-            }
+
+            String[] scriptEntry = entry.split(" ", 2);
 
             try {
                 /* Build new script commands */
-                String[] args = ArgumentHelper.buildArgs(scriptEntry[1]);
+                String[] args = scriptEntry.length > 1 ?  ArgumentHelper.buildArgs(scriptEntry[1]) : null;
                 if (Debug.showScriptBuilder) {
                     Debug.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 }
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside);
+                newEntry.internal.lineNumber = lineNum;
                 newEntry.internal.originalLine = entry;
                 newEntry.entryData.transferDataFrom(data);
                 scriptCommands.add(newEntry);

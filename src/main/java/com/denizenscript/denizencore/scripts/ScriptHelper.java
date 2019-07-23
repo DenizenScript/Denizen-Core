@@ -90,27 +90,31 @@ public class ScriptHelper {
     public static String ClearComments(String filename, String input, boolean trackSources) {
         StringBuilder result = new StringBuilder(input.length());
         String[] lines = input.replace("\t", "    ").replace("\r", "").split("\n");
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-            String trimStart = lines[i].replaceAll("^[\\s\\t]+", "");
-            if (trackSources && !line.startsWith("#") && trimStart.length() == lines[i].length() && line.endsWith(":") && line.length() > 1) {
-                String name = line.substring(0, line.length() - 1).replace('\"', '\'').replace("'", "");
+        for (int lineNum = 0; lineNum < lines.length; lineNum++) {
+            String trimmedLine = lines[lineNum].trim();
+            String trimStart = lines[lineNum].replaceAll("^[\\s]+", "");
+            if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == lines[lineNum].length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
+                String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
                 scriptSources.put(name.toUpperCase(), filename);
                 scriptOriginalNames.put(name.toUpperCase(), name);
                 result.append(name.toUpperCase() + ":\n");
             }
-            else if (!line.startsWith("#")) {
-                if ((line.startsWith("}") || line.startsWith("{") || line.startsWith("else")) && !line.endsWith(":")) {
-                    result.append(' ').append(lines[i].replace('\0', ' ')
+            else if (!trimmedLine.startsWith("#")) {
+                if ((trimmedLine.startsWith("}") || trimmedLine.startsWith("{") || trimmedLine.startsWith("else")) && !trimmedLine.endsWith(":")) {
+                    result.append(' ').append(lines[lineNum].replace('\0', ' ')
                             .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
                 }
                 else {
-                    String liner = lines[i].replace('\0', ' ');
-                    if (!line.endsWith(":") && line.startsWith("-")) {
-                        liner = liner.replace(": ", "<&co> ");
-                        liner = liner.replace("#", "<&ns>");
+                    String curLine = lines[lineNum].replace('\0', ' ');
+                    if (!trimmedLine.endsWith(":") && trimmedLine.startsWith("-")) {
+                        curLine = curLine.replace(": ", "<&co> ");
+                        curLine = curLine.replace("#", "<&ns>");
                     }
-                    result.append(liner.replace('\0', ' ')).append("\n");
+                    if (trimmedLine.startsWith("- ")) {
+                        int dashIndex = curLine.indexOf('-');
+                        curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
+                    }
+                    result.append(curLine).append("\n");
                 }
             }
             else {
