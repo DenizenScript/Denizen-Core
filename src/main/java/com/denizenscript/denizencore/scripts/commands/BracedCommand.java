@@ -206,9 +206,16 @@ public abstract class BracedCommand extends AbstractCommand {
                             Debug.echoDebug(scriptEntry, "Calculating " + cmd);
                         }
                         command.remove(0);
+                        int lineNum = 1;
+                        if (cmd.length() > 2 && cmd.charAt(0) == ScriptBuilder.LINE_PREFIX_CHAR && cmd.charAt(cmd.length() - 1) == ScriptBuilder.LINE_PREFIX_CHAR) {
+                            lineNum = Integer.valueOf(cmd.substring(1, cmd.length() - 1));
+                            cmd = command.get(0);
+                            command.remove(0);
+                        }
                         String[] args = new String[command.size()];
                         args = command.toArray(args);
                         ScriptEntry newEntry = new ScriptEntry(cmd, args, scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
+                        newEntry.internal.lineNumber = lineNum;
                         newEntry.internal.originalLine = newEntry.toString();
                         bracesSection.add(newEntry);
                         bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
