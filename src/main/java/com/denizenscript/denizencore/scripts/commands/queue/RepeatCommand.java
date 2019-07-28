@@ -22,7 +22,7 @@ public class RepeatCommand extends BracedCommand {
     //
     // @Description
     // Loops through a series of braced commands a specified number of times.
-    // To get the number of loops so far, you can use <def[value]>.
+    // To get the number of loops so far, you can use <[value]>.
     //
     // Optionally, specify "as:<name>" to change the definition name to something other than "value".
     //

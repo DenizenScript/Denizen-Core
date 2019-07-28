@@ -49,7 +49,7 @@ public class ChooseCommand extends BracedCommand {
     //
     // @Usage
     // Use for dynamically choosing a case.
-    // - choose "<def[entity_type]>":
+    // - choose "<[entity_type]>":
     //   - case "zombie":
     //     - narrate "You slayed an undead zombie!"
     //   - case "skeleton":
@@ -59,7 +59,7 @@ public class ChooseCommand extends BracedCommand {
     //   - case "pig" "cow" "chicken":
     //     - narrate "You killed an innocent farm animal!"
     //   - default:
-    //     - narrate "You killed a <def[entity_type].to_titlecase>!"
+    //     - narrate "You killed a <[entity_type].to_titlecase>!"
     //
     // -->
 

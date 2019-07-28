@@ -22,7 +22,7 @@ public class ForeachCommand extends BracedCommand {
     //
     // @Description
     // Loops through a ListTag of any type. For each item in the ListTag, the specified commands will be ran for
-    // that list entry. To call the value of the entry while in the loop, you can use <def[value]>.
+    // that list entry. To call the value of the entry while in the loop, you can use <[value]>.
     //
     // Optionally, specify "as:<name>" to change the definition name to something other than "value".
     //

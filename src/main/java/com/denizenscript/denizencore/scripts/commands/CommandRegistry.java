@@ -79,7 +79,7 @@ public abstract class CommandRegistry {
     // Highly specific note: <commands> means a block of commands wrapped in braces or as a sub-block... EG:
     // <code>
     // - repeat 3:
-    //   - narrate "<def[value]>"
+    //   - narrate "<[value]>"
     //   - narrate "everything spaced out as a sub-block (these two narrates) following a ":" ended command (that repeat) is for the <commands> input!"
     // </code>
     //

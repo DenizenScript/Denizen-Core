@@ -25,27 +25,26 @@ import java.util.regex.Pattern;
 public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
     // <--[language]
-    // @name Element
+    // @name ElementTags
     // @group Object System
     // @description
-    // Elements are simple objects that contain either a boolean (true/false),
+    // ElementTags are simple objects that contain either a boolean (true/false),
     // string, or number value. Their main usage is within the replaceable tag
     // system, often times returned from the use of another tag that isn't returning
     // a specific object type, such as a location or entity. For example,
-    // <player.name> or <lItemTag|item2|item3.as_cslist> will both return Elements.
+    // <player.name> or <list[item1|item2|item3].as_cslist> will both return ElementTags.
     //
     // Pluses to the ElementTag system is the ability to utilize its attributes that
     // can provide a range of functionality that should be familiar from any other
     // programming language, such as 'to_uppercase', 'split', 'replace', 'contains',
-    // as_int, any many more. See 'element' tags for more information.
+    // and many more. See 'elementtag.*' tags for more information.
     //
     // While information fetched from other tags resulting in an ElementTag is often
     // times automatically handled, it may be desirable to utilize element
-    // attributes from strings/numbers/etc. that aren't already an element object.
-    // To accomplish this, the object fetcher can be used to create a new element.
-    // ElementTag has a constructor, el@val[element_value], that will allow the
-    // creation of a new element. For example: <el@val[This_is_a_test.].to_uppercase>
-    // will result in the value 'THIS_IS_A_TEST.' Note that while other objects often
+    // attributes from text/numbers/etc. that aren't already an element object.
+    // To accomplish this, the standard 'element' tag base can be used for the
+    // creation of a new element. For example: <element[This_is_a_test].to_uppercase>
+    // will result in the value 'THIS_IS_A_TEST' Note that while other objects often
     // return their object identifier (el@, li@, e@, etc.), elements do not.
     //
     // For format info, see <@link language el@>
@@ -946,7 +945,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         // @description
         // Returns the specific group from a regex match.
         // Specify group 0 for the whole match.
-        // For example, <el@val[hello5world].regex[.*(\d).*].group[1]> returns '5'.
+        // For example, <element[hello5world].regex[.*(\d).*].group[1]> returns '5'.
         // -->
         registerTag("regex", new TagRunnable.ObjectForm() {
             @Override

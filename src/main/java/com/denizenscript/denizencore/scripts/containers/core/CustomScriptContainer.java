@@ -52,7 +52,7 @@ public class CustomScriptContainer extends ScriptContainer {
     //   # NEVER change any external state. Just determine a value. Nothing else should change from the script.
     //   tags:
     //
-    //     # This would be read like <def[my_object].my_tag>
+    //     # This would be read like <[my_object].my_tag>
     //     my_tag:
     //     # Perform any logic here, and 'determine' the result.
     //     - determine 3

@@ -43,7 +43,7 @@ public class DebugCommand extends AbstractCommand {
     //
     // @Usage
     // Use to add some information to help your own ability to read debug output from you script
-    // - debug debug "Time is currently <def[milliseconds].div[1000].round> seconds!"
+    // - debug debug "Time is currently <[milliseconds].div[1000].round> seconds!"
     //
     // -->
 
