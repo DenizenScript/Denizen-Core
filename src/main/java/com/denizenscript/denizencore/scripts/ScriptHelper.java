@@ -110,7 +110,7 @@ public class ScriptHelper {
                         curLine = curLine.replace(": ", "<&co> ");
                         curLine = curLine.replace("#", "<&ns>");
                     }
-                    if (trimmedLine.startsWith("- ")) {
+                    if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
                         int dashIndex = curLine.indexOf('-');
                         curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                     }
