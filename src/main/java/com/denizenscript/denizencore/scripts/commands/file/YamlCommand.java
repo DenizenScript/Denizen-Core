@@ -353,7 +353,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             FileInputStream fis = new FileInputStream(file);
                             String str = ScriptHelper.convertStreamToString(fis);
                             if (fixFormatting.asBoolean()) {
-                                str = ScriptHelper.ClearComments("", str, false);
+                                str = ScriptHelper.clearComments("", str, false);
                             }
                             runnableConfigs[0] = YamlConfiguration.load(str);
                             fis.close();
@@ -383,7 +383,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case LOADTEXT:
                 String str = rawText.asString();
                 if (fixFormatting.asBoolean()) {
-                    str = ScriptHelper.ClearComments("", str, false);
+                    str = ScriptHelper.clearComments("", str, false);
                 }
                 YamlConfiguration config = YamlConfiguration.load(str);
                 if (yamls.containsKey(id)) {

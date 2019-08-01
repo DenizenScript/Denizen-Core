@@ -87,9 +87,10 @@ public class ScriptHelper {
         return scriptOriginalNames.get(script.toUpperCase());
     }
 
-    public static String ClearComments(String filename, String input, boolean trackSources) {
+    public static String clearComments(String filename, String input, boolean trackSources) {
         StringBuilder result = new StringBuilder(input.length());
         String[] lines = input.replace("\t", "    ").replace("\r", "").split("\n");
+        boolean hasAnyScript = false;
         for (int lineNum = 0; lineNum < lines.length; lineNum++) {
             String trimmedLine = lines[lineNum].trim();
             String trimStart = lines[lineNum].replaceAll("^[\\s]+", "");
@@ -98,8 +99,13 @@ public class ScriptHelper {
                 scriptSources.put(name.toUpperCase(), filename);
                 scriptOriginalNames.put(name.toUpperCase(), name);
                 result.append(name.toUpperCase() + ":\n");
+                hasAnyScript = true;
             }
             else if (!trimmedLine.startsWith("#")) {
+                if (trackSources && !hasAnyScript && trimmedLine.endsWith(":")) {
+                    Debug.echoError("Script '" + filename + "' is broken: script container title has spaces in front.");
+                    hasAnyScript = true;
+                }
                 if ((trimmedLine.startsWith("}") || trimmedLine.startsWith("{") || trimmedLine.startsWith("else")) && !trimmedLine.endsWith(":")) {
                     result.append(' ').append(lines[lineNum].replace('\0', ' ')
                             .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
@@ -141,7 +147,7 @@ public class ScriptHelper {
 
     public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
         try {
-            String script = ClearComments(filename, convertStreamToString(resource), true);
+            String script = clearComments(filename, convertStreamToString(resource), true);
             return YamlConfiguration.load(script);
         }
         finally {
