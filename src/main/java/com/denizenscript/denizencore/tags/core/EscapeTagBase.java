@@ -44,7 +44,7 @@ public class EscapeTagBase {
     // [ = &lb
     // ] = &rb
     // : = &co
-    // @ = &at
+    // at sign @ = &at
     // . = &dot
     // \ = &bs
     // ' = &sq
