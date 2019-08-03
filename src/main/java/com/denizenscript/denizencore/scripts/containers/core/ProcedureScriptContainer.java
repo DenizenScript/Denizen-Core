@@ -34,7 +34,6 @@ public class ProcedureScriptContainer extends ScriptContainer {
     // In general, maximum caution is the best for situations like this... simply *never* make a procedure
     // that executes external changes.
     //
-    //
     // <code>
     // Proc_Script_Name:
     //

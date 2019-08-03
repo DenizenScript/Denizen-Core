@@ -72,7 +72,6 @@ public class CustomScriptContainer extends ScriptContainer {
     //
     //     # list additional mechanisms here...
     //
-    //
     // </code>
     //
     // -->

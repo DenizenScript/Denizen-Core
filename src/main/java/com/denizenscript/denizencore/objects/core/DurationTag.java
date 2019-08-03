@@ -57,7 +57,6 @@ public class DurationTag implements ObjectTag {
     // Fetcher. Durations must be a positive number or range of numbers followed optionally by
     // a unit of time, and prefixed by d@. Examples: d@3s, d@1d, d@10s-20s.
     //
-    //
     // For general info, see <@link language Duration>
     // -->
 
