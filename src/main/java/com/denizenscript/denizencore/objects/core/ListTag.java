@@ -1867,21 +1867,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         });
 
         // <--[tag]
-        // @attribute <ListTag.type>
-        // @returns ElementTag
-        // @description
-        // Always returns 'List' for ListTag objects. All objects fetchable by the Object Fetcher will return the
-        // type of object that is fulfilling this attribute.
-        // -->
-
-        registerTag("type", new TagRunnable.ObjectForm() {
-            @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag("List").getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
         // @attribute <ListTag.random[<#>]>
         // @returns ObjectTag
         // @description
