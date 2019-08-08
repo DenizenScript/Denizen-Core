@@ -58,7 +58,7 @@ public class EscapeTagBase {
     //
     // These symbols are automatically used by the internal system, if you are
     // writing your own property string and need to escape some symbols, you
-    // can just directly type them in, EG: i@stick[display_name=&ltFancy&spStick&gt]
+    // can just directly type them in, EG: stick[display_name=&ltFancy&spStick&gt]
     // -->
 
     /**

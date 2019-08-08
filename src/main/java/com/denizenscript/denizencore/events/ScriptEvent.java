@@ -125,7 +125,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
-                if (split.size() > 1) {
+                if (split.size() > 1 && !split.get(0).equalsIgnoreCase("regex")) {
                     switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
                 }
                 else {
