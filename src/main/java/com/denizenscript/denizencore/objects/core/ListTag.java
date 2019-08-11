@@ -16,6 +16,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -467,13 +468,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
     }
 
     public static void registerTags() {
+
         // <--[tag]
         // @attribute <ListTag.combine>
         // @returns ListTag
         // @description
         // returns a list containing the contents of all sublists within this list.
         // -->
-
         registerTag("combine", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -493,7 +494,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list in a cleaner format, separated by spaces.
         // For example: a list of "one|two|three" will return "one two three".
         // -->
-
         registerTag("space_separated", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -513,7 +513,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list formatted, with each item separated by the defined text.
         // For example: <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
         // -->
-
         registerTag("separated_by", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -533,7 +532,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list in a cleaner format, separated by commas.
         // For example: a list of "one|two|three" will return "one, two, three".
         // -->
-
         registerTag("comma_separated", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -553,7 +551,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list in a less clean format, separated by nothing.
         // For example: a list of "one|two|three" will return "onetwothree".
         // -->
-
         registerTag("unseparated", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -572,7 +569,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // forward-slash character (/).
         // For example: .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
         // -->
-
         registerTag("get_sub_items", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -628,7 +624,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // TODO: Clarify
         // For example: li@one/a|two/b.map_get[one] returns a.
         // -->
-
         registerTag("map_get", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -672,7 +667,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // TODO: Clarify
         // For example: li@one/a|two/b.map_find_key[a] returns one.
         // -->
-
         registerTag("map_find_key", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -740,7 +734,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a new ListTag with the items specified inserted to the specified location.
         // For example: .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
         // -->
-
         registerTag("insert", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -779,7 +772,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // already at that location.
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // -->
-
         registerTag("set", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -822,7 +814,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a new ListTag including the items specified.
         // For example: .include[three|four] on a list of "one|two" will return "one|two|three|four".
         // -->
-
         registerTag("include", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -843,7 +834,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a new ListTag excluding the items specified.
         // For example: .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
         // -->
-
         registerTag("exclude", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -875,7 +865,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .remove[2] on a list of "one|two|three|four" will return "one|three|four".
         // Also supports [first] and [last] values.
         // -->
-
         registerTag("remove", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -983,7 +972,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a copy of the list, with all items placed in opposite order.
         // For example: a list of "one|two|three" will become "three|two|one".
         // -->
-
         registerTag("reverse", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1000,7 +988,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a copy of the list with any duplicate items removed.
         // For example: a list of "one|one|two|three" will become "one|two|three".
         // -->
-
         registerTag("deduplicate", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1110,7 +1097,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-
         registerTag("find_all_partial", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1139,7 +1125,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .find_all[two] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-
         registerTag("find_all", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1167,7 +1152,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .find_partial[tw] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-
         registerTag("find_partial", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1195,7 +1179,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .find[two] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-
         registerTag("find", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1227,7 +1210,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns how many times in the sub-list occurs.
         // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
-
         registerTag("count", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1253,7 +1235,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns the sum of all numbers in the list.
         // -->
-
         registerTag("sum", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1272,7 +1253,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns the average of all numbers in the list.
         // -->
-
         registerTag("average", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1297,7 +1277,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: a list of "one|two|three" will return "one".
         // Effectively equivalent to .get[1]
         // -->
-
         registerTag("first", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1320,7 +1299,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: a list of "one|two|three" will return "three".
         // Effectively equivalent to .get[<list.size>]
         // -->
-
         registerTag("last", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1335,13 +1313,66 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         });
 
         // <--[tag]
+        // @attribute <ListTag.lowest>
+        // @returns ElementTag(Decimal)
+        // @description
+        // returns the smallest value in a list of decimal numbers.
+        // For example: a list of "3|2|1|10" will return "1".
+        // -->
+        registerTag("lowest", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                ListTag list = (ListTag) object;
+                BigDecimal lowest = null;
+                for (String str : list) {
+                    if (ArgumentHelper.matchesDouble(str)) {
+                        BigDecimal val = new ElementTag(str).asBigDecimal();
+                        if (lowest == null || lowest.compareTo(val) > 0) {
+                            lowest = val;
+                        }
+                    }
+                }
+                if (lowest == null) {
+                    return null;
+                }
+                return new ElementTag(lowest).getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.highest>
+        // @returns ElementTag(Decimal)
+        // @description
+        // returns the highest value in a list of decimal numbers.
+        // For example: a list of "3|2|1|10" will return "10".
+        // -->
+        registerTag("highest", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                ListTag list = (ListTag) object;
+                BigDecimal highest = null;
+                for (String str : list) {
+                    if (ArgumentHelper.matchesDouble(str)) {
+                        BigDecimal val = new ElementTag(str).asBigDecimal();
+                        if (highest == null || highest.compareTo(val) < 0) {
+                            highest = val;
+                        }
+                    }
+                }
+                if (highest == null) {
+                    return null;
+                }
+                return new ElementTag(highest).getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
         // @attribute <ListTag.numerical>
         // @returns ListTag
         // @description
         // returns the list sorted to be in numerical order.
         // For example: a list of "3|2|1|10" will return "1|2|3|10".
         // -->
-
         registerTag("numerical", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1372,7 +1403,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list sorted to be in alphabetical/numerical order.
         // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
         // -->
-
         registerTag("alphanumeric", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1389,7 +1419,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns the list sorted to be in alphabetical order.
         // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".
         // -->
-
         registerTag("alphabetical", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1412,7 +1441,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
         // -->
-
         registerTag("sort_by_number", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(final Attribute attribute, final ObjectTag object) {
@@ -1460,7 +1488,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Note that the script should ALWAYS return -1, 0, or 1, or glitches could happen!
         // Note that if two inputs are exactly equal, the procedure should always return 0.
         // -->
-
         registerTag("sort", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1544,7 +1571,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
-
         registerTag("filter", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1579,7 +1605,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // returns a copy of the list with all its contents parsed through the given tag.
         // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
         // -->
-
         registerTag("parse", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1632,7 +1657,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Returns a ListTag extended to reach a minimum specified length
         // by adding entries to the left side.
         // -->
-
         registerTag("pad_left", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1673,7 +1697,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Returns a ListTag extended to reach a minimum specified length
         // by adding entries to the right side.
         // -->
-
         registerTag("pad_right", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1715,7 +1738,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Inverts <@link tag ListTag.unescape_contents>.
         // See <@link language property escaping>.
         // -->
-
         registerTag("escape_contents", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1735,7 +1757,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Inverts <@link tag ListTag.escape_contents>.
         // See <@link language property escaping>.
         // -->
-
         registerTag("unescape_contents", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1753,7 +1774,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns whether the list contains any of a list of given elements, case-sensitive.
         // -->
-
         registerTag("contains_any_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1784,7 +1804,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns whether the list contains any of a list of given elements.
         // -->
-
         registerTag("contains_any", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1815,7 +1834,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns whether the list contains a given element, case-sensitive.
         // -->
-
         registerTag("contains_case_sensitive", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1842,7 +1860,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // @description
         // returns whether the list contains all of the given elements.
         // -->
-
         registerTag("contains", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1877,7 +1894,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // For example: .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
-
         registerTag("random", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1917,7 +1933,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Uses the logic of tag "ElementTag.difference"!
         // You can use that tag to add an upper limit on how different the strings can be.
         // -->
-
         registerTag("closest_to", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
@@ -1934,7 +1949,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         // Always returns 'List' for ListTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
-
         registerTag("type", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
