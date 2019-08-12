@@ -558,7 +558,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
         // <--[tag]
         // @attribute <ElementTag.as_custom>
-        // @returns ListTag
+        // @returns CustomObject
         // @group conversion
         // @description
         // Returns the element as a custom object.
