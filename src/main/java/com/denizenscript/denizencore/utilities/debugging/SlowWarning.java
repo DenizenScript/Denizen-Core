@@ -1,28 +1,18 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
-public class SlowWarning {
+public class SlowWarning extends Warning {
 
     public static long WARNING_RATE = 10000;
 
     public long lastWarning;
 
-    public String message;
-
     public SlowWarning(String message) {
-        this.message = message;
+        super(message);
     }
 
-    public void warn(ScriptEntry entry) {
-        warn(entry == null ? null : entry.getResidingQueue());
-    }
-
-    public void warn() {
-        warn((ScriptQueue) null);
-    }
-
+    @Override
     public void warn(ScriptQueue queue) {
         long cTime = System.currentTimeMillis();
         if (lastWarning + WARNING_RATE > cTime) {
