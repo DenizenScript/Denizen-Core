@@ -14,7 +14,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2018/12/23
     // Bad candidate for functionality removal - a bit handy to use in "/ex", despite being clearly bad in standard scripts.
-    public static SlowWarning playerByNameWarning = new SlowWarning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
+    public static Warning playerByNameWarning = new SlowWarning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
 
     // ==================== Tag shorthands ====================
     // ====== All added on 2019/02/06 ======
@@ -38,19 +38,19 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/03/08
     // Prime candidate for functionality removal - has been unsupported for a LONG time.
-    public static SlowWarning boundWarning = new SlowWarning("Item script 'bound' functionality has never been reliable and should not be used. Consider replicating the concept with world events.");
+    public static Warning boundWarning = new SlowWarning("Item script 'bound' functionality has never been reliable and should not be used. Consider replicating the concept with world events.");
 
     // In Bukkit impl, Added on 2019/07/07
     public static Warning mathTagBase = new Warning("'math:' tags have been non-recommended for years. Please use modern element math tags like 'element.add[...]', etc.");
 
     // Added on 2019/07/13
-    public static SlowWarning oldEscapeTags = new SlowWarning("'escape:' tags are deprecated. Please use '.escaped' element tags instead.");
+    public static Warning oldEscapeTags = new SlowWarning("'escape:' tags are deprecated. Please use '.escaped' element tags instead.");
 
     // In Bukkit impl, Added on 2019/07/25
-    public static SlowWarning oldStylePlayerBreaksItemEvent = new SlowWarning("Event 'player breaks <item>' is old. Use 'player breaks held <item>' instead (this is to prevent conflict with breaks block)");
+    public static Warning oldStylePlayerBreaksItemEvent = new SlowWarning("Event 'player breaks <item>' is old. Use 'player breaks held <item>' instead (this is to prevent conflict with breaks block)");
 
     // In Bukkit impl, Added on 2019/08/11
-    public static SlowWarning oldEconomyTags = new SlowWarning("player.money.currency* tags are deprecated in favor of server.economy.currency* tags.");
+    public static Warning oldEconomyTags = new SlowWarning("player.money.currency* tags are deprecated in favor of server.economy.currency* tags.");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
@@ -64,5 +64,5 @@ public class Deprecations {
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/07/13, deprecate officially by 2020.
-    public static SlowWarning oldParseTag = new SlowWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
+    public static Warning oldParseTag = new SlowWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
 }
