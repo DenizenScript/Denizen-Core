@@ -56,9 +56,14 @@ public class EscapeTagBase {
     //
     // Also, you can input a non-breaking space via &sp
     //
+    // Note that these are NOT tag names. They are exclusively used by the escaping system.
+    //
     // These symbols are automatically used by the internal system, if you are
     // writing your own property string and need to escape some symbols, you
     // can just directly type them in, EG: stick[display_name=&ltFancy&spStick&gt]
+    //
+    // You can use these escape codes in a tag via <@link tag ElementTag.escaped> and <@link tag ElementTag.unescaped>.
+    //
     // -->
 
     /**

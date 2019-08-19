@@ -52,6 +52,9 @@ public class Deprecations {
     // In Bukkit impl, Added on 2019/08/11
     public static Warning oldEconomyTags = new SlowWarning("player.money.currency* tags are deprecated in favor of server.economy.currency* tags.");
 
+    // In Bukkit impl, Added on 2019/08/19
+    public static Warning pointlessTextTags = new SlowWarning("Several text tags like '&dot' or '&cm' are pointless (there's no reason you can't just directly write them in). Please replace them with the actual intended text.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
