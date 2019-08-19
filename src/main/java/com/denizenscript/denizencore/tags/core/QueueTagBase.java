@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.tags.TagManager;
 
 public class QueueTagBase {
@@ -27,8 +27,6 @@ public class QueueTagBase {
     //  ReplaceableTagEvent handler
     ////////
 
-    public SlowWarning queueShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
-
     public void queueTag(ReplaceableTagEvent event) {
 
         if (!event.matches("queue", "q")) {
@@ -36,7 +34,7 @@ public class QueueTagBase {
         }
 
         if (event.matches("q")) {
-            queueShorthand.warn(event.getScriptEntry());
+            Deprecations.queueShorthand.warn(event.getScriptEntry());
         }
 
         // Handle <queue[id]. ...> tags

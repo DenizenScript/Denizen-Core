@@ -6,8 +6,8 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 
 public class TernaryTagBase {
 
@@ -19,8 +19,6 @@ public class TernaryTagBase {
             }
         }, "ternary", "tern", "t");
     }
-
-    public SlowWarning ternShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'tern' instead of 't' as a root tag.");
 
     // <--[tag]
     // @attribute <tern[<condition>].pass[<result>].fail[<result>]>
@@ -35,7 +33,7 @@ public class TernaryTagBase {
             return;
         }
         if (event.matches("t")) {
-            ternShorthand.warn(event.getScriptEntry());
+            Deprecations.ternShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attribute = event.getAttributes();

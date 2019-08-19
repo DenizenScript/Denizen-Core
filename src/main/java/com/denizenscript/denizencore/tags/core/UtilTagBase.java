@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -28,15 +28,13 @@ public class UtilTagBase {
         }, "util", "u");
     }
 
-    public SlowWarning utilShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
-
     public void utilTag(ReplaceableTagEvent event) {
         if (!event.matches("util", "u")) {
             return;
         }
 
         if (event.matches("u")) {
-            utilShorthand.warn(event.getScriptEntry());
+            Deprecations.utilShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attribute = event.getAttributes().fulfill(1);

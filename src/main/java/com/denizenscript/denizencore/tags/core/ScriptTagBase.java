@@ -3,8 +3,8 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -20,8 +20,6 @@ public class ScriptTagBase {
         }, "script", "s");
     }
 
-    public SlowWarning scriptShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'script' instead of 's' as a root tag.");
-
     public void scriptTags(ReplaceableTagEvent event) {
 
         if (!event.matches("script", "s") || event.replaced()) {
@@ -29,7 +27,7 @@ public class ScriptTagBase {
         }
 
         if (event.matches("s")) {
-            scriptShorthand.warn(event.getScriptEntry());
+            Deprecations.scriptShorthand.warn(event.getScriptEntry());
         }
 
         // Stage the location

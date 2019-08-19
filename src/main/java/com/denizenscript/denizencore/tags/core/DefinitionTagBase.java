@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class DefinitionTagBase {
@@ -27,8 +27,6 @@ public class DefinitionTagBase {
     //  ReplaceableTagEvent handler
     ////////
 
-    public SlowWarning defShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
-
     public void definitionTag(ReplaceableTagEvent event) {
 
         if (!event.matches("definition", "def", "d", "")) {
@@ -36,7 +34,7 @@ public class DefinitionTagBase {
         }
 
         if (event.matches("d")) {
-            defShorthand.warn(event.getScriptEntry());
+            Deprecations.defShorthand.warn(event.getScriptEntry());
         }
 
         if (!event.hasNameContext()) {

@@ -9,7 +9,7 @@ import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
@@ -25,8 +25,6 @@ public class ProcedureScriptTagBase {
             }
         }, "proc", "pr");
     }
-
-    public SlowWarning procShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
 
     public void procedureTag(ReplaceableTagEvent event) {
 
@@ -48,7 +46,7 @@ public class ProcedureScriptTagBase {
         }
 
         if (event.matches("pr")) {
-            procShorthand.warn(event.getScriptEntry());
+            Deprecations.procShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attr = event.getAttributes();

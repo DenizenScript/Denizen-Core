@@ -4,9 +4,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 
 public class EscapeTagBase {
 
@@ -108,10 +108,8 @@ public class EscapeTagBase {
                 .replace("&ns", "#").replace("&amp", "&");
     }
 
-    public SlowWarning oldEscapeTags = new SlowWarning("'escape:' tags are deprecated. Please use '.escaped' element tags instead.");
-
     public void escapeTags(ReplaceableTagEvent event) {
-        oldEscapeTags.warn(event.getScriptEntry());
+        Deprecations.oldEscapeTags.warn(event.getScriptEntry());
         if (event.matches("escape")) {
             if (!event.hasValue()) {
                 Debug.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
@@ -122,7 +120,7 @@ public class EscapeTagBase {
     }
 
     public void unEscapeTags(ReplaceableTagEvent event) {
-        oldEscapeTags.warn(event.getScriptEntry());
+        Deprecations.oldEscapeTags.warn(event.getScriptEntry());
         if (event.matches("unescape")) {
             if (!event.hasValue()) {
                 Debug.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");
