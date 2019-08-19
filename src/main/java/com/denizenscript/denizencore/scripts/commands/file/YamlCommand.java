@@ -109,7 +109,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         return yamls.get(id.toUpperCase());
     }
 
-    public enum Action {LOAD, LOADTEXT, UNLOAD, CREATE, WRITE, SAVE, SET, COPYKEY}
+    public enum Action {LOAD, LOADTEXT, UNLOAD, CREATE, SAVE, SET, COPYKEY}
 
     public enum YAML_Action {
         SET_VALUE, INCREASE, DECREASE, MULTIPLY,
@@ -155,12 +155,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             else if (!scriptEntry.hasObject("action") &&
                     arg.matches("unload")) {
                 scriptEntry.addObject("action", new ElementTag("UNLOAD"));
-            }
-            else if (!scriptEntry.hasObject("action") &&
-                    arg.matchesPrefix("write")) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "YAML write is deprecated, use YAML set!");
-                scriptEntry.addObject("action", new ElementTag("WRITE"));
-                scriptEntry.addObject("key", arg.asElement());
             }
             else if (!scriptEntry.hasObject("value") &&
                     arg.matchesPrefix("value")) {
@@ -270,11 +264,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify an action!");
-        }
-
-        if (!scriptEntry.hasObject("key") &&
-                scriptEntry.getElement("action").asString().equalsIgnoreCase("write")) {
-            throw new InvalidArgumentsException("Must specify a key!");
         }
 
         scriptEntry.defaultObject("value", new ElementTag(""));
@@ -454,23 +443,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 else {
                     Debug.echoError("Unknown YAML ID '" + id + "'");
                     scriptEntry.setFinished(true);
-                }
-                break;
-
-            case WRITE:
-                if (yamls.containsKey(id)) {
-                    if (value instanceof ElementTag) {
-                        yamls.get(id).set(key.asString(), ((ElementTag) value).asString());
-                    }
-                    else if (split != null && split.asBoolean()) {
-                        yamls.get(id).set(key.asString(), value);
-                    }
-                    else {
-                        yamls.get(id).set(key.asString(), value.identify());
-                    }
-                }
-                else {
-                    Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
 
