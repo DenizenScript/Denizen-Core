@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -50,7 +51,7 @@ public class CommandExecuter {
                 Debug.log("(Attempted: " + scriptEntry.toString() + ")");
                 definition = "null";
             }
-            Debug.echoError(scriptEntry.getResidingQueue(), "Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
+            Deprecations.ancientDefs.warn(scriptEntry.getResidingQueue());
             Debug.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
             m.appendReplacement(sb, Matcher.quoteReplacement(definition));
         }

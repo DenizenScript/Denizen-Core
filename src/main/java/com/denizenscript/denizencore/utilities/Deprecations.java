@@ -9,6 +9,9 @@ import com.denizenscript.denizencore.utilities.debugging.Warning;
  */
 public class Deprecations {
 
+    // Prime candidate for removal - been strongly deprecated for a very long time (exact date is unclear, but many years).
+    public static Warning ancientDefs = new Warning("Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
+
     // In Bukkit impl, Added on 2018/12/23
     // Bad candidate for functionality removal - a bit handy to use in "/ex", despite being clearly bad in standard scripts.
     public static SlowWarning playerByNameWarning = new SlowWarning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
@@ -48,6 +51,15 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/08/11
     public static SlowWarning oldEconomyTags = new SlowWarning("player.money.currency* tags are deprecated in favor of server.economy.currency* tags.");
+
+    // ==================== SPECIAL deprecations: Minecraft version ====================
+
+    // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
+    public static Warning materialIds = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release.");
+    public static Warning materialIdsSuggestProperties = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use relevant properties instead.");
+    public static Warning materialIdsSuggestNames = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use material names instead.");
+    public static Warning skullSkinMaterials = new Warning("As of Minecraft version 1.13 you may only set the skin of a PLAYER_HEAD or PLAYER_WALL_HEAD.");
+    public static Warning flowerpotMechanism = new Warning("As of Minecraft version 1.13 potted flowers each have their own material, such as POTTED_CACTUS.");
 
     // ==================== FUTURE deprecations ====================
 
