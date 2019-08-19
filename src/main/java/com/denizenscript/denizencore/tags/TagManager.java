@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.core.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.regex.Pattern;
 
 public class TagManager {
 
@@ -388,12 +390,19 @@ public class TagManager {
             DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplacedObj().debuggable());
         }
         if (!event.replaced()) {
-            Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null,
-                    "Tag <" + event.toString() + "> is invalid!");
+            ScriptQueue queue = context.entry != null ? context.entry.getResidingQueue() : null;
+            String tagStr = "<" + event.toString() + ">";
+            Debug.echoError(queue, "Tag " + tagStr + " is invalid!");
+            if (OBJECTTAG_CONFUSION_PATTERN.matcher(tagStr).matches()) {
+                Debug.echoError(queue, "'ObjectTag' notation is for documentation purposes, and not to be used literally."
+                    + " An actual object must be inserted instead. If confused, join our Discord at https://discord.gg/Q6pZGSR to ask for help!");
+            }
             return new ElementTag(event.raw_tag);
         }
         return event.getReplacedObj();
     }
+
+    public static Pattern OBJECTTAG_CONFUSION_PATTERN = Pattern.compile("<\\w+tag[\\[.>].*", Pattern.CASE_INSENSITIVE);
 
     static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<>();
 
