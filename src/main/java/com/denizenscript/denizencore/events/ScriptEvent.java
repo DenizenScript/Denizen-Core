@@ -516,6 +516,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return output.toString();
     }
 
+    public static boolean isRegexMatchable(String input) {
+        return input.startsWith("regex:") || input.contains("|") || input.contains("*");
+    }
+
     public static Pattern regexHandle(String input) {
         Pattern result = knownPatterns.get(input);
         if (result != null) {
