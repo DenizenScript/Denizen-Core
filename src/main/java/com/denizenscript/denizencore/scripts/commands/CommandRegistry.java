@@ -112,7 +112,7 @@ public abstract class CommandRegistry {
         registerCoreMember(StopCommand.class, "STOP", "stop", 0);
         registerCoreMember(SyncCommand.class, "SYNC", "sync [<commands>]", 0);
         registerCoreMember(WaitCommand.class, "WAIT", "wait (<duration>) (queue:<name>)", 0);
-        registerCoreMember(WaitUntilCommand.class, "WAITUNTIL", "waituntil [<comparisons>]", 0);
+        registerCoreMember(WaitUntilCommand.class, "WAITUNTIL", "waituntil (rate:<duration>) [<comparisons>]", 1);
         registerCoreMember(WebGetCommand.class, "WEBGET", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
         registerCoreMember(WhileCommand.class, "WHILE", "while [stop/next/<comparison tag>] [<commands>]", 1);
         registerCoreMember(YamlCommand.class, "YAML", "yaml [create]/[load:<file> (fix_formatting)]/[loadtext:<text> (fix_formatting)]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]", 2);
