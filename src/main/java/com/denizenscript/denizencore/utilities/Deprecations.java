@@ -55,6 +55,10 @@ public class Deprecations {
     // In Bukkit impl, Added on 2019/08/19
     public static Warning pointlessTextTags = new SlowWarning("Several text tags like '&dot' or '&cm' are pointless (there's no reason you can't just directly write them in). Please replace them with the actual intended text.");
 
+    // Added on 2019/08/27
+    // Prime candidate for functionality removal - hasn't been useful for several years.
+    public static Warning yamlFixFormatting = new SlowWarning("YAML command 'fix_formatting' argument is deprecated: this should never be used.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

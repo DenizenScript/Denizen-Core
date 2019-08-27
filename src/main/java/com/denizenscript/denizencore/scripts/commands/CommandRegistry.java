@@ -115,7 +115,7 @@ public abstract class CommandRegistry {
         registerCoreMember(WaitUntilCommand.class, "WAITUNTIL", "waituntil (rate:<duration>) [<comparisons>]", 1);
         registerCoreMember(WebGetCommand.class, "WEBGET", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
         registerCoreMember(WhileCommand.class, "WHILE", "while [stop/next/<comparison tag>] [<commands>]", 1);
-        registerCoreMember(YamlCommand.class, "YAML", "yaml [create]/[load:<file> (fix_formatting)]/[loadtext:<text> (fix_formatting)]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]", 2);
+        registerCoreMember(YamlCommand.class, "YAML", "yaml [create]/[load:<file>]/[loadtext:<text> (fix_formatting)]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]", 2);
     }
 
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {
