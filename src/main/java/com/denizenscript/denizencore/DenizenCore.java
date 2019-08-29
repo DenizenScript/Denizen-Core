@@ -81,20 +81,12 @@ public class DenizenCore {
     public static void init(DenizenImplementation implementation) {
         currentTimeMillis = System.currentTimeMillis();
         DenizenCore.implementation = implementation;
-        MAIN_THREAD = implementation.getMainThread();
+        MAIN_THREAD = Thread.currentThread();
         Debug.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
         scriptEngine = new ScriptEngine();
         ScriptEvent.registerCoreEvents();
-    }
-
-    /**
-     * Called after all objects are added and registered, to calculate
-     * everything that needs calculating.
-     */
-    public static void initSecondary() {
-
     }
 
     /**

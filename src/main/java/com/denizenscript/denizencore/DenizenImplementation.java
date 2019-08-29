@@ -137,8 +137,6 @@ public interface DenizenImplementation {
 
     boolean matchesType(String comparable, String comparedTo);
 
-    Thread getMainThread();
-
     boolean allowedToWebget();
 
     void preTagExecute();
