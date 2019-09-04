@@ -319,6 +319,8 @@ public class TagManager {
         }
     }
 
+    public static boolean isInTag = false;
+
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -328,7 +330,14 @@ public class TagManager {
             public void run() {
                 try {
                     DenizenCore.getImplementation().preTagExecute();
-                    fireEvent(event);
+                    if (isInTag) {
+                        fireEvent(event);
+                    }
+                    else {
+                        isInTag = true;
+                        fireEvent(event);
+                        isInTag = false;
+                    }
                 }
                 finally {
                     DenizenCore.getImplementation().postTagExecute();
@@ -377,7 +386,7 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag read: " + event.raw_tag + ", " + event.isInstant() + ", " + tT + "...");
         }
-        if (tT <= 0 || (!DenizenCore.getImplementation().shouldDebug(context) && !DenizenCore.getImplementation().tagTimeoutWhenSilent())) {
+        if (tT <= 0 || isInTag || (!DenizenCore.getImplementation().shouldDebug(context) && !DenizenCore.getImplementation().tagTimeoutWhenSilent())) {
             fireEvent(event);
         }
         else {
