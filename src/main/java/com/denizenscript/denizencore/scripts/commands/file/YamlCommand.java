@@ -118,6 +118,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         boolean isSet = false;
+        boolean isCopyKey = false;
 
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("action") &&
@@ -149,6 +150,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("COPYKEY"));
                 scriptEntry.addObject("key", arg.asElement());
                 isSet = true;
+                isCopyKey = true;
             }
             else if (!scriptEntry.hasObject("action") &&
                     arg.matches("unload")) {
@@ -248,6 +250,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     continue;
                 }
                 scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
+            }
+
+            else if (isCopyKey && !scriptEntry.hasObject("value")) {
+                scriptEntry.addObject("value", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
