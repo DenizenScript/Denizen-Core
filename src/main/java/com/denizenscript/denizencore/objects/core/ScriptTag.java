@@ -481,7 +481,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
         registerTag("to_json", new TagRunnable() {
             @Override
             public String run(Attribute attribute, ObjectTag object) {
-                JSONObject jsobj = new JSONObject(((ScriptTag) object).container.getConfigurationSection("").getMap());
+                JSONObject jsobj = new JSONObject(YamlConfiguration.reverse(((ScriptTag) object).container.getContents().getMap(), true));
                 jsobj.remove("TYPE");
                 return new ElementTag(jsobj.toString()).getAttribute(attribute.fulfill(1));
             }
@@ -501,7 +501,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
                 YamlConfiguration config = new YamlConfiguration();
                 config.addAll(((ScriptTag) object).getContainer().getContents().getMap());
                 config.set("type", null);
-                return new ElementTag(config.saveToString()).getAttribute(attribute.fulfill(1));
+                return new ElementTag(config.saveToString(true)).getAttribute(attribute.fulfill(1));
             }
         });
 

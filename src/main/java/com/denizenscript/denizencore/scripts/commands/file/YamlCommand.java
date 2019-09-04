@@ -407,7 +407,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             return;
                         }
                         fileObj.getParentFile().mkdirs();
-                        String outp = yamls.get(id).saveToString();
+                        String outp = yamls.get(id).saveToString(false);
                         Runnable saveRunnable = new Runnable() {
                             @Override
                             public void run() {
@@ -457,6 +457,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 YamlConfiguration sourceSection = yaml.getConfigurationSection(key.asString());
+                if (sourceSection == null) {
+                    Debug.echoError("Invalid YAML section key name '" + key.asString() + "'.");
+                    break;
+                }
                 YamlConfiguration newSection = copySection(sourceSection);
                 destYaml.set(value.toString(), newSection);
                 break;
@@ -814,7 +818,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Converts the YAML container to raw YAML text.
         // -->
         if (attribute.startsWith("to_text")) {
-            event.setReplaced(new ElementTag(getYaml(id).saveToString()).getAttribute(attribute.fulfill(1)));
+            event.setReplaced(new ElementTag(getYaml(id).saveToString(false)).getAttribute(attribute.fulfill(1)));
             return;
         }
     }

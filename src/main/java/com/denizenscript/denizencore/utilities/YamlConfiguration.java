@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
+import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
@@ -42,7 +43,7 @@ public class YamlConfiguration {
     /**
      * Use StringHolders instead of strings.
      */
-    private static void switchKeys(Map<StringHolder, Object> objs) {
+    public static void switchKeys(Map<StringHolder, Object> objs) {
         for (Object o : new HashSet<Object>(objs.keySet())) {
             Object got = objs.get(o);
             objs.remove(o);
@@ -58,11 +59,22 @@ public class YamlConfiguration {
         }
     }
 
-    private static Map<String, Object> reverse(Map<StringHolder, Object> objs) {
+    public static Map<String, Object> reverse(Map<StringHolder, Object> objs, boolean patchLines) {
         HashMap<String, Object> map = new HashMap<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             if (obj.getValue() instanceof Map) {
-                map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue()));
+                map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue(), patchLines));
+            }
+            else if (patchLines && obj.getValue() instanceof List) {
+                List vals = (List) obj.getValue();
+                List<String> output = new ArrayList<>(vals.size());
+                for (Object val : vals) {
+                    if (val == null) {
+                        continue;
+                    }
+                    output.add(ScriptBuilder.stripLinePrefix(val.toString()));
+                }
+                map.put(obj.getKey().str, output);
             }
             else {
                 map.put(obj.getKey().str, obj.getValue());
@@ -71,7 +83,7 @@ public class YamlConfiguration {
         return map;
     }
 
-    private static List<String> patchListNonsense(List<Object> objs) {
+    public static List<String> patchListNonsense(List<Object> objs) {
         List<String> list = new ArrayList<>();
         for (Object o : objs) {
             if (o == null) {
@@ -116,12 +128,12 @@ public class YamlConfiguration {
         return strings;
     }
 
-    public String saveToString() {
+    public String saveToString(boolean patchLines) {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         Yaml yaml = new Yaml(options);
-        String dumped = yaml.dump(reverse(contents));
+        String dumped = yaml.dump(reverse(contents, patchLines));
         if (Debug.verbose) {
             Debug.log("Outputting " + dumped);
         }
