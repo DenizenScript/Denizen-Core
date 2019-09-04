@@ -321,38 +321,38 @@ public class TagManager {
 
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
 
-        DenizenCore.getImplementation().preTagExecute();
-        try {
-            ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(4);
 
-            Future<?> future = executor.submit(new Runnable() {
-                @Override
-                public void run() {
+        Future<?> future = executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DenizenCore.getImplementation().preTagExecute();
                     fireEvent(event);
                 }
-            });
+                finally {
+                    DenizenCore.getImplementation().postTagExecute();
+                }
+            }
+        });
 
-            executor.shutdown();
+        executor.shutdown();
 
-            try {
-                future.get(seconds, TimeUnit.SECONDS);
-            }
-            catch (InterruptedException e) {
-                Debug.echoError("Tag filling was interrupted!");
-            }
-            catch (ExecutionException e) {
-                Debug.echoError(e);
-            }
-            catch (TimeoutException e) {
-                future.cancel(true);
-                Debug.echoError("Tag filling timed out!");
-            }
-
-            executor.shutdownNow();
+        try {
+            future.get(seconds, TimeUnit.SECONDS);
         }
-        finally {
-            DenizenCore.getImplementation().postTagExecute();
+        catch (InterruptedException e) {
+            Debug.echoError("Tag filling was interrupted!");
         }
+        catch (ExecutionException e) {
+            Debug.echoError(e);
+        }
+        catch (TimeoutException e) {
+            future.cancel(true);
+            Debug.echoError("Tag filling timed out!");
+        }
+
+        executor.shutdownNow();
     }
 
     public static String readSingleTag(String str, TagContext context) {
