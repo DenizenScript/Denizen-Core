@@ -41,6 +41,7 @@ public class ScriptEngine {
             return;
         }
         scriptEntry.setSendingQueue(scriptQueue);
+        scriptQueue.setLastEntryExecuted(scriptEntry);
         try {
             getScriptExecuter().execute(scriptEntry);
         }
@@ -48,7 +49,6 @@ public class ScriptEngine {
             Debug.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
             Debug.echoError(scriptEntry.getResidingQueue(), e);
         }
-        scriptQueue.setLastEntryExecuted(scriptEntry);
     }
 
     public void revolve(ScriptQueue scriptQueue) {
