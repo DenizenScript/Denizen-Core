@@ -2473,6 +2473,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             if (Debug.verbose) {
                 Debug.log("Element - run tag " + otr.name);
             }
+            attribute.seemingSuccesses.add(otr.name);
             return otr.run(attribute, this);
         }
         /*
@@ -2547,6 +2548,15 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         if (!attribute.hasAlternative()) {
             Debug.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.unfilledString() +
                     "' for tag <" + attribute.getOrigin() + ">!");
+            if (attribute.seemingSuccesses.size() > 0) {
+                String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
+                if (attribute.hasContextFailed) {
+                    Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (missing [context] parameter?): " + almost);
+                }
+                else {
+                    Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (possibly bad input?): " + almost);
+                }
+            }
         }
         if (Debug.verbose) {
             Debug.log("Element - Unfilled! Null!");

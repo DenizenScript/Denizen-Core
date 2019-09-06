@@ -65,10 +65,13 @@ public class CoreUtilities {
         if (properties == null) {
             return null;
         }
-        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(attribute.getAttributeWithoutContext(1));
+        String tagName = attribute.getAttributeWithoutContext(1);
+        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(tagName);
         if (specificGetter != null) {
             Property prop = specificGetter.get(object);
             if (prop == null) {
+                String propName = properties.propertyNamesByTag.get(tagName);
+                attribute.seemingSuccesses.add(attribute.getAttributeWithoutContext(1) + " - property " + propName + " matched, but is not valid for the object.");
                 return null;
             }
             return prop.getObjectAttribute(attribute);
@@ -93,10 +96,13 @@ public class CoreUtilities {
         if (properties == null) {
             return null;
         }
-        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(attribute.getAttributeWithoutContext(1));
+        String tagName = attribute.getAttributeWithoutContext(1);
+        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(tagName);
         if (specificGetter != null) {
             Property prop = specificGetter.get(object);
             if (prop == null) {
+                String propName = properties.propertyNamesByTag.get(tagName);
+                attribute.seemingSuccesses.add(attribute.getAttributeWithoutContext(1) + " - property " + propName + " matched, but is not valid for the object.");
                 return null;
             }
             return prop.getAttribute(attribute);

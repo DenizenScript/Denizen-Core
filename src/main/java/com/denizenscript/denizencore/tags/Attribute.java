@@ -127,6 +127,15 @@ public class Attribute {
         return raw_tag_low;
     }
 
+    public List<String> seemingSuccesses = new ArrayList<>(2);
+
+    public boolean hasContextFailed = false;
+
+    public void resetErrorTrack() {
+        seemingSuccesses.clear();
+        hasContextFailed = false;
+    }
+
     public ScriptEntry getScriptEntry() {
         return scriptEntry;
     }
@@ -176,9 +185,14 @@ public class Attribute {
                     return false;
                 }
             }
+            seemingSuccesses.add(string);
             return true;
         }
-        return attributes[fulfilled].key.equals(string);
+        if (attributes[fulfilled].key.equals(string)) {
+            seemingSuccesses.add(string);
+            return true;
+        }
+        return false;
     }
 
     public boolean startsWith(String string, int attribute) {
@@ -192,6 +206,7 @@ public class Attribute {
     }
 
     public Attribute fulfill(int attributes) {
+        resetErrorTrack();
         fulfilled += attributes;
         return this;
     }
@@ -222,7 +237,11 @@ public class Attribute {
         if (attribute < 0 || attribute >= attributes.length) {
             return false;
         }
-        return attributes[attribute].context != null;
+        if (attributes[attribute].context != null) {
+            return true;
+        }
+        hasContextFailed = true;
+        return false;
     }
 
     public ObjectTag getContextObject(int attribute) {
