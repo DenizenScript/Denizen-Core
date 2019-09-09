@@ -191,7 +191,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 if (script != null && script.getContainer().contains("SPEED")) {
                     long ticks = DurationTag.valueOf(script.getContainer().getString("SPEED", "0")).getTicks();
                     if (ticks > 0) {
-                        queue = ((TimedQueue) new TimedQueue(id).addEntries(entries)).setSpeed(ticks);
+                        queue = new TimedQueue(id).setSpeed(ticks).addEntries(entries);
                     }
                     else {
                         queue = new InstantQueue(id).addEntries(entries);
