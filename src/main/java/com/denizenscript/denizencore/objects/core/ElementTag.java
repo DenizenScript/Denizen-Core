@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.queue.Comparable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.SQLEscaper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -484,17 +485,10 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         registerTag("as_double", registeredObjectTags.get("as_decimal"));
         registerTag("asdouble", registeredObjectTags.get("as_decimal"));
 
-        // <--[tag]
-        // @attribute <ElementTag.as_int>
-        // @returns ElementTag(Number)
-        // @group conversion
-        // @description
-        // Returns the element as a number without a decimal. Rounds decimal values.
-        // NOTE: Please use .round_down instead of .as_int!
-        // -->
         registerTag("as_int", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
+                Deprecations.elementAsInTag.warn(attribute.context);
                 String element = ((ElementTag) object).element;
                 try {
                     return new ElementTag(Double.valueOf(element).longValue())
@@ -509,6 +503,30 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
             }
         });
         registerTag("asint", registeredObjectTags.get("as_int"));
+
+        // <--[tag]
+        // @attribute <ElementTag.truncate>
+        // @returns ElementTag(Number)
+        // @group conversion
+        // @description
+        // Returns the element as a number without a decimal by way of stripping the decimal value off the end.
+        // That is, rounds towards zero.
+        // -->
+        registerTag("truncate", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                try {
+                    return new ElementTag(((ElementTag) object).asBigDecimal().longValue())
+                            .getObjectAttribute(attribute.fulfill(1));
+                }
+                catch (NumberFormatException e) {
+                    if (!attribute.hasAlternative()) {
+                        Debug.echoError("'" + ((ElementTag) object).element + "' is not a valid decimal number.");
+                    }
+                    return null;
+                }
+            }
+        });
 
         // <--[tag]
         // @attribute <ElementTag.as_money>

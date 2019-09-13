@@ -59,6 +59,10 @@ public class Deprecations {
     // Prime candidate for functionality removal - hasn't been useful for several years.
     public static Warning yamlFixFormatting = new SlowWarning("YAML command 'fix_formatting' argument is deprecated: this should never be used.");
 
+    // Added on 2019/09/13
+    // Bad candidate for functionality removal - used to be commonly used
+    public static Warning elementAsInTag = new SlowWarning("'element.as_int' tag is deprecated: use '.round', '.round_down', '.round_up', or '.truncate'.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

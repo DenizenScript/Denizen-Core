@@ -261,46 +261,6 @@ public class ArgumentHelper {
     }
 
 
-    /**
-     * <p>Used to match a custom argument with a value. In practice, the standard
-     * arguments should be used whenever possible to keep things consistent across
-     * the entire 'dScript experience'. Should you need to use custom arguments,
-     * however, this method provides some support. After all, while using standard
-     * arguments is nice, you should never reach. Arguments should make as much
-     * sense to the user/script writer as possible.</p>
-     * <p/>
-     * <b>Small code example:</b>
-     * <ol>
-     * <tt>0 if (aH.matchesValueArg("HARDNESS", arg, ArgumentType.Word))</tt><br>
-     * <tt>1     try { </tt><br>
-     * <tt>2        hardness = Hardness.valueOf(aH.getStringFrom(arg).toUpperCase());</tt><br>
-     * <tt>3     } catch (Exception e) { </tt><br>
-     * <tt>4        dB.echoError("Invalid HARDNESS!") </tt><br>
-     * <tt>5 }</tt><br>
-     * </ol>
-     * <p/>
-     * <p>Note: Like {@link #matchesArg(String, String)}, matchesValueArg(String)
-     * supports multiple argument names, separated by a comma (,) character. This method
-     * will trim() each name specified.</p>
-     * <p/>
-     * <p>Also requires a specified ArgumentType, which will filter the type of value
-     * to match to. If anything should be excepted as the value, or you plan
-     * on parsing the value yourself, use ArgumentType.Custom, otherwise use an
-     * an appropriate ArgumentType. See: {@link ArgumentType}.</p>
-     * <p/>
-     * <b>Example use of '<tt>aH.matchesValueArg("TIME", arg, ArgumentType.Integer)</tt>':</b>
-     * <ol>
-     * <tt>arg = "TIME:60"</tt> will return true.<br>
-     * <tt>arg = "90"</tt> will return false.<br>
-     * <tt>arg = "TIME:8 o'clock"</tt> will return false.<br>
-     * <tt>arg = "TIME:0"</tt> will return true.
-     * </ol>
-     *
-     * @param names      the desired name variations of the argument
-     * @param string_arg the dScript argument string
-     * @param type       a valid ArgumentType, used for matching values
-     * @return true if matched, false otherwise
-     */
     @Deprecated
     public static boolean matchesValueArg(String names, String string_arg, ArgumentType type) {
         if (string_arg == null) {
