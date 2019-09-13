@@ -1,32 +1,17 @@
 package com.denizenscript.denizencore.objects;
 
-import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
-import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * The dScript Argument Helper will aid you in parsing and formatting arguments from a
- * dScript argument string (such as those found in a ScriptEntry.getArguments() method).
- */
 public class ArgumentHelper {
-
-
-    ////////////////////
-    // Patterns and Enumerations
-    /////////////////
 
     public enum PrimitiveType {Float, Double, Integer, Boolean, String, Word, Percentage}
 
-    final static Pattern floatPrimitive =
-            Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
+    public final static Pattern floatPrimitive = Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
 
     // <--[language]
     // @name Number and Decimal
@@ -39,7 +24,7 @@ public class ArgumentHelper {
     // Numbers can be verified with the 'if' commands' 'matches' functionality.
     // For example: "- if <number> matches number" ... will return true if <number> is a valid number.
     // -->
-    final static Pattern doublePrimitive = floatPrimitive;
+    public final static Pattern doublePrimitive = floatPrimitive;
 
     // <--[language]
     // @name Percentage
@@ -59,21 +44,13 @@ public class ArgumentHelper {
     // To translate between the two formats, you only need to multiply or divide by one hundred (100).
     //
     // -->
-    final static Pattern percentagePrimitive =
-            Pattern.compile("-?(?:\\d+)?(\\.\\d+)?(%)?");
+    public final static Pattern percentagePrimitive = Pattern.compile("-?(?:\\d+)?(\\.\\d+)?(%)?");
 
-    final static Pattern integerPrimitive =
-            Pattern.compile("(-)?\\d+");
+    public final static Pattern integerPrimitive = Pattern.compile("(-)?[0-9]+");
 
-    final static Pattern booleanPrimitive =
-            Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
+    public final static Pattern booleanPrimitive = Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
 
-    final static Pattern wordPrimitive =
-            Pattern.compile("\\w+");
-
-    /////////////////
-    // Static Methods
-    ///////////////
+    public final static Pattern wordPrimitive = Pattern.compile("\\w+");
 
     public static List<Argument> interpretObjects(List<ObjectTag> args) {
         List<Argument> arg_list = new ArrayList<>(args.size());
@@ -176,14 +153,6 @@ public class ArgumentHelper {
         return matchList.toArray(new String[matchList.size()]);
     }
 
-    /**
-     * To be used with the dBuggers' .report to provide debug output for
-     * objects that don't extend ObjectTag.
-     *
-     * @param prefix name/type/simple description of the object being reported
-     * @param value  object being reported will report the value of toString()
-     * @return color coded debug report
-     */
     public static String debugObj(String prefix, Object value) {
         return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null") + "<G>'  ";
     }
@@ -204,145 +173,8 @@ public class ArgumentHelper {
         }
     }
 
-    /**
-     * To be used with the dBuggers' .report to provide debug output for
-     * objects that may have some kind of id or type also associated with
-     * the object.
-     *
-     * @param prefix name/type/simple description of the object being reported
-     * @param id     additional id/type of the object
-     * @param value  object being reported will report the value of toString()
-     * @return color coded debug report
-     */
     public static String debugUniqueObj(String prefix, String id, Object value) {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
-    }
-
-
-    public enum ArgumentType {
-        LivingEntity, Item, Boolean, Custom, Double, Float,
-        Integer, String, Word, Location, Script, Duration
-    }
-
-
-    /**
-     * <p>Used to determine if a argument string matches a non-valued custom argument.
-     * If a dScript valued argument (such as TARGET:NAME) is passed, this method
-     * will always return false. Also supports multiple argument names, separated by a
-     * comma (,) character. This method will trim() each name specified.</p>
-     * <p/>
-     * <b>Example use of '<tt>aH.matchesArg("NOW, LATER", arg)</tt>':</b>
-     * <ol>
-     * <tt>arg = "NOW"</tt> will return true.<br>
-     * <tt>arg = "NEVER"</tt> will return false.<br>
-     * <tt>arg = "LATER:8PM"</tt> will return false.<br>
-     * <tt>arg = "LATER"</tt> will return true.
-     * </ol>
-     *
-     * @param names      the valid argument names to match
-     * @param string_arg the dScript argument string
-     * @return true if matched, false if not
-     */
-    public static boolean matchesArg(String names, String string_arg) {
-        String[] parts = names.split(",");
-        if (parts.length == 1) {
-            if (string_arg.toUpperCase().equals(names.toUpperCase())) {
-                return true;
-            }
-        }
-        else {
-            for (String string : parts) {
-                if (string_arg.split(":")[0].equalsIgnoreCase(string.trim())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-    @Deprecated
-    public static boolean matchesValueArg(String names, String string_arg, ArgumentType type) {
-        if (string_arg == null) {
-            return false;
-        }
-
-        int firstColonIndex = string_arg.indexOf(':');
-        if (firstColonIndex == -1) {
-            return false;
-        }
-
-        String[] commaParts = names.split(",");
-
-        if (commaParts.length == 1) {
-            if (!string_arg.substring(0, firstColonIndex).equalsIgnoreCase(names)) {
-                return false;
-            }
-        }
-
-        else {
-            boolean matched = false;
-            for (String string : commaParts) {
-                if (string_arg.substring(0, firstColonIndex).equalsIgnoreCase(string.trim())) {
-                    matched = true;
-                }
-            }
-            if (!matched) {
-                return false;
-            }
-        }
-
-        string_arg = string_arg.split(":", 2)[1];
-
-        switch (type) {
-            case Word:
-                return wordPrimitive.matcher(string_arg).matches();
-
-            case Integer:
-                return doublePrimitive.matcher(string_arg).matches();
-
-            case Double:
-                return doublePrimitive.matcher(string_arg).matches();
-
-            case Float:
-                return floatPrimitive.matcher(string_arg).matches();
-
-            case Boolean:
-                return booleanPrimitive.matcher(string_arg).matches();
-
-            case Script:
-                // return ScriptTag.matches(string_arg);
-                return true;
-
-            /* TODO: MOVE OUT OF CORE:
-             case Location:
-             return LocationTag.matches(string_arg);
-
-             case Item:
-             return ItemTag.matches(string_arg);
-
-             case LivingEntity:
-             return EntityTag.matches(string_arg);
-
-             case Duration:
-             return Duration.matches(string_arg);
-             */
-            case String:
-                return true;
-
-            case Custom:
-                return true;
-
-            default:
-                Debug.echoError("Invalid or temporarily unavailable matches value!");
-
-        }
-
-        Debug.echoError("While parsing '" + string_arg + "', Denizen has run into a problem. While the " +
-                "prefix is correct, the value is not valid. Check documentation for valid value." +
-                "Perhaps a replaceable tag has failed to fill in a value?");
-
-        return false;
     }
 
     public static boolean getBooleanFrom(String arg) {
@@ -376,11 +208,6 @@ public class ArgumentHelper {
         }
     }
 
-    @Deprecated
-    public static ListTag getListFrom(String arg) {
-        return ListTag.valueOf(ArgumentHelper.getStringFrom(arg));
-    }
-
     public static long getLongFrom(String arg) {
         try {
             return Long.valueOf(arg);
@@ -395,109 +222,17 @@ public class ArgumentHelper {
         }
     }
 
-    @Deprecated
-    public static ScriptTag getScriptFrom(String arg) {
-        arg = CoreUtilities.toLowerCase(arg).replace("script:", "");
-        return ScriptTag.valueOf(arg);
-    }
 
     public static String getStringFrom(String arg) {
         String[] parts = arg.split(":", 2);
         return parts.length >= 2 ? parts[1] : arg;
     }
 
-    @Deprecated
-    public static DurationTag getDurationFrom(String arg) {
-        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
-        return DurationTag.valueOf(arg);
-    }
-
     public static boolean matchesDouble(String arg) {
         return doublePrimitive.matcher(arg).matches();
-    }
-
-    @Deprecated
-    public static boolean matchesDuration(String arg) {
-        arg = CoreUtilities.toLowerCase(arg).replace("duration:", "").replace("delay:", "");
-        return DurationTag.matches(arg);
     }
 
     public static boolean matchesInteger(String arg) {
         return doublePrimitive.matcher(arg).matches();
     }
-
-    @Deprecated
-    public static boolean matchesItem(String arg) {
-        if (arg.length() > 5 && arg.toUpperCase().startsWith("ITEM:")) {
-            return true;
-        }
-        return false;
-    }
-
-    @Deprecated
-    public static boolean matchesContext(String arg) {
-        if (arg.toUpperCase().startsWith("CONTEXT:") ||
-                arg.toUpperCase().startsWith("DEFINE:")) {
-            return true;
-        }
-        return false;
-    }
-
-    @Deprecated
-    public static Map<String, String> getContextFrom(String arg) {
-        Map<String, String> context = new HashMap<>();
-        int x = 1;
-        for (String ctxt : ArgumentHelper.getListFrom(arg)) {
-            context.put(String.valueOf(x), ctxt.trim());
-            x++;
-        }
-        return context;
-    }
-
-    @Deprecated
-    public static boolean matchesLocation(String arg) {
-        return arg.toUpperCase().startsWith("LOCATION:");
-    }
-
-    @Deprecated
-    public static boolean matchesQuantity(String arg) {
-        return arg.toUpperCase().startsWith("QTY:");
-    }
-
-    @Deprecated
-    public static boolean matchesQueue(String arg) {
-        return arg.toUpperCase().startsWith("QUEUE:");
-    }
-
-    @Deprecated
-    public static boolean matchesScript(String arg) {
-        Matcher m = matchesScriptPtrn.matcher(arg);
-        if (m.matches()) {
-            if (ScriptRegistry.containsScript(m.group(1))) {
-                return true;
-            }
-            else {
-                Debug.echoError("While parsing '" + arg + "', Denizen has run into a problem. This " +
-                        "argument's format is correct, but Denizen couldn't locate a script " +
-                        "named '" + m.group(1) + "'. Is it spelled correctly?");
-            }
-        }
-        return false;
-    }
-
-    @Deprecated
-    public static boolean matchesState(String arg) {
-        final Pattern m = Pattern.compile("(state|toggle):(true|false|toggle)");
-        if (m.matcher(arg).matches()) {
-            return true;
-        }
-        else if (arg.toUpperCase().startsWith("(state|toggle):")) {
-            Debug.echoError("While parsing '" + arg + "', Denizen has run into a problem. While the prefix is " +
-                    "correct, the value is not valid. 'STATE' requires a value of TRUE, FALSE, or TOGGLE. ");
-        }
-
-        return false;
-    }
-
-    final static Pattern matchesScriptPtrn = Pattern.compile("script:(.+)", Pattern.CASE_INSENSITIVE);
 }
