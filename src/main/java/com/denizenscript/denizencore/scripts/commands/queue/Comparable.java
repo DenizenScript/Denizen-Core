@@ -29,17 +29,13 @@ public class Comparable {
     // comparables are compatible with all operators. See <@link language comparable> for more information.
     //
     // Available Operators include:
-    // EQUALS (==), OR_MORE (>=), OR_LESS (<=), MORE (>), LESS (<), CONTAINS, and IS_EMPTY.
+    // EQUALS (==), OR_MORE (>=), OR_LESS (<=), MORE (>), and LESS (<).
     //
     // Operators which have a symbol alternative (as marked by parenthesis) can be referred to by either
     // their name or symbol. Using a '!' in front of the operator will also reverse logic, effectively
     // turning 'EQUALS' into 'DOES NOT EQUAL', for example.
     //
     // == <= >= > < all compare arguments as text or numbers.
-    //
-    // CONTAINS checks whether a list contains an element, or an element contains another element.
-    //
-    // IS_EMPTY checks whether a list is empty. (This exists for back-support).
     //
     // Note: When using an operator in a replaceable tag (such as <ElementTag.is[...].than[...]>),
     // keep in mind that < and >, and even >= and <= must be either escaped, or referred to by name.
@@ -320,6 +316,7 @@ public class Comparable {
         switch (operator) {
             // For checking if a FLAG is empty.
             case IS_EMPTY:
+                // TODO: Deprecations.oldMatchesOperator.warn();
                 outcome = comparable.length() == 0;
                 break;
 
@@ -330,6 +327,7 @@ public class Comparable {
 
             // For checking if the comparable contains comparedto
             case CONTAINS:
+                // TODO: Deprecations.oldMatchesOperator.warn();
                 outcome = CoreUtilities.toLowerCase(comparable).contains(CoreUtilities.toLowerCase(comparedto));
                 break;
 

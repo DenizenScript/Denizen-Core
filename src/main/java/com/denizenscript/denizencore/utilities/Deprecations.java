@@ -81,5 +81,5 @@ public class Deprecations {
     public static Warning oldNPCNavigator = new SlowWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
     // Relevant as of 2019/09/13, deprecate officially by 2020.
-    public static Warning oldMatchesOperator = new SlowWarning("'matches' operator is deprecated. Use the logically equivalent tags instead.");
+    public static Warning oldMatchesOperator = new SlowWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
 }
