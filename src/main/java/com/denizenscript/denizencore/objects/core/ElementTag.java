@@ -475,23 +475,6 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.is_number>
-        // @returns ElementTag(Boolean)
-        // @group comparison
-        // @description
-        // Returns whether the element is a valid decimal number (the decimal point is optional).
-        // This is equivalent to <@link tag ElementTag.is_decimal>.
-        // -->
-        registerTag("is_number", new TagRunnable.ObjectForm() {
-            @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                String element = ((ElementTag) object).element;
-                return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches())
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-        });
-
-        // <--[tag]
         // @attribute <ElementTag.is_odd>
         // @returns ElementTag(Boolean)
         // @group comparison
