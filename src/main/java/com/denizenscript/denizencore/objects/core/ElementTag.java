@@ -424,6 +424,107 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_boolean>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is a boolean ('true' or 'false').
+        // -->
+        registerTag("is_boolean", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(element.equalsIgnoreCase("true")
+                        || element.equalsIgnoreCase("false"))
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_integer>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is an integer number (a number without a decimal point).
+        // -->
+        registerTag("is_integer", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(ArgumentHelper.integerPrimitive.matcher(element).matches())
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_decimal>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is a valid decimal number (the decimal point is optional).
+        // -->
+        registerTag("is_decimal", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches())
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_number>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is a valid decimal number (the decimal point is optional).
+        // This is equivalent to <@link tag ElementTag.is_decimal>.
+        // -->
+        registerTag("is_number", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches())
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_odd>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is an odd-valued decimal number. Returns 'false' for non-numbers.
+        // -->
+        registerTag("is_odd", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches()
+                            && (((ElementTag) object).asBigDecimal().longValue() % 2) == 1)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_even>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is an even-valued decimal number. Returns 'false' for non-numbers.
+        // -->
+        registerTag("is_even", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String element = ((ElementTag) object).element;
+                return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches()
+                        && (((ElementTag) object).asBigDecimal().longValue() % 2) == 0)
+                        .getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+
         // <--[tag]
         // @attribute <ElementTag.as_element>
         // @returns ElementTag
@@ -435,7 +536,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         registerTag("as_element", new TagRunnable.ObjectForm() {
             @Override
             public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return ((ElementTag) object).getObjectAttribute(attribute.fulfill(1));
+                return object.getObjectAttribute(attribute.fulfill(1));
             }
         });
         registerTag("aselement", registeredObjectTags.get("as_element"));

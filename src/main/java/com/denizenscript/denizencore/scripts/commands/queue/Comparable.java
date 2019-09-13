@@ -29,7 +29,7 @@ public class Comparable {
     // comparables are compatible with all operators. See <@link language comparable> for more information.
     //
     // Available Operators include:
-    // EQUALS (==), MATCHES, OR_MORE (>=), OR_LESS (<=), MORE (>), LESS (<), CONTAINS, and IS_EMPTY.
+    // EQUALS (==), OR_MORE (>=), OR_LESS (<=), MORE (>), LESS (<), CONTAINS, and IS_EMPTY.
     //
     // Operators which have a symbol alternative (as marked by parenthesis) can be referred to by either
     // their name or symbol. Using a '!' in front of the operator will also reverse logic, effectively
@@ -40,12 +40,6 @@ public class Comparable {
     // CONTAINS checks whether a list contains an element, or an element contains another element.
     //
     // IS_EMPTY checks whether a list is empty. (This exists for back-support).
-    //
-    // MATCHES checks whether the first element matches a given type.
-    // For example: "if 1 matches number" or "if p@bob matches player".
-    // Match types: location, material, materiallist, script, entity, spawnedentity, entitytype,
-    // npc, player, offlineplayer, onlineplayer, item, pose, duration, cuboid, decimal,
-    // number, even number, odd number, boolean.
     //
     // Note: When using an operator in a replaceable tag (such as <ElementTag.is[...].than[...]>),
     // keep in mind that < and >, and even >= and <= must be either escaped, or referred to by name.
@@ -351,6 +345,7 @@ public class Comparable {
             // Check if the string comparable MATCHES a specific argument type,
             // as specified by comparedto
             case MATCHES:
+                // TODO: Deprecations.oldMatchesOperator.warn();
                 comparedto = comparedto.replace("_", "");
 
                 if (comparedto.equalsIgnoreCase("script")) {
