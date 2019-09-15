@@ -69,7 +69,7 @@ public class ObjectFetcher {
 
         // Initialize the ObjectFetcher
         registerWithObjectFetcher(CustomObjectTag.class); // custom@
-        registerWithObjectFetcher(ListTag.class);        // li@/fl@
+        registerWithObjectFetcher(ListTag.class);        // li@
         ListTag.registerTags(); // TODO: Automate this once all classes have tag registries
         registerWithObjectFetcher(ScriptTag.class);      // s@
         ScriptTag.registerTags(); // TODO: Automate this once all classes have tag registries

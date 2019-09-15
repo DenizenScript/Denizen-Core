@@ -45,6 +45,7 @@ public class Comparable {
     // contains no replaceable tags.
     //
     // -->
+
     public static enum Operator {
         EQUALS, MATCHES, OR_MORE, OR_LESS, MORE,
         LESS, CONTAINS, IS_EMPTY

@@ -118,7 +118,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         return valueOf(string, null);
     }
 
-    @Fetchable("li,fl")
+    @Fetchable("li")
     public static ListTag valueOf(String string, TagContext context) {
         if (string == null) {
             return null;
@@ -1958,8 +1958,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
 
     }
 
-    //public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
-
     public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
@@ -2029,42 +2027,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
             }
         }
 
-        /*
-        TagRunnable tr = registeredTags.get(attrLow);
-        if (tr != null) {
-            if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
-            }
-            return new Element(tr.run(attribute, this));
-        }*/
-
-        //
-        // TODO: Everything below is deprecated and will be moved to registerTag() format
-        //
-
-        // FLAG Specific Attributes
-
-        // Note: is_expired attribute is handled in player/npc/server
-        // since expired flags return 'null'
-
-        // <--[tag]
-        // @attribute <fl@flag_name.is_expired>
-        // @returns ElementTag(Boolean)
-        // @description
-        // returns true of the flag is expired or does not exist, false if it
-        // is not yet expired, or has no expiration.
-        // -->
-
-        // Need this attribute (for flags) since they return the last
-        // element of the list, unless '.as_list' is specified.
-
-        // <--[tag]
-        // @attribute <fl@flag_name.as_list>
-        // @returns ListTag
-        // @description
-        // returns a ListTag containing the items in the flag.
-        // -->
+        // Special handling for flag
         if (flag != null && (attribute.startsWith("as_list")
                 || attribute.startsWith("aslist"))) {
             return new ListTag(this).getObjectAttribute(attribute.fulfill(1));
