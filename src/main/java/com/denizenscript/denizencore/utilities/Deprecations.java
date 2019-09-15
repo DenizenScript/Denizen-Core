@@ -21,16 +21,16 @@ public class Deprecations {
     // Note: context was most often used, and needs to remain longer than the others.
     public static Warning contextShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'context' instead of 'c' as a root tag.");
     public static Warning entryShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'entry' instead of 'e' as a root tag.");
-    public static Warning defShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
-    public static Warning procShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
-    public static Warning queueShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
-    public static Warning scriptShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'script' instead of 's' as a root tag.");
+    public static Warning defShorthand = new Warning("Short-named tags are hard to read. Please use 'def' instead of 'd' as a root tag.");
+    public static Warning procShorthand = new Warning("Short-named tags are hard to read. Please use 'proc' instead of 'pr' as a root tag.");
+    public static Warning queueShorthand = new Warning("Short-named tags are hard to read. Please use 'queue' instead of 'q' as a root tag.");
+    public static Warning scriptShorthand = new Warning("Short-named tags are hard to read. Please use 'script' instead of 's' as a root tag.");
     public static Warning ternShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'tern' instead of 't' as a root tag.");
-    public static Warning utilShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
+    public static Warning utilShorthand = new Warning("Short-named tags are hard to read. Please use 'util' instead of 'u' as a root tag.");
     // In Bukkit impl:
-    public static Warning locationShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'location' instead of 'l' as a root tag.");
+    public static Warning locationShorthand = new Warning("Short-named tags are hard to read. Please use 'location' instead of 'l' as a root tag.");
     public static Warning playerShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'player' instead of 'pl' as a root tag.");
-    public static Warning serverShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'server' instead of 'svr' as a root tag.");
+    public static Warning serverShorthand = new Warning("Short-named tags are hard to read. Please use 'server' instead of 'svr' as a root tag.");
     // ==================== End tag shorthands ====================
 
     // In Bukkit impl, Added on 2019/02/06
@@ -38,7 +38,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/03/08
     // Prime candidate for functionality removal - has been unsupported for a LONG time.
-    public static Warning boundWarning = new SlowWarning("Item script 'bound' functionality has never been reliable and should not be used. Consider replicating the concept with world events.");
+    public static Warning boundWarning = new Warning("Item script 'bound' functionality has never been reliable and should not be used. Consider replicating the concept with world events.");
 
     // In Bukkit impl, Added on 2019/07/07
     public static Warning mathTagBase = new Warning("'math:' tags have been non-recommended for years. Please use modern element math tags like 'element.add[...]', etc.");
