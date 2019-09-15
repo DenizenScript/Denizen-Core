@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.objects.Fetchable;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.TagRunnable;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -341,13 +342,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of years in the Duration.
         // -->
-        registerTag("in_years", new TagRunnable() {
+        registerTag("in_years", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds / (86400 * 365)).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / (86400 * 365)).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("years", registeredTags.get("in_years"));
+        registerTag("years", tagProcessor.registeredObjectTags.get("in_years"));
 
         // <--[tag]
         // @attribute <DurationTag.in_weeks>
@@ -355,13 +356,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of weeks in the Duration.
         // -->
-        registerTag("in_weeks", new TagRunnable() {
+        registerTag("in_weeks", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds / 604800).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 604800).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("weeks", registeredTags.get("in_weeks"));
+        registerTag("weeks", tagProcessor.registeredObjectTags.get("in_weeks"));
 
         // <--[tag]
         // @attribute <DurationTag.in_days>
@@ -369,13 +370,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of days in the Duration.
         // -->
-        registerTag("in_days", new TagRunnable() {
+        registerTag("in_days", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds / 86400).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 86400).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("days", registeredTags.get("in_days"));
+        registerTag("days", tagProcessor.registeredObjectTags.get("in_days"));
 
         // <--[tag]
         // @attribute <DurationTag.in_hours>
@@ -383,13 +384,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of hours in the Duration.
         // -->
-        registerTag("in_hours", new TagRunnable() {
+        registerTag("in_hours", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds / 3600).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 3600).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("hours", registeredTags.get("in_hours"));
+        registerTag("hours", tagProcessor.registeredObjectTags.get("in_hours"));
 
         // <--[tag]
         // @attribute <DurationTag.in_minutes>
@@ -397,13 +398,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of minutes in the Duration.
         // -->
-        registerTag("in_minutes", new TagRunnable() {
+        registerTag("in_minutes", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds / 60).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds / 60).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("minutes", registeredTags.get("in_minutes"));
+        registerTag("minutes", tagProcessor.registeredObjectTags.get("in_minutes"));
 
         // <--[tag]
         // @attribute <DurationTag.in_seconds>
@@ -411,13 +412,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of seconds in the Duration.
         // -->
-        registerTag("in_seconds", new TagRunnable() {
+        registerTag("in_seconds", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("seconds", registeredTags.get("in_seconds"));
+        registerTag("seconds", tagProcessor.registeredObjectTags.get("in_seconds"));
 
         // <--[tag]
         // @attribute <DurationTag.in_milliseconds>
@@ -425,13 +426,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of milliseconds in the Duration.
         // -->
-        registerTag("in_milliseconds", new TagRunnable() {
+        registerTag("in_milliseconds", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).seconds * 1000).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).seconds * 1000).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("milliseconds", registeredTags.get("in_milliseconds"));
+        registerTag("milliseconds", tagProcessor.registeredObjectTags.get("in_milliseconds"));
 
         // <--[tag]
         // @attribute <DurationTag.in_ticks>
@@ -439,13 +440,13 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of ticks in the Duration. (20t/second)
         // -->
-        registerTag("in_ticks", new TagRunnable() {
+        registerTag("in_ticks", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag((long) (((DurationTag) object).seconds * 20L)).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag((long) (((DurationTag) object).seconds * 20L)).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("ticks", registeredTags.get("in_ticks"));
+        registerTag("ticks", tagProcessor.registeredObjectTags.get("in_ticks"));
 
         // <--[tag]
         // @attribute <DurationTag.sub[<duration>]>
@@ -453,15 +454,15 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns this duration minus another.
         // -->
-        registerTag("sub", new TagRunnable() {
+        registerTag("sub", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                     return null;
                 }
                 return new DurationTag(((DurationTag) object).getTicks() - DurationTag.valueOf(attribute.getContext(1)).getTicks())
-                        .getAttribute(attribute.fulfill(1));
+                        .getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -471,15 +472,15 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns this duration plus another.
         // -->
-        registerTag("add", new TagRunnable() {
+        registerTag("add", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag DurationTag.add[...] must have a value.");
                     return null;
                 }
                 return new DurationTag(((DurationTag) object).getTicks() + DurationTag.valueOf(attribute.getContext(1)).getTicks())
-                        .getAttribute(attribute.fulfill(1));
+                        .getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -489,9 +490,9 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the date-time specified by the duration object.
         // -->
-        registerTag("time", new TagRunnable() {
+        registerTag("time", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
                 Date currentDate = new Date(((DurationTag) object).getTicks() * 50);
                 SimpleDateFormat format = new SimpleDateFormat();
 
@@ -504,7 +505,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current year of the time specified by the duration object.
                 // -->
                 if (attribute.startsWith("year")) {
-                    return new ElementTag(currentDate.getYear() + 1900 /* ??? */).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getYear() + 1900 /* ??? */).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -514,7 +515,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current month of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("month")) {
-                    return new ElementTag(currentDate.getMonth() + 1).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getMonth() + 1).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -524,7 +525,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current day of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("day")) {
-                    return new ElementTag(currentDate.getDate()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getDate()).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -534,7 +535,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current day-of-the-week of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("day_of_week")) {
-                    return new ElementTag(currentDate.getDay()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getDay()).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -544,7 +545,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current hour of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("hour")) {
-                    return new ElementTag(currentDate.getHours()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getHours()).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -554,7 +555,7 @@ public class DurationTag implements ObjectTag {
                 // Returns the current minute of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("minute")) {
-                    return new ElementTag(currentDate.getMinutes()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getMinutes()).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // <--[tag]
@@ -564,14 +565,14 @@ public class DurationTag implements ObjectTag {
                 // Returns the current second of the time specified by the duration object.
                 // -->
                 else if (attribute.startsWith("second")) {
-                    return new ElementTag(currentDate.getSeconds()).getAttribute(attribute.fulfill(1));
+                    return new ElementTag(currentDate.getSeconds()).getObjectAttribute(attribute.fulfill(1));
                 }
 
                 // TODO: Custom format option
                 else {
                     format.applyPattern("EEE, d MMM yyyy HH:mm:ss");
                     return new ElementTag(format.format(currentDate))
-                            .getAttribute(attribute);
+                            .getObjectAttribute(attribute);
                 }
             }
         });
@@ -583,10 +584,10 @@ public class DurationTag implements ObjectTag {
         // Always returns 'Duration' for DurationTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
-        registerTag("type", new TagRunnable() {
+        registerTag("type", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag("Duration").getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag("Duration").getObjectAttribute(attribute.fulfill(1));
             }
         });
 
@@ -603,50 +604,25 @@ public class DurationTag implements ObjectTag {
         // is less than a day left and seconds are only shown if
         // there are less than 10 minutes left.
         // -->
-        registerTag("formatted", new TagRunnable() {
+        registerTag("formatted", new TagRunnable.ObjectForm() {
             @Override
-            public String run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((DurationTag) object).formatted()).getAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                return new ElementTag(((DurationTag) object).formatted()).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("value", registeredTags.get("formatted"));
+        registerTag("value", tagProcessor.registeredObjectTags.get("formatted"));
 
     }
 
-    public static HashMap<String, TagRunnable> registeredTags = new HashMap<>();
+    public static ObjectTagProcessor tagProcessor = new ObjectTagProcessor();
 
-    public static void registerTag(String name, TagRunnable runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredTags.put(name, runnable);
+    public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
+        tagProcessor.registerTag(name, runnable);
     }
-
 
     @Override
-    public String getAttribute(Attribute attribute) {
-
-        if (attribute == null) {
-            return null;
-        }
-
-        // TODO: Scrap getAttribute, make this functionality a core system
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
-        TagRunnable tr = registeredTags.get(attrLow);
-        if (tr != null) {
-            if (!tr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
-            }
-            return tr.run(attribute, this);
-        }
-
-        String returned = CoreUtilities.autoPropertyTag(this, attribute);
-        if (returned != null) {
-            return returned;
-        }
-
-        return new ElementTag(identify()).getAttribute(attribute);
+    public ObjectTag getObjectAttribute(Attribute attribute) {
+        return tagProcessor.getObjectAttribute(this, attribute);
     }
 
     public String formatted() {

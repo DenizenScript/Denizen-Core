@@ -126,11 +126,6 @@ public class CustomObjectTag implements ObjectTag, ObjectTag.ObjectAttributable,
     }
 
     @Override
-    public String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
-    }
-
-    @Override
     public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
         return null;
     }
