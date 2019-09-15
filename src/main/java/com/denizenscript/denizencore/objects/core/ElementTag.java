@@ -23,7 +23,7 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
+public class ElementTag implements ObjectTag {
 
     // <--[language]
     // @name ElementTags
@@ -2571,11 +2571,6 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
         tagProcessor.registerTag(name, runnable);
-    }
-
-    @Override
-    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
-        return null;
     }
 
     @Override

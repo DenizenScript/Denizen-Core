@@ -151,9 +151,4 @@ public interface ObjectTag {
     default ObjectTag specialTagProcessing(Attribute attribute) {
         return null;
     }
-
-    interface ObjectAttributable extends ObjectTag {
-
-        <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context);
-    }
 }

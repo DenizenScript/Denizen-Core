@@ -13,7 +13,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-public class CustomObjectTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjustable {
+public class CustomObjectTag implements ObjectTag, Adjustable {
 
     // <--[language]
     // @name Custom Objects
@@ -123,11 +123,6 @@ public class CustomObjectTag implements ObjectTag, ObjectTag.ObjectAttributable,
     @Override
     public boolean isUnique() {
         return false;
-    }
-
-    @Override
-    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
-        return null;
     }
 
     @Override

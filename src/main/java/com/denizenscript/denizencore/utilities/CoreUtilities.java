@@ -148,12 +148,6 @@ public class CoreUtilities {
         if (type == ElementTag.class) {
             return (T) new ElementTag(inp.toString());
         }
-        if (inp instanceof ObjectTag.ObjectAttributable) {
-            T temp = ((ObjectTag.ObjectAttributable) inp).asObjectType(type, context);
-            if (temp != null) {
-                return temp;
-            }
-        }
         return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
     }
 

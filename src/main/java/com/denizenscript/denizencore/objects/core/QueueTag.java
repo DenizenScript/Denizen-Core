@@ -11,7 +11,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjustable {
+public class QueueTag implements ObjectTag, Adjustable {
 
     // <--[language]
     // @name QueueTag
@@ -312,11 +312,6 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         return tagProcessor.getObjectAttribute(this, attribute);
-    }
-
-    @Override
-    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
-        return null;
     }
 
     public void ensure() {

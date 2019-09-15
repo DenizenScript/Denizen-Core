@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.ObjectAttributable {
+public class ListTag extends ArrayList<String> implements ObjectTag {
 
     // <--[language]
     // @name ListTag
@@ -1985,11 +1985,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
     @Override
     public ObjectTag getNextObjectTypeDown() {
         return (flag != null && size() == 1) ? getObject(0) : new ElementTag(identifyList());
-    }
-
-    @Override
-    public <T extends ObjectTag> T asObjectType(Class<T> type, TagContext context) {
-        return null;
     }
 
     @Override
