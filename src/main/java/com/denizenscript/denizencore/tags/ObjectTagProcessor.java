@@ -16,14 +16,16 @@ public class ObjectTagProcessor {
             runnable.name = name;
         }
         else {
-            registeredObjectTags.put(name, new TagRunnable.ObjectForm() {
+            TagRunnable.ObjectForm newRunnable = new TagRunnable.ObjectForm() {
                 @Override
                 public ObjectTag run(Attribute attribute, ObjectTag object) {
                     Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                             "Using deprecated form of tag '" + runnable.name + "': '" + name + "'.");
                     return runnable.run(attribute, object);
                 }
-            });
+            };
+            newRunnable.name = runnable.name;
+            registeredObjectTags.put(name, newRunnable);
         }
         registeredObjectTags.put(name, runnable);
     }
