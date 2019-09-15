@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.queue.Comparable;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.SQLEscaper;
@@ -19,7 +20,6 @@ import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -522,7 +522,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return object.getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("aselement", registeredObjectTags.get("as_element"));
+        registerTag("aselement", tagProcessor.registeredObjectTags.get("as_element"));
 
         // <--[tag]
         // @attribute <ElementTag.as_boolean>
@@ -541,7 +541,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("asboolean", registeredObjectTags.get("as_boolean"));
+        registerTag("asboolean", tagProcessor.registeredObjectTags.get("as_boolean"));
 
         // <--[tag]
         // @attribute <ElementTag.as_decimal>
@@ -566,8 +566,8 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 }
             }
         });
-        registerTag("as_double", registeredObjectTags.get("as_decimal"));
-        registerTag("asdouble", registeredObjectTags.get("as_decimal"));
+        registerTag("as_double", tagProcessor.registeredObjectTags.get("as_decimal"));
+        registerTag("asdouble", tagProcessor.registeredObjectTags.get("as_decimal"));
 
         registerTag("as_int", new TagRunnable.ObjectForm() {
             @Override
@@ -586,7 +586,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 }
             }
         });
-        registerTag("asint", registeredObjectTags.get("as_int"));
+        registerTag("asint", tagProcessor.registeredObjectTags.get("as_int"));
 
         // <--[tag]
         // @attribute <ElementTag.truncate>
@@ -636,7 +636,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 }
             }
         });
-        registerTag("asmoney", registeredObjectTags.get("as_money"));
+        registerTag("asmoney", tagProcessor.registeredObjectTags.get("as_money"));
 
         // <--[tag]
         // @attribute <ElementTag.as_list>
@@ -656,7 +656,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
-        registerTag("aslist", registeredObjectTags.get("as_list"));
+        registerTag("aslist", tagProcessor.registeredObjectTags.get("as_list"));
 
         // <--[tag]
         // @attribute <ElementTag.as_custom>
@@ -676,7 +676,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
-        registerTag("ascustom", registeredObjectTags.get("as_custom"));
+        registerTag("ascustom", tagProcessor.registeredObjectTags.get("as_custom"));
 
         // <--[tag]
         // @attribute <ElementTag.as_script>
@@ -697,7 +697,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
-        registerTag("asscript", registeredObjectTags.get("as_script"));
+        registerTag("asscript", tagProcessor.registeredObjectTags.get("as_script"));
 
         // <--[tag]
         // @attribute <ElementTag.as_queue>
@@ -718,7 +718,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
-        registerTag("asqueue", registeredObjectTags.get("as_queue"));
+        registerTag("asqueue", tagProcessor.registeredObjectTags.get("as_queue"));
 
         // <--[tag]
         // @attribute <ElementTag.as_duration>
@@ -739,7 +739,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return null;
             }
         });
-        registerTag("asduration", registeredObjectTags.get("as_duration"));
+        registerTag("asduration", tagProcessor.registeredObjectTags.get("as_duration"));
 
         // <--[tag]
         // @attribute <ElementTag.escaped>
@@ -848,7 +848,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag(false).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        TagRunnable.ObjectForm r = registeredObjectTags.get("contains_any_case_sensitive").clone();
+        TagRunnable.ObjectForm r = tagProcessor.registeredObjectTags.get("contains_any_case_sensitive").clone();
         r.name = null;
         registerTag("contains_any_case_sensitive_text", r);
 
@@ -873,7 +873,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag(false).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        r = registeredObjectTags.get("contains_any").clone();
+        r = tagProcessor.registeredObjectTags.get("contains_any").clone();
         r.name = null;
         registerTag("contains_any_text", r);
 
@@ -897,7 +897,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 }
             }
         });
-        r = registeredObjectTags.get("contains_case_sensitive").clone();
+        r = tagProcessor.registeredObjectTags.get("contains_case_sensitive").clone();
         r.name = null;
         registerTag("contains_case_sensitive_text", r);
 
@@ -932,7 +932,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 }
             }
         });
-        r = registeredObjectTags.get("contains").clone();
+        r = tagProcessor.registeredObjectTags.get("contains").clone();
         r.name = null;
         registerTag("contains_text", r);
 
@@ -957,7 +957,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag("true").getObjectAttribute(attribute.fulfill(1));
             }
         });
-        r = registeredObjectTags.get("contains_all").clone();
+        r = tagProcessor.registeredObjectTags.get("contains_all").clone();
         r.name = null;
         registerTag("contains_all_text", r);
 
@@ -981,7 +981,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag("true").getObjectAttribute(attribute.fulfill(1));
             }
         });
-        r = registeredObjectTags.get("contains_all_case_sensitive").clone();
+        r = tagProcessor.registeredObjectTags.get("contains_all_case_sensitive").clone();
         r.name = null;
         registerTag("contains_all_case_sensitive_text", r);
 
@@ -1000,7 +1000,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("endswith", registeredObjectTags.get("ends_with"));
+        registerTag("endswith", tagProcessor.registeredObjectTags.get("ends_with"));
 
         // <--[tag]
         // @attribute <ElementTag.equals_case_sensitive[<element>]>
@@ -1020,7 +1020,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("equals_with_case", registeredObjectTags.get("equals_case_sensitive"));
+        registerTag("equals_with_case", tagProcessor.registeredObjectTags.get("equals_case_sensitive"));
 
         // <--[tag]
         // @attribute <ElementTag.matches[<regex>]>
@@ -1160,7 +1160,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("startswith", registeredObjectTags.get("starts_with"));
+        registerTag("startswith", tagProcessor.registeredObjectTags.get("starts_with"));
 
         // <--[tag]
         // @attribute <ElementTag.index_of[<element>]>
@@ -1410,7 +1410,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
         // Specify regex: at the start of the replace element to use Regex replacement.
         // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
         // -->
-        r = registeredObjectTags.get("replace").clone();
+        r = tagProcessor.registeredObjectTags.get("replace").clone();
         r.name = null;
         registerTag("replace_text", r);
 
@@ -1500,7 +1500,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag(((ElementTag) object).element.toUpperCase()).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("upper", registeredObjectTags.get("to_uppercase"));
+        registerTag("upper", tagProcessor.registeredObjectTags.get("to_uppercase"));
 
         // <--[tag]
         // @attribute <ElementTag.to_lowercase>
@@ -1515,7 +1515,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag(CoreUtilities.toLowerCase(((ElementTag) object).element)).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("lower", registeredObjectTags.get("to_lowercase"));
+        registerTag("lower", tagProcessor.registeredObjectTags.get("to_lowercase"));
 
         // <--[tag]
         // @attribute <ElementTag.to_titlecase>
@@ -1545,7 +1545,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 return new ElementTag(TitleCase.toString()).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("totitlecase", registeredObjectTags.get("to_titlecase"));
+        registerTag("totitlecase", tagProcessor.registeredObjectTags.get("to_titlecase"));
 
         // <--[tag]
         // @attribute <ElementTag.substring[<#>(,<#>)]>
@@ -1587,7 +1587,47 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                         .getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("substr", registeredObjectTags.get("substring"));
+        registerTag("substr", tagProcessor.registeredObjectTags.get("substring"));
+
+        // <--[tag]
+        // @attribute <ElementTag.split[(regex:)<string>]>
+        // @returns ListTag
+        // @group element manipulation
+        // @description
+        // Returns a list of portions of this element, split by the specified string.
+        // If a split string is unspecified, splits by space.
+        // -->
+        registerTag("split", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
+                if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
+                    split_string = split_string.split(":", 2)[1];
+                }
+                else {
+                    split_string = "(?i)" + Pattern.quote(split_string);
+                }
+                String[] split;
+
+                // <--[tag]
+                // @attribute <ElementTag.split[(regex:)<string>].limit[<#>]>
+                // @returns ListTag
+                // @group element manipulation
+                // @description
+                // Returns a list of portions of this element, split by the specified string,
+                // and capped at the specified number of max list items.
+                // If a split string is unspecified, splits by space.
+                // -->
+                if (attribute.startsWith("limit", 2)) {
+                    int limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
+                    split = ((ElementTag) object).element.split(split_string, limit);
+                }
+                else {
+                    split = ((ElementTag) object).element.split(split_string);
+                }
+                return new ListTag(Arrays.asList(split)).getObjectAttribute(attribute.fulfill(2));
+            }
+        });
 
         // <--[tag]
         // @attribute <ElementTag.pad_left[<#>]>
@@ -1610,7 +1650,7 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                 // <--[tag]
                 // @attribute <ElementTag.pad_left[<#>].with[<element>]>
                 // @returns ElementTag
-                // @group string manipulation
+                // @group element manipulation
                 // @description
                 // Returns the value of an element extended to reach a minimum specified length
                 // by adding a specific symbol to the left side.
@@ -1620,11 +1660,12 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
                     with = String.valueOf(attribute.getContext(1).charAt(0));
                     attribute = attribute.fulfill(1);
                 }
-                String padded = ((ElementTag) object).element;
+                StringBuilder padded = new StringBuilder();
                 while (padded.length() < length) {
-                    padded = with + padded;
+                    padded.append(with);
                 }
-                return new ElementTag(padded).getObjectAttribute(attribute);
+                padded.append(((ElementTag) object).element);
+                return new ElementTag(padded.toString()).getObjectAttribute(attribute);
             }
         });
 
@@ -2526,15 +2567,10 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
 
     }
 
-    //public static HashMap<String, TagRunnable> registeredTags = new HashMap<String, TagRunnable>();
-
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
+    public static ObjectTagProcessor tagProcessor = new ObjectTagProcessor();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredObjectTags.put(name, runnable);
+        tagProcessor.registerTag(name, runnable);
     }
 
     @Override
@@ -2543,126 +2579,58 @@ public class ElementTag implements ObjectTag, ObjectTag.ObjectAttributable {
     }
 
     @Override
-    public String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+    public ObjectTag getObjectAttribute(Attribute attribute) {
+        return tagProcessor.getObjectAttribute(this, attribute);
     }
 
-    @Override
-    public ObjectTag getObjectAttribute(Attribute attribute) {
-
-        if (attribute == null) {
+    public static class FailedObjectTag implements ObjectTag {
+        @Override
+        public String getPrefix() {
+            return null;
+        }
+        @Override
+        public boolean isUnique() {
+            return false;
+        }
+        @Override
+        public String getObjectType() {
+            return null;
+        }
+        @Override
+        public String identify() {
+            return null;
+        }
+        @Override
+        public String identifySimple() {
+            return null;
+        }
+        @Override
+        public ObjectTag setPrefix(String prefix) {
+            return null;
+        }
+        @Override
+        public ObjectTag getObjectAttribute(Attribute attribute) {
+            if (!attribute.hasAlternative()) {
+                Debug.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.unfilledString() +
+                        "' for tag <" + attribute.getOrigin() + ">!");
+                if (attribute.seemingSuccesses.size() > 0) {
+                    String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
+                    if (attribute.hasContextFailed) {
+                        Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (missing [context] parameter?): " + almost);
+                    }
+                    else {
+                        Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (possibly bad input?): " + almost);
+                    }
+                }
+            }
             if (Debug.verbose) {
-                Debug.log("Element - Attribute null!");
+                Debug.log("Element - Unfilled! Null!");
             }
             return null;
         }
+    }
 
-        if (attribute.isComplete()) {
-            if (Debug.verbose) {
-                Debug.log("Element - Attribute complete! Self return! " + element);
-            }
-            return this;
-        }
-
-        // TODO: Scrap getAttribute, make this functionality a core system
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
-        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
-        if (otr != null) {
-            if (!otr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
-            }
-            if (Debug.verbose) {
-                Debug.log("Element - run tag " + otr.name);
-            }
-            attribute.seemingSuccesses.add(otr.name);
-            return otr.run(attribute, this);
-        }
-        /*
-        TagRunnable tr = registeredTags.get(attrLow);
-        if (tr != null) {
-            if (!tr.name.equals(attrLow)) {
-                dB.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + tr.name + "': '" + attrLow + "'.");
-            }
-            return new Element(tr.run(attribute, this));
-        }*/
-
-
-        // <--[tag]
-        // @attribute <ElementTag.split[(regex:)<string>].limit[<#>]>
-        // @returns ListTag
-        // @group string manipulation
-        // @description
-        // Returns a list of portions of this element, split by the specified string,
-        // and capped at the specified number of max list items.
-        // If a split string is unspecified, splits by space.
-        // -->
-        if (attribute.startsWith("split") && attribute.startsWith("limit", 2)) {
-            String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
-            Integer limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
-            if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
-                return new ListTag(Arrays.asList(element.split(split_string.split(":", 2)[1], limit)))
-                        .getObjectAttribute(attribute.fulfill(2));
-            }
-            else {
-                return new ListTag(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string), limit)))
-                        .getObjectAttribute(attribute.fulfill(2));
-            }
-        }
-
-        // <--[tag]
-        // @attribute <ElementTag.split[(regex:)<string>]>
-        // @returns ListTag
-        // @group string manipulation
-        // @description
-        // Returns a list of portions of this element, split by the specified string.
-        // If a split string is unspecified, splits by space.
-        // -->
-        if (attribute.startsWith("split")) {
-            String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
-            if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
-                return new ListTag(Arrays.asList(element.split(split_string.split(":", 2)[1])))
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-            else {
-                return new ListTag(Arrays.asList(element.split("(?i)" + Pattern.quote(split_string))))
-                        .getObjectAttribute(attribute.fulfill(1));
-            }
-        }
-
-        ObjectTag returned = CoreUtilities.autoPropertyTagObject(this, attribute);
-        if (returned != null) {
-            return returned;
-        }
-
-        if (attribute.isComplete()) {
-            if (Debug.verbose) {
-                Debug.log("Element - Secondary complete! Self return! " + element);
-            }
-            return this;
-        }
-
-        // Unfilled attributes past this point probably means the tag is spelled
-        // incorrectly. So instead of just passing through what's been resolved
-        // so far, 'null' shall be returned with a debug message.
-
-        if (!attribute.hasAlternative()) {
-            Debug.echoDebug(attribute.getScriptEntry(), "Unfilled attributes '" + attribute.unfilledString() +
-                    "' for tag <" + attribute.getOrigin() + ">!");
-            if (attribute.seemingSuccesses.size() > 0) {
-                String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
-                if (attribute.hasContextFailed) {
-                    Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (missing [context] parameter?): " + almost);
-                }
-                else {
-                    Debug.echoDebug(attribute.getScriptEntry(), "Almost matched but failed (possibly bad input?): " + almost);
-                }
-            }
-        }
-        if (Debug.verbose) {
-            Debug.log("Element - Unfilled! Null!");
-        }
-        return null;
+    public ObjectTag getNextObjectTypeDown() {
+        return new FailedObjectTag();
     }
 }

@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.TagRunnable;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -413,7 +414,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
             return "li@";
         }
         StringBuilder debugText = new StringBuilder();
-        debugText.append("li@");
+        debugText.append("<G>li@<Y> ");
         for (ObjectTag item : objectForms) {
             debugText.append(item.debuggable()).append(" <G>|<Y> ");
         }
@@ -434,17 +435,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
 
     @Override
     public String identify() {
-        if (flag != null) {
-            if (size() == 1) {
-                return DenizenCore.getImplementation().getLastEntryFromFlag(flag);
-            }
-            else {
-                StringBuilder dScriptArg = new StringBuilder();
-                for (String item : this) {
-                    dScriptArg.append(item).append('|');
-                }
-                return dScriptArg.substring(0, dScriptArg.length() - 1);
-            }
+        if (flag != null && size() == 1) {
+            return get(0);
         }
         return identifyList();
     }
@@ -453,18 +445,29 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         if (isEmpty()) {
             return "li@";
         }
-        StringBuilder dScriptArg = new StringBuilder();
-        dScriptArg.append("li@");
+        StringBuilder output = new StringBuilder();
+        output.append("li@");
         for (String item : this) {
-            dScriptArg.append(item).append('|');
+            output.append(item).append('|');
         }
-        return dScriptArg.substring(0, dScriptArg.length() - 1);
+        return output.substring(0, output.length() - 1);
     }
 
 
     @Override
     public String identifySimple() {
         return identify();
+    }
+
+    private static String parseString(ListTag obj, String spacer) {
+
+        StringBuilder dScriptArg = new StringBuilder();
+        for (String item : obj) {
+            dScriptArg.append(item);
+            dScriptArg.append(spacer);
+        }
+        return dScriptArg.toString().substring(0,
+                dScriptArg.length() - spacer.length());
     }
 
     public static void registerTags() {
@@ -503,8 +506,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
                 return new ElementTag(parseString((ListTag) object, " ")).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("as_string", registeredObjectTags.get("space_separated"));
-        registerTag("asstring", registeredObjectTags.get("space_separated"));
+        registerTag("as_string", tagProcessor.registeredObjectTags.get("space_separated"));
+        registerTag("asstring", tagProcessor.registeredObjectTags.get("space_separated"));
 
         // <--[tag]
         // @attribute <ListTag.separated_by[<text>]>
@@ -541,8 +544,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
                 return new ElementTag(parseString((ListTag) object, ", ")).getObjectAttribute(attribute.fulfill(1));
             }
         });
-        registerTag("ascslist", registeredObjectTags.get("comma_separated"));
-        registerTag("as_cslist", registeredObjectTags.get("comma_separated"));
+        registerTag("ascslist", tagProcessor.registeredObjectTags.get("comma_separated"));
+        registerTag("as_cslist", tagProcessor.registeredObjectTags.get("comma_separated"));
 
         // <--[tag]
         // @attribute <ListTag.unseparated>
@@ -1942,6 +1945,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
         });
 
 
+        registerTag("as_list", new TagRunnable.ObjectForm() {
+            @Override
+            public ObjectTag run(Attribute attribute, ObjectTag object) {
+                // Special handler for flag lists.
+                return new ListTag((ListTag) object).getObjectAttribute(attribute.fulfill(1));
+            }
+        });
+        registerTag("aslist", tagProcessor.registeredObjectTags.get("as_list"));
+
+
         // <--[tag]
         // @attribute <ListTag.type>
         // @returns ElementTag
@@ -1958,29 +1971,20 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
 
     }
 
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
+    public static ObjectTagProcessor tagProcessor = new ObjectTagProcessor();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredObjectTags.put(name, runnable);
-    }
-
-    private static String parseString(ListTag obj, String spacer) {
-
-        StringBuilder dScriptArg = new StringBuilder();
-        for (String item : obj) {
-            dScriptArg.append(item);
-            dScriptArg.append(spacer);
-        }
-        return dScriptArg.toString().substring(0,
-                dScriptArg.length() - spacer.length());
+        tagProcessor.registerTag(name, runnable);
     }
 
     @Override
-    public String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+    public ObjectTag getObjectAttribute(Attribute attribute) {
+        return tagProcessor.getObjectAttribute(this, attribute);
+    }
+
+    @Override
+    public ObjectTag getNextObjectTypeDown() {
+        return (flag != null && size() == 1) ? getObject(0) : new ElementTag(identifyList());
     }
 
     @Override
@@ -1989,27 +1993,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
     }
 
     @Override
-    public ObjectTag getObjectAttribute(Attribute attribute) {
-
-        if (attribute == null) {
-            return null;
-        }
-
-        if (attribute.isComplete()) {
-            return this;
-        }
-
-        // TODO: Scrap getObjectAttribute, make this functionality a core system
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
-        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
-        if (otr != null) {
-            if (!otr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
-            }
-            return otr.run(attribute, this);
-        }
-
+    public ObjectTag specialTagProcessing(Attribute attribute) {
+        String attrLow = attribute.getAttributeWithoutContext(1);
         if (Debug.verbose) {
             Debug.log("ListTag alternate attribute " + attrLow);
         }
@@ -2026,26 +2011,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag, ObjectTag.O
                 return getObject(index - 1).getObjectAttribute(attribute.fulfill(1));
             }
         }
-
-        // Special handling for flag
-        if (flag != null && (attribute.startsWith("as_list")
-                || attribute.startsWith("aslist"))) {
-            return new ListTag(this).getObjectAttribute(attribute.fulfill(1));
-        }
-
-
-        ObjectTag returned = CoreUtilities.autoPropertyTagObject(this, attribute);
-        if (returned != null) {
-            return returned;
-        }
-
-        // If this is a flag, return the last element (this is how it has always worked...)
-        // Use as_list to return a list representation of the flag.
-        // If this is NOT a flag, but instead a normal ListTag, return an element
-        // with ListTag's identify() value.
-
-        return (flag != null
-                ? new ElementTag(DenizenCore.getImplementation().getLastEntryFromFlag(flag)).getObjectAttribute(attribute)
-                : new ElementTag(identifyList()).getObjectAttribute(attribute));
+        return null;
     }
 }

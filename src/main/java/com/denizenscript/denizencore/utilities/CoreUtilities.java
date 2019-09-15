@@ -33,7 +33,7 @@ public class CoreUtilities {
     }
 
     public static void autoPropertyMechanism(ObjectTag object, Mechanism mechanism) {
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
         if (properties == null) {
             return;
         }
@@ -61,7 +61,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return null;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
         if (properties == null) {
             return null;
         }
@@ -92,7 +92,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return null;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getdObjectClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
         if (properties == null) {
             return null;
         }
@@ -142,7 +142,7 @@ public class CoreUtilities {
     }
 
     public static <T extends ObjectTag> T asType(ObjectTag inp, Class<T> type, TagContext context) {
-        if (inp.getdObjectClass() == type) {
+        if (inp.getObjectTagClass() == type) {
             return (T) inp;
         }
         if (type == ElementTag.class) {
@@ -199,7 +199,7 @@ public class CoreUtilities {
     }
 
     public static boolean canPossiblyBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
-        if (inp.getdObjectClass() == type) {
+        if (inp.getObjectTagClass() == type) {
             return true;
         }
         TypeComparisonRunnable comp = typeCheckers.get(type);

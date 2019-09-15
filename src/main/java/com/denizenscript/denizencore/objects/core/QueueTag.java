@@ -6,11 +6,10 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-
-import java.util.HashMap;
 
 public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjustable {
 
@@ -304,13 +303,15 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
         });
     }
 
-    public static HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
+    public static ObjectTagProcessor tagProcessor = new ObjectTagProcessor();
 
     public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        registeredObjectTags.put(name, runnable);
+        tagProcessor.registerTag(name, runnable);
+    }
+
+    @Override
+    public ObjectTag getObjectAttribute(Attribute attribute) {
+        return tagProcessor.getObjectAttribute(this, attribute);
     }
 
     @Override
@@ -318,50 +319,10 @@ public class QueueTag implements ObjectTag, ObjectTag.ObjectAttributable, Adjust
         return null;
     }
 
-    @Override
-    public String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
-    }
-
-    @Override
-    public Class<? extends ObjectTag> getdObjectClass() {
-        return QueueTag.class;
-    }
-
     public void ensure() {
         while (queue.replacementQueue != null) {
             queue = queue.replacementQueue;
         }
-    }
-
-    @Override
-    public ObjectTag getObjectAttribute(Attribute attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        if (attribute.isComplete()) {
-            return this;
-        }
-        ensure();
-
-        // TODO: Scrap getAttribute, make this functionality a core system
-        String attrLow = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(1));
-        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
-        if (otr != null) {
-            if (!otr.name.equals(attrLow)) {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + otr.name + "': '" + attrLow + "'.");
-            }
-            return otr.run(attribute, this);
-        }
-
-        ObjectTag returned = CoreUtilities.autoPropertyTagObject(this, attribute);
-        if (returned != null) {
-            return returned;
-        }
-
-        return new ElementTag(identify()).getObjectAttribute(attribute);
     }
 
     @Override
