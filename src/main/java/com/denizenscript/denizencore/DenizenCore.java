@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.events.core.ReloadScriptsScriptEvent;
 import com.denizenscript.denizencore.events.core.SystemTimeScriptEvent;
 import com.denizenscript.denizencore.events.core.TickScriptEvent;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
@@ -105,6 +106,7 @@ public class DenizenCore {
      */
     public static void postLoadScripts() {
         try {
+            ScriptRegistry.postLoadScripts();
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();

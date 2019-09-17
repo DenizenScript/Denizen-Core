@@ -32,7 +32,7 @@ public class ScriptHelper {
             _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: yaml data\n");
         }
 
-        ScriptRegistry._buildCoreYamlScriptContainers(_yamlScripts);
+        ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
     }
 
     public static YamlConfiguration _gs() {

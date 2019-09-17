@@ -50,7 +50,53 @@ public class ScriptRegistry {
         return type != null && (script.getContainerType().equalsIgnoreCase(type));
     }
 
-    public static void _buildCoreYamlScriptContainers(YamlConfiguration yamlScripts) {
+    public static YamlConfiguration fullYaml;
+
+    public static ArrayList<String> toPostLoadAttempt = new ArrayList<>();
+
+    public static void postLoadScripts() {
+        for (String scriptName : toPostLoadAttempt) {
+            attemptLoadSingle(scriptName, true);
+        }
+        toPostLoadAttempt.clear();
+        fullYaml = null;
+    }
+
+    public static void attemptLoadSingle(String scriptName, boolean shouldErrorOnType) {
+        // Make sure the script has a type
+        if (fullYaml.contains(scriptName + ".TYPE")) {
+            String type = fullYaml.getString(scriptName + ".TYPE");
+            // Check that types is a registered type
+            if (!scriptContainerTypes.containsKey(type.toUpperCase())) {
+                if (shouldErrorOnType) {
+                    Debug.log("<G>Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")'<G> is an unknown type.");
+                    ScriptHelper.setHadError();
+                }
+                else {
+                    toPostLoadAttempt.add(scriptName);
+                }
+                return;
+            }
+            // Instantiate a new scriptContainer of specified type.
+            Class typeClass = scriptContainerTypes.get(type.toUpperCase());
+            Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
+            try {
+                scriptContainers.put(scriptName, typeClass.getConstructor(YamlConfiguration.class, String.class)
+                        .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
+            }
+            catch (Exception e) {
+                Debug.echoError(e);
+                ScriptHelper.setHadError();
+            }
+        }
+        else {
+            Debug.echoError("Found type-less container: '" + scriptName + "'.");
+            ScriptHelper.setHadError();
+        }
+    }
+
+    public static void buildCoreYamlScriptContainers(YamlConfiguration yamlScripts) {
+        fullYaml = yamlScripts;
         scriptContainers.clear();
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
@@ -61,33 +107,8 @@ public class ScriptRegistry {
         // Get a set of key names in concatenated Denizen Scripts
         Set<StringHolder> scripts = yamlScripts.getKeys(false);
         // Iterate through set
-        for (StringHolder scriptName1 : scripts) {
-            String scriptName = scriptName1.str;
-            // Make sure the script has a type
-            if (yamlScripts.contains(scriptName + ".TYPE")) {
-                String type = yamlScripts.getString(scriptName + ".TYPE");
-                // Check that types is a registered type
-                if (!scriptContainerTypes.containsKey(type.toUpperCase())) {
-                    Debug.log("<G>Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")'<G> is an unknown type.");
-                    ScriptHelper.setHadError();
-                    continue;
-                }
-                // Instantiate a new scriptContainer of specified type.
-                Class typeClass = scriptContainerTypes.get(type.toUpperCase());
-                Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
-                try {
-                    scriptContainers.put(scriptName, typeClass.getConstructor(YamlConfiguration.class, String.class)
-                            .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
-                }
-                catch (Exception e) {
-                    Debug.echoError(e);
-                    ScriptHelper.setHadError();
-                }
-            }
-            else {
-                Debug.echoError("Found type-less container: '" + scriptName + "'.");
-                ScriptHelper.setHadError();
-            }
+        for (StringHolder scriptName : scripts) {
+            attemptLoadSingle(scriptName.str, false);
         }
     }
 
