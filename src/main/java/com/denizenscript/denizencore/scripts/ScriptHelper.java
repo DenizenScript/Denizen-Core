@@ -32,7 +32,7 @@ public class ScriptHelper {
             _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: yaml data\n");
         }
 
-        DenizenCore.getImplementation().buildCoreContainers(_yamlScripts);
+        ScriptRegistry._buildCoreYamlScriptContainers(_yamlScripts);
     }
 
     public static YamlConfiguration _gs() {

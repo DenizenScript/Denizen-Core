@@ -106,11 +106,6 @@ public interface DenizenImplementation {
     /**
      * Temporary.
      */
-    void buildCoreContainers(YamlConfiguration yamlScripts);
-
-    /**
-     * Temporary.
-     */
     List<YamlConfiguration> getOutsideScripts();
 
     TagContext getTagContextFor(ScriptEntry entry, boolean instant);

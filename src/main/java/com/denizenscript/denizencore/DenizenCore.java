@@ -90,14 +90,21 @@ public class DenizenCore {
     }
 
     /**
-     * Called last in the init sequence, loads all scripts and starts the Denizen engine.
+     * Call postLoadScripts first.
      */
-    public static void loadScripts() {
+    public static void preloadScripts() {
+        ScriptEvent.worldContainers.clear();
+        implementation.preScriptReload();
+        ScriptHelper.resetError();
+        ScriptHelper.reloadScripts();
+    }
+
+    /**
+     * Called last in the init sequence, loads all scripts and starts the Denizen engine.
+     * Call preloadScripts first.
+     */
+    public static void postLoadScripts() {
         try {
-            ScriptEvent.worldContainers.clear();
-            implementation.preScriptReload();
-            ScriptHelper.resetError();
-            ScriptHelper.reloadScripts();
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
@@ -118,7 +125,8 @@ public class DenizenCore {
      * Call when a script reload is required (EG, requested by user command.)
      */
     public static void reloadScripts() {
-        loadScripts();
+        preloadScripts();
+        postLoadScripts();
     }
 
     public static final List<Schedulable> scheduled = new ArrayList<>();

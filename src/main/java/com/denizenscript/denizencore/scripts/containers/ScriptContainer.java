@@ -190,22 +190,22 @@ public class ScriptContainer implements Debuggable {
      * @return true if the key exists
      */
     public boolean contains(String path) {
-        return contents.contains(path.toUpperCase());
+        return contents.contains(path);
     }
 
 
     public String getString(String path) {
-        return contents.getString(path.toUpperCase());
+        return contents.getString(path);
     }
 
 
     public String getString(String path, String def) {
-        return contents.getString(path.toUpperCase(), def);
+        return contents.getString(path, def);
     }
 
 
     public List<String> getStringList(String path) {
-        List<String> strs = contents.getStringList(path.toUpperCase());
+        List<String> strs = contents.getStringList(path);
         if (strs == null) {
             return null;
         }
@@ -221,12 +221,12 @@ public class ScriptContainer implements Debuggable {
         if (path.length() == 0) {
             return contents;
         }
-        return contents.getConfigurationSection(path.toUpperCase());
+        return contents.getConfigurationSection(path);
     }
 
 
     public void set(String path, Object object) {
-        contents.set(path.toUpperCase(), object);
+        contents.set(path, object);
     }
 
 

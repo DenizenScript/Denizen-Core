@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.events;
 
 import com.denizenscript.denizencore.events.core.*;
+import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -49,7 +50,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
     }
 
-    public static ArrayList<ScriptContainer> worldContainers = new ArrayList<>();
+    public static ArrayList<WorldScriptContainer> worldContainers = new ArrayList<>();
 
     public static ArrayList<ScriptEvent> events = new ArrayList<>();
 
