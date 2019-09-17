@@ -1608,6 +1608,7 @@ public class ElementTag implements ObjectTag {
                     split_string = "(?i)" + Pattern.quote(split_string);
                 }
                 String[] split;
+                attribute = attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ElementTag.split[(regex:)<string>].limit[<#>]>
@@ -1618,14 +1619,15 @@ public class ElementTag implements ObjectTag {
                 // and capped at the specified number of max list items.
                 // If a split string is unspecified, splits by space.
                 // -->
-                if (attribute.startsWith("limit", 2)) {
-                    int limit = (attribute.hasContext(2) ? attribute.getIntContext(2) : 1);
+                if (attribute.startsWith("limit")) {
+                    int limit = (attribute.hasContext(1) ? attribute.getIntContext(1) : 1);
+                    attribute = attribute.fulfill(1);
                     split = ((ElementTag) object).element.split(split_string, limit);
                 }
                 else {
                     split = ((ElementTag) object).element.split(split_string);
                 }
-                return new ListTag(Arrays.asList(split)).getObjectAttribute(attribute.fulfill(2));
+                return new ListTag(Arrays.asList(split)).getObjectAttribute(attribute);
             }
         });
 
