@@ -67,6 +67,9 @@ public class Deprecations {
     public static Warning worldContext = new SlowWarning("'context.world' in events containing a location or chunk context is deprecated: use 'context.location.world' or similar to get the world value.");
     public static Warning entityBreaksHangingEventContext = new SlowWarning("'context.entity' in event 'on player breaks hanging' is deprecated: use 'context.breaker'.");
     public static Warning hangingBreaksEventContext = new SlowWarning("'context.location' in event 'on hanging breaks' is deprecated: use 'context.hanging.location'.");
+    public static Warning playerRightClicksEntityContext = new SlowWarning("'context.location' in event 'on player right clicks entity' is deprecated: use 'context.entity.location'.");
+    public static Warning blockDispensesItemDetermination = new SlowWarning("Multiplier double determination for 'on block dispenses item' is deprecated: use 'context.velocity.mul[#]'.");
+    public static Warning serverRedirectLogging = new SlowWarning("server mechanism redirect_logging is deprecated: use the system mechanism by the same name.");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
