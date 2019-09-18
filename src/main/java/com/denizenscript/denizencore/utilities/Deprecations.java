@@ -63,6 +63,11 @@ public class Deprecations {
     // Bad candidate for functionality removal - used to be commonly used
     public static Warning elementAsInTag = new SlowWarning("'element.as_int' tag is deprecated: use '.round', '.round_down', '.round_up', or '.truncate'.");
 
+    // In Bukkit impl, Added on 2019/09/18, but was deprecated earlier.
+    public static Warning worldContext = new SlowWarning("'context.world' in events containing a location or chunk context is deprecated: use 'context.location.world' or similar to get the world value.");
+    public static Warning entityBreaksHangingEventContext = new SlowWarning("'context.entity' in event 'on player breaks hanging' is deprecated: use 'context.breaker'.");
+    public static Warning hangingBreaksEventContext = new SlowWarning("'context.location' in event 'on hanging breaks' is deprecated: use 'context.hanging.location'.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
