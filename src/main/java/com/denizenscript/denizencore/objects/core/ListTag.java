@@ -620,12 +620,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.map_get[<element>]>
-        // @returns ElementTag
+        // @attribute <ListTag.map_get[<element>|...]>
+        // @returns ListTag or ElementTag
         // @description
-        // Returns the element split by the / symbol's value for the matching input element.
-        // TODO: Clarify
+        // Interprets a list of "key/value" pairs as a map, and returns the value for the given key.
         // For example: li@one/a|two/b.map_get[one] returns a.
+        // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
         // -->
         registerTag("map_get", new TagRunnable.ObjectForm() {
             @Override
@@ -633,12 +633,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 if (((ListTag) object).isEmpty()) {
                     return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
                 }
-                String input = attribute.getContext(1);
+                ListTag input = getListFor(attribute.getContextObject(1));
                 attribute.fulfill(1);
 
                 // <--[tag]
-                // @attribute <ListTag.map_get[<element>].split_by[<element>]>
-                // @returns ElementTag
+                // @attribute <ListTag.map_get[<element>|...].split_by[<element>]>
+                // @returns ListTag or ElementTag
                 // @description
                 // Returns the element split by the given symbol's value for the matching input element.
                 // TODO: Clarify
@@ -652,11 +652,24 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     attribute.fulfill(1);
                 }
 
-                for (String item : (ListTag) object) {
-                    String[] strings = item.split(Pattern.quote(split), 2);
-                    if (strings.length > 1 && strings[0].equalsIgnoreCase(input)) {
-                        return new ElementTag(strings[1]).getObjectAttribute(attribute);
+                ListTag result = new ListTag();
+
+                for (String key : input) {
+                    for (String item : (ListTag) object) {
+                        String[] strings = item.split(Pattern.quote(split), 2);
+                        if (strings.length > 1 && strings[0].equalsIgnoreCase(key)) {
+                            result.add(strings[1]);
+                        }
                     }
+                }
+                if (input.size() == 1 && result.size() == 1) {
+                    return new ElementTag(result.get(0)).getObjectAttribute(attribute);
+                }
+                else if (input.size() > 1) {
+                    if (result.size() != input.size()) {
+                        return null;
+                    }
+                    return result.getObjectAttribute(attribute);
                 }
                 return null;
             }
