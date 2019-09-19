@@ -14,11 +14,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,43 +49,10 @@ public class TagManager {
     }
 
     public static HashMap<String, TagRunnable.RootForm> handlers = new HashMap<>();
-    public static List<OldTagRunner> oldRunners = new ArrayList<>();
 
     @FunctionalInterface
     public interface OldTagRunner {
         void run(ReplaceableTagEvent event);
-    }
-
-    public static void registerTagEvents(Object o) {
-        for (Method method : o.getClass().getMethods()) {
-            if (!method.isAnnotationPresent(TagManager.TagEvents.class)) {
-                continue;
-            }
-            Class[] parameters = method.getParameterTypes();
-            if (parameters.length != 1 || parameters[0] != ReplaceableTagEvent.class) {
-                Debug.echoError("Class " + o.getClass().getCanonicalName() + " has a method "
-                        + method.getName() + " that is targeted at the event manager but has invalid parameters.");
-                break;
-            }
-            registerMethod(method, o);
-        }
-    }
-
-    public static void registerMethod(Method method, Object o) {
-        try {
-            method.setAccessible(true); // Reduce invoke checks
-            final MethodHandles.Lookup lookup = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(lookup, "run", // OldTagRunner#run
-                    MethodType.methodType(OldTagRunner.class, o.getClass()), // Signature of invoke method
-                    MethodType.methodType(void.class, ReplaceableTagEvent.class), // signature of OldTagRunner#run
-                    lookup.unreflect(method), // tag event method
-                    MethodType.methodType(void.class, ReplaceableTagEvent.class)); // Signature of tag event method
-            OldTagRunner runner = (OldTagRunner) site.getTarget().invoke(o);
-            oldRunners.add(runner);
-        }
-        catch (Throwable ex) {
-            Debug.echoError(ex);
-        }
     }
 
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
@@ -133,18 +95,9 @@ public class TagManager {
                 Debug.echoError(ex);
             }
         }
-        for (OldTagRunner runner : oldRunners) {
-            try {
-                runner.run(event);
-                if (event.replaced()) {
-                    if (Debug.verbose) {
-                        Debug.log("Tag alt-handle success: " + event.getReplaced());
-                    }
-                    return;
-                }
-            }
-            catch (Throwable ex) {
-                Debug.echoError(ex);
+        else {
+            if (!event.hasAlternative()) {
+                Debug.echoError("No tag-base handler for '" + event.getName() + "'.");
             }
         }
         if (Debug.verbose) {
