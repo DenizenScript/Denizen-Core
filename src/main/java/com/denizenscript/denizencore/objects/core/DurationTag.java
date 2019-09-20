@@ -142,7 +142,7 @@ public class DurationTag implements ObjectTag {
             }
             else {
                 // Invalid.
-                if (context.debug) {
+                if (context == null || context.debug) {
                     Debug.echoError("Duration type '" + string + "' is not valid.");
                 }
                 return null;
