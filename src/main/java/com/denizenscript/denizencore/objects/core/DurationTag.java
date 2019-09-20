@@ -132,16 +132,26 @@ public class DurationTag implements ObjectTag {
                 // Matches HOURS, so 1 hour = 3600 seconds
                 return new DurationTag(Double.valueOf(numericString) * 3600);
             }
-            else {
+            else if (string.endsWith("s")) {
                 // seconds
                 return new DurationTag(Double.valueOf(numericString));
+            }
+            else if (numericString.equals(string)) {
+                // seconds
+                return new DurationTag(Double.valueOf(numericString));
+            }
+            else {
+                // Invalid.
+                if (context.debug) {
+                    Debug.echoError("Duration type '" + string + "' is not valid.");
+                }
+                return null;
             }
         }
         catch (Exception e) {
             return null;
         }
     }
-
 
     /**
      * Checks to see if the string is a valid Duration.
@@ -151,7 +161,7 @@ public class DurationTag implements ObjectTag {
      */
     public static boolean matches(String string) {
         try {
-            return valueOf(string) != null;
+            return valueOf(string, CoreUtilities.noDebugContext) != null;
         }
         catch (Exception e) {
             return false;

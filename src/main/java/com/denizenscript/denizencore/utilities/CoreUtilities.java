@@ -21,6 +21,8 @@ import java.util.*;
 
 public class CoreUtilities {
 
+    public static TagContext noDebugContext;
+
     public static String stringifyNullPass(Object obj) {
         return obj == null ? null : obj.toString();
     }
