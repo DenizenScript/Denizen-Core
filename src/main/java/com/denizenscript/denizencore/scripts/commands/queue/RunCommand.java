@@ -182,26 +182,22 @@ public class RunCommand extends AbstractCommand implements Holdable {
         }
         else {
 
+            DurationTag speed;
             if (scriptEntry.hasObject("speed")) {
-                DurationTag speed = scriptEntry.getObjectTag("speed");
-                queue = ((TimedQueue) new TimedQueue(id).addEntries(entries)).setSpeed(speed.getTicks());
+                speed = scriptEntry.getObjectTag("speed");
+            }
+            else if (script != null && script.getContainer().contains("SPEED")) {
+                speed = DurationTag.valueOf(script.getContainer().getString("SPEED", "0"));
             }
             else {
-                // Check speed of the script if a TimedQueue -- if identified, use the speed from the script.
-                if (script != null && script.getContainer().contains("SPEED")) {
-                    long ticks = DurationTag.valueOf(script.getContainer().getString("SPEED", "0")).getTicks();
-                    if (ticks > 0) {
-                        queue = new TimedQueue(id).setSpeed(ticks).addEntries(entries);
-                    }
-                    else {
-                        queue = new InstantQueue(id).addEntries(entries);
-                    }
-                }
-                else {
-                    queue = new TimedQueue(id).addEntries(entries);
-                }
+                speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
             }
-
+            if (speed.getTicks() > 0) {
+                queue = new TimedQueue(id).setSpeed(speed.getTicks()).addEntries(entries);
+            }
+            else {
+                queue = new InstantQueue(id).addEntries(entries);
+            }
         }
 
         // Set any delay
