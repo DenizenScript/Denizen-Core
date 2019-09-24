@@ -74,7 +74,7 @@ public class InjectCommand extends AbstractCommand {
             throw new InvalidArgumentsException("Must define a SCRIPT to be injected.");
         }
 
-        if (!scriptEntry.hasObject("path") && scriptEntry.hasObject("local")) {
+        if (scriptEntry.hasObject("local") && !scriptEntry.hasObject("path") && !scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must specify a PATH.");
         }
 
@@ -83,34 +83,26 @@ public class InjectCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        if (scriptEntry.dbCallShouldDebug()) {
+        ScriptTag script = scriptEntry.getObjectTag("script");
+        if (script == null) {
+            script = scriptEntry.getScript();
+        }
 
-            Debug.report(scriptEntry, getName(),
-                    (scriptEntry.hasObject("script") ? scriptEntry.getObjectTag("script").debug() : scriptEntry.getScript().debug())
+        if (scriptEntry.dbCallShouldDebug()) {
+            Debug.report(scriptEntry, getName(), script.debug()
                             + (scriptEntry.hasObject("instant") ? scriptEntry.getObjectTag("instant").debug() : "")
                             + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
                             + (scriptEntry.hasObject("local") ? scriptEntry.getElement("local").debug() : ""));
-
         }
 
-        // Get the script
-        ScriptTag script = scriptEntry.getObjectTag("script");
-
-        // Get the entries
         List<ScriptEntry> entries;
-        // If it's local
         if (scriptEntry.hasObject("local")) {
-            entries = scriptEntry.getScript().getContainer().getEntries(scriptEntry.entryData.clone(),
-                    scriptEntry.getElement("path").asString());
+            String pathName = scriptEntry.hasObject("path") ? scriptEntry.getElement("path").asString() : script.getName();
+            entries = scriptEntry.getScript().getContainer().getEntries(scriptEntry.entryData.clone(), pathName);
         }
-
-        // If it has a path
         else if (scriptEntry.hasObject("path")) {
-            entries = script.getContainer().getEntries(scriptEntry.entryData.clone(),
-                    scriptEntry.getElement("path").asString());
+            entries = script.getContainer().getEntries(scriptEntry.entryData.clone(), scriptEntry.getElement("path").asString());
         }
-
-        // Else, assume standard path
         else {
             entries = script.getContainer().getBaseEntries(scriptEntry.entryData.clone());
         }
@@ -120,12 +112,10 @@ public class InjectCommand extends AbstractCommand {
             return;
         }
 
-        // If 'instantly' was specified, run the commands immediately.
         if (scriptEntry.hasObject("instant")) {
             scriptEntry.getResidingQueue().runNow(entries, "INJECT");
         }
         else {
-            // Inject the entries into the current scriptqueue
             scriptEntry.getResidingQueue().injectEntries(entries, 0);
         }
     }
