@@ -90,4 +90,7 @@ public class Deprecations {
 
     // Relevant as of 2019/09/13, deprecate officially by 2020.
     public static Warning oldMatchesOperator = new SlowWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
+
+    // Relevant as of 2019/09/24, deprecate officially by 2020.
+    public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 }
