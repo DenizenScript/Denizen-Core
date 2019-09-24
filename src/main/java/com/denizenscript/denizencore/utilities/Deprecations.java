@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
+import com.denizenscript.denizencore.utilities.debugging.FutureWarning;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.utilities.debugging.Warning;
 
@@ -73,7 +74,7 @@ public class Deprecations {
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
-    // To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
+    // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
     public static Warning materialIds = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release.");
     public static Warning materialIdsSuggestProperties = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use relevant properties instead.");
     public static Warning materialIdsSuggestNames = new Warning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use material names instead.");
@@ -83,14 +84,14 @@ public class Deprecations {
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/07/13, deprecate officially by 2020.
-    public static Warning oldParseTag = new SlowWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
+    public static Warning oldParseTag = new FutureWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
 
     // In Bukkit impl, Relevant as of 2019/09/09, deprecate officially by 2020.
-    public static Warning oldNPCNavigator = new SlowWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
+    public static Warning oldNPCNavigator = new FutureWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
     // Relevant as of 2019/09/13, deprecate officially by 2020.
-    public static Warning oldMatchesOperator = new SlowWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
+    public static Warning oldMatchesOperator = new FutureWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
 
-    // Relevant as of 2019/09/24, deprecate officially by 2020.
-    public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
+    // In Bukkit impl, Relevant as of 2019/09/24, deprecate officially by 2020.
+    public static Warning oldRecipeScript = new FutureWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 }

@@ -1,7 +1,5 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-
 public class SlowWarning extends Warning {
 
     public static long WARNING_RATE = 10000;
@@ -13,12 +11,12 @@ public class SlowWarning extends Warning {
     }
 
     @Override
-    public void warn(ScriptQueue queue) {
+    public boolean testShouldWarn() {
         long cTime = System.currentTimeMillis();
         if (lastWarning + WARNING_RATE > cTime) {
-            return;
+            return false;
         }
         lastWarning = cTime;
-        Debug.echoError(queue, message);
+        return true;
     }
 }

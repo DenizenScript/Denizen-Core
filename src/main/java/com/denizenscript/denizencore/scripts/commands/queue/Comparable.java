@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.DurationTag;
@@ -317,7 +318,7 @@ public class Comparable {
         switch (operator) {
             // For checking if a FLAG is empty.
             case IS_EMPTY:
-                // TODO: Deprecations.oldMatchesOperator.warn();
+                Deprecations.oldMatchesOperator.warn();
                 outcome = comparable.length() == 0;
                 break;
 
@@ -328,7 +329,7 @@ public class Comparable {
 
             // For checking if the comparable contains comparedto
             case CONTAINS:
-                // TODO: Deprecations.oldMatchesOperator.warn();
+                Deprecations.oldMatchesOperator.warn();
                 outcome = CoreUtilities.toLowerCase(comparable).contains(CoreUtilities.toLowerCase(comparedto));
                 break;
 
@@ -344,7 +345,7 @@ public class Comparable {
             // Check if the string comparable MATCHES a specific argument type,
             // as specified by comparedto
             case MATCHES:
-                // TODO: Deprecations.oldMatchesOperator.warn();
+                Deprecations.oldMatchesOperator.warn();
                 comparedto = comparedto.replace("_", "");
 
                 if (comparedto.equalsIgnoreCase("script")) {
