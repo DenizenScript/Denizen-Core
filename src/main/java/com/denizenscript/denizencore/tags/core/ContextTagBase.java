@@ -1,6 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.TagRunnable;
+import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.Attribute;

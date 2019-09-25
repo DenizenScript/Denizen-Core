@@ -1,8 +1,7 @@
-package com.denizenscript.denizencore.objects;
+package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 
 public abstract class TagRunnable implements Cloneable {
 
