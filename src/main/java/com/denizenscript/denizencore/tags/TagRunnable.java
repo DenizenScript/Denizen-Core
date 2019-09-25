@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public abstract class TagRunnable implements Cloneable {
 
-    public static abstract class ObjectForm implements Cloneable {
+    public static abstract class ObjectForm<T extends ObjectTag> implements Cloneable {
 
         @Override
         public ObjectForm clone() {
@@ -20,7 +20,7 @@ public abstract class TagRunnable implements Cloneable {
 
         public String name = null;
 
-        public abstract ObjectTag run(Attribute attribute, ObjectTag object);
+        public abstract ObjectTag run(Attribute attribute, T object);
     }
 
     public static abstract class RootForm implements Cloneable {

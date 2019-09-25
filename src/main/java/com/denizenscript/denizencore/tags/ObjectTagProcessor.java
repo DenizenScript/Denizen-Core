@@ -6,18 +6,18 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
 
-public class ObjectTagProcessor {
+public class ObjectTagProcessor<T extends ObjectTag> {
 
-    public HashMap<String, TagRunnable.ObjectForm> registeredObjectTags = new HashMap<>();
+    public HashMap<String, TagRunnable.ObjectForm<T>> registeredObjectTags = new HashMap<>();
 
-    public void registerTag(String name, TagRunnable.ObjectForm runnable) {
+    public void registerTag(String name, TagRunnable.ObjectForm<T> runnable) {
         if (runnable.name == null) {
             runnable.name = name;
         }
         else {
-            TagRunnable.ObjectForm newRunnable = new TagRunnable.ObjectForm() {
+            TagRunnable.ObjectForm<T> newRunnable = new TagRunnable.ObjectForm<T>() {
                 @Override
-                public ObjectTag run(Attribute attribute, ObjectTag object) {
+                public ObjectTag run(Attribute attribute, T object) {
                     Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
                             "Using deprecated form of tag '" + runnable.name + "': '" + name + "'.");
                     return runnable.run(attribute, object);
@@ -29,7 +29,7 @@ public class ObjectTagProcessor {
         registeredObjectTags.put(name, runnable);
     }
 
-    public ObjectTag getObjectAttribute(ObjectTag object, Attribute attribute) {
+    public ObjectTag getObjectAttribute(T object, Attribute attribute) {
         if (attribute == null) {
             if (Debug.verbose) {
                 Debug.log("TagProcessor - Attribute null!");
@@ -43,18 +43,17 @@ public class ObjectTagProcessor {
             return object;
         }
         String attrLow = attribute.getAttributeWithoutContext(1);
-        TagRunnable.ObjectForm otr = registeredObjectTags.get(attrLow);
+        TagRunnable.ObjectForm<T> otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             attribute.seemingSuccesses.add(otr.name);
             return otr.run(attribute, object);
         }
         ObjectTag returned = CoreUtilities.autoPropertyTagObject(object, attribute);
-        if (returned != null) {
-            return returned;
+        if (returned == null) {
+            returned = object.specialTagProcessing(attribute);
         }
-        returned = object.specialTagProcessing(attribute);
         if (returned != null) {
-            return returned;
+            return returned.getObjectAttribute(attribute.fulfill(1));
         }
         return object.getNextObjectTypeDown().getObjectAttribute(attribute);
     }
