@@ -7,7 +7,7 @@
     <groupId>com.denizenscript</groupId>
     <artifactId>denizencore</artifactId>
     <packaging>jar</packaging>
-    <version>1.50-SNAPSHOT</version>
+    <version>1.60-SNAPSHOT</version>
     <name>DenizenCore</name>
     <description>A powerful scripting engine for Java-based games</description>
 
