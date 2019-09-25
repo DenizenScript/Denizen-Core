@@ -343,25 +343,22 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
     }
 
-
-    // Return a list that includes only elements belonging to a certain class
-    public <T extends ObjectTag> List<T> filter(Class<T> dClass) {
-        return filter(dClass, DenizenCore.getImplementation().getTagContext(null));
-    }
-
-
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, ScriptEntry entry) {
         return filter(dClass, (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
-                entry.entryData.getTagContext()));
+                entry.entryData.getTagContext()), true);
     }
 
-    public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger) {
+    public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger, boolean showFailure) {
         TagContext context = DenizenCore.getImplementation().getTagContext(null);
         context.debug = debugger.shouldDebug();
-        return filter(dClass, context);
+        return filter(dClass, context, showFailure);
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, TagContext context) {
+        return filter(dClass, context, context == null || context.debug);
+    }
+
+    public <T extends ObjectTag> List<T> filter(Class<T> dClass, TagContext context, boolean showFailure) {
         List<T> results = new ArrayList<>();
 
         for (ObjectTag obj : objectForms) {
@@ -373,6 +370,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     if (object != null) {
                         results.add(object);
                     }
+                    else if (showFailure) {
+                        Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + dClass.getSimpleName() + "' (conversion returned null).");
+                    }
+                }
+                else if (showFailure) {
+                    Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + dClass.getSimpleName() + "' (does not match expected type).");
                 }
             }
             catch (Exception e) {

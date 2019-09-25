@@ -351,11 +351,11 @@ public class Argument implements Cloneable {
 
     public <T extends ObjectTag> T asType(Class<T> clazz) {
         T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
-        if (arg != null) {
-            arg.setPrefix(prefix);
-            return arg;
+        if (arg == null) {
+            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot process argument '" + object + "' as type '" + clazz.getSimpleName() + "' (conversion returned null).");
         }
-        return null;
+        arg.setPrefix(prefix);
+        return arg;
     }
 
 
