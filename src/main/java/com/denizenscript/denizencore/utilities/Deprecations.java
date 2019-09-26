@@ -119,4 +119,5 @@ public class Deprecations {
     public static Warning playerXpTags = new FutureWarning(pointlessSubtagPrefix + "player.xp.* tags are now just player.xp_*.");
     public static Warning entityHealthTags = new FutureWarning(pointlessSubtagPrefix + "entity.health.* tags are now just entity.health_*.");
     public static Warning entityMaxOxygenTag = new FutureWarning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
+    public static Warning itemBookTags = new FutureWarning(pointlessSubtagPrefix + "item.book.* tags are now just item.book_*.");
 }
