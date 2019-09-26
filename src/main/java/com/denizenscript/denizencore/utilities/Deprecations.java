@@ -72,6 +72,9 @@ public class Deprecations {
     public static Warning blockDispensesItemDetermination = new SlowWarning("Multiplier double determination for 'on block dispenses item' is deprecated: use 'context.velocity.mul[#]'.");
     public static Warning serverRedirectLogging = new SlowWarning("server mechanism redirect_logging is deprecated: use the system mechanism by the same name.");
 
+    // In Bukkit impl, Added on 2019/09/25, but was deprecated earlier.
+    public static Warning qtyTags = new SlowWarning("'qty' in a tag is deprecated: use 'quantity'.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
