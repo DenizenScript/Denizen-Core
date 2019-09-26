@@ -43,17 +43,22 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return object;
         }
         String attrLow = attribute.getAttributeWithoutContext(1);
+        ObjectTag returned;
         TagRunnable.ObjectForm<T> otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             attribute.seemingSuccesses.add(otr.name);
-            return otr.run(attribute, object);
+            returned = otr.run(attribute, object);
+            if (returned == null) {
+                return null;
+            }
+            return returned.getObjectAttribute(attribute.fulfill(1));
         }
-        ObjectTag returned = CoreUtilities.autoPropertyTagObject(object, attribute);
+        returned = CoreUtilities.autoPropertyTagObject(object, attribute);
         if (returned == null) {
             returned = object.specialTagProcessing(attribute);
         }
         if (returned != null) {
-            return returned.getObjectAttribute(attribute.fulfill(1));
+            return returned;
         }
         return object.getNextObjectTypeDown().getObjectAttribute(attribute);
     }

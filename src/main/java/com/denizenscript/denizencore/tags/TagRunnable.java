@@ -8,9 +8,9 @@ public abstract class TagRunnable implements Cloneable {
     public static abstract class ObjectForm<T extends ObjectTag> implements Cloneable {
 
         @Override
-        public ObjectForm clone() {
+        public ObjectForm<T> clone() {
             try {
-                return (ObjectForm) super.clone();
+                return (ObjectForm<T>) super.clone();
             }
             catch (Exception ex) {
                 Debug.echoError(ex);

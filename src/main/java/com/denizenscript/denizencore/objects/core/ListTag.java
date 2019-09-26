@@ -481,15 +481,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns a list containing the contents of all sublists within this list.
         // -->
-        registerTag("combine", new TagRunnable.ObjectForm() {
+        registerTag("combine", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 ListTag output = new ListTag();
                 for (ObjectTag obj : list.objectForms) {
                     output.addObjects(ListTag.getListFor(obj).objectForms);
                 }
-                return output.getObjectAttribute(attribute.fulfill(1));
+                return output;
             }
         });
 
@@ -500,13 +500,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list in a cleaner format, separated by spaces.
         // For example: a list of "one|two|three" will return "one two three".
         // -->
-        registerTag("space_separated", new TagRunnable.ObjectForm() {
+        registerTag("space_separated", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                if (((ListTag) object).isEmpty()) {
-                    return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                if (object.isEmpty()) {
+                    return new ElementTag("");
                 }
-                return new ElementTag(parseString((ListTag) object, " ")).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(parseString(object, " "));
             }
         });
         registerTag("as_string", tagProcessor.registeredObjectTags.get("space_separated"));
@@ -519,15 +519,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list formatted, with each item separated by the defined text.
         // For example: <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
         // -->
-        registerTag("separated_by", new TagRunnable.ObjectForm() {
+        registerTag("separated_by", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 if (list.isEmpty()) {
-                    return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
+                    return new ElementTag("");
                 }
                 String input = attribute.getContext(1);
-                return new ElementTag(parseString(list, input)).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(parseString(list, input));
             }
         });
 
@@ -538,13 +538,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list in a cleaner format, separated by commas.
         // For example: a list of "one|two|three" will return "one, two, three".
         // -->
-        registerTag("comma_separated", new TagRunnable.ObjectForm() {
+        registerTag("comma_separated", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                if (((ListTag) object).isEmpty()) {
-                    return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                if (object.isEmpty()) {
+                    return new ElementTag("");
                 }
-                return new ElementTag(parseString((ListTag) object, ", ")).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(parseString(object, ", "));
             }
         });
         registerTag("ascslist", tagProcessor.registeredObjectTags.get("comma_separated"));
@@ -557,13 +557,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list in a less clean format, separated by nothing.
         // For example: a list of "one|two|three" will return "onetwothree".
         // -->
-        registerTag("unseparated", new TagRunnable.ObjectForm() {
+        registerTag("unseparated", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                if (((ListTag) object).isEmpty()) {
-                    return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                if (object.isEmpty()) {
+                    return new ElementTag("");
                 }
-                return new ElementTag(parseString((ListTag) object, "")).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(parseString(object, ""));
             }
         });
 
@@ -575,14 +575,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // forward-slash character (/).
         // For example: .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
         // -->
-        registerTag("get_sub_items", new TagRunnable.ObjectForm() {
+        registerTag("get_sub_items", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 int index = -1;
                 if (ArgumentHelper.matchesInteger(attribute.getContext(1))) {
                     index = attribute.getIntContext(1) - 1;
                 }
-                attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ListTag.get_sub_items[<#>].split_by[<element>]>
@@ -595,9 +594,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // -->
 
                 String split = "/";
-                if (attribute.startsWith("split_by")) {
-                    if (attribute.hasContext(1) && attribute.getContext(1).length() > 0) {
-                        split = attribute.getContext(1);
+                if (attribute.startsWith("split_by", 2)) {
+                    if (attribute.hasContext(2) && attribute.getContext(2).length() > 0) {
+                        split = attribute.getContext(2);
                     }
                     attribute.fulfill(1);
                 }
@@ -608,7 +607,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
                 ListTag sub_list = new ListTag();
 
-                for (String item : (ListTag) object) {
+                for (String item : object) {
                     String[] strings = item.split(Pattern.quote(split));
                     if (strings.length > index) {
                         sub_list.add(strings[index]);
@@ -618,7 +617,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
 
-                return sub_list.getObjectAttribute(attribute);
+                return sub_list;
             }
         });
 
@@ -630,27 +629,26 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: li@one/a|two/b.map_get[one] returns a.
         // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
         // -->
-        registerTag("map_get", new TagRunnable.ObjectForm() {
+        registerTag("map_get", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                if (((ListTag) object).isEmpty()) {
-                    return new ElementTag("").getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                if (object.isEmpty()) {
+                    return new ElementTag("");
                 }
                 ListTag input = getListFor(attribute.getContextObject(1));
-                attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ListTag.map_get[<element>|...].split_by[<element>]>
                 // @returns ListTag or ElementTag
                 // @description
-                // Returns the element split by the given symbol's value for the matching input element.
-                // TODO: Clarify
+                // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
                 // For example: li@one/a|two/b.map_get[one].split_by[/] returns a.
+                // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
                 // -->
                 String split = "/";
-                if (attribute.startsWith("split_by")) {
-                    if (attribute.hasContext(1) && attribute.getContext(1).length() > 0) {
-                        split = attribute.getContext(1);
+                if (attribute.startsWith("split_by", 2)) {
+                    if (attribute.hasContext(2) && attribute.getContext(2).length() > 0) {
+                        split = attribute.getContext(2);
                     }
                     attribute.fulfill(1);
                 }
@@ -658,7 +656,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 ListTag result = new ListTag();
 
                 for (String key : input) {
-                    for (String item : (ListTag) object) {
+                    for (String item : object) {
                         String[] strings = item.split(Pattern.quote(split), 2);
                         if (strings.length > 1 && strings[0].equalsIgnoreCase(key)) {
                             result.add(strings[1]);
@@ -666,13 +664,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
                 if (input.size() == 1 && result.size() == 1) {
-                    return new ElementTag(result.get(0)).getObjectAttribute(attribute);
+                    return new ElementTag(result.get(0));
                 }
                 else if (input.size() > 1) {
                     if (result.size() != input.size()) {
                         return null;
                     }
-                    return result.getObjectAttribute(attribute);
+                    return result;
                 }
                 return null;
             }
@@ -682,36 +680,33 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @attribute <ListTag.map_find_key[<element>]>
         // @returns ElementTag
         // @description
-        // Returns the element split by the / symbol's value for the matching input element.
-        // TODO: Clarify
+        // Interprets a list of "key/value" pairs as a map, and returns the key for the given value.
         // For example: li@one/a|two/b.map_find_key[a] returns one.
         // -->
-        registerTag("map_find_key", new TagRunnable.ObjectForm() {
+        registerTag("map_find_key", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 String input = attribute.getContext(1);
-                attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ListTag.map_find_key[<element>].split_by[<element>]>
                 // @returns ElementTag
                 // @description
-                // Returns the element split by the given symbol's value for the matching input element.
-                // TODO: Clarify
+                // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
                 // For example: li@one/a|two/b.map_find_key[a].split_by[/] returns one.
                 // -->
 
                 String split = "/";
-                if (attribute.startsWith("split_by")) {
-                    if (attribute.hasContext(1) && attribute.getContext(1).length() > 0) {
-                        split = attribute.getContext(1);
+                if (attribute.startsWith("split_by", 2)) {
+                    if (attribute.hasContext(2) && attribute.getContext(2).length() > 0) {
+                        split = attribute.getContext(2);
                     }
                     attribute.fulfill(1);
                 }
-                for (String item : (ListTag) object) {
+                for (String item : object) {
                     String[] strings = item.split(Pattern.quote(split), 2);
                     if (strings.length > 1 && strings[1].equalsIgnoreCase(input)) {
-                        return new ElementTag(strings[0]).getObjectAttribute(attribute);
+                        return new ElementTag(strings[0]);
                     }
                 }
                 return null;
@@ -725,10 +720,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the size of the list.
         // For example: a list of "one|two|three" will return "3".
         // -->
-        registerTag("size", new TagRunnable.ObjectForm() {
+        registerTag("size", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((ListTag) object).size()).getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                return new ElementTag(object.size());
             }
         });
 
@@ -739,10 +734,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns whether the list is empty.
         // For example: a list of "" returns true, while "one" returns false.
         // -->
-        registerTag("is_empty", new TagRunnable.ObjectForm() {
+        registerTag("is_empty", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(((ListTag) object).isEmpty()).getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                return new ElementTag(object.isEmpty());
             }
         });
 
@@ -753,18 +748,17 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a new ListTag with the items specified inserted to the specified location.
         // For example: .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
         // -->
-        registerTag("insert", new TagRunnable.ObjectForm() {
+        registerTag("insert", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.insert[...] must have a value.");
                     return null;
                 }
                 ListTag items = getListFor(attribute.getContextObject(1));
-                attribute = attribute.fulfill(1);
-                if (attribute.startsWith("at") && attribute.hasContext(1)) {
-                    ListTag result = new ListTag((ListTag) object);
-                    int index = new ElementTag(attribute.getContext(1)).asInt() - 1;
+                if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
+                    ListTag result = new ListTag(object);
+                    int index = attribute.getIntContext(2) - 1;
                     if (index < 0) {
                         index = 0;
                     }
@@ -774,7 +768,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     for (int i = 0; i < items.size(); i++) {
                         result.addObject(index + i, items.getObject(i));
                     }
-                    return result.getObjectAttribute(attribute.fulfill(1));
+                    attribute.fulfill(1);
+                    return result;
                 }
                 else {
                     Debug.echoError("The tag ListTag.insert[...] must be followed by .at[#]!");
@@ -791,33 +786,32 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // already at that location.
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // -->
-        registerTag("set", new TagRunnable.ObjectForm() {
+        registerTag("set", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.set[...] must have a value.");
                     return null;
                 }
-                if (((ListTag) object).isEmpty()) {
+                if (object.isEmpty()) {
                     return null;
                 }
                 ListTag items = getListFor(attribute.getContextObject(1));
-                attribute = attribute.fulfill(1);
-                if (attribute.startsWith("at")
-                        && attribute.hasContext(1)) {
-                    ListTag result = new ListTag((ListTag) object);
-                    int index = ArgumentHelper.getIntegerFrom(attribute.getContext(1)) - 1;
+                if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
+                    ListTag result = new ListTag(object);
+                    int index = attribute.getIntContext(2) - 1;
                     if (index < 0) {
                         index = 0;
                     }
                     if (index > result.size() - 1) {
                         index = result.size() - 1;
                     }
+                    attribute.fulfill(1);
                     result.remove(index);
                     for (int i = 0; i < items.size(); i++) {
                         result.addObject(index + i, items.objectForms.get(i));
                     }
-                    return result.getObjectAttribute(attribute.fulfill(1));
+                    return result;
                 }
                 else {
                     Debug.echoError("The tag ListTag.set[...] must be followed by .at[#]!");
@@ -833,16 +827,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a new ListTag including the items specified.
         // For example: .include[three|four] on a list of "one|two" will return "one|two|three|four".
         // -->
-        registerTag("include", new TagRunnable.ObjectForm() {
+        registerTag("include", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.include[...] must have a value.");
                     return null;
                 }
-                ListTag copy = new ListTag((ListTag) object);
+                ListTag copy = new ListTag(object);
                 copy.addAll(getListFor(attribute.getContextObject(1)));
-                return copy.getObjectAttribute(attribute.fulfill(1));
+                return copy;
             }
         });
 
@@ -853,16 +847,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a new ListTag excluding the items specified.
         // For example: .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
         // -->
-        registerTag("exclude", new TagRunnable.ObjectForm() {
+        registerTag("exclude", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.exclude[...] must have a value.");
                     return null;
                 }
                 ListTag exclusions = getListFor(attribute.getContextObject(1));
                 // Create a new ListTag that will contain the exclusions
-                ListTag copy = new ListTag((ListTag) object);
+                ListTag copy = new ListTag(object);
                 // Iterate through
                 for (String exclusion : exclusions) {
                     for (int i = 0; i < copy.size(); i++) {
@@ -872,7 +866,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
                 // Return the modified list
-                return copy.getObjectAttribute(attribute.fulfill(1));
+                return copy;
             }
         });
 
@@ -884,15 +878,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .remove[2] on a list of "one|two|three|four" will return "one|three|four".
         // Also supports [first] and [last] values.
         // -->
-        registerTag("remove", new TagRunnable.ObjectForm() {
+        registerTag("remove", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.remove[#] must have a value.");
                     return null;
                 }
                 ListTag indices = getListFor(attribute.getContextObject(1));
-                ListTag copy = new ListTag((ListTag) object);
+                ListTag copy = new ListTag(object);
                 for (String index : indices) {
                     int remove;
                     if (index.equalsIgnoreCase("last")) {
@@ -913,7 +907,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         copy.remove(i--);
                     }
                 }
-                return copy.getObjectAttribute(attribute.fulfill(1));
+                return copy;
             }
         });
 
@@ -932,24 +926,23 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Returns the list with all instances of an element replaced with another.
         // Specify regex: at the start of the replace element to replace elements that match the Regex.
         // -->
-        registerTag("replace", new TagRunnable.ObjectForm() {
+        registerTag("replace", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.replace[...] must have a value.");
                     return null;
                 }
                 String replace = attribute.getContext(1);
                 ObjectTag replacement = null;
-                attribute.fulfill(1);
-                if (attribute.startsWith("with")) {
-                    if (attribute.hasContext(1)) {
-                        replacement = attribute.getContextObject(1);
+                if (attribute.startsWith("with", 2)) {
+                    if (attribute.hasContext(2)) {
+                        replacement = attribute.getContextObject(2);
                         attribute.fulfill(1);
                     }
                 }
 
-                ListTag obj = (ListTag) object;
+                ListTag obj = object;
                 ListTag list = new ListTag();
 
                 if (replace.startsWith("regex:")) {
@@ -980,7 +973,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
 
-                return list.getObjectAttribute(attribute);
+                return list;
             }
         });
 
@@ -991,12 +984,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a copy of the list, with all items placed in opposite order.
         // For example: a list of "one|two|three" will become "three|two|one".
         // -->
-        registerTag("reverse", new TagRunnable.ObjectForm() {
+        registerTag("reverse", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ArrayList<ObjectTag> objs = new ArrayList<>(((ListTag) object).objectForms);
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ArrayList<ObjectTag> objs = new ArrayList<>(object.objectForms);
                 Collections.reverse(objs);
-                return new ListTag(objs).getObjectAttribute(attribute.fulfill(1));
+                return new ListTag(objs);
             }
         });
 
@@ -1007,10 +1000,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a copy of the list with any duplicate items removed.
         // For example: a list of "one|one|two|three" will become "one|two|three".
         // -->
-        registerTag("deduplicate", new TagRunnable.ObjectForm() {
+        registerTag("deduplicate", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag obj = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag obj = object;
                 ListTag list = new ListTag();
                 int size = obj.size();
                 for (int i = 0; i < size; i++) {
@@ -1026,7 +1019,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         list.addObject(obj.objectForms.get(i));
                     }
                 }
-                return list.getObjectAttribute(attribute.fulfill(1));
+                return list;
             }
         });
 
@@ -1038,14 +1031,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
         // -->
-        TagRunnable.ObjectForm getRunnable = new TagRunnable.ObjectForm() {
+        TagRunnable.ObjectForm<ListTag> getRunnable = new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.get[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 if (list.isEmpty()) {
                     if (!attribute.hasAlternative()) {
                         Debug.echoError("Can't get from an empty list.");
@@ -1061,7 +1054,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                             results.add(list.get(ind - 1));
                         }
                     }
-                    return results.getObjectAttribute(attribute.fulfill(1));
+                    return results;
                 }
                 if (indices.size() > 0) {
                     int index = ArgumentHelper.getIntegerFrom(indices.get(0)) - 1;
@@ -1074,7 +1067,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     if (index < 0) {
                         index = 0;
                     }
-                    attribute = attribute.fulfill(1);
 
                     // <--[tag]
                     // @attribute <ListTag.get[<#>].to[<#>]>
@@ -1083,8 +1075,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     // returns all elements in the range from the first index to the second.
                     // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three"
                     // -->
-                    if (attribute.startsWith("to") && attribute.hasContext(1)) {
-                        int index2 = attribute.getIntContext(1) - 1;
+                    if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
+                        int index2 = attribute.getIntContext(2) - 1;
                         if (index2 >= list.size()) {
                             index2 = list.size() - 1;
                         }
@@ -1095,10 +1087,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         for (int i = index; i <= index2; i++) {
                             newList.addObject(list.objectForms.get(i));
                         }
-                        return newList.getObjectAttribute(attribute.fulfill(1));
+                        attribute.fulfill(1);
+                        return newList;
                     }
                     else {
-                        return CoreUtilities.autoAttribTyped(list.objectForms.get(index), attribute);
+                        return list.objectForms.get(index);
                     }
                 }
                 return null;
@@ -1116,14 +1109,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-        registerTag("find_all_partial", new TagRunnable.ObjectForm() {
+        registerTag("find_all_partial", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.find_all_partial[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 String test = attribute.getContext(1).toUpperCase();
                 ListTag positions = new ListTag();
                 for (int i = 0; i < list.size(); i++) {
@@ -1131,7 +1124,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         positions.add(String.valueOf(i + 1));
                     }
                 }
-                return positions.getObjectAttribute(attribute.fulfill(1));
+                return positions;
             }
         });
 
@@ -1144,21 +1137,21 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .find_all[two] on a list of "one|two|three|two" will return "2|4".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-        registerTag("find_all", new TagRunnable.ObjectForm() {
+        registerTag("find_all", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.find_all[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 ListTag positions = new ListTag();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
                         positions.add(String.valueOf(i + 1));
                     }
                 }
-                return positions.getObjectAttribute(attribute.fulfill(1));
+                return positions;
             }
         });
 
@@ -1171,21 +1164,21 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .find_partial[tw] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-        registerTag("find_partial", new TagRunnable.ObjectForm() {
+        registerTag("find_partial", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.find_partial[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 String test = attribute.getContext(1).toUpperCase();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
-                        return new ElementTag(i + 1).getObjectAttribute(attribute.fulfill(1));
+                        return new ElementTag(i + 1);
                     }
                 }
-                return new ElementTag(-1).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(-1);
             }
         });
 
@@ -1198,27 +1191,27 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .find[two] on a list of "one|two|three" will return "2".
         // TODO: Take multiple inputs? Or a regex?
         // -->
-        registerTag("find", new TagRunnable.ObjectForm() {
+        registerTag("find", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.find[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
-                        return new ElementTag(i + 1).getObjectAttribute(attribute.fulfill(1));
+                        return new ElementTag(i + 1);
                     }
                 }
                 // TODO: This should be find_partial or something
             /*
             for (int i = 0; i < size(); i++) {
                 if (get(i).toUpperCase().contains(attribute.getContext(1).toUpperCase()))
-                    return new Element(i + 1).getObjectAttribute(attribute.fulfill(1));
+                    return new Element(i + 1);
             }
             */
-                return new ElementTag(-1).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(-1);
             }
         });
 
@@ -1229,14 +1222,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns how many times in the sub-list occurs.
         // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
-        registerTag("count", new TagRunnable.ObjectForm() {
+        registerTag("count", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.count[...] must have a value.");
                     return null;
                 }
-                ListTag list = (ListTag) object;
+                ListTag list = object;
                 String element = attribute.getContext(1);
                 int count = 0;
                 for (int i = 0; i < list.size(); i++) {
@@ -1244,7 +1237,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         count++;
                     }
                 }
-                return new ElementTag(count).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(count);
             }
         });
 
@@ -1254,15 +1247,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns the sum of all numbers in the list.
         // -->
-        registerTag("sum", new TagRunnable.ObjectForm() {
+        registerTag("sum", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 double sum = 0;
                 for (String entry : list) {
                     sum += ArgumentHelper.getDoubleFrom(entry);
                 }
-                return new ElementTag(sum).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(sum);
             }
         });
 
@@ -1272,18 +1265,18 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns the average of all numbers in the list.
         // -->
-        registerTag("average", new TagRunnable.ObjectForm() {
+        registerTag("average", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 if (list.isEmpty()) {
-                    return new ElementTag(0).getObjectAttribute(attribute.fulfill(1));
+                    return new ElementTag(0);
                 }
                 double sum = 0;
                 for (String entry : list) {
                     sum += ArgumentHelper.getDoubleFrom(entry);
                 }
-                return new ElementTag(sum / list.size()).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(sum / list.size());
             }
         });
 
@@ -1296,15 +1289,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: a list of "one|two|three" will return "one".
         // Effectively equivalent to .get[1]
         // -->
-        registerTag("first", new TagRunnable.ObjectForm() {
+        registerTag("first", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 if (list.isEmpty()) {
                     return null;
                 }
                 else {
-                    return CoreUtilities.autoAttribTyped(list.objectForms.get(0), attribute.fulfill(1));
+                    return list.objectForms.get(0);
                 }
             }
         });
@@ -1318,15 +1311,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: a list of "one|two|three" will return "three".
         // Effectively equivalent to .get[<list.size>]
         // -->
-        registerTag("last", new TagRunnable.ObjectForm() {
+        registerTag("last", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 if (list.isEmpty()) {
                     return null;
                 }
                 else {
-                    return CoreUtilities.autoAttribTyped(list.objectForms.get(list.size() - 1), attribute.fulfill(1));
+                    return list.objectForms.get(list.size() - 1);
                 }
             }
         });
@@ -1338,10 +1331,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the smallest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "1".
         // -->
-        registerTag("lowest", new TagRunnable.ObjectForm() {
+        registerTag("lowest", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 BigDecimal lowest = null;
                 for (String str : list) {
                     if (ArgumentHelper.matchesDouble(str)) {
@@ -1354,7 +1347,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 if (lowest == null) {
                     return null;
                 }
-                return new ElementTag(lowest).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(lowest);
             }
         });
 
@@ -1365,10 +1358,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the highest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "10".
         // -->
-        registerTag("highest", new TagRunnable.ObjectForm() {
+        registerTag("highest", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag list = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag list = object;
                 BigDecimal highest = null;
                 for (String str : list) {
                     if (ArgumentHelper.matchesDouble(str)) {
@@ -1381,7 +1374,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 if (highest == null) {
                     return null;
                 }
-                return new ElementTag(highest).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(highest);
             }
         });
 
@@ -1392,10 +1385,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list sorted to be in numerical order.
         // For example: a list of "3|2|1|10" will return "1|2|3|10".
         // -->
-        registerTag("numerical", new TagRunnable.ObjectForm() {
+        registerTag("numerical", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ArrayList<String> sortable = new ArrayList<>((ListTag) object);
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ArrayList<String> sortable = new ArrayList<>(object);
                 Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
@@ -1411,7 +1404,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         }
                     }
                 });
-                return new ListTag(sortable).getObjectAttribute(attribute.fulfill(1));
+                return new ListTag(sortable);
             }
         });
 
@@ -1422,12 +1415,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list sorted to be in alphabetical/numerical order.
         // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
         // -->
-        registerTag("alphanumeric", new TagRunnable.ObjectForm() {
+        registerTag("alphanumeric", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ArrayList<String> sortable = new ArrayList<>((ListTag) object);
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ArrayList<String> sortable = new ArrayList<>(object);
                 Collections.sort(sortable, new NaturalOrderComparator());
-                return new ListTag(sortable).getObjectAttribute(attribute.fulfill(1));
+                return new ListTag(sortable);
             }
         });
 
@@ -1438,17 +1431,17 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the list sorted to be in alphabetical order.
         // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".
         // -->
-        registerTag("alphabetical", new TagRunnable.ObjectForm() {
+        registerTag("alphabetical", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ArrayList<String> sortable = new ArrayList<>((ListTag) object);
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ArrayList<String> sortable = new ArrayList<>(object);
                 Collections.sort(sortable, new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
                         return o1.compareToIgnoreCase(o2);
                     }
                 });
-                return new ListTag(sortable).getObjectAttribute(attribute.fulfill(1));
+                return new ListTag(sortable);
             }
         });
 
@@ -1460,10 +1453,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
         // -->
-        registerTag("sort_by_number", new TagRunnable.ObjectForm() {
+        registerTag("sort_by_number", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(final Attribute attribute, final ObjectTag object) {
-                ListTag newlist = new ListTag((ListTag) object);
+            public ObjectTag run(final Attribute attribute, final ListTag object) {
+                ListTag newlist = new ListTag(object);
                 try {
                     Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
                         @Override
@@ -1484,12 +1477,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                             }
                         }
                     });
-                    return new ListTag(newlist.objectForms).getObjectAttribute(attribute.fulfill(1));
+                    return new ListTag(newlist.objectForms);
                 }
                 catch (Exception ex) {
                     Debug.echoError(ex);
                 }
-                return newlist.getObjectAttribute(attribute.fulfill(1));
+                return newlist;
             }
         });
 
@@ -1507,17 +1500,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Note that the script should ALWAYS return -1, 0, or 1, or glitches could happen!
         // Note that if two inputs are exactly equal, the procedure should always return 0.
         // -->
-        registerTag("sort", new TagRunnable.ObjectForm() {
+        registerTag("sort", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag obj = new ListTag((ListTag) object);
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag obj = new ListTag(object);
                 final ProcedureScriptContainer script = (ProcedureScriptContainer) ScriptTag.valueOf(attribute.getContext(1)).getContainer();
                 if (script == null) {
                     Debug.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
-                    return obj.getObjectAttribute(attribute.fulfill(1));
+                    return obj;
                 }
                 final ScriptEntry entry = attribute.getScriptEntry();
-                attribute = attribute.fulfill(1);
                 // <--[tag]
                 // @attribute <ListTag.sort[<procedure>].context[<context>]>
                 // @returns ElementTag
@@ -1525,9 +1517,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // Sort a list, with context. See <@link tag ListTag.sort[<procedure>]> for general sort details.
                 // -->
                 ListTag context = new ListTag();
-                if (attribute.startsWith("context")) {
-                    context = getListFor(attribute.getContextObject(1));
-                    attribute = attribute.fulfill(1);
+                if (attribute.startsWith("context", 2)) {
+                    context = getListFor(attribute.getContextObject(2));
+                    attribute.fulfill(1);
                 }
                 final ListTag context_send = context;
                 List<String> list = new ArrayList<>(obj);
@@ -1579,7 +1571,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 catch (Exception e) {
                     Debug.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
                 }
-                return new ListTag(list).getObjectAttribute(attribute);
+                return new ListTag(list);
             }
         });
 
@@ -1590,9 +1582,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
-        registerTag("filter", new TagRunnable.ObjectForm() {
+        registerTag("filter", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 String tag = attribute.getContext(1);
                 boolean defaultValue = tag.endsWith("||true");
                 if (defaultValue) {
@@ -1600,7 +1592,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
                 ListTag newlist = new ListTag();
                 try {
-                    for (ObjectTag obj : ((ListTag) object).objectForms) {
+                    for (ObjectTag obj : object.objectForms) {
                         Attribute tempAttrib = new Attribute(tag,
                                 attribute.getScriptEntry(), attribute.context);
                         tempAttrib.setHadAlternative(true);
@@ -1613,7 +1605,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 catch (Exception ex) {
                     Debug.echoError(ex);
                 }
-                return newlist.getObjectAttribute(attribute.fulfill(1));
+                return newlist;
             }
         });
 
@@ -1624,9 +1616,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a copy of the list with all its contents parsed through the given tag.
         // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
         // -->
-        registerTag("parse", new TagRunnable.ObjectForm() {
+        registerTag("parse", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 ListTag newlist = new ListTag();
                 String tag = attribute.getContext(1);
                 String defaultValue = "null";
@@ -1651,7 +1643,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
                 try {
-                    for (ObjectTag obj : ((ListTag) object).objectForms) {
+                    for (ObjectTag obj : object.objectForms) {
                         Attribute tempAttrib = new Attribute(tag,
                                 attribute.getScriptEntry(), attribute.context);
                         tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
@@ -1665,7 +1657,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 catch (Exception ex) {
                     Debug.echoError(ex);
                 }
-                return newlist.getObjectAttribute(attribute.fulfill(1));
+                return newlist;
             }
         });
 
@@ -1676,16 +1668,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Returns a ListTag extended to reach a minimum specified length
         // by adding entries to the left side.
         // -->
-        registerTag("pad_left", new TagRunnable.ObjectForm() {
+        registerTag("pad_left", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.pad_left[...] must have a value.");
                     return null;
                 }
                 ObjectTag with = new ElementTag("");
                 int length = attribute.getIntContext(1);
-                attribute = attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ListTag.pad_left[<#>].with[<element>]>
@@ -1694,18 +1685,17 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // Returns a ListTag extended to reach a minimum specified length
                 // by adding a specific entry to the left side.
                 // -->
-                if (attribute.startsWith("with")
-                        && attribute.hasContext(1)) {
-                    with = attribute.getContextObject(1);
+                if (attribute.startsWith("with", 2) && attribute.hasContext(2)) {
+                    with = attribute.getContextObject(2);
                     attribute = attribute.fulfill(1);
                 }
 
-                ListTag newList = new ListTag((ListTag) object);
+                ListTag newList = new ListTag(object);
                 while (newList.size() < length) {
                     newList.addObject(with);
                 }
 
-                return newList.getObjectAttribute(attribute);
+                return newList;
             }
         });
 
@@ -1716,16 +1706,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Returns a ListTag extended to reach a minimum specified length
         // by adding entries to the right side.
         // -->
-        registerTag("pad_right", new TagRunnable.ObjectForm() {
+        registerTag("pad_right", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.pad_right[...] must have a value.");
                     return null;
                 }
                 ObjectTag with = new ElementTag("");
                 int length = attribute.getIntContext(1);
-                attribute = attribute.fulfill(1);
 
                 // <--[tag]
                 // @attribute <ListTag.pad_right[<#>].with[<element>]>
@@ -1734,18 +1723,17 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // Returns a ListTag extended to reach a minimum specified length
                 // by adding a specific entry to the right side.
                 // -->
-                if (attribute.startsWith("with")
-                        && attribute.hasContext(1)) {
-                    with = attribute.getContextObject(1);
+                if (attribute.startsWith("with", 2) && attribute.hasContext(2)) {
+                    with = attribute.getContextObject(2);
                     attribute = attribute.fulfill(1);
                 }
 
-                ListTag newList = new ListTag((ListTag) object);
+                ListTag newList = new ListTag(object);
                 while (newList.size() < length) {
                     newList.addObject(with);
                 }
 
-                return newList.getObjectAttribute(attribute);
+                return newList;
             }
         });
 
@@ -1757,14 +1745,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Inverts <@link tag ListTag.unescape_contents>.
         // See <@link language property escaping>.
         // -->
-        registerTag("escape_contents", new TagRunnable.ObjectForm() {
+        registerTag("escape_contents", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 ListTag escaped = new ListTag();
-                for (String entry : (ListTag) object) {
+                for (String entry : object) {
                     escaped.add(EscapeTagBase.escape(entry));
                 }
-                return escaped.getObjectAttribute(attribute.fulfill(1));
+                return escaped;
             }
         });
 
@@ -1776,14 +1764,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Inverts <@link tag ListTag.escape_contents>.
         // See <@link language property escaping>.
         // -->
-        registerTag("unescape_contents", new TagRunnable.ObjectForm() {
+        registerTag("unescape_contents", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 ListTag escaped = new ListTag();
-                for (String entry : (ListTag) object) {
+                for (String entry : object) {
                     escaped.add(EscapeTagBase.unEscape(entry));
                 }
-                return escaped.getObjectAttribute(attribute.fulfill(1));
+                return escaped;
             }
         });
 
@@ -1793,9 +1781,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns whether the list contains any of a list of given elements, case-sensitive.
         // -->
-        registerTag("contains_any_case_sensitive", new TagRunnable.ObjectForm() {
+        registerTag("contains_any_case_sensitive", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.contains_any_case_sensitive[...] must have a value.");
                     return null;
@@ -1804,7 +1792,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 boolean state = false;
 
                 full_set:
-                for (String element : (ListTag) object) {
+                for (String element : object) {
                     for (String sub_element : list) {
                         if (element.equals(sub_element)) {
                             state = true;
@@ -1813,7 +1801,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
 
-                return new ElementTag(state).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(state);
             }
         });
 
@@ -1823,9 +1811,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns whether the list contains any of a list of given elements.
         // -->
-        registerTag("contains_any", new TagRunnable.ObjectForm() {
+        registerTag("contains_any", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.contains_any[...] must have a value.");
                     return null;
@@ -1834,7 +1822,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 boolean state = false;
 
                 full_set:
-                for (String element : (ListTag) object) {
+                for (String element : object) {
                     for (String sub_element : list) {
                         if (element.equalsIgnoreCase(sub_element)) {
                             state = true;
@@ -1843,7 +1831,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
 
-                return new ElementTag(state).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(state);
             }
         });
 
@@ -1853,23 +1841,23 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns whether the list contains a given element, case-sensitive.
         // -->
-        registerTag("contains_case_sensitive", new TagRunnable.ObjectForm() {
+        registerTag("contains_case_sensitive", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.contains_case_sensitive[...] must have a value.");
                     return null;
                 }
                 boolean state = false;
 
-                for (String element : (ListTag) object) {
+                for (String element : object) {
                     if (element.equals(attribute.getContext(1))) {
                         state = true;
                         break;
                     }
                 }
 
-                return new ElementTag(state).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(state);
             }
         });
 
@@ -1879,9 +1867,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @description
         // returns whether the list contains all of the given elements.
         // -->
-        registerTag("contains", new TagRunnable.ObjectForm() {
+        registerTag("contains", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 if (!attribute.hasContext(1)) {
                     Debug.echoError("The tag ListTag.contains[...] must have a value.");
                     return null;
@@ -1890,7 +1878,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 int gotten = 0;
 
                 for (String check : needed) {
-                    for (String element : (ListTag) object) {
+                    for (String element : object) {
                         if (element.equalsIgnoreCase(check)) {
                             gotten++;
                             break;
@@ -1898,7 +1886,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
 
-                return new ElementTag(gotten == needed.size() && gotten > 0).getObjectAttribute(attribute.fulfill(1));
+                return new ElementTag(gotten == needed.size() && gotten > 0);
             }
         });
 
@@ -1913,10 +1901,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
-        registerTag("random", new TagRunnable.ObjectForm() {
+        registerTag("random", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                ListTag obj = (ListTag) object;
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                ListTag obj = object;
                 if (obj.isEmpty()) {
                     return null;
                 }
@@ -1932,11 +1920,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                         available.remove(random);
                         times++;
                     }
-                    return toReturn.getObjectAttribute(attribute.fulfill(1));
+                    return toReturn;
                 }
                 else {
-                    return CoreUtilities.autoAttribTyped(obj.objectForms.get(CoreUtilities.getRandom().nextInt(obj.size())),
-                            attribute.fulfill(1));
+                    return obj.objectForms.get(CoreUtilities.getRandom().nextInt(obj.size()));
                 }
             }
         });
@@ -1952,20 +1939,19 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Uses the logic of tag "ElementTag.difference"!
         // You can use that tag to add an upper limit on how different the strings can be.
         // -->
-        registerTag("closest_to", new TagRunnable.ObjectForm() {
+        registerTag("closest_to", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag(CoreUtilities.getClosestOption((ListTag) object, attribute.getContext(1)))
-                        .getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                return new ElementTag(CoreUtilities.getClosestOption(object, attribute.getContext(1)));
             }
         });
 
 
-        registerTag("as_list", new TagRunnable.ObjectForm() {
+        registerTag("as_list", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
+            public ObjectTag run(Attribute attribute, ListTag object) {
                 // Special handler for flag lists.
-                return new ListTag((ListTag) object).getObjectAttribute(attribute.fulfill(1));
+                return new ListTag(object);
             }
         });
         registerTag("aslist", tagProcessor.registeredObjectTags.get("as_list"));
@@ -1978,18 +1964,18 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Always returns 'List' for ListTag objects. All objects fetchable by the Object Fetcher will return the
         // type of object that is fulfilling this attribute.
         // -->
-        registerTag("type", new TagRunnable.ObjectForm() {
+        registerTag("type", new TagRunnable.ObjectForm<ListTag>() {
             @Override
-            public ObjectTag run(Attribute attribute, ObjectTag object) {
-                return new ElementTag("List").getObjectAttribute(attribute.fulfill(1));
+            public ObjectTag run(Attribute attribute, ListTag object) {
+                return new ElementTag("List");
             }
         });
 
     }
 
-    public static ObjectTagProcessor tagProcessor = new ObjectTagProcessor();
+    public static ObjectTagProcessor<ListTag> tagProcessor = new ObjectTagProcessor<>();
 
-    public static void registerTag(String name, TagRunnable.ObjectForm runnable) {
+    public static void registerTag(String name, TagRunnable.ObjectForm<ListTag> runnable) {
         tagProcessor.registerTag(name, runnable);
     }
 
@@ -2012,14 +1998,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         if (ArgumentHelper.matchesInteger(attrLow)) {
             int index = ArgumentHelper.getIntegerFrom(attrLow);
             if (index != 0) {
+                attribute.fulfill(1);
                 if (index < 1 || index > size()) {
                     if (!attribute.hasAlternative()) {
                         Debug.echoError("ListTag index " + index + " is out of range");
                     }
-                    attribute.fulfill(1);
                     return null;
                 }
-                return getObject(index - 1).getObjectAttribute(attribute.fulfill(1));
+                return getObject(index - 1);
             }
         }
         return null;
