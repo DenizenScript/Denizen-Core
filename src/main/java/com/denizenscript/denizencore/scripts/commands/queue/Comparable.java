@@ -47,20 +47,20 @@ public class Comparable {
     //
     // -->
 
-    public static enum Operator {
+    public enum Operator {
         EQUALS, MATCHES, OR_MORE, OR_LESS, MORE,
         LESS, CONTAINS, IS_EMPTY
     }
 
     public static final Operator[] OperatorValues = Operator.values();
 
-    public static enum Bridge {
+    public enum Bridge {
         OR, AND, FIRST, THEN, ELSE
     }
 
     public static final Bridge[] BridgeValues = Bridge.values();
 
-    public static enum Logic {
+    public enum Logic {
         REGULAR, NEGATIVE
     }
 

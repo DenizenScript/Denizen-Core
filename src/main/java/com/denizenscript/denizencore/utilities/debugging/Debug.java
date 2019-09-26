@@ -22,7 +22,7 @@ public class Debug {
      * <p/>
      * Also includes color.
      */
-    public static enum DebugElement {
+    public enum DebugElement {
         Header, Footer, Spacer
     }
 
