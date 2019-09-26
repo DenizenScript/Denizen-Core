@@ -77,6 +77,10 @@ public class Deprecations {
     public static Warning playerStepTag = new SlowWarning("'player.current_step[script]' tag is deprecated: use 'script.step[player]'.");
     public static Warning playerGamemodeTag = new SlowWarning("player.gamemode.id tag is deprecated: IDs are no longer in use. Use the player.gamemode (named) tag.");
 
+    // In Bukkit impl, Added on 2019/09/25.
+    // Prime candidate for functionality removal - tags were only recently added, and were always jank.
+    public static Warning bookItemRawTags = new SlowWarning("Raw text tags for books were a placeholder. The normal (non-raw) tags now contain all needed data.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
