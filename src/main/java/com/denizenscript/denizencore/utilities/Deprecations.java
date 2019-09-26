@@ -74,6 +74,8 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/09/25, but was deprecated earlier.
     public static Warning qtyTags = new SlowWarning("'qty' in a tag is deprecated: use 'quantity'.");
+    public static Warning playerStepTag = new SlowWarning("'player.current_step[script]' tag is deprecated: use 'script.step[player]'.");
+    public static Warning playerGamemodeTag = new SlowWarning("player.gamemode.id tag is deprecated: IDs are no longer in use. Use the player.gamemode (named) tag.");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
@@ -97,4 +99,20 @@ public class Deprecations {
 
     // In Bukkit impl, Relevant as of 2019/09/24, deprecate officially by 2020.
     public static Warning oldRecipeScript = new FutureWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
+
+    // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.
+    private static String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
+    public static Warning npcNicknameTag = new FutureWarning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname.");
+    public static Warning npcPreviousLocationTag = new FutureWarning(pointlessSubtagPrefix + "npc.location.previous_location is now just npc.previous_location.");
+    public static Warning npcAnchorListTag = new FutureWarning(pointlessSubtagPrefix + "npc.anchor.list is now just npc.list_anchors.");
+    public static Warning playerMoneyFormatTag = new FutureWarning(pointlessSubtagPrefix + "player.money.format is now just player.formatted_money.");
+    public static Warning playerFoodLevelFormatTag = new FutureWarning(pointlessSubtagPrefix + "player.food_level.format is now just player.formatted_food_level.");
+    public static Warning playerItemInHandSlotTag = new FutureWarning(pointlessSubtagPrefix + "player.item_in_hand_slot is now just player.held_item_slot.");
+    public static Warning playerBanInfoTags = new FutureWarning(pointlessSubtagPrefix + "player.ban_info.* tags are now just player.ban_*.");
+    public static Warning playerNameTags = new FutureWarning(pointlessSubtagPrefix + "player.name.* tags are now just player.*_name.");
+    public static Warning playerSidebarTags = new FutureWarning(pointlessSubtagPrefix + "player.sidebar.* tags are now just player.sidebar_*.");
+    public static Warning playerAttackCooldownTags = new FutureWarning(pointlessSubtagPrefix + "player.attack_cooldown.* tags are now just player.attack_cooldown_*.");
+    public static Warning playerXpTags = new FutureWarning(pointlessSubtagPrefix + "player.xp.* tags are now just player.xp_*.");
+    public static Warning entityHealthTags = new FutureWarning(pointlessSubtagPrefix + "entity.health.* tags are now just entity.health_*.");
+    public static Warning entityMaxOxygenTag = new FutureWarning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
 }
