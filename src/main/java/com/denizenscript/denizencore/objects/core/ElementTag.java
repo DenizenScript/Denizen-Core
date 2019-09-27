@@ -1623,6 +1623,7 @@ public class ElementTag implements ObjectTag {
                     attribute.fulfill(1);
                 }
                 StringBuilder padded = new StringBuilder();
+                length -= object.element.length();
                 while (padded.length() < length) {
                     padded.append(with);
                 }
