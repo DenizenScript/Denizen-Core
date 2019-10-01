@@ -126,7 +126,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("id", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ElementTag(object.queue.id);
+                return new ElementTag(object.getQueue().id);
             }
         });
 
@@ -139,7 +139,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("size", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ElementTag(object.queue.script_entries.size());
+                return new ElementTag(object.getQueue().script_entries.size());
             }
         });
 
@@ -152,7 +152,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("start_time", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new DurationTag(object.queue.startTimeMilli / 50);
+                return new DurationTag(object.getQueue().startTimeMilli / 50);
             }
         });
 
@@ -165,7 +165,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("time_ran", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                long timeNano = System.nanoTime() - object.queue.startTime;
+                long timeNano = System.nanoTime() - object.getQueue().startTime;
                 return new DurationTag(timeNano / (1000000 * 1000.0));
             }
         });
@@ -180,13 +180,13 @@ public class QueueTag implements ObjectTag, Adjustable {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
                 String state;
-                if ((object.queue instanceof Delayable) && ((Delayable) object.queue).isPaused()) {
+                if ((object.getQueue() instanceof Delayable) && ((Delayable) object.getQueue()).isPaused()) {
                     state = "paused";
                 }
-                else if (object.queue.is_started) {
+                else if (object.getQueue().is_started) {
                     state = "running";
                 }
-                else if (object.queue.is_stopping) {
+                else if (object.getQueue().is_stopping) {
                     state = "stopping";
                 }
                 else {
@@ -205,10 +205,10 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("script", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (object.queue.script == null) {
+                if (object.getQueue().script == null) {
                     return null;
                 }
-                return object.queue.script;
+                return object.getQueue().script;
             }
         });
 
@@ -222,7 +222,7 @@ public class QueueTag implements ObjectTag, Adjustable {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
                 ListTag commands = new ListTag();
-                for (ScriptEntry entry : object.queue.script_entries) {
+                for (ScriptEntry entry : object.getQueue().script_entries) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(entry.getCommandName()).append(" ");
                     for (String arg : entry.getOriginalArguments()) {
@@ -243,7 +243,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("definitions", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ListTag(object.queue.getAllDefinitions().keySet());
+                return new ListTag(object.getQueue().getAllDefinitions().keySet());
             }
         });
 
@@ -261,7 +261,7 @@ public class QueueTag implements ObjectTag, Adjustable {
                     Debug.echoError("The tag QueueTag.definition[...] must have a value.");
                     return null;
                 }
-                return object.queue.getDefinitionObject(attribute.getContext(1));
+                return object.getQueue().getDefinitionObject(attribute.getContext(1));
             }
         });
 
@@ -275,11 +275,11 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("determination", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (object.queue.determinations == null) {
+                if (object.getQueue().determinations == null) {
                     return null;
                 }
                 else {
-                    return object.queue.determinations;
+                    return object.getQueue().determinations;
                 }
             }
         });
@@ -293,13 +293,13 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("speed", new TagRunnable.ObjectForm<QueueTag>() {
             @Override
             public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (!(object.queue instanceof TimedQueue)) {
+                if (!(object.getQueue() instanceof TimedQueue)) {
                     if (!attribute.hasAlternative()) {
                         Debug.echoError("The tag QueueTag.speed is only valid for Timed queues.");
                     }
                     return null;
                 }
-                return ((TimedQueue) object.queue).getSpeed();
+                return ((TimedQueue) object.getQueue()).getSpeed();
             }
         });
     }
@@ -313,6 +313,11 @@ public class QueueTag implements ObjectTag, Adjustable {
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         return tagProcessor.getObjectAttribute(this, attribute);
+    }
+
+    public ScriptQueue getQueue() {
+        ensure();
+        return queue;
     }
 
     public void ensure() {
