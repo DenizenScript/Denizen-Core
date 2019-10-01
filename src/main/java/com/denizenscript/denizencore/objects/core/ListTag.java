@@ -1446,6 +1446,37 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.sort_by_value[<tag>]>
+        // @returns ListTag
+        // @description
+        // returns a copy of the list, sorted alphanumerically.
+        // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
+        // For example, you might sort a list of players based on their names, via .sort_by_value[name] on the list of valid players.
+        // -->
+        registerTag("sort_by_value", new TagRunnable.ObjectForm<ListTag>() {
+            @Override
+            public ObjectTag run(final Attribute attribute, final ListTag object) {
+                ListTag newlist = new ListTag(object);
+                final NaturalOrderComparator comparator = new NaturalOrderComparator();
+                try {
+                    Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
+                        @Override
+                        public int compare(ObjectTag o1, ObjectTag o2) {
+                            ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                            ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                            return comparator.compare(or1, or2);
+                        }
+                    });
+                    return new ListTag(newlist.objectForms);
+                }
+                catch (Exception ex) {
+                    Debug.echoError(ex);
+                }
+                return newlist;
+            }
+        });
+
+        // <--[tag]
         // @attribute <ListTag.sort_by_number[<tag>]>
         // @returns ListTag
         // @description
