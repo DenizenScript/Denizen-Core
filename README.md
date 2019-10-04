@@ -5,6 +5,8 @@ The core Denizen engine
 
 To be implemented and extended by separate DenizenScript projects.
 
+Please posts issues to the [Denizen Repo](https://github.com/DenizenScript/Denizen/issues).
+
 ### Licensing pre-note:
 
 This is an open source project, provided entirely freely, for everyone to use and contribute to.
