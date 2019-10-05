@@ -34,7 +34,7 @@ public abstract class TagContext implements Debuggable {
         this.entry = entry;
         this.script = script;
         this.definitionProvider = definitionProvider != null ? definitionProvider :
-                entry != null ? entry.getResidingQueue() : new SimpleDefinitionProvider();
+                (entry != null ? entry.getResidingQueue() : new SimpleDefinitionProvider());
     }
 
     public abstract ScriptEntryData getScriptEntryData();

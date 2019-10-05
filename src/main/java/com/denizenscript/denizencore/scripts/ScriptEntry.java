@@ -136,6 +136,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         se.processed_arguments = processed_arguments == null ? null : new ArrayList<>(processed_arguments);
         se.args = new ArrayList<>(args);
         se.entryData = entryData.clone();
+        se.entryData.scriptEntry = se;
         return se;
     }
 

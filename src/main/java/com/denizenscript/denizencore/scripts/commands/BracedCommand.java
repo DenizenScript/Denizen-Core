@@ -68,6 +68,7 @@ public abstract class BracedCommand extends AbstractCommand {
                     for (ScriptEntry sEntry : bd.value) {
                         ScriptEntry newEntry = sEntry.clone();
                         newEntry.entryData.transferDataFrom(scriptEntry.entryData);
+                        newEntry.entryData.scriptEntry = newEntry;
                         newbd.value.add(newEntry);
                     }
                     if (Debug.verbose) {
