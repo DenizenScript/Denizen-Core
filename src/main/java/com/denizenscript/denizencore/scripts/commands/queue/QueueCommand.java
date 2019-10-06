@@ -26,7 +26,7 @@ public class QueueCommand extends AbstractCommand {
     // TODO: Document Command Details
     //
     // @Tags
-    // <queue>
+    // <queue> to get the current queue.
     // <QueueTag.id>
     // <QueueTag.size>
     // <queue.list>

@@ -48,7 +48,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <yaml[<idname>].contains[<path>]>
     // <yaml[<idname>].read[<path>]>
-    // <yaml[<idname>].read[<path>].as_list>
     // <yaml[<idname>].list_keys[<path>]>
     //
     // @Usage

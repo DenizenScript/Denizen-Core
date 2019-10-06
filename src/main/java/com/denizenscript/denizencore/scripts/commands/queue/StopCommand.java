@@ -20,7 +20,7 @@ public class StopCommand extends AbstractCommand {
     // This will immediately stop the current queue, preventing it from processing any further.
     //
     // @Tags
-    // <queue>
+    // <queue> to get the current queue.
     //
     // @Usage
     // Use to stop the current queue.
