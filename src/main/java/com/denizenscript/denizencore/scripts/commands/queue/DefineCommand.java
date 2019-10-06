@@ -50,8 +50,7 @@ public class DefineCommand extends AbstractCommand {
     // - narrate '[NOTICE] You have noticed <player.location.find.blocks[<[blocks]>].within[<[range]>].size> blocks in the area that may be of interest.'
     //
     // @Usage
-    // Use to keep the value of a replaceable tag that you might use many times within a single script. Definitions
-    // can be faster and cleaner than reusing a replaceable tag over and over
+    // Use to keep the value of a replaceable tag that you might use many times within a single script.
     // - define arg1:<context.args.get[1]>
     // - if <[arg1]> == hello:
     //   - narrate 'Hello!'
