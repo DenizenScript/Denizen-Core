@@ -19,7 +19,6 @@ public class WhileCommand extends BracedCommand {
     // @Required 1
     // @Short Runs a series of braced commands until the tag returns false.
     // @Group queue
-    // @Video /denizen/vids/Loops
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html
     //
     // @Description
