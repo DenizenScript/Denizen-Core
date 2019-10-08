@@ -19,6 +19,7 @@ public class RepeatCommand extends BracedCommand {
     // @Short Runs a series of braced commands several times.
     // @Group queue
     // @Video /denizen/vids/Loops
+    // @Guide https://guide.denizenscript.com/guides/basics/loops.html
     //
     // @Description
     // Loops through a series of braced commands a specified number of times.

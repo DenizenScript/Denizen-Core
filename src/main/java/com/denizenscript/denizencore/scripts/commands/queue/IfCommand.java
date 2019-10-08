@@ -22,6 +22,7 @@ public class IfCommand extends BracedCommand {
     // @Short Compares values, and runs one script if they match, or a different script if they don't match.
     // @Group queue
     // @Video /denizen/vids/Alternate/Dynamic%20Actions:%20The%20If%20Command
+    // @Guide https://guide.denizenscript.com/guides/basics/if-command.html
     //
     // @Description
     // TODO: Document Command Details

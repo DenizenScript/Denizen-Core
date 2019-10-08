@@ -18,6 +18,7 @@ public class InjectCommand extends AbstractCommand {
     // @Required 1
     // @Short Runs a script in the current ScriptQueue.
     // @Video /denizen/vids/Run%20And%20Inject
+    // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
     //
     // @Description

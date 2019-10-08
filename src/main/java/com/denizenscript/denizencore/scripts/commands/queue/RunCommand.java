@@ -22,6 +22,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // @Required 1
     // @Short Runs a script in a new ScriptQueue.
     // @Video /denizen/vids/Run%20And%20Inject
+    // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
     //
     // @Description

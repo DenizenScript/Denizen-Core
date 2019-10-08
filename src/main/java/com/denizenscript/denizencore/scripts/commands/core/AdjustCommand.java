@@ -23,6 +23,7 @@ public class AdjustCommand extends AbstractCommand {
     // @Short Adjusts an object's mechanism.
     // @Group core
     // @Video /denizen/vids/Properties%20and%20Mechanisms
+    // @Guide https://guide.denizenscript.com/guides/basics/mechanisms.html
     //
     // @Description
     // Many object tag types contains options and properties that need to be adjusted. Denizen employs a mechanism

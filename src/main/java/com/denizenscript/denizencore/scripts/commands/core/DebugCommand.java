@@ -17,6 +17,7 @@ public class DebugCommand extends AbstractCommand {
     // @Required 2
     // @Short Shows a debug message.
     // @Group core
+    // @Guide https://guide.denizenscript.com/guides/first-steps/problem-solving.html
     //
     // @Description
     // Use to quickly output debug information to console.
