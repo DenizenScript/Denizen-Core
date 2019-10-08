@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.scripts.commands.queue.Comparable;
+import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;

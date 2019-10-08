@@ -1,4 +1,4 @@
-package com.denizenscript.denizencore.scripts.commands.queue;
+package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
