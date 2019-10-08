@@ -98,7 +98,7 @@ public abstract class CommandRegistry {
         registerCoreMember(FileCopyCommand.class, "FILECOPY", "filecopy [origin:<origin>] [destination:<destination>] (overwrite)", 2);
         registerCoreMember(ForeachCommand.class, "FOREACH", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
         registerCoreMember(GotoCommand.class, "GOTO", "goto [<name>]", 1);
-        registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>] (else <commands>)", 1);
+        registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>]", 1);
         registerCoreMember(InjectCommand.class, "INJECT", "inject (locally) [<script>] (path:<name>) (instantly)", 1);
         registerCoreMember(LogCommand.class, "LOG", "log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]", 2);
         registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);

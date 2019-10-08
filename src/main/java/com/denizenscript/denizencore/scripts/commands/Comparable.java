@@ -11,15 +11,18 @@ import com.denizenscript.denizencore.objects.core.ScriptTag;
 
 public class Comparable {
 
-    // TODO: Expand upon this.
-    //
     // <--[language]
     // @name Comparable
     // @group Comparables
     // @description
-    // A Comparable is a method that the IF command and ElementTag ObjectTag uses to compare objects.
-    // (This lang is TODO! )
-    // See <@link language operator>
+    // A Comparable is a method that the If command, While command, and 'element.is[...].to[...]' tag uses to compare objects.
+    //
+    // These are usually written in the format "VALUE OPERATOR VALUE".
+    //
+    // For example, if you use ">=" as the operator, and "3" and "5" as the values, you'd write "3 >= 5",
+    // which would return false (as 3 is NOT greater-than-or-equal-to 5).
+    //
+    // For a list of valid operators and their usages, see <@link language operator>.
     // -->
 
     // <--[language]
