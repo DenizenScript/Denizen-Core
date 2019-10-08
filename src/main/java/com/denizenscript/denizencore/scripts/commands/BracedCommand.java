@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.commands;
 
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -139,7 +140,7 @@ public abstract class BracedCommand extends AbstractCommand {
         ArrayList<String> bracesArgs = new ArrayList<>();
         bracesArgs.add(bracesName);
 
-        int startArg = 0;
+        int startArg = -1;
         for (int i = 0; i < argList.size(); i++) {
             String arg = argList.get(i);
             if (arg.equals("{")) {
@@ -147,6 +148,12 @@ public abstract class BracedCommand extends AbstractCommand {
                 break;
             }
         }
+
+        if (startArg == -1) {
+            return null;
+        }
+
+        Deprecations.oldBraceSyntax.warn(scriptEntry);
 
         int tStart = -1;
         int tEnd = -1;

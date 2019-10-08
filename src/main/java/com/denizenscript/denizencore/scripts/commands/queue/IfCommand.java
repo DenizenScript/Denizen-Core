@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -151,6 +152,7 @@ public class IfCommand extends BracedCommand {
                 in_subcommand = false;
             }
             else if (!has_brace && !in_elsecommand && DenizenCore.getCommandRegistry().get(arg.toUpperCase()) != null) {
+                Deprecations.ifCommandSingleLine.warn(scriptEntry);
                 in_subcommand = true;
                 subcommand.add(arg);
             }

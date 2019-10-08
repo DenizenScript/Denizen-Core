@@ -123,4 +123,10 @@ public class Deprecations {
 
     // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
     public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
+
+    // Added 2019/10/08, deprecate officially by 2021.
+    public static Warning ifCommandSingleLine = new FutureWarning("Single line if commands are deprecated. Please update them to modern format.");
+
+    // Added 2019/10/08, deprecate officially by 2022.
+    public static Warning oldBraceSyntax = new FutureWarning("The { braced } command format is deprecated. Please use the ':' colon syntax (refer to documentation).");
 }
