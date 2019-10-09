@@ -49,6 +49,7 @@ public class TernaryTagBase {
         if (result.equalsIgnoreCase("true")) {
             ObjectTag passValue;
             if (event.hasValue()) {
+                Deprecations.oldTernTag.warn(attribute.context);
                 passValue = new ElementTag(event.getValue().trim());
                 attribute = attribute.fulfill(1);
             }
@@ -65,6 +66,7 @@ public class TernaryTagBase {
         else {
             ObjectTag failValue;
             if (event.hasValue()) {
+                Deprecations.oldTernTag.warn(attribute.context);
                 failValue = null;
                 attribute = attribute.fulfill(1);
             }

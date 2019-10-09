@@ -95,6 +95,9 @@ public class Deprecations {
     // In Bukkit impl, Relevant as of 2019/07/13, deprecate officially by 2020.
     public static Warning oldParseTag = new FutureWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
 
+    // Added on 2019/10/09, but was changed earlier, deprecate officially by 2020.
+    public static Warning oldTernTag = new FutureWarning("'tern[a]:b||c' tag style is deprecated. Please use 'tern[a].pass[b].fail[c]' tag style instead.");
+
     // In Bukkit impl, Relevant as of 2019/09/09, deprecate officially by 2020.
     public static Warning oldNPCNavigator = new FutureWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
