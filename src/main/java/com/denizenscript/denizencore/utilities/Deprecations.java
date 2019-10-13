@@ -81,6 +81,10 @@ public class Deprecations {
     // Prime candidate for functionality removal - tags were only recently added, and were always jank.
     public static Warning bookItemRawTags = new SlowWarning("Raw text tags for books were a placeholder. The normal (non-raw) tags now contain all needed data.");
 
+    // In Bukkit impl, Added on 2019/10/13
+    // This is just a message, relevant functionality already removed. Remove the script container registration after a few releases.
+    public static Warning versionScripts = new SlowWarning("Version script containers are deprecated due to the old script repo no longer being active.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
