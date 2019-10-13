@@ -111,7 +111,6 @@ public class DenizenCore {
             ScriptEvent.reload();
             implementation.onScriptReload();
             ReloadScriptsScriptEvent.instance.reset();
-            ReloadScriptsScriptEvent.instance.all = true;
             ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
             ReloadScriptsScriptEvent.instance.data = DenizenCore.getImplementation().getEmptyScriptEntryData();
             ReloadScriptsScriptEvent.instance.fire();

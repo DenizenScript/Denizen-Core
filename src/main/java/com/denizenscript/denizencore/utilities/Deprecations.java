@@ -85,6 +85,9 @@ public class Deprecations {
     // This is just a message, relevant functionality already removed. Remove the script container registration after a few releases.
     public static Warning versionScripts = new SlowWarning("Version script containers are deprecated due to the old script repo no longer being active.");
 
+    // Added on 2019/10/13
+    public static Warning scriptReloadEventNoUnderscore = new SlowWarning("In the 'on script reload' event, 'had_error' should be used instead of 'haderror'.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

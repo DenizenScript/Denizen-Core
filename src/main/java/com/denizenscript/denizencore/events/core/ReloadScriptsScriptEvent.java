@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.utilities.Deprecations;
 
 public class ReloadScriptsScriptEvent extends ScriptEvent {
 
@@ -13,16 +14,14 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // reload scripts
     // script reload
     //
-    // @Switch haderror true|false
-    // @Switch all true|false
+    // @Switch had_error true|false
     //
     // @Regex ^on ((reload scripts)|(script reload))$
     //
     // @Triggers when Denizen scripts are reloaded.
     //
     // @Context
-    // <context.all> returns an Element(Boolean) of whether 'reload -a' was used.
-    // <context.haderror> returns an Element(Boolean) whether there was an error.
+    // <context.had_error> returns an Element(Boolean) whether there was an error.
     //
     // -->
 
@@ -30,14 +29,11 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     public boolean hadError = false;
 
-    public boolean all = false;
-
     public ScriptEntryData data = null;
 
     @Override
     public void reset() {
         hadError = false;
-        all = false;
         data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         super.reset();
     }
@@ -49,11 +45,12 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("haderror")) {
+        if (name.equals("had_error")) {
             return new ElementTag(hadError);
         }
-        else if (name.equals("all")) {
-            return new ElementTag(all);
+        else if (name.equals("haderror")) {
+            Deprecations.scriptReloadEventNoUnderscore.warn();
+            return new ElementTag(hadError);
         }
         return super.getContext(name);
     }
@@ -69,8 +66,16 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public boolean matches(ScriptPath path) {
-        return path.checkSwitch("haderror", hadError ? "true" : "false")
-                && path.checkSwitch("all", all ? "true" : "false");
+        if (path.switches.containsKey("haderror")) {
+            Deprecations.scriptReloadEventNoUnderscore.warn();
+            if (!path.checkSwitch("haderror", hadError ? "true" : "false")) {
+                return false;
+            }
+        }
+        if (path.checkSwitch("had_error", hadError ? "true" : "false")) {
+            return false;
+        }
+        return true;
     }
 
     @Override
