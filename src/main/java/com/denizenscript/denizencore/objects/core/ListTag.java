@@ -386,6 +386,24 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return results;
     }
 
+    public ListTag deduplicate() {
+        ListTag list = new ListTag();
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            String entry = get(i);
+            boolean duplicate = false;
+            for (int x = 0; x < i; x++) {
+                if (get(x).equalsIgnoreCase(entry)) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                list.addObject(objectForms.get(i));
+            }
+        }
+        return list;
+    }
 
     @Override
     public String toString() {
@@ -1003,23 +1021,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("deduplicate", new TagRunnable.ObjectForm<ListTag>() {
             @Override
             public ObjectTag run(Attribute attribute, ListTag object) {
-                ListTag obj = object;
-                ListTag list = new ListTag();
-                int size = obj.size();
-                for (int i = 0; i < size; i++) {
-                    String entry = obj.get(i);
-                    boolean duplicate = false;
-                    for (int x = 0; x < i; x++) {
-                        if (obj.get(x).equalsIgnoreCase(entry)) {
-                            duplicate = true;
-                            break;
-                        }
-                    }
-                    if (!duplicate) {
-                        list.addObject(obj.objectForms.get(i));
-                    }
-                }
-                return list;
+                return object.deduplicate();
             }
         });
 
@@ -2001,7 +2003,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 return new ElementTag("List");
             }
         });
-
     }
 
     public static ObjectTagProcessor<ListTag> tagProcessor = new ObjectTagProcessor<>();
