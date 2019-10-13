@@ -2,10 +2,7 @@ package com.denizenscript.denizencore;
 
 import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.events.core.DeltaTimeScriptEvent;
-import com.denizenscript.denizencore.events.core.ReloadScriptsScriptEvent;
-import com.denizenscript.denizencore.events.core.SystemTimeScriptEvent;
-import com.denizenscript.denizencore.events.core.TickScriptEvent;
+import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
@@ -91,9 +88,11 @@ public class DenizenCore {
     }
 
     /**
-     * Call postLoadScripts first.
+     * Call postLoadScripts after.
      */
     public static void preloadScripts() {
+        PreScriptReloadScriptEvent.instance.reset();
+        PreScriptReloadScriptEvent.instance.fire();
         ScriptEvent.worldContainers.clear();
         implementation.preScriptReload();
         ScriptHelper.resetError();
@@ -112,7 +111,6 @@ public class DenizenCore {
             implementation.onScriptReload();
             ReloadScriptsScriptEvent.instance.reset();
             ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
-            ReloadScriptsScriptEvent.instance.data = DenizenCore.getImplementation().getEmptyScriptEntryData();
             ReloadScriptsScriptEvent.instance.fire();
 
         }

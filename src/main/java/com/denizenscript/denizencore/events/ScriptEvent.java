@@ -39,6 +39,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void registerCoreEvents() {
         registerScriptEvent(new ConsoleOutputScriptEvent());
         registerScriptEvent(new DeltaTimeScriptEvent());
+        registerScriptEvent(new PreScriptReloadScriptEvent());
         registerScriptEvent(new ReloadScriptsScriptEvent());
         registerScriptEvent(new SystemTimeScriptEvent());
         registerScriptEvent(new TickScriptEvent());
