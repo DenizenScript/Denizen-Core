@@ -69,7 +69,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
                 return false;
             }
         }
-        if (path.checkSwitch("had_error", hadError ? "true" : "false")) {
+        if (!path.checkSwitch("had_error", hadError ? "true" : "false")) {
             return false;
         }
         return true;
