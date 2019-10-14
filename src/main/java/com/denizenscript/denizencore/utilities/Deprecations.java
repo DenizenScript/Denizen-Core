@@ -32,6 +32,7 @@ public class Deprecations {
     public static Warning locationShorthand = new Warning("Short-named tags are hard to read. Please use 'location' instead of 'l' as a root tag.");
     public static Warning playerShorthand = new SlowWarning("Short-named tags are hard to read. Please use 'player' instead of 'pl' as a root tag.");
     public static Warning serverShorthand = new Warning("Short-named tags are hard to read. Please use 'server' instead of 'svr' as a root tag.");
+    public static Warning schematicShorthand = new Warning("Short-named tags are hard to read. Please use 'schematic' instead of 'schem' as a root tag.");
     // ==================== End tag shorthands ====================
 
     // In Bukkit impl, Added on 2019/02/06
