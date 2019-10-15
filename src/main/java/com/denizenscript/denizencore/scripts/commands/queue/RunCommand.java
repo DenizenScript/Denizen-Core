@@ -18,53 +18,50 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Run
-    // @Syntax run (locally) [<script>] (path:<name>) (def:<element>|...) (id:<name>) (instantly) (speed:<value>) (delay:<value>)
+    // @Syntax run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)
     // @Required 1
     // @Short Runs a script in a new ScriptQueue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
     //
     // @Description
-    // Runs a new script queue, either in the local script or in a different task script.
+    // Runs a script in a new ScriptQueue.
     //
-    // You can set the queue speed using the speed argument
-    // this makes the queue run each script command with a delay.
-    // Specifying the "instantly" argument will run the queue instantly
-    // (speed at 0 ticks; queue running in total of 1 tick, just like an event script)
-    // If no speed or "instantly" argument are applied,
-    // it assumes the default script speed that are configured.
+    // You can specify either a script object to run, or "locally" to use a path within the same script.
     //
-    // Specifying definitions as argument
-    // allows the transfer of definitions to the new queue.
-    // Definitions are not carried over if not specified.
-    // (See <@link command define>)
+    // Optionally, use the "path:" argument to choose a specific sub-path within a script (works well with the "locally" argument).
     //
-    // Specifying a player argument will run the queue with a player attached
-    // to that queue. The same can be done to attach an npc.
-    // Player and npc are not carried over to the new queue if not specified.
+    // Optionally, use the "def:" argument to specify definition values to pass to the script (named via the "definitions:" script key).
+    //
+    // Optionally, use the "speed:" argument to specify the queue command-speed to run the target script at,
+    // or use the "instantly" argument to use an instant speed (no command delay applied).
+    // If neither argument is specified, the default queue speed applies (normally instant, refer to the config file).
+    // Generally, prefer to set the "speed:" script key on the script to be ran, rather than using this argument.
+    //
+    // Optionally, use the "delay:" argument to specify a delay time before the script starts running.
+    //
+    // Optionally, specify the "id:" argument to choose a custom queue ID to be used.
+    // If none is specified, a randomly generated one will be used. Generally, don't use this argument.
     //
     // @Tags
     // <entry[saveName].created_queue> returns the queue that was started by the run command.
     //
     // @Usage
-    // Use to run a new queue instant
-    // - run MyNewTask instantly
+    // Use to run a task script named 'MyTask'.
+    // - run MyTask
     //
     // @Usage
-    // Use to run a new queue instant
-    // - run MyNewTask instantly def:4|20|true
+    // Use to run a task script named 'MyTask' that isn't normally instant, instantly.
+    // - run MyTask instantly
     //
     // @Usage
-    // Use to run a new queue with an attached player and npc with a definition
-    // - run MyNewTask def:friends player:p@bob npc:<player.selected_npc>
+    // Use to run a local subscript named 'alt_path'.
+    // - run locally path:alt_path
     //
     // @Usage
-    // Use to run a new queue instant with the same attached player
-    // - run MyNewTask instantly player:<player>
+    // Use to run 'MyTask' and pass 3 definitions to it.
+    // - run MyTask def:A|Second_Def|Taco
     //
-    // @Usage
-    // Use to run a new queue from a local script
-    // - run locally MyNewTask
     // -->
 
     @Override
