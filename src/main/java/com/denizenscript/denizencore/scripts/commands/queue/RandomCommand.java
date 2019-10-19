@@ -16,35 +16,22 @@ public class RandomCommand extends BracedCommand {
 
     // <--[command]
     // @Name Random
-    // @Syntax random [<#>/<commands>]
+    // @Syntax random [<commands>]
     // @Required 0
     // @Short Selects a random choice from the following script commands.
     // @Group queue
     //
     // @Description
-    // The random command picks one of the following script command
-    // and skips all the other script commands that are in range.
+    // The random command picks one of the following script command and skips all the other script commands that are in its section.
+    // Commands like "repeat 1" or "if true" can be used to group together a sublisting of commands to execute together
+    // (as a way to get around the 1-command limit).
     //
-    // Specifying a number as argument will get the next following
-    // scripts commands in the queue to be picked at random.
-    // Example "- random 3" will get the next 3 commands
-    // in the current queue and pick one of those 3 to run,
-    // the other 2 commands, that was in range, will be skipped.
-    //
-    // If braces are used for argument, then it is for every
-    // denizen command, in the brace, one of them will be picked
-    // and the rest, in the brace, will be skipped.
+    // If wanting to choose a random long set of commands,
+    // consider instead using <@link command choose> with <@link tag util.random.int.to>
     //
     // @Tags
     // <entry[saveName].possibilities> returns an ElementTag of the possibility count.
     // <entry[saveName].selected> returns an ElementTag of the selected number.
-    //
-    // @Usage
-    // Use to choose randomly from the following commands
-    // - random 3
-    // - narrate "hi"
-    // - narrate "hello"
-    // - narrate "hey"
     //
     // @Usage
     // Use to choose randomly from a braced set of commands
