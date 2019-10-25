@@ -61,12 +61,18 @@ public class Mechanism {
         return false;
     }
 
+    public String forMechanismText() {
+        return "For input to mechanism '" + raw_mechanism + "'"
+                + (value == null ? "" : " with value '" + value.asString() + "'")
+                + ": ";
+    }
+
     public boolean requireBoolean() {
-        return requireBoolean("Invalid boolean. Must specify TRUE or FALSE.");
+        return requireBoolean(forMechanismText() + "Invalid boolean. Must specify TRUE or FALSE.");
     }
 
     public boolean requireDouble() {
-        return requireDouble("Invalid decimal number specified.");
+        return requireDouble(forMechanismText() + "Invalid decimal number specified.");
     }
 
     public boolean requireEnum(boolean allowInt, Enum<?>... values) {
@@ -74,11 +80,11 @@ public class Mechanism {
     }
 
     public boolean requireFloat() {
-        return requireFloat("Invalid decimal number specified.");
+        return requireFloat(forMechanismText() + "Invalid decimal number specified.");
     }
 
     public boolean requireInteger() {
-        return requireInteger("Invalid integer number specified.");
+        return requireInteger(forMechanismText() + "Invalid integer number specified.");
     }
 
     public <T extends ObjectTag> boolean requireObject(Class<T> type) {
@@ -114,7 +120,7 @@ public class Mechanism {
             }
         }
         if (error == null) {
-            echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
+            echoError(forMechanismText() + "Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
                     + " Must specify a valid name" + (allowInt ? " or number" : "") + ".");
         }
         else {
