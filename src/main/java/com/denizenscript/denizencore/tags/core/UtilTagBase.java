@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -159,8 +160,7 @@ public class UtilTagBase {
         // Returns PI: 3.14159265358979323846
         // -->
         else if (attribute.startsWith("pi")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI)
-                    , attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI), attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -170,8 +170,7 @@ public class UtilTagBase {
         // Returns Tau: 6.28318530717958647692
         // -->
         else if (attribute.startsWith("tau")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI * 2)
-                    , attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI * 2), attribute.fulfill(1)));
         }
 
         // <--[tag]
@@ -181,8 +180,18 @@ public class UtilTagBase {
         // Returns e: 2.7182818284590452354
         // -->
         else if (attribute.matches("e")) {
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.E)
-                    , attribute.fulfill(1)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.E), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.list_denizen_commands>
+        // @returns ListTag
+        // @description
+        // Returns a list of all currently loaded Denizen commands.
+        // -->
+        else if (attribute.startsWith("list_denizen_commands")) {
+            ListTag result = new ListTag(DenizenCore.getCommandRegistry().instances.keySet());
+            event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
         }
 
         // <--[tag]
