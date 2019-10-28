@@ -1,12 +1,12 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.TagContext;
 
-import java.io.IOException;
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandles;
@@ -24,66 +24,38 @@ public class ObjectFetcher {
         boolean matches(String str);
     }
 
-    public interface ValueOfInterface {
+    public interface ValueOfInterface<T extends ObjectTag> {
 
-        ObjectTag valueOf(String str, TagContext context);
+        T valueOf(String str, TagContext context);
     }
 
-    // Keep track of each Class keyed by its 'object identifier' --> i@, e@, etc.
-    private static Map<String, Class> objects = new HashMap<>();
+    public static class ObjectType<T extends ObjectTag> {
 
-    // Keep track of the static 'matches' and 'valueOf' methods for each ObjectTag
-    static Map<Class, MatchesInterface> matches = new HashMap<>();
-    static Map<Class, ValueOfInterface> valueof = new HashMap<>();
+        public Class<T> clazz;
 
-    public static void _initialize() throws IOException, ClassNotFoundException {
+        public MatchesInterface matches;
 
-        if (fetchable_objects.isEmpty()) {
-            return;
-        }
+        public ValueOfInterface<T> valueOf;
 
-        Map<String, Class> adding = new HashMap<>();
-        for (Class dClass : fetchable_objects) {
-            try {
-                Method method = dClass.getMethod("valueOf", String.class, TagContext.class);
-                if (method.isAnnotationPresent(Fetchable.class)) {
-                    String[] identifiers = method.getAnnotation(Fetchable.class).value().split(",");
-                    for (String identifier : identifiers) {
-                        adding.put(CoreUtilities.toLowerCase(identifier.trim()), dClass);
-                        Debug.log("Registered: " + dClass.getSimpleName() + " as " + identifier);
-                    }
-                }
-            }
-            catch (Throwable e) {
-                Debug.echoError("Failed to initialize an object type(" + dClass.getSimpleName() + "): ");
-                Debug.echoError(e);
-            }
-        }
+        public ObjectTagProcessor<T> tagProcessor;
 
-        objects.putAll(adding);
-        Debug.echoApproval("Added objects to the ObjectFetcher " + adding.keySet().toString());
-        fetchable_objects.clear();
+        public String prefix;
     }
 
-    public static void _registerCoreObjects() throws NoSuchMethodException, ClassNotFoundException, IOException {
+    public static Map<String, ObjectType<? extends ObjectTag>> objectsByPrefix = new HashMap<>();
+    public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
+
+    public static void registerCoreObjects() {
 
         // Initialize the ObjectFetcher
-        registerWithObjectFetcher(CustomObjectTag.class); // custom@
-        registerWithObjectFetcher(ListTag.class);        // li@
-        ListTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(ScriptTag.class);      // s@
-        ScriptTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(ElementTag.class);      // el@
-        ElementTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(DurationTag.class);     // d@
-        DurationTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        registerWithObjectFetcher(QueueTag.class);  // q@
-        QueueTag.registerTags(); // TODO: Automate this once all classes have tag registries
-        _initialize();
+        registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
+        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor);        // li@
+        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor);      // s@
+        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor);      // el@
+        registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor);     // d@
+        registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor);  // q@
 
     }
-
-    private static ArrayList<Class> fetchable_objects = new ArrayList<>();
 
     public static MatchesInterface getMatchesFor(Class clazz) {
 
@@ -123,25 +95,48 @@ public class ObjectFetcher {
         }
     }
 
+    @Deprecated
     public static void registerWithObjectFetcher(Class<? extends ObjectTag> objectTag) {
+        registerWithObjectFetcher(objectTag, null);
+    }
+
+    public static <T extends ObjectTag> void registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
+        ObjectType newType = new ObjectType();
+        newType.clazz = objectTag;
+        newType.tagProcessor = processor;
+        objectsByClass.put(objectTag, newType);
         try {
-            fetchable_objects.add(objectTag);
-            matches.put(objectTag, getMatchesFor(objectTag));
-            valueof.put(objectTag, getValueOfFor(objectTag));
+            Method valueOfMethod = objectTag.getMethod("valueOf", String.class, TagContext.class);
+            if (valueOfMethod.isAnnotationPresent(Fetchable.class)) {
+                String identifier = valueOfMethod.getAnnotation(Fetchable.class).value();
+                objectsByPrefix.put(CoreUtilities.toLowerCase(identifier.trim()), newType);
+                Debug.log("Registered: " + objectTag.getSimpleName() + " as " + identifier);
+                newType.prefix = identifier;
+            }
+            else {
+                Debug.echoError("Type '" + objectTag.getSimpleName() + "' registered as an object type, but doesn't have a fetcher prefix.");
+            }
+            newType.matches = getMatchesFor(objectTag);
+            newType.valueOf = getValueOfFor(objectTag);
+            for (Method registerMethod: objectTag.getDeclaredMethods()) {
+                if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
+                    registerMethod.invoke(null);
+                }
+            }
         }
         catch (Throwable e) {
-            Debug.echoError("Failed to register an object type (" + objectTag.getSimpleName() + "): ");
+            Debug.echoError("Failed to initialize an object type(" + objectTag.getSimpleName() + "): ");
             Debug.echoError(e);
         }
     }
 
     public static boolean canFetch(String id) {
-        return objects.containsKey(CoreUtilities.toLowerCase(id));
+        return objectsByPrefix.containsKey(CoreUtilities.toLowerCase(id));
     }
 
     public static Class getObjectClass(String id) {
         if (canFetch(id)) {
-            return objects.get(CoreUtilities.toLowerCase(id));
+            return objectsByPrefix.get(CoreUtilities.toLowerCase(id)).clazz;
         }
         else {
             return null;
@@ -158,8 +153,9 @@ public class ObjectFetcher {
             return false;
         }
         Matcher m = PROPERTIES_PATTERN.matcher(value);
+        value = m.matches() ? m.group(1) : value;
         try {
-            return matches.get(dClass).matches(m.matches() ? m.group(1) : value);
+            return objectsByClass.get(dClass).matches.matches(value);
         }
         catch (Exception e) {
             Debug.echoError(e);
@@ -203,10 +199,14 @@ public class ObjectFetcher {
     }
 
     public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value, TagContext context) {
+        return getObjectFrom((ObjectType<T>) objectsByClass.get(dClass), value, context);
+    }
+
+    public static <T extends ObjectTag> T getObjectFrom(ObjectType<T> type, String value, TagContext context) {
         try {
             List<String> matches = separateProperties(value);
-            boolean matched = matches != null && Adjustable.class.isAssignableFrom(dClass);
-            T gotten = (T) valueof.get(dClass).valueOf(matched ? matches.get(0) : value, context);
+            boolean matched = matches != null && Adjustable.class.isAssignableFrom(type.clazz);
+            T gotten = type.valueOf.valueOf(matched ? matches.get(0) : value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {
                     List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
@@ -242,22 +242,16 @@ public class ObjectFetcher {
         if (value == null) {
             return null;
         }
-        // While many inputs are valid as various object types
-        // (EG, 'bob' could be a player or NPC's name)
-        // Only use specific objects for input with @ notation
         if (value.contains("@")) {
             String type = value.split("@", 2)[0];
-            // Of course, ensure the @ notation is valid first
-            if (canFetch(type)) {
-                Class toFetch = getObjectClass(type);
+            ObjectType<? extends ObjectTag> toFetch = objectsByPrefix.get(type);
+            if (toFetch != null) {
                 ObjectTag fetched = getObjectFrom(toFetch, value, context);
-                // Only return if a valid object is born... otherwise, use an element.
                 if (fetched != null) {
                     return fetched;
                 }
             }
         }
-        // If all else fails, just use a simple Element!
         return new ElementTag(value);
     }
 }

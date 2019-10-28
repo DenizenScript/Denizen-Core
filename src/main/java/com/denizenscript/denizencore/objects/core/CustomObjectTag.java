@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.CustomScriptContainer;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -125,6 +126,8 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         return false;
     }
 
+    public static ObjectTagProcessor<CustomObjectTag> tagProcessor = new ObjectTagProcessor<>();
+
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         if (attribute == null) {
@@ -136,20 +139,20 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         }
 
         ObjectTag res = vars.get(attribute.getAttribute(1));
-        if (res == null) {
-            String taggo = attribute.getAttributeWithoutContext(1);
-            if (container.hasPath("tags." + taggo)) {
-                ListTag outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
-                        attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
-                                DenizenCore.getImplementation().getEmptyScriptEntryData());
-                if (outcomes == null) {
-                    return null;
-                }
-                return CoreUtilities.autoAttribTyped(outcomes.getObject(0), attribute.fulfill(1));
-            }
-            return new ElementTag(identify()).getObjectAttribute(attribute);
+        if (res != null) {
+            return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
         }
-        return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
+        String taggo = attribute.getAttributeWithoutContext(1);
+        if (container.hasPath("tags." + taggo)) {
+            ListTag outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
+                    attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
+                            DenizenCore.getImplementation().getEmptyScriptEntryData());
+            if (outcomes == null) {
+                return null;
+            }
+            return CoreUtilities.autoAttribTyped(outcomes.getObject(0), attribute.fulfill(1));
+        }
+        return tagProcessor.getObjectAttribute(this, attribute);
     }
 
     @Override
