@@ -48,6 +48,8 @@ public class Comparable {
     // they are normally notation for a replaceable tag. Escaping is not necessary when the argument
     // contains no replaceable tags.
     //
+    // There are also special boolean operators (&&, ||, ...) documented at: <@link command if>
+    //
     // -->
 
     public enum Operator {
