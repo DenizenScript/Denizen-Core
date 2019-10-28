@@ -4,6 +4,11 @@ import com.denizenscript.denizencore.exceptions.CommandExecutionException;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractCommand {
 
@@ -14,12 +19,43 @@ public abstract class AbstractCommand {
      * See {@link #withOptions} for information on using CommandOptions with this command.
      */
     public class CommandOptions {
-        public String USAGE_HINT;
-        public int REQUIRED_ARGS;
 
-        public CommandOptions(String usageHint, int numberOfRequiredArgs) {
-            this.USAGE_HINT = usageHint;
-            this.REQUIRED_ARGS = numberOfRequiredArgs;
+        public String syntax;
+
+        public int requiredArgs;
+
+        public List<String> flatArgs = new ArrayList<>();
+
+        public List<String> prefixes = new ArrayList<>();
+
+        public CommandOptions(String syntax, int numberOfRequiredArgs) {
+            this.syntax = syntax;
+            this.requiredArgs = numberOfRequiredArgs;
+            int firstSpace = syntax.indexOf(' ');
+            if (firstSpace < 0) {
+                return;
+            }
+            String cleaned = syntax.substring(firstSpace).replace("/", " ");
+            cleaned = cleaned.replace("[", "").replace("]", "").replace("(", "").replace(")", "").replace("{", "").replace("}", "");
+            List<String> args = CoreUtilities.split(cleaned, ' ');
+            for (String arg : args) {
+                if (arg.isEmpty()) {
+                    continue;
+                }
+                int colonIndex = arg.indexOf(':');
+                if (colonIndex > 0) {
+                    String prefix = arg.substring(0, colonIndex);
+                    if (!prefix.contains("<")) {
+                        prefixes.add(prefix);
+                    }
+                }
+                else if (!arg.contains("<") && !arg.contains("|")) {
+                    flatArgs.add(arg);
+                }
+            }
+            if (Debug.verbose) {
+                Debug.log("Command syntax '" + syntax + "' parsed to flat args: ( " + String.join(", ", flatArgs) + " ) and prefixes ( " + String.join(", ", prefixes) + " ).");
+            }
         }
     }
 
@@ -75,12 +111,12 @@ public abstract class AbstractCommand {
     }
 
     /**
-     * Returns USAGE_HINT specified in the {@link CommandOptions}, if specified.
+     * Returns syntax specified in the {@link CommandOptions}, if specified.
      *
-     * @return USAGE_HINT if specified, otherwise "No usage defined! See documentation for more information!"
+     * @return syntax if specified, otherwise "No usage defined! See documentation for more information!"
      */
     public String getUsageHint() {
-        return !commandOptions.USAGE_HINT.equals("") ? commandOptions.USAGE_HINT : "No usage defined! See documentation for more information!";
+        return !commandOptions.syntax.equals("") ? commandOptions.syntax : "No usage defined! See documentation for more information!";
     }
 
     /**

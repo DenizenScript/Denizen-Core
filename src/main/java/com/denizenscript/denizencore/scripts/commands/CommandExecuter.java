@@ -109,7 +109,7 @@ public class CommandExecuter {
         if (command == null) {
             command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
             scriptEntry.internal.actualCommand = command;
-            if (command == null || command.getOptions().REQUIRED_ARGS > scriptEntry.getArguments().size()) {
+            if (command == null || command.getOptions().requiredArgs > scriptEntry.getArguments().size()) {
                 scriptEntry.broken = true;
             }
         }

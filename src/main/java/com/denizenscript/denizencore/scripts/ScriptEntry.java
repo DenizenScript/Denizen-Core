@@ -323,7 +323,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             processed_arguments = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
-            if (internal.actualCommand.getOptions().REQUIRED_ARGS > args.size()) {
+            if (internal.actualCommand.getOptions().requiredArgs > args.size()) {
                 broken = true;
             }
             if (internal.actualCommand instanceof BracedCommand) {
