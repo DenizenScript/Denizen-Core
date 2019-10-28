@@ -19,7 +19,7 @@ public class DefinitionTagBase {
             public void run(ReplaceableTagEvent event) {
                 definitionTag(event);
             }
-        }, "definition", "def", "d", "");
+        }, "def", "definition", "d", "");
     }
 
 

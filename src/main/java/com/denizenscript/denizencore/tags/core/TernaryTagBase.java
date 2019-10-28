@@ -17,7 +17,7 @@ public class TernaryTagBase {
             public void run(ReplaceableTagEvent event) {
                 ternaryTag(event);
             }
-        }, "ternary", "tern", "t");
+        }, "tern", "ternary", "t");
     }
 
     // <--[tag]
