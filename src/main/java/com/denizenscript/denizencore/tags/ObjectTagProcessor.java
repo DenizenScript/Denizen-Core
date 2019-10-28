@@ -8,23 +8,16 @@ import java.util.HashMap;
 
 public class ObjectTagProcessor<T extends ObjectTag> {
 
-    public HashMap<String, TagRunnable.ObjectForm<T>> registeredObjectTags = new HashMap<>();
+    public HashMap<String, TagRunnable.ObjectInterface<T>> registeredObjectTags = new HashMap<>();
 
-    public void registerTag(String name, TagRunnable.ObjectForm<T> runnable) {
-        if (runnable.name == null) {
-            runnable.name = name;
-        }
-        else {
-            TagRunnable.ObjectForm<T> newRunnable = new TagRunnable.ObjectForm<T>() {
-                @Override
-                public ObjectTag run(Attribute attribute, T object) {
-                    Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                            "Using deprecated form of tag '" + runnable.name + "': '" + name + "'.");
-                    return runnable.run(attribute, object);
-                }
+    public void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... deprecatedVariants) {
+        for (String variant : deprecatedVariants) {
+            TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {
+                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
+                        "Using deprecated form of tag '" + name + "': '" + variant + "'.");
+                return runnable.run(attribute, object);
             };
-            newRunnable.name = runnable.name;
-            registeredObjectTags.put(name, newRunnable);
+            registeredObjectTags.put(variant, newRunnable);
         }
         registeredObjectTags.put(name, runnable);
     }
@@ -44,9 +37,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
         String attrLow = attribute.getAttributeWithoutContext(1);
         ObjectTag returned;
-        TagRunnable.ObjectForm<T> otr = registeredObjectTags.get(attrLow);
+        TagRunnable.ObjectInterface<T> otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
-            attribute.seemingSuccesses.add(otr.name);
+            attribute.seemingSuccesses.add(attrLow);
             returned = otr.run(attribute, object);
             if (returned == null) {
                 return null;

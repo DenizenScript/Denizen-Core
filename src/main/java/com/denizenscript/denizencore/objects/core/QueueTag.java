@@ -123,11 +123,8 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the id of the queue.
         // -->
-        registerTag("id", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ElementTag(object.getQueue().id);
-            }
+        registerTag("id", (attribute, object) -> {
+            return new ElementTag(object.getQueue().id);
         });
 
         // <--[tag]
@@ -136,11 +133,8 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the number of script entries in the queue.
         // -->
-        registerTag("size", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ElementTag(object.getQueue().script_entries.size());
-            }
+        registerTag("size", (attribute, object) -> {
+            return new ElementTag(object.getQueue().script_entries.size());
         });
 
         // <--[tag]
@@ -149,11 +143,8 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the time this queue started as a duration.
         // -->
-        registerTag("start_time", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new DurationTag(object.getQueue().startTimeMilli / 50);
-            }
+        registerTag("start_time", (attribute, object) -> {
+            return new DurationTag(object.getQueue().startTimeMilli / 50);
         });
 
         // <--[tag]
@@ -162,12 +153,9 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the time this queue has ran for (the length of time between now and when the queue started) as a duration.
         // -->
-        registerTag("time_ran", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                long timeNano = System.nanoTime() - object.getQueue().startTime;
-                return new DurationTag(timeNano / (1000000 * 1000.0));
-            }
+        registerTag("time_ran", (attribute, object) -> {
+            long timeNano = System.nanoTime() - object.getQueue().startTime;
+            return new DurationTag(timeNano / (1000000 * 1000.0));
         });
 
         // <--[tag]
@@ -176,24 +164,21 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns 'stopping', 'running', 'paused', or 'unknown'.
         // -->
-        registerTag("state", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                String state;
-                if ((object.getQueue() instanceof Delayable) && ((Delayable) object.getQueue()).isPaused()) {
-                    state = "paused";
-                }
-                else if (object.getQueue().is_started) {
-                    state = "running";
-                }
-                else if (object.getQueue().is_stopping) {
-                    state = "stopping";
-                }
-                else {
-                    state = "unknown";
-                }
-                return new ElementTag(state);
+        registerTag("state", (attribute, object) -> {
+            String state;
+            if ((object.getQueue() instanceof Delayable) && ((Delayable) object.getQueue()).isPaused()) {
+                state = "paused";
             }
+            else if (object.getQueue().is_started) {
+                state = "running";
+            }
+            else if (object.getQueue().is_stopping) {
+                state = "stopping";
+            }
+            else {
+                state = "unknown";
+            }
+            return new ElementTag(state);
         });
 
         // <--[tag]
@@ -202,14 +187,11 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the script that started this queue.
         // -->
-        registerTag("script", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (object.getQueue().script == null) {
-                    return null;
-                }
-                return object.getQueue().script;
+        registerTag("script", (attribute, object) -> {
+            if (object.getQueue().script == null) {
+                return null;
             }
+            return object.getQueue().script;
         });
 
         // <--[tag]
@@ -218,20 +200,17 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns a list of commands waiting in the queue.
         // -->
-        registerTag("commands", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                ListTag commands = new ListTag();
-                for (ScriptEntry entry : object.getQueue().script_entries) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(entry.getCommandName()).append(" ");
-                    for (String arg : entry.getOriginalArguments()) {
-                        sb.append(arg).append(" ");
-                    }
-                    commands.add(sb.substring(0, sb.length() - 1));
+        registerTag("commands", (attribute, object) -> {
+            ListTag commands = new ListTag();
+            for (ScriptEntry entry : object.getQueue().script_entries) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(entry.getCommandName()).append(" ");
+                for (String arg : entry.getOriginalArguments()) {
+                    sb.append(arg).append(" ");
                 }
-                return commands;
+                commands.add(sb.substring(0, sb.length() - 1));
             }
+            return commands;
         });
 
         // <--[tag]
@@ -240,11 +219,8 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the names of all definitions that were passed to the current queue.
         // -->
-        registerTag("definitions", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                return new ListTag(object.getQueue().getAllDefinitions().keySet());
-            }
+        registerTag("definitions", (attribute, object) -> {
+            return new ListTag(object.getQueue().getAllDefinitions().keySet());
         });
 
         // <--[tag]
@@ -254,15 +230,12 @@ public class QueueTag implements ObjectTag, Adjustable {
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
-        registerTag("definition", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (!attribute.hasContext(1)) {
-                    Debug.echoError("The tag QueueTag.definition[...] must have a value.");
-                    return null;
-                }
-                return object.getQueue().getDefinitionObject(attribute.getContext(1));
+        registerTag("definition", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag QueueTag.definition[...] must have a value.");
+                return null;
             }
+            return object.getQueue().getDefinitionObject(attribute.getContext(1));
         });
 
         // <--[tag]
@@ -272,15 +245,12 @@ public class QueueTag implements ObjectTag, Adjustable {
         // Returns the values that have been determined via <@link command Determine>
         // for this queue, or null if there is none.
         // -->
-        registerTag("determination", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (object.getQueue().determinations == null) {
-                    return null;
-                }
-                else {
-                    return object.getQueue().determinations;
-                }
+        registerTag("determination", (attribute, object) -> {
+            if (object.getQueue().determinations == null) {
+                return null;
+            }
+            else {
+                return object.getQueue().determinations;
             }
         });
 
@@ -290,24 +260,21 @@ public class QueueTag implements ObjectTag, Adjustable {
         // @description
         // Returns the speed of the queue as a Duration. A return of '0' implies it is 'instant'.
         // -->
-        registerTag("speed", new TagRunnable.ObjectForm<QueueTag>() {
-            @Override
-            public ObjectTag run(Attribute attribute, QueueTag object) {
-                if (!(object.getQueue() instanceof TimedQueue)) {
-                    if (!attribute.hasAlternative()) {
-                        Debug.echoError("The tag QueueTag.speed is only valid for Timed queues.");
-                    }
-                    return null;
+        registerTag("speed", (attribute, object) -> {
+            if (!(object.getQueue() instanceof TimedQueue)) {
+                if (!attribute.hasAlternative()) {
+                    Debug.echoError("The tag QueueTag.speed is only valid for Timed queues.");
                 }
-                return ((TimedQueue) object.getQueue()).getSpeed();
+                return null;
             }
+            return ((TimedQueue) object.getQueue()).getSpeed();
         });
     }
 
     public static ObjectTagProcessor<QueueTag> tagProcessor = new ObjectTagProcessor<>();
 
-    public static void registerTag(String name, TagRunnable.ObjectForm<QueueTag> runnable) {
-        tagProcessor.registerTag(name, runnable);
+    public static void registerTag(String name, TagRunnable.ObjectInterface<QueueTag> runnable, String... variants) {
+        tagProcessor.registerTag(name, runnable, variants);
     }
 
     @Override

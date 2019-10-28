@@ -16,6 +16,7 @@ public class PropertyParser {
     }
 
     public static class ClassPropertiesInfo {
+
         public List<PropertyGetter> allProperties = new ArrayList<>();
 
         public List<PropertyGetter> propertiesAnyTags = new ArrayList<>();

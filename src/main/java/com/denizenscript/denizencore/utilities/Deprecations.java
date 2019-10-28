@@ -42,9 +42,6 @@ public class Deprecations {
     // Prime candidate for functionality removal - has been unsupported for a LONG time.
     public static Warning boundWarning = new Warning("Item script 'bound' functionality has never been reliable and should not be used. Consider replicating the concept with world events.");
 
-    // In Bukkit impl, Added on 2019/07/07
-    public static Warning mathTagBase = new Warning("'math:' tags have been non-recommended for years. Please use modern element math tags like 'element.add[...]', etc.");
-
     // Added on 2019/07/13
     public static Warning oldEscapeTags = new SlowWarning("'escape:' tags are deprecated. Please use '.escaped' element tags instead.");
 

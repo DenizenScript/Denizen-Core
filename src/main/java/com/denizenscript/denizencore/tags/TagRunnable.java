@@ -5,22 +5,10 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public abstract class TagRunnable implements Cloneable {
 
-    public static abstract class ObjectForm<T extends ObjectTag> implements Cloneable {
+    @FunctionalInterface
+    public interface ObjectInterface<T extends ObjectTag> {
 
-        @Override
-        public ObjectForm<T> clone() {
-            try {
-                return (ObjectForm<T>) super.clone();
-            }
-            catch (Exception ex) {
-                Debug.echoError(ex);
-                return null;
-            }
-        }
-
-        public String name = null;
-
-        public abstract ObjectTag run(Attribute attribute, T object);
+        ObjectTag run(Attribute attribute, T object);
     }
 
     public static abstract class RootForm implements Cloneable {
