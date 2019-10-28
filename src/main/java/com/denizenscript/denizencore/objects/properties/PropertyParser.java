@@ -1,10 +1,14 @@
 package com.denizenscript.denizencore.objects.properties;
 
+import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.ObjectTag;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class PropertyParser {
@@ -34,7 +38,45 @@ public class PropertyParser {
 
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
+    public static <T extends ObjectTag> void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... variants) {
+        final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
+        final Class propertyClass = PropertyParser.currentlyRegisteringPropertyClass;
+        ObjectTagProcessor<T> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
+        tagProcessor.registerTag(name, (attribute, object) -> {
+            Property prop = getter.get(object);
+            if (prop == null) {
+                if (!attribute.hasAlternative()) {
+                    Debug.echoError("Property '" + propertyClass.getSimpleName() + "' does not describe the input object.");
+                }
+                return null;
+            }
+            return runnable.run(attribute, object);
+        }, variants);
+    }
+
+    public static Class currentlyRegisteringPropertyClass;
+
+    public static PropertyGetter currentlyRegisteringProperty;
+
+    public static ObjectFetcher.ObjectType currentlyRegisteringObjectType;
+
     public static void registerPropertyGetter(PropertyGetter getter, Class<? extends ObjectTag> object, String[] tags, String[] mechs, Class property) {
+        currentlyRegisteringPropertyClass = property;
+        currentlyRegisteringProperty = getter;
+        currentlyRegisteringObjectType = ObjectFetcher.objectsByClass.get(object);
+        try {
+            for (Method registerMethod : property.getDeclaredMethods()) {
+                if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
+                    registerMethod.invoke(null);
+                }
+            }
+        }
+        catch (Throwable ex) {
+            Debug.echoError(ex);
+        }
+        currentlyRegisteringProperty = null;
+        currentlyRegisteringObjectType = null;
+        currentlyRegisteringPropertyClass = null;
         ClassPropertiesInfo propInfo = propertiesByClass.get(object);
         if (propInfo == null) {
             propInfo = new ClassPropertiesInfo();
