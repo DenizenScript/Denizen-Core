@@ -195,6 +195,17 @@ public class UtilTagBase {
         }
 
         // <--[tag]
+        // @attribute <util.list_tag_bases>
+        // @returns ListTag
+        // @description
+        // Returns a list of all currently loaded Denizen tag bases (including "player", "context", "util", "server", etc).
+        // -->
+        else if (attribute.startsWith("list_tag_bases")) {
+            ListTag result = new ListTag(TagManager.handlers.keySet());
+            event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.time_at[<year>/<month>/<day> (<hour>:<minute>:<second>(:<millisecond>))]>
         // @returns DurationTag
         // @description
