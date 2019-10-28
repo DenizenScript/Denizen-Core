@@ -16,6 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
@@ -50,12 +51,15 @@ public class TagManager {
 
     public static HashMap<String, TagRunnable.RootForm> handlers = new HashMap<>();
 
+    public static HashSet<String> properTagBases = new HashSet<>();
+
     @FunctionalInterface
     public interface OldTagRunner {
         void run(ReplaceableTagEvent event);
     }
 
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
+        properTagBases.add(names[0]);
         if (names.length == 1) {
             run.name = names[0];
             handlers.put(run.name, run);
