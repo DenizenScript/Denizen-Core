@@ -64,10 +64,12 @@ public class PropertyParser {
         currentlyRegisteringPropertyClass = property;
         currentlyRegisteringProperty = getter;
         currentlyRegisteringObjectType = ObjectFetcher.objectsByClass.get(object);
+        boolean didRegisterTags = false;
         try {
             for (Method registerMethod : property.getDeclaredMethods()) {
                 if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
                     registerMethod.invoke(null);
+                    didRegisterTags = true;
                 }
             }
         }
@@ -90,7 +92,7 @@ public class PropertyParser {
                 propInfo.propertyNamesByTag.put(tag, propName);
             }
         }
-        else {
+        else if (!didRegisterTags) {
             propInfo.propertiesAnyTags.add(getter);
         }
         if (mechs != null) {
@@ -111,7 +113,7 @@ public class PropertyParser {
             return (String[]) f.get(null);
         }
         catch (IllegalAccessException e) {
-            Debug.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a Set: " + e.getMessage() + "!");
+            Debug.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a String[]: " + e.getMessage() + "!");
         }
         catch (NoSuchFieldException e) {
             // Ignore this exception.
