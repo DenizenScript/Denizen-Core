@@ -13,12 +13,14 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class ContextTagBase {
 
     public ContextTagBase() {
+        // Intentionally no docs
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
                 contextTags(event);
             }
         }, "context", "c");
+        // Intentionally no docs
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

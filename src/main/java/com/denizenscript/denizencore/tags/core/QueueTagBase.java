@@ -14,6 +14,14 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class QueueTagBase {
 
     public QueueTagBase() {
+
+        // <--[tag]
+        // @attribute <queue[(<queue>)]>
+        // @returns QueueTag
+        // @description
+        // Returns a queue object constructed from the input value.
+        // If no input is given, returns the current queue.
+        // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

@@ -12,6 +12,13 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class ScriptTagBase {
 
     public ScriptTagBase() {
+
+        // <--[tag]
+        // @attribute <script[<script>]>
+        // @returns ScriptTag
+        // @description
+        // Returns a script object constructed from the input value.
+        // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

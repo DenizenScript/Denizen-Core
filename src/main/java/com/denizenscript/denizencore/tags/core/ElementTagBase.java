@@ -10,6 +10,13 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class ElementTagBase {
 
     public ElementTagBase() {
+
+        // <--[tag]
+        // @attribute <element[<element>]>
+        // @returns ElementTag
+        // @description
+        // Returns an element constructed from the input value.
+        // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

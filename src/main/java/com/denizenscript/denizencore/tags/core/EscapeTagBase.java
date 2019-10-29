@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class EscapeTagBase {
 
     public EscapeTagBase() {
+        // Intentionally no docs due to deprecation
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {

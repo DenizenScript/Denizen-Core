@@ -10,6 +10,13 @@ import com.denizenscript.denizencore.tags.TagManager;
 public class DurationTagBase {
 
     public DurationTagBase() {
+
+        // <--[tag]
+        // @attribute <duration[<duration>]>
+        // @returns DurationTag
+        // @description
+        // Returns a duration object constructed from the input value.
+        // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
