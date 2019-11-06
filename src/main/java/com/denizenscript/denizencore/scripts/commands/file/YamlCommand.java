@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class YamlCommand extends AbstractCommand implements Holdable {
@@ -418,11 +419,17 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             @Override
                             public void run() {
                                 try {
-                                    FileWriter fw = new FileWriter(fileObj.getAbsoluteFile());
-                                    BufferedWriter writer = new BufferedWriter(fw);
+                                    Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+                                    FileOutputStream fiout = new FileOutputStream(fileObj);
+                                    OutputStreamWriter writer;
+                                    if (charset == null) {
+                                        writer = new OutputStreamWriter(fiout);
+                                    }
+                                    else {
+                                        writer = new OutputStreamWriter(fiout, charset);
+                                    }
                                     writer.write(outp);
                                     writer.close();
-                                    fw.close();
                                 }
                                 catch (IOException e) {
                                     Debug.echoError(e);
