@@ -179,18 +179,6 @@ public class ScriptHelper {
 
                 YamlConfiguration yaml;
 
-                Debug.log("Processing outside scripts... ");
-                for (YamlConfiguration outsideConfig : DenizenCore.getImplementation().getOutsideScripts()) {
-                    try {
-                        Debug.log("Processing unnamed script...");
-                        sb.append(outsideConfig.saveToString(false)).append("\r\n");
-                    }
-                    catch (Exception e) {
-                        Debug.echoError("Woah! Error parsing outside scripts!");
-                        hadError = true;
-                    }
-                }
-
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
                     Debug.log("Processing '" + fileName + "'... ");

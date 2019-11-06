@@ -6,12 +6,10 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Interface representing all the information that an implementation must provide to the engine.
@@ -102,11 +100,6 @@ public interface DenizenImplementation {
      * This is to avoid casting issues when ScriptEntry's use generic data objects.
      */
     ScriptEntryData getEmptyScriptEntryData();
-
-    /**
-     * Temporary.
-     */
-    List<YamlConfiguration> getOutsideScripts();
 
     TagContext getTagContextFor(ScriptEntry entry, boolean instant);
 
