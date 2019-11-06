@@ -36,7 +36,7 @@ public class ForeachCommand extends BracedCommand {
     //
     // @Usage
     // Use to run commands 'for each entry' in a list of objects/elements.
-    // - foreach li@e@123|n@424|p@BobBarker:
+    // - foreach li@e@123|n@424|p@bob:
     //     - announce "There's something at <[value].location>!"
     //
     // @Usage

@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.DenizenCore;
 
 import java.io.*;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,12 +135,16 @@ public class ScriptHelper {
     public static CharsetDecoder encoding = null;
 
     public static String convertStreamToString(InputStream is) {
+        return convertStreamToString(is, false);
+    }
+
+    public static String convertStreamToString(InputStream is, boolean defaultUTF8) {
         Scanner s;
-        if (encoding == null) {
+        if (encoding == null && !defaultUTF8) {
             s = new Scanner(is);
         }
         else {
-            s = new Scanner(new InputStreamReader(is, encoding));
+            s = new Scanner(new InputStreamReader(is, encoding == null ? StandardCharsets.UTF_8.newDecoder() : encoding));
         }
         s.useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
@@ -147,7 +152,7 @@ public class ScriptHelper {
 
     public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
         try {
-            String script = clearComments(filename, convertStreamToString(resource), true);
+            String script = clearComments(filename, convertStreamToString(resource, filename.endsWith(".dsc")), true);
             return YamlConfiguration.load(script);
         }
         finally {
