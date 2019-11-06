@@ -49,6 +49,14 @@ public class DefineCommand extends AbstractCommand {
     // - narrate '[NOTICE] You have noticed <player.location.find.blocks[<[blocks]>].within[<[range]>].size> blocks in the area that may be of interest.'
     //
     // @Usage
+    // Use to validate a player input to a command script, and then output the found player's name.
+    // - define target:<server.match_player[<context.args.get[1]>]||null>
+    // - if <[target]> == null:
+    //   - narrate '<red>Unknown player target.'
+    //   - stop
+    // - narrate 'You targeted <[target].name>!'
+    //
+    // @Usage
     // Use to keep the value of a replaceable tag that you might use many times within a single script.
     // - define arg1:<context.args.get[1]>
     // - if <[arg1]> == hello:
