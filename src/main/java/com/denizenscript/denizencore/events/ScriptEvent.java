@@ -110,6 +110,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // This is both more efficient to process and more explicit in what's going on, however it is less
         // clear/readable to the average user, so it is not often used.
         // Some events may have switches for less-often specified data, and use the event line for other options.
+        //
+        // Most switches take input in the form of a simplified name or value.
+        // For example an "<entity>" input will usually except the name of an entity type like "zombie",
+        // not a full entity UUID or other specific-entity identifier.
+        // An "<item>" input will expect a material name or item script name, not a fully detailed item description with property syntax.
+        // A "<cuboid>" input will expect the name of a notable cuboid, never a fully written out cuboid object.
+        //
+        // One of the most common switches across many Denizen events is "in <area>".
+        // In these switches, 'area' is a world, notable cuboid, or notable ellipsoid.
+        // So for example you might have an event line like "on player breaks on block in:space:"
+        // where space is the name of a world or of a notable cuboid.
         // -->
 
         public boolean checkSwitch(String key, String value) {
