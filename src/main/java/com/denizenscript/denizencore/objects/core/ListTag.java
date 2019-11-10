@@ -527,7 +527,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @returns ElementTag
         // @description
         // returns the list formatted, with each item separated by the defined text.
-        // For example: <li@bob|jacob|mcmonkey.separated_by[ and ]> will return "bob and jacob and mcmonkey".
+        // For example: <li@bob|joe|john.separated_by[ and ]> will return "bob and joe and john".
         // -->
         registerTag("separated_by", (attribute, object) -> {
             ListTag list = object;
