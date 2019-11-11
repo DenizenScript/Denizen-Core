@@ -117,7 +117,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // An "<item>" input will expect a material name or item script name, not a fully detailed item description with property syntax.
         // A "<cuboid>" input will expect the name of a notable cuboid, never a fully written out cuboid object.
         //
-        // One of the most common switches across many Denizen events is "in <area>".
+        // One of the most common switches across many Denizen events is "in:<area>".
         // In these switches, 'area' is a world, notable cuboid, or notable ellipsoid.
         // So for example you might have an event line like "on player breaks block in:space:"
         // where space is the name of a world or of a notable cuboid.

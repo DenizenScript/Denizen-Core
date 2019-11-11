@@ -13,7 +13,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
     // @Events
     // delta time [hourly/minutely/secondly]
     //
-    // @Switch every <count>
+    // @Switch every:<count> to only run the event every *count* times (like "on delta time secondly every:5" for every 5 seconds).
     //
     // @Regex ^on delta time (hourly|minutely|secondly)$
     //

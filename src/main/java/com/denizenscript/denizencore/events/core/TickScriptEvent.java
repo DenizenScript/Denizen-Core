@@ -13,7 +13,7 @@ public class TickScriptEvent extends ScriptEvent {
     // @Events
     // tick
     //
-    // @Switch every <count>
+    // @Switch every:<count> to only run the event every *count* times (like "every:5" for every 5 ticks).
     //
     // @Regex ^on tick$
     //
