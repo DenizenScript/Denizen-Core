@@ -31,7 +31,11 @@ public class RunCommand extends AbstractCommand implements Holdable {
     //
     // Optionally, use the "path:" argument to choose a specific sub-path within a script (works well with the "locally" argument).
     //
-    // Optionally, use the "def:" argument to specify definition values to pass to the script (named via the "definitions:" script key).
+    // Optionally, use the "def:" argument to specify definition values to pass to the script,
+    // the definitions will be named via the "definitions:" script key on the script being ran,
+    // or numerically in order if that isn't specified (starting with <[1]>).
+    // To pass a list value in here as a single definition, use <@link tag ElementTag.escaped> in the run command line,
+    // and <@link tag ElementTag.unescaped> in the final task script to read it back.
     //
     // Optionally, use the "speed:" argument to specify the queue command-speed to run the target script at,
     // or use the "instantly" argument to use an instant speed (no command delay applied).
@@ -61,6 +65,12 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Use to run 'MyTask' and pass 3 definitions to it.
     // - run MyTask def:A|Second_Def|Taco
+    //
+    // @Usage
+    // Use to run 'MyTask' and pass a list as a single definition.
+    // - run MyTask def:<list[a|big|list|here].escaped>
+    // # MyTask can then get the list back by doing:
+    // - define mylist:<[1].unescaped>
     //
     // -->
 

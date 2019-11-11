@@ -14,29 +14,38 @@ public class QueueCommand extends AbstractCommand {
 
     // <--[command]
     // @Name Queue
-    // @Syntax queue (<queue>) [clear/stop/pause/resume/delay:<#>]
+    // @Syntax queue (<queue>) [clear/stop/pause/resume/delay:<duration>]
     // @Required 1
     // @Short Modifies the current state of a script queue.
     // @Group queue
     //
     // @Description
-    // Allows queues to be modified during their run. It can also be used to modify other queues currently running
-    // Clearing a queue will remove it and not run any of the next commands in the queue.
-    // It is possible to pause a queue but it will try to finish its last command that was executed.
-    // TODO: Document Command Details
+    // Allows queues to be modified during their run. This can also be used to modify other queues currently running.
+    //
+    // Clearing a queue will remove any commands still queued within it, and thus end the queue.
+    // When trying to clear the current queue, use <@link command stop> instead.
+    //
+    // Using the "stop" argument will force the queue to immediately stop running.
+    // When trying to stop the current queue, use <@link command stop> instead.
+    //
+    // Using the "delay:<duration>" argument will cause the queue to wait for a specified duration.
+    // When trying to delay the current queue, use <@link command wait> instead.
+    //
+    // Using the "pause" argument will freeze the queue but keep it listed, waiting for a "resume" instruction.
+    // It is of course not possible to resume the current queue (as if you're running a 'queue' command, the queue can't be paused).
+    //
+    // Generally, the queue is considered a non-ideal way of doing things - that is, there's usually a better/cleaner way to achieve similar results.
+    // It's most useful within the "/ex" command for quick problem solving
+    // (eg if a script in testing gets caught in an infinite loop, you can do "/ex queue ID_HERE stop" to fix that).
     //
     // @Tags
-    // <queue> to get the current queue.
+    // <queue>
     // <QueueTag.id>
     // <QueueTag.size>
     // <queue.list>
     // <queue.stats>
     // <queue.exists[queue_id]>
     // <ScriptTag.list_queues>
-    //
-    // @Usage
-    // Use to clear the current queue.
-    // - queue clear
     //
     // @Usage
     // Use to force-stop a given queue.

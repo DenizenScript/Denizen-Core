@@ -31,7 +31,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Yaml
-    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text> (fix_formatting)]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
+    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
     // @Required 2
     // @Short Edits a YAML configuration file.
     // @Group file
@@ -40,11 +40,23 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // Edits a YAML configuration file.
     // This can be used for interacting with other plugins' configuration files.
     // It can also be used for storing your own script's data.
-    // TODO: Document Command Details
+    //
     // Use holdable syntax ("- ~yaml load:...") with load or savefile actions to avoid locking up the server during file IO.
     //
     // For loading and saving, the starting path is within 'plugins/Denizen'.
+    //
+    // Please note that all usages of the YAML command except for "load" and "savefile" arguments are purely in memory.
+    // That means, if you use "set" to make changes, those changes will not be saved to any file, until you use "savefile".
+    // Similarly, "create" does not create any file, instead it only creates a YAML object in RAM.
+    //
     // Note that the '.yml' extension is not automatically appended, and you will have to include that in filenames.
+    //
+    // All usages of the YAML command must include the "id:" argument. This is any arbitrary name, as plaintext or from a tag,
+    // to uniquely and globally identify the YAML object in memory. This ID can only be used by one YAML object at a type.
+    // IDs are stored when "create" or "load" arguments are used, and only removed when "unload" is used.
+    // If, for example, you have a unique YAML data container per-player, you might use something like "id:myscript_<player>".
+    //
+    // For ways to use the "set" argument, refer to <@link language data actions>.
     //
     // @Tags
     // <yaml[<idname>].contains[<path>]>

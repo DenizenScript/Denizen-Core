@@ -27,11 +27,22 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // @Group core
     //
     // @Description
-    // TODO: Document Command Details
-    // Note that while this replace URL spaces to %20, you are responsible for any other necessary URL encoding. You may want to use the element.url_encode tag for this.
-    // Optionally, specify a set of data to post to the server (changes the message from GET to POST).
-    // Optionally specify a list of headers as list of key/value pairs separated by slashes.
-    // Optionally specify a path to save the gotten file to. This will remove the 'result' entry savedata. Path is relative to server base directory.
+    // Connects to a webpage and downloads its contents, to be used via the save argument and corresponding entry tags.
+    //
+    // This should almost always be ~waited for.
+    //
+    // Note that while this will replace URL spaces to %20, you are responsible for any other necessary URL encoding.
+    // You may want to use the element.url_encode tag for this.
+    //
+    // Optionally, use "post:<data>" to specify a set of data to post to the server (changes the method from GET to POST).
+    //
+    // Optionally, use "headers:" to specify a list of headers as list of key/value pairs separated by slashes.
+    //
+    // Optionally use "savefile:" specify a path to save the gotten file to.
+    // This will remove the 'result' entry savedata.
+    // Path is relative to server base directory.
+    //
+    // Specify the "timeout:" to set how long the command should wait for a webpage to load before giving up. Defaults to 10 seconds.
     //
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed.
@@ -40,7 +51,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to download the google home page.
-    // - ~webget "http://google.com" save:google
+    // - ~webget "https://google.com" save:google
     // - narrate "<entry[google].result>"
     //
     // -->

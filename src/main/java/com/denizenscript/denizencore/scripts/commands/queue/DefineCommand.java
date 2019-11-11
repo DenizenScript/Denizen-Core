@@ -40,6 +40,8 @@ public class DefineCommand extends AbstractCommand {
     //
     // @Tags
     // <[<id>]> to get the value assigned to an ID
+    // <QueueTag.definition[<definition>]>
+    // <QueueTag.definitions>
     //
     // @Usage
     // Use to make complex tags look less complex, and scripts more readable.
