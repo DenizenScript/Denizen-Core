@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -84,6 +85,7 @@ public class ReplaceableTagEvent {
         if (tag.length() > 0) {
             char start = tag.charAt(0);
             if (start == '!' || start == '^') {
+                Deprecations.oldTagTickSyntax.warn(context);
                 mainRef.isInstant = true;
                 tag = tag.substring(1);
             }
