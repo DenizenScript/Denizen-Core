@@ -132,6 +132,9 @@ public class Deprecations {
     public static Warning entityMaxOxygenTag = new FutureWarning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
     public static Warning itemBookTags = new FutureWarning(pointlessSubtagPrefix + "item.book.* tags are now just item.book_*.");
 
+    // In Bukkit impl, Added 2019/11/11  deprecate officially by 2021.
+    public static Warning entityLocationCursorOnTag = new FutureWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
+
     // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
     public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 

@@ -64,6 +64,8 @@ public class ElementTag implements ObjectTag {
     // (refer to <@link language ElementTag Objects>) that is an integer number.
     // That is, for example: 0, 1, 5, -4, 10002325 or any other number.
     // This does NOT include decimal numbers (like 1.5). Those will be documented as <@link language ElementTag(Decimal)>.
+    //
+    // In some cases, this will also be documented as "<#>".
     // -->
 
     // <--[language]
@@ -74,6 +76,8 @@ public class ElementTag implements ObjectTag {
     // (refer to <@link language ElementTag Objects>) that is a decimal number.
     // That is, for example: 0, 1, 5, -4, 10002325, 4.2, -18.281241 or any other number.
     // While this is specifically for decimal numbers, the decimal itself is optional (will be assumed as ".0").
+    //
+    // In some cases, this will also be documented as "<#.#>".
     // -->
 
     @Deprecated
