@@ -21,7 +21,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     // @Triggers when Denizen scripts are reloaded.
     //
     // @Context
-    // <context.had_error> returns an Element(Boolean) whether there was an error.
+    // <context.had_error> returns an ElementTag(Boolean) whether there was an error.
     //
     // -->
 

@@ -439,7 +439,7 @@ public class UtilTagBase {
         // <--[mechanism]
         // @object system
         // @name redirect_logging
-        // @input Element(Boolean)
+        // @input ElementTag(Boolean)
         // @description
         // Tells the server to redirect logging to a world event or not.
         // Note that this redirects *all console output* not just Denizen output.
