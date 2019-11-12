@@ -8,7 +8,7 @@ public interface Holdable {
 
     // <--[language]
     // @name ~Waitable
-    // @group Object System
+    // @group Script Command System
     // @description
     // A command that is "~Waitable" (or "Holdable", or that can be "~waited for") is a command that:
     // - Might potentially take a while to execute

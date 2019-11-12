@@ -90,6 +90,23 @@ public class CommandExecuter {
 
     public static ScriptQueue currentQueue;
 
+    // <--[language]
+    // @name The Save Argument
+    // @group Script Command System
+    // @description
+    // The "save:<name>" argument is a special meta-argument that is available for all commands, but is only useful for some.
+    // It is written like:
+    // - run MyScript save:mysave
+    //
+    // When the save argument is used, the results of the command will be saved on the queue, for later usage by the "entry" tag.
+    //
+    // The useful entry keys available for any command are listed in the "Tags" documentation section for any command.
+    // For example, the "run" command lists "<entry[saveName].created_queue>".
+    // The "saveName" part should be replaced with whatever name you gave to the "save" argument,
+    // and the "created_queue" part changes between commands.
+    // Some commands have multiple save entry keys, some have just one, most don't have any.
+    // -->
+
     public boolean execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
             StringBuilder output = new StringBuilder();
