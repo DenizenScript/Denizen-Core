@@ -26,26 +26,54 @@ public class ElementTag implements ObjectTag {
     // @name ElementTag Objects
     // @group Object System
     // @description
-    // ElementTags are simple objects that contain either a boolean (true/false),
-    // string, or number value. Their main usage is within the replaceable tag
-    // system, often times returned from the use of another tag that isn't returning
-    // a specific object type, such as a location or entity. For example,
-    // <player.name> or <list[item1|item2|item3].as_cslist> will both return ElementTags.
+    // ElementTags are simple objects that contain a simple bit of text.
+    // Their main usage is within the replaceable tag system,
+    // often times returned from the use of another tag that isn't returning a specific object type, such as a location or entity.
+    // For example, <player.name> or <list[item1|item2|item3].comma_separated> will both return ElementTags.
     //
-    // Pluses to the ElementTag system is the ability to utilize its attributes that
-    // can provide a range of functionality that should be familiar from any other
-    // programming language, such as 'to_uppercase', 'split', 'replace', 'contains',
-    // and many more. See 'elementtag.*' tags for more information.
+    // Pluses to the ElementTag system is the ability to utilize its tag attributes,
+    // which can provide a range of functionality that should be familiar from any other programming language,
+    // such as 'to_uppercase', 'split', 'replace', 'contains', and many more.
+    // See 'ElementTag.*' tags for more information.
     //
-    // While information fetched from other tags resulting in an ElementTag is often
-    // times automatically handled, it may be desirable to utilize element
-    // attributes from text/numbers/etc. that aren't already an element object.
-    // To accomplish this, the standard 'element' tag base can be used for the
-    // creation of a new element. For example: <element[This_is_a_test].to_uppercase>
-    // will result in the value 'THIS_IS_A_TEST' Note that while other objects often
-    // return their object identifier (el@, li@, e@, etc.), elements do not.
+    // While information fetched from other tags resulting in an ElementTag is often times automatically handled,
+    // it may be desirable to utilize element attributes from text/numbers/etc. that aren't already an element object.
+    // To accomplish this, the standard 'element' tag base can be used for the creation of a new element.
+    // For example: <element[This_is_a_test].to_uppercase>
+    // will result in the value 'THIS_IS_A_TEST'.
+    //
+    // Note that while other objects often return their object identifier (p@, li@, e@, etc.), elements do not.
     //
     // For format info, see <@link language el@>
+    // -->
+
+    // <--[language]
+    // @name ElementTag(Boolean)
+    // @group Object System
+    // @description
+    // When "ElementTag(Boolean)" appears in meta documentation, this means the input/output is an ElementTag
+    // (refer to <@link language ElementTag Objects>) that is a boolean.
+    // Boolean means either a "true" or a "false".
+    // -->
+
+    // <--[language]
+    // @name ElementTag(Number)
+    // @group Object System
+    // @description
+    // When "ElementTag(Number)" appears in meta documentation, this means the input/output is an ElementTag
+    // (refer to <@link language ElementTag Objects>) that is an integer number.
+    // That is, for example: 0, 1, 5, -4, 10002325 or any other number.
+    // This does NOT include decimal numbers (like 1.5). Those will be documented as <@link language ElementTag(Decimal)>.
+    // -->
+
+    // <--[language]
+    // @name ElementTag(Decimal)
+    // @group Object System
+    // @description
+    // When "ElementTag(Decimal)" appears in meta documentation, this means the input/output is an ElementTag
+    // (refer to <@link language ElementTag Objects>) that is a decimal number.
+    // That is, for example: 0, 1, 5, -4, 10002325, 4.2, -18.281241 or any other number.
+    // While this is specifically for decimal numbers, the decimal itself is optional (will be assumed as ".0").
     // -->
 
     @Deprecated
