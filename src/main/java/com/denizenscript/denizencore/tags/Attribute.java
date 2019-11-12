@@ -282,7 +282,10 @@ public class Attribute {
                 return Integer.valueOf(getContext(attribute));
             }
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            if (!hasAlternative()) {
+                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+            }
         }
 
         return 0;
@@ -294,7 +297,10 @@ public class Attribute {
                 return Double.valueOf(getContext(attribute));
             }
         }
-        catch (Exception e) {
+        catch (NumberFormatException ex) {
+            if (!hasAlternative()) {
+                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a decimal number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+            }
         }
         return 0;
     }
