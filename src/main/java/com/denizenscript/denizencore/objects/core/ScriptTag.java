@@ -98,7 +98,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // associated with. For example, if my script container is called 'cool_script', the ScriptTag object for that script
     // would be able to be referenced (fetched) with s@cool_script.
     //
-    // For general info, see <@link language ScriptTag>
+    // For general info, see <@link language ScriptTag Objects>
     // -->
 
     public static ScriptTag valueOf(String string) {

@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class ElementTag implements ObjectTag {
 
     // <--[language]
-    // @name ElementTags
+    // @name ElementTag Objects
     // @group Object System
     // @description
     // ElementTags are simple objects that contain either a boolean (true/false),

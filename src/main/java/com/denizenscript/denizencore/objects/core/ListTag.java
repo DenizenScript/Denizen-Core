@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class ListTag extends ArrayList<String> implements ObjectTag {
 
     // <--[language]
-    // @name ListTag
+    // @name ListTag Objects
     // @group Object System
     // @description
     // A ListTag is a list of any data. It can hold any number of objects in any order.
@@ -47,7 +47,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     // A list with zero items in it is simply 'li@'
     // and a list with one item is just the one item and no pipes.
     //
-    // For general info, see <@link language ListTag>
+    // For general info, see <@link language ListTag Objects>
     // -->
 
     public final ArrayList<ObjectTag> objectForms;

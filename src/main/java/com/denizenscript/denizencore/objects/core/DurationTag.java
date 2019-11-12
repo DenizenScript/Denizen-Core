@@ -19,7 +19,7 @@ import java.util.Date;
 public class DurationTag implements ObjectTag {
 
     // <--[language]
-    // @name DurationTag
+    // @name DurationTag Objects
     // @group Object System
     // @description
     // Durations are a unified and convenient way to get a 'unit of time' throughout Denizen.

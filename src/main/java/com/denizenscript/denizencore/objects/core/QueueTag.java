@@ -15,7 +15,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 public class QueueTag implements ObjectTag, Adjustable {
 
     // <--[language]
-    // @name QueueTag
+    // @name QueueTag Objects
     // @group Object System
     // @description
     // A QueueTag is a single currently running set of script commands.
@@ -33,7 +33,7 @@ public class QueueTag implements ObjectTag, Adjustable {
     // q@ refers to the 'object identifier' of a QueueTag. The 'q@' is notation for Denizen's Object
     // Fetcher. The constructor for a QueueTag is the queue ID.
     //
-    // For general info, see <@link language QueueTag>
+    // For general info, see <@link language QueueTag Objects>
     //
     // -->
 
