@@ -444,7 +444,7 @@ public class ElementTag implements ObjectTag {
                     return new ElementTag(com.determineOutcome());
                 }
                 else {
-                    Debug.echoError("Unknown operator '" + operator + "'.");
+                    attribute.echoError("Unknown operator '" + operator + "'.");
                 }
             }
 
@@ -554,7 +554,7 @@ public class ElementTag implements ObjectTag {
             }
             catch (NumberFormatException e) {
                 if (!attribute.hasAlternative()) {
-                    Debug.echoError("'" + element + "' is not a valid decimal number.");
+                    attribute.echoError("'" + element + "' is not a valid decimal number.");
                 }
                 return null;
             }
@@ -568,7 +568,7 @@ public class ElementTag implements ObjectTag {
             }
             catch (NumberFormatException e) {
                 if (!attribute.hasAlternative()) {
-                    Debug.echoError("'" + element + "' is not a valid decimal number.");
+                    attribute.echoError("'" + element + "' is not a valid decimal number.");
                 }
                 return null;
             }
@@ -588,7 +588,7 @@ public class ElementTag implements ObjectTag {
             }
             catch (NumberFormatException e) {
                 if (!attribute.hasAlternative()) {
-                    Debug.echoError("'" + object.element + "' is not a valid decimal number.");
+                    attribute.echoError("'" + object.element + "' is not a valid decimal number.");
                 }
                 return null;
             }
@@ -609,7 +609,7 @@ public class ElementTag implements ObjectTag {
             }
             catch (NumberFormatException e) {
                 if (!attribute.hasAlternative()) {
-                    Debug.echoError("'" + element + "' is not a valid decimal number.");
+                    attribute.echoError("'" + element + "' is not a valid decimal number.");
                 }
                 return null;
             }
@@ -914,7 +914,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("equals_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.equals_case_sensitive[...] must have a value.");
+                attribute.echoError("The tag ElementTag.equals_case_sensitive[...] must have a value.");
                 return null;
             }
             return new ElementTag(object.element.equals(attribute.getContext(1)));
@@ -929,7 +929,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("matches", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.matches[...] must have a value.");
+                attribute.echoError("The tag ElementTag.matches[...] must have a value.");
                 return null;
             }
             return new ElementTag(object.element.matches(attribute.getContext(1)));
@@ -946,7 +946,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("regex", (attribute, object) -> {
             if (!attribute.hasContext(1) || !attribute.hasContext(2)) {
-                Debug.echoError("The tag ElementTag.regex[...] must have a value.");
+                attribute.echoError("The tag ElementTag.regex[...] must have a value.");
                 return null;
             }
             String regex = attribute.getContext(1);
@@ -1042,7 +1042,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("index_of", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.index_of[...] must have a value.");
+                attribute.echoError("The tag ElementTag.index_of[...] must have a value.");
                 return null;
             }
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
@@ -1059,7 +1059,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("last_index_of", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.last_index_of[...] must have a value.");
+                attribute.echoError("The tag ElementTag.last_index_of[...] must have a value.");
                 return null;
             }
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
@@ -1076,7 +1076,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("char_at", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.char_at[...] must have a value.");
+                attribute.echoError("The tag ElementTag.char_at[...] must have a value.");
                 return null;
             }
             int index = attribute.getIntContext(1) - 1;
@@ -1102,7 +1102,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("after_last", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.after_last[...] must have a value.");
+                attribute.echoError("The tag ElementTag.after_last[...] must have a value.");
                 return null;
             }
             String delimiter = attribute.getContext(1);
@@ -1125,7 +1125,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("after", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.after[...] must have a value.");
+                attribute.echoError("The tag ElementTag.after[...] must have a value.");
                 return null;
             }
             String delimiter = attribute.getContext(1);
@@ -1148,7 +1148,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("before_last", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.before_last[...] must have a value.");
+                attribute.echoError("The tag ElementTag.before_last[...] must have a value.");
                 return null;
             }
             String delimiter = attribute.getContext(1);
@@ -1171,7 +1171,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("before", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.before[...] must have a value.");
+                attribute.echoError("The tag ElementTag.before[...] must have a value.");
                 return null;
             }
             String delimiter = attribute.getContext(1);
@@ -1203,7 +1203,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("replace", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.replace[...] must have a value.");
+                attribute.echoError("The tag ElementTag.replace[...] must have a value.");
                 return null;
             }
             String replace = attribute.getContext(1);
@@ -1212,7 +1212,7 @@ public class ElementTag implements ObjectTag {
                 if (attribute.hasContext(2)) {
                     replacement = attribute.getContext(2);
                     if (replacement == null) {
-                        Debug.echoError("The tag ElementTag.replace[...].with[...] must have a value.");
+                        attribute.echoError("The tag ElementTag.replace[...].with[...] must have a value.");
                         return null;
                     }
                     attribute.fulfill(1);
@@ -1282,7 +1282,7 @@ public class ElementTag implements ObjectTag {
                 return new ElementTag(negative + intform + afterdecimal);
             }
             catch (Exception ex) {
-                Debug.echoError(ex);
+                attribute.echoError(ex);
             }
             return null;
         });
@@ -1372,7 +1372,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("substring", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.substring[...] must have a value.");
+                attribute.echoError("The tag ElementTag.substring[...] must have a value.");
                 return null;
             }
             int beginning_index = new ElementTag(attribute.getContext(1).split(",")[0]).asInt() - 1;
@@ -1446,7 +1446,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("pad_left", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.pad_left[...] must have a value.");
+                attribute.echoError("The tag ElementTag.pad_left[...] must have a value.");
                 return null;
             }
             String with = String.valueOf((char) 0x00A0);
@@ -1483,7 +1483,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("pad_right", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.pad_right[...] must have a value.");
+                attribute.echoError("The tag ElementTag.pad_right[...] must have a value.");
                 return null;
             }
             String with = String.valueOf((char) 0x00A0);
@@ -1522,7 +1522,7 @@ public class ElementTag implements ObjectTag {
         registerTag("abs", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.abs(ele.asDouble()));
@@ -1538,7 +1538,7 @@ public class ElementTag implements ObjectTag {
         registerTag("max", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.max(ele.asDouble(), new ElementTag(attribute.getContext(1)).asDouble()));
@@ -1554,7 +1554,7 @@ public class ElementTag implements ObjectTag {
         registerTag("min", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.min(ele.asDouble(), new ElementTag(attribute.getContext(1)).asDouble()));
@@ -1570,7 +1570,7 @@ public class ElementTag implements ObjectTag {
         registerTag("add_int", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(ele.asLong() + ArgumentHelper.getLongFrom(attribute.getContext(1)));
@@ -1586,7 +1586,7 @@ public class ElementTag implements ObjectTag {
         registerTag("div_int", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(ele.asLong() / ArgumentHelper.getLongFrom(attribute.getContext(1)));
@@ -1602,7 +1602,7 @@ public class ElementTag implements ObjectTag {
         registerTag("mul_int", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(ele.asLong() * ArgumentHelper.getLongFrom(attribute.getContext(1)));
@@ -1618,7 +1618,7 @@ public class ElementTag implements ObjectTag {
         registerTag("sub_int", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(ele.asLong() - ArgumentHelper.getLongFrom(attribute.getContext(1)));
@@ -1633,12 +1633,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> addRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.add[...] must have a value.");
+                attribute.echoError("The tag ElementTag.add[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             try {
@@ -1660,12 +1660,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> divRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.div[...] must have a value.");
+                attribute.echoError("The tag ElementTag.div[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             try {
@@ -1687,12 +1687,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> modRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.mod[...] must have a value.");
+                attribute.echoError("The tag ElementTag.mod[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(ele.asDouble() % (ArgumentHelper.getDoubleFrom(attribute.getContext(1))));
@@ -1709,12 +1709,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> mulRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.mul[...] must have a value.");
+                attribute.echoError("The tag ElementTag.mul[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             try {
@@ -1736,12 +1736,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> subRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.sub[...] must have a value.");
+                attribute.echoError("The tag ElementTag.sub[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             try {
@@ -1764,7 +1764,7 @@ public class ElementTag implements ObjectTag {
         registerTag("sqrt", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.sqrt(ele.asDouble()));
@@ -1779,12 +1779,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("log", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.log[...] must have a value.");
+                attribute.echoError("The tag ElementTag.log[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.log(ele.asDouble()) / Math.log(ArgumentHelper.getDoubleFrom(attribute.getContext(1))));
@@ -1800,7 +1800,7 @@ public class ElementTag implements ObjectTag {
         registerTag("ln", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.log(ele.asDouble()));
@@ -1815,12 +1815,12 @@ public class ElementTag implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ElementTag> powerRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.power[...] must have a value.");
+                attribute.echoError("The tag ElementTag.power[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.pow(ele.asDouble(), ArgumentHelper.getDoubleFrom(attribute.getContext(1))));
@@ -1838,7 +1838,7 @@ public class ElementTag implements ObjectTag {
         registerTag("asin", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.asin(ele.asDouble()));
@@ -1854,7 +1854,7 @@ public class ElementTag implements ObjectTag {
         registerTag("acos", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.acos(ele.asDouble()));
@@ -1870,7 +1870,7 @@ public class ElementTag implements ObjectTag {
         registerTag("atan", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.atan(ele.asDouble()));
@@ -1886,12 +1886,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("atan2", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.atan2[...] must have a value.");
+                attribute.echoError("The tag ElementTag.atan2[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.atan2(ele.asDouble(), attribute.getDoubleContext(1)));
@@ -1907,7 +1907,7 @@ public class ElementTag implements ObjectTag {
         registerTag("cos", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.cos(ele.asDouble()));
@@ -1923,7 +1923,7 @@ public class ElementTag implements ObjectTag {
         registerTag("sin", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.sin(ele.asDouble()));
@@ -1939,7 +1939,7 @@ public class ElementTag implements ObjectTag {
         registerTag("tan", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.tan(ele.asDouble()));
@@ -1955,7 +1955,7 @@ public class ElementTag implements ObjectTag {
         registerTag("to_degrees", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.toDegrees(ele.asDouble()));
@@ -1971,7 +1971,7 @@ public class ElementTag implements ObjectTag {
         registerTag("to_radians", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag(Math.toRadians(ele.asDouble()));
@@ -1987,7 +1987,7 @@ public class ElementTag implements ObjectTag {
         registerTag("round_up", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag((long) Math.ceil(ele.asDouble()));
@@ -2003,7 +2003,7 @@ public class ElementTag implements ObjectTag {
         registerTag("round_down", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag((long) Math.floor(ele.asDouble()));
@@ -2019,12 +2019,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("round_to", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.round_to[...] must have a value.");
+                attribute.echoError("The tag ElementTag.round_to[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             int ten = (int) Math.pow(10, attribute.getIntContext(1));
@@ -2041,7 +2041,7 @@ public class ElementTag implements ObjectTag {
         registerTag("round", (attribute, object) -> {
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             return new ElementTag((long) Math.round(ele.asDouble()));
@@ -2057,12 +2057,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("round_to_precision", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.round_to_precision[...] must have a value.");
+                attribute.echoError("The tag ElementTag.round_to_precision[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
@@ -2078,12 +2078,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("round_down_to_precision", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.round_down_to_precision[...] must have a value.");
+                attribute.echoError("The tag ElementTag.round_down_to_precision[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
@@ -2099,12 +2099,12 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("round_up_to_precision", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ElementTag.round_up_to_precision[...] must have a value.");
+                attribute.echoError("The tag ElementTag.round_up_to_precision[...] must have a value.");
                 return null;
             }
             ElementTag ele = (ElementTag) object;
             if (!ele.isDouble()) {
-                Debug.echoError("Element '" + ele + "' is not a valid decimal number!");
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
@@ -2172,7 +2172,7 @@ public class ElementTag implements ObjectTag {
                 return new ElementTag(encoded);
             }
             catch (Exception e) {
-                Debug.echoError(e);
+                attribute.echoError(e);
                 return null;
             }
         });
@@ -2190,7 +2190,7 @@ public class ElementTag implements ObjectTag {
                 return new ElementTag(decoded);
             }
             catch (Exception e) {
-                Debug.echoError(e);
+                attribute.echoError(e);
                 return null;
             }
         });

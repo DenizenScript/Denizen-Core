@@ -305,6 +305,18 @@ public class Attribute {
         return 0;
     }
 
+    public void echoError(Throwable ex) {
+        if (!hasAlternative()) {
+            Debug.echoError(ex);
+        }
+    }
+
+    public void echoError(String message) {
+        if (!hasAlternative()) {
+            Debug.echoError(message);
+        }
+    }
+
     public String getAttribute(int num) {
         num += fulfilled - 1;
         if (num < 0 || num >= attributes.length) {
