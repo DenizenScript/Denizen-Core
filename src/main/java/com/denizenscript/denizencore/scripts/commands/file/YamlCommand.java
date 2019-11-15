@@ -682,16 +682,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             return;
         }
 
-        // YAML tag requires name context and type context.
-        if ((!event.hasNameContext() || !(event.hasTypeContext() || attribute.getAttribute(2).equalsIgnoreCase("to_json")))
-                && !attribute.hasAlternative()) {
-            Debug.echoError("YAML tag '" + event.raw_tag + "' is missing required context. Tag replacement aborted.");
-            return;
-        }
-
-        // Set id (name context) and path (type context)
-        String id = event.getNameContext().toUpperCase();
-        String path = event.getTypeContext();
+        String id = attribute.getContext(1).toUpperCase();
 
         // Check if there is a yaml file loaded with the specified id
         if (!yamls.containsKey(id)) {
@@ -716,8 +707,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns true if the file has the specified path.
         // Otherwise, returns false.
         // -->
-        if (attribute.startsWith("contains")) {
-            event.setReplaced(new ElementTag(getYaml(id).contains(path))
+        if (attribute.startsWith("contains") && attribute.hasContext(1)) {
+            event.setReplaced(new ElementTag(getYaml(id).contains(attribute.getContext(1)))
                     .getAttribute(attribute.fulfill(1)));
             return;
         }
@@ -728,8 +719,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns true if the specified path results in a list.
         // -->
-        if (attribute.startsWith("is_list")) {
-            event.setReplaced(new ElementTag(getYaml(id).isList(path))
+        if (attribute.startsWith("is_list") && attribute.hasContext(1)) {
+            event.setReplaced(new ElementTag(getYaml(id).isList(attribute.getContext(1)))
                     .getAttribute(attribute.fulfill(1)));
             return;
         }
@@ -741,11 +732,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns the value of the key at the path.
         // If the key is a list, returns a ListTag instead.
         // -->
-        if (attribute.startsWith("read")) {
+        if (attribute.startsWith("read") && attribute.hasContext(1)) {
             attribute.fulfill(1);
 
-            if (getYaml(id).isList(path)) {
-                List<String> value = getYaml(id).getStringList(path);
+            if (getYaml(id).isList(attribute.getContext(1))) {
+                List<String> value = getYaml(id).getStringList(attribute.getContext(1));
                 if (value == null) {
                     // If value is null, the key at the specified path didn't exist.
                     return;
@@ -756,7 +747,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 }
             }
             else {
-                String value = getYaml(id).getString(path);
+                String value = getYaml(id).getString(attribute.getContext(1));
                 if (value == null) {
                     // If value is null, the key at the specified path didn't exist.
                     return;
@@ -774,8 +765,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns a ListTag of all the keys at the path and all subpaths.
         // -->
-        if (attribute.startsWith("list_deep_keys")) {
+        if (attribute.startsWith("list_deep_keys") && attribute.hasContext(1)) {
             Set<StringHolder> keys;
+            String path = attribute.getContext(1);
             if (path != null && path.length() > 0) {
                 YamlConfiguration section = getYaml(id).getConfigurationSection(path);
                 if (section == null) {
@@ -802,8 +794,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns a ListTag of all the keys at the path.
         // -->
-        if (attribute.startsWith("list_keys")) {
+        if (attribute.startsWith("list_keys") && attribute.hasContext(1)) {
             Set<StringHolder> keys;
+            String path = attribute.getContext(1);
             if (path != null && path.length() > 0) {
                 YamlConfiguration section = getYaml(id).getConfigurationSection(path);
                 if (section == null) {
