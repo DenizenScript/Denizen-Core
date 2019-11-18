@@ -733,7 +733,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // If the key is a list, returns a ListTag instead.
         // -->
         if (attribute.startsWith("read") && attribute.hasContext(1)) {
-            attribute.fulfill(1);
 
             if (getYaml(id).isList(attribute.getContext(1))) {
                 List<String> value = getYaml(id).getStringList(attribute.getContext(1));
@@ -742,7 +741,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 else {
-                    event.setReplaced(new ListTag(value).getAttribute(attribute));
+                    event.setReplaced(new ListTag(value).getAttribute(attribute.fulfill(1)));
                     return;
                 }
             }
@@ -753,7 +752,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 else {
-                    event.setReplaced(new ElementTag(value).getAttribute(attribute));
+                    event.setReplaced(new ElementTag(value).getAttribute(attribute.fulfill(1)));
                     return;
                 }
             }
