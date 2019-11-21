@@ -10,9 +10,9 @@ import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 public abstract class TagContext implements Debuggable {
     public boolean instant;
     public boolean debug;
-    public final ScriptEntry entry;
-    public final ScriptTag script;
-    public final DefinitionProvider definitionProvider;
+    public ScriptEntry entry;
+    public ScriptTag script;
+    public DefinitionProvider definitionProvider;
 
     @Override
     public boolean shouldDebug() {
