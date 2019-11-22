@@ -86,6 +86,9 @@ public class Deprecations {
     // Added on 2019/10/13
     public static Warning scriptReloadEventNoUnderscore = new SlowWarning("In the 'on script reload' event, 'had_error' should be used instead of 'haderror'.");
 
+    // Added on 2019/11/22
+    public static Warning serverPluginNamesTag = new SlowWarning("'server.list_plugin_names' is deprecated: use 'server.list_plugins'");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

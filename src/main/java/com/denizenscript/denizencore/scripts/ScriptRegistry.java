@@ -13,15 +13,11 @@ import java.util.*;
 public class ScriptRegistry {
 
     // Currently loaded 'script-containers'
-    private static Map<String, Object> scriptContainers = new HashMap<>();
-    private static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<>();
+    public static Map<String, ScriptContainer> scriptContainers = new HashMap<>();
+    public static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<>();
 
     public static void _registerType(String typeName, Class<? extends ScriptContainer> scriptContainerClass) {
         scriptContainerTypes.put(typeName.toUpperCase(), scriptContainerClass);
-    }
-
-    public static Set<String> _getScriptNames() {
-        return scriptContainers.keySet();
     }
 
     public static void _registerCoreTypes() {
@@ -40,7 +36,7 @@ public class ScriptRegistry {
         if (!scriptContainers.containsKey(id.toUpperCase())) {
             return false;
         }
-        ScriptContainer script = (ScriptContainer) scriptContainers.get(id.toUpperCase());
+        ScriptContainer script = scriptContainers.get(id.toUpperCase());
         String type = null;
         for (Map.Entry<String, Class<? extends ScriptContainer>> entry : scriptContainerTypes.entrySet()) {
             if (entry.getValue() == scriptContainerType) {
@@ -81,7 +77,7 @@ public class ScriptRegistry {
             Class typeClass = scriptContainerTypes.get(type.toUpperCase());
             Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
             try {
-                scriptContainers.put(scriptName, typeClass.getConstructor(YamlConfiguration.class, String.class)
+                scriptContainers.put(scriptName, (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
                         .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
             }
             catch (Exception e) {

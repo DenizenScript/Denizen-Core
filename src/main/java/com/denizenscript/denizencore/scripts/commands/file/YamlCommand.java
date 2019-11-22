@@ -69,7 +69,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to load a YAML file from disk.
-    // - yaml load:myfile.yml id:myfile
+    // - ~yaml load:myfile.yml id:myfile
     //
     // @Usage
     // Use to modify a YAML file similarly to a flag.
@@ -77,7 +77,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to save a YAML file to disk.
-    // - yaml savefile:myfile.yml id:myfile
+    // - ~yaml savefile:myfile.yml id:myfile
     //
     // @Usage
     // Use to unload a YAML file from memory.
