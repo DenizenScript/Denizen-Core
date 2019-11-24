@@ -520,18 +520,54 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     String valueStr = value.identify();
 
                     switch (yaml_action) {
-                        case INCREASE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "0")) + ArgumentHelper.getDoubleFrom(valueStr)));
+                        case INCREASE: {
+                            String originalVal = Get(yaml, index, keyStr, "0");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            if (!ArgumentHelper.matchesDouble(valueStr)) {
+                                Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
+                                return;
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) + Double.parseDouble(valueStr)));
                             break;
-                        case DECREASE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "0")) - ArgumentHelper.getDoubleFrom(valueStr)));
+                        }
+                        case DECREASE: {
+                            String originalVal = Get(yaml, index, keyStr, "0");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            if (!ArgumentHelper.matchesDouble(valueStr)) {
+                                Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
+                                return;
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) - Double.parseDouble(valueStr)));
                             break;
-                        case MULTIPLY:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "1")) * ArgumentHelper.getDoubleFrom(valueStr)));
+                        }
+                        case MULTIPLY: {
+                            String originalVal = Get(yaml, index, keyStr, "1");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            if (!ArgumentHelper.matchesDouble(valueStr)) {
+                                Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
+                                return;
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) * Double.parseDouble(valueStr)));
                             break;
-                        case DIVIDE:
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(ArgumentHelper.getDoubleFrom(Get(yaml, index, keyStr, "1")) / ArgumentHelper.getDoubleFrom(valueStr)));
+                        }
+                        case DIVIDE: {
+                            String originalVal = Get(yaml, index, keyStr, "1");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            if (!ArgumentHelper.matchesDouble(valueStr)) {
+                                Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
+                                return;
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) / Double.parseDouble(valueStr)));
                             break;
+                        }
                         case DELETE:
                             yaml.set(keyStr, null);
                             break;

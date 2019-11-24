@@ -16,8 +16,10 @@ public class DataActionHelper {
         int bracketIndex = toReturn.key.indexOf('[');
         if (bracketIndex >= 0) {
             String index = toReturn.key.substring(bracketIndex + 1, toReturn.key.lastIndexOf(']'));
-            toReturn.key = toReturn.key.substring(bracketIndex);
-            toReturn.index = ArgumentHelper.getIntegerFrom(index);
+            if (ArgumentHelper.matchesInteger(index)) {
+                toReturn.key = toReturn.key.substring(bracketIndex);
+                toReturn.index = Integer.parseInt(index);
+            }
         }
         if (split.size() == 1) {
             toReturn.type = DataActionType.AUTO_SET;

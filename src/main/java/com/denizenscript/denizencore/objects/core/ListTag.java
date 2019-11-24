@@ -991,7 +991,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (indices.size() > 1) {
                 ListTag results = new ListTag();
                 for (String index : indices) {
-                    int ind = ArgumentHelper.getIntegerFrom(index);
+                    int ind = Integer.parseInt(index);
                     if (ind > 0 && ind <= list.size()) {
                         results.add(list.get(ind - 1));
                     }
@@ -999,7 +999,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 return results;
             }
             if (indices.size() > 0) {
-                int index = ArgumentHelper.getIntegerFrom(indices.get(0)) - 1;
+                int index = Integer.parseInt(indices.get(0)) - 1;
                 if (index >= list.size()) {
                     if (!attribute.hasAlternative()) {
                         Debug.echoError("Invalid list.get index.");
@@ -1171,13 +1171,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @attribute <ListTag.sum>
         // @returns ElementTag(Number)
         // @description
-        // returns the sum of all numbers in the list.
+        // returns the sum of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("sum", (attribute, object) -> {
             ListTag list = object;
             double sum = 0;
             for (String entry : list) {
-                sum += ArgumentHelper.getDoubleFrom(entry);
+                if (ArgumentHelper.matchesDouble(entry)) {
+                    sum += Double.parseDouble(entry);
+                }
             }
             return new ElementTag(sum);
         });
@@ -1186,7 +1188,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @attribute <ListTag.average>
         // @returns ElementTag(Number)
         // @description
-        // returns the average of all numbers in the list.
+        // returns the average of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("average", (attribute, object) -> {
             ListTag list = object;
@@ -1195,7 +1197,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             double sum = 0;
             for (String entry : list) {
-                sum += ArgumentHelper.getDoubleFrom(entry);
+                if (ArgumentHelper.matchesDouble(entry)) {
+                    sum += Double.parseDouble(entry);
+                }
             }
             return new ElementTag(sum / list.size());
         });
@@ -1379,6 +1383,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a copy of the list, sorted such that the lower numbers appear first, and the higher numbers appear last.
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
+        // Non-numerical input is considered an error, and the result is not guaranteed.
         // -->
         registerTag("sort_by_number", (attribute, object) -> {
             ListTag newlist = new ListTag(object);
@@ -1388,17 +1393,23 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     public int compare(ObjectTag o1, ObjectTag o2) {
                         ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
                         ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
-                        double r1 = ArgumentHelper.getDoubleFrom(or1.toString());
-                        double r2 = ArgumentHelper.getDoubleFrom(or2.toString());
-                        double value = r1 - r2;
-                        if (value == 0) {
+                        try {
+                            double r1 = Double.parseDouble(or1.toString());
+                            double r2 = Double.parseDouble(or2.toString());
+                            double value = r1 - r2;
+                            if (value == 0) {
+                                return 0;
+                            }
+                            else if (value > 0) {
+                                return 1;
+                            }
+                            else {
+                                return -1;
+                            }
+                        }
+                        catch (NumberFormatException ex) {
+                            attribute.echoError("Invalid non-numerical input to sort_by_number tag: " + or1.toString() + ", " + or2.toString());
                             return 0;
-                        }
-                        else if (value > 0) {
-                            return 1;
-                        }
-                        else {
-                            return -1;
                         }
                     }
                 });
@@ -1873,7 +1884,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             Debug.log("ListTag alternate attribute " + attrLow);
         }
         if (ArgumentHelper.matchesInteger(attrLow)) {
-            int index = ArgumentHelper.getIntegerFrom(attrLow);
+            int index = Integer.parseInt(attrLow);
             if (index != 0) {
                 attribute.fulfill(1);
                 if (index < 1 || index > size()) {

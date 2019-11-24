@@ -276,9 +276,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // The default priority is 0.
     // -->
     public void sort() {
-        for (ScriptPath path : eventPaths) {
-            String gotten = path.switches.get("priority");
-            path.priority = gotten == null ? 0 : ArgumentHelper.getIntegerFrom(gotten);
+        try {
+            for (ScriptPath path : eventPaths) {
+                String gotten = path.switches.get("priority");
+                path.priority = gotten == null ? 0 : Integer.parseInt(gotten);
+            }
+        }
+        catch (NumberFormatException ex) {
+            Debug.echoError("Failed to sort events: not-a-number priority value! " + ex.getMessage());
         }
         Collections.sort(eventPaths, new Comparator<ScriptPath>() {
             @Override

@@ -177,57 +177,6 @@ public class ArgumentHelper {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
-    public static boolean getBooleanFrom(String arg) {
-        return Boolean.valueOf(getStringFrom(arg));
-    }
-
-    public static double getDoubleFrom(String arg) {
-        try {
-            return Double.valueOf(getStringFrom(arg));
-        }
-        catch (NumberFormatException e) {
-            return 0D;
-        }
-    }
-
-    public static float getFloatFrom(String arg) {
-        try {
-            return Float.valueOf(getStringFrom(arg));
-        }
-        catch (NumberFormatException e) {
-            return 0f;
-        }
-    }
-
-    public static int getIntegerFrom(String arg) {
-        try {
-            return Double.valueOf(getStringFrom(arg)).intValue();
-        }
-        catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
-    public static long getLongFrom(String arg) {
-        try {
-            return Long.valueOf(arg);
-        }
-        catch (NumberFormatException ex) {
-            try {
-                return Double.valueOf(getStringFrom(arg)).longValue();
-            }
-            catch (NumberFormatException e) {
-                return 0;
-            }
-        }
-    }
-
-
-    public static String getStringFrom(String arg) {
-        String[] parts = arg.split(":", 2);
-        return parts.length >= 2 ? parts[1] : arg;
-    }
-
     public static boolean matchesDouble(String arg) {
         return doublePrimitive.matcher(arg).matches();
     }

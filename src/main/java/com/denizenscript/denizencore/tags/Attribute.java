@@ -276,10 +276,25 @@ public class Attribute {
         this.hadAlternative = hadAlternative;
     }
 
+    public long getLongContext(int attribute) {
+        try {
+            if (hasContext(attribute)) {
+                return Long.parseLong(getContext(attribute));
+            }
+        }
+        catch (Exception ex) {
+            if (!hasAlternative()) {
+                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+            }
+        }
+
+        return 0;
+    }
+
     public int getIntContext(int attribute) {
         try {
             if (hasContext(attribute)) {
-                return Integer.valueOf(getContext(attribute));
+                return Integer.parseInt(getContext(attribute));
             }
         }
         catch (Exception ex) {
@@ -294,7 +309,7 @@ public class Attribute {
     public double getDoubleContext(int attribute) {
         try {
             if (hasContext(attribute)) {
-                return Double.valueOf(getContext(attribute));
+                return Double.parseDouble(getContext(attribute));
             }
         }
         catch (NumberFormatException ex) {

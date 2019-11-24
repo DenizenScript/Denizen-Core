@@ -43,7 +43,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         String time = path.rawEventArgAt(2);
         long seconds = DenizenCore.serverTimeMillis / 1000;
         String countString = path.switches.get("every");
-        int count = countString == null ? 1 : ArgumentHelper.getIntegerFrom(countString);
+        int count = countString == null ? 1 : Integer.parseInt(countString);
         if (time.equals("secondly")) {
             return seconds % count == 0;
         }

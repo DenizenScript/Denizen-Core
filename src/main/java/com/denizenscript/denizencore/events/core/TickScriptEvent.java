@@ -63,7 +63,7 @@ public class TickScriptEvent extends ScriptEvent {
     @Override
     public boolean matches(ScriptPath path) {
         String countString = path.switches.get("every");
-        int count = countString == null ? 1 : ArgumentHelper.getIntegerFrom(countString);
+        int count = countString == null ? 1 : Integer.parseInt(countString);
         return ticks % count == 0;
     }
 

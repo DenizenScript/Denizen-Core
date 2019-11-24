@@ -58,8 +58,8 @@ public class UtilTagBase {
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
                     if (ArgumentHelper.matchesInteger(stc) && ArgumentHelper.matchesInteger(attribute.getContext(1))) {
-                        int min = ArgumentHelper.getIntegerFrom(stc);
-                        int max = ArgumentHelper.getIntegerFrom(attribute.getContext(1));
+                        int min = Integer.parseInt(stc);
+                        int max = attribute.getIntContext(1);
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -88,8 +88,8 @@ public class UtilTagBase {
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
                     if (ArgumentHelper.matchesDouble(stc) && ArgumentHelper.matchesDouble(attribute.getContext(1))) {
-                        double min = ArgumentHelper.getDoubleFrom(stc);
-                        double max = ArgumentHelper.getDoubleFrom(attribute.getContext(1));
+                        double min = Double.parseDouble(stc);
+                        double max = Double.parseDouble(attribute.getContext(1));
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
