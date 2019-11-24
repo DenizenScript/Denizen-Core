@@ -83,6 +83,15 @@ public class YamlConfiguration {
         return map;
     }
 
+    public void forceLoweredRootKey(String keyName) {
+        StringHolder key = new StringHolder(CoreUtilities.toLowerCase(keyName));
+        Object obj = contents.get(key);
+        if (obj != null) {
+            contents.remove(key);
+            contents.put(key, obj);
+        }
+    }
+
     public static List<String> patchListNonsense(List<Object> objs) {
         List<String> list = new ArrayList<>();
         for (Object o : objs) {

@@ -445,7 +445,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
 
         registerTag("to_json", (attribute, object) -> {
             JSONObject jsobj = new JSONObject(YamlConfiguration.reverse(object.container.getContents().getMap(), true));
-            jsobj.remove("TYPE");
+            jsobj.remove("type");
             return new ElementTag(jsobj.toString());
         });
 

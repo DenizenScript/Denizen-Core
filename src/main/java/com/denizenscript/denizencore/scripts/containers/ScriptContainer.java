@@ -57,8 +57,13 @@ public class ScriptContainer implements Debuggable {
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {
             Debug.echoError("Null configuration section while generating a ScriptContainer?!");
+            throw new RuntimeException("Null configuration section while generating a ScriptContainer");
         }
         contents = configurationSection;
+        configurationSection.forceLoweredRootKey("type");
+        configurationSection.forceLoweredRootKey("debug");
+        configurationSection.forceLoweredRootKey("script");
+        configurationSection.forceLoweredRootKey("speed");
         this.name = scriptContainerName.toUpperCase();
     }
 
@@ -177,8 +182,8 @@ public class ScriptContainer implements Debuggable {
      * @return the type of container
      */
     public String getContainerType() {
-        return contents.contains("TYPE")
-                ? contents.getString("TYPE").toUpperCase()
+        return contents.contains("type")
+                ? contents.getString("type").toUpperCase()
                 : null;
     }
 
