@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -48,6 +49,8 @@ public class SyncCommand extends BracedCommand implements Holdable {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
+
+        Debug.echoError("WARNING: THE 'SYNC' COMMAND SHOULD **NEVER** BE USED.");
 
         ScriptQueue residingQueue = scriptEntry.getResidingQueue();
 

@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class AsyncCommand extends BracedCommand implements Holdable {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
+
+        Debug.echoError("WARNING: THE 'ASYNC' COMMAND SHOULD **NEVER** BE USED.");
 
         InstantQueue queue = new InstantQueue("ASYNC_COMMAND");
         queue.run_async = true;
