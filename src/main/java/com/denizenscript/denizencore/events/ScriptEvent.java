@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;

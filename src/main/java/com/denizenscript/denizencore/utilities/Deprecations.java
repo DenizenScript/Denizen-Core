@@ -86,8 +86,11 @@ public class Deprecations {
     // Added on 2019/10/13
     public static Warning scriptReloadEventNoUnderscore = new SlowWarning("In the 'on script reload' event, 'had_error' should be used instead of 'haderror'.");
 
-    // Added on 2019/11/22
+    // In Bukkit impl, Added on 2019/11/22
     public static Warning serverPluginNamesTag = new SlowWarning("'server.list_plugin_names' is deprecated: use 'server.list_plugins'");
+
+    // In Bukkit impl, Added on 2019/11/25
+    public static Warning locationBiomeFormattedTag = new SlowWarning("'location.biome.formatted' is deprecated: use 'location.biome.name' (uses BiomeTag.name)");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
