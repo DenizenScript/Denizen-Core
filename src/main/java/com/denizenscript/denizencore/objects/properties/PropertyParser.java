@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.objects.properties;
 
 import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
-import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.ObjectTag;
 
@@ -36,12 +36,17 @@ public class PropertyParser {
         public Map<String, String> propertyNamesByTag = new HashMap<>();
     }
 
+    @FunctionalInterface
+    public interface PropertyTag<T extends Property> {
+        ObjectTag run(Attribute attribute, T prop);
+    }
+
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
-    public static <T extends ObjectTag> void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... variants) {
+    public static <P extends Property> void registerTag(String name, PropertyTag<P> runnable, String... variants) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
         final Class propertyClass = PropertyParser.currentlyRegisteringPropertyClass;
-        ObjectTagProcessor<T> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
+        ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
         tagProcessor.registerTag(name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
@@ -50,7 +55,7 @@ public class PropertyParser {
                 }
                 return null;
             }
-            return runnable.run(attribute, object);
+            return runnable.run(attribute, (P) prop);
         }, variants);
     }
 
