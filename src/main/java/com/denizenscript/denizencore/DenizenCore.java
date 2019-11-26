@@ -126,6 +126,7 @@ public class DenizenCore {
     public static void reloadScripts() {
         preloadScripts();
         postLoadScripts();
+        Debug.log("Scripts reloaded.");
     }
 
     public static final List<Schedulable> scheduled = new ArrayList<>();

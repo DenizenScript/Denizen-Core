@@ -43,7 +43,9 @@ public class OldEventManager {
             // Build a Map of scripts keyed by 'world events name'.
 
             // Loop through each world script
-            Debug.log("Scanning " + world_scripts.size() + " world scripts...");
+            if (Debug.showLoading) {
+                Debug.log("Scanning " + world_scripts.size() + " world scripts...");
+            }
             for (WorldScriptContainer script : world_scripts.values()) {
                 if (script == null) {
                     Debug.echoError("Null world script?!");

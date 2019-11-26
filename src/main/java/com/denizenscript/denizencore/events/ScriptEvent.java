@@ -158,7 +158,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public static void reload() {
-        Debug.log("Reloading script events...");
+        if (Debug.showLoading) {
+            Debug.log("Reloading script events...");
+        }
         for (ScriptContainer container : worldContainers) {
             if (!container.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
                 continue;
@@ -198,7 +200,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     if (event.couldMatch(path)) {
                         event.eventPaths.add(path);
                         path.matches++;
-                        Debug.log("Event match, " + event.getName() + " matched for '" + path + "'!");
+                        if (Debug.showLoading) {
+                            Debug.log("Event match, " + event.getName() + " matched for '" + path + "'!");
+                        }
                         matched = true;
                     }
                 }

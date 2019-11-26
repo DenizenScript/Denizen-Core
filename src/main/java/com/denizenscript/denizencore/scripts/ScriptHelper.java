@@ -164,20 +164,15 @@ public class ScriptHelper {
 
         scriptSources.clear();
         try {
-            File file = null;
-            file = DenizenCore.getImplementation().getScriptFolder();
-
+            File file = DenizenCore.getImplementation().getScriptFolder();
             // Check if the directory exists
             if (!file.exists()) {
                 Debug.echoError("No script folder found, please create one.");
                 hadError = true;
                 return "";
             }
-
-
             // Get files using script directory
             List<File> files = CoreUtilities.listDScriptFiles(file);
-
             if (files.size() > 0) {
                 StringBuilder sb = new StringBuilder();
                 List<String> scriptNames = new ArrayList<>();
@@ -186,8 +181,9 @@ public class ScriptHelper {
 
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
-                    Debug.log("Processing '" + fileName + "'... ");
-
+                    if (Debug.showLoading) {
+                        Debug.log("Processing '" + fileName + "'... ");
+                    }
                     try {
                         yaml = loadConfig(f.getAbsolutePath(), new FileInputStream(f));
                         String saved = yaml != null ? yaml.saveToString(false) : null;
@@ -199,7 +195,6 @@ public class ScriptHelper {
                             Debug.echoError("Woah! Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
                             hadError = true;
                         }
-
                     }
                     catch (Exception e) {
                         Debug.echoError("Woah! Error parsing " + fileName + "!");
@@ -207,15 +202,15 @@ public class ScriptHelper {
                         Debug.echoError(e);
                     }
                 }
-
-                Debug.echoApproval("All scripts loaded!");
+                if (Debug.showLoading) {
+                    Debug.echoApproval("All scripts loaded!");
+                }
                 return sb.toString();
             }
             else {
                 Debug.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
                 hadError = true;
             }
-
         }
         catch (Exception e) {
             Debug.echoError("Woah! No script folder found in /plugins/Denizen/scripts/");

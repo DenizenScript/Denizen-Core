@@ -75,7 +75,9 @@ public class ScriptRegistry {
             }
             // Instantiate a new scriptContainer of specified type.
             Class typeClass = scriptContainerTypes.get(type.toUpperCase());
-            Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
+            if (Debug.showLoading) {
+                Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
+            }
             try {
                 scriptContainers.put(scriptName, (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
                         .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
