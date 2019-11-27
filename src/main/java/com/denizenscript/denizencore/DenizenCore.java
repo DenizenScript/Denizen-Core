@@ -109,9 +109,6 @@ public class DenizenCore {
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
-            ReloadScriptsScriptEvent.instance.reset();
-            ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
-            ReloadScriptsScriptEvent.instance.fire();
 
         }
         catch (Exception ex) {
@@ -126,6 +123,9 @@ public class DenizenCore {
     public static void reloadScripts() {
         preloadScripts();
         postLoadScripts();
+        ReloadScriptsScriptEvent.instance.reset();
+        ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
+        ReloadScriptsScriptEvent.instance.fire();
         Debug.log("Scripts reloaded.");
     }
 
