@@ -51,8 +51,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to download the google home page.
-    // - ~webget "https://google.com" save:google
-    // - narrate "<entry[google].result>"
+    // - ~webget https://google.com save:google
+    // - narrate <entry[google].result>
     //
     // -->
 

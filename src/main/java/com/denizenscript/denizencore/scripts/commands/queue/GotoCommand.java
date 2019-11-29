@@ -28,7 +28,6 @@ public class GotoCommand extends AbstractCommand {
     // </code>
     //
     // @Tags
-    //
     // None
     //
     // @Usage
