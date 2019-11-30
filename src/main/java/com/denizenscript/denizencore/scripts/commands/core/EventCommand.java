@@ -25,7 +25,7 @@ public class EventCommand extends AbstractCommand {
     // This command will trigger a world event (an event within a 'world' type script) exactly the same
     // as if an actual serverside event had caused it.
     // You can specify as many event names as you want in the list, they will all be fired. It will also automatically
-    // fire a duplicate of each event name with object identifiers (eg 'i@', see <@link language dobject>) removed.
+    // fire a duplicate of each event name with object identifiers (eg 'i@', see <@link language objecttag>) removed.
     // The script's linked player and NPC will automatically be sent through to the event.
     // To add context information (tags like <context.location>) to the event, simply specify all context values in a list.
     // Note that there are some inherent limitations... EG, you can't directly add a list to the context currently.
