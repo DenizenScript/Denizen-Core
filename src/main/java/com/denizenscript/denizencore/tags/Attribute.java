@@ -268,6 +268,48 @@ public class Attribute {
 
     private boolean hadAlternative = false;
 
+    // <--[language]
+    // @name Tag Fallbacks
+    // @group Tag System
+    // @description
+    // Tag fallbacks (AKA "tag alternatives") are a system designed to allow scripters to automatically handle tag errors.
+    //
+    // A tag without a fallback might look like "<player.name>".
+    // This tag works fine as long as there's a linked player, but what if a player isn't always available?
+    // Normally, this situation would display an error in the console debug logs, and return plaintext "player.name" in the script.
+    // A fallback can help us handle the problem more gracefully.
+    // That same tag with a fallback would look like "<player.name||Steve>".
+    // Now, when there isn't a player available, there will not be an error, and the tag will simply return "Steve".
+    //
+    // This format is the same for basically all tags. "<main.tag.here||Fallback here>".
+    // For another example, "<player.flag[myflag]||0>" returns either the value of the flag, or "0" if the flag is not present (or if there's no player).
+    //
+    // This is particularly useful for things like checking whether an object exists / is valid.
+    // What if we want to check if there even is a linked player? We don't have a "<has_player>" tag to do that, so what can we do?
+    // <code>
+    // - if <player||null> == null:
+    // </code>
+    // The above example demonstrates using a fallback to check if a player is valid.
+    // The if block will run only if there is not a player valid (you might, for example, place the "stop" command inside).
+    //
+    // We use the word "null" in the above example. This is a common programming term that means "no object is present".
+    // In this case, that term isn't actually a functionality of Denizen, it's just a word we choose for clarity.
+    // You could just as easily do "- if <player||nothing> == nothing:", or for that matter "- if <player||cheese> == cheese:".
+    // A player object takes the form "p@uuid", so it will therefore never exactly match any simple word, so there's no coincidental match edge-case to worry about.
+    // Note that this won't work so perfect for things like a user input or fully dynamic value,
+    // so in those cases you may want to use a more specialized check. For example, with flags, the "has_flag" tag is available for this purpose.
+    //
+    // Fallbacks can be tags themselves. So, for example, if we want either a custom flag-based display name, or if not available, the player's base name,
+    // we can do: "<player.flag[display_name]||<player.name>>".
+    // You can as well chain these, though that starts to get ugly pretty fast: "<player.flag[good_name]||<player.flag[bad_name]||<player.name>>>".
+    //
+    // Note that fallbacks will *hide errors*. Generally, the only errors you should ever hide are ones you're expecting that are fine.
+    // Don't use a fallback on a "<player.name>" tag, for example, if there should always be a player present when the script runs.
+    // That tag should only ever have a fallback when the script is meant to still work without a player attached.
+    // If you carelessly apply fallbacks to all tags, you might end up not realizing there's a problem in your script until it's affecting real players.
+    // You want to solve errors in testing, not ten months later when a player mentions to you "that shop NPC let me buy things even when I had $0"!
+    //
+    // -->
     public boolean hasAlternative() {
         return hadAlternative;
     }
