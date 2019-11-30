@@ -97,6 +97,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/11/30
     public static Warning serverListMaterialNames = new SlowWarning("The tag 'server.list_materials' is deprecated: use '<server.list_material_types.parse[name]>' to get a matching result.");
+    public static Warning serverListBiomeNames = new SlowWarning("The tag 'server.list_biomes' is deprecated: use '<server.list_biome_types.parse[name]>' to get a matching result.");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
