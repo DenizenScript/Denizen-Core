@@ -95,6 +95,9 @@ public class Deprecations {
     // In Bukkit impl, Added on 2019/11/26
     public static Warning nbtCommand = new SlowWarning("The NBT command is deprecated: adjust the 'nbt' mechanism instead.");
 
+    // In Bukkit impl, Added on 2019/11/30
+    public static Warning serverListMaterialNames = new SlowWarning("The tag 'server.list_materials' is deprecated: use '<server.list_material_types.parse[name]>' to get a matching result.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
