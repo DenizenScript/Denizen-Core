@@ -11,7 +11,7 @@ public class ProcedureScriptContainer extends ScriptContainer {
     // @description
     // Procedure script containers are used to define a script that can be ran through a tag.
     //
-    // Generally called via the 'proc' tag.
+    // Generally called via <@link tag proc> or <@link tag proc.context>.
     //
     // The only required key is 'script:'.
     //
@@ -26,7 +26,7 @@ public class ProcedureScriptContainer extends ScriptContainer {
     // If you were to make a proc script 'spawn_entity' that actually spawns an entity into the world,
     // you would likely end up with a *lot* of unintentional entity spawns.
     // Some tags will be read multiple times when theoretically ran once,
-    // in some circumstances a tag read might even be based on user input! (Particularly if you ever make use of the 'parse:' tag,
+    // in some circumstances a tag read might even be based on user input! (Particularly if you ever make use of the '.parsed' tag,
     // or the list.parse/filter/sort_by_number tags).
     // Imagine if for example, a tag can be read when users input a specific custom command,
     // and a clever user finds out they can type "/testcommand 32 <proc[spawn_entity].context[creeper]>"
@@ -38,6 +38,9 @@ public class ProcedureScriptContainer extends ScriptContainer {
     // Proc_Script_Name:
     //
     //   type: procedure
+    //
+    //   # Optionally specify definition names to use with the 'context' input of the proc tag.
+    //   definitions: def|names|here
     //
     //   script:
     //

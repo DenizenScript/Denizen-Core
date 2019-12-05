@@ -38,6 +38,8 @@ public class LogCommand extends AbstractCommand {
     // Remember that the file location is inside the server's primary folder. You most likely want to prefix
     // file names with a folder name, For example: 'file:logs/security.log'
     //
+    // If the file or folder path you input do not already exist, they will be automatically created.
+    //
     // Warning: Remember that file operations are dangerous! A typo in the filename could ruin your server.
     // It's recommended you use this command minimally.
     //
