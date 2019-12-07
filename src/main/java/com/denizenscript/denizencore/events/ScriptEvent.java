@@ -504,6 +504,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // The asterisk is a generic wildcard, it means any text at all will match. So an asterisk followed by '_log' means
     // any material at all that has a name ending with '_log', including 'birch_log' and the rest.
     //
+    // Note that you can also use multiple wildcards at once, like "on player breaks block with:my_*_script_*:"
+    // That example will work for item scripts named "my_item_script_1" and "my_first_script_of_items" or any similar name.
+    // Note also that wildcards still match for blanks, so "my_item_script_" would still work for that example.
+    //
     // You can also specify lists. For example, if you want an event to work with certain tool types,
     // the 'on player breaks block:' event supports a switch named 'with', like 'on player breaks block with:iron_pickaxe:'
     // So lets match multiple tools for our event...
