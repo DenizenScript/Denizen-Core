@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -1943,6 +1944,26 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             return new ElementTag(Math.tan(ele.asDouble()));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.factorial>
+        // @returns ElementTag(Number)
+        // @group math
+        // @description
+        // Returns the factorial of the element. This should only be used for small values (generally: less than 20), and will become ridiculous/unusable at larger values.
+        // -->
+        registerTag("factorial", (attribute, ele) -> {
+            if (!ele.isInt()) {
+                attribute.echoError("Element '" + ele + "' is not a valid number!");
+                return null;
+            }
+            int count = ele.asInt();
+            BigInteger result = BigInteger.ONE;
+            for (int i = 2; i <= count; i++) {
+                result = result.multiply(BigInteger.valueOf(i));
+            }
+            return new ElementTag(result.toString());
         });
 
         // <--[tag]
