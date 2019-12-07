@@ -1520,8 +1520,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the absolute value of the element.
         // -->
-        registerTag("abs", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("abs", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1536,8 +1535,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the higher number: this element or the specified one.
         // -->
-        registerTag("max", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("max", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1552,8 +1550,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the lower number: this element or the specified one.
         // -->
-        registerTag("min", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("min", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1568,8 +1565,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element plus a number, using integer math.
         // -->
-        registerTag("add_int", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("add_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1584,8 +1580,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element divided by a number.
         // -->
-        registerTag("div_int", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("div_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1600,8 +1595,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element multiplied by a number.
         // -->
-        registerTag("mul_int", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("mul_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1616,8 +1610,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element minus a number.
         // -->
-        registerTag("sub_int", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("sub_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1762,8 +1755,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the square root of the element.
         // -->
-        registerTag("sqrt", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("sqrt", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1798,8 +1790,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the natural logarithm of the element.
         // -->
-        registerTag("ln", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("ln", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1836,8 +1827,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-sine of the element.
         // -->
-        registerTag("asin", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("asin", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1852,8 +1842,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-cosine of the element.
         // -->
-        registerTag("acos", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("acos", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1868,8 +1857,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-tangent of the element.
         // -->
-        registerTag("atan", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("atan", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1905,8 +1893,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the cosine of the element.
         // -->
-        registerTag("cos", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("cos", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1921,8 +1908,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the sine of the element.
         // -->
-        registerTag("sin", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("sin", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1937,8 +1923,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the tangent of the element.
         // -->
-        registerTag("tan", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("tan", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1973,8 +1958,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the element from radians to degrees.
         // -->
-        registerTag("to_degrees", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("to_degrees", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -1989,8 +1973,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the element from degrees to radians.
         // -->
-        registerTag("to_radians", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("to_radians", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -2005,8 +1988,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal upward.
         // -->
-        registerTag("round_up", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("round_up", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -2021,8 +2003,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal downward.
         // -->
-        registerTag("round_down", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("round_down", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
@@ -2059,8 +2040,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal.
         // -->
-        registerTag("round", (attribute, object) -> {
-            ElementTag ele = object;
+        registerTag("round", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
