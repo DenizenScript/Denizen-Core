@@ -77,7 +77,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public String[] eventArgs;
         public String[] eventArgsLower;
         public String[] rawEventArgs;
-        public int matches = 0;
+        public List<ScriptEvent> matches = new ArrayList<>();
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -199,7 +199,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 for (ScriptPath path : paths) {
                     if (event.couldMatch(path)) {
                         event.eventPaths.add(path);
-                        path.matches++;
+                        path.matches.add(event);
                         if (Debug.showLoading) {
                             Debug.log("Event match, " + event.getName() + " matched for '" + path + "'!");
                         }
@@ -217,10 +217,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
         }
         for (ScriptPath path : paths) {
-            if (path.matches > 1) {
-                Debug.log("Event " + path + " is matched to multiple ScriptEvents.");
+            if (path.matches.size() > 1) {
+                Debug.log("Event " + path + " is matched to multiple ScriptEvents: " + CoreUtilities.join(", ", path.matches));
             }
-            else if (path.matches == 0) {
+            else if (path.matches.isEmpty()) {
                 Debug.log("Event " + path + " is not matched to any ScriptEvents.");
             }
         }
@@ -482,6 +482,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return new ElementTag(getName());
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     // <--[language]

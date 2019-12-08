@@ -23,6 +23,17 @@ public class CoreUtilities {
 
     public static TagContext noDebugContext;
 
+    public static String join(String delim, List objects) {
+        StringBuilder output = new StringBuilder(objects.size() * 5);
+        for (int i = 0; i < objects.size(); i++) {
+            output.append(objects.get(i));
+            if (i + 1 < objects.size()) {
+                output.append(delim);
+            }
+        }
+        return output.toString();
+    }
+
     public static String stringifyNullPass(Object obj) {
         return obj == null ? null : obj.toString();
     }
