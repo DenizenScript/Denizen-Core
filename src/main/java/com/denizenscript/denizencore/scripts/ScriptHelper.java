@@ -36,11 +36,7 @@ public class ScriptHelper {
         ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
     }
 
-    public static YamlConfiguration _gs() {
-        return getScripts();
-    }
-
-    private static YamlConfiguration getScripts() {
+    public static YamlConfiguration getScripts() {
         if (_yamlScripts == null) {
             reloadScripts();
         }
@@ -113,9 +109,17 @@ public class ScriptHelper {
                 }
                 else {
                     String curLine = lines[lineNum].replace('\0', ' ');
-                    if (!trimmedLine.endsWith(":") && trimmedLine.startsWith("-")) {
+                    boolean endsColon = trimmedLine.endsWith(":");
+                    boolean startsDash = trimmedLine.startsWith("-");
+                    if (!endsColon && startsDash) {
                         curLine = curLine.replace(": ", "<&co> ");
                         curLine = curLine.replace("#", "<&ns>");
+                    }
+                    else if (endsColon && !startsDash) {
+                        if (curLine.contains(".")) {
+                            curLine = curLine.replace("&", "&amp").replace(".", "&dot");
+                            Debug.log("Originally " + trimmedLine + " became " + curLine);
+                        }
                     }
                     if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
                         int dashIndex = curLine.indexOf('-');

@@ -187,8 +187,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 continue;
             }
             for (StringHolder evt1 : config.getKeys(false)) {
-                String evt = evt1.str.substring(3);
-                paths.add(new ScriptPath(container, evt));
+                String evt = evt1.str.substring(3).replace("&dot", ".").replace("&amp", "&");
+                ScriptPath path = new ScriptPath(container, evt);
+                path.set = path.container.getSetFor("events." + evt1);
+                if (path.set == null) {
+                    Debug.echoError("Script path '" + path + "' is invalid.");
+                    continue;
+                }
+                paths.add(path);
             }
         }
         for (ScriptEvent event : events) {
@@ -424,9 +430,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             for (Map.Entry<String, ObjectTag> obj : context.entrySet()) {
                 Debug.echoDebug(path.container, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
             }
-        }
-        if (path.set == null) {
-            path.set = path.container.getSetFor("events.on " + path.event);
         }
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);

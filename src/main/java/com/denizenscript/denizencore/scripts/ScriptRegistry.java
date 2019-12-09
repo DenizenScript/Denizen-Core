@@ -80,7 +80,7 @@ public class ScriptRegistry {
             }
             try {
                 scriptContainers.put(scriptName, (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
-                        .newInstance(ScriptHelper._gs().getConfigurationSection(scriptName), scriptName));
+                        .newInstance(ScriptHelper.getScripts().getConfigurationSection(scriptName), scriptName));
             }
             catch (Exception e) {
                 Debug.echoError(e);
