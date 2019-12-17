@@ -473,8 +473,16 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is an integer number (a number without a decimal point).
         // -->
         registerTag("is_integer", (attribute, object) -> {
-            String element = object.element;
-            return new ElementTag(ArgumentHelper.integerPrimitive.matcher(element).matches());
+            if (!ArgumentHelper.integerPrimitive.matcher(object.element).matches()) {
+                return new ElementTag(false);
+            }
+            try {
+                object.asLong();
+                return new ElementTag(true);
+            }
+            catch (NumberFormatException ex) {
+                return new ElementTag(false);
+            }
         });
 
         // <--[tag]
@@ -485,8 +493,15 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is a valid decimal number (the decimal point is optional).
         // -->
         registerTag("is_decimal", (attribute, object) -> {
-            String element = object.element;
-            return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches());
+            if (!ArgumentHelper.doublePrimitive.matcher(object.element).matches()) {
+                return new ElementTag(false);
+            }
+            try {
+                return new ElementTag(object.asBigDecimal() != null);
+            }
+            catch (NumberFormatException ex) {
+                return new ElementTag(false);
+            }
         });
 
         // <--[tag]
