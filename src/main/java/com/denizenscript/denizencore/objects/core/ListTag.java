@@ -1793,7 +1793,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.random[<#>]>
+        // @attribute <ListTag.random[(<#>)]>
         // @returns ObjectTag
         // @description
         // Gets a random item in the list and returns it as an Element.

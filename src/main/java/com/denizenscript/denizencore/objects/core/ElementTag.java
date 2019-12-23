@@ -1266,15 +1266,21 @@ public class ElementTag implements ObjectTag {
         registerTag("replace_text", r);
 
         // <--[tag]
-        // @attribute <ElementTag.format_number>
+        // @attribute <ElementTag.format_number[(<format>)]>
         // @returns ElementTag
         // @group element manipulation
         // @description
         // Returns a number reformatted for easier reading.
         // For example: 1234567 will become 1,234,567.
+        // Optionally, specify a standard number format code to instead use that.
+        // For information on that optional input, refer to <@link url https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html>.
         // -->
         registerTag("format_number", (attribute, object) -> {
             try {
+                if (attribute.hasContext(1)) {
+                    DecimalFormat format = new DecimalFormat(attribute.getContext(1));
+                    return new ElementTag(format.format(object.asBigDecimal()));
+                }
                 int decimal = object.element.indexOf('.');
                 String shortelement;
                 String afterdecimal;
