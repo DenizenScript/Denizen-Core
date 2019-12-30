@@ -39,7 +39,7 @@ public class AdjustCommand extends AbstractCommand {
     //
     // @Usage
     // Use to set a custom display name on an entity.
-    // - adjust e@1000 custom_name:ANGRY!
+    // - adjust <[some_entity]> custom_name:ANGRY!
     //
     // @Usage
     // Use to set the skin of every online player.
