@@ -24,14 +24,14 @@ public class DurationTag implements ObjectTag {
     // @description
     // Durations are a unified and convenient way to get a 'unit of time' throughout Denizen.
     // Many commands and features that require a duration can be satisfied by specifying a number
-    // and unit of time, especially command arguments that are prefixed 'duration:', etc. The d@
-    // object fetcher notation can also be used, and is encouraged. The unit of time can be specified
-    // by using one of the following: T=ticks, M=minutes, S=seconds, H=hours, D=days, W=Weeks.
-    // Not using a unit will imply seconds. Examples: d@10s, d@50m, d@1d, d@20.
+    // and unit of time, especially command arguments that are prefixed 'duration:', etc.
+    // The unit of time can be specified by using one of the following:
+    // T=ticks, M=minutes, S=seconds, H=hours, D=days, W=Weeks.
+    // Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 20.
     //
     // Specifying a range of duration will result in a randomly selected duration that is
     // in between the range specified. The smaller value should be first. Examples:
-    // d@10s-25s, d@1m-2m.
+    // '10s-25s', '1m-2m'.
     //
     // For format info, see <@link language d@>
     // -->

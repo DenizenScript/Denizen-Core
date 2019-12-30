@@ -47,6 +47,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // Optionally, specify the "id:" argument to choose a custom queue ID to be used.
     // If none is specified, a randomly generated one will be used. Generally, don't use this argument.
     //
+    // The run command is ~waitable. Refer to <@link language ~waitable>.
+    //
     // @Tags
     // <entry[saveName].created_queue> returns the queue that was started by the run command.
     //

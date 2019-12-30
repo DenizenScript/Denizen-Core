@@ -191,7 +191,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 ScriptPath path = new ScriptPath(container, evt);
                 path.set = path.container.getSetFor("events." + evt1);
                 if (path.set == null) {
-                    Debug.echoError("Script path '" + path + "' is invalid.");
+                    Debug.echoError("Script path '" + path + "' is invalid (empty or misconfigured).");
                     continue;
                 }
                 paths.add(path);
