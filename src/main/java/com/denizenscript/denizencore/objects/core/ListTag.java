@@ -527,7 +527,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @returns ElementTag
         // @description
         // returns the list formatted, with each item separated by the defined text.
-        // For example: <li@bob|joe|john.separated_by[ and ]> will return "bob and joe and john".
+        // For example: <list[bob|joe|john].separated_by[ and ]> will return "bob and joe and john".
         // -->
         registerTag("separated_by", (attribute, object) -> {
             ListTag list = object;
@@ -622,7 +622,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @returns ListTag or ElementTag
         // @description
         // Interprets a list of "key/value" pairs as a map, and returns the value for the given key.
-        // For example: li@one/a|two/b.map_get[one] returns a.
+        // For example: one/a|two/b.map_get[one] returns a.
         // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
         // -->
         registerTag("map_get", (attribute, object) -> {
@@ -636,7 +636,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // @returns ListTag or ElementTag
             // @description
             // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
-            // For example: li@one/a|two/b.map_get[one].split_by[/] returns a.
+            // For example: one/a|two/b.map_get[one].split_by[/] returns a.
             // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
             // -->
             String split = "/";
@@ -674,7 +674,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @returns ElementTag
         // @description
         // Interprets a list of "key/value" pairs as a map, and returns the key for the given value.
-        // For example: li@one/a|two/b.map_find_key[a] returns one.
+        // For example: one/a|two/b.map_find_key[a] returns one.
         // -->
         registerTag("map_find_key", (attribute, object) -> {
             String input = attribute.getContext(1);
@@ -684,7 +684,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // @returns ElementTag
             // @description
             // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
-            // For example: li@one/a|two/b.map_find_key[a].split_by[/] returns one.
+            // For example: one/a|two/b.map_find_key[a].split_by[/] returns one.
             // -->
 
             String split = "/";
@@ -1832,8 +1832,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the item in the list that seems closest to the given value.
-        // Particularly useful for command handlers, "<li@c1|c2|c3|[...].closest_to[<argument>]>" to get the best option as  "did you mean" suggestion.
-        // For example, "<li@dance|quit|spawn.closest_to[spwn]>" returns "spawn".
+        // Particularly useful for command handlers, "<list[c1|c2|c3|...].closest_to[<argument>]>" to get the best option as  "did you mean" suggestion.
+        // For example, "<list[dance|quit|spawn].closest_to[spwn]>" returns "spawn".
         // Be warned that this will always return /something/, excluding the case of an empty list, which will return an empty element.
         // Uses the logic of tag "ElementTag.difference"!
         // You can use that tag to add an upper limit on how different the strings can be.

@@ -36,7 +36,7 @@ public class ForeachCommand extends BracedCommand {
     //
     // @Usage
     // Use to run commands 'for each entry' in a list of objects/elements.
-    // - foreach li@<[some_entity]>|<[some_npc]>|<[player]>:
+    // - foreach <[some_entity]>|<[some_npc]>|<[player]>:
     //     - announce "There's something at <[value].location>!"
     //
     // @Usage

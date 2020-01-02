@@ -42,7 +42,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // as this will delay the commands following the SQL command until after the SQL operation is complete.
     //
     // @Tags
-    // <entry[saveName].result> returns a ListTag of all rows from a query or update command, of the form li@escaped_text/escaped_text|escaped_text/escaped_text
+    // <entry[saveName].result> returns a ListTag of all rows from a query or update command, of the form escaped_text/escaped_text|escaped_text/escaped_text
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
     //
     // @Usage
