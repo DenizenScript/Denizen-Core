@@ -130,7 +130,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.toLowerCase(pathValue).equals(value);
         }
 
-        public ScriptPath(ScriptContainer container, String event) {
+        public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
             this.event = event;
             rawEventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
             this.container = container;
@@ -149,6 +149,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
             switch_cancelled = switches.containsKey("cancelled") ? switches.get("cancelled").equalsIgnoreCase("true") : null;
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
+            set = container.getSetFor("events." + rawEventPath);
         }
 
         @Override
@@ -187,9 +188,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 continue;
             }
             for (StringHolder evt1 : config.getKeys(false)) {
-                String evt = evt1.str.substring(3).replace("&dot", ".").replace("&amp", "&");
-                ScriptPath path = new ScriptPath(container, evt);
-                path.set = path.container.getSetFor("events." + evt1);
+                String evt = evt1.str.substring("on ".length()).replace("&dot", ".").replace("&amp", "&");
+                ScriptPath path = new ScriptPath(container, evt, evt1.str);
                 if (path.set == null) {
                     Debug.echoError("Script path '" + path + "' is invalid (empty or misconfigured).");
                     continue;
