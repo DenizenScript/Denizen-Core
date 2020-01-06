@@ -322,10 +322,6 @@ public class ElementTag implements ObjectTag {
         return ObjectFetcher.checkMatch(dClass, element);
     }
 
-    public <T extends ObjectTag> T asType(Class<T> dClass) {
-        return ObjectFetcher.getObjectFrom(dClass, element);
-    }
-
     public <T extends ObjectTag> T asType(Class<T> dClass, TagContext context) {
         return ObjectFetcher.getObjectFrom(dClass, element, context);
     }
@@ -641,10 +637,7 @@ public class ElementTag implements ObjectTag {
         registerTag("as_list", (attribute, object) -> {
             String element = object.element;
             ListTag obj = handleNull(element, ListTag.valueOf(element), "dList", attribute.hasAlternative());
-            if (obj != null) {
-                return obj;
-            }
-            return null;
+            return obj;
         }, "aslist");
 
         // <--[tag]
@@ -657,10 +650,7 @@ public class ElementTag implements ObjectTag {
         registerTag("as_custom", (attribute, object) -> {
             String element = object.element;
             CustomObjectTag obj = handleNull(element, CustomObjectTag.valueOf(element, null), "Custom", attribute.hasAlternative());
-            if (obj != null) {
-                return obj;
-            }
-            return null;
+            return obj;
         }, "ascustom");
 
         // <--[tag]
@@ -673,8 +663,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_script", (attribute, object) -> {
             String element = object.element;
-            ScriptTag obj = handleNull(element, ScriptTag.valueOf(element), "dScript", attribute.hasAlternative());
-            return obj;
+            return handleNull(element, ScriptTag.valueOf(element), "dScript", attribute.hasAlternative());
         }, "asscript");
 
         // <--[tag]
@@ -687,8 +676,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_queue", (attribute, object) -> {
             String element = object.element;
-            QueueTag obj = handleNull(element, QueueTag.valueOf(element), "ScriptQueue", attribute.hasAlternative());
-            return obj;
+            return handleNull(element, QueueTag.valueOf(element), "ScriptQueue", attribute.hasAlternative());
         }, "asqueue");
 
         // <--[tag]
@@ -701,8 +689,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_duration", (attribute, object) -> {
             String element = object.element;
-            DurationTag obj = handleNull(element, DurationTag.valueOf(element), "Duration", attribute.hasAlternative());
-            return obj;
+            return handleNull(element, DurationTag.valueOf(element), "Duration", attribute.hasAlternative());
         }, "asduration");
 
         // <--[tag]
@@ -755,8 +742,7 @@ public class ElementTag implements ObjectTag {
         // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
         // -->
         registerTag("parsed", (attribute, object) -> {
-            ObjectTag read = TagManager.tagObject(TagManager.cleanOutputFully(object.element), attribute.context);
-            return read;
+            return TagManager.tagObject(TagManager.cleanOutputFully(object.element), attribute.context);
         });
 
         /////////////////////
@@ -1651,16 +1637,15 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.add[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             try {
-                return new ElementTag(ele.asBigDecimal().add(ele.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().add(object.getBD(attribute.getContext(1))));
             }
             catch (Throwable e) {
-                return new ElementTag(ele.asDouble() + attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() + attribute.getDoubleContext(1));
             }
         };
         registerTag("add", addRunnable);
@@ -1678,16 +1663,15 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.div[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             try {
-                return new ElementTag(ele.asBigDecimal().divide(ele.getBD(attribute.getContext(1)), 64, RoundingMode.HALF_UP));
+                return new ElementTag(object.asBigDecimal().divide(object.getBD(attribute.getContext(1)), 64, RoundingMode.HALF_UP));
             }
             catch (Throwable e) {
-                return new ElementTag(ele.asDouble() / attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() / attribute.getDoubleContext(1));
             }
         };
         registerTag("div", divRunnable);
@@ -1705,12 +1689,11 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.mod[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asDouble() % attribute.getDoubleContext(1));
+            return new ElementTag(object.asDouble() % attribute.getDoubleContext(1));
         };
         registerTag("mod", modRunnable);
         registerTag("%", modRunnable);
@@ -1727,16 +1710,15 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.mul[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             try {
-                return new ElementTag(ele.asBigDecimal().multiply(ele.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().multiply(object.getBD(attribute.getContext(1))));
             }
             catch (Throwable e) {
-                return new ElementTag(ele.asDouble() * attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() * attribute.getDoubleContext(1));
             }
         };
         registerTag("mul", mulRunnable);
@@ -1754,16 +1736,15 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.sub[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             try {
-                return new ElementTag(ele.asBigDecimal().subtract(ele.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().subtract(object.getBD(attribute.getContext(1))));
             }
             catch (Throwable e) {
-                return new ElementTag(ele.asDouble() - attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() - attribute.getDoubleContext(1));
             }
         };
         registerTag("sub", subRunnable);
@@ -1796,12 +1777,11 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.log[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.log(ele.asDouble()) / Math.log(attribute.getDoubleContext(1)));
+            return new ElementTag(Math.log(object.asDouble()) / Math.log(attribute.getDoubleContext(1)));
         });
 
         // <--[tag]
@@ -1831,12 +1811,11 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.power[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.pow(ele.asDouble(), attribute.getDoubleContext(1)));
+            return new ElementTag(Math.pow(object.asDouble(), attribute.getDoubleContext(1)));
         };
         registerTag("power", powerRunnable);
         registerTag("^", powerRunnable);
@@ -1899,12 +1878,11 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.atan2[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.atan2(ele.asDouble(), attribute.getDoubleContext(1)));
+            return new ElementTag(Math.atan2(object.asDouble(), attribute.getDoubleContext(1)));
         });
 
         // <--[tag]
@@ -2045,13 +2023,12 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.round_to[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             int ten = (int) Math.pow(10, attribute.getIntContext(1));
-            return new ElementTag(((double) Math.round(ele.asDouble() * ten)) / ten);
+            return new ElementTag(((double) Math.round(object.asDouble() * ten)) / ten);
         });
 
         // <--[tag]
@@ -2066,7 +2043,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag((long) Math.round(ele.asDouble()));
+            return new ElementTag(Math.round(ele.asDouble()));
         });
 
         // <--[tag]
@@ -2082,13 +2059,12 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.round_to_precision[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
-            return new ElementTag(((double) Math.round(ele.asDouble() / precision)) * precision);
+            return new ElementTag(((double) Math.round(object.asDouble() / precision)) * precision);
         });
 
         // <--[tag]
@@ -2103,13 +2079,12 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.round_down_to_precision[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
-            return new ElementTag(Math.floor(ele.asDouble() / precision) * precision);
+            return new ElementTag(Math.floor(object.asDouble() / precision) * precision);
         });
 
         // <--[tag]
@@ -2124,13 +2099,12 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.round_up_to_precision[...] must have a value.");
                 return null;
             }
-            ElementTag ele = object;
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+            if (!object.isDouble()) {
+                attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
             double precision = attribute.getDoubleContext(1);
-            return new ElementTag(Math.ceil(ele.asDouble() / precision) * precision);
+            return new ElementTag(Math.ceil(object.asDouble() / precision) * precision);
         });
 
         // <--[tag]

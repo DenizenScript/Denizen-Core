@@ -82,7 +82,7 @@ public class CustomScriptContainer extends ScriptContainer {
         HashMap<String, ObjectTag> vars;
         if (inherit != null) {
             ScriptContainer sc = ScriptRegistry.getScriptContainer(inherit);
-            if (sc != null && sc instanceof CustomScriptContainer) {
+            if (sc instanceof CustomScriptContainer) {
                 vars = ((CustomScriptContainer) sc).getVars();
             }
             else {

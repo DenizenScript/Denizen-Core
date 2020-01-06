@@ -179,13 +179,6 @@ public class Argument implements Cloneable {
         return false;
     }
 
-
-    public void replaceValue(String string) {
-        value = string;
-        lower_value = CoreUtilities.toLowerCase(value);
-    }
-
-
     public String getValue() {
         return value;
     }

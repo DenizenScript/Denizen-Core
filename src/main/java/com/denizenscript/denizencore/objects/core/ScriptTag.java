@@ -371,8 +371,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
                 Debug.echoError("The tag ScriptTag.constant[...] must have a value.");
                 return null;
             }
-            ScriptTag scr = object;
-            ScriptContainer container = scr.getContainer();
+            ScriptContainer container = object.getContainer();
             if (container == null) {
                 Debug.echoError("Missing script container?!");
                 return null;
@@ -484,10 +483,9 @@ public class ScriptTag implements ObjectTag, Adjustable {
         // -->
 
         registerTag("list_queues", (attribute, object) -> {
-            ScriptTag script = object;
             ListTag queues = new ListTag();
             for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                if (queue.script != null && queue.script.getName().equals(script.getName())) {
+                if (queue.script != null && queue.script.getName().equals(object.getName())) {
                     queues.addObject(new QueueTag(queue));
                 }
             }

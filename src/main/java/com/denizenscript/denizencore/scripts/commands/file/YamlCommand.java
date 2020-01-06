@@ -344,9 +344,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 Runnable onLoadCompleted = new Runnable() {
                     @Override
                     public void run() {
-                        if (yamls.containsKey(id)) {
-                            yamls.remove(id);
-                        }
+                        yamls.remove(id);
                         yamls.put(id, runnableConfigs[0]);
                         scriptEntry.setFinished(true);
                     }
@@ -389,9 +387,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case LOADTEXT:
                 String str = rawText.asString();
                 YamlConfiguration config = YamlConfiguration.load(str);
-                if (yamls.containsKey(id)) {
-                    yamls.remove(id);
-                }
+                yamls.remove(id);
                 yamls.put(id, config);
                 scriptEntry.setFinished(true);
                 break;
@@ -634,9 +630,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 break;
 
             case CREATE:
-                if (yamls.containsKey(id)) {
-                    yamls.remove(id);
-                }
+                yamls.remove(id);
                 yamlConfiguration = new YamlConfiguration();
                 yamls.put(id.toUpperCase(), yamlConfiguration);
                 break;

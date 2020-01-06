@@ -102,8 +102,7 @@ public class OldEventManager {
     }
 
     public static List<String> trimEvents(List<String> original) {
-        List<String> event = new ArrayList<>();
-        event.addAll(original);
+        List<String> event = new ArrayList<>(original);
         List<String> parsed = new ArrayList<>();
 
         if (Debug.showEventsTrimming) {

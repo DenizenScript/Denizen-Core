@@ -95,7 +95,7 @@ public class ScriptHelper {
                 String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
                 scriptSources.put(name.toUpperCase(), filename);
                 scriptOriginalNames.put(name.toUpperCase(), name);
-                result.append(name.toUpperCase() + ":\n");
+                result.append(name.toUpperCase()).append(":\n");
                 hasAnyScript = true;
             }
             else if (!trimmedLine.startsWith("#")) {

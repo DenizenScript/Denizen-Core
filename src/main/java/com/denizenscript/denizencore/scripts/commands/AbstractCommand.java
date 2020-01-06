@@ -156,7 +156,7 @@ public abstract class AbstractCommand {
         return commandOptions;
     }
 
-    public abstract void execute(ScriptEntry scriptEntry) throws CommandExecutionException;
+    public abstract void execute(ScriptEntry scriptEntry);
 
     /**
      * Called by the CommandExecuter before the execute() method is called. Arguments

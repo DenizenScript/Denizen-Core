@@ -293,12 +293,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
      * @return the array copy
      */
     public String[] toArray(int arraySize) { // TODO: Why does this exist?
-        List<String> list = new ArrayList<>();
-
-        for (String string : this) {
-            list.add(string); // TODO: Why is this a manual copy?
-        }
-
+        List<String> list = new ArrayList<>(this);
         return list.toArray(new String[arraySize]);
     }
 
@@ -500,9 +495,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a list containing the contents of all sublists within this list.
         // -->
         registerTag("combine", (attribute, object) -> {
-            ListTag list = object;
             ListTag output = new ListTag();
-            for (ObjectTag obj : list.objectForms) {
+            for (ObjectTag obj : object.objectForms) {
                 output.addObjects(ListTag.getListFor(obj).objectForms);
             }
             return output;
@@ -530,12 +524,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: <list[bob|joe|john].separated_by[ and ]> will return "bob and joe and john".
         // -->
         registerTag("separated_by", (attribute, object) -> {
-            ListTag list = object;
-            if (list.isEmpty()) {
+            if (object.isEmpty()) {
                 return new ElementTag("");
             }
             String input = attribute.getContext(1);
-            return new ElementTag(parseString(list, input));
+            return new ElementTag(parseString(object, input));
         });
 
         // <--[tag]
@@ -909,33 +902,32 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
             }
 
-            ListTag obj = object;
             ListTag list = new ListTag();
 
             if (replace.startsWith("regex:")) {
                 String regex = replace.substring("regex:".length());
                 Pattern tempPat = Pattern.compile(regex);
-                for (int i = 0; i < obj.size(); i++) {
-                    if (tempPat.matcher(obj.get(i)).matches()) {
+                for (int i = 0; i < object.size(); i++) {
+                    if (tempPat.matcher(object.get(i)).matches()) {
                         if (replacement != null) {
                             list.addObject(replacement);
                         }
                     }
                     else {
-                        list.addObject(obj.getObject(i));
+                        list.addObject(object.getObject(i));
                     }
                 }
             }
             else {
                 String lower = CoreUtilities.toLowerCase(replace);
-                for (int i = 0; i < obj.size(); i++) {
-                    if (CoreUtilities.toLowerCase(obj.get(i)).equals(lower)) {
+                for (int i = 0; i < object.size(); i++) {
+                    if (CoreUtilities.toLowerCase(object.get(i)).equals(lower)) {
                         if (replacement != null) {
                             list.addObject(replacement);
                         }
                     }
                     else {
-                        list.addObject(obj.getObject(i));
+                        list.addObject(object.getObject(i));
                     }
                 }
             }
@@ -980,8 +972,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.get[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
-            if (list.isEmpty()) {
+            if (object.isEmpty()) {
                 if (!attribute.hasAlternative()) {
                     Debug.echoError("Can't get from an empty list.");
                 }
@@ -992,15 +983,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 ListTag results = new ListTag();
                 for (String index : indices) {
                     int ind = Integer.parseInt(index);
-                    if (ind > 0 && ind <= list.size()) {
-                        results.add(list.get(ind - 1));
+                    if (ind > 0 && ind <= object.size()) {
+                        results.add(object.get(ind - 1));
                     }
                 }
                 return results;
             }
             if (indices.size() > 0) {
                 int index = Integer.parseInt(indices.get(0)) - 1;
-                if (index >= list.size()) {
+                if (index >= object.size()) {
                     if (!attribute.hasAlternative()) {
                         Debug.echoError("Invalid list.get index.");
                     }
@@ -1019,21 +1010,21 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // -->
                 if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
                     int index2 = attribute.getIntContext(2) - 1;
-                    if (index2 >= list.size()) {
-                        index2 = list.size() - 1;
+                    if (index2 >= object.size()) {
+                        index2 = object.size() - 1;
                     }
                     if (index2 < 0) {
                         index2 = 0;
                     }
                     ListTag newList = new ListTag();
                     for (int i = index; i <= index2; i++) {
-                        newList.addObject(list.objectForms.get(i));
+                        newList.addObject(object.objectForms.get(i));
                     }
                     attribute.fulfill(1);
                     return newList;
                 }
                 else {
-                    return list.objectForms.get(index);
+                    return object.objectForms.get(index);
                 }
             }
             return null;
@@ -1055,11 +1046,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.find_all_partial[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
             String test = attribute.getContext(1).toUpperCase();
             ListTag positions = new ListTag();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).toUpperCase().contains(test)) {// TODO: Efficiency
+            for (int i = 0; i < object.size(); i++) {
+                if (object.get(i).toUpperCase().contains(test)) {// TODO: Efficiency
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1080,10 +1070,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.find_all[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
             ListTag positions = new ListTag();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
+            for (int i = 0; i < object.size(); i++) {
+                if (object.get(i).equalsIgnoreCase(attribute.getContext(1))) {
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1104,10 +1093,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.find_partial[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
             String test = attribute.getContext(1).toUpperCase();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
+            for (int i = 0; i < object.size(); i++) {
+                if (object.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
                     return new ElementTag(i + 1);
                 }
             }
@@ -1128,9 +1116,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.find[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).equalsIgnoreCase(attribute.getContext(1))) {
+            for (int i = 0; i < object.size(); i++) {
+                if (object.get(i).equalsIgnoreCase(attribute.getContext(1))) {
                     return new ElementTag(i + 1);
                 }
             }
@@ -1156,11 +1143,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.count[...] must have a value.");
                 return null;
             }
-            ListTag list = object;
             String element = attribute.getContext(1);
             int count = 0;
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).equalsIgnoreCase(element)) {
+            for (int i = 0; i < object.size(); i++) {
+                if (object.get(i).equalsIgnoreCase(element)) {
                     count++;
                 }
             }
@@ -1174,9 +1160,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the sum of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("sum", (attribute, object) -> {
-            ListTag list = object;
             double sum = 0;
-            for (String entry : list) {
+            for (String entry : object) {
                 if (ArgumentHelper.matchesDouble(entry)) {
                     sum += Double.parseDouble(entry);
                 }
@@ -1191,17 +1176,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the average of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("average", (attribute, object) -> {
-            ListTag list = object;
-            if (list.isEmpty()) {
+            if (object.isEmpty()) {
                 return new ElementTag(0);
             }
             double sum = 0;
-            for (String entry : list) {
+            for (String entry : object) {
                 if (ArgumentHelper.matchesDouble(entry)) {
                     sum += Double.parseDouble(entry);
                 }
             }
-            return new ElementTag(sum / list.size());
+            return new ElementTag(sum / object.size());
         });
 
         // <--[tag]
@@ -1214,12 +1198,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Effectively equivalent to .get[1]
         // -->
         registerTag("first", (attribute, object) -> {
-            ListTag list = object;
-            if (list.isEmpty()) {
+            if (object.isEmpty()) {
                 return null;
             }
             else {
-                return list.objectForms.get(0);
+                return object.objectForms.get(0);
             }
         });
 
@@ -1233,12 +1216,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Effectively equivalent to .get[<list.size>]
         // -->
         registerTag("last", (attribute, object) -> {
-            ListTag list = object;
-            if (list.isEmpty()) {
+            if (object.isEmpty()) {
                 return null;
             }
             else {
-                return list.objectForms.get(list.size() - 1);
+                return object.objectForms.get(object.size() - 1);
             }
         });
 
@@ -1250,9 +1232,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: a list of "3|2|1|10" will return "1".
         // -->
         registerTag("lowest", (attribute, object) -> {
-            ListTag list = object;
             BigDecimal lowest = null;
-            for (String str : list) {
+            for (String str : object) {
                 if (ArgumentHelper.matchesDouble(str)) {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (lowest == null || lowest.compareTo(val) > 0) {
@@ -1274,9 +1255,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: a list of "3|2|1|10" will return "10".
         // -->
         registerTag("highest", (attribute, object) -> {
-            ListTag list = object;
             BigDecimal highest = null;
-            for (String str : list) {
+            for (String str : object) {
                 if (ArgumentHelper.matchesDouble(str)) {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (highest == null || highest.compareTo(val) < 0) {
@@ -1804,15 +1784,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
         registerTag("random", (attribute, object) -> {
-            ListTag obj = object;
-            if (obj.isEmpty()) {
+            if (object.isEmpty()) {
                 return null;
             }
             if (attribute.hasContext(1)) {
                 int count = Integer.valueOf(attribute.getContext(1));
                 int times = 0;
-                ArrayList<ObjectTag> available = new ArrayList<>();
-                available.addAll(obj.objectForms);
+                ArrayList<ObjectTag> available = new ArrayList<>(object.objectForms);
                 ListTag toReturn = new ListTag();
                 while (!available.isEmpty() && times < count) {
                     int random = CoreUtilities.getRandom().nextInt(available.size());
@@ -1823,7 +1801,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 return toReturn;
             }
             else {
-                return obj.objectForms.get(CoreUtilities.getRandom().nextInt(obj.size()));
+                return object.objectForms.get(CoreUtilities.getRandom().nextInt(object.size()));
             }
         });
 

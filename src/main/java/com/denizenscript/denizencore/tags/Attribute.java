@@ -64,7 +64,7 @@ public class Attribute {
 
         for (int x = 0; x < attrInp.length; x++) {
 
-            Character chr = attrInp[x];
+            char chr = attrInp[x];
 
             if (chr == '[') {
                 braced++;
