@@ -276,28 +276,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return this;
     }
 
-    /**
-     * Fetches a String Array copy of the ListTag,
-     * with the same size as the ListTag.
-     *
-     * @return the array copy
-     */
-    public String[] toArray() {
-        return toArray(size());
-    }
-
-    /**
-     * Fetches a String Array copy of the ListTag.
-     *
-     * @param arraySize the size of the new array
-     * @return the array copy
-     */
-    public String[] toArray(int arraySize) { // TODO: Why does this exist?
-        List<String> list = new ArrayList<>(this);
-        return list.toArray(new String[arraySize]);
-    }
-
-
     // Returns if the list contains objects from the specified dClass
     // by using the matches() method.
     public boolean containsObjectsFrom(Class<? extends ObjectTag> dClass) {
@@ -311,7 +289,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         return false;
     }
-
 
     /**
      * Return a new list that includes only strings that match the values of an Enum array
