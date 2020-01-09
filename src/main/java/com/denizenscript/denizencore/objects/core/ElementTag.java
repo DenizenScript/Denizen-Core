@@ -94,7 +94,6 @@ public class ElementTag implements ObjectTag {
             Pattern.compile("el@val(?:ue)?\\[([^\\[\\]]+)\\].*",
                     Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
-
     public static ElementTag valueOf(String string) {
         return valueOf(string, null);
     }

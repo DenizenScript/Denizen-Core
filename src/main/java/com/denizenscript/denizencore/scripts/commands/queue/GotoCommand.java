@@ -57,7 +57,6 @@ public class GotoCommand extends AbstractCommand {
 
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

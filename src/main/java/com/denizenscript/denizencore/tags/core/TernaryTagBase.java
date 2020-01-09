@@ -45,7 +45,6 @@ public class TernaryTagBase {
 
         String result = attribute.getContext(1);
 
-
         if (result.equalsIgnoreCase("true")) {
             ObjectTag passValue;
             if (event.hasValue()) {

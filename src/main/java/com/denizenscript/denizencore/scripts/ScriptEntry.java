@@ -144,7 +144,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return internal.insideList;
     }
 
-
     /**
      * Get a hot, fresh, script entry, ready for execution! Just supply a valid command,
      * some arguments, and bonus points for a script container (can be null)!
@@ -351,7 +350,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return this;
     }
 
-
     /**
      * If the scriptEntry lacks the object corresponding to the
      * key, set it to the first non-null argument
@@ -461,7 +459,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         setSendingQueue(entry.getResidingQueue());
     }
 
-
     //////////////////
     // SCRIPTENTRY CONTEXT
     //////////////
@@ -469,7 +466,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public Map<String, Object> getObjects() {
         return objects;
     }
-
 
     public Object getObject(String key) {
         try {
@@ -514,7 +510,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-
     public boolean hasObject(String key) {
         return objects.containsKey(key);
     }
@@ -527,17 +522,14 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return internal.script;
     }
 
-
     public ScriptEntry setScript(String scriptName) {
         internal.script = ScriptTag.valueOf(scriptName);
         return this;
     }
 
-
     public ScriptQueue getResidingQueue() {
         return queue;
     }
-
 
     public void setSendingQueue(ScriptQueue scriptQueue) {
         queue = scriptQueue;
@@ -547,13 +539,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // TimedQueue FEATURES
     /////////
 
-
     public boolean forceInstant = false;
 
     public boolean isInstant() {
         return internal.instant || forceInstant;
     }
-
 
     public ScriptEntry setInstant(boolean instant) {
         forceInstant = instant;
@@ -565,7 +555,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public boolean shouldWaitFor() {
         return internal.waitfor && !isFinished;
     }
-
 
     public ScriptEntry setFinished(boolean finished) {
         isFinished = finished;

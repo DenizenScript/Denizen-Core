@@ -30,7 +30,6 @@ public class ElseCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

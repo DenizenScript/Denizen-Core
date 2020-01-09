@@ -32,7 +32,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     protected static long total_queues = 0;
 
-
     /**
      * Returns the number of queues created in the current instance
      * as well as the number of currently active queues.
@@ -55,7 +54,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 + ", currently active queues: "
                 + allQueues.size() + ",\n" + stats.toString();
     }
-
 
     /**
      * Gets an existing queue. Cast to the correct QueueType to
@@ -97,11 +95,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return allQueues.containsKey(id) ? getNextId(prefix) : id;
     }
 
-
     // Contains all currently active queues, keyed by a String id.
     protected static Map<String, ScriptQueue> allQueues =
             new ConcurrentHashMap<>(8, 0.9f, 1);
-
 
     /**
      * Returns a collection of all active queues.
@@ -111,7 +107,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public static Collection<ScriptQueue> getQueues() {
         return allQueues.values();
     }
-
 
     /**
      * Checks if a queue exists with the given id.
@@ -127,7 +122,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Public instance fields
     /////////////////////
 
-
     public String id;
 
     public String debugId;
@@ -141,17 +135,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      */
     public Consumer<String> debugOutput = null;
 
-
     /////////////////////
     // Private instance fields and constructors
     /////////////////////
 
-
     public final List<ScriptEntry> script_entries = new ArrayList<>();
 
-
     private ScriptEntry lastEntryExecuted = null;
-
 
     /**
      If this number is larger than
@@ -160,13 +150,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      */
     private long delay_time = 0;
 
-
     private final HashMap<String, ObjectTag> definitions = new HashMap<>();
 
     public ListTag determinations = null;
 
     private final HashMap<String, ScriptEntry> held_entries = new HashMap<>();
-
 
     public ScriptTag script;
 
@@ -230,7 +218,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return this;
     }
 
-
     /**
      * Gets a context from the queue. Script writers can
      * use the <c.context_name> or <context.context_name> tags
@@ -254,7 +241,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
         return obj;
     }
-
 
     public ContextSource contextSource = null;
 
@@ -281,7 +267,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return CoreUtilities.stringifyNullPass(definitions.get(CoreUtilities.toLowerCase(definition)));
     }
 
-
     /**
      * Checks for a piece of definitions.
      *
@@ -293,17 +278,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return definitions.containsKey(CoreUtilities.toLowerCase(definition));
     }
 
-
     public void addDefinition(String definition, ObjectTag value) {
         definitions.put(CoreUtilities.toLowerCase(definition), value);
     }
-
 
     @Override
     public void addDefinition(String definition, String value) {
         definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
     }
-
 
     /**
      * Removes an existing definitions from the queue. This
@@ -329,7 +311,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return definitions;
     }
 
-
     /**
      * The last entry that was executed. Note: any
      * replaceable tags/etc. are already replaced
@@ -341,7 +322,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return lastEntryExecuted;
     }
 
-
     /**
      * Clears the script queue.
      * <p/>
@@ -352,7 +332,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         was_cleared = true;
         script_entries.clear();
     }
-
 
     /**
      * Will delay the start of the queue until Java's
@@ -434,12 +413,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return newQueue;
     }
 
-
     /**
      * Called when the script queue is started.
      */
     protected abstract void onStart();
-
 
     public boolean is_started;
 
@@ -585,15 +562,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return breakMe;
     }
 
-
     /**
      * Stops the script_queue and breaks it down.
      */
     protected abstract void onStop();
 
-
     public boolean is_stopping = false;
-
 
     public void stop() {
 
@@ -646,7 +620,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Internal methods and fields
     ////////////////////
 
-
     /**
      * Sets the last entry executed by the ScriptEngine.
      *
@@ -656,9 +629,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         lastEntryExecuted = entry;
     }
 
-
     protected abstract boolean shouldRevolve();
-
 
     protected void revolve() {
         // If entries queued up are empty, deconstruct the queue.
@@ -680,7 +651,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
     }
 
-
     public ScriptEntry getNext() {
         if (!script_entries.isEmpty()) {
             return script_entries.remove(0);
@@ -690,20 +660,16 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
     }
 
-
     public ScriptQueue addEntries(List<ScriptEntry> entries) {
         script_entries.addAll(entries);
         return this;
     }
 
-
     public List<ScriptEntry> getEntries() {
         return script_entries;
     }
 
-
     public boolean hasInjectedItems = false;
-
 
     public ScriptQueue injectEntries(List<ScriptEntry> entries, int position) {
         if (position > script_entries.size() || position < 0) {
@@ -717,7 +683,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return this;
     }
 
-
     public boolean removeEntry(int position) {
         if (script_entries.size() < position) {
             return false;
@@ -726,14 +691,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return true;
     }
 
-
     public ScriptEntry getEntry(int position) {
         if (script_entries.size() < position) {
             return null;
         }
         return script_entries.get(position);
     }
-
 
     public ScriptQueue injectEntry(ScriptEntry entry, int position) {
         if (position > script_entries.size() || position < 0) {
@@ -747,11 +710,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return this;
     }
 
-
     public int getQueueSize() {
         return script_entries.size();
     }
-
 
     // DEBUGGABLE
     //

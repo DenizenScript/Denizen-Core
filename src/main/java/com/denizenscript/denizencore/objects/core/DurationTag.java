@@ -12,7 +12,6 @@ import com.denizenscript.denizencore.tags.TagContext;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
  */
@@ -36,14 +35,12 @@ public class DurationTag implements ObjectTag {
     // For format info, see <@link language d@>
     // -->
 
-
     /////////////////////
     //   STATIC METHODS AND FIELDS
     /////////////////
 
     // Define a 'ZERO' Duration
     final public static DurationTag ZERO = new DurationTag(0);
-
 
     /////////////////////
     //   OBJECT FETCHER
@@ -168,7 +165,6 @@ public class DurationTag implements ObjectTag {
         }
     }
 
-
     /////////////////////
     //   CONSTRUCTORS
     /////////////////
@@ -209,19 +205,15 @@ public class DurationTag implements ObjectTag {
         }
     }
 
-
     /////////////////////
     //   INSTANCE FIELDS/METHODS
     /////////////////
 
-
     // The amount of seconds in the duration.
     private double seconds;
 
-
     // Duration's default ObjectTag prefix.
     private String prefix = "Duration";
-
 
     /**
      * Gets the number of ticks of this duration. There are 20 ticks
@@ -233,7 +225,6 @@ public class DurationTag implements ObjectTag {
         return (long) (seconds * 20);
     }
 
-
     /**
      * Gets the number of ticks of this duration as an integer. There are
      * 20 per second.
@@ -243,7 +234,6 @@ public class DurationTag implements ObjectTag {
     public int getTicksAsInt() {
         return (int) (seconds * 20);
     }
-
 
     /**
      * Gets the number of milliseconds in this duration.
@@ -255,7 +245,6 @@ public class DurationTag implements ObjectTag {
         return millis.longValue();
     }
 
-
     /**
      * Gets the number of seconds of this duration.
      *
@@ -264,7 +253,6 @@ public class DurationTag implements ObjectTag {
     public double getSeconds() {
         return seconds;
     }
-
 
     /**
      * Gets the number of seconds as an integer value of the duration.
@@ -291,7 +279,6 @@ public class DurationTag implements ObjectTag {
             return d < 0 ? -(i + 1) : i + 1;
         }
     }
-
 
     /////////////////////
     //   ObjectTag Methods

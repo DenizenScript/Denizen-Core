@@ -20,14 +20,12 @@ public interface OldSmartEvent {
      */
     boolean shouldInitialize(Set<String> events);
 
-
     /**
      * Called if shouldInitialize() returns true. This method handles any code that is
      * required to make this event, or set of events, function. No code should reach the
      * doEvents(...) call unless this method is invoked.
      */
     void _initialize();
-
 
     /**
      * Called as scripts are reloaded. Since there's the possibility that events may change

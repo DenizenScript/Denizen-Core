@@ -34,7 +34,6 @@ public class ReloadCommand extends AbstractCommand {
         // TODO: Allow 'reload saves', etc?
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
         DenizenCore.reloadScripts();

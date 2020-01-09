@@ -176,7 +176,6 @@ public class IfCommand extends BracedCommand {
         scriptEntry.addObject("comparisons", comparisons);
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

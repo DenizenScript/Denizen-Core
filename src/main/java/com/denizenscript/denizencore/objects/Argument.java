@@ -129,21 +129,17 @@ public class Argument implements Cloneable {
         fillStr(string);
     }
 
-
     public static Argument valueOf(String string) {
         return new Argument(string);
     }
-
 
     public boolean startsWith(String string) {
         return lower_value.startsWith(CoreUtilities.toLowerCase(string));
     }
 
-
     public boolean hasPrefix() {
         return prefix != null;
     }
-
 
     public Argument getPrefix() {
         if (prefix == null) {
@@ -151,7 +147,6 @@ public class Argument implements Cloneable {
         }
         return valueOf(prefix);
     }
-
 
     // TODO: REMOVE IN 1.0
     public boolean matches(String values) {
@@ -237,7 +232,6 @@ public class Argument implements Cloneable {
         return false;
     }
 
-
     // TODO: REMOVE IN 1.0
     public boolean matchesPrefix(String values) {
         if (!hasPrefix()) {
@@ -273,7 +267,6 @@ public class Argument implements Cloneable {
         return false;
     }
 
-
     public boolean matchesPrimitive(ArgumentHelper.PrimitiveType argumentType) {
         if (value == null) {
             return false;
@@ -305,12 +298,10 @@ public class Argument implements Cloneable {
         return false;
     }
 
-
     // Check if this argument matches a certain ObjectTag type
     public boolean matchesArgumentType(Class<? extends ObjectTag> dClass) {
         return CoreUtilities.canPossiblyBeType(object, dClass);
     }
-
 
     // Check if this argument matches any of multiple ObjectTag types
     public boolean matchesArgumentTypes(Class<? extends ObjectTag>... dClasses) {
@@ -324,7 +315,6 @@ public class Argument implements Cloneable {
         return false;
     }
 
-
     // Check if this argument matches a ListTag of a certain ObjectTag
     public boolean matchesArgumentList(Class<? extends ObjectTag> dClass) {
 
@@ -333,14 +323,12 @@ public class Argument implements Cloneable {
         return list.isEmpty() || list.containsObjectsFrom(dClass);
     }
 
-
     public ElementTag asElement() {
         if (object instanceof ElementTag) {
             return (ElementTag) object;
         }
         return new ElementTag(prefix, value);
     }
-
 
     public <T extends ObjectTag> T asType(Class<T> clazz) {
         T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
@@ -351,11 +339,9 @@ public class Argument implements Cloneable {
         return arg;
     }
 
-
     public void reportUnhandled() {
         Debug.echoError('\'' + raw_value + "' is an unknown argument!");
     }
-
 
     @Override
     public String toString() {

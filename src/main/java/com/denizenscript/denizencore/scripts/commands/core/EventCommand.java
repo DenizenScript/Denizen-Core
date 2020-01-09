@@ -72,7 +72,6 @@ public class EventCommand extends AbstractCommand {
 
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

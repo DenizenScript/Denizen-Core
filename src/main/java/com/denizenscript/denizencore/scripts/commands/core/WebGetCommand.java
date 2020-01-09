@@ -104,7 +104,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     }
 
-
     @Override
     public void execute(final ScriptEntry scriptEntry) {
 

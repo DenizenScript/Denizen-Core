@@ -49,7 +49,6 @@ public class RepeatCommand extends BracedCommand {
         setBraced();
     }
 
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 

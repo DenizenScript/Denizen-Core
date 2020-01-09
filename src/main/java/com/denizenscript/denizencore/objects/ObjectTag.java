@@ -28,7 +28,6 @@ public interface ObjectTag {
      *
      */
 
-
     /**
      * Retrieves the dScript argument prefix. ObjectTags should provide a default
      * prefix if nothing else has been specified.
@@ -36,7 +35,6 @@ public interface ObjectTag {
      * @return the prefix
      */
     String getPrefix();
-
 
     /**
      * <p>Gets a standard dB representation of this argument. All ObjectTags should follow
@@ -61,7 +59,6 @@ public interface ObjectTag {
         return identify();
     }
 
-
     /**
      * Determines if this argument object is unique. This typically stipulates
      * that this object has been named, or has some unique identifier that
@@ -71,7 +68,6 @@ public interface ObjectTag {
      */
     boolean isUnique();
 
-
     /**
      * Returns the string type of the object. This is fairly verbose and crude, but used with
      * a basic dScriptArg attribute.
@@ -79,7 +75,6 @@ public interface ObjectTag {
      * @return a straight-up string description of the type of dScriptArg. ie. ListTag, LocationTag
      */
     String getObjectType();
-
 
     /**
      * Gets an ugly, but exact, string representation of this ObjectTag.
@@ -89,7 +84,6 @@ public interface ObjectTag {
      * @return a single-line string representation of this argument
      */
     String identify();
-
 
     /**
      * Gets an overall string representation of this ObjectTag.
@@ -108,7 +102,6 @@ public interface ObjectTag {
      * @return a single-line, 'simple' string representation of this argument
      */
     String identifySimple();
-
 
     /**
      * Sets the prefix for this argument, otherwise uses the default.

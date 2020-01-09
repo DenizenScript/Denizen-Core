@@ -58,7 +58,6 @@ public class QueueTag implements ObjectTag, Adjustable {
         return null;
     }
 
-
     public static boolean matches(String string) {
         // Starts with q@? Assume match.
         if (CoreUtilities.toLowerCase(string).startsWith("q@")) {
@@ -77,12 +76,10 @@ public class QueueTag implements ObjectTag, Adjustable {
 
     String prefix = "Queue";
 
-
     @Override
     public String getPrefix() {
         return prefix;
     }
-
 
     @Override
     public QueueTag setPrefix(String prefix) {

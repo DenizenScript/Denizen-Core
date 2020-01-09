@@ -50,26 +50,21 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     // Private instance fields and constructors
     /////////////////////
 
-
     private Schedulable schedulable;
-
 
     // The speed of the engine, the # of ticks
     // between each revolution. Use setSpeed()
     // to change this.
     private long ticks;
 
-
     // ScriptQueues can be paused mid-rotation.
     // The next entry will be held up until
     // un-paused.
     protected boolean paused = false;
 
-
     // The delay in ticks can put off the
     // start of a queue
     protected long delay_ticks = 0;
-
 
     @Override
     public void delayFor(DurationTag duration) {
@@ -104,7 +99,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         return ticks <= 0;
     }
 
-
     /**
      * Gets the speed of the queue. This is the
      * time in between each revolution.
@@ -114,7 +108,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     public DurationTag getSpeed() {
         return new DurationTag(ticks);
     }
-
 
     /**
      * Pauses the queue. Paused queues will check
@@ -129,7 +122,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         return this;
     }
 
-
     /**
      * Checks if the queue is currently paused.
      *
@@ -139,7 +131,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     public boolean isPaused() {
         return paused;
     }
-
 
     /**
      * Sets the speed of a queue. Uses bukkit's 'ticks', which is
@@ -151,7 +142,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         this.ticks = ticks;
         return this;
     }
-
 
     @Override
     protected void onStart() {
@@ -178,14 +168,12 @@ public class TimedQueue extends ScriptQueue implements Delayable {
         return "TimedQueue";
     }
 
-
     @Override
     protected void onStop() {
         if (schedulable != null) {
             schedulable.cancel();
         }
     }
-
 
     @Override
     protected boolean shouldRevolve() {

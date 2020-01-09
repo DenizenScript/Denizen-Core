@@ -142,14 +142,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return inp instanceof ListTag ? (ListTag) inp : valueOf(inp.toString());
     }
 
-
     public static boolean matches(String arg) {
 
         boolean flag = DenizenCore.getImplementation().matchesFlagListTag(arg);
 
         return flag || arg.contains("|") || arg.contains(internal_escape) || arg.startsWith("li@");
     }
-
 
     /////////////
     //   Constructors
@@ -376,11 +374,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return identify();
     }
 
-
     //////////////////////////////
     //    DSCRIPT ARGUMENT METHODS
     /////////////////////////
-
 
     private String prefix = "List";
 
@@ -439,7 +435,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
         return output.substring(0, output.length() - 1);
     }
-
 
     @Override
     public String identifySimple() {
@@ -1791,12 +1786,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             return new ElementTag(CoreUtilities.getClosestOption(object, attribute.getContext(1)));
         });
 
-
         registerTag("as_list", (attribute, object) -> {
             // Special handler for flag lists.
             return new ListTag(object);
         }, "aslist");
-
 
         // <--[tag]
         // @attribute <ListTag.type>

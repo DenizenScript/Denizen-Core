@@ -22,7 +22,6 @@ public class DefinitionTagBase {
         }, "def", "definition", "d", "");
     }
 
-
     //////////
     //  ReplaceableTagEvent handler
     ////////
@@ -86,5 +85,4 @@ public class DefinitionTagBase {
         event.setReplacedObject(CoreUtilities.autoAttribTyped(def, atttribute));
     }
 }
-
 

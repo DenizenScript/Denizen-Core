@@ -7,15 +7,12 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 public class ScriptEngine {
 
-
     final private CommandExecuter commandExecuter;
-
 
     public ScriptEngine() {
         // Create Denizen CommandExecuter
         commandExecuter = new CommandExecuter();
     }
-
 
     boolean shouldHold(ScriptQueue scriptQueue) {
         if (scriptQueue instanceof Delayable && ((Delayable) scriptQueue).isPaused()) {

@@ -432,7 +432,6 @@ public class UtilTagBase {
         }
     }
 
-
     public static void adjustSystem(Mechanism mechanism) {
         ElementTag value = mechanism.getValue();
 

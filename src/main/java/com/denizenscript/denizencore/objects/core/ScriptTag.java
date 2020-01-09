@@ -122,7 +122,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
         }
     }
 
-
     public static boolean matches(String string) {
 
         if (CoreUtilities.toLowerCase(string).startsWith("s@")) {
@@ -137,7 +136,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
     //////////////////
     // Constructor
     ////////////////
-
 
     /**
      * Creates a script object from a script name. If the script is valid, {@link #isValid()} will return true.
@@ -168,7 +166,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // Make the default prefix "Container"
     private String prefix = "Container";
 
-
     private boolean valid = false;
 
     /**
@@ -189,7 +186,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
         return (container != null ? container.getContainerType() : "invalid");
     }
 
-
     private String name = null;
 
     /**
@@ -200,7 +196,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
     public String getName() {
         return name;
     }
-
 
     /**
      * Gets the contents of the scriptContainer.

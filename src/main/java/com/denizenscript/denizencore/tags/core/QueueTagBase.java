@@ -30,7 +30,6 @@ public class QueueTagBase {
         }, "queue", "q");
     }
 
-
     //////////
     //  ReplaceableTagEvent handler
     ////////
@@ -59,7 +58,6 @@ public class QueueTagBase {
         }
 
         Attribute attribute = event.getAttributes().fulfill(1);
-
 
         // Otherwise, try to use queue in a static manner.
 
@@ -104,7 +102,6 @@ public class QueueTagBase {
             return;
         }
 
-
         // Else,
         // Use current queue
 
@@ -112,5 +109,4 @@ public class QueueTagBase {
                 attribute));
     }
 }
-
 

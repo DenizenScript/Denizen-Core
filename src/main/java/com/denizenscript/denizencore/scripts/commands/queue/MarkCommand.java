@@ -51,7 +51,6 @@ public class MarkCommand extends AbstractCommand {
 
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

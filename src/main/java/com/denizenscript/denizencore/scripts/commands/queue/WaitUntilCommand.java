@@ -64,7 +64,6 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         scriptEntry.addObject("comparisons", arguments);
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

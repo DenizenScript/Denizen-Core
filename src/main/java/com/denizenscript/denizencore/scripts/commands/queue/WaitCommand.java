@@ -52,7 +52,6 @@ public class WaitCommand extends AbstractCommand {
         scriptEntry.defaultObject("delay", new DurationTag(3));
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
 

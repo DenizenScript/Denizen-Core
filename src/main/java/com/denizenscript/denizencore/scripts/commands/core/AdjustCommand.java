@@ -13,7 +13,6 @@ import com.denizenscript.denizencore.tags.core.UtilTagBase;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-
 public class AdjustCommand extends AbstractCommand {
 
     // <--[command]
@@ -145,7 +144,6 @@ public class AdjustCommand extends AbstractCommand {
         ((Adjustable) object).safeAdjust(mechanism);
         return object;
     }
-
 
     @Override
     public void execute(ScriptEntry scriptEntry) {

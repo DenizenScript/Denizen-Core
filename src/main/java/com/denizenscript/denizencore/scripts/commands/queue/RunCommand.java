@@ -241,7 +241,6 @@ public class RunCommand extends AbstractCommand implements Holdable {
             queue.addDefinition("raw_context", raw_defintions.asString());
         }
 
-
         // Setup a callback if the queue is being waited on
         if (scriptEntry.shouldWaitFor()) {
             // Record the ScriptEntry

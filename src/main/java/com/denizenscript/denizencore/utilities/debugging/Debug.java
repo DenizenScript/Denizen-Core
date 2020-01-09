@@ -13,7 +13,6 @@ public class Debug {
 
     public static boolean showLoading = false;
 
-
     /**
      * Can be used with echoDebug(...) to output a header, footer,
      * or a spacer.

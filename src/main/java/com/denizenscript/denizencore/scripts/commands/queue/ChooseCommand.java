@@ -86,7 +86,6 @@ public class ChooseCommand extends BracedCommand {
         }
     }
 
-
     @Override
     public void execute(ScriptEntry scriptEntry) {
         List<BracedData> bdlist = getBracedCommands(scriptEntry, false);

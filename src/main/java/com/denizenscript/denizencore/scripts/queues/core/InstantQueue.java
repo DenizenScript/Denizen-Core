@@ -39,7 +39,6 @@ public class InstantQueue extends ScriptQueue {
         return scriptQueue;
     }
 
-
     /////////////////////
     // Private instance fields and constructors
     /////////////////////

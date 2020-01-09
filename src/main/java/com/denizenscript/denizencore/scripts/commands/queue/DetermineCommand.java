@@ -45,7 +45,6 @@ public class DetermineCommand extends AbstractCommand {
 
     public static String DETERMINE_NONE = "none";
 
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
@@ -65,7 +64,6 @@ public class DetermineCommand extends AbstractCommand {
         scriptEntry.defaultObject("passively", new ElementTag(false));
         scriptEntry.defaultObject("outcome", new ElementTag(DETERMINE_NONE));
     }
-
 
     @Override
     public void execute(ScriptEntry scriptEntry) {

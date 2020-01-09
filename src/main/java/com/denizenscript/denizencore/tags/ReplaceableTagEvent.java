@@ -178,7 +178,6 @@ public class ReplaceableTagEvent {
         return -1;
     }
 
-
     // Matches method (checks first attribute (name) of the tag)
 
     // TODO: Remove!
@@ -205,7 +204,6 @@ public class ReplaceableTagEvent {
         }
         return false;
     }
-
 
     private static String StripContext(String input) {
         if (input == null) {
@@ -387,7 +385,6 @@ public class ReplaceableTagEvent {
     public ScriptEntry getScriptEntry() {
         return context.entry;
     }
-
 
     /**
      * Gets an Attribute object for easy parsing/reading

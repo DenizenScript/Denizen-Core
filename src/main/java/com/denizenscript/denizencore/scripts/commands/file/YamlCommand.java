@@ -287,7 +287,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         scriptEntry.defaultObject("fix_formatting", new ElementTag("false"));
     }
 
-
     @Override
     public void execute(final ScriptEntry scriptEntry) {
 

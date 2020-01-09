@@ -59,7 +59,6 @@ public class RateLimitCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-
         DurationTag duration = scriptEntry.getObjectTag("duration");
         ElementTag object = scriptEntry.getElement("object");
 

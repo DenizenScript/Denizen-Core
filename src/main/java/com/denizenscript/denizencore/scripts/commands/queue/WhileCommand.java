@@ -50,7 +50,6 @@ public class WhileCommand extends BracedCommand {
         setParseArgs(false);
     }
 
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 

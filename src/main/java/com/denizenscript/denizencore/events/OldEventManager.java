@@ -21,7 +21,6 @@ public class OldEventManager {
     //  MAPS
     ////////////
 
-
     // Map for keeping the WorldScriptContainers
     public static Map<String, WorldScriptContainer> world_scripts =
             new ConcurrentHashMap<>(8, 0.9f, 1);
@@ -36,7 +35,6 @@ public class OldEventManager {
     //////////////////
     // PERFORMANCE
     ///////////
-
 
     public static void scanWorldEvents() {
         try {
@@ -130,11 +128,9 @@ public class OldEventManager {
         return parsed;
     }
 
-
     public static boolean eventExists(String original) {
         return events.containsKey("ON " + original.toUpperCase());
     }
-
 
     public static List<String> addAlternates(List<String> events) {
 
@@ -171,7 +167,6 @@ public class OldEventManager {
         finalEvents.addAll(newEvents);
         return finalEvents;
     }
-
 
     public static String StripIdentifiers(String original) {
         if (original.matches(".*?[a-z]+@[\\w ]+")) {
@@ -272,10 +267,8 @@ public class OldEventManager {
     //  REGISTRATION
     //////////////
 
-
     public void registerCoreMembers() {
     }
-
 
     public static void registerSmartEvent(OldSmartEvent event) {
         // Seems simple enough
