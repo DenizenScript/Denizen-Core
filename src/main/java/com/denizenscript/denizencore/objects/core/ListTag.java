@@ -290,12 +290,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return false;
     }
 
-    /**
-     * Return a new list that includes only strings that match the values of an Enum array
-     *
-     * @param values the Enum's value
-     * @return a filtered list
-     */
     public List<String> filter(Enum[] values) {
         List<String> list = new ArrayList<>();
 
