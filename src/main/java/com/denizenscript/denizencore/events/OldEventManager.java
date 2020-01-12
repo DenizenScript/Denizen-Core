@@ -13,7 +13,6 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class OldEventManager {
 
@@ -22,12 +21,10 @@ public class OldEventManager {
     ////////////
 
     // Map for keeping the WorldScriptContainers
-    public static Map<String, WorldScriptContainer> world_scripts =
-            new ConcurrentHashMap<>(8, 0.9f, 1);
+    public static Map<String, WorldScriptContainer> world_scripts = new HashMap<>();
 
     // Map for keeping the names of events
-    public static Map<String, List<WorldScriptContainer>> events =
-            new HashMap<>();
+    public static Map<String, List<WorldScriptContainer>> events = new HashMap<>();
 
     // Map for keeping track of registered smart_events
     public static Set<OldSmartEvent> smart_events = new HashSet<>();

@@ -113,7 +113,7 @@ public class InjectCommand extends AbstractCommand {
         }
 
         if (scriptEntry.hasObject("instant")) {
-            scriptEntry.getResidingQueue().runNow(entries, "INJECT");
+            scriptEntry.getResidingQueue().runNow(entries);
         }
         else {
             scriptEntry.getResidingQueue().injectEntries(entries, 0);

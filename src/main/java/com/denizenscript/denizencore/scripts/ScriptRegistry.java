@@ -12,7 +12,6 @@ import java.util.*;
 
 public class ScriptRegistry {
 
-    // Currently loaded 'script-containers'
     public static Map<String, ScriptContainer> scriptContainers = new HashMap<>();
     public static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<>();
 
@@ -73,7 +72,6 @@ public class ScriptRegistry {
                 }
                 return;
             }
-            // Instantiate a new scriptContainer of specified type.
             Class typeClass = scriptContainerTypes.get(type.toUpperCase());
             if (Debug.showLoading) {
                 Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
@@ -102,35 +100,10 @@ public class ScriptRegistry {
         if (yamlScripts == null) {
             return;
         }
-        // Get a set of key names in concatenated Denizen Scripts
         Set<StringHolder> scripts = yamlScripts.getKeys(false);
-        // Iterate through set
         for (StringHolder scriptName : scripts) {
             attemptLoadSingle(scriptName.str, false);
         }
-    }
-
-    public static List<YamlConfiguration> outside_scripts = new ArrayList<>();
-
-    /**
-     * Adds a YAML FileConfiguration to the list of scripts to be loaded. Adding a new
-     * FileConfiguration will reload the scripts automatically.
-     *
-     * @param yaml_script the FileConfiguration containing the script
-     */
-    public static void addYamlScriptContainer(YamlConfiguration yaml_script) {
-        outside_scripts.add(yaml_script);
-    }
-
-    /**
-     * Removes a YAML FileConfiguration to the list of scripts to be loaded. Removing a
-     * FileConfiguration will reload the scripts automatically.
-     *
-     * @param yaml_script the FileConfiguration containing the script
-     */
-    public static void removeYamlScriptContainer(YamlConfiguration yaml_script) {
-        outside_scripts.remove(yaml_script);
-        DenizenCore.reloadScripts();
     }
 
     public static <T extends ScriptContainer> T getScriptContainerAs(String name, Class<T> type) {

@@ -19,25 +19,12 @@ import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-/**
- * ScriptQueues hold/control ScriptEntries while being sent
- * to the CommandExecuter
- */
-
 public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
-    private static final Map<Class<? extends ScriptQueue>, String> classNameCache = new HashMap<>();
 
     protected static long total_queues = 0;
 
-    /**
-     * Returns the number of queues created in the current instance
-     * as well as the number of currently active queues.
-     *
-     * @return stats
-     */
     public static String getStats() {
         StringBuilder stats = new StringBuilder();
         for (ScriptEvent event : ScriptEvent.events) {
@@ -55,13 +42,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 + allQueues.size() + ",\n" + stats.toString();
     }
 
-    /**
-     * Gets an existing queue. Cast to the correct QueueType to
-     * access further methods.
-     *
-     * @param id the id of the queue
-     * @return a ScriptQueue instance, or null
-     */
     public static ScriptQueue getExistingQueue(String id) {
         if (!queueExists(id)) {
             return null;
@@ -70,11 +50,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             return allQueues.get(id);
         }
     }
-
-    /*
-    private static String randomEntry(String[] strings) {
-        return strings[CoreUtilities.getRandom().nextInt(strings.length)];
-    }*/
 
     public static String getNextId(String prefix) {
         // DUUIDs v2.1
@@ -95,25 +70,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return allQueues.containsKey(id) ? getNextId(prefix) : id;
     }
 
-    // Contains all currently active queues, keyed by a String id.
-    protected static Map<String, ScriptQueue> allQueues =
-            new ConcurrentHashMap<>(8, 0.9f, 1);
+    protected static Map<String, ScriptQueue> allQueues = new LinkedHashMap<>();
 
-    /**
-     * Returns a collection of all active queues.
-     *
-     * @return a collection of ScriptQueues
-     */
     public static Collection<ScriptQueue> getQueues() {
         return allQueues.values();
     }
 
-    /**
-     * Checks if a queue exists with the given id.
-     *
-     * @param id the String ID of the queue to check.
-     * @return true if it exists.
-     */
     public static boolean queueExists(String id) {
         return allQueues.containsKey(id);
     }
@@ -144,9 +106,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     private ScriptEntry lastEntryExecuted = null;
 
     /**
-     If this number is larger than
-     DenizenCore.serverTimeMillis, the queue will
-     delay execution of the next ScriptEntry
+     If this number is larger than DenizenCore.serverTimeMillis, the queue will delay execution of the next ScriptEntry.
      */
     private long delay_time = 0;
 
@@ -158,18 +118,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public ScriptTag script;
 
-    /**
-     * Creates a ScriptQueue instance. Users of
-     * the API should instead use the static members
-     * of classes that extend ScriptQueue.
-     *
-     * @param id the name of the ScriptQueue
-     */
     protected ScriptQueue(String id) {
-        // Remember the 'id'
         this.id = id;
         generateId(id);
-        // Increment the stats
         total_queues++;
     }
 
@@ -182,50 +133,15 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Public instance setters and getters
     /////////////////////
 
-    /**
-     * Gets a boolean indicating whether the queue
-     * was cleared.
-     *
-     * @return whether the queue has been cleared.
-     */
-    public boolean getWasCleared() {
-        return was_cleared;
-    }
-
-    /**
-     * Gets a held script entry. Held script entries might
-     * contains some script entry context that might need
-     * to be fetched!
-     */
     public ScriptEntry getHeldScriptEntry(String id) {
         return held_entries.get(CoreUtilities.toLowerCase(id));
     }
 
-    /**
-     * Provides a way to hold a script entry for retrieval later in the
-     * script. Keyed by an id, which is turned to lowercase making
-     * it case insensitive.
-     *
-     * @param id    intended name of the entry
-     * @param entry the ScriptEntry instance
-     * @return the ScriptQueue, just in case you need to do more with it
-     */
-
     public ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
-        // to lowercase to avoid case sensitivity.
         held_entries.put(CoreUtilities.toLowerCase(id), entry);
-
         return this;
     }
 
-    /**
-     * Gets a context from the queue. Script writers can
-     * use the <c.context_name> or <context.context_name> tags
-     * to fetch this data.
-     *
-     * @param id The name of the definitions
-     * @return The value of the definitions, or null
-     */
     public ObjectTag getContext(String id) {
         id = CoreUtilities.toLowerCase(id);
         if (contextSource == null) {
@@ -267,12 +183,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return CoreUtilities.stringifyNullPass(definitions.get(CoreUtilities.toLowerCase(definition)));
     }
 
-    /**
-     * Checks for a piece of definitions.
-     *
-     * @param definition The name of the definitions
-     * @return true if the definition exists.
-     */
     @Override
     public boolean hasDefinition(String definition) {
         return definitions.containsKey(CoreUtilities.toLowerCase(definition));
@@ -287,60 +197,25 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
     }
 
-    /**
-     * Removes an existing definitions from the queue. This
-     * can be done with dScript as well by using the
-     * 'define' command, with :! as the value using the definition
-     * name as a prefix.
-     *
-     * @param definition the name of the definitions
-     */
     @Override
     public void removeDefinition(String definition) {
         definitions.remove(CoreUtilities.toLowerCase(definition));
     }
 
-    /**
-     * Returns a Map of all the current definitions
-     * stored in the queue, keyed by 'definition id'
-     *
-     * @return all current definitions, empty if none.
-     */
     @Override
     public Map<String, ObjectTag> getAllDefinitions() {
         return definitions;
     }
 
-    /**
-     * The last entry that was executed. Note: any
-     * replaceable tags/etc. are already replaced
-     * in this ScriptEntry.
-     *
-     * @return the last entry executed
-     */
     public ScriptEntry getLastEntryExecuted() {
         return lastEntryExecuted;
     }
 
-    /**
-     * Clears the script queue.
-     * <p/>
-     * Use the 'queue clear' command in dScript to
-     * access this method.
-     */
     public void clear() {
         was_cleared = true;
         script_entries.clear();
     }
 
-    /**
-     * Will delay the start of the queue until Java's
-     * System.currentTimeMillis() is less than the
-     * delayTime.
-     *
-     * @param delayTime the time to start the queue, in
-     *                  System.currentTimeMillis() format.
-     */
     public void delayUntil(long delayTime) {
         this.delay_time = delayTime;
     }
@@ -413,63 +288,40 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return newQueue;
     }
 
-    /**
-     * Called when the script queue is started.
-     */
     protected abstract void onStart();
 
     public boolean is_started;
-
-    private Class<? extends ScriptQueue> cachedClass;
 
     public long startTime = 0;
 
     public long startTimeMilli = 0;
 
     public String getName() {
-        Class<? extends ScriptQueue> clazz = this.cachedClass == null ? this.cachedClass = getClass() : this.cachedClass;
-        String name = classNameCache.get(clazz);
-        if (name == null) {
-            classNameCache.put(clazz, name = clazz.getSimpleName());
-        }
-        return name;
+        return "UnidentifiedQueueType";
     }
 
     public void runMeNow() {
         startTime = System.nanoTime();
         startTimeMilli = System.currentTimeMillis();
-        onStart(); /* Start the engine */
+        onStart();
     }
 
     public void queueDebug(String message) {
         Debug.echoDebug(this, "<O>" + message.replace("<QUEUE>", debugId + "<O>"));
     }
 
-    /**
-     * Starts the script queue.
-     */
     public void start() {
         if (is_started) {
             return;
         }
-
         if (script_entries.isEmpty()) {
-            // Nothing to execute
             return;
         }
-
-        // Save the instance to the allQueues static map
         allQueues.put(id, this);
-
-        // Set as started, and check for a valid delay_time.
         is_started = true;
         long delay = delay_time - DenizenCore.serverTimeMillis;
         boolean is_delayed = delay > 0;
-
-        // Record what script generated the first entry in the queue
         script = script_entries.get(0).getScript();
-
-        // Debug info
         String name = getName();
         if (is_delayed) {
             queueDebug("Delaying " + name + " '<QUEUE>'" + " for '"
@@ -478,8 +330,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         else {
             queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
         }
-
-        // If it's delayed, schedule it for later
         if (is_delayed) {
             Schedulable schedulable = new OneTimeSchedulable(new Runnable() {
                 @Override
@@ -494,7 +344,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
         }
         else {
-            // If it's not, start the engine now!
             if (!run_async) {
                 runMeNow();
             }
@@ -515,28 +364,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      *
      * @param entries the entries to be run.
      */
-    public String runNow(List<ScriptEntry> entries, String type) {
-        //Note which entry comes next in the existing queue
+    public String runNow(List<ScriptEntry> entries) {
         ScriptEntry nextup = getQueueSize() > 0 ? getEntry(0) : null;
-        // Inject the entries at the start
         injectEntries(entries, 0);
-        // Loop through until the queue is emptied or the entry noted above is reached
         while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
-            if (breakMe != null) {
-                removeEntry(0);
-            }
-            else {
-                getEntry(0).setInstant(true);
-                // Don't let the system try to 'hold' this entry.
-                getEntry(0).setFinished(true);
-                // Execute the ScriptEntry properly through the Script Engine.
-                DenizenCore.getScriptEngine().revolveOnceForce(this);
-            }
-        }
-        if (breakMe != null && breakMe.startsWith(type)) {
-            String origBreakMe = breakMe;
-            breakMe = null;
-            return origBreakMe;
+            getEntry(0).setInstant(true);
+            getEntry(0).setFinished(true);
+            DenizenCore.getScriptEngine().revolveOnceForce(this);
         }
         return null;
     }
@@ -552,42 +386,20 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         callback = r;
     }
 
-    private String breakMe = null;
-
-    public void breakLoop(String toBreak) {
-        breakMe = toBreak;
-    }
-
-    public String isLoopBroken() {
-        return breakMe;
-    }
-
-    /**
-     * Stops the script_queue and breaks it down.
-     */
     protected abstract void onStop();
 
     public boolean is_stopping = false;
 
     public void stop() {
-
-        // If this is the first time this has been called, check the
-        // ScriptContainer event 'on queue completes' which may have
-        // a few more script entries to run.
         if (!is_stopping) {
             is_stopping = true;
-
-            // Get the entries
-            List<ScriptEntry> entries =
-                    (lastEntryExecuted != null && lastEntryExecuted.getScript() != null ?
-                            lastEntryExecuted.getScript().getContainer()
-                                    .getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : null);
-            // Add the 'finishing' entries back into the queue (if not empty)
+            List<ScriptEntry> entries = (lastEntryExecuted != null && lastEntryExecuted.getScript() != null ?
+                            lastEntryExecuted.getScript().getContainer().getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : null);
             if (entries != null && !entries.isEmpty()) {
                 script_entries.addAll(entries);
                 queueDebug("Finishing up queue '<QUEUE>'...");
             }
-            else /* if empty, just stop the queue like normal */ {
+            else {
                 if (allQueues.get(id) == this) {
                     allQueues.remove(id);
                 }
@@ -599,10 +411,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 onStop();
             }
         }
-
-        // Else, just complete the queue.
-        // 1) Remove the id from active queue list
-        // 2) Cancel the corresponding task_id
         else {
             if (allQueues.get(id) == this) {
                 allQueues.remove(id);
@@ -620,11 +428,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Internal methods and fields
     ////////////////////
 
-    /**
-     * Sets the last entry executed by the ScriptEngine.
-     *
-     * @param entry the ScriptEntry last executed.
-     */
     public void setLastEntryExecuted(ScriptEntry entry) {
         lastEntryExecuted = entry;
     }
@@ -632,20 +435,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     protected abstract boolean shouldRevolve();
 
     protected void revolve() {
-        // If entries queued up are empty, deconstruct the queue.
         if (script_entries.isEmpty()) {
             stop();
             return;
         }
-
         if (!shouldRevolve()) {
             return;
         }
-
-        // Criteria met for a successful 'revolution' of this queue,
-        // so send the next script entry to the ScriptEngine.
         DenizenCore.getScriptEngine().revolve(this);
-
         if (script_entries.isEmpty()) {
             stop();
         }
