@@ -77,8 +77,8 @@ public class DurationTag implements ObjectTag {
         if (string.contains("-") && !string.contains("e-")) {
             String[] split = string.split("-", 2);
             if (split.length == 2) {
-                DurationTag low = DurationTag.valueOf(split[0]);
-                DurationTag high = DurationTag.valueOf(split[1]);
+                DurationTag low = DurationTag.valueOf(split[0], context);
+                DurationTag high = DurationTag.valueOf(split[1], context);
 
                 // Make sure 'low' and 'high' returned valid Durations,
                 // and that 'low' is less time than 'high'.
