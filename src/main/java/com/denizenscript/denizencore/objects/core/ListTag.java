@@ -475,7 +475,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("combine", (attribute, object) -> {
             ListTag output = new ListTag();
             for (ObjectTag obj : object.objectForms) {
-                output.addObjects(ListTag.getListFor(obj).objectForms);
+                output.addObjects(ListTag.getListFor(obj, attribute.context).objectForms);
             }
             return output;
         });
@@ -600,7 +600,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (object.isEmpty()) {
                 return new ElementTag("");
             }
-            ListTag input = getListFor(attribute.getContextObject(1));
+            ListTag input = getListFor(attribute.getContextObject(1), attribute.context);
 
             // <--[tag]
             // @attribute <ListTag.map_get[<element>|...].split_by[<element>]>
@@ -708,7 +708,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.insert[...] must have a value.");
                 return null;
             }
-            ListTag items = getListFor(attribute.getContextObject(1));
+            ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
                 int index = attribute.getIntContext(2) - 1;
@@ -746,7 +746,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (object.isEmpty()) {
                 return null;
             }
-            ListTag items = getListFor(attribute.getContextObject(1));
+            ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
                 int index = attribute.getIntContext(2) - 1;
@@ -782,7 +782,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 return null;
             }
             ListTag copy = new ListTag(object);
-            copy.addAll(getListFor(attribute.getContextObject(1)));
+            copy.addAll(getListFor(attribute.getContextObject(1), attribute.context));
             return copy;
         });
 
@@ -798,7 +798,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.exclude[...] must have a value.");
                 return null;
             }
-            ListTag exclusions = getListFor(attribute.getContextObject(1));
+            ListTag exclusions = getListFor(attribute.getContextObject(1), attribute.context);
             // Create a new ListTag that will contain the exclusions
             ListTag copy = new ListTag(object);
             // Iterate through
@@ -826,7 +826,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.remove[#] must have a value.");
                 return null;
             }
-            ListTag indices = getListFor(attribute.getContextObject(1));
+            ListTag indices = getListFor(attribute.getContextObject(1), attribute.context);
             ListTag copy = new ListTag(object);
             for (String index : indices) {
                 int remove;
@@ -956,7 +956,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
                 return null;
             }
-            ListTag indices = getListFor(attribute.getContextObject(1));
+            ListTag indices = getListFor(attribute.getContextObject(1), attribute.context);
             if (indices.size() > 1) {
                 ListTag results = new ListTag();
                 for (String index : indices) {
@@ -1409,7 +1409,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // -->
             ListTag context = new ListTag();
             if (attribute.startsWith("context", 2)) {
-                context = getListFor(attribute.getContextObject(2));
+                context = getListFor(attribute.getContextObject(2), attribute.context);
                 attribute.fulfill(1);
             }
             final ListTag context_send = context;
@@ -1658,7 +1658,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.contains_any_case_sensitive[...] must have a value.");
                 return null;
             }
-            ListTag list = getListFor(attribute.getContextObject(1));
+            ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
             boolean state = false;
 
             full_set:
@@ -1685,7 +1685,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.contains_any[...] must have a value.");
                 return null;
             }
-            ListTag list = getListFor(attribute.getContextObject(1));
+            ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
             boolean state = false;
 
             full_set:
@@ -1735,7 +1735,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.contains[...] must have a value.");
                 return null;
             }
-            ListTag needed = getListFor(attribute.getContextObject(1));
+            ListTag needed = getListFor(attribute.getContextObject(1), attribute.context);
             int gotten = 0;
 
             for (String check : needed) {

@@ -635,7 +635,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_list", (attribute, object) -> {
             String element = object.element;
-            ListTag obj = handleNull(element, ListTag.valueOf(element), "dList", attribute.hasAlternative());
+            ListTag obj = handleNull(element, ListTag.valueOf(element, attribute.context), "ListTag", attribute.hasAlternative());
             return obj;
         }, "aslist");
 
@@ -648,7 +648,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_custom", (attribute, object) -> {
             String element = object.element;
-            CustomObjectTag obj = handleNull(element, CustomObjectTag.valueOf(element, null), "Custom", attribute.hasAlternative());
+            CustomObjectTag obj = handleNull(element, CustomObjectTag.valueOf(element, attribute.context), "Custom", attribute.hasAlternative());
             return obj;
         }, "ascustom");
 
@@ -662,7 +662,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_script", (attribute, object) -> {
             String element = object.element;
-            return handleNull(element, ScriptTag.valueOf(element), "dScript", attribute.hasAlternative());
+            return handleNull(element, ScriptTag.valueOf(element, attribute.context), "ScriptTag", attribute.hasAlternative());
         }, "asscript");
 
         // <--[tag]
@@ -675,7 +675,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_queue", (attribute, object) -> {
             String element = object.element;
-            return handleNull(element, QueueTag.valueOf(element), "ScriptQueue", attribute.hasAlternative());
+            return handleNull(element, QueueTag.valueOf(element, attribute.context), "QueueTag", attribute.hasAlternative());
         }, "asqueue");
 
         // <--[tag]
@@ -688,7 +688,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_duration", (attribute, object) -> {
             String element = object.element;
-            return handleNull(element, DurationTag.valueOf(element), "Duration", attribute.hasAlternative());
+            return handleNull(element, DurationTag.valueOf(element, attribute.context), "DurationTag", attribute.hasAlternative());
         }, "asduration");
 
         // <--[tag]
@@ -770,7 +770,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_any_case_sensitive", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(attribute.getContext(1));
+            ListTag list = ListTag.valueOf(attribute.getContext(1), attribute.context);
             for (String list_element : list) {
                 if (element.contains(list_element)) {
                     return new ElementTag(true);
@@ -790,7 +790,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_any", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
+            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)), attribute.context);
             String ellow = CoreUtilities.toLowerCase(element);
             for (String list_element : list) {
                 if (ellow.contains(list_element)) {
@@ -862,7 +862,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_all", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)));
+            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)), attribute.context);
             String ellow = CoreUtilities.toLowerCase(element);
             for (String list_element : list) {
                 if (!ellow.contains(list_element)) {
@@ -883,7 +883,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_all_case_sensitive", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(attribute.getContext(1));
+            ListTag list = ListTag.valueOf(attribute.getContext(1), attribute.context);
             for (String list_element : list) {
                 if (!element.contains(list_element)) {
                     return new ElementTag("false");

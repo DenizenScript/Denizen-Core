@@ -218,7 +218,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         if (scriptEntry.hasObject("definitions")) {
             int x = 1;
             ElementTag raw_defintions = scriptEntry.getElement("definitions");
-            ListTag definitions = ListTag.valueOf(raw_defintions.asString());
+            ListTag definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
             String[] definition_names = null;
             try {
                 if (script != null && script.getContainer() != null) {

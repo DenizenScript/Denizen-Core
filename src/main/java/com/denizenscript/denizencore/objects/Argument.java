@@ -182,7 +182,7 @@ public class Argument implements Cloneable {
         if (object instanceof ListTag) {
             return (ListTag) object;
         }
-        return ListTag.valueOf(value);
+        return ListTag.valueOf(value, scriptEntry.getContext());
     }
 
     public static HashSet<String> precalcEnum(Enum<?>[] values) {

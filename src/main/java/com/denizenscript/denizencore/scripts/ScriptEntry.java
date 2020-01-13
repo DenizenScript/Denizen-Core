@@ -100,6 +100,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return internal.bracedSet;
     }
 
+    public TagContext getContext() {
+        return DenizenCore.getImplementation().getTagContext(this);
+    }
+
     public void setBracedSet(List<BracedCommand.BracedData> set) {
         internal.bracedSet = set;
     }

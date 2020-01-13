@@ -60,7 +60,7 @@ public class AdjustCommand extends AbstractCommand {
                 }
                 else if (arg.object instanceof ElementTag) {
                     // Special parse to avoid prefixing issues
-                    scriptEntry.addObject("object", ListTag.valueOf(arg.raw_value));
+                    scriptEntry.addObject("object", ListTag.valueOf(arg.raw_value, scriptEntry.getContext()));
                 }
                 else {
                     scriptEntry.addObject("object", arg.asType(ListTag.class));

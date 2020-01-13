@@ -84,7 +84,7 @@ public class ForeachCommand extends BracedCommand {
                 scriptEntry.addObject("as_name", arg.asElement());
             }
             else if (!handled) {
-                scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.raw_value));
+                scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.raw_value, scriptEntry.getContext()));
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }

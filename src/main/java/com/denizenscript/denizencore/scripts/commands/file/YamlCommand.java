@@ -609,7 +609,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             break;
                         }
                         case SPLIT_NEW: {
-                            yaml.set(keyStr, new ArrayList<>(ListTag.valueOf(valueStr)));
+                            yaml.set(keyStr, new ArrayList<>(ListTag.valueOf(valueStr, scriptEntry.getContext())));
                             break;
                         }
                         case SPLIT: {
@@ -617,7 +617,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             if (list == null) {
                                 list = new ArrayList<>();
                             }
-                            list.addAll(ListTag.valueOf(valueStr));
+                            list.addAll(ListTag.valueOf(valueStr, scriptEntry.getContext()));
                             yaml.set(keyStr, list);
                             break;
                         }
