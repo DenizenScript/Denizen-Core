@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.Fetchable;
+import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -135,11 +136,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
 
         // Use value of string, which will separate values by the use of a pipe '|'
-        return new ListTag(string.startsWith("li@") ? string.substring(3) : string);
+        return new ListTag(string.startsWith("li@") ? string.substring(3) : string, context);
     }
 
     public static ListTag getListFor(ObjectTag inp) {
-        return inp instanceof ListTag ? (ListTag) inp : valueOf(inp.toString());
+        return getListFor(inp, null);
+    }
+
+    public static ListTag getListFor(ObjectTag inp, TagContext context) {
+        return inp instanceof ListTag ? (ListTag) inp : valueOf(inp.toString(), context);
     }
 
     public static boolean matches(String arg) {
@@ -160,12 +165,19 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
     }
 
+    public ListTag(ObjectTag... objects) {
+        this(Arrays.asList(objects));
+    }
+
     public ListTag() {
         objectForms = new ArrayList<>();
     }
 
-    // A string of items, split by '|'
     public ListTag(String items) {
+        this(items, null);
+    }
+
+    public ListTag(String items, TagContext context) {
         if (items != null && items.length() > 0) {
             // Count brackets
             int brackets = 0;
@@ -196,7 +208,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
         objectForms = new ArrayList<>(size());
         for (String str : this) {
-            objectForms.add(new ElementTag(str));
+            objectForms.add(ObjectFetcher.pickObjectFor(str, context));
         }
     }
 
