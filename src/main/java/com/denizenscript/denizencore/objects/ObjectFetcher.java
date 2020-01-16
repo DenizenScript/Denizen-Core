@@ -49,12 +49,11 @@ public class ObjectFetcher {
 
         // Initialize the ObjectFetcher
         registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
-        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor);        // li@
-        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor);      // s@
-        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor);      // el@
-        registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor);     // d@
-        registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor);  // q@
-
+        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
+        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
+        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
+        registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
+        registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
     }
 
     public static MatchesInterface getMatchesFor(Class clazz) {
@@ -110,7 +109,6 @@ public class ObjectFetcher {
             if (valueOfMethod.isAnnotationPresent(Fetchable.class)) {
                 String identifier = valueOfMethod.getAnnotation(Fetchable.class).value();
                 objectsByPrefix.put(CoreUtilities.toLowerCase(identifier.trim()), newType);
-                Debug.log("Registered: " + objectTag.getSimpleName() + " as " + identifier);
                 newType.prefix = identifier;
             }
             else {
