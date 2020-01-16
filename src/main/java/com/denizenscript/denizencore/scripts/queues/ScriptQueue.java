@@ -257,9 +257,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public TimedQueue forceToTimed(DurationTag delay) {
         Runnable r = callback;
         callback = null;
-        stop();
-        TimedQueue newQueue = new TimedQueue(id, 0);
+        TimedQueue newQueue = new TimedQueue("FORCE:" + id, 0);
         replacementQueue = newQueue;
+        stop();
         newQueue.id = id;
         newQueue.debugId = debugId;
         newQueue.run_async = this.run_async;
@@ -392,6 +392,8 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public boolean is_stopping = false;
 
+    public boolean isStopped = false;
+
     public void stop() {
         if (!is_stopping) {
             is_stopping = true;
@@ -411,6 +413,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 }
                 is_started = false;
                 onStop();
+                isStopped = true;
             }
         }
         else {
@@ -422,6 +425,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 }
                 is_started = false;
                 onStop();
+                isStopped = true;
             }
         }
     }

@@ -20,12 +20,12 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // @Name Run
     // @Syntax run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)
     // @Required 1
-    // @Short Runs a script in a new ScriptQueue.
+    // @Short Runs a script in a new queue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
     //
     // @Description
-    // Runs a script in a new ScriptQueue.
+    // Runs a script in a new queue.
     //
     // You can specify either a script object to run, or "locally" to use a path within the same script.
     //

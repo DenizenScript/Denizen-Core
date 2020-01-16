@@ -41,7 +41,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // This can be used for interacting with other plugins' configuration files.
     // It can also be used for storing your own script's data.
     //
-    // Use holdable syntax ("- ~yaml load:...") with load or savefile actions to avoid locking up the server during file IO.
+    // Use waitable syntax ("- ~yaml load:...") with load or savefile actions to avoid locking up the server during file IO.
+    // Refer to <@link language ~waitable>.
     //
     // For loading and saving, the starting path is within 'plugins/Denizen'.
     //
