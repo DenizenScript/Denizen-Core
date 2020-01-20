@@ -17,7 +17,7 @@ public class DataActionHelper {
         if (bracketIndex >= 0) {
             String index = toReturn.key.substring(bracketIndex + 1, toReturn.key.lastIndexOf(']'));
             if (ArgumentHelper.matchesInteger(index)) {
-                toReturn.key = toReturn.key.substring(bracketIndex);
+                toReturn.key = toReturn.key.substring(0, bracketIndex);
                 toReturn.index = Integer.parseInt(index);
             }
         }
