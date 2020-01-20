@@ -572,7 +572,7 @@ public class ElementTag implements ObjectTag {
         }, "as_double", "asdouble");
 
         registerTag("as_int", (attribute, object) -> {
-            Deprecations.elementAsInTag.warn(attribute.context);
+            Deprecations.elementAsIntTag.warn(attribute.context);
             String element = object.element;
             try {
                 return new ElementTag(Double.valueOf(element).longValue());
@@ -592,6 +592,8 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element as a number without a decimal by way of stripping the decimal value off the end.
         // That is, rounds towards zero.
+        // This is an extremely special case tag that should only be used in very specific situations.
+        // If at all unsure, this is probably the wrong tag. Consider <@link tag elementtag.round> or <@link tag elementtag.round_down> instead.
         // -->
         registerTag("truncate", (attribute, object) -> {
             try {
@@ -1092,6 +1094,28 @@ public class ElementTag implements ObjectTag {
         /////////////////////
         //   ELEMENT MANIPULATION ATTRIBUTES
         /////////////////
+
+        // <--[tag]
+        // @attribute <ElementTag.repeat[<#>]>
+        // @returns ElementTag
+        // @group element manipulation
+        // @description
+        // Returns a copy of the element, repeated the specified number of times.
+        // For example, "hello" .repeat[3] returns "hellohellohello"
+        // An input value or zero or a negative number will result in an empty element.
+        // -->
+        registerTag("repeat", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag ElementTag.repeat[...] must have a value.");
+                return null;
+            }
+            int repeatTimes = attribute.getIntContext(1);
+            StringBuilder result = new StringBuilder(object.element.length() * repeatTimes);
+            for (int i = 0; i < repeatTimes; i++) {
+                result.append(object.element);
+            }
+            return new ElementTag(result.toString());
+        });
 
         // <--[tag]
         // @attribute <ElementTag.after_last[<element>]>

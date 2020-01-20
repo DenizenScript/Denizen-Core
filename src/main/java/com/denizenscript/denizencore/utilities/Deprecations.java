@@ -61,7 +61,7 @@ public class Deprecations {
 
     // Added on 2019/09/13
     // Bad candidate for functionality removal - used to be commonly used
-    public static Warning elementAsInTag = new SlowWarning("'element.as_int' tag is deprecated: use '.round', '.round_down', '.round_up', or '.truncate'.");
+    public static Warning elementAsIntTag = new SlowWarning("'element.as_int' tag is deprecated: use '.round', '.round_down', or '.round_up'.");
 
     // In Bukkit impl, Added on 2019/09/18, but was deprecated earlier.
     public static Warning worldContext = new Warning("'context.world' in events containing a location or chunk context is deprecated: use 'context.location.world' or similar to get the world value.");
@@ -121,8 +121,11 @@ public class Deprecations {
     // Added 2019/11/11.
     public static Warning oldTagTickSyntax = new SlowWarning("The '^' prefix syntax for 'instant' tags is outdated. Please instead use the 'define' command to track the original player/NPC.");
 
-    // Added 2020/01/15
+    // In Bukkit impl, Added 2020/01/15
     public static Warning worldRandomLoadedChunkTag = new SlowWarning("The 'world.random_loaded_chunk' tag is pointless. Use 'world.loaded_chunks.random' instead.");
+
+    // In Bukkit impl, Added 2020/01/15
+    public static Warning entityCustomIdTag = new SlowWarning("The tag 'EntityTag.custom_id' is deprecated. Use '.script' instead, though it is technically equivalent to <ENTITY.script||<ENTITY.entity_type>>.");
 
     // ==================== SPECIAL deprecations: Minecraft version ====================
 

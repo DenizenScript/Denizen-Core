@@ -46,7 +46,6 @@ public class ObjectFetcher {
     public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
 
     public static void registerCoreObjects() {
-
         // Initialize the ObjectFetcher
         registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
         registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
@@ -57,7 +56,6 @@ public class ObjectFetcher {
     }
 
     public static MatchesInterface getMatchesFor(Class clazz) {
-
         try {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "matches", // MatchesInterface#matches
@@ -76,7 +74,6 @@ public class ObjectFetcher {
     }
 
     public static ValueOfInterface getValueOfFor(Class clazz) {
-
         try {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "valueOf", // ValueOfInterface#valueOf
