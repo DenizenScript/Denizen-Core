@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -326,11 +327,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         script = script_entries.get(0).getScript();
         String name = getName();
         if (is_delayed) {
-            queueDebug("Delaying " + name + " '<QUEUE>'" + " for '"
-                    + new DurationTag(((double) delay) / 1000f).identify() + "'...");
+            if (queueNeedsToDebug()) {
+                queueDebug("Delaying " + name + " '<QUEUE>'" + " for '" + new DurationTag(((double) delay) / 1000f).identify() + "'...");
+            }
         }
         else {
-            queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
+            if (queueNeedsToDebug()) {
+                queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
+            }
         }
         if (is_delayed) {
             Schedulable schedulable = new OneTimeSchedulable(new Runnable() {
@@ -400,6 +404,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             List<ScriptEntry> entries = (lastEntryExecuted != null && lastEntryExecuted.getScript() != null ?
                             lastEntryExecuted.getScript().getContainer().getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : null);
             if (entries != null && !entries.isEmpty()) {
+                Deprecations.onQueueComplete.warn(this);
                 script_entries.addAll(entries);
                 queueDebug("Finishing up queue '<QUEUE>'...");
             }
@@ -407,7 +412,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 if (allQueues.get(id) == this) {
                     allQueues.remove(id);
                 }
-                queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
+                if (queueNeedsToDebug()) {
+                    queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
+                }
                 if (callback != null) {
                     callback.run();
                 }
@@ -472,17 +479,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return script_entries;
     }
 
-    public boolean hasInjectedItems = false;
-
     public ScriptQueue injectEntries(List<ScriptEntry> entries, int position) {
         if (position > script_entries.size() || position < 0) {
             position = 1;
         }
-        if (script_entries.size() == 0) {
+        if (script_entries.isEmpty()) {
             position = 0;
         }
         script_entries.addAll(position, entries);
-        hasInjectedItems = true;
         return this;
     }
 
@@ -505,11 +509,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (position > script_entries.size() || position < 0) {
             position = 1;
         }
-        if (script_entries.size() == 0) {
+        if (script_entries.isEmpty()) {
             position = 0;
         }
         script_entries.add(position, entry);
-        hasInjectedItems = true;
         return this;
     }
 
@@ -517,13 +520,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return script_entries.size();
     }
 
-    // DEBUGGABLE
-    //
+    public boolean queueNeedsToDebug() {
+        return DenizenCore.getImplementation().shouldDebug(this);
+    }
 
     @Override
     public boolean shouldDebug() {
-        return (lastEntryExecuted != null ? lastEntryExecuted.shouldDebug()
-                : script_entries.get(0).shouldDebug());
+        return (lastEntryExecuted != null ? lastEntryExecuted.shouldDebug() : script_entries.get(0).shouldDebug());
     }
 
     @Override
