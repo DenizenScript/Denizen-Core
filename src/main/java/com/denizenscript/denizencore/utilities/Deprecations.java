@@ -127,6 +127,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/01/15
     public static Warning entityCustomIdTag = new SlowWarning("The tag 'EntityTag.custom_id' is deprecated. Use '.script' instead, though it is technically equivalent to <ENTITY.script||<ENTITY.entity_type>>.");
 
+    // In Bukkit impl, Added 2020/01/15
+    public static Warning playerActionBarMech = new SlowWarning("The mechanism 'PlayerTag.action_bar' is deprecated. Use the 'actionbar' command instead.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
