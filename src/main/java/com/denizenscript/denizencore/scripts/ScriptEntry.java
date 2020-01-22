@@ -108,7 +108,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         internal.bracedSet = set;
     }
 
-    private Map<String, Object> objects = new HashMap<>();
+    private Map<String, Object> objects = new HashMap<>(8);
 
     public void regenerateArgsCur() {
         args_cur = new ArrayList<>(internal.args_ref);
@@ -136,7 +136,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     @Override
     public ScriptEntry clone() throws CloneNotSupportedException {
         ScriptEntry se = (ScriptEntry) super.clone();
-        se.objects = new HashMap<>();
+        se.objects = new HashMap<>(8);
         se.processed_arguments = processed_arguments == null ? null : new ArrayList<>(processed_arguments);
         se.args = new ArrayList<>(args);
         se.entryData = entryData.clone();
@@ -350,7 +350,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         if (object instanceof ObjectTag) {
             ((ObjectTag) object).setPrefix(key);
         }
-        objects.put(CoreUtilities.toLowerCase(key), object);
+        objects.put(key, object);
         return this;
     }
 
@@ -362,7 +362,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
      * @return The scriptEntry
      */
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
-        if (!this.objects.containsKey(CoreUtilities.toLowerCase(key))) {
+        if (!this.objects.containsKey(key)) {
             for (Object obj : objects) {
                 if (obj != null) {
                     this.addObject(key, obj);
@@ -487,6 +487,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         try {
             // If an ENUM, return as an Element
             Object gotten = objects.get(key);
+            if (gotten == null) {
+                return null;
+            }
             if (gotten instanceof Enum) {
                 return (T) new ElementTag(((Enum) gotten).name());
             }
@@ -504,7 +507,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ElementTag getElement(String key) {
         try {
-            return (ElementTag) objects.get(key);
+            Object gotten = objects.get(key);
+            if (gotten == null) {
+                return null;
+            }
+            return (ElementTag) gotten;
         }
         catch (Exception ex) {
             if (Debug.verbose) {
