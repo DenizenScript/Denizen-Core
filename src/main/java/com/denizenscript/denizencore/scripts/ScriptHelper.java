@@ -217,7 +217,7 @@ public class ScriptHelper {
             }
         }
         catch (Exception e) {
-            Debug.echoError("Woah! No script folder found in /plugins/Denizen/scripts/");
+            Debug.echoError("Woah! No script folder found in " + DenizenCore.getImplementation().getScriptFolder());
             hadError = true;
             Debug.echoError(e);
         }
