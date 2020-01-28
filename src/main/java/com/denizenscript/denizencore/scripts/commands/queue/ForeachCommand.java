@@ -115,7 +115,7 @@ public class ForeachCommand extends BracedCommand {
         ElementTag as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
@@ -145,7 +145,7 @@ public class ForeachCommand extends BracedCommand {
             return;
         }
         else if (next != null && next.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
@@ -204,8 +204,6 @@ public class ForeachCommand extends BracedCommand {
         }
 
         else {
-
-            // Get objects
             List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
             if (bdlist == null || bdlist.isEmpty()) {
                 Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
@@ -219,7 +217,6 @@ public class ForeachCommand extends BracedCommand {
                 return;
             }
 
-            // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), list.debug() + as_name.debug());
             }

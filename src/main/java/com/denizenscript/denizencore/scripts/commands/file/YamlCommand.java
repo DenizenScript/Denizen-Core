@@ -274,8 +274,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
         }
 
-        // Check for required arguments
-
         if (!scriptEntry.hasObject("id")) {
             throw new InvalidArgumentsException("Must specify an id!");
         }

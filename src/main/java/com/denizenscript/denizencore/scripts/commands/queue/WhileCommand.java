@@ -90,7 +90,7 @@ public class WhileCommand extends BracedCommand {
         ElementTag callback = scriptEntry.getElement("callback");
 
         if (stop != null && stop.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
@@ -120,7 +120,7 @@ public class WhileCommand extends BracedCommand {
             return;
         }
         else if (next != null && next.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
@@ -203,7 +203,6 @@ public class WhileCommand extends BracedCommand {
             }
             boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);
 
-            // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_loop", run));
             }

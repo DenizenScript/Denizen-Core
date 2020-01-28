@@ -38,7 +38,6 @@ public class GotoCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        // Interpret arguments
         for (Argument arg : scriptEntry.getProcessedArgs()) {
 
             if (!scriptEntry.hasObject("m_name")) {
@@ -50,7 +49,6 @@ public class GotoCommand extends AbstractCommand {
             }
         }
 
-        // Check for required information
         if (!scriptEntry.hasObject("m_name")) {
             throw new InvalidArgumentsException("Must have a mark name!");
         }
@@ -60,10 +58,8 @@ public class GotoCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        // Fetch required objects
         ElementTag mName = scriptEntry.getElement("m_name");
 
-        // Debug the execution
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), mName.debug());
         }

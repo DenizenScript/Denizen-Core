@@ -72,7 +72,6 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
 
-        // Report to dB
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run)
                     + (rate == null ? "" : rate.debug()));

@@ -108,7 +108,7 @@ public class RepeatCommand extends BracedCommand {
         ElementTag as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
@@ -138,7 +138,7 @@ public class RepeatCommand extends BracedCommand {
             return;
         }
         else if (next != null && next.asBoolean()) {
-            // Report to dB
+
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
@@ -208,7 +208,6 @@ public class RepeatCommand extends BracedCommand {
                 return;
             }
 
-            // Report to dB
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), quantity.debug() + as_name.debug());
             }
