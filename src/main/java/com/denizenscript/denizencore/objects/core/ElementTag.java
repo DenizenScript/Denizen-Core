@@ -2055,21 +2055,6 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.round>
-        // @returns ElementTag(Number)
-        // @group math
-        // @description
-        // Rounds a decimal.
-        // -->
-        registerTag("round", (attribute, ele) -> {
-            if (!ele.isDouble()) {
-                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
-                return null;
-            }
-            return new ElementTag(Math.round(ele.asDouble()));
-        });
-
-        // <--[tag]
         // @attribute <ElementTag.round_to_precision[<#.#>]>
         // @returns ElementTag(Decimal)
         // @group math
@@ -2128,6 +2113,21 @@ public class ElementTag implements ObjectTag {
             }
             double precision = attribute.getDoubleContext(1);
             return new ElementTag(Math.ceil(object.asDouble() / precision) * precision);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.round>
+        // @returns ElementTag(Number)
+        // @group math
+        // @description
+        // Rounds a decimal.
+        // -->
+        registerTag("round", (attribute, ele) -> {
+            if (!ele.isDouble()) {
+                attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+                return null;
+            }
+            return new ElementTag(Math.round(ele.asDouble()));
         });
 
         // <--[tag]

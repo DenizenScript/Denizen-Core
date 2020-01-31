@@ -1344,6 +1344,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Non-numerical input is considered an error, and the result is not guaranteed.
         // -->
         registerTag("sort_by_number", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("Sort_By_Number must have an input value.");
+                return null;
+            }
             ListTag newlist = new ListTag(object);
             try {
                 Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
