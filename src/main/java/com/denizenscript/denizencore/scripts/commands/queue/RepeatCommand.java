@@ -173,7 +173,9 @@ public class RepeatCommand extends BracedCommand {
                 RepeatData data = (RepeatData) scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.target) {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop " + data.index);
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop " + data.index);
+                    }
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.index));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK", "as:" + as_name.asString()},
@@ -187,7 +189,9 @@ public class RepeatCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop complete");
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop complete");
+                    }
                 }
             }
             else {
@@ -214,7 +218,9 @@ public class RepeatCommand extends BracedCommand {
 
             int target = quantity.asInt();
             if (target <= 0) {
-                Debug.echoDebug(scriptEntry, "Zero count, not looping...");
+                if (scriptEntry.dbCallShouldDebug()) {
+                    Debug.echoDebug(scriptEntry, "Zero count, not looping...");
+                }
                 return;
             }
             RepeatData datum = new RepeatData();

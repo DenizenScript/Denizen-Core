@@ -228,14 +228,16 @@ public class RunCommand extends AbstractCommand implements Holdable {
                     }
                 }
             }
-            catch (Exception e) {
-                // TODO: less lazy handling
+            catch (Exception ex) {
+                Debug.echoError(ex);
             }
             for (String definition : definitions) {
                 String name = definition_names != null && definition_names.length >= x ?
                         definition_names[x - 1].trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
-                Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
+                if (scriptEntry.dbCallShouldDebug()) {
+                    Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
+                }
                 x++;
             }
             queue.addDefinition("raw_context", raw_defintions.asString());

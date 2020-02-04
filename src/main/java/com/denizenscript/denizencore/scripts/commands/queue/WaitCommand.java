@@ -69,7 +69,9 @@ public class WaitCommand extends AbstractCommand {
         }
         else {
             scriptEntry.setInstant(false);
-            Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue.id + " into a timed queue...");
+            if (scriptEntry.dbCallShouldDebug()) {
+                Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue.id + " into a timed queue...");
+            }
             queue.queue.forceToTimed(delay);
         }
     }

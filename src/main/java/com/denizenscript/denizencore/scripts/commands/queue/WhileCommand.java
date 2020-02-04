@@ -167,7 +167,9 @@ public class WhileCommand extends BracedCommand {
                 data.LastChecked = System.currentTimeMillis();
                 boolean run = new IfCommand.ArgComparer().compare(new ArrayList(data.value), scriptEntry);
                 if (run) {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop " + data.index);
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop " + data.index);
+                    }
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},
@@ -181,7 +183,9 @@ public class WhileCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop complete");
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop complete");
+                    }
                 }
             }
             else {

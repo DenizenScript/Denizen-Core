@@ -180,7 +180,9 @@ public class ForeachCommand extends BracedCommand {
                 ForeachData data = (ForeachData) scriptEntry.getOwner().getData();
                 data.index++;
                 if (data.index <= data.list.size()) {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop " + data.index);
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop " + data.index);
+                    }
                     scriptEntry.getResidingQueue().addDefinition("loop_index", String.valueOf(data.index));
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.list.get(data.index - 1)));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
@@ -195,7 +197,9 @@ public class ForeachCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
                 else {
-                    Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop complete");
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop complete");
+                    }
                 }
             }
             else {
@@ -223,7 +227,9 @@ public class ForeachCommand extends BracedCommand {
 
             int target = list.size();
             if (target <= 0) {
-                Debug.echoDebug(scriptEntry, "Empty list, not looping...");
+                if (scriptEntry.dbCallShouldDebug()) {
+                    Debug.echoDebug(scriptEntry, "Empty list, not looping...");
+                }
                 return;
             }
             ForeachData datum = new ForeachData();
