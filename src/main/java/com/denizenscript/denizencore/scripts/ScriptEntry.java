@@ -20,7 +20,7 @@ import java.util.*;
 
 /**
  * ScriptEntry contain information about a single entry from a dScript. It is used
- * by the CommandExecuter, among other parts of Denizen.
+ * by the CommandExecutor, among other parts of Denizen.
  */
 public class ScriptEntry implements Cloneable, Debuggable {
 
@@ -369,7 +369,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     /**
      * Gets the original, pre-tagged arguments, as constructed. This is simply a copy of
      * the original arguments, immune from any changes that may be made (such as tag filling)
-     * by the CommandExecuter.
+     * by the CommandExecutor.
      *
      * @return unmodified arguments from entry creation
      */

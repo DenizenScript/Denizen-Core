@@ -136,7 +136,7 @@ public abstract class AbstractCommand {
      *                             Typically []'s represent required arguments and ()'s represent optional arguments.
      *                             Example from SWITCH command: [LOCATION:x,y,z,world] (STATE:ON|OFF|TOGGLE) (DURATION:#)
      * @param numberOfRequiredArgs The minimum number of required arguments needed to ensure proper functionality. The
-     *                             Executer will not parseArgs() for this command if this number is not met.
+     *                             Executor will not parseArgs() for this command if this number is not met.
      * @return The newly created CommandOptions object for the possibility of setting other
      * criteria, though currently none exists.
      */
@@ -148,9 +148,9 @@ public abstract class AbstractCommand {
     public abstract void execute(ScriptEntry scriptEntry);
 
     /**
-     * Called by the CommandExecuter before the execute() method is called. Arguments
+     * Called by the CommandExecutor before the execute() method is called. Arguments
      * should be iterated through and checked before continuing to execute(). Note that
-     * PLAYER:<player> and NPC:<npc> arguments are parsed automatically by the Executer
+     * PLAYER:<player> and NPC:<npc> arguments are parsed automatically by the Executor
      * and should not be handled by this Command otherwise. Their output is stored in the
      * attached {@link ScriptEntry} and can be retrieved with ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(),
      * scriptEntry.getOfflinePlayer() (if the player specified is not online), and

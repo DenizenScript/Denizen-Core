@@ -7,10 +7,10 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 public class ScriptEngine {
 
-    public final CommandExecutor commandExecuter;
+    public final CommandExecutor commandExecutor;
 
     public ScriptEngine() {
-        commandExecuter = new CommandExecutor();
+        commandExecutor = new CommandExecutor();
     }
 
     boolean shouldHold(ScriptQueue scriptQueue) {
@@ -35,7 +35,7 @@ public class ScriptEngine {
         scriptEntry.setSendingQueue(scriptQueue);
         scriptQueue.setLastEntryExecuted(scriptEntry);
         try {
-            commandExecuter.execute(scriptEntry);
+            commandExecutor.execute(scriptEntry);
         }
         catch (Throwable e) {
             Debug.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
@@ -51,7 +51,7 @@ public class ScriptEngine {
         while (scriptEntry != null) {
             scriptEntry.setSendingQueue(scriptQueue);
             scriptQueue.setLastEntryExecuted(scriptEntry);
-            commandExecuter.execute(scriptEntry);
+            commandExecutor.execute(scriptEntry);
             if (scriptQueue instanceof Delayable) {
                 Delayable delayedQueue = (Delayable) scriptQueue;
                 if (delayedQueue.isDelayed() || delayedQueue.isPaused()) {
