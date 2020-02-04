@@ -113,9 +113,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return objectForms.get(id);
     }
 
-    public final static char internal_escape_char = (char) 0x05;
-    public final static String internal_escape = String.valueOf(internal_escape_char);
-
     public static ListTag valueOf(String string) {
         return valueOf(string, null);
     }
@@ -147,7 +144,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         boolean flag = DenizenCore.getImplementation().matchesFlagListTag(arg);
 
-        return flag || arg.contains("|") || arg.contains(internal_escape) || arg.startsWith("li@");
+        return flag || arg.contains("|") || arg.startsWith("li@");
     }
 
     /////////////
@@ -192,7 +189,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                 }
                 // Separate if an un-bracketed pipe is found
-                else if ((brackets == 0) && (chr == '|' || chr == internal_escape_char)) {
+                else if (brackets == 0 && chr == '|') {
                     super.add(items.substring(start, i));
                     start = i + 1;
                 }

@@ -3,6 +3,8 @@ package com.denizenscript.denizencore.objects.properties;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.ObjectTag;
 
@@ -158,8 +160,9 @@ public class PropertyParser {
             if (property != null) {
                 String description = property.getPropertyString();
                 if (description != null) {
-                    prop_string.append(property.getPropertyId()).append('=')
-                            .append(description.replace(';', (char) 0x2011)).append(';');
+                    description = CoreUtilities.replace(description, "&", "&amp");
+                    description = CoreUtilities.replace(description, ";", "&sc");
+                    prop_string.append(property.getPropertyId()).append('=').append(description).append(';');
                 }
             }
         }

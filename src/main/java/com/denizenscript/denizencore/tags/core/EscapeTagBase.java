@@ -78,16 +78,25 @@ public class EscapeTagBase {
         if (input == null) {
             return null;
         }
-        return TagManager.cleanOutputFully(input)
-                .replace("&", "&amp").replace("|", "&pipe")
-                .replace(">", "&gt").replace("<", "&lt")
-                .replace("\n", "&nl").replace(";", "&sc")
-                .replace("[", "&lb").replace("]", "&rb")
-                .replace(":", "&co").replace("@", "&at")
-                .replace(".", "&dot").replace("\\", "&bs")
-                .replace("'", "&sq").replace("\"", "&quo")
-                .replace("!", "&exc").replace("/", "&fs")
-                .replace("§", "&ss").replace("#", "&ns");
+        input = CoreUtilities.replace(input, "&", "&amp");
+        input = CoreUtilities.replace(input, "|", "&pipe");
+        input = CoreUtilities.replace(input, "<", "&lt");
+        input = CoreUtilities.replace(input, ">", "&gt");
+        input = CoreUtilities.replace(input, "\n", "&nl");
+        input = CoreUtilities.replace(input, ";", "&sc");
+        input = CoreUtilities.replace(input, "[", "&lb");
+        input = CoreUtilities.replace(input, "]", "&rb");
+        input = CoreUtilities.replace(input, ":", "&co");
+        input = CoreUtilities.replace(input, "@", "&at");
+        input = CoreUtilities.replace(input, ".", "&dot");
+        input = CoreUtilities.replace(input, "\\", "&bs");
+        input = CoreUtilities.replace(input, "'", "&sq");
+        input = CoreUtilities.replace(input, "\"", "&quo");
+        input = CoreUtilities.replace(input, "!", "&exc");
+        input = CoreUtilities.replace(input, "/", "&fs");
+        input = CoreUtilities.replace(input, "§", "&ss");
+        input = CoreUtilities.replace(input, "#", "&ns");
+        return input;
     }
 
     /**
@@ -101,17 +110,26 @@ public class EscapeTagBase {
         if (input == null) {
             return null;
         }
-        return TagManager.cleanOutputFully(input)
-                .replace("&pipe", "|").replace("&nl", "\n")
-                .replace("&gt", ">").replace("&lt", "<")
-                .replace("&sc", ";").replace("&sq", "'")
-                .replace("&lb", "[").replace("&rb", "]")
-                .replace("&sp", String.valueOf((char) 0x00A0))
-                .replace("&co", ":").replace("&at", "@")
-                .replace("&dot", ".").replace("&bs", "\\")
-                .replace("&quo", "\"").replace("&exc", "!")
-                .replace("&fs", "/").replace("&ss", "§")
-                .replace("&ns", "#").replace("&amp", "&");
+        input = CoreUtilities.replace(input, "&pipe", "|");
+        input = CoreUtilities.replace(input, "&lt", "<");
+        input = CoreUtilities.replace(input, "&gt", ">");
+        input = CoreUtilities.replace(input, "&nl", "\n");
+        input = CoreUtilities.replace(input, "&sc", ";");
+        input = CoreUtilities.replace(input, "&lb", "[");
+        input = CoreUtilities.replace(input, "&rb", "]");
+        input = CoreUtilities.replace(input, "&co", ":");
+        input = CoreUtilities.replace(input, "&at", "@");
+        input = CoreUtilities.replace(input, "&dot", ".");
+        input = CoreUtilities.replace(input, "&bs", "\\");
+        input = CoreUtilities.replace(input, "&sq", "'");
+        input = CoreUtilities.replace(input, "&quo", "\"");
+        input = CoreUtilities.replace(input, "&exc", "!");
+        input = CoreUtilities.replace(input, "&fs", "/");
+        input = CoreUtilities.replace(input, "&ss", "§");
+        input = CoreUtilities.replace(input, "&ns", "#");
+        input = CoreUtilities.replace(input, "&sp", String.valueOf((char) 0x00A0));
+        input = CoreUtilities.replace(input, "&amp", "&");
+        return input;
     }
 
     public void escapeTags(ReplaceableTagEvent event) {

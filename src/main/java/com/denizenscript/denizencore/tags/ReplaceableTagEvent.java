@@ -293,7 +293,7 @@ public class ReplaceableTagEvent {
 
     public String getValue() {
         if (value_tagged == null) {
-            value_tagged = TagManager.cleanOutput(TagManager.tag(mainRef.value, context));
+            value_tagged = TagManager.tag(mainRef.value, context);
         }
         return value_tagged;
     }

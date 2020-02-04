@@ -161,7 +161,7 @@ public class ElementTag implements ObjectTag {
             this.element = "null";
         }
         else {
-            this.element = TagManager.cleanOutput(string);
+            this.element = string;
         }
     }
 
@@ -212,7 +212,7 @@ public class ElementTag implements ObjectTag {
         else {
             this.prefix = prefix;
         }
-        this.element = TagManager.cleanOutput(string);
+        this.element = string;
     }
 
     static final BigDecimal max = new BigDecimal("10E1000");
@@ -732,7 +732,7 @@ public class ElementTag implements ObjectTag {
         // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
         // -->
         registerTag("parsed", (attribute, object) -> {
-            return TagManager.tagObject(TagManager.cleanOutputFully(object.element), attribute.context);
+            return TagManager.tagObject(object.element, attribute.context);
         });
 
         /////////////////////

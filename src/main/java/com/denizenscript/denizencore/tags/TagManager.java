@@ -91,124 +91,6 @@ public class TagManager {
         }
     }
 
-    // INTERNAL MAPPING NOTE:
-    // 0x00: Null, reserved for special handlers
-    // 0x01: <
-    // 0x02: >
-    // 0x04: Reserved for impl
-    // 0x05: |
-    // 0x2011: ;
-
-    /**
-     * Cleans escaped symbols generated within Tag Manager so that
-     * they can be parsed now.
-     *
-     * @param input the potentially escaped input string.
-     * @return the cleaned output string.
-     */
-    public static String cleanOutput(String input) {
-        if (input == null) {
-            return null;
-        }
-        char[] data = input.toCharArray();
-        for (int i = 0; i < data.length; i++) {
-            switch (data[i]) {
-                case 0x01:
-                    data[i] = '<';
-                    break;
-                case 0x02:
-                    data[i] = '>';
-                    break;
-                case 0x07:
-                    data[i] = '[';
-                    break;
-                case 0x09:
-                    data[i] = ']';
-                    break;
-                case ListTag.internal_escape_char:
-                    data[i] = '|';
-                    break;
-                default:
-                    break;
-            }
-        }
-        return new String(data);
-    }
-
-    /**
-     * Cleans any potential internal escape characters (secret characters
-     * used to hold the place of symbols that might get parsed weirdly
-     * like > or | ) back into their proper form. Use this function
-     * when outputting information that is going to be read by a
-     * person.
-     *
-     * @param input the potentially escaped input string.
-     * @return the cleaned output string.
-     */
-    public static String cleanOutputFully(String input) {
-        if (input == null) {
-            return null;
-        }
-        char[] data = input.toCharArray();
-        for (int i = 0; i < data.length; i++) {
-            switch (data[i]) {
-                case 0x01:
-                    data[i] = '<';
-                    break;
-                case 0x02:
-                    data[i] = '>';
-                    break;
-                case 0x2011:
-                    data[i] = ';';
-                    break;
-                case 0x07:
-                    data[i] = '[';
-                    break;
-                case 0x09:
-                    data[i] = ']';
-                    break;
-                case ListTag.internal_escape_char:
-                    data[i] = '|';
-                    break;
-                case 0x00A0:
-                    data[i] = ' ';
-                    break;
-                default:
-                    break;
-            }
-        }
-        return new String(data);
-    }
-
-    public static String escapeOutput(String input) {
-        if (input == null) {
-            return null;
-        }
-        char[] data = input.toCharArray();
-        for (int i = 0; i < data.length; i++) {
-            switch (data[i]) {
-                case '<':
-                    data[i] = 0x01;
-                    break;
-                case '>':
-                    data[i] = 0x02;
-                    break;
-                case '[':
-                    data[i] = 0x07;
-                    break;
-                case ']':
-                    data[i] = 0x09;
-                    break;
-                case '|':
-                    data[i] = ListTag.internal_escape_char;
-                    break;
-                default:
-                    break;
-            }
-        }
-        return new String(data);
-    }
-
     public static void fetchObject(ReplaceableTagEvent event) {
         String object_type = CoreUtilities.toLowerCase(CoreUtilities.split(event.getAttributes().attributes[0].rawKey, '@').get(0));
         Class object_class = ObjectFetcher.getObjectClass(object_type);
@@ -305,7 +187,7 @@ public class TagManager {
 
     public static String readSingleTag(String str, TagContext context) {
         ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
-        return escapeOutput(readSingleTagObject(context, event).toString());
+        return readSingleTagObject(context, event).toString();
     }
 
     public static ObjectTag readSingleTagObject(ParseableTagPiece tag, TagContext context) {
@@ -422,7 +304,7 @@ public class TagManager {
     }
 
     public static String tag(String arg, TagContext context) {
-        return cleanOutput(tagObject(arg, context).toString());
+        return tagObject(arg, context).toString();
     }
 
     public static List<ParseableTagPiece> dupChain(List<ParseableTagPiece> chain) {
@@ -437,7 +319,7 @@ public class TagManager {
         if (arg == null) {
             return null;
         }
-        arg = cleanOutput(arg);
+        arg = arg;
         List<ParseableTagPiece> pieces = preCalced.get(arg);
         if (pieces != null) {
             return pieces;

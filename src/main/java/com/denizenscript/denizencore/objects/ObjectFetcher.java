@@ -208,8 +208,10 @@ public class ObjectFetcher {
                         Debug.echoError("Invalid property string '" + matches.get(i) + "'!");
                         continue;
                     }
-                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)),
-                            new ElementTag((data.get(1)).replace((char) 0x2011, ';')), context));
+                    String description = data.get(1);
+                    description = CoreUtilities.replace(description, "&amp", "&");
+                    description = CoreUtilities.replace(description, "&sc", ";");
+                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
                 }
             }
             return gotten;

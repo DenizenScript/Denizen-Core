@@ -42,7 +42,7 @@ public class Argument implements Cloneable {
 
     public Argument(String prefix, String value) {
         this.prefix = prefix;
-        this.value = TagManager.cleanOutputFully(value);
+        this.value = value;
         if (prefix != null) {
             if (prefix.equals("no_prefix")) {
                 this.prefix = null;
@@ -61,7 +61,7 @@ public class Argument implements Cloneable {
     }
 
     void fillStr(String string) {
-        string = TagManager.cleanOutputFully(string);
+        string = string;
         raw_value = string;
 
         int first_colon = string.indexOf(':');

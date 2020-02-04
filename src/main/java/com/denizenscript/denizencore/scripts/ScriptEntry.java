@@ -229,10 +229,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 Argument argObj = new Argument(arg);
                 if (argObj.hasPrefix()) {
-                    if (argObj.matchesPrefix("unparsed")) {
-                        args.add(TagManager.escapeOutput(argObj.getValue()));
-                    }
-                    else if (argObj.matchesPrefix("save") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
+                    if (argObj.matchesPrefix("save") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
                         internal.preprocArgs.add(argObj);
                     }
                     else {
@@ -388,24 +385,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return internal.actualCommand;
     }
 
-    public void setArgument(int ind, String val) {
-        args.set(ind, val);
-        if (processed_arguments != null) {
-            processed_arguments.set(ind, new ElementTag(val));
-        }
-    }
-
     public ScriptEntry setArguments(List<String> arguments) {
         args = arguments;
-        return this;
-    }
-
-    public ScriptEntry setArgumentsObjects(List<ObjectTag> arguments) {
-        processed_arguments = arguments;
-        args = new ArrayList<>(arguments.size()); // TODO: Placeholder! Remove old string args entirely!
-        for (ObjectTag tmp : arguments) {
-            args.add(TagManager.escapeOutput(tmp.toString()));
-        }
         return this;
     }
 

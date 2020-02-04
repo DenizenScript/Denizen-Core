@@ -23,6 +23,16 @@ public class CoreUtilities {
 
     public static TagContext noDebugContext;
 
+    public static String replace(String original, String findMe, String swapMeIn) {
+        // This is jank but still better than Java's regex-driven String#replace method.
+        int lastIndex = original.indexOf(findMe);
+        while (lastIndex >= 0) {
+            original = original.substring(0, lastIndex) + swapMeIn + original.substring(lastIndex + findMe.length());
+            lastIndex = original.indexOf(findMe, lastIndex + swapMeIn.length());
+        }
+        return original;
+    }
+
     public static String join(String delim, List objects) {
         StringBuilder output = new StringBuilder(objects.size() * 5);
         for (int i = 0; i < objects.size(); i++) {

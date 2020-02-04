@@ -131,7 +131,7 @@ public class LogCommand extends AbstractCommand {
             return;
         }
 
-        String output = TagManager.cleanOutputFully(message.asString());
+        String output = message.asString();
 
         file.getParentFile().mkdirs();
         if (type == Type.NONE) {
