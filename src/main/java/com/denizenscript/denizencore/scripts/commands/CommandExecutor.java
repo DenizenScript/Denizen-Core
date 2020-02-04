@@ -57,7 +57,7 @@ public class CommandExecutor {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
-                else if (arg.matchesOnePrefix("save")) {
+                else if (arg.matchesPrefix("save")) {
                     saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
                     if (scriptEntry.dbCallShouldDebug()) {
                         Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");

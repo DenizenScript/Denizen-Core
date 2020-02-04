@@ -77,7 +77,7 @@ public class DebugCommand extends AbstractCommand {
             }
 
             else if (!scriptEntry.hasObject("name")
-                    && arg.matchesOnePrefix("name")) {
+                    && arg.matchesPrefix("name")) {
                 scriptEntry.addObject("name", arg.asElement());
             }
 

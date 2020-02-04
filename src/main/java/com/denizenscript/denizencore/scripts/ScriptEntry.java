@@ -224,10 +224,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 Argument argObj = new Argument(arg);
                 if (argObj.hasPrefix()) {
-                    if (argObj.matchesOnePrefix("unparsed")) {
+                    if (argObj.matchesPrefix("unparsed")) {
                         args.add(TagManager.escapeOutput(argObj.getValue()));
                     }
-                    else if (argObj.matchesOnePrefix("save") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
+                    else if (argObj.matchesPrefix("save") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
                         internal.preprocArgs.add(argObj);
                     }
                     else {

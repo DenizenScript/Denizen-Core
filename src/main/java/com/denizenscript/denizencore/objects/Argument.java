@@ -134,7 +134,7 @@ public class Argument implements Cloneable {
     }
 
     public boolean startsWith(String string) {
-        return lower_value.startsWith(CoreUtilities.toLowerCase(string));
+        return lower_value.startsWith(string);
     }
 
     public boolean hasPrefix() {
@@ -148,26 +148,13 @@ public class Argument implements Cloneable {
         return valueOf(prefix);
     }
 
-    // TODO: REMOVE IN 1.0
     public boolean matches(String values) {
-        if (!CoreUtilities.contains(values, ',')) {
-            return CoreUtilities.toLowerCase(values).equals(lower_value);
-        }
-        for (String value : CoreUtilities.split(values, ',')) {
-            if (CoreUtilities.toLowerCase(value.replace(" ", "")).equals(lower_value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean matchesOne(String value) {
-        return CoreUtilities.toLowerCase(value).equals(lower_value);
+        return values.equals(lower_value);
     }
 
     public boolean matches(String... values) {
         for (String value : values) {
-            if (CoreUtilities.toLowerCase(value).equals(lower_value)) {
+            if (value.equals(lower_value)) {
                 return true;
             }
         }
@@ -198,17 +185,6 @@ public class Argument implements Cloneable {
         return values.contains(upper);
     }
 
-    public boolean matchesEnumList(HashSet<String> values) {
-        ListTag list = getList();
-        for (String string : list) {
-            String tval = string.replace("_", "").toUpperCase();
-            if (values.contains(tval)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean matchesEnum(Enum<?>[] values) {
         String upper = value.replace("_", "").toUpperCase();
         for (Enum<?> value : values) {
@@ -232,27 +208,11 @@ public class Argument implements Cloneable {
         return false;
     }
 
-    // TODO: REMOVE IN 1.0
     public boolean matchesPrefix(String values) {
         if (!hasPrefix()) {
             return false;
         }
-        if (!CoreUtilities.contains(values, ',')) {
-            return CoreUtilities.toLowerCase(values).equals(lower_prefix);
-        }
-        for (String value : CoreUtilities.split(values, ',')) {
-            if (CoreUtilities.toLowerCase(value.trim()).equals(lower_prefix)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean matchesOnePrefix(String value) {
-        if (!hasPrefix()) {
-            return false;
-        }
-        return CoreUtilities.toLowerCase(value).equals(lower_prefix);
+        return values.equals(lower_prefix);
     }
 
     public boolean matchesPrefix(String... values) {
@@ -260,7 +220,7 @@ public class Argument implements Cloneable {
             return false;
         }
         for (String value : values) {
-            if (CoreUtilities.toLowerCase(value).equals(lower_prefix)) {
+            if (value.equals(lower_prefix)) {
                 return true;
             }
         }

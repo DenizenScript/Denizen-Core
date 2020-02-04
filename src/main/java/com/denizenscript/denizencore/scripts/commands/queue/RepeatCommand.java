@@ -73,15 +73,15 @@ public class RepeatCommand extends BracedCommand {
                 handled = true;
             }
             else if (!handled
-                    && arg.matches("\0CALLBACK")) {
+                    && arg.matches("\0callback")) {
                 scriptEntry.addObject("callback", new ElementTag(true));
                 handled = true;
             }
             else if (!scriptEntry.hasObject("as_name")
-                    && arg.matchesOnePrefix("as")) {
+                    && arg.matchesPrefix("as")) {
                 scriptEntry.addObject("as_name", arg.asElement());
             }
-            else if (arg.matchesOne("{")) {
+            else if (arg.matches("{")) {
                 break;
             }
             else {
