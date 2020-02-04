@@ -48,61 +48,42 @@ public class Attribute {
     }
 
     private static AttributeComponent[] separate_attributes(String attributes) {
-
         AttributeComponent[] matchesRes = attribsLookup.get(attributes);
-
         if (matchesRes != null) {
             return matchesRes;
         }
-
-        ArrayList<AttributeComponent> matches = new ArrayList<>();
-
+        ArrayList<AttributeComponent> matches = new ArrayList<>(attributes.length() / 7);
         int x1 = 0, x2 = -1;
         int braced = 0;
-
         char[] attrInp = attributes.toCharArray();
-
         for (int x = 0; x < attrInp.length; x++) {
-
             char chr = attrInp[x];
-
             if (chr == '[') {
                 braced++;
             }
-
             else if (x == attrInp.length - 1) {
                 x2 = x + 1;
             }
-
             else if (chr == ']') {
                 if (braced > 0) {
                     braced--;
                 }
             }
-
-            else if (chr == '.'
-                    && !(x > 0 && isNumber(attrInp[x + 1]) && isNumber(attrInp[x - 1]))
-                    && braced == 0) {
+            else if (chr == '.' && !(x > 0 && isNumber(attrInp[x + 1]) && isNumber(attrInp[x - 1])) && braced == 0) {
                 x2 = x;
             }
-
             if (x2 > -1) {
                 matches.add(new AttributeComponent(attributes.substring(x1, x2)));
                 x2 = -1;
                 x1 = x + 1;
             }
-
         }
-
         if (Debug.verbose) {
             Debug.log("attribute splitter: '" + attributes + "' becomes: " + matches);
         }
-
         matchesRes = new AttributeComponent[matches.size()];
         matchesRes = matches.toArray(matchesRes);
-
         attribsLookup.put(attributes, matchesRes);
-
         return matchesRes;
     }
 

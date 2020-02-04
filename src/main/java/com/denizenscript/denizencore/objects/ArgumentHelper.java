@@ -96,7 +96,7 @@ public class ArgumentHelper {
         }
         stringArgs = stringArgs.trim();
         stringArgs = stringArgs.replace('\r', ' ').replace('\n', ' ');
-        ArrayList<String> matchList = new ArrayList<>();
+        ArrayList<String> matchList = new ArrayList<>(stringArgs.length() / 7);
         int start = 0;
         int len = stringArgs.length();
         char currentQuote = 0;

@@ -198,7 +198,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
         if (arguments != null) {
             args = new ArrayList<>(arguments.length);
-            internal.preprocArgs = new ArrayList<>();
+            internal.preprocArgs = new ArrayList<>(arguments.length);
             int nested_depth = 0;
             for (String arg : arguments) {
                 if (arg.equals("{")) {
@@ -250,7 +250,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
             internal.args_ref = new ArrayList<>(args.size());
-            List<Integer> tempProcessArgs = new ArrayList<>();
+            List<Integer> tempProcessArgs = new ArrayList<>(args.size());
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
                 if (arg.equals("{")) {

@@ -83,16 +83,6 @@ public class IfCommand extends BracedCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        boolean in_subcommand = false;
-
-        boolean in_elsecommand = false;
-
-        List<String> subcommand = new ArrayList<>();
-
-        List<String> elsecommand = new ArrayList<>();
-
-        List<String> comparisons = new ArrayList<>();
-
         boolean has_brace = scriptEntry.getInsideList() != null;
         if (has_brace) {
             List<BracedData> allData = new ArrayList<>();
@@ -136,11 +126,15 @@ public class IfCommand extends BracedCommand {
             }
         }
 
+        boolean in_subcommand = false;
+        boolean in_elsecommand = false;
+        List<String> subcommand = new ArrayList<>();
+        List<String> elsecommand = new ArrayList<>();
+        List<String> comparisons = new ArrayList<>();
         for (String arg : scriptEntry.getArguments()) {
             if (arg.equalsIgnoreCase("{")) {
                 break;
             }
-
             if (!has_brace && in_subcommand && arg.equalsIgnoreCase("else")) {
                 in_elsecommand = true;
                 in_subcommand = false;
@@ -160,7 +154,6 @@ public class IfCommand extends BracedCommand {
                 comparisons.add(arg);
             }
         }
-
         if (!has_brace && in_elsecommand) {
             scriptEntry.addObject("elsecommand", elsecommand);
         }
@@ -435,10 +428,9 @@ public class IfCommand extends BracedCommand {
             for (int i = 0; i < args.size(); i++) {
                 String arg = procStringNoTag(args.get(i));
                 if (arg.equals("(") || arg.equals("!(")) {
-                    List subargs = new ArrayList();
+                    List subargs = new ArrayList(args.size());
                     int count = 0;
                     boolean found = false;
-                    boolean flip = false;
                     for (int x = i + 1; x < args.size(); x++) {
                         String xarg = procStringNoTag(args.get(x));
                         if (xarg.equals("(") || xarg.equals("!(")) {

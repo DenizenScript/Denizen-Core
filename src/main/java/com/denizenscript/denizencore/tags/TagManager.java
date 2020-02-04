@@ -442,7 +442,7 @@ public class TagManager {
         if (pieces != null) {
             return pieces;
         }
-        pieces = new ArrayList<>();
+        pieces = new ArrayList<>(1);
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;

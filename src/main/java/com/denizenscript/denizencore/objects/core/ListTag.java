@@ -248,7 +248,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
     // A Set<Object> of items
     public ListTag(Set<?> items) {
-        objectForms = new ArrayList<>();
+        objectForms = new ArrayList<>(items.size());
         if (items != null) {
             for (Object o : items) {
                 String strd = o.toString();
@@ -301,8 +301,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public List<String> filter(Enum[] values) {
-        List<String> list = new ArrayList<>();
-
+        List<String> list = new ArrayList<>(values.length);
         for (String string : this) {
             for (Enum value : values) {
                 if (value.name().equalsIgnoreCase(string)) {
@@ -310,13 +309,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
             }
         }
-
         if (!list.isEmpty()) {
             return list;
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, ScriptEntry entry) {
@@ -335,14 +331,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, TagContext context, boolean showFailure) {
-        List<T> results = new ArrayList<>();
-
+        List<T> results = new ArrayList<>(objectForms.size());
         for (ObjectTag obj : objectForms) {
-
             try {
                 if (CoreUtilities.canPossiblyBeType(obj, dClass)) {
                     T object = CoreUtilities.asType(obj, dClass, context);
-
                     if (object != null) {
                         results.add(object);
                     }
@@ -358,7 +351,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError(e);
             }
         }
-
         return results;
     }
 

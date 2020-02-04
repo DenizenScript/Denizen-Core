@@ -99,7 +99,7 @@ public class ChooseCommand extends BracedCommand {
             lookupTable = (HashMap<String, Integer>) scriptEntry.internal.specialProcessedData;
         }
         else {
-            lookupTable = new HashMap<>();
+            lookupTable = new HashMap<>(bracedCommandsList.size());
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 ScriptEntry se = bracedCommandsList.get(i);
                 String cmdName = CoreUtilities.toLowerCase(se.getCommandName());

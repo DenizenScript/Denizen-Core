@@ -67,7 +67,7 @@ public class RateLimitCommand extends AbstractCommand {
         }
 
         if (scriptEntry.internal.specialProcessedData == null) {
-            scriptEntry.internal.specialProcessedData = new HashMap<>();
+            scriptEntry.internal.specialProcessedData = new HashMap<>(2);
         }
         HashMap<String, Long> map = (HashMap<String, Long>) scriptEntry.internal.specialProcessedData;
         String key = CoreUtilities.toLowerCase(object.asString());

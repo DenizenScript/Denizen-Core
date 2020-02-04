@@ -49,7 +49,7 @@ public abstract class BracedCommand extends AbstractCommand {
         boolean hyperdebug = Debug.verbose;
 
         // And a place to store all the final braces...
-        List<BracedData> bracedSections = new ArrayList<>();
+        List<BracedData> bracedSections;
 
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
@@ -90,10 +90,12 @@ public abstract class BracedCommand extends AbstractCommand {
             bd.key = "base";
             bd.args = new ArrayList<>();
             bd.value = entries;
+            bracedSections = new ArrayList<>(1);
             bracedSections.add(bd);
             scriptEntry.setBracedSet(bracedSections);
             return getBracedCommands(scriptEntry);
         }
+        bracedSections = new ArrayList<>();
 
         // We need a place to store the commands being built at...
         TreeMap<Integer, ArrayList<String>> commandList = new TreeMap<>();

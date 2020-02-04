@@ -179,10 +179,8 @@ public class ScriptHelper {
             List<File> files = CoreUtilities.listDScriptFiles(file);
             if (files.size() > 0) {
                 StringBuilder sb = new StringBuilder();
-                List<String> scriptNames = new ArrayList<>();
-
+                List<String> scriptNames = new ArrayList<>(files.size() * 2);
                 YamlConfiguration yaml;
-
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
                     if (Debug.showLoading) {

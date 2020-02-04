@@ -54,7 +54,6 @@ public class WhileCommand extends BracedCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         List<String> comparisons = new ArrayList<>();
-
         if (scriptEntry.getArguments().size() == 1) {
             String arg = scriptEntry.getArguments().get(0);
             if (arg.equalsIgnoreCase("stop")) {

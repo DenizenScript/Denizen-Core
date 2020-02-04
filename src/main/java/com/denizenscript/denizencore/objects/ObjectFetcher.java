@@ -169,7 +169,7 @@ public class ObjectFetcher {
         if (input.indexOf('[') == -1 || input.lastIndexOf(']') != input.length() - 1) {
             return null;
         }
-        ArrayList<String> output = new ArrayList<>();
+        ArrayList<String> output = new ArrayList<>(input.length() / 7);
         int start = 0;
         boolean needObject = true;
         int brackets = 0;

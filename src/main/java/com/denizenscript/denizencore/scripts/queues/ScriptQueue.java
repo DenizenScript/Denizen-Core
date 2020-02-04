@@ -98,7 +98,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Private instance fields and constructors
     /////////////////////
 
-    public final List<ScriptEntry> script_entries = new ArrayList<>();
+    public final List<ScriptEntry> script_entries = new ArrayList<>(4);
 
     private ScriptEntry lastEntryExecuted = null;
 

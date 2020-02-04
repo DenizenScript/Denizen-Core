@@ -10,21 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ScriptBuilder {
-    /**
-     * Adds an object to a list of ScriptEntries. Can later be retrieved from the ScriptEntry
-     * by using getObject(String key)
-     *
-     * @param scriptEntryList the list of ScriptEntries
-     * @param key             the key (name) of the object being added
-     * @param obj             the object
-     * @return the List of ScriptEntries, with the object added in each member
-     */
-    public static List<ScriptEntry> addObjectToEntries(List<ScriptEntry> scriptEntryList, String key, Object obj) {
-        for (ScriptEntry entry : scriptEntryList) {
-            entry.addObject(key, obj);
-        }
-        return scriptEntryList;
-    }
 
     public static char LINE_PREFIX_CHAR = '^'; // This would be an invisible special character... if SnakeYAML allowed them!
 
@@ -41,7 +26,7 @@ public class ScriptBuilder {
      */
 
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
-        List<ScriptEntry> scriptCommands = new ArrayList<>();
+        List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
 
         if (contents == null || contents.isEmpty()) {
             if (Debug.showScriptBuilder) {
