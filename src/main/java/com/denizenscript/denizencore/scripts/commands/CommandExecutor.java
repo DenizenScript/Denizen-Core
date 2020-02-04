@@ -8,7 +8,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagManager;
 
-public class CommandExecuter {
+public class CommandExecutor {
 
     public static ScriptQueue currentQueue;
 
@@ -55,7 +55,9 @@ public class CommandExecuter {
                 }
                 else if (arg.matchesOnePrefix("save")) {
                     saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
-                    Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
+                    }
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {

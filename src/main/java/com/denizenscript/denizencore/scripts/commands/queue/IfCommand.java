@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
-import com.denizenscript.denizencore.scripts.commands.CommandExecuter;
 import com.denizenscript.denizencore.tags.TagManager;
 
 import java.util.ArrayList;
