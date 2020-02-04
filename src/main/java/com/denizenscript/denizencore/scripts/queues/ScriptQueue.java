@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -399,42 +398,20 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public boolean isStopped = false;
 
     public void stop() {
-        if (!is_stopping) {
-            is_stopping = true;
-            List<ScriptEntry> entries = (lastEntryExecuted != null && lastEntryExecuted.getScript() != null ?
-                            lastEntryExecuted.getScript().getContainer().getEntries(lastEntryExecuted.entryData.clone(), "on queue completes") : null);
-            if (entries != null && !entries.isEmpty()) {
-                Deprecations.onQueueComplete.warn(this);
-                script_entries.addAll(entries);
-                queueDebug("Finishing up queue '<QUEUE>'...");
-            }
-            else {
-                if (allQueues.get(id) == this) {
-                    allQueues.remove(id);
-                }
-                if (queueNeedsToDebug()) {
-                    queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
-                }
-                if (callback != null) {
-                    callback.run();
-                }
-                is_started = false;
-                onStop();
-                isStopped = true;
-            }
+        if (is_stopping) {
+            return;
         }
-        else {
-            if (allQueues.get(id) == this) {
-                allQueues.remove(id);
-                queueDebug("Re-completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
-                if (callback != null) {
-                    callback.run();
-                }
-                is_started = false;
-                onStop();
-                isStopped = true;
-            }
+        is_stopping = true;
+        allQueues.remove(id);
+        if (queueNeedsToDebug()) {
+            queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
         }
+        if (callback != null) {
+            callback.run();
+        }
+        is_started = false;
+        onStop();
+        isStopped = true;
     }
 
     ////////////////////

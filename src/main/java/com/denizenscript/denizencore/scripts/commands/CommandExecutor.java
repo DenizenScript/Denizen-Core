@@ -12,6 +12,21 @@ public class CommandExecutor {
 
     public static ScriptQueue currentQueue;
 
+    public static void debugSingleExecution(ScriptEntry scriptEntry) {
+        StringBuilder output = new StringBuilder();
+        output.append("<G>(line ").append(scriptEntry.internal.lineNumber).append(")<W> ");
+        output.append(scriptEntry.getCommandName());
+        if (scriptEntry.getOriginalArguments() == null) {
+            Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
+        }
+        else {
+            for (String arg : scriptEntry.getOriginalArguments()) {
+                output.append(" \"").append(arg).append("\"");
+            }
+        }
+        DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
+    }
+
     // <--[language]
     // @name The Save Argument
     // @group Script Command System
@@ -31,18 +46,7 @@ public class CommandExecutor {
 
     public boolean execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
-            StringBuilder output = new StringBuilder();
-            output.append("<G>(line ").append(scriptEntry.internal.lineNumber).append(")<W> ");
-            output.append(scriptEntry.getCommandName());
-            if (scriptEntry.getOriginalArguments() == null) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
-            }
-            else {
-                for (String arg : scriptEntry.getOriginalArguments()) {
-                    output.append(" \"").append(arg).append("\"");
-                }
-            }
-            DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
+            debugSingleExecution(scriptEntry);
         }
         AbstractCommand command = scriptEntry.internal.actualCommand;
         currentQueue = scriptEntry.getResidingQueue();

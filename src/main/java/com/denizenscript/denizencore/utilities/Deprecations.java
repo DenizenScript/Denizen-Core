@@ -124,9 +124,6 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/01/15
     public static Warning playerActionBarMech = new SlowWarning("The mechanism 'PlayerTag.action_bar' is deprecated. Use the 'actionbar' command instead.");
 
-    // GOING TO BE REMOVED.
-    public static Warning onQueueComplete = new StrongWarning("'on queue completes' is deprecated and GOING TO BE REMOVED VERY SOON. This is a historical system that has not been documented or supported for quite some time.");
-
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

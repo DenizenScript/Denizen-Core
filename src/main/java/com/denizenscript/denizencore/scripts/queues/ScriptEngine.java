@@ -51,13 +51,7 @@ public class ScriptEngine {
         while (scriptEntry != null) {
             scriptEntry.setSendingQueue(scriptQueue);
             scriptQueue.setLastEntryExecuted(scriptEntry);
-            try {
-                commandExecuter.execute(scriptEntry);
-            }
-            catch (Throwable e) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while revolving the queue)!");
-                Debug.echoError(scriptEntry.getResidingQueue(), e);
-            }
+            commandExecuter.execute(scriptEntry);
             if (scriptQueue instanceof Delayable) {
                 Delayable delayedQueue = (Delayable) scriptQueue;
                 if (delayedQueue.isDelayed() || delayedQueue.isPaused()) {
