@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.*;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -28,14 +29,14 @@ public class ScriptRegistry {
     }
 
     public static boolean containsScript(String id) {
-        return scriptContainers.containsKey(id.toUpperCase());
+        return scriptContainers.containsKey(CoreUtilities.toLowerCase(id));
     }
 
     public static boolean containsScript(String id, Class scriptContainerType) {
-        if (!scriptContainers.containsKey(id.toUpperCase())) {
+        if (!scriptContainers.containsKey(CoreUtilities.toLowerCase(id))) {
             return false;
         }
-        ScriptContainer script = scriptContainers.get(id.toUpperCase());
+        ScriptContainer script = scriptContainers.get(CoreUtilities.toLowerCase(id));
         String type = null;
         for (Map.Entry<String, Class<? extends ScriptContainer>> entry : scriptContainerTypes.entrySet()) {
             if (entry.getValue() == scriptContainerType) {
@@ -77,7 +78,7 @@ public class ScriptRegistry {
                 Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
             }
             try {
-                scriptContainers.put(scriptName, (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
+                scriptContainers.put(CoreUtilities.toLowerCase(scriptName), (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
                         .newInstance(ScriptHelper.getScripts().getConfigurationSection(scriptName), scriptName));
             }
             catch (Exception e) {
@@ -108,8 +109,9 @@ public class ScriptRegistry {
 
     public static <T extends ScriptContainer> T getScriptContainerAs(String name, Class<T> type) {
         try {
-            if (scriptContainers.containsKey(name.toUpperCase())) {
-                return type.cast(scriptContainers.get(name.toUpperCase()));
+            ScriptContainer container = scriptContainers.get(CoreUtilities.toLowerCase(name));
+            if (container != null) {
+                return type.cast(container);
             }
             else {
                 return null;
@@ -122,10 +124,10 @@ public class ScriptRegistry {
     }
 
     public static <T extends ScriptContainer> T getScriptContainer(String name) {
-        if (scriptContainers.containsKey(name.toUpperCase())) {
-            return (T) scriptContainers.get(name.toUpperCase());
+        ScriptContainer container = scriptContainers.get(CoreUtilities.toLowerCase(name));
+        if (container != null) {
+            return (T) container;
         }
-
         else {
             return null;
         }

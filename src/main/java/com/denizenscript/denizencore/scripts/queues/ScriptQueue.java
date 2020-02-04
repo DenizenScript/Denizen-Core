@@ -224,9 +224,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
         // DUUIDs v2.1
         int size = QueueWordList.FinalWordList.size();
-        String wordOne = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
-        String wordTwo = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
-        String wordThree = QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
+        Random random = CoreUtilities.getRandom();
+        String wordOne = QueueWordList.FinalWordList.get(random.nextInt(size));
+        String wordTwo = QueueWordList.FinalWordList.get(random.nextInt(size));
+        String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
         id = prefix + "_" + wordOne + wordTwo + wordThree;
         if (queueExists(id)) {
             generateId(prefix);

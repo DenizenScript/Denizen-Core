@@ -121,14 +121,19 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     @Override
-    public ScriptEntry clone() throws CloneNotSupportedException {
-        ScriptEntry se = (ScriptEntry) super.clone();
-        se.objects = new HashMap<>(8);
-        se.processed_arguments = processed_arguments == null ? null : new ArrayList<>(processed_arguments);
-        se.args = new ArrayList<>(args);
-        se.entryData = entryData.clone();
-        se.entryData.scriptEntry = se;
-        return se;
+    public ScriptEntry clone()  {
+        try {
+            ScriptEntry se = (ScriptEntry) super.clone();
+            se.objects = new HashMap<>(8);
+            se.processed_arguments = processed_arguments == null ? null : new ArrayList<>(processed_arguments);
+            se.args = new ArrayList<>(args);
+            se.entryData = entryData.clone();
+            se.entryData.scriptEntry = se;
+            return se;
+        }
+        catch (CloneNotSupportedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public List<Object> getInsideList() {

@@ -66,13 +66,13 @@ public class DurationTag implements ObjectTag {
         if (string == null) {
             return null;
         }
-
-        string = CoreUtilities.toLowerCase(string.replace("d@", ""));
-
+        string = CoreUtilities.toLowerCase(string);
+        if (string.startsWith("d@")) {
+            string = string.substring("d@".length());
+        }
         if (string.equals("instant")) {
             return new DurationTag(0);
         }
-
         // Pick a duration between a high and low number if there is a '-' present, but it's not "E-2" style scientific notation.
         if (string.contains("-") && !string.contains("e-")) {
             String[] split = string.split("-", 2);
@@ -104,9 +104,7 @@ public class DurationTag implements ObjectTag {
                 }
             }
         }
-
         String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
-
         // Standard Duration. Check the type and create new DurationTag object accordingly.
         try {
             if (string.endsWith("t")) {

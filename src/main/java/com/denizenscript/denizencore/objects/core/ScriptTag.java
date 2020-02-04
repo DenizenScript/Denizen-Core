@@ -143,16 +143,16 @@ public class ScriptTag implements ObjectTag, Adjustable {
      * @param scriptName the name of the script
      */
     public ScriptTag(String scriptName) {
-        if (ScriptRegistry.getScriptContainer(scriptName) != null) {
-            container = ScriptRegistry.getScriptContainer(scriptName);
-            name = scriptName.toUpperCase();
+        container = ScriptRegistry.getScriptContainer(scriptName);
+        if (container != null) {
+            name = CoreUtilities.toLowerCase(scriptName);
             valid = true;
         }
     }
 
     public ScriptTag(ScriptContainer container) {
         this.container = container;
-        name = container.getName().toUpperCase();
+        name = CoreUtilities.toLowerCase(container.getName());
         valid = true;
     }
 

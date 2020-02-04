@@ -173,8 +173,7 @@ public class RepeatCommand extends BracedCommand {
                     }
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), String.valueOf(data.index));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
-                    ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK", "as:" + as_name.asString()},
-                            (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+                    ScriptEntry callbackEntry = scriptEntry.clone();
                     callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
                     bracedCommands.add(callbackEntry);

@@ -138,17 +138,16 @@ public class ObjectFetcher {
         }
     }
 
-    final static Pattern PROPERTIES_PATTERN = Pattern.compile("([^\\[]+)\\[(.+=.+)\\]", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-
-    public final static Pattern DESCRIBED_PATTERN =
-            Pattern.compile("[^\\[]+\\[.+=.+\\]", Pattern.DOTALL | Pattern.MULTILINE);
+    public final static Pattern DESCRIBED_PATTERN = Pattern.compile("[^\\[]+\\[.+=.+\\]", Pattern.DOTALL | Pattern.MULTILINE);
 
     public static boolean checkMatch(Class<? extends ObjectTag> dClass, String value) {
         if (value == null || dClass == null) {
             return false;
         }
-        Matcher m = PROPERTIES_PATTERN.matcher(value);
-        value = m.matches() ? m.group(1) : value;
+        int firstBracket = value.indexOf('[');
+        if (firstBracket != -1 && value.lastIndexOf(']') == value.length() - 1) {
+            value = value.substring(0, firstBracket);
+        }
         try {
             return objectsByClass.get(dClass).matches.matches(value);
         }

@@ -259,7 +259,7 @@ public class ElementTag implements ObjectTag {
     }
 
     public boolean asBoolean() {
-        return Boolean.parseBoolean(element.replaceAll("el@", ""));
+        return CoreUtilities.toLowerCase(element).equals("true");
     }
 
     public String asString() {
@@ -267,7 +267,7 @@ public class ElementTag implements ObjectTag {
     }
 
     public boolean isBoolean() {
-        return (element != null && (element.equalsIgnoreCase("true") || element.equalsIgnoreCase("false")));
+        return element.equalsIgnoreCase("true") || element.equalsIgnoreCase("false");
     }
 
     public boolean isDouble() {
