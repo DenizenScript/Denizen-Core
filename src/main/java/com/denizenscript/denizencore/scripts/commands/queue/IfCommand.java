@@ -381,7 +381,7 @@ public class IfCommand extends BracedCommand {
                 toRet.negative = true;
                 arg = arg.substring(1);
             }
-            toRet.value = TagManager.tag(arg, DenizenCore.getImplementation().getTagContextFor(scriptEntry, false));
+            toRet.value = TagManager.tag(arg, DenizenCore.getImplementation().getTagContext(scriptEntry));
             return toRet;
         }
 

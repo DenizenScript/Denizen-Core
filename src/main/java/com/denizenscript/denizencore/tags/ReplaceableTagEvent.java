@@ -41,8 +41,6 @@ public class ReplaceableTagEvent {
 
     public static class ReferenceData {
 
-        public boolean isInstant = false;
-
         public Attribute attribs = null;
 
         public String alternative = null;
@@ -80,16 +78,6 @@ public class ReplaceableTagEvent {
         String otag = tag;
 
         mainRef = new ReferenceData();
-
-        // Check if tag is 'instant'
-        if (tag.length() > 0) {
-            char start = tag.charAt(0);
-            if (start == '!' || start == '^') {
-                Deprecations.oldTagTickSyntax.warn(context);
-                mainRef.isInstant = true;
-                tag = tag.substring(1);
-            }
-        }
 
         // Get alternative text
         int alternativeLoc = locateAlternative(tag);
@@ -343,10 +331,6 @@ public class ReplaceableTagEvent {
             replaced = replaced_obj.toString();
         }
         return replaced;
-    }
-
-    public boolean isInstant() {
-        return mainRef.isInstant;
     }
 
     public ScriptTag getScript() {

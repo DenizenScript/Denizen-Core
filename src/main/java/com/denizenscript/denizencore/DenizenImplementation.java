@@ -101,8 +101,6 @@ public interface DenizenImplementation {
      */
     ScriptEntryData getEmptyScriptEntryData();
 
-    TagContext getTagContextFor(ScriptEntry entry, boolean instant);
-
     boolean handleCustomArgs(ScriptEntry entry, Argument arg, boolean if_ignore);
 
     void refreshScriptContainers();
@@ -112,8 +110,6 @@ public interface DenizenImplementation {
     ListTag valueOfFlagListTag(String input);
 
     boolean matchesFlagListTag(String input);
-
-    String getLastEntryFromFlag(String flag);
 
     TagContext getTagContext(ScriptEntry entry);
 

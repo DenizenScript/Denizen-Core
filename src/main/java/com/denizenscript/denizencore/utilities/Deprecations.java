@@ -115,9 +115,6 @@ public class Deprecations {
     // In Bukkit impl, Relevant as of 2019/09/24, deprecate officially by 2020.
     public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 
-    // Added 2019/11/11.
-    public static Warning oldTagTickSyntax = new SlowWarning("The '^' prefix syntax for 'instant' tags is outdated. Please instead use the 'define' command to track the original player/NPC.");
-
     // In Bukkit impl, Added 2020/01/15
     public static Warning worldRandomLoadedChunkTag = new SlowWarning("The 'world.random_loaded_chunk' tag is pointless. Use 'world.loaded_chunks.random' instead.");
 

@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.utilities.SimpleDefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
 public abstract class TagContext implements Debuggable {
-    public boolean instant;
     public boolean debug;
     public ScriptEntry entry;
     public ScriptTag script;
@@ -24,12 +23,11 @@ public abstract class TagContext implements Debuggable {
         return false;
     }
 
-    public TagContext(boolean instant, boolean debug, ScriptEntry entry, ScriptTag script) {
-        this(instant, debug, entry, script, null);
+    public TagContext(boolean debug, ScriptEntry entry, ScriptTag script) {
+        this(debug, entry, script, null);
     }
 
-    public TagContext(boolean instant, boolean debug, ScriptEntry entry, ScriptTag script, DefinitionProvider definitionProvider) {
-        this.instant = instant;
+    public TagContext(boolean debug, ScriptEntry entry, ScriptTag script, DefinitionProvider definitionProvider) {
         this.debug = debug;
         this.entry = entry;
         this.script = script;

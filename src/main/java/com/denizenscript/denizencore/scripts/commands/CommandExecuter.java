@@ -68,14 +68,6 @@ public class CommandExecuter {
         String saveName = null;
         try {
             scriptEntry.generateAHArgs();
-            boolean genned = false;
-            if (scriptEntry.internal.actualCommand.shouldPreParse() && scriptEntry.internal.hasInstantTags) {
-                scriptEntry.regenerateArgsCur();
-                genned = true;
-                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.args,
-                        scriptEntry.args_cur, scriptEntry.aHArgs, true,
-                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs);
-            }
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
@@ -86,9 +78,8 @@ public class CommandExecuter {
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
-                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.args,
-                        genned ? scriptEntry.args_cur : scriptEntry.internal.args_ref, scriptEntry.aHArgs, false,
-                        DenizenCore.getImplementation().getTagContextFor(scriptEntry, false), scriptEntry.internal.processArgs);
+                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.args, scriptEntry.internal.args_ref, scriptEntry.aHArgs,
+                        DenizenCore.getImplementation().getTagContext(scriptEntry), scriptEntry.internal.processArgs);
                 // TODO: Fix this weird interpreter efficiency hack (remove string dependence)
                 ArgumentHelper.specialInterpretTrickStrings = scriptEntry.args;
                 ArgumentHelper.specialInterpretTrickObjects = scriptEntry.aHArgs;

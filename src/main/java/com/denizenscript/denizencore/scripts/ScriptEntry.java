@@ -9,7 +9,6 @@ import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -46,8 +45,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public boolean hasTags = false;
 
-        public boolean hasInstantTags = false;
-
         public int[] processArgs = null;
 
         public List<Argument> preprocArgs = null;
@@ -80,8 +77,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return ArgumentHelper.interpretArguments(aHArgs);
     }
 
-    public List<InternalArgument> args_cur = null;
-
     public List<Argument> aHArgs = null;
 
     public List<String> args;
@@ -107,15 +102,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     private Map<String, Object> objects = new HashMap<>(8);
-
-    public void regenerateArgsCur() {
-        args_cur = new ArrayList<>(internal.args_ref);
-        for (int i : internal.processArgs) {
-            InternalArgument arg = args_cur.get(i).duplicate();
-            args_cur.set(i, arg);
-            arg.aHArg = aHArgs.get(i);
-        }
-    }
 
     public final static Argument NULL_ARGUMENT = new Argument("null_trick", "null_trick");
 
@@ -167,13 +153,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
             if (indEnd > indStart) {
                 isTag = true;
                 internal.hasTags = true;
-                while (!internal.hasInstantTags && indStart >= 0 && indStart + 1 < indEnd) {
-                    char c = arg.charAt(indStart + 1);
-                    if (c == '!' || c == '^') {
-                        internal.hasInstantTags = true;
-                    }
-                    indStart = arg.indexOf('<', indStart + 1);
-                }
             }
         }
         argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
@@ -558,22 +537,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ScriptEntry setFinished(boolean finished) {
         isFinished = finished;
-        return this;
-    }
-
-    ////////////
-    // COMPATIBILITY
-    //////////
-
-    // Keep track of objects which were added by mass
-    // so that IF can inject them into new entries.
-    // This is ugly, but it will keep from breaking
-    // previous versions of Denizen.
-    // TODO: Get rid of this
-    public List<String> tracked_objects = new ArrayList<>();
-
-    public ScriptEntry trackObject(String key) {
-        tracked_objects.add(CoreUtilities.toLowerCase(key));
         return this;
     }
 
