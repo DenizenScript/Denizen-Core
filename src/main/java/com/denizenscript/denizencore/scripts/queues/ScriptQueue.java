@@ -11,7 +11,6 @@ import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -90,8 +89,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public boolean was_cleared = false;
 
-    public boolean run_async = false;
-
     /**
      * Optional secondary debug output method.
      */
@@ -122,11 +119,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         this.id = id;
         generateId(id);
         total_queues++;
-    }
-
-    protected ScriptQueue(String id, boolean async) {
-        this(id);
-        this.run_async = async;
     }
 
     /////////////////////
@@ -262,7 +254,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         stop();
         newQueue.id = id;
         newQueue.debugId = debugId;
-        newQueue.run_async = this.run_async;
         newQueue.debugOutput = this.debugOutput;
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
@@ -342,24 +333,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                     runMeNow();
                 }
             }, ((float) delay) / 1000);
-            if (run_async) {
-                schedulable = new AsyncSchedulable(schedulable);
-            }
             DenizenCore.schedule(schedulable);
 
         }
         else {
-            if (!run_async) {
-                runMeNow();
-            }
-            else {
-                AsyncSchedulable.executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        runMeNow();
-                    }
-                });
-            }
+            runMeNow();
         }
     }
 

@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -8,43 +7,6 @@ import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
 public class TimedQueue extends ScriptQueue implements Delayable {
-
-    /**
-     * Gets a TimedQueue instance.
-     * <p/>
-     * If a queue already exists with the given id, it will return that instance,
-     * which may be currently running, unless the type of queue is not a TimedQueue.
-     * If a queue does not exist, a new stopped queue is created instead.
-     * <p/>
-     * IDs are case insensitive.  If having an easy-to-recall ID is not necessary, just
-     * pass along null as the id, and it will use ScriptQueue's static method _getNextId()
-     * which will return a random UUID.
-     * <p/>
-     * The speed node will be automatically read from the configuration,
-     * and new ScriptQueues may need further information before they
-     * can start(), including entries, delays, loops, and possibly context.
-     *
-     * @param id unique id of the queue
-     * @return a TimedQueue
-     */
-    public static TimedQueue getQueue(String id) {
-        // Get id if not specified.
-        if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null!");
-        }
-        TimedQueue scriptQueue;
-        // Does the queue already exist? Get it if it does.
-        if (queueExists(id)) {
-            scriptQueue = (TimedQueue) ScriptQueue.allQueues.get(id);
-        }
-        // If not, create a new one.
-        else {
-            scriptQueue = new TimedQueue(id,
-                    DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
-        }
-        // Return the queue
-        return scriptQueue;
-    }
 
     /////////////////////
     // Private instance fields and constructors
@@ -156,9 +118,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
                         revolve();
                     }
                 }, (ticks <= 0 ? 1 : ticks) / 20f);
-        if (run_async) {
-            schedulable = new AsyncSchedulable(schedulable);
-        }
         this.schedulable = schedulable;
         DenizenCore.schedule(schedulable);
     }

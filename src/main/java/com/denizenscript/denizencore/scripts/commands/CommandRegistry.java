@@ -91,7 +91,6 @@ public abstract class CommandRegistry {
     public void registerCoreCommands() {
 
         registerCoreMember(AdjustCommand.class, "ADJUST", "adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)", 2);
-        registerCoreMember(AsyncCommand.class, "ASYNC", "async [<commands>]", 0);
         registerCoreMember(ChooseCommand.class, "CHOOSE", "choose [<option>] [<cases>]", 1);
         registerCoreMember(DebugCommand.class, "DEBUG", "debug [<type>] [<message>] (name:<name>)", 2);
         registerCoreMember(DefineCommand.class, "DEFINE", "define [<id>] [<value>]", 1);
@@ -113,7 +112,6 @@ public abstract class CommandRegistry {
         registerCoreMember(RunCommand.class, "RUN", "run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)", 1);
         registerCoreMember(SQLCommand.class, "SQL", "sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]", 2);
         registerCoreMember(StopCommand.class, "STOP", "stop", 0);
-        registerCoreMember(SyncCommand.class, "SYNC", "sync [<commands>]", 0);
         registerCoreMember(WaitCommand.class, "WAIT", "wait (<duration>) (queue:<name>)", 0);
         registerCoreMember(WaitUntilCommand.class, "WAITUNTIL", "waituntil (rate:<duration>) [<comparisons>]", 1);
         registerCoreMember(WebGetCommand.class, "WEBGET", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
@@ -121,16 +119,13 @@ public abstract class CommandRegistry {
         registerCoreMember(YamlCommand.class, "YAML", "yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]", 2);
     }
 
-    public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String names, String hint, int args) {
-        for (String name : names.split(", ")) {
-
-            try {
-                cmd.newInstance().activate().as(name).withOptions(hint, args);
-            }
-            catch (Throwable e) {
-                Debug.echoError("Could not register command " + name + ": " + e.getMessage());
-                Debug.echoError(e);
-            }
+    public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String name, String hint, int args) {
+        try {
+            cmd.newInstance().activate().as(name).withOptions(hint, args);
+        }
+        catch (Throwable e) {
+            Debug.echoError("Could not register command " + name + ": " + e.getMessage());
+            Debug.echoError(e);
         }
     }
 
