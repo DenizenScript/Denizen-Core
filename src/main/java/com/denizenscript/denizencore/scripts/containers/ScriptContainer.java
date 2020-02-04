@@ -288,11 +288,6 @@ public class ScriptContainer implements Debuggable {
     }
 
     @Override
-    public boolean shouldFilter(String criteria) throws Exception {
-        return name.equalsIgnoreCase(criteria.replace("s@", ""));
-    }
-
-    @Override
     public String toString() {
         return "s@" + CoreUtilities.toLowerCase(getName());
     }

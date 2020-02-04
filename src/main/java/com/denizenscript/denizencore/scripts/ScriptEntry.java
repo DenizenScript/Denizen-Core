@@ -571,11 +571,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     @Override
-    public boolean shouldFilter(String criteria) throws Exception {
-        return internal.script.getName().equalsIgnoreCase(criteria.replace("s@", ""));
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String str : getOriginalArguments()) {

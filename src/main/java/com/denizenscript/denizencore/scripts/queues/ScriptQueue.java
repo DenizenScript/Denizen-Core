@@ -530,12 +530,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     @Override
-    public boolean shouldFilter(String criteria) throws Exception {
-        return (lastEntryExecuted != null ? lastEntryExecuted.getScript().getName().equalsIgnoreCase(criteria.replace("s@", ""))
-                : script_entries.get(0).getScript().getName().equalsIgnoreCase(criteria.replace("s@", "")));
-    }
-
-    @Override
     public String toString() {
         return id;
     }

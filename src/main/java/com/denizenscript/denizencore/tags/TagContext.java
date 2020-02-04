@@ -18,11 +18,6 @@ public abstract class TagContext implements Debuggable {
         return debug;
     }
 
-    @Override
-    public boolean shouldFilter(String criteria) {
-        return false;
-    }
-
     public TagContext(boolean debug, ScriptEntry entry, ScriptTag script) {
         this(debug, entry, script, null);
     }
