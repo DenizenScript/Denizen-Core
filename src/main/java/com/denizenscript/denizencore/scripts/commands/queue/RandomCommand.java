@@ -99,7 +99,7 @@ public class RandomCommand extends BracedCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        int possibilities = 0;
+        int possibilities;
         ScriptQueue queue = scriptEntry.getResidingQueue();
         List<ScriptEntry> bracedCommands = null;
 

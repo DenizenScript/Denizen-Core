@@ -381,7 +381,6 @@ public class CoreUtilities {
         char[] data = args.toCharArray();
         StringBuilder nArg = new StringBuilder();
         int arg = 0;
-        int x = 0;
         for (int i = 0; i < data.length; i++) {
             if (data[i] == ' ') {
                 arg++;

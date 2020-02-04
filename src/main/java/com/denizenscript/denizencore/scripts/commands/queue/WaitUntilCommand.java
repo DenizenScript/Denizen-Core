@@ -42,7 +42,6 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void onEnable() {
-        setBraced();
         setParseArgs(false);
         forceHold = true;
     }

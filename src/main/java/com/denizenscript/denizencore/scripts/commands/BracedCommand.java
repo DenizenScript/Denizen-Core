@@ -168,7 +168,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 newCommand = false;
                 waitingForDash = bracesEntered == 1;
                 if (hyperdebug) {
-                    Debug.echoDebug(scriptEntry, "Opened brace; " + String.valueOf(bracesEntered) + " now");
+                    Debug.echoDebug(scriptEntry, "Opened brace; " + bracesEntered + " now");
                 }
                 if (bracesEntered > 1) {
                     commandList.get(commandList.lastKey()).add(arg);
@@ -180,7 +180,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 bracesEntered--;
                 newCommand = false;
                 if (hyperdebug) {
-                    Debug.echoDebug(scriptEntry, "Closed brace; " + String.valueOf(bracesEntered) + " now");
+                    Debug.echoDebug(scriptEntry, "Closed brace; " + bracesEntered + " now");
                 }
                 if (bracesEntered > 0) {
                     commandList.get(commandList.lastKey()).add(arg);
@@ -219,7 +219,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         bracesSection.add(newEntry);
                         bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
                         if (hyperdebug) {
-                            Debug.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + String.valueOf(args.length) + " arguments");
+                            Debug.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + args.length + " arguments");
                         }
                     }
                     if (hyperdebug) {

@@ -60,43 +60,6 @@ public class Argument implements Cloneable {
         object = new ElementTag(this.value);
     }
 
-    public Argument(String prefix, ObjectTag value) {
-        this.prefix = prefix;
-        this.value = TagManager.cleanOutputFully(value.toString());
-        if (prefix != null) {
-            if (prefix.equals("no_prefix")) {
-                this.prefix = null;
-                raw_value = this.value;
-            }
-            else {
-                raw_value = prefix + ":" + this.value;
-                lower_prefix = CoreUtilities.toLowerCase(prefix);
-            }
-        }
-        else {
-            raw_value = this.value;
-        }
-        lower_value = CoreUtilities.toLowerCase(this.value);
-        if (value instanceof ElementTag) {
-            object = new ElementTag(this.value);
-        }
-        else {
-            object = value;
-        }
-    }
-
-    public Argument(ObjectTag obj) {
-        object = obj;
-        if (obj instanceof ElementTag) {
-            fillStr(obj.toString());
-        }
-        else {
-            raw_value = TagManager.cleanOutputFully(obj.toString()); // TODO: Avoid for non-elements
-            value = raw_value;
-            lower_value = CoreUtilities.toLowerCase(value);
-        }
-    }
-
     void fillStr(String string) {
         string = TagManager.cleanOutputFully(string);
         raw_value = string;

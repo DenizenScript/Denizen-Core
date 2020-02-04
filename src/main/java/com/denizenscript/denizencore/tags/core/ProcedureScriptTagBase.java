@@ -52,7 +52,7 @@ public class ProcedureScriptTagBase {
         Attribute attr = event.getAttributes();
         int attribs = 1;
 
-        ScriptTag script = null;
+        ScriptTag script;
         String path = null;
 
         if (event.hasNameContext()) {

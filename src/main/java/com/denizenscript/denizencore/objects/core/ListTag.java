@@ -139,10 +139,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return new ListTag(string.startsWith("li@") ? string.substring(3) : string, context);
     }
 
-    public static ListTag getListFor(ObjectTag inp) {
-        return getListFor(inp, null);
-    }
-
     public static ListTag getListFor(ObjectTag inp, TagContext context) {
         return inp instanceof ListTag ? (ListTag) inp : valueOf(inp.toString(), context);
     }
@@ -1565,7 +1561,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // -->
             if (attribute.startsWith("with", 2) && attribute.hasContext(2)) {
                 with = attribute.getContextObject(2);
-                attribute = attribute.fulfill(1);
+                attribute.fulfill(1);
             }
 
             ListTag newList = new ListTag(object);
@@ -1600,7 +1596,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // -->
             if (attribute.startsWith("with", 2) && attribute.hasContext(2)) {
                 with = attribute.getContextObject(2);
-                attribute = attribute.fulfill(1);
+                attribute.fulfill(1);
             }
 
             ListTag newList = new ListTag(object);

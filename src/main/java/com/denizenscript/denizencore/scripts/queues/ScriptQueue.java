@@ -347,7 +347,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      *
      * @param entries the entries to be run.
      */
-    public String runNow(List<ScriptEntry> entries) {
+    public void runNow(List<ScriptEntry> entries) {
         ScriptEntry nextup = getQueueSize() > 0 ? getEntry(0) : null;
         injectEntries(entries, 0);
         while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
@@ -355,7 +355,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             getEntry(0).setFinished(true);
             DenizenCore.getScriptEngine().revolveOnceForce(this);
         }
-        return null;
+        return;
     }
 
     private Runnable callback = null;

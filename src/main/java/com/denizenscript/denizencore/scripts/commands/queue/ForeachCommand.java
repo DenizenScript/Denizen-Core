@@ -53,11 +53,6 @@ public class ForeachCommand extends BracedCommand {
     }
 
     @Override
-    public void onEnable() {
-        setBraced();
-    }
-
-    @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
         boolean handled = false;

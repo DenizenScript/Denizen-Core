@@ -5,7 +5,6 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class ReplaceableTagEvent {
     private boolean wasReplaced = false;
 
     private ObjectTag alternative_tagged = null;
-    private String replaced = null;
+    private String replaced;
     private String value_tagged = null;
     private Attribute core_attributes = null;
 

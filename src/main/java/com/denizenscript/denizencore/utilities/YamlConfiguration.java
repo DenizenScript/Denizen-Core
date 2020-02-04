@@ -38,7 +38,7 @@ public class YamlConfiguration {
         return config;
     }
 
-    Map<StringHolder, Object> contents = null;
+    Map<StringHolder, Object> contents;
 
     /**
      * Use StringHolders instead of strings.

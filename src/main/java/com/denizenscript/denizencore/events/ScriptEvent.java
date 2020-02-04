@@ -309,28 +309,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void destroy() {
     }
 
-    @Deprecated
-    public static boolean checkSwitch(String event, String switcher, String value) {
-        for (String possible : CoreUtilities.split(event, ' ')) {
-            List<String> split = CoreUtilities.split(possible, ':', 2);
-            if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1 && !split.get(1).equalsIgnoreCase(value)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Deprecated
-    public static String getSwitch(String event, String switcher) {
-        for (String possible : CoreUtilities.split(event, ' ')) {
-            List<String> split = CoreUtilities.split(possible, ':', 2);
-            if (split.get(0).equalsIgnoreCase(switcher) && split.size() > 1) {
-                return split.get(1);
-            }
-        }
-        return null;
-    }
-
     public static HashSet<String> defaultDeterminations = new HashSet<>(Arrays.asList("cancelled", "cancelled:true", "cancelled:false"));
 
     public static boolean isDefaultDetermination(ObjectTag determination) {
@@ -373,18 +351,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public boolean couldMatch(ScriptPath path) {
-        return couldMatch(path.container, path.event);
-    }
-
-    public boolean couldMatch(ScriptContainer script, String event) {
-        return false;
+        throw new UnsupportedOperationException("CouldMatch not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
     }
 
     public boolean matches(ScriptPath path) {
-        return matches(path.container, path.event);
-    }
-
-    public boolean matches(ScriptContainer script, String event) {
         throw new UnsupportedOperationException("Matches not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
     }
 

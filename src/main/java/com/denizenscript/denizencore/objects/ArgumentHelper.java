@@ -135,7 +135,7 @@ public class ArgumentHelper {
             Debug.log("Constructed args: " + Arrays.toString(matchList.toArray()));
         }
 
-        return matchList.toArray(new String[matchList.size()]);
+        return matchList.toArray(new String[0]);
     }
 
     public static String debugObj(String prefix, Object value) {

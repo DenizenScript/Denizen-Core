@@ -46,7 +46,6 @@ public class WhileCommand extends BracedCommand {
 
     @Override
     public void onEnable() {
-        setBraced();
         setParseArgs(false);
     }
 

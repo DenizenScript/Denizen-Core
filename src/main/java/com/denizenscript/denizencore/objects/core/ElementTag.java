@@ -81,15 +81,6 @@ public class ElementTag implements ObjectTag {
     // In some cases, this will also be documented as "<#.#>".
     // -->
 
-    @Deprecated
-    public final static ElementTag TRUE = new ElementTag(Boolean.TRUE);
-    @Deprecated
-    public final static ElementTag FALSE = new ElementTag(Boolean.FALSE);
-    @Deprecated
-    public final static ElementTag SERVER = new ElementTag("server");
-    @Deprecated
-    public final static ElementTag NULL = new ElementTag("null");
-
     final static Pattern VALUE_PATTERN =
             Pattern.compile("el@val(?:ue)?\\[([^\\[\\]]+)\\].*",
                     Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
@@ -637,8 +628,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_list", (attribute, object) -> {
             String element = object.element;
-            ListTag obj = handleNull(element, ListTag.valueOf(element, attribute.context), "ListTag", attribute.hasAlternative());
-            return obj;
+            return handleNull(element, ListTag.valueOf(element, attribute.context), "ListTag", attribute.hasAlternative());
         }, "aslist");
 
         // <--[tag]
@@ -650,8 +640,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("as_custom", (attribute, object) -> {
             String element = object.element;
-            CustomObjectTag obj = handleNull(element, CustomObjectTag.valueOf(element, attribute.context), "Custom", attribute.hasAlternative());
-            return obj;
+            return handleNull(element, CustomObjectTag.valueOf(element, attribute.context), "Custom", attribute.hasAlternative());
         }, "ascustom");
 
         // <--[tag]

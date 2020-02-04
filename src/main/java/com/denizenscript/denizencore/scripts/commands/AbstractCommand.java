@@ -58,16 +58,6 @@ public abstract class AbstractCommand {
         }
     }
 
-    private boolean braced = false;
-
-    public void setBraced() {
-        braced = true;
-    }
-
-    public boolean isBraced() {
-        return braced;
-    }
-
     private boolean preparseArgs = true;
 
     public boolean forceHold = false;

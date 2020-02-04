@@ -72,7 +72,7 @@ public class NaturalOrderComparator implements Comparator {
         String a = o1.toString();
         String b = o2.toString();
         int ia = 0, ib = 0;
-        int nza = 0, nzb = 0;
+        int nza, nzb;
         char ca, cb;
         int result;
         while (true) {

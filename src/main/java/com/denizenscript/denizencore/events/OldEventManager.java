@@ -264,9 +264,6 @@ public class OldEventManager {
     //  REGISTRATION
     //////////////
 
-    public void registerCoreMembers() {
-    }
-
     public static void registerSmartEvent(OldSmartEvent event) {
         // Seems simple enough
         if (event != null) {

@@ -8,7 +8,7 @@ public class RepeatingSchedulable extends Schedulable {
         secondsLeft = fireRate;
     }
 
-    public float fireEverySeconds = 0;
+    public float fireEverySeconds;
 
     @Override
     public boolean tick(float seconds) {

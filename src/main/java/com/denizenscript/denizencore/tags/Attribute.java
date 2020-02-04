@@ -98,16 +98,6 @@ public class Attribute {
     private int rawtaglen = -1;
     String origin;
 
-    public String getRawTag() {
-        rebuild_raw_tag();
-        return raw_tag;
-    }
-
-    public String getRawTagLow() {
-        rebuild_raw_tag();
-        return raw_tag_low;
-    }
-
     public List<String> seemingSuccesses = new ArrayList<>(2);
 
     public boolean hasContextFailed = false;

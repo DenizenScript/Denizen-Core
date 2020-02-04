@@ -76,7 +76,6 @@ public class IfCommand extends BracedCommand {
 
     @Override
     public void onEnable() {
-        setBraced();
         setParseArgs(false);
     }
 
@@ -248,7 +247,7 @@ public class IfCommand extends BracedCommand {
             scriptEntry.setInstant(true);
             String cmd = subcommand.get(0);
             subcommand.remove(0);
-            ScriptEntry entry = new ScriptEntry(cmd, subcommand.toArray(new String[subcommand.size()]),
+            ScriptEntry entry = new ScriptEntry(cmd, subcommand.toArray(new String[0]),
                     scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
             entry.entryData = scriptEntry.entryData.clone();
             entry.setInstant(true);
@@ -290,29 +289,6 @@ public class IfCommand extends BracedCommand {
             public String toString() {
                 return negative ? "!" + value : value;
             }
-        }
-
-        public static boolean boolify(String arg) {
-            if (arg.startsWith("!")) {
-                return !arg.equalsIgnoreCase("!true");
-            }
-            return arg.equalsIgnoreCase("true");
-        }
-
-        public static boolean procBoolean(Object arg) {
-            if (arg instanceof String) {
-                return boolify((String) arg);
-            }
-            else if (arg instanceof ArgInternal) {
-                return ((ArgInternal) arg).boolify();
-            }
-            else if (arg instanceof ArgComparer) {
-                return ((ArgComparer) arg).compare();
-            }
-            else if (arg instanceof Boolean) {
-                return ((Boolean) arg);
-            }
-            return boolify(arg.toString());
         }
 
         public static String procString(Object arg) {
