@@ -1443,7 +1443,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                             String name = definition_names != null && definition_names.length >= x ?
                                     definition_names[x - 1].trim() : String.valueOf(x);
                             queue.addDefinition(name, definition);
-                            Debug.echoDebug(entries.get(0), "Adding definition %" + name + "% as " + definition);
+                            Debug.echoDebug(entries.get(0), "Adding definition '" + name + "' as " + definition);
                             x++;
                         }
                         queue.start();

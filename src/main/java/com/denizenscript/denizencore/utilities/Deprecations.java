@@ -11,9 +11,6 @@ import com.denizenscript.denizencore.utilities.debugging.Warning;
  */
 public class Deprecations {
 
-    // Prime candidate for removal - been strongly deprecated for a very long time (exact date is unclear, but many years).
-    public static Warning ancientDefs = new StrongWarning("Ancient style definitions ('%def%') are deprecated. Please use modern definition syntax: '<[def]>'.");
-
     // In Bukkit impl, Added on 2018/12/23
     // Bad candidate for functionality removal - a bit handy to use in "/ex", despite being clearly bad in standard scripts.
     public static Warning playerByNameWarning = new SlowWarning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");

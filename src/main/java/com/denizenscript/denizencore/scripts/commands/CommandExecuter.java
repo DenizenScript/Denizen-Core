@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -10,83 +9,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagManager;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class CommandExecuter {
-
-    private static final Pattern definition_pattern = Pattern.compile("%(.+?)%");
-
-    public CommandExecuter() {
-    }
-
-    public static String parseDefsRaw(ScriptEntry scriptEntry, String arg) {
-        if (!hasDef(arg)) {
-            return arg;
-        }
-        if (scriptEntry.getResidingQueue() == null) {
-            return arg;
-        }
-        Matcher m;
-        StringBuffer sb;
-        m = definition_pattern.matcher(arg);
-        sb = new StringBuffer();
-        while (m.find()) {
-            String def = m.group(1);
-            boolean dynamic = false;
-            if (def.startsWith("|")) {
-                def = def.substring(1, def.length() - 1);
-                dynamic = true;
-            }
-            String definition;
-            String defval = scriptEntry.getResidingQueue().getDefinition(def);
-            if (dynamic) {
-                definition = scriptEntry.getResidingQueue().getDefinition(def);
-            }
-            else {
-                definition = TagManager.escapeOutput(scriptEntry.getResidingQueue().getDefinition(def));
-            }
-            if (defval == null) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Unknown definition %" + m.group(1) + "%.");
-                Debug.log("(Attempted: " + scriptEntry.toString() + ")");
-                definition = "null";
-            }
-            Deprecations.ancientDefs.warn(scriptEntry.getResidingQueue());
-            Debug.echoDebug(scriptEntry, "Filled definition %" + m.group(1) + "% with '" + definition + "'.");
-            m.appendReplacement(sb, Matcher.quoteReplacement(definition));
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
-
-    public static boolean hasDef(String arg) {
-        return arg.indexOf('%') != -1;
-    }
-
-    public static boolean handleDefs(ScriptEntry scriptEntry, boolean genned) {
-        if (scriptEntry.internal.hasOldDefs) {
-            if (!genned) {
-                scriptEntry.regenerateArgsCur();
-                genned = true;
-            }
-            for (int argId : scriptEntry.internal.processArgs) {
-                String arg = scriptEntry.args.get(argId);
-                if (hasDef(arg)) {
-                    String parsed = parseDefsRaw(scriptEntry, arg);
-                    scriptEntry.setArgument(argId, parsed);
-                    Argument aharg = new Argument(parsed);
-                    Argument oldaharg = scriptEntry.aHArgs.get(argId);
-                    aharg.needsFill = oldaharg.needsFill || oldaharg.hasSpecialPrefix;
-                    aharg.hasSpecialPrefix = false;
-                    scriptEntry.aHArgs.set(argId, aharg);
-                    ScriptEntry.InternalArgument argse = scriptEntry.args_cur.get(argId);
-                    argse.value = TagManager.dupChain(TagManager.genChain(parsed, scriptEntry));
-                    argse.prefix = null;
-                }
-            }
-        }
-        return genned;
-    }
 
     public static ScriptQueue currentQueue;
 
@@ -153,7 +76,6 @@ public class CommandExecuter {
                         scriptEntry.args_cur, scriptEntry.aHArgs, true,
                         DenizenCore.getImplementation().getTagContextFor(scriptEntry, true), scriptEntry.internal.processArgs);
             }
-            genned = handleDefs(scriptEntry, genned);
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing

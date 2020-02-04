@@ -48,8 +48,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public boolean hasInstantTags = false;
 
-        public boolean hasOldDefs = false;
-
         public int[] processArgs = null;
 
         public List<Argument> preprocArgs = null;
@@ -86,15 +84,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public List<Argument> aHArgs = null;
 
-    public List<String> args = null;
+    public List<String> args;
 
     public List<ObjectTag> processed_arguments = null;
 
-    public ScriptEntryData entryData = null;
+    public ScriptEntryData entryData;
 
     private ScriptQueue queue = null;
 
-    public ScriptEntryInternal internal = null;
+    public ScriptEntryInternal internal;
 
     public List<BracedCommand.BracedData> getBracedSet() {
         return internal.bracedSet;
@@ -129,7 +127,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         for (int i : internal.processArgs) {
             InternalArgument arg = internal.args_ref.get(i);
             arg.aHArg.scriptEntry = this;
-            aHArgs.set(i, arg.aHArg.needsFill || arg.aHArg.hasSpecialPrefix || (internal.hasOldDefs && arg.aHArg.raw_value.indexOf('%') != -1) ? arg.aHArg.clone() : arg.aHArg);
+            aHArgs.set(i, arg.aHArg.needsFill || arg.aHArg.hasSpecialPrefix ? arg.aHArg.clone() : arg.aHArg);
         }
     }
 
@@ -161,16 +159,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public void crunchInto(InternalArgument argVal, String arg, TagContext refContext) {
-        if (arg.indexOf('%') != -1) {
-            internal.hasOldDefs = true;
-            argVal.value = new LinkedList<>();
-            TagManager.ParseableTagPiece piece = new TagManager.ParseableTagPiece();
-            piece.content = arg;
-            argVal.value.add(piece);
-        }
-        else {
-            argVal.value = TagManager.dupChain(TagManager.genChain(arg, refContext));
-        }
+        argVal.value = TagManager.dupChain(TagManager.genChain(arg, refContext));
         boolean isTag = false;
         int indStart = arg.indexOf('<');
         if (indStart >= 0) {
