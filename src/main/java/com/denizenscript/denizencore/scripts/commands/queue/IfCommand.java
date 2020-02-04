@@ -225,40 +225,30 @@ public class IfCommand extends BracedCommand {
                         Debug.log("Trying: " + braceSet.key);
                     }
                     List<String> key = braceSet.args;
-                    boolean should_fire = false;
-                    int x = 0;
-                    if (key.size() > x && key.get(x).equalsIgnoreCase("else")) {
-                        x++;
+                    if (key.size() == 0 || !key.get(0).equalsIgnoreCase("else")) {
+                        Debug.echoError("If command has argument '" + key.get(0) + "' which is unknown.");
+                        continue;
+                    }
+                    if (key.size() > 1) {
+                        if (!key.get(1).equalsIgnoreCase("if")) {
+                            Debug.echoError("Else command has argument '" + key.get(1) + "' which is unknown.");
+                            continue;
+                        }
+                        if (!new ArgComparer().compare(key.subList(2, key.size()), scriptEntry)) {
+                            continue;
+                        }
+                        Debug.echoDebug(scriptEntry, "<Y>If/else-if chain entry #" + (z + 1) + " passed, running block.");
                     }
                     else {
-                        Debug.echoError("If command has argument '" + key.get(x) + "' which is unknown.");
+                        Debug.echoDebug(scriptEntry, "<Y>No part of the if command passed, running ELSE block.");
                     }
-                    if (key.size() > x && key.get(x).equalsIgnoreCase("if")) {
-                        x++;
+                    scriptEntry.setInstant(true);
+                    List<ScriptEntry> bracedCommandsList = braceSet.value;
+                    for (int i = 0; i < bracedCommandsList.size(); i++) {
+                        bracedCommandsList.get(i).setInstant(true);
                     }
-                    else {
-                        should_fire = true;
-                    }
-                    if (!should_fire) {
-                        if (new ArgComparer().compare(key.subList(x, key.size()), scriptEntry)) {
-                            should_fire = true;
-                        }
-                    }
-                    if (should_fire) {
-                        if (key.size() == 1 && key.get(0).equals("else")) {
-                            Debug.echoDebug(scriptEntry, "<Y>No part of the if command passed, running ELSE block.");
-                        }
-                        else {
-                            Debug.echoDebug(scriptEntry, "<Y>If sub-command " + z + " passed, running block.");
-                        }
-                        scriptEntry.setInstant(true);
-                        List<ScriptEntry> bracedCommandsList = braceSet.value;
-                        for (int i = 0; i < bracedCommandsList.size(); i++) {
-                            bracedCommandsList.get(i).setInstant(true);
-                        }
-                        scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
-                        return;
-                    }
+                    scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
+                    return;
                 }
             }
         }
