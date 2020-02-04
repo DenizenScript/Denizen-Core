@@ -33,13 +33,12 @@ public class Comparable {
     // comparables are compatible with all operators. See <@link language comparable> for more information.
     //
     // Available Operators include:
-    // EQUALS (==), OR_MORE (>=), OR_LESS (<=), MORE (>), and LESS (<).
-    //
-    // Operators which have a symbol alternative (as marked by parenthesis) can be referred to by either
-    // their name or symbol. Using a '!' in front of the operator will also reverse logic, effectively
-    // turning 'EQUALS' into 'DOES NOT EQUAL', for example.
-    //
-    // == <= >= > < all compare arguments as text or numbers.
+    // "Equals" is written as "=="
+    // "Does not equal" is written as "!="
+    // "Is more than" is written as ">" or "MORE".
+    // "Is less than" is written as "<" or "LESS".
+    // "Is more than or equal to" is written as ">=" or "OR_MORE".
+    // "Is less than or equal to" is written as "<=" or "OR_LESS".
     //
     // Note: When using an operator in a replaceable tag (such as <ElementTag.is[...].than[...]>),
     // keep in mind that < and >, and even >= and <= must be either escaped, or referred to by name.
