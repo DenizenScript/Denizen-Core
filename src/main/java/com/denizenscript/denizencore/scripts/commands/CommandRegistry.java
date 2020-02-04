@@ -16,6 +16,8 @@ public abstract class CommandRegistry {
     public CommandRegistry() {
     }
 
+    public static final DebugInvalidCommand debugInvalidCommand = new DebugInvalidCommand();
+
     public final Map<String, AbstractCommand> instances = new HashMap<>();
     public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<>();
 

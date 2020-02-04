@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
+import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -54,6 +55,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public String originalLine = null;
 
         public int lineNumber;
+
+        public boolean brokenArgs = false;
     }
 
     public static class InternalArgument {
@@ -295,11 +298,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
         if (internal.actualCommand != null) {
             if (internal.actualCommand.getOptions().requiredArgs > args.size()) {
-                broken = true;
+                internal.brokenArgs = true;
+                internal.actualCommand = CommandRegistry.debugInvalidCommand;
             }
             if (internal.actualCommand instanceof BracedCommand) {
                 BracedCommand.getBracedCommands(this);
             }
+        }
+        else {
+            internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
     }
 
@@ -375,8 +382,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public AbstractCommand getCommand() {
         return internal.actualCommand;
     }
-
-    public boolean broken = false;
 
     public void setArgument(int ind, String val) {
         args.set(ind, val);

@@ -52,18 +52,6 @@ public class ArgumentHelper {
 
     public final static Pattern wordPrimitive = Pattern.compile("\\w+");
 
-    public static List<Argument> interpretObjects(List<ObjectTag> args) {
-        List<Argument> arg_list = new ArrayList<>(args.size());
-        for (ObjectTag obj : args) {
-            arg_list.add(new Argument(obj));
-        }
-        return arg_list;
-    }
-
-    public static List<String> specialInterpretTrickStrings = null;
-
-    public static List<Argument> specialInterpretTrickObjects = null;
-
     public static List<Argument> interpretArguments(List<Argument> args) {
         for (Argument arg : args) {
             if (arg.needsFill || arg.hasSpecialPrefix) {
@@ -88,9 +76,6 @@ public class ArgumentHelper {
      * @return a list of Arguments
      */
     public static List<Argument> interpret(List<String> args) {
-        if (args == specialInterpretTrickStrings) {
-            return interpretArguments(specialInterpretTrickObjects);
-        }
         List<Argument> arg_list = new ArrayList<>(args.size());
         for (String string : args) {
             arg_list.add(new Argument(string));

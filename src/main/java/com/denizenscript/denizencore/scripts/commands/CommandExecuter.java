@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -46,24 +45,6 @@ public class CommandExecuter {
             DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
         }
         AbstractCommand command = scriptEntry.internal.actualCommand;
-        if (command == null) {
-            command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
-            scriptEntry.internal.actualCommand = command;
-            if (command == null || command.getOptions().requiredArgs > scriptEntry.getArguments().size()) {
-                scriptEntry.broken = true;
-            }
-        }
-        if (scriptEntry.broken) {
-            Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
-            if (command == null) {
-                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid command! Are you sure it loaded?");
-            }
-            else {
-                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?");
-            }
-            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
-            return false;
-        }
         currentQueue = scriptEntry.getResidingQueue();
         String saveName = null;
         try {
@@ -80,11 +61,14 @@ public class CommandExecuter {
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
                 TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.args, scriptEntry.internal.args_ref, scriptEntry.aHArgs,
                         DenizenCore.getImplementation().getTagContext(scriptEntry), scriptEntry.internal.processArgs);
-                // TODO: Fix this weird interpreter efficiency hack (remove string dependence)
-                ArgumentHelper.specialInterpretTrickStrings = scriptEntry.args;
-                ArgumentHelper.specialInterpretTrickObjects = scriptEntry.aHArgs;
             }
             command.parseArgs(scriptEntry);
+            command.execute(scriptEntry);
+            if (saveName != null) {
+                scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
+            }
+            currentQueue = null;
+            return true;
         }
         catch (InvalidArgumentsException e) {
             // Give usage hint if InvalidArgumentsException was called.
@@ -100,24 +84,7 @@ public class CommandExecuter {
             return false;
         }
         catch (Exception e) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command (while preparing it)!");
-            Debug.echoError(scriptEntry.getResidingQueue(), e);
-            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
-            Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
-            scriptEntry.setFinished(true);
-            currentQueue = null;
-            return false;
-        }
-        try {
-            command.execute(scriptEntry);
-            if (saveName != null) {
-                scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
-            }
-            currentQueue = null;
-            return true;
-        }
-        catch (Exception e) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Woah!! An exception has been called with this command (while executing it)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             Debug.echoError(scriptEntry.getResidingQueue(), e);
             Debug.log("(Attempted: " + scriptEntry.toString() + ")");
             Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
