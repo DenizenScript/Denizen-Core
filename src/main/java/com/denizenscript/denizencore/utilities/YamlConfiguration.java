@@ -213,7 +213,7 @@ public class YamlConfiguration {
                 return;
             }
             else if (oPortion instanceof Map) {
-                if (((Map<StringHolder, Object>) oPortion).size() == 0) {
+                if (((Map<StringHolder, Object>) oPortion).isEmpty()) {
                     portion.remove(new StringHolder(parts.get(i)));
                     emptyEmptyMaps(parts);
                     return;

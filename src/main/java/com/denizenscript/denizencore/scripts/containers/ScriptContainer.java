@@ -256,7 +256,7 @@ public class ScriptContainer implements Debuggable {
             return got;
         }
         List<Object> stringEntries = contents.getList(path);
-        if (stringEntries == null || stringEntries.size() == 0) {
+        if (stringEntries == null || stringEntries.isEmpty()) {
             return null;
         }
         List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(stringEntries, this, null);

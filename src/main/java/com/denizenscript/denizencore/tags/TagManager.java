@@ -387,7 +387,7 @@ public class TagManager {
             }
         }
         if (pieces.size() < 2) {
-            if (pieces.size() == 0) {
+            if (pieces.isEmpty()) {
                 return new ElementTag("");
             }
             ParseableTagPiece pzero = pieces.get(0);

@@ -168,7 +168,7 @@ public class RepeatCommand extends BracedCommand {
         }
         else if (callback != null && callback.asBoolean()) {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equalsIgnoreCase("repeat") ||
-                    scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().size() == 0 ||
+                    scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().isEmpty() ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
                 RepeatData data = (RepeatData) scriptEntry.getOwner().getData();
                 data.index++;

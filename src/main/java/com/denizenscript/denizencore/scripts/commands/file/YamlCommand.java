@@ -660,7 +660,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             if (index > list.size()) {
                 index = list.size() - 1;
             }
-            if (list.size() == 0) {
+            if (list.isEmpty()) {
                 return "";
             }
             return list.get(index);

@@ -220,7 +220,7 @@ public class IfCommand extends BracedCommand {
                         Debug.log("Trying: " + braceSet.key);
                     }
                     List<String> key = braceSet.args;
-                    if (key.size() == 0 || !key.get(0).equalsIgnoreCase("else")) {
+                    if (key.isEmpty() || !key.get(0).equalsIgnoreCase("else")) {
                         Debug.echoError("If command has argument '" + key.get(0) + "' which is unknown.");
                         continue;
                     }
@@ -420,7 +420,7 @@ public class IfCommand extends BracedCommand {
             if (Debug.verbose) {
                 Debug.log("Comparing " + args);
             }
-            if (args.size() == 0) {
+            if (args.isEmpty()) {
                 if (Debug.verbose) {
                     Debug.log("Args.size == 0, return false");
                 }
