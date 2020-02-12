@@ -28,10 +28,9 @@ public class DefineCommand extends AbstractCommand {
     // @Guide https://guide.denizenscript.com/guides/basics/definitions.html
     //
     // @Description
-    // Definitions are queue-level 'variables' that can be used throughout a script, once defined,
-    // by using the <[<id>]> tag. Definitions are only valid on the current queue and are
-    // not transferred to any new queues constructed within the script, such as by a 'run' command, without explicitly
-    // specifying to do so.
+    // Definitions are queue-level 'variables' that can be used throughout a script, once defined, by using the <[<id>]> tag.
+    // Definitions are only valid on the current queue and are not transferred to any new queues constructed within the script,
+    // such as by a 'run' command, without explicitly specifying to do so.
     //
     // Definitions are lighter and faster than creating a temporary flag.
     // Definitions are also automatically removed when the queue is completed, so there is no worry for leaving unused data hanging around.
@@ -52,7 +51,7 @@ public class DefineCommand extends AbstractCommand {
     //
     // @Usage
     // Use to validate a player input to a command script, and then output the found player's name.
-    // - define target:<server.match_player[<context.args.get[1]>]||null>
+    // - define target <server.match_player[<context.args.get[1]>]||null>
     // - if <[target]> == null:
     //   - narrate '<red>Unknown player target.'
     //   - stop
@@ -60,7 +59,7 @@ public class DefineCommand extends AbstractCommand {
     //
     // @Usage
     // Use to keep the value of a replaceable tag that you might use many times within a single script.
-    // - define arg1:<context.args.get[1]>
+    // - define arg1 <context.args.get[1]>
     // - if <[arg1]> == hello:
     //   - narrate 'Hello!'
     // - else if <[arg1]> == goodbye:
