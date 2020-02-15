@@ -1,13 +1,11 @@
 package com.denizenscript.denizencore.objects;
 
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class ArgumentHelper {
-
-    public final static Pattern floatPrimitive = Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
 
     // <--[language]
     // @name Number and Decimal
@@ -20,7 +18,6 @@ public class ArgumentHelper {
     // Numbers can be verified with the 'if' commands' 'matches' functionality.
     // For example: "- if <number> matches number" ... will return true if <number> is a valid number.
     // -->
-    public final static Pattern doublePrimitive = floatPrimitive;
 
     // <--[language]
     // @name Percentage
@@ -40,8 +37,6 @@ public class ArgumentHelper {
     // To translate between the two formats, you only need to multiply or divide by one hundred (100).
     //
     // -->
-
-    public final static Pattern integerPrimitive = Pattern.compile("(-)?[0-9]+");
 
     /**
      * Turns a list of string arguments (separated by buildArgs) into Argument
@@ -137,11 +132,13 @@ public class ArgumentHelper {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
+    public static AsciiMatcher DOUBLE_MATCHER = new AsciiMatcher("0123456789.+-eE");
+
     public static boolean matchesDouble(String arg) {
-        return doublePrimitive.matcher(arg).matches();
+        return arg.length() > 0 && DOUBLE_MATCHER.isOnlyMatches(arg);
     }
 
     public static boolean matchesInteger(String arg) {
-        return doublePrimitive.matcher(arg).matches();
+        return arg.length() > 0 && Argument.INTEGER_MATCHER.isOnlyMatches(arg);
     }
 }

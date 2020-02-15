@@ -13,7 +13,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class ObjectFetcher {
 
@@ -140,7 +139,9 @@ public class ObjectFetcher {
         }
     }
 
-    public final static Pattern DESCRIBED_PATTERN = Pattern.compile("[^\\[]+\\[.+=.+\\]", Pattern.DOTALL | Pattern.MULTILINE);
+    public static boolean isObjectWithProperties(String input) {
+        return input.indexOf('[') != -1 && input.lastIndexOf(']') == input.length() - 1;
+    }
 
     public static boolean checkMatch(Class<? extends ObjectTag> dClass, String value) {
         if (value == null || dClass == null) {
@@ -167,7 +168,7 @@ public class ObjectFetcher {
     }
 
     public static List<String> separateProperties(String input) {
-        if (input.indexOf('[') == -1 || input.lastIndexOf(']') != input.length() - 1) {
+        if (!isObjectWithProperties(input)) {
             return null;
         }
         ArrayList<String> output = new ArrayList<>(input.length() / 7);

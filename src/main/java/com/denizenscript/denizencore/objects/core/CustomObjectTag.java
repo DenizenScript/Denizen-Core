@@ -43,8 +43,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
 
         ///////
         // Handle objects with properties through the object fetcher
-        m = ObjectFetcher.DESCRIBED_PATTERN.matcher(string);
-        if (m.matches()) {
+        if (ObjectFetcher.isObjectWithProperties(string)) {
             return ObjectFetcher.getObjectFrom(CustomObjectTag.class, string, context);
         }
 

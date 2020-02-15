@@ -81,10 +81,6 @@ public class ElementTag implements ObjectTag {
     // In some cases, this will also be documented as "<#.#>".
     // -->
 
-    final static Pattern VALUE_PATTERN =
-            Pattern.compile("el@val(?:ue)?\\[([^\\[\\]]+)\\].*",
-                    Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-
     public static ElementTag valueOf(String string) {
         return valueOf(string, null);
     }
@@ -109,15 +105,10 @@ public class ElementTag implements ObjectTag {
         if (string == null) {
             return null;
         }
-
-        Matcher m = VALUE_PATTERN.matcher(string);
-
         // Allow construction of elements with el@val[<value>]
-        if (m.matches()) {
-            String value = m.group(1);
-            return new ElementTag(value);
+        if (string.startsWith("el@val[") && string.endsWith("]")) {
+            return new ElementTag(string.substring("el@val[".length(), string.length() - "el@val[]".length()));
         }
-
         return new ElementTag(CoreUtilities.toLowerCase(string).startsWith("el@") ? string.substring(3) : string);
     }
 
@@ -479,7 +470,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is a valid decimal number (the decimal point is optional).
         // -->
         registerTag("is_decimal", (attribute, object) -> {
-            if (!ArgumentHelper.doublePrimitive.matcher(object.element).matches()) {
+            if (!ArgumentHelper.matchesDouble(object.element)) {
                 return new ElementTag(false);
             }
             try {
@@ -499,8 +490,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("is_odd", (attribute, object) -> {
             String element = object.element;
-            return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches()
-                    && (object.asBigDecimal().longValue() % 2) == 1);
+            return new ElementTag(ArgumentHelper.matchesDouble(element) && (object.asBigDecimal().longValue() % 2) == 1);
         });
 
         // <--[tag]
@@ -512,8 +502,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("is_even", (attribute, object) -> {
             String element = object.element;
-            return new ElementTag(ArgumentHelper.doublePrimitive.matcher(element).matches()
-                    && (object.asBigDecimal().longValue() % 2) == 0);
+            return new ElementTag(ArgumentHelper.matchesDouble(element) && (object.asBigDecimal().longValue() % 2) == 0);
         });
 
         // <--[tag]

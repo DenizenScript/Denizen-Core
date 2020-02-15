@@ -195,14 +195,12 @@ public class Argument implements Cloneable {
 
     public static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher("0123456789+-");
 
-    public static AsciiMatcher DOUBLE_MATCHER = new AsciiMatcher("0123456789.+-eE");
-
     public boolean matchesInteger() {
         return matchesFloat();
     }
 
     public boolean matchesFloat() {
-        return lower_value.length() > 0 && DOUBLE_MATCHER.isOnlyMatches(lower_value);
+        return ArgumentHelper.matchesDouble(lower_value);
     }
 
     // Check if this argument matches a certain ObjectTag type
