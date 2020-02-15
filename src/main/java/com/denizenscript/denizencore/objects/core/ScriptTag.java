@@ -123,14 +123,11 @@ public class ScriptTag implements ObjectTag, Adjustable {
     }
 
     public static boolean matches(String string) {
-
         if (CoreUtilities.toLowerCase(string).startsWith("s@")) {
             return true;
         }
 
-        ScriptTag script = new ScriptTag(string);
-        // Make sure it's valid.
-        return script.isValid();
+        return ScriptRegistry.getScriptContainer(string) != null;
     }
 
     //////////////////

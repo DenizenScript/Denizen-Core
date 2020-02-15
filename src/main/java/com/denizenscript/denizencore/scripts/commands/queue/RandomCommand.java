@@ -66,7 +66,7 @@ public class RandomCommand extends BracedCommand {
                 break;
             }
             else if (!scriptEntry.hasObject("possibilities")
-                    && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
+                    && arg.matchesInteger()) {
                 scriptEntry.addObject("possibilities", arg.asElement());
             }
             else {

@@ -7,8 +7,6 @@ import java.util.regex.Pattern;
 
 public class ArgumentHelper {
 
-    public enum PrimitiveType {Float, Double, Integer, Boolean, String, Word, Percentage}
-
     public final static Pattern floatPrimitive = Pattern.compile("^[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?$");
 
     // <--[language]
@@ -42,13 +40,8 @@ public class ArgumentHelper {
     // To translate between the two formats, you only need to multiply or divide by one hundred (100).
     //
     // -->
-    public final static Pattern percentagePrimitive = Pattern.compile("-?(?:\\d+)?(\\.\\d+)?(%)?");
 
     public final static Pattern integerPrimitive = Pattern.compile("(-)?[0-9]+");
-
-    public final static Pattern booleanPrimitive = Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
-
-    public final static Pattern wordPrimitive = Pattern.compile("\\w+");
 
     /**
      * Turns a list of string arguments (separated by buildArgs) into Argument

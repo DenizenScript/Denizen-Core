@@ -52,7 +52,7 @@ public class RepeatCommand extends BracedCommand {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
 
             if (!handled
-                    && arg.matchesPrimitive(ArgumentHelper.PrimitiveType.Integer)) {
+                    && arg.matchesInteger()) {
                 scriptEntry.addObject("qty", arg.asElement());
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;

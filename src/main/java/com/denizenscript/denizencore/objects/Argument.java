@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -188,35 +189,20 @@ public class Argument implements Cloneable {
         return false;
     }
 
-    public boolean matchesPrimitive(ArgumentHelper.PrimitiveType argumentType) {
-        if (value == null) {
-            return false;
-        }
+    public boolean matchesBoolean() {
+        return lower_value.equals("true") || lower_value.equals("false");
+    }
 
-        switch (argumentType) {
-            case Word:
-                return ArgumentHelper.wordPrimitive.matcher(value).matches();
+    public static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher("0123456789+-");
 
-            case Integer:
-                return ArgumentHelper.doublePrimitive.matcher(value).matches();
+    public static AsciiMatcher DOUBLE_MATCHER = new AsciiMatcher("0123456789.+-eE");
 
-            case Double:
-                return ArgumentHelper.doublePrimitive.matcher(value).matches();
+    public boolean matchesInteger() {
+        return matchesFloat();
+    }
 
-            case Float:
-                return ArgumentHelper.floatPrimitive.matcher(value).matches();
-
-            case Boolean:
-                return ArgumentHelper.booleanPrimitive.matcher(value).matches();
-
-            case Percentage:
-                return ArgumentHelper.percentagePrimitive.matcher(value).matches();
-
-            case String:
-                return true;
-        }
-
-        return false;
+    public boolean matchesFloat() {
+        return lower_value.length() > 0 && DOUBLE_MATCHER.isOnlyMatches(lower_value);
     }
 
     // Check if this argument matches a certain ObjectTag type
