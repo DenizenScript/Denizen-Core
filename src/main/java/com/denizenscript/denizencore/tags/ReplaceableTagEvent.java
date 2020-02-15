@@ -12,6 +12,13 @@ import java.util.List;
 
 public class ReplaceableTagEvent {
 
+    public static TagRunnable.RootForm objectTagBaseHandler = new TagRunnable.RootForm() {
+        @Override
+        public void run(ReplaceableTagEvent event) {
+            TagManager.fetchObject(event);
+        }
+    };
+
     private final TagContext context;
 
     private boolean wasReplaced = false;
@@ -47,6 +54,8 @@ public class ReplaceableTagEvent {
         public String rawTag = null;
 
         public String value = null;
+
+        public TagRunnable.RootForm baseHandler = null;
     }
 
     public ReferenceData mainRef = null;
@@ -105,6 +114,19 @@ public class ReplaceableTagEvent {
 
         mainRef.attribs = new Attribute(core_attributes, null, null);
         mainRef.rawTag = raw_tag;
+
+        String startValue = getName();
+        if (startValue.contains("@")) {
+            mainRef.baseHandler = objectTagBaseHandler;
+        }
+        else {
+            mainRef.baseHandler = TagManager.handlers.get(startValue);
+            if (mainRef.baseHandler == null) {
+                if (!hasAlternative()) {
+                    Debug.echoError("(Initial detection) No tag-base handler for '" + startValue + "'.");
+                }
+            }
+        }
         refs.put(otag, mainRef);
     }
 

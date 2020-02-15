@@ -70,7 +70,7 @@ public class CommandExecutor {
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
-                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.args, scriptEntry.internal.args_ref, scriptEntry.aHArgs,
+                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.internal.args_ref, scriptEntry.aHArgs,
                         DenizenCore.getImplementation().getTagContext(scriptEntry), scriptEntry.internal.processArgs);
             }
             command.parseArgs(scriptEntry);

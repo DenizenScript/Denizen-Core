@@ -59,11 +59,7 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
-        if (event.getAttributes().attributes[0].rawKey.contains("@")) {
-            fetchObject(event);
-            return;
-        }
-        TagRunnable.RootForm handler = handlers.get(event.getName());
+        TagRunnable.RootForm handler = event.mainRef.baseHandler;
         if (handler != null) {
             try {
                 if (Debug.verbose) {
@@ -110,8 +106,7 @@ public class TagManager {
                     : event.getAttributes().attributes[0].rawKey;
             if (!ObjectFetcher.checkMatch(object_class, tagObjectFull)) {
                 if (!event.hasAlternative()) {
-                    Debug.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey
-                            + "' is an invalid " + object_class.getSimpleName() + ".");
+                    Debug.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey + "' is an invalid " + object_class.getSimpleName() + ".");
                     event.setReplaced("null");
                 }
                 return;
@@ -432,7 +427,7 @@ public class TagManager {
         holder[0] = -1;
     }
 
-    public static void fillArgumentsObjects(List<ObjectTag> args, List<String> strArgs, List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, TagContext context, int[] targets) {
+    public static void fillArgumentsObjects(List<ObjectTag> args, List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, TagContext context, int[] targets) {
         if (Debug.verbose) {
             Debug.log("Fill argument objects: " + args + ", " + targets.length + "...");
         }
@@ -450,12 +445,10 @@ public class TagManager {
                     }
                     String fullx = aharg.prefix + ":" + aharg.object.toString();
                     args.set(argId, new ElementTag(fullx));
-                    strArgs.set(argId, fullx);
                 }
                 else {
                     ObjectTag created = parseChainObject(piece.value, context);
                     args.set(argId, created);
-                    strArgs.set(argId, created.toString());
                     aharg.object = created;
                     aharg.prefix = null;
                     aharg.lower_prefix = null;
