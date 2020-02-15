@@ -247,9 +247,9 @@ public class IfCommand extends BracedCommand {
             scriptEntry.setInstant(true);
             String cmd = subcommand.get(0);
             subcommand.remove(0);
-            ScriptEntry entry = new ScriptEntry(cmd, subcommand.toArray(new String[0]),
-                    scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
+            ScriptEntry entry = new ScriptEntry(cmd, subcommand.toArray(new String[0]), scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null);
             entry.entryData = scriptEntry.entryData.clone();
+            entry.updateContext();
             entry.setInstant(true);
             scriptEntry.getResidingQueue().injectEntry(entry, 0);
         }

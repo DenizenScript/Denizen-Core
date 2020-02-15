@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.tags;
 
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.core.*;
@@ -112,7 +111,7 @@ public class TagManager {
                 return;
             }
 
-            arg = ObjectFetcher.getObjectFrom(object_class, tagObjectFull, DenizenCore.getImplementation().getTagContext(event.getScriptEntry()));
+            arg = ObjectFetcher.getObjectFrom(object_class, tagObjectFull, event.getContext());
 
             if (arg == null) {
                 if (!event.hasAlternative()) {

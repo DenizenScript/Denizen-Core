@@ -259,6 +259,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         for (ScriptEntry entry : getEntries()) {
             entry.setInstant(true);
             entry.setSendingQueue(newQueue);
+            entry.updateContext();
         }
         newQueue.addEntries(getEntries());
         for (Map.Entry<String, ObjectTag> def : getAllDefinitions().entrySet()) {

@@ -58,6 +58,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public int lineNumber;
 
         public boolean brokenArgs = false;
+
+        public HashMap<String, Integer> argPrefixMap = null;
     }
 
     public static class InternalArgument {
@@ -93,12 +95,18 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public ScriptEntryInternal internal;
 
+    public TagContext context;
+
     public List<BracedCommand.BracedData> getBracedSet() {
         return internal.bracedSet;
     }
 
     public TagContext getContext() {
-        return DenizenCore.getImplementation().getTagContext(this);
+        return context;
+    }
+
+    public void updateContext() {
+        context = DenizenCore.getImplementation().getTagContext(this);
     }
 
     public void setBracedSet(List<BracedCommand.BracedData> set) {
@@ -122,7 +130,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     @Override
-    public ScriptEntry clone()  {
+    public ScriptEntry clone() {
         try {
             ScriptEntry se = (ScriptEntry) super.clone();
             se.objects = new HashMap<>(8);
@@ -130,6 +138,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             se.args = new ArrayList<>(args);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
+            se.updateContext();
             return se;
         }
         catch (CloneNotSupportedException ex) {
@@ -177,9 +186,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
         internal.command = command.toUpperCase();
         internal.insideList = insides;
+        internal.argPrefixMap = new HashMap<>();
         if (script != null) {
             internal.script = script.getAsScriptArg();
         }
+        updateContext();
         if (command.length() > 0) {
             if (command.charAt(0) == '^') {
                 internal.instant = true;
@@ -288,6 +299,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     argVal.prefix = new InternalArgument();
                     crunchInto(argVal.prefix, arg.substring(0, colon), refContext);
                     arg = arg.substring(colon + 1);
+                    if (!argVal.prefix.aHArg.needsFill) {
+                        internal.argPrefixMap.put(argVal.prefix.aHArg.lower_value, i);
+                    }
                 }
                 crunchInto(argVal, arg, refContext);
             }
@@ -427,6 +441,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void copyFrom(ScriptEntry entry) {
         entryData = entry.entryData.clone();
         setSendingQueue(entry.getResidingQueue());
+        updateContext();
     }
 
     //////////////////

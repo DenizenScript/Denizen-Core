@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -58,20 +59,20 @@ public class CommandExecutor {
         String saveName = null;
         try {
             scriptEntry.generateAHArgs();
+            TagContext context = scriptEntry.getContext();
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
                 else if (arg.matchesPrefix("save")) {
-                    saveName = TagManager.tag(arg.getValue(), DenizenCore.getImplementation().getTagContext(scriptEntry));
+                    saveName = TagManager.tag(arg.getValue(), context);
                     if (scriptEntry.dbCallShouldDebug()) {
                         Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     }
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
-                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.internal.args_ref, scriptEntry.aHArgs,
-                        DenizenCore.getImplementation().getTagContext(scriptEntry), scriptEntry.internal.processArgs);
+                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.internal.args_ref, scriptEntry.aHArgs, context, scriptEntry.internal.processArgs);
             }
             command.parseArgs(scriptEntry);
             command.execute(scriptEntry);

@@ -33,6 +33,7 @@ public class ScriptEngine {
             return;
         }
         scriptEntry.setSendingQueue(scriptQueue);
+        scriptEntry.updateContext();
         scriptQueue.setLastEntryExecuted(scriptEntry);
         try {
             commandExecutor.execute(scriptEntry);
@@ -50,6 +51,7 @@ public class ScriptEngine {
         ScriptEntry scriptEntry = scriptQueue.getNext();
         while (scriptEntry != null) {
             scriptEntry.setSendingQueue(scriptQueue);
+            scriptEntry.updateContext();
             scriptQueue.setLastEntryExecuted(scriptEntry);
             commandExecutor.execute(scriptEntry);
             if (scriptQueue instanceof Delayable) {
