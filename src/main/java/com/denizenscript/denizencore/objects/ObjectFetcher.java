@@ -39,6 +39,8 @@ public class ObjectFetcher {
         public ObjectTagProcessor<T> tagProcessor;
 
         public String prefix;
+
+        public boolean isAdjustable;
     }
 
     public static Map<String, ObjectType<? extends ObjectTag>> objectsByPrefix = new HashMap<>();
@@ -99,6 +101,7 @@ public class ObjectFetcher {
         ObjectType newType = new ObjectType();
         newType.clazz = objectTag;
         newType.tagProcessor = processor;
+        newType.isAdjustable = Adjustable.class.isAssignableFrom(objectTag);
         objectsByClass.put(objectTag, newType);
         try {
             Method valueOfMethod = objectTag.getMethod("valueOf", String.class, TagContext.class);
@@ -160,7 +163,7 @@ public class ObjectFetcher {
 
     @Deprecated
     public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value) {
-        return getObjectFrom(dClass, value, DenizenCore.getImplementation().getTagContext(null));
+        return getObjectFrom(dClass, value, CoreUtilities.basicContext);
     }
 
     public static List<String> separateProperties(String input) {
@@ -198,7 +201,7 @@ public class ObjectFetcher {
     public static <T extends ObjectTag> T getObjectFrom(ObjectType<T> type, String value, TagContext context) {
         try {
             List<String> matches = separateProperties(value);
-            boolean matched = matches != null && Adjustable.class.isAssignableFrom(type.clazz);
+            boolean matched = matches != null && type.isAdjustable;
             T gotten = type.valueOf.valueOf(matched ? matches.get(0) : value, context);
             if (gotten != null && matched) {
                 for (int i = 1; i < matches.size(); i++) {

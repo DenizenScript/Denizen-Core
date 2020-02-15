@@ -309,8 +309,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, ScriptEntry entry) {
-        return filter(dClass, (entry == null ? DenizenCore.getImplementation().getTagContext(null) :
-                entry.entryData.getTagContext()), true);
+        return filter(dClass, (entry == null ? CoreUtilities.basicContext : entry.entryData.getTagContext()), true);
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger, boolean showFailure) {

@@ -22,6 +22,7 @@ import java.util.*;
 public class CoreUtilities {
 
     public static TagContext noDebugContext;
+    public static TagContext basicContext;
 
     public static String replace(String original, String findMe, String swapMeIn) {
         // This is jank but still better than Java's regex-driven String#replace method.
