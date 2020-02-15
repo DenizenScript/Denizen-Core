@@ -163,4 +163,10 @@ public class Deprecations {
 
     // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
     public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
+
+    // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
+
+    // Removed in February 2020.
+    public static Warning ancientDefs = new StrongWarning("Ancient-style definitions (those with percent signs like %def%) were removed in Denizen 1.1.3, and can no longer be used. Instead, use <[def]>.");
+    public static Warning instantTags = new StrongWarning("Instant tags (those with a caret prefix, like <^tag>) were removed in Denizen 1.1.3, and can no longer be used. Instead, pre-define the player or NPC on the line before.");
 }

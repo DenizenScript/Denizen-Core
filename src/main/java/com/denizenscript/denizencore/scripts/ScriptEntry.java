@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -206,6 +207,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
             internal.preprocArgs = new ArrayList<>(arguments.length);
             int nested_depth = 0;
             for (String arg : arguments) {
+                if (arg.lastIndexOf('%') > arg.indexOf('%')) {
+                    Deprecations.ancientDefs.warn(this);
+                }
+                if (arg.lastIndexOf('>') > arg.indexOf('<') && arg.contains("<^")) {
+                    Deprecations.instantTags.warn(this);
+                }
                 if (arg.equals("{")) {
                     nested_depth++;
                     args.add(arg);
