@@ -145,7 +145,9 @@ public abstract class BracedCommand extends AbstractCommand {
             return null;
         }
 
-        Deprecations.oldBraceSyntax.warn(scriptEntry);
+        if (scriptEntry.getScript() != null) { // Ex command is temporarily allowed to bypass, to avoid annoying user testing
+            Deprecations.oldBraceSyntax.warn(scriptEntry);
+        }
 
         int tStart = -1;
         int tEnd = -1;
