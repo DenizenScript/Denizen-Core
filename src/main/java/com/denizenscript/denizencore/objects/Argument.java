@@ -59,7 +59,7 @@ public class Argument implements Cloneable {
         object = new ElementTag(this.value);
     }
 
-    void fillStr(String string) {
+    public void fillStr(String string) {
         raw_value = string;
 
         int first_colon = string.indexOf(':');

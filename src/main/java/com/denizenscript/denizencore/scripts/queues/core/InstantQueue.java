@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
 public class InstantQueue extends ScriptQueue {
@@ -52,6 +53,15 @@ public class InstantQueue extends ScriptQueue {
         while (is_started) {
             revolve();
         }
+    }
+
+    @Override
+    protected void revolve() {
+        if (script_entries.isEmpty()) {
+            stop();
+            return;
+        }
+        DenizenCore.getScriptEngine().revolve(this);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.denizenscript.denizencore.objects;
 
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
@@ -51,22 +49,6 @@ public class ArgumentHelper {
     public final static Pattern booleanPrimitive = Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
 
     public final static Pattern wordPrimitive = Pattern.compile("\\w+");
-
-    public static List<Argument> interpretArguments(List<Argument> args) {
-        for (Argument arg : args) {
-            if (arg.needsFill || arg.hasSpecialPrefix) {
-                if (arg.object instanceof ElementTag && arg.prefix == null) {
-                    arg.fillStr(arg.object.toString());
-                }
-                else {
-                    arg.value = arg.object.toString();
-                    arg.lower_value = CoreUtilities.toLowerCase(arg.value);
-                    arg.raw_value = arg.generateRaw();
-                }
-            }
-        }
-        return args;
-    }
 
     /**
      * Turns a list of string arguments (separated by buildArgs) into Argument

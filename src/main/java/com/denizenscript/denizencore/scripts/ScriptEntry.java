@@ -81,10 +81,20 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public List<Argument> getProcessedArgs() {
-        return ArgumentHelper.interpretArguments(aHArgs);
+        for (Argument arg : aHArgs) {
+            if (arg.object instanceof ElementTag && arg.prefix == null) {
+                arg.fillStr(arg.object.toString());
+            }
+            else {
+                arg.value = arg.object.toString();
+                arg.lower_value = CoreUtilities.toLowerCase(arg.value);
+                arg.raw_value = arg.generateRaw();
+            }
+        }
+        return aHArgs;
     }
 
-    public List<Argument> aHArgs = null;
+    public List<Argument> aHArgs;
 
     public List<String> args;
 
@@ -118,15 +128,18 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public final static Argument NULL_ARGUMENT = new Argument("null_trick", "null_trick");
 
+    public final static InternalArgument NULL_INTERNAL_ARGUMENT = new InternalArgument();
+
+    static {
+        NULL_INTERNAL_ARGUMENT.aHArg = NULL_ARGUMENT;
+        NULL_INTERNAL_ARGUMENT.value = new ArrayList<>();
+    }
+
     public void generateAHArgs() {
-        aHArgs = new ArrayList<>(internal.args_ref.size());
-        for (int i = 0; i < internal.args_ref.size(); i++) {
-            aHArgs.add(internal.args_ref.get(i) == null ? NULL_ARGUMENT : internal.args_ref.get(i).aHArg);
-        }
         for (int i : internal.processArgs) {
-            InternalArgument arg = internal.args_ref.get(i);
-            arg.aHArg.scriptEntry = this;
-            aHArgs.set(i, arg.aHArg.needsFill || arg.aHArg.hasSpecialPrefix ? arg.aHArg.clone() : arg.aHArg);
+            Argument aHArg = internal.args_ref.get(i).aHArg.clone();
+            aHArg.scriptEntry = this;
+            aHArgs.set(i, aHArg);
         }
     }
 
@@ -139,6 +152,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             se.args = new ArrayList<>(args);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
+            se.aHArgs = new ArrayList<>(aHArgs);
             se.updateContext();
             return se;
         }
@@ -272,6 +286,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
             internal.args_ref = new ArrayList<>(args.size());
             List<Integer> tempProcessArgs = new ArrayList<>(args.size());
+            aHArgs = new ArrayList<>(args.size());
             for (int i = 0; i < args.size(); i++) {
                 String arg = args.get(i);
                 if (arg.equals("{")) {
@@ -288,11 +303,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     nested_depth--;
                     continue;
                 }
-                internal.args_ref.add(null);
+                internal.args_ref.add(NULL_INTERNAL_ARGUMENT);
                 if (nested_depth > 0) {
                     continue;
                 }
-                tempProcessArgs.add(i);
                 InternalArgument argVal = new InternalArgument();
                 internal.args_ref.set(i, argVal);
                 int colon = TagManager.findColonNotTagNorSpace(arg);
@@ -305,6 +319,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     }
                 }
                 crunchInto(argVal, arg, refContext);
+                if (argVal.aHArg.needsFill || argVal.aHArg.hasSpecialPrefix) {
+                    tempProcessArgs.add(i);
+                }
+                aHArgs.add(argVal.aHArg);
             }
             internal.processArgs = new int[tempProcessArgs.size()];
             for (int i = 0; i < tempProcessArgs.size(); i++) {
@@ -319,6 +337,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             internal.processArgs = new int[0];
             internal.args_ref = new ArrayList<>();
             processed_arguments = new ArrayList<>();
+            aHArgs = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
             if (internal.actualCommand.getOptions().requiredArgs > args.size()) {

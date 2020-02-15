@@ -432,26 +432,24 @@ public class TagManager {
         }
         for (int argId : targets) {
             Argument aharg = aHArgs.get(argId);
-            if (aharg.needsFill || aharg.hasSpecialPrefix) {
-                ScriptEntry.InternalArgument piece = pieceHelp.get(argId);
-                if (piece.prefix != null) {
-                    if (piece.prefix.aHArg.needsFill) {
-                        aharg.prefix = parseChainObject(piece.prefix.value, context).toString();
-                        aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
-                    }
-                    if (aharg.needsFill) {
-                        aharg.object = parseChainObject(piece.value, context);
-                    }
-                    String fullx = aharg.prefix + ":" + aharg.object.toString();
-                    args.set(argId, new ElementTag(fullx));
+            ScriptEntry.InternalArgument piece = pieceHelp.get(argId);
+            if (piece.prefix != null) {
+                if (piece.prefix.aHArg.needsFill) {
+                    aharg.prefix = parseChainObject(piece.prefix.value, context).toString();
+                    aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
                 }
-                else {
-                    ObjectTag created = parseChainObject(piece.value, context);
-                    args.set(argId, created);
-                    aharg.object = created;
-                    aharg.prefix = null;
-                    aharg.lower_prefix = null;
+                if (aharg.needsFill) {
+                    aharg.object = parseChainObject(piece.value, context);
                 }
+                String fullx = aharg.prefix + ":" + aharg.object.toString();
+                args.set(argId, new ElementTag(fullx));
+            }
+            else {
+                ObjectTag created = parseChainObject(piece.value, context);
+                args.set(argId, created);
+                aharg.object = created;
+                aharg.prefix = null;
+                aharg.lower_prefix = null;
             }
         }
     }

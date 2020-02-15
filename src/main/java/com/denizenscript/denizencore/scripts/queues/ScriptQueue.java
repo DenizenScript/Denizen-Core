@@ -69,7 +69,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return allQueues.containsKey(id) ? getNextId(prefix) : id;
     }
 
-    protected static Map<String, ScriptQueue> allQueues = new LinkedHashMap<>();
+    protected static LinkedHashMap<String, ScriptQueue> allQueues = new LinkedHashMap<>();
 
     public static Collection<ScriptQueue> getQueues() {
         return allQueues.values();
@@ -318,13 +318,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         boolean is_delayed = delay > 0;
         script = script_entries.get(0).getScript();
         String name = getName();
-        if (is_delayed) {
-            if (queueNeedsToDebug()) {
+        if (queueNeedsToDebug()) {
+            if (is_delayed) {
                 queueDebug("Delaying " + name + " '<QUEUE>'" + " for '" + new DurationTag(((double) delay) / 1000f).identify() + "'...");
             }
-        }
-        else {
-            if (queueNeedsToDebug()) {
+            else {
                 queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
             }
         }
