@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class ReplaceableTagEvent {
 
@@ -116,7 +115,7 @@ public class ReplaceableTagEvent {
         mainRef.rawTag = raw_tag;
 
         String startValue = getName();
-        if (startValue.contains("@")) {
+        if (CoreUtilities.contains(startValue, '@')) {
             mainRef.baseHandler = objectTagBaseHandler;
         }
         else {
@@ -187,21 +186,8 @@ public class ReplaceableTagEvent {
         return -1;
     }
 
-    // Matches method (checks first attribute (name) of the tag)
-
-    // TODO: Remove!
     public boolean matches(String tagName) {
-        if (!tagName.contains(",")) {
-            return getName().equals(tagName);
-        }
-        List<String> tagNames = CoreUtilities.split(tagName, ',');
-        String name = getName();
-        for (String string : tagNames) {
-            if (name.equals(string.trim())) {
-                return true;
-            }
-        }
-        return false;
+        return getName().equals(tagName);
     }
 
     public boolean matches(String... tagNames) {
@@ -212,19 +198,6 @@ public class ReplaceableTagEvent {
             }
         }
         return false;
-    }
-
-    private static String StripContext(String input) {
-        if (input == null) {
-            return null;
-        }
-        int index = input.indexOf('[');
-        if (index < 0 || !input.endsWith("]")) {
-            return input;
-        }
-        else {
-            return input.substring(0, index);
-        }
     }
 
     ////////

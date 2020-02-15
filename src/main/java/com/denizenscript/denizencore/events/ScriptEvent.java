@@ -175,7 +175,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 if (evt == null || evt.str == null) {
                     Debug.echoError("Missing or invalid events block for " + container.getName());
                 }
-                else if (evt.str.contains("@")) {
+                else if (CoreUtilities.contains(evt.str, '@')) {
                     Debug.echoError("Script '" + container.getName() + "' has event '" + evt.str.replace("@", "<R>@<W>")
                             + "' which contains object notation, which is deprecated for use in world events. Please remove it.");
                 }
@@ -520,7 +520,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public static boolean isRegexMatchable(String input) {
-        return input.startsWith("regex:") || input.contains("|") || input.contains("*");
+        return input.startsWith("regex:") || CoreUtilities.contains(input, '|') || CoreUtilities.contains(input, '*');
     }
 
     public static Pattern regexHandle(String input) {
@@ -532,14 +532,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (input.startsWith("regex:")) {
             output = input.substring("regex:".length());
         }
-        else if (input.contains("|")) {
+        else if (CoreUtilities.contains(input, '|')) {
             String[] split = input.split("\\|");
             for (int i = 0; i < split.length; i++) {
                 split[i] = quotify(split[i]);
             }
             output = String.join("|", split);
         }
-        else if (input.contains("*")) {
+        else if (CoreUtilities.contains(input, '*')) {
             output = quotify(input);
         }
         else {

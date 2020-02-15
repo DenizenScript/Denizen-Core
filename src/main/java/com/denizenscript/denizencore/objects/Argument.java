@@ -60,7 +60,6 @@ public class Argument implements Cloneable {
     }
 
     void fillStr(String string) {
-        string = string;
         raw_value = string;
 
         int first_colon = string.indexOf(':');
@@ -110,8 +109,8 @@ public class Argument implements Cloneable {
         return valueOf(prefix);
     }
 
-    public boolean matches(String values) {
-        return values.equals(lower_value);
+    public boolean matches(String value) {
+        return value.equals(lower_value);
     }
 
     public boolean matches(String... values) {
@@ -170,11 +169,11 @@ public class Argument implements Cloneable {
         return false;
     }
 
-    public boolean matchesPrefix(String values) {
+    public boolean matchesPrefix(String value) {
         if (!hasPrefix()) {
             return false;
         }
-        return values.equals(lower_prefix);
+        return value.equals(lower_prefix);
     }
 
     public boolean matchesPrefix(String... values) {

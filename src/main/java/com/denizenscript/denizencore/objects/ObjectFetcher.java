@@ -237,7 +237,7 @@ public class ObjectFetcher {
         if (value == null) {
             return null;
         }
-        if (value.contains("@")) {
+        if (CoreUtilities.contains(value, '@')) {
             String type = value.split("@", 2)[0];
             ObjectType<? extends ObjectTag> toFetch = objectsByPrefix.get(type);
             if (toFetch != null) {

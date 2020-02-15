@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -22,7 +23,7 @@ public class CommandExecutor {
         }
         else {
             for (String arg : scriptEntry.getOriginalArguments()) {
-                if (arg.contains(" ")) {
+                if (CoreUtilities.contains(arg, ' ')) {
                     output.append(" \"").append(arg).append("\"");
                 }
                 else {

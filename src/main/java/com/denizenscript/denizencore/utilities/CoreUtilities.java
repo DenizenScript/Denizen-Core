@@ -285,7 +285,7 @@ public class CoreUtilities {
 
     public static String bigDecToString(BigDecimal input) {
         String temp = input.toString();
-        if (temp.contains(".")) {
+        if (contains(temp, '.')) {
             for (int i = temp.length() - 1; i >= 0; i--) {
                 if (temp.charAt(i) != '0') {
                     if (temp.charAt(i) == '.') {

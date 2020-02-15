@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -578,14 +579,24 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return shouldDebugBool;
     }
 
+    private static String stringifyArg(String arg) {
+        arg = arg.replace("\"", "<&dq>");
+        if (CoreUtilities.contains(arg, ' ')) {
+            return '"' + arg + '"';
+        }
+        else {
+            return arg;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String str : getOriginalArguments()) {
-            sb.append(" \"").append(str.replace("\"", "<&dq>")).append("\"");
+            sb.append(" ").append(stringifyArg(str));
         }
         for (Argument arg : internal.preprocArgs) {
-            sb.append(" \"").append(arg.toString().replace("\"", "<&dq>")).append("\"");
+            sb.append(" ").append(stringifyArg(arg.toString()));
         }
         return internal.command + sb.toString();
     }
