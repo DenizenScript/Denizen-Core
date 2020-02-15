@@ -21,7 +21,12 @@ public class CommandExecutor {
         }
         else {
             for (String arg : scriptEntry.getOriginalArguments()) {
-                output.append(" \"").append(arg).append("\"");
+                if (arg.contains(" ")) {
+                    output.append(" \"").append(arg).append("\"");
+                }
+                else {
+                    output.append(" ").append(arg);
+                }
             }
         }
         DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
