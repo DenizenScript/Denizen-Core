@@ -17,12 +17,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 public class CoreUtilities {
 
     public static TagContext noDebugContext;
     public static TagContext basicContext;
+
+    public static DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
 
     public static String replace(String original, String findMe, String swapMeIn) {
         // This is jank but still better than Java's regex-driven String#replace method.

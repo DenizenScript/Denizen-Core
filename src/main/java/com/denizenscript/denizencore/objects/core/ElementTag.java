@@ -597,7 +597,7 @@ public class ElementTag implements ObjectTag {
         registerTag("as_money", (attribute, object) -> {
             String element = object.element;
             try {
-                DecimalFormat d = new DecimalFormat("0.00");
+                DecimalFormat d = new DecimalFormat("0.00", CoreUtilities.decimalFormatSymbols);
                 return new ElementTag(d.format(Double.valueOf(element)));
             }
             catch (NumberFormatException e) {
@@ -1265,7 +1265,7 @@ public class ElementTag implements ObjectTag {
         registerTag("format_number", (attribute, object) -> {
             try {
                 if (attribute.hasContext(1)) {
-                    DecimalFormat format = new DecimalFormat(attribute.getContext(1));
+                    DecimalFormat format = new DecimalFormat(attribute.getContext(1), CoreUtilities.decimalFormatSymbols);
                     return new ElementTag(format.format(object.asBigDecimal()));
                 }
                 int decimal = object.element.indexOf('.');
