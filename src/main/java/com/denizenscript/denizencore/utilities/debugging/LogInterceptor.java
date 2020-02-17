@@ -34,6 +34,16 @@ public class LogInterceptor extends PrintStream {
         antiLoop = false;
     }
 
+    @Override
+    public void print(Object obj) {
+        print(String.valueOf(obj));
+    }
+
+    @Override
+    public void print(char[] buf) {
+        print(new String(buf));
+    }
+
     private boolean antiLoop = false;
 
     public void redirectOutput() {
