@@ -18,7 +18,7 @@ public interface Holdable {
     // This is written, for example, like: - ~run MySlowScript
     //
     // When a command is ~waited for, the queue it's in will wait for it to complete, but the rest of the server will continue running.
-    // This is of course similar to the "wait" command, but that waits for the action to complete instead of simply for a period of time.
+    // This is of course similar to the "wait" command, but waits for the action to complete instead of simply for a period of time.
     //
     // Some commands, particularly those related to file operation, when ~waited for will move the file operation off-thread.
     // Others may need to be on the server thread, and may split the operation into smaller segments spread out over 1 tick each or similar logic.
