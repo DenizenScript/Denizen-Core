@@ -20,7 +20,7 @@ public class Attribute {
         public final String context;
 
         public AttributeComponent(String inp) {
-            if (inp.endsWith("]") && CoreUtilities.contains(inp, ']')) {
+            if (inp.endsWith("]") && CoreUtilities.contains(inp, '[')) {
                 int ind = inp.indexOf('[');
                 rawKey = inp.substring(0, ind);
                 context = inp.substring(ind + 1, inp.length() - 1);
