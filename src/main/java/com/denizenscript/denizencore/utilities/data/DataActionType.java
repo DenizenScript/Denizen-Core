@@ -16,19 +16,19 @@ public enum DataActionType {
     // The following actions are available:
     //
     // Actions that take no input value:
-    // Increment: '++': raises the value numerically up by 1.
-    // Decrement: '--': lowers the value numerically down by 1.
-    // Clear: '!': removes the value entirely.
+    // Increment: '++': raises the value numerically up by 1. Example: - define x:++
+    // Decrement: '--': lowers the value numerically down by 1. Example: - define x:--
+    // Clear: '!': removes the value entirely. Example: - define x:!
     //
     // Actions that take an input value:
-    // Add: '+': adds the input value to the value at the key.
-    // Subtract: '-': subtracts the input value from the value at the key.
-    // Multiply: '*': multiplies the value at the key by the input value.
-    // Divide: '/': divides the value at the key by the input value.
-    // List insert: '->': adds the input value as a single new entry in the list (see also 'List split').
-    // List remove: '<-': removes the input value from the list.
-    // List split: '|': splits the input list and adds each value into the list at the key.
-    // Split to new: '!|': similar to list split, but removes the existing value at the key first.
+    // Add: '+': adds the input value to the value at the key. Example: - define x:+:5
+    // Subtract: '-': subtracts the input value from the value at the key. Example: - define x:-:5
+    // Multiply: '*': multiplies the value at the key by the input value. Example: - define x:*:5
+    // Divide: '/': divides the value at the key by the input value. Example: - define x:/:5
+    // List insert: '->': adds the input value as a single new entry in the list (see also 'List split'). Example: - define x:->:new_value
+    // List remove: '<-': removes the input value from the list. Example: - define x:<-:old_value
+    // List split: '|': splits the input list and adds each value into the list at the key. Example: - define x:|:a|b|c
+    // Split to new: '!|': similar to list split, but removes the existing value at the key first. Example: - define x:!|:a|b|c
     //
     // Special cases:
     // In some commands, specifying no action or input value will automatically set the key's value to 'true'.
