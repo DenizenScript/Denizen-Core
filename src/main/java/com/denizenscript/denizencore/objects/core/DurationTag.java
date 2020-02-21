@@ -32,7 +32,9 @@ public class DurationTag implements ObjectTag {
     // in between the range specified. The smaller value should be first. Examples:
     // '10s-25s', '1m-2m'.
     //
-    // For format info, see <@link language d@>
+    // These use the object notation "d@".
+    // The identity format for DurationTags is the number of seconds, followed by an 's'.
+    //
     // -->
 
     /////////////////////
@@ -45,17 +47,6 @@ public class DurationTag implements ObjectTag {
     /////////////////////
     //   OBJECT FETCHER
     /////////////////
-
-    // <--[language]
-    // @name d@
-    // @group Object Fetcher System
-    // @description
-    // d@ refers to the 'object identifier' of a 'Duration'. The 'd@' is notation for Denizen's Object
-    // Fetcher. Durations must be a positive number or range of numbers followed optionally by
-    // a unit of time, and prefixed by d@. Examples: d@3s, d@1d, d@10s-20s.
-    //
-    // For general info, see <@link language Duration>
-    // -->
 
     public static DurationTag valueOf(String string) {
         return valueOf(string, null);

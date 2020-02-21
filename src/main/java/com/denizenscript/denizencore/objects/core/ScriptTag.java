@@ -81,25 +81,14 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // fetcher or any other entry point to a ScriptTag object. ScriptTag objects have the object identifier of 's@'.
     // For example: ScriptTag_name
     //
-    // For format info, see <@link language s@>
+    // These use the object notation "s@".
+    // The identity format for scripts is simply the script name.
     //
     // -->
 
     ///////////////
     // Object Fetcher
     /////////////
-
-    // <--[language]
-    // @name s@
-    // @group Object Fetcher System
-    // @description
-    // s@ refers to the 'object identifier' of a ScriptTag. The 's@' is notation for Denizen's Object
-    // Fetcher. The only valid constructor for a ScriptTag is the name of the script container that it should be
-    // associated with. For example, if my script container is called 'cool_script', the ScriptTag object for that script
-    // would be able to be referenced (fetched) with s@cool_script.
-    //
-    // For general info, see <@link language ScriptTag Objects>
-    // -->
 
     public static ScriptTag valueOf(String string) {
         return valueOf(string, null);

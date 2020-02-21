@@ -22,18 +22,8 @@ public class QueueTag implements ObjectTag, Adjustable {
     // This is not to be confused with a script path, which is a single set of script commands that can be run.
     // There can be one, multiple, or zero queues running at any time for any given path.
     //
-    // For format info, see <@link language q@>
-    //
-    // -->
-
-    // <--[language]
-    // @name q@
-    // @group Object Fetcher System
-    // @description
-    // q@ refers to the 'object identifier' of a QueueTag. The 'q@' is notation for Denizen's Object
-    // Fetcher. The constructor for a QueueTag is the queue ID.
-    //
-    // For general info, see <@link language QueueTag Objects>
+    // These use the object notation "q@".
+    // The identity format for queues is simply the queue ID.
     //
     // -->
 

@@ -32,23 +32,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     // The objects can be of any basic Denizen object type, including another list
     // (escaping sub-lists is strongly recommended).
     //
-    // For format info, see <@link language li@>
-    //
-    // -->
-
-    // <--[language]
-    // @name li@
-    // @group Object Fetcher System
-    // @description
-    // li@ refers to the 'object identifier' of a ListTag. The 'li@' is notation for Denizen's Object
-    // Fetcher. The constructor for a ListTag is the content items of a list separated by a pipe '|' symbol.
-    // For example, if I had a list of 'taco', 'potatoes', and 'cheese', I would use
-    // 'li@taco|potatoes|cheese'
-    //
-    // A list with zero items in it is simply 'li@'
+    // These use the object notation "li@".
+    // The identity format for ListTags is each item, one after the other, in order, separated by a pipe '|' symbol.
+    // For example, for a list of 'taco', 'potatoes', and 'cheese', it would be 'li@taco|potatoes|cheese'
+    // A list with zero items in it is simply 'li@',
     // and a list with one item is just the one item and no pipes.
     //
-    // For general info, see <@link language ListTag Objects>
     // -->
 
     public final ArrayList<ObjectTag> objectForms;

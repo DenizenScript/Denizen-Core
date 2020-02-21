@@ -44,8 +44,8 @@ public class ElementTag implements ObjectTag {
     // will result in the value 'THIS_IS_A_TEST'.
     //
     // Note that while other objects often return their object identifier (p@, li@, e@, etc.), elements do not.
+    // They will, however, recognize the object notation "el@" if it is used.
     //
-    // For format info, see <@link language el@>
     // -->
 
     // <--[language]
@@ -84,21 +84,6 @@ public class ElementTag implements ObjectTag {
     public static ElementTag valueOf(String string) {
         return valueOf(string, null);
     }
-
-    // <--[language]
-    // @name el@
-    // @group Object Fetcher System
-    // @description
-    // el@ refers to the 'object identifier' of an Element. The 'el@' is notation for Denizen's Object
-    // Fetcher. The constructor for an ElementTag is just any text.
-    //
-    // For example 'el@hello' forms an element with text 'hello'.
-    //
-    // Elements do not output with 'el@' visible. The 'el@' is only for use as a shorthanded constructor.
-    // If you need an element constructor, consider using the '<element[text here]>' tag base instead.
-    //
-    // For general info, see <@link language Element>
-    // -->
 
     @Fetchable("el")
     public static ElementTag valueOf(String string, TagContext context) {
