@@ -132,13 +132,26 @@ public class ArgumentHelper {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
-    public static AsciiMatcher DOUBLE_MATCHER = new AsciiMatcher("0123456789.+-eE");
+    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = ".eE";
+    private static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
+    private static AsciiMatcher DOUBLE_AFTERFIRST_MATCHER = new AsciiMatcher(DIGITS + DOUBLE_CHARS);
 
     public static boolean matchesDouble(String arg) {
-        return arg.length() > 0 && DOUBLE_MATCHER.isOnlyMatches(arg);
+        if (arg.length() == 0) {
+            return false;
+        }
+        if (!INTEGER_MATCHER.isMatch(arg.charAt(0))) {
+            return false;
+        }
+        for (int i = 1; i < arg.length(); i++) {
+            if (!DOUBLE_AFTERFIRST_MATCHER.isMatch(arg.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean matchesInteger(String arg) {
-        return arg.length() > 0 && Argument.INTEGER_MATCHER.isOnlyMatches(arg);
+        return matchesDouble(arg) && INTEGER_MATCHER.isOnlyMatches(arg);
     }
 }

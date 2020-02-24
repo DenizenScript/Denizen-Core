@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -192,8 +191,6 @@ public class Argument implements Cloneable {
     public boolean matchesBoolean() {
         return lower_value.equals("true") || lower_value.equals("false");
     }
-
-    public static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher("0123456789+-");
 
     public boolean matchesInteger() {
         return matchesFloat();

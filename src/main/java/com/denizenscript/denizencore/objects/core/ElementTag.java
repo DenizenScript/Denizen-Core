@@ -435,7 +435,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is an integer number (a number without a decimal point).
         // -->
         registerTag("is_integer", (attribute, object) -> {
-            if (!Argument.INTEGER_MATCHER.isOnlyMatches(object.element)) {
+            if (!ArgumentHelper.matchesInteger(object.element)) {
                 return new ElementTag(false);
             }
             try {
