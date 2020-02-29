@@ -306,6 +306,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void destroy() {
     }
 
+    public void cancellationChanged() {
+    }
+
     public static HashSet<String> defaultDeterminations = new HashSet<>(Arrays.asList("cancelled", "cancelled:true", "cancelled:false"));
 
     public static boolean isDefaultDetermination(ObjectTag determination) {
@@ -321,16 +324,19 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (low.equals("cancelled")) {
             Debug.echoDebug(path.container, "Event cancelled!");
             cancelled = true;
+            cancellationChanged();
             return true;
         }
         else if (low.equals("cancelled:true")) {
             Debug.echoDebug(path.container, "Event cancelled!");
             cancelled = true;
+            cancellationChanged();
             return true;
         }
         else if (low.equals("cancelled:false")) {
             Debug.echoDebug(path.container, "Event uncancelled!");
             cancelled = false;
+            cancellationChanged();
             return true;
         }
         else {
