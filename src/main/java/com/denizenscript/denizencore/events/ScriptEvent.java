@@ -360,11 +360,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public abstract String getName();
 
     public void fire() {
+        ScriptEvent copy = clone();
         stats.fires++;
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(this, path)) {
-                    run(path);
+                    copy.run(path);
                 }
             }
             catch (Exception e) {
@@ -385,7 +386,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
         currentEvent = path.event;
-        queue.setContextSource(this.clone());
+        queue.setContextSource(this);
         queue.determinationTarget = (o) -> applyDetermination(path, o);
         queue.start();
         stats.nanoTimes += System.nanoTime() - queue.startTime;
