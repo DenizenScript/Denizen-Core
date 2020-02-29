@@ -81,9 +81,6 @@ public class DetermineCommand extends AbstractCommand {
             scriptEntry.getResidingQueue().determinations = determines;
         }
         determines.addObject(outcomeObj);
-        if (scriptEntry.getResidingQueue().cachedContext != null) {
-            scriptEntry.getResidingQueue().cachedContext.clear();
-        }
 
         if (!passively.asBoolean()) {
             scriptEntry.getResidingQueue().clear();

@@ -342,10 +342,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
-    public HashMap<String, ObjectTag> getContext() { // TODO: Delete
-        return new HashMap<>();
-    }
-
     public ScriptEntryData getScriptEntryData() {
         return DenizenCore.getImplementation().getEmptyScriptEntryData();
     }
@@ -393,28 +389,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public void run(ScriptPath path) {
         stats.scriptFires++;
-        HashMap<String, ObjectTag> context = getContext();
         if (path.container.shouldDebug()) {
             Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
                     + " for script '<A>" + path.container.getName() + "<Y>'");
-            for (Map.Entry<String, ObjectTag> obj : context.entrySet()) {
-                Debug.echoDebug(path.container, "<Y>Context '<A>" + obj.getKey() + "<Y>' = '<A>" + obj.getValue().identify() + "<Y>'");
-            }
         }
         List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
         ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
-        HashMap<String, ObjectTag> oldStyleContext = getContext();
         currentEvent = path.event;
-        if (oldStyleContext.size() > 0) {
-            OldEventManager.OldEventContextSource oecs = new OldEventManager.OldEventContextSource();
-            oecs.contexts = oldStyleContext;
-            oecs.contexts.put("cancelled", new ElementTag(cancelled));
-            oecs.contexts.put("event_header", new ElementTag(currentEvent));
-            queue.setContextSource(oecs);
-        }
-        else {
-            queue.setContextSource(this.clone());
-        }
+        queue.setContextSource(this.clone());
         queue.start();
         stats.nanoTimes += System.nanoTime() - queue.startTime;
         ListTag outList = queue.determinations;
@@ -424,11 +406,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 applyDetermination(path, determination);
             }
         }
-    }
-
-    @Override
-    public boolean getShouldCache() {
-        return false;
     }
 
     // <--[language]

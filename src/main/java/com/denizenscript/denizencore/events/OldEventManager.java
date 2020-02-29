@@ -250,11 +250,6 @@ public class OldEventManager {
         public Map<String, ObjectTag> contexts;
 
         @Override
-        public boolean getShouldCache() {
-            return true;
-        }
-
-        @Override
         public ObjectTag getContext(String name) {
             return contexts.get(name);
         }

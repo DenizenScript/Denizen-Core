@@ -174,11 +174,6 @@ public class CustomScriptContainer extends ScriptContainer {
         public ObjectTag value;
 
         @Override
-        public boolean getShouldCache() {
-            return true;
-        }
-
-        @Override
         public ObjectTag getContext(String name) {
             if (name.equals("this")) {
                 return obj;

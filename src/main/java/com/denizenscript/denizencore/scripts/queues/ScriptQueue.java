@@ -139,24 +139,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (contextSource == null) {
             return null;
         }
-        ObjectTag obj = cachedContext.get(id);
-        if (obj != null) {
-            return obj;
-        }
-        obj = contextSource.getContext(id);
-        if (obj != null && contextSource.getShouldCache()) {
-            cachedContext.put(id, obj);
-        }
-        return obj;
+        return contextSource.getContext(id);
     }
 
     public ContextSource contextSource = null;
 
-    public HashMap<String, ObjectTag> cachedContext;
-
     public void setContextSource(ContextSource source) {
         contextSource = source;
-        cachedContext = new HashMap<>();
     }
 
     @Override
@@ -266,7 +255,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
         newQueue.setContextSource(contextSource);
-        newQueue.cachedContext = cachedContext;
         for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
         }
