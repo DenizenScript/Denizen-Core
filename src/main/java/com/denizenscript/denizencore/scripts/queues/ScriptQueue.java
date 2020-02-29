@@ -144,6 +144,8 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public ContextSource contextSource = null;
 
+    public DeterminationTarget determinationTarget = null;
+
     public void setContextSource(ContextSource source) {
         contextSource = source;
     }
@@ -255,6 +257,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             newQueue.addDefinition(def.getKey(), def.getValue());
         }
         newQueue.setContextSource(contextSource);
+        newQueue.determinationTarget = determinationTarget;
         for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
             newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
         }

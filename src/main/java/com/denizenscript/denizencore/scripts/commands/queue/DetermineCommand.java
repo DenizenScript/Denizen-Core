@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -75,12 +76,16 @@ public class DetermineCommand extends AbstractCommand {
             Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug() + new QueueTag(scriptEntry.getResidingQueue()).debug());
         }
 
-        ListTag determines = scriptEntry.getResidingQueue().determinations;
+        ScriptQueue queue = scriptEntry.getResidingQueue();
+        ListTag determines = queue.determinations;
         if (determines == null) {
             determines = new ListTag();
-            scriptEntry.getResidingQueue().determinations = determines;
+            queue.determinations = determines;
         }
         determines.addObject(outcomeObj);
+        if (queue.determinationTarget != null) {
+            queue.determinationTarget.applyDetermination(outcomeObj);
+        }
 
         if (!passively.asBoolean()) {
             scriptEntry.getResidingQueue().clear();

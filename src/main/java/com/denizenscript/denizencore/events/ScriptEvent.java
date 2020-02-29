@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
@@ -397,15 +396,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
         currentEvent = path.event;
         queue.setContextSource(this.clone());
+        queue.determinationTarget = (o) -> applyDetermination(path, o);
         queue.start();
         stats.nanoTimes += System.nanoTime() - queue.startTime;
-        ListTag outList = queue.determinations;
-        if (outList != null && !outList.isEmpty()) {
-            List<ObjectTag> determinations = outList.objectForms;
-            for (ObjectTag determination : determinations) {
-                applyDetermination(path, determination);
-            }
-        }
     }
 
     // <--[language]
