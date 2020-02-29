@@ -1811,7 +1811,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the arc-sine of the element.
+        // Returns the arc-sine of the element in radians.
         // -->
         registerTag("asin", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1826,7 +1826,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the arc-cosine of the element.
+        // Returns the arc-cosine of the element in radians.
         // -->
         registerTag("acos", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1841,7 +1841,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the arc-tangent of the element.
+        // Returns the arc-tangent of the element in radians.
         // -->
         registerTag("atan", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1857,7 +1857,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Interprets the element to be a Y value and the input value to be an X value (meaning: <Y.atan2[X]>),
-        // and returns an angle representing the vector of (X,Y).
+        // and returns an angle in radians representing the vector of (X,Y).
         // -->
         registerTag("atan2", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -1876,7 +1876,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the cosine of the element.
+        // Returns the cosine of the input radian angle.
         // -->
         registerTag("cos", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1891,7 +1891,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the sine of the element.
+        // Returns the sine of the input radian angle.
         // -->
         registerTag("sin", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1906,7 +1906,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @group math
         // @description
-        // Returns the tangent of the element.
+        // Returns the tangent of the input radian angle.
         // -->
         registerTag("tan", (attribute, ele) -> {
             if (!ele.isDouble()) {
