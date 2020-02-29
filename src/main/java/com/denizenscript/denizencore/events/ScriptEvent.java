@@ -14,7 +14,6 @@ import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 
@@ -44,7 +43,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public static void registerScriptEvent(ScriptEvent event) {
-        event.reset();
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
     }
@@ -355,17 +353,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public abstract String getName();
 
-    public void reset() {
-        cancelled = false;
-    }
-
-    Runnable resetRunnable = new Runnable() {
-        @Override
-        public void run() {
-            reset();
-        }
-    };
-
     public void fire() {
         stats.fires++;
         for (ScriptPath path : eventPaths) {
@@ -378,9 +365,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 Debug.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
                 Debug.echoError(e);
             }
-        }
-        if (cancelled) {
-            DenizenCore.schedule(new OneTimeSchedulable(resetRunnable, 0.01f));
         }
     }
 

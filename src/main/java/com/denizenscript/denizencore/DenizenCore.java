@@ -91,7 +91,6 @@ public class DenizenCore {
      * Call postLoadScripts after.
      */
     public static void preloadScripts() {
-        PreScriptReloadScriptEvent.instance.reset();
         PreScriptReloadScriptEvent.instance.fire();
         ScriptEvent.worldContainers.clear();
         implementation.preScriptReload();
@@ -123,7 +122,6 @@ public class DenizenCore {
     public static void reloadScripts() {
         preloadScripts();
         postLoadScripts();
-        ReloadScriptsScriptEvent.instance.reset();
         ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
         ReloadScriptsScriptEvent.instance.fire();
         Debug.log("Scripts reloaded.");

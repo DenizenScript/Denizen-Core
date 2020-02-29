@@ -30,12 +30,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     public boolean hadError = false;
 
     @Override
-    public void reset() {
-        hadError = false;
-        super.reset();
-    }
-
-    @Override
     public ScriptEntryData getScriptEntryData() {
         return DenizenCore.getImplementation().getEmptyScriptEntryData();
     }

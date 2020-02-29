@@ -29,13 +29,7 @@ public class TickScriptEvent extends ScriptEvent {
 
     public long ticks = 0;
 
-    public ScriptEntryData data = null;
-
-    @Override
-    public void reset() {
-        data = DenizenCore.getImplementation().getEmptyScriptEntryData();
-        super.reset();
-    }
+    public ScriptEntryData data = DenizenCore.getImplementation().getEmptyScriptEntryData();
 
     @Override
     public ScriptEntryData getScriptEntryData() {

@@ -27,14 +27,7 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
 
     public String message = null;
 
-    public ScriptEntryData data = null;
-
-    @Override
-    public void reset() {
-        message = null;
-        data = DenizenCore.getImplementation().getEmptyScriptEntryData();
-        super.reset();
-    }
+    public ScriptEntryData data = DenizenCore.getImplementation().getEmptyScriptEntryData();
 
     @Override
     public ScriptEntryData getScriptEntryData() {
