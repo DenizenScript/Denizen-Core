@@ -106,6 +106,23 @@ public class UtilTagBase {
             }
 
             // <--[tag]
+            // @attribute <util.list_numbers_to[<#>]>
+            // @returns ListTag
+            // @description
+            // Returns a list of numbers from 1 to the specified input number (inclusive).
+            // Note that you should NEVER use this as the input to a "foreach" command. Instead, use "repeat".
+            // In most cases, there's a better way to do what you're trying to accomplish than using this tag.
+            // -->
+            if (attribute.startsWith("list_numbers_to") && attribute.hasContext(1)) {
+                int to = attribute.getIntContext(1);
+                ListTag result = new ListTag();
+                for (int i = 1; i <= to; i++) {
+                    result.add(String.valueOf(i));
+                }
+                event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            }
+
+            // <--[tag]
             // @attribute <util.random.decimal>
             // @returns ElementTag
             // @description
