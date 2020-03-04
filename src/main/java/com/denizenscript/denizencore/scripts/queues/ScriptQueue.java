@@ -266,11 +266,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (delay != null) {
             newQueue.delayFor(delay);
         }
-        newQueue.script = script;
-        newQueue.callBack(r);
-        newQueue.start();
         newQueue.startTime = startTime;
         newQueue.startTimeMilli = startTimeMilli;
+        newQueue.script = script;
+        newQueue.callBack(r);
+        newQueue.start(false);
         return newQueue;
     }
 
@@ -287,8 +287,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public void runMeNow() {
-        startTime = System.nanoTime();
-        startTimeMilli = System.currentTimeMillis();
         onStart();
     }
 
@@ -297,6 +295,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public void start() {
+        start(true);
+    }
+
+    public void start(boolean doBasicConfig) {
         if (is_started) {
             return;
         }
@@ -307,7 +309,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         is_started = true;
         long delay = delay_time - DenizenCore.serverTimeMillis;
         boolean is_delayed = delay > 0;
-        script = script_entries.get(0).getScript();
+        if (doBasicConfig) {
+            script = script_entries.get(0).getScript();
+            startTime = System.nanoTime();
+            startTimeMilli = System.currentTimeMillis();
+        }
         String name = getName();
         if (queueNeedsToDebug()) {
             if (is_delayed) {
