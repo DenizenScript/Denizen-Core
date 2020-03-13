@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -242,7 +243,19 @@ public class Argument implements Cloneable {
     }
 
     public void reportUnhandled() {
-        Debug.echoError('\'' + raw_value + "' is an unknown argument!");
+        if (TagManager.recentTagError) {
+            Debug.echoError('\'' + raw_value + "' is an unknown argument! This was probably caused by a tag not parsing properly.");
+            return;
+        }
+        if (prefix != null) {
+            Debug.echoError('\'' + raw_value + "' is an unknown argument! Did you mess up the command syntax?");
+        }
+        else {
+            Debug.echoError('\'' + raw_value + "' is an unknown argument! Did you forget quotes, or did you mess up the command syntax?");
+        }
+        if (scriptEntry != null && scriptEntry.getCommand() != null) {
+            Debug.log("Command usage: " + scriptEntry.getCommand().getUsageHint());
+        }
     }
 
     @Override

@@ -55,6 +55,7 @@ public class CommandExecutor {
         if (scriptEntry.dbCallShouldDebug()) {
             debugSingleExecution(scriptEntry);
         }
+        TagManager.recentTagError = false;
         AbstractCommand command = scriptEntry.internal.actualCommand;
         currentQueue = scriptEntry.getResidingQueue();
         String saveName = null;

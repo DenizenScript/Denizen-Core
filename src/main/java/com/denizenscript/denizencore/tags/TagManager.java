@@ -189,6 +189,8 @@ public class TagManager {
         return readSingleTagObject(context, event);
     }
 
+    public static boolean recentTagError = true;
+
     public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         // Call Event
         int tT = DenizenCore.getImplementation().getTagTimeout();
@@ -211,6 +213,7 @@ public class TagManager {
             ScriptQueue queue = context.entry != null ? context.entry.getResidingQueue() : null;
             String tagStr = "<" + event.toString() + ">";
             Debug.echoError(queue, "Tag " + tagStr + " is invalid!");
+            recentTagError = true;
             if (OBJECTTAG_CONFUSION_PATTERN.matcher(tagStr).matches()) {
                 Debug.echoError(queue, "'ObjectTag' notation is for documentation purposes, and not to be used literally."
                     + " An actual object must be inserted instead. If confused, join our Discord at https://discord.gg/Q6pZGSR to ask for help!");

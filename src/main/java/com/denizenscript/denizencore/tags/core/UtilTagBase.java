@@ -76,7 +76,7 @@ public class UtilTagBase {
             }
 
             // <--[tag]
-            // @attribute <util.random.decimal[<#>].to[<#>]>
+            // @attribute <util.random.decimal[<#.#>].to[<#.#>]>
             // @returns ElementTag(Decimal)
             // @description
             // Returns a random number between the 2 specified numbers, inclusive.

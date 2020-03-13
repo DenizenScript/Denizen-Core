@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
+import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -45,10 +46,12 @@ public class ArgumentHelper {
      * @param args a list of string arguments
      * @return a list of Arguments
      */
-    public static List<Argument> interpret(List<String> args) {
+    public static List<Argument> interpret(ScriptEntry entry, List<String> args) {
         List<Argument> arg_list = new ArrayList<>(args.size());
         for (String string : args) {
-            arg_list.add(new Argument(string));
+            Argument newArg = new Argument(string);
+            newArg.scriptEntry = entry;
+            arg_list.add(newArg);
         }
         return arg_list;
     }

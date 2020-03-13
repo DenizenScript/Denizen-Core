@@ -18,11 +18,12 @@ public class DebugInvalidCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
+        AbstractCommand command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
         if (scriptEntry.internal.brokenArgs) {
-            Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?");
+            Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?\nUsage: " + command.getUsageHint());
+            return;
         }
         else {
-            AbstractCommand command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
             if (command != null) {
                 if (command.getOptions().requiredArgs > scriptEntry.getArguments().size()) {
                     scriptEntry.internal.brokenArgs = true;
