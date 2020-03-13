@@ -141,6 +141,7 @@ public class AdjustCommand extends AbstractCommand {
             Debug.echoError("'" + objectString + "' is not an adjustable object type.");
             return object;
         }
+        object = ObjectFetcher.pickObjectFor(objectString, mechanism.context); // Create duplicate of object, instead of adjusting original
         ((Adjustable) object).safeAdjust(mechanism);
         return object;
     }
