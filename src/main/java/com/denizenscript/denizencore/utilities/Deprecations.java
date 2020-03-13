@@ -130,7 +130,7 @@ public class Deprecations {
 
     // In Bukkit impl, Relevant as of 2019/09/25, made current on 2020/02/12.
     private static String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
-    public static Warning npcNicknameTag = new SlowWarning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname.");
+    public static Warning npcNicknameTag = new SlowWarning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname. Note that this historically appeared in the config.yml file, so check there if you're unsure what's using this tag.");
     public static Warning npcPreviousLocationTag = new SlowWarning(pointlessSubtagPrefix + "npc.location.previous_location is now just npc.previous_location.");
     public static Warning npcAnchorListTag = new SlowWarning(pointlessSubtagPrefix + "npc.anchor.list is now just npc.list_anchors.");
     public static Warning playerMoneyFormatTag = new SlowWarning(pointlessSubtagPrefix + "player.money.format is now just player.formatted_money.");
