@@ -77,10 +77,6 @@ public class Deprecations {
     // Prime candidate for functionality removal - tags were only recently added, and were always jank.
     public static Warning bookItemRawTags = new StrongWarning("Raw text tags for books were a placeholder. The normal (non-raw) tags now contain all needed data.");
 
-    // In Bukkit impl, Added on 2019/10/13
-    // This is just a message, relevant functionality already removed. Remove the script container registration after a few releases.
-    public static Warning versionScripts = new SlowWarning("Version script containers are deprecated due to the old script repo no longer being active.");
-
     // Added on 2019/10/13
     public static Warning scriptReloadEventNoUnderscore = new StrongWarning("In the 'on script reload' event, 'had_error' should be used instead of 'haderror'.");
 
@@ -100,31 +96,31 @@ public class Deprecations {
     // In Bukkit impl, Added on 2019/12/24
     public static Warning entityRemainingAir = new SlowWarning("The mechanism 'EntityTag.remaining_air' is deprecated: use 'EntityTag.oxygen' instead (duration input vs. tick input).");
 
-    // In Bukkit impl, Relevant as of 2019/07/13, deprecate officially by 2020.
+    // In Bukkit impl, Added on 2019/07/13
     public static Warning oldParseTag = new SlowWarning("'parse:' tags are deprecated. Please use '.parsed' element tags instead.");
 
-    // Added on 2019/10/09, but was changed earlier, deprecate officially by 2020.
+    // Added on 2019/10/09, but was changed earlier.
     public static Warning oldTernTag = new SlowWarning("'tern[a]:b||c' tag style is deprecated. Please use 'tern[a].pass[b].fail[c]' tag style instead.");
 
-    // In Bukkit impl, Relevant as of 2019/09/09, deprecate officially by 2020.
+    // In Bukkit impl, Added on 2019/09/09
     public static Warning oldNPCNavigator = new SlowWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
-    // Relevant as of 2019/09/13, deprecate officially by 2020.
+    // Added on 2019/09/13.
     public static Warning oldMatchesOperator = new SlowWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
 
-    // In Bukkit impl, Relevant as of 2019/09/24, deprecate officially by 2020.
+    // In Bukkit impl, Added on 2019/09/24
     public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 
-    // In Bukkit impl, Added 2020/01/15
+    // In Bukkit impl, Added on 2020/01/15
     public static Warning worldRandomLoadedChunkTag = new SlowWarning("The 'world.random_loaded_chunk' tag is pointless. Use 'world.loaded_chunks.random' instead.");
 
-    // In Bukkit impl, Added 2020/01/15
+    // In Bukkit impl, Added on 2020/01/15
     public static Warning entityCustomIdTag = new SlowWarning("The tag 'EntityTag.custom_id' is deprecated. Use '.script' instead, though it is technically equivalent to <ENTITY.script||<ENTITY.entity_type>>.");
 
-    // In Bukkit impl, Added 2020/01/15
+    // In Bukkit impl, Added on 2020/01/15
     public static Warning playerActionBarMech = new SlowWarning("The mechanism 'PlayerTag.action_bar' is deprecated. Use the 'actionbar' command instead.");
 
-    // Added 2019/10/08, made current on 2020/02/12.
+    // Added on 2019/10/08, made current on 2020/02/12.
     public static Warning ifCommandSingleLine = new SlowWarning("Single line if commands are deprecated. Please update them to modern format.");
     public static Warning oldBraceSyntax = new SlowWarning("The { braced } command format is deprecated. Please use the ':' colon syntax (refer to documentation).");
 
@@ -180,6 +176,9 @@ public class Deprecations {
     public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
+
+    // In Bukkit impl, Added on 2019/10/13
+    public static Warning versionScripts = new StrongWarning("Version script containers are deprecated due to the old script repo no longer being active.");
 
     // Removed in February 2020.
     public static Warning ancientDefs = new StrongWarning("Ancient-style definitions (those with percent signs like %def%) were removed in Denizen 1.1.3, and can no longer be used. Instead, use <[def]>.");
