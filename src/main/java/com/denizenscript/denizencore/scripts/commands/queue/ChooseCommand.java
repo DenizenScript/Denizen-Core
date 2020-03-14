@@ -13,10 +13,17 @@ import java.util.List;
 
 public class ChooseCommand extends BracedCommand {
 
+    public ChooseCommand() {
+        setName("choose");
+        setSyntax("choose [<option>] [<cases>]");
+        setRequiredArguments(1, 1);
+    }
+
     // <--[command]
     // @Name Choose
     // @Syntax choose [<option>] [<cases>]
     // @Required 1
+    // @Maximum 1
     // @Short Chooses an option from the list of cases.
     // @Group queue
 

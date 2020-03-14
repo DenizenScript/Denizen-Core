@@ -12,10 +12,17 @@ import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 
 public class QueueCommand extends AbstractCommand {
 
+    public QueueCommand() {
+        setName("queue");
+        setSyntax("queue (<queue>) [clear/stop/pause/resume/delay:<duration>]");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Queue
     // @Syntax queue (<queue>) [clear/stop/pause/resume/delay:<duration>]
     // @Required 1
+    // @Maximum 2
     // @Short Modifies the current state of a script queue.
     // @Group queue
     //

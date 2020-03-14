@@ -7,10 +7,17 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
 public class ElseCommand extends AbstractCommand {
 
+    public ElseCommand() {
+        setName("else");
+        setSyntax("else (if <comparison logic>)");
+        setRequiredArguments(0, -1);
+    }
+
     // <--[command]
     // @Name Else
     // @Syntax else (if <comparison logic>)
     // @Required 0
+    // @Maximum -1
     // @Short Helper command for usage with the if command.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/if-command.html

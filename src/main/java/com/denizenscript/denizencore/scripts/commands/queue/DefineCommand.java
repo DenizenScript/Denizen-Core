@@ -19,10 +19,17 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
  */
 public class DefineCommand extends AbstractCommand {
 
+    public DefineCommand() {
+        setName("define");
+        setSyntax("define [<id>](:<action>)[:<value>]");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Define
     // @Syntax define [<id>](:<action>)[:<value>]
     // @Required 1
+    // @Maximum 2
     // @Short Creates a temporary variable inside a script queue.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/definitions.html

@@ -12,10 +12,17 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
 public class DetermineCommand extends AbstractCommand {
 
+    public DetermineCommand() {
+        setName("determine");
+        setSyntax("determine (passively) [<value>]");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Determine
     // @Syntax determine (passively) [<value>]
     // @Required 1
+    // @Maximum 2
     // @Short Sets the outcome of a script.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/first-steps/world-script.html

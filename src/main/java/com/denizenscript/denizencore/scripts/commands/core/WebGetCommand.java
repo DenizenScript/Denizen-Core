@@ -19,10 +19,17 @@ import java.nio.charset.StandardCharsets;
 
 public class WebGetCommand extends AbstractCommand implements Holdable {
 
+    public WebGetCommand() {
+        setName("webget");
+        setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)");
+        setRequiredArguments(1, 5);
+    }
+
     // <--[command]
     // @Name Webget
     // @Syntax webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)
     // @Required 1
+    // @Maximum 5
     // @Short Gets the contents of a web page.
     // @Group core
     //

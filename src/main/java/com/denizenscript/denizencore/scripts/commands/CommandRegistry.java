@@ -89,39 +89,54 @@ public abstract class CommandRegistry {
     // -->
 
     public void registerCoreCommands() {
-
-        registerCoreMember(AdjustCommand.class, "ADJUST", "adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)", 2);
-        registerCoreMember(ChooseCommand.class, "CHOOSE", "choose [<option>] [<cases>]", 1);
-        registerCoreMember(DebugCommand.class, "DEBUG", "debug [<type>] [<message>] (name:<name>)", 2);
-        registerCoreMember(DefineCommand.class, "DEFINE", "define [<id>] [<value>]", 1);
-        registerCoreMember(DetermineCommand.class, "DETERMINE", "determine (passively) [<value>]", 1);
-        registerCoreMember(ElseCommand.class, "ELSE", "else (if <comparison logic>)", 0);
-        registerCoreMember(EventCommand.class, "EVENT", "event [<event name>|...] (context:<name>|<object>|...)", 1);
-        registerCoreMember(FileCopyCommand.class, "FILECOPY", "filecopy [origin:<origin>] [destination:<destination>] (overwrite)", 2);
-        registerCoreMember(ForeachCommand.class, "FOREACH", "foreach [stop/next/<object>|...] (as:<name>) [<commands>]", 1);
-        registerCoreMember(GotoCommand.class, "GOTO", "goto [<name>]", 1);
-        registerCoreMember(IfCommand.class, "IF", "if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>]", 1);
-        registerCoreMember(InjectCommand.class, "INJECT", "inject (locally) [<script>] (path:<name>) (instantly)", 1);
-        registerCoreMember(LogCommand.class, "LOG", "log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]", 2);
-        registerCoreMember(MarkCommand.class, "MARK", "mark [<name>]", 1);
-        registerCoreMember(QueueCommand.class, "QUEUE", "queue (<queue>) [clear/stop/pause/resume/delay:<duration>]", 1);
-        registerCoreMember(RandomCommand.class, "RANDOM", "random [<commands>]", 0);
-        registerCoreMember(RateLimitCommand.class, "RATELIMIT", "ratelimit [<object>] [<duration>]", 2);
-        registerCoreMember(ReloadCommand.class, "RELOAD", "reload", 0);
-        registerCoreMember(RepeatCommand.class, "REPEAT", "repeat [stop/next/<amount>] [<commands>] (as:<name>)", 1);
-        registerCoreMember(RunCommand.class, "RUN", "run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)", 1);
-        registerCoreMember(SQLCommand.class, "SQL", "sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]", 2);
-        registerCoreMember(StopCommand.class, "STOP", "stop", 0);
-        registerCoreMember(WaitCommand.class, "WAIT", "wait (<duration>) (queue:<name>)", 0);
-        registerCoreMember(WaitUntilCommand.class, "WAITUNTIL", "waituntil (rate:<duration>) [<comparisons>]", 1);
-        registerCoreMember(WebGetCommand.class, "WEBGET", "webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)", 1);
-        registerCoreMember(WhileCommand.class, "WHILE", "while [stop/next/<comparison tag>] [<commands>]", 1);
-        registerCoreMember(YamlCommand.class, "YAML", "yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]", 2);
+        // core
+        registerCommand(AdjustCommand.class);
+        registerCommand(DebugCommand.class);
+        // Intentionally do not register the DebugInvalidCommand
+        registerCommand(EventCommand.class);
+        registerCommand(ReloadCommand.class);
+        registerCommand(SQLCommand.class);
+        registerCommand(WebGetCommand.class);
+        // file
+        registerCommand(FileCopyCommand.class);
+        registerCommand(LogCommand.class);
+        registerCommand(YamlCommand.class);
+        // queue
+        registerCommand(ChooseCommand.class);
+        registerCommand(DefineCommand.class);
+        registerCommand(DetermineCommand.class);
+        registerCommand(ElseCommand.class);
+        registerCommand(ForeachCommand.class);
+        registerCommand(GotoCommand.class);
+        registerCommand(IfCommand.class);
+        registerCommand(InjectCommand.class);
+        registerCommand(MarkCommand.class);
+        registerCommand(QueueCommand.class);
+        registerCommand(RandomCommand.class);
+        registerCommand(RateLimitCommand.class);
+        registerCommand(RepeatCommand.class);
+        registerCommand(RunCommand.class);
+        registerCommand(StopCommand.class);
+        registerCommand(WaitCommand.class);
+        registerCommand(WaitUntilCommand.class);
+        registerCommand(WhileCommand.class);
     }
 
+    public <T extends AbstractCommand> void registerCommand(Class<T> cmd) {
+        try {
+            AbstractCommand command = cmd.newInstance();
+            register(command.getName(), command);
+        }
+        catch (Throwable e) {
+            Debug.echoError("Could not register command " + cmd.getName() + ", exception follows...");
+            Debug.echoError(e);
+        }
+    }
+
+    @Deprecated
     public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String name, String hint, int args) {
         try {
-            cmd.newInstance().activate().as(name).withOptions(hint, args);
+            cmd.newInstance().as(name).withOptions(hint, args);
         }
         catch (Throwable e) {
             Debug.echoError("Could not register command " + name + ": " + e.getMessage());

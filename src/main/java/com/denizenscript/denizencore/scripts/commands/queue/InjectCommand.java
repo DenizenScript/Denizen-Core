@@ -12,10 +12,17 @@ import java.util.List;
 
 public class InjectCommand extends AbstractCommand {
 
+    public InjectCommand() {
+        setName("inject");
+        setSyntax("inject (locally) [<script>] (path:<name>) (instantly)");
+        setRequiredArguments(1, 4);
+    }
+
     // <--[command]
     // @Name Inject
     // @Syntax inject (locally) [<script>] (path:<name>) (instantly)
     // @Required 1
+    // @Maximum 4
     // @Short Runs a script in the current ScriptQueue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue

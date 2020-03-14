@@ -11,10 +11,17 @@ import java.util.List;
 
 public class RepeatCommand extends BracedCommand {
 
+    public RepeatCommand() {
+        setName("repeat");
+        setSyntax("repeat [stop/next/<amount>] (as:<name>) [<commands>]");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Repeat
-    // @Syntax repeat [stop/next/<amount>] [<commands>] (as:<name>)
+    // @Syntax repeat [stop/next/<amount>] (as:<name>) [<commands>]
     // @Required 1
+    // @Maximum 2
     // @Short Runs a series of braced commands several times.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html

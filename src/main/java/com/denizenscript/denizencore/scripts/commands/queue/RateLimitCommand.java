@@ -14,10 +14,17 @@ import java.util.HashMap;
 
 public class RateLimitCommand extends AbstractCommand {
 
+    public RateLimitCommand() {
+        setName("ratelimit");
+        setSyntax("ratelimit [<object>] [<duration>]");
+        setRequiredArguments(2, 2);
+    }
+
     // <--[command]
     // @Name RateLimit
     // @Syntax ratelimit [<object>] [<duration>]
     // @Required 2
+    // @Maximum 2
     // @Short Limits the rate that queues may process a script at.
     // @Group queue
     //

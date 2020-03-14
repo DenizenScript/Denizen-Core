@@ -16,10 +16,17 @@ import java.util.List;
 
 public class RunCommand extends AbstractCommand implements Holdable {
 
+    public RunCommand() {
+        setName("run");
+        setSyntax("run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
+        setRequiredArguments(1, 6);
+    }
+
     // <--[command]
     // @Name Run
     // @Syntax run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)
     // @Required 1
+    // @Maximum 6
     // @Short Runs a script in a new queue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue

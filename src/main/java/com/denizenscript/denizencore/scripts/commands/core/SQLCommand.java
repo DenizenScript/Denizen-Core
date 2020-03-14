@@ -21,10 +21,17 @@ import java.util.Properties;
 
 public class SQLCommand extends AbstractCommand implements Holdable {
 
+    public SQLCommand() {
+        setName("sql");
+        setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]");
+        setRequiredArguments(2, 5);
+    }
+
     // <--[command]
     // @Name SQL
     // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]
     // @Required 2
+    // @Maximum 5
     // @Short Interacts with a MySQL server.
     // @Group core
     //

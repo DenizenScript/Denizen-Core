@@ -11,10 +11,17 @@ import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 
 public class WaitCommand extends AbstractCommand {
 
+    public WaitCommand() {
+        setName("wait");
+        setSyntax("wait (<duration>) (queue:<name>)");
+        setRequiredArguments(0, 2);
+    }
+
     // <--[command]
     // @Name Wait
     // @Syntax wait (<duration>) (queue:<name>)
     // @Required 0
+    // @Maximum 2
     // @Short Delays a script for a specified amount of time.
     // @Group queue
     //

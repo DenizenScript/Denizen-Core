@@ -13,10 +13,18 @@ import java.util.List;
 
 public class WhileCommand extends BracedCommand {
 
+    public WhileCommand() {
+        setName("while");
+        setSyntax("while [stop/next/[<value>] (!)(<operator> <value>) (&&/|| ...)] [<commands>]");
+        setRequiredArguments(1, -1);
+        setParseArgs(false);
+    }
+
     // <--[command]
     // @Name While
     // @Syntax while [stop/next/[<value>] (!)(<operator> <value>) (&&/|| ...)] [<commands>]
     // @Required 1
+    // @Maximum -1
     // @Short Runs a series of braced commands until the tag returns false.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html
@@ -42,11 +50,6 @@ public class WhileCommand extends BracedCommand {
         public List<String> value;
         public long LastChecked;
         int instaTicks;
-    }
-
-    @Override
-    public void onEnable() {
-        setParseArgs(false);
     }
 
     @Override

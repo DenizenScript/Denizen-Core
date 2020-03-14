@@ -7,10 +7,17 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 public class ReloadCommand extends AbstractCommand {
 
+    public ReloadCommand() {
+        setName("reload");
+        setSyntax("reload");
+        setRequiredArguments(0, 0);
+    }
+
     // <--[command]
     // @Name Reload
     // @Syntax reload
     // @Required 0
+    // @Maximum 0
     // @Short Reloads all Denizen scripts. Primarily for use as an in-game command.
     // @Group core
     //

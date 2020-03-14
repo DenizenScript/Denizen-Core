@@ -228,6 +228,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         else {
             internal.actualCommand = null;
         }
+        boolean hasBraces = false;
         if (arguments != null) {
             args = new ArrayList<>(arguments.length);
             internal.preprocArgs = new ArrayList<>(arguments.length);
@@ -240,6 +241,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     Deprecations.instantTags.warn(this);
                 }
                 if (arg.equals("{")) {
+                    if (!hasBraces) {
+                        Deprecations.oldBraceSyntax.warn(this);
+                        hasBraces = true;
+                    }
                     nested_depth++;
                     args.add(arg);
                     continue;
@@ -340,7 +345,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             aHArgs = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
-            if (internal.actualCommand.getOptions().requiredArgs > args.size()) {
+            int argCount = getArguments().size();
+            if (argCount < internal.actualCommand.minimumArguments || (!hasBraces && argCount > internal.actualCommand.maximumArguments)) {
                 internal.brokenArgs = true;
                 internal.actualCommand = CommandRegistry.debugInvalidCommand;
             }

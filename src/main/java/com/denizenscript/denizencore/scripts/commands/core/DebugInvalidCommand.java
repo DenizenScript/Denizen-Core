@@ -11,6 +11,12 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
  */
 public class DebugInvalidCommand extends AbstractCommand {
 
+    public DebugInvalidCommand() {
+        setName("debug-invalid-command");
+        setSyntax("");
+        setRequiredArguments(0, Integer.MAX_VALUE);
+    }
+
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
     }
@@ -20,12 +26,18 @@ public class DebugInvalidCommand extends AbstractCommand {
         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
         AbstractCommand command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
         if (scriptEntry.internal.brokenArgs) {
-            Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Is the number of arguments given correct?\nUsage: " + command.getUsageHint());
+            if (scriptEntry.getArguments().size() > command.maximumArguments) {
+                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());
+            }
+            else {
+                Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
+            }
             return;
         }
         else {
             if (command != null) {
-                if (command.getOptions().requiredArgs > scriptEntry.getArguments().size()) {
+                int argCount = scriptEntry.getArguments().size();
+                if (argCount < command.minimumArguments || argCount > command.maximumArguments) {
                     scriptEntry.internal.brokenArgs = true;
                 }
                 else {

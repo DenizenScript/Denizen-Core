@@ -16,10 +16,17 @@ import java.net.URLDecoder;
 
 public class LogCommand extends AbstractCommand {
 
+    public LogCommand() {
+        setName("log");
+        setSyntax("log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]");
+        setRequiredArguments(2, 3);
+    }
+
     // <--[command]
     // @Name Log
     // @Syntax log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]
     // @Required 2
+    // @Maximum 3
     // @Short Logs some debugging info to a file.
     // @Group file
     //

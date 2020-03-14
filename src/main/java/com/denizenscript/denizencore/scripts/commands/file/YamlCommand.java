@@ -29,10 +29,23 @@ import java.util.*;
 
 public class YamlCommand extends AbstractCommand implements Holdable {
 
+    public YamlCommand() {
+        setName("yaml");
+        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]");
+        setRequiredArguments(2, 4);
+        TagManager.registerTagHandler(new TagRunnable.RootForm() {
+            @Override
+            public void run(ReplaceableTagEvent event) {
+                yaml(event);
+            }
+        }, "yaml");
+    }
+
     // <--[command]
     // @Name Yaml
     // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
     // @Required 2
+    // @Maximum 4
     // @Short Edits a YAML configuration file.
     // @Group file
     //
@@ -100,16 +113,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // Use to modify a copy the contents of one YAML key to a new owning key on a different YAML file.
     // - yaml id:myfile copykey:my.first.key my.new.key to_id:myotherfile
     // -->
-
-    @Override
-    public void onEnable() {
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                yaml(event);
-            }
-        }, "yaml");
-    }
 
     Map<String, YamlConfiguration> yamls = new HashMap<>();
 

@@ -14,10 +14,17 @@ import java.util.List;
 
 public class RandomCommand extends BracedCommand {
 
+    public RandomCommand() {
+        setName("random");
+        setSyntax("random [<commands>]");
+        setRequiredArguments(0, 1);
+    }
+
     // <--[command]
     // @Name Random
     // @Syntax random [<commands>]
     // @Required 0
+    // @Maximum 1
     // @Short Selects a random choice from the following script commands.
     // @Group queue
     //

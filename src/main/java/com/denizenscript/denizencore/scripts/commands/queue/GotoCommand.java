@@ -11,10 +11,17 @@ import java.util.List;
 
 public class GotoCommand extends AbstractCommand {
 
+    public GotoCommand() {
+        setName("goto");
+        setSyntax("goto [<name>]");
+        setRequiredArguments(1, 1);
+    }
+
     // <--[command]
     // @Name Goto
     // @Syntax goto [<name>]
     // @Required 1
+    // @Maximum 1
     // @Short Jump forward to a location marked by <@link command mark>.
     // @Group queue
     //

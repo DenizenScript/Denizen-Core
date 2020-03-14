@@ -11,10 +11,17 @@ import java.util.HashSet;
 
 public class DebugCommand extends AbstractCommand {
 
+    public DebugCommand() {
+        setName("debug");
+        setSyntax("debug [<type>] [<message>] (name:<name>)");
+        setRequiredArguments(2, 3);
+    }
+
     // <--[command]
     // @Name Debug
     // @Syntax debug [<type>] [<message>] (name:<name>)
     // @Required 2
+    // @Maximum 3
     // @Short Shows a debug message.
     // @Group core
     // @Guide https://guide.denizenscript.com/guides/first-steps/problem-solving.html

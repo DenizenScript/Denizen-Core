@@ -9,10 +9,17 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
 public class MarkCommand extends AbstractCommand {
 
+    public MarkCommand() {
+        setName("mark");
+        setSyntax("mark [<name>]");
+        setRequiredArguments(1, 1);
+    }
+
     // <--[command]
     // @Name Mark
     // @Syntax mark [<name>]
     // @Required 1
+    // @Maximum 1
     // @Short Marks a location for <@link command goto>.
     // @Group queue
     //

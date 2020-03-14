@@ -14,10 +14,17 @@ import java.util.Map;
 
 public class EventCommand extends AbstractCommand {
 
+    public EventCommand() {
+        setName("event");
+        setSyntax("event [<event name>|...] (context:<name>|<object>|...)");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Event
     // @Syntax event [<event name>|...] (context:<name>|<object>|...)
     // @Required 1
+    // @Maximum 2
     // @Short Manually fires a world event.
     // @Group core
     //

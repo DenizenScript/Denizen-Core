@@ -12,10 +12,17 @@ import java.util.List;
 
 public class ForeachCommand extends BracedCommand {
 
+    public ForeachCommand() {
+        setName("foreach");
+        setSyntax("foreach [stop/next/<object>|...] (as:<name>) [<commands>]");
+        setRequiredArguments(1, 2);
+    }
+
     // <--[command]
     // @Name Foreach
     // @Syntax foreach [stop/next/<object>|...] (as:<name>) [<commands>]
     // @Required 1
+    // @Maximum 2
     // @Short Loops through a ListTag, running a set of commands for each item.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html

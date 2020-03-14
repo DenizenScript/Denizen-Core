@@ -15,10 +15,18 @@ import java.util.List;
 
 public class IfCommand extends BracedCommand {
 
+    public IfCommand() {
+        setName("if");
+        setSyntax("if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>]");
+        setRequiredArguments(1, -1);
+        setParseArgs(false);
+    }
+
     // <--[command]
     // @Name If
     // @Syntax if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>]
     // @Required 1
+    // @Maximum -1
     // @Short Compares values, and runs a subset of commands if they match.
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/if-command.html
@@ -73,11 +81,6 @@ public class IfCommand extends BracedCommand {
     // - narrate "Okay so your quest is to find the needle item in the haystack build next to town."
     //
     // -->
-
-    @Override
-    public void onEnable() {
-        setParseArgs(false);
-    }
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {

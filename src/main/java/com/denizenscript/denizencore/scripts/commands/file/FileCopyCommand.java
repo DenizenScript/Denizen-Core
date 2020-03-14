@@ -17,10 +17,17 @@ import java.nio.file.Files;
 
 public class FileCopyCommand extends AbstractCommand implements Holdable {
 
+    public FileCopyCommand() {
+        setName("filecopy");
+        setSyntax("filecopy [origin:<origin>] [destination:<destination>] (overwrite)");
+        setRequiredArguments(2, 3);
+    }
+
     // <--[command]
     // @Name FileCopy
     // @Syntax filecopy [origin:<origin>] [destination:<destination>] (overwrite)
     // @Required 2
+    // @Maximum 3
     // @Short Copies a file from one location to another.
     // @Group file
     //
