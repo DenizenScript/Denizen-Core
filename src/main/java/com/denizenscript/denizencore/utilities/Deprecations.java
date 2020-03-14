@@ -175,6 +175,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/03/05, deprecate officially by 2022.
     public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
+    // Added 2020/03/14, deprecate officially by 2022.
+    public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

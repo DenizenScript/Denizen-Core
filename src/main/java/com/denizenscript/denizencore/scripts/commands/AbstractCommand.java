@@ -98,13 +98,6 @@ public abstract class AbstractCommand {
     public void onDisable() {
     }
 
-    /**
-     * Part of the Plugin enable sequence. This is called when the command is
-     * instanced by the CommandRegistry, which is generally on a server startup.
-     * <p/>
-     * Can be '@Override'n by a Command which requires a method when starting, such
-     * as registering as a Bukkit Listener.
-     */
     @Deprecated
     public void onEnable() {
     }
