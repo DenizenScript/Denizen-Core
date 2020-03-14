@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -74,6 +75,7 @@ public class RandomCommand extends BracedCommand {
             }
             else if (!scriptEntry.hasObject("possibilities")
                     && arg.matchesInteger()) {
+                Deprecations.oldStyleRandomCommand.warn(scriptEntry);
                 scriptEntry.addObject("possibilities", arg.asElement());
             }
             else {
@@ -133,9 +135,7 @@ public class RandomCommand extends BracedCommand {
         scriptEntry.addObject("selected", new ElementTag(selected));
 
         if (scriptEntry.dbCallShouldDebug()) {
-
             Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("possibilities", possibilities) + ArgumentHelper.debugObj("choice", selected + 1));
-
         }
 
         scriptEntry.setInstant(true);

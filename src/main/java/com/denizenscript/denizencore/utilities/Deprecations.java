@@ -152,6 +152,9 @@ public class Deprecations {
     // Prime candidate for functionality removal - has not been recommended for many years.
     public static Warning anchorWalk = new SlowWarning("Using the anchor 'walkto'/'walknear' options is deprecated: use the walk command with the npc.anchor tag instead, and 'assume' should be replaced by the teleport command.");
 
+    // Added 2020/03/14
+    public static Warning oldStyleRandomCommand = new SlowWarning("Using the 'random' command with an argument number is deprecated: use the modern colon syntax instead (refer to documentation).");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
