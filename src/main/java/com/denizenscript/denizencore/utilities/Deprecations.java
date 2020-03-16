@@ -73,7 +73,7 @@ public class Deprecations {
     public static Warning playerStepTag = new StrongWarning("'player.current_step[script]' tag is deprecated: use 'script.step[player]'.");
     public static Warning playerGamemodeTag = new StrongWarning("player.gamemode.id tag is deprecated: IDs are no longer in use. Use the player.gamemode (named) tag.");
 
-    // In Bukkit impl, Added on 2019/09/25.
+    // In Bukkit impl, Added on 2019/09/25
     // Prime candidate for functionality removal - tags were only recently added, and were always jank.
     public static Warning bookItemRawTags = new StrongWarning("Raw text tags for books were a placeholder. The normal (non-raw) tags now contain all needed data.");
 
@@ -120,11 +120,11 @@ public class Deprecations {
     // In Bukkit impl, Added on 2020/01/15
     public static Warning playerActionBarMech = new SlowWarning("The mechanism 'PlayerTag.action_bar' is deprecated. Use the 'actionbar' command instead.");
 
-    // Added on 2019/10/08, made current on 2020/02/12.
+    // Added on 2019/10/08, made current on 2020/02/12
     public static Warning ifCommandSingleLine = new SlowWarning("Single line if commands are deprecated. Please update them to modern format.");
     public static Warning oldBraceSyntax = new SlowWarning("The { braced } command format is deprecated. Please use the ':' colon syntax (refer to documentation).");
 
-    // In Bukkit impl, Relevant as of 2019/09/25, made current on 2020/02/12.
+    // In Bukkit impl, Relevant as of 2019/09/25, made current on 2020/02/12
     private static String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
     public static Warning npcNicknameTag = new SlowWarning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname. Note that this historically appeared in the config.yml file, so check there if you're unsure what's using this tag.");
     public static Warning npcPreviousLocationTag = new SlowWarning(pointlessSubtagPrefix + "npc.location.previous_location is now just npc.previous_location.");
@@ -140,7 +140,7 @@ public class Deprecations {
     public static Warning entityMaxOxygenTag = new SlowWarning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
     public static Warning itemBookTags = new SlowWarning(pointlessSubtagPrefix + "item.book.* tags are now just item.book_*.");
 
-    // In Bukkit impl, Added on 2020/02/17.
+    // In Bukkit impl, Added on 2020/02/17
     // Prime candidate for functionality removal - command hasn't been used or recommended by anyone in years, and has clear faults that would have prevented usage for most users.
     public static Warning scribeCommand = new SlowWarning("The scribe command was created many years ago, in an earlier era of Denizen, and doesn't make sense to use anymore. Consider the 'equip', 'give', or 'drop' commands instead.");
 

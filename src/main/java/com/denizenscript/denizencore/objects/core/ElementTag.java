@@ -475,7 +475,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("is_odd", (attribute, object) -> {
             String element = object.element;
-            return new ElementTag(ArgumentHelper.matchesDouble(element) && (object.asBigDecimal().longValue() % 2) == 1);
+            return new ElementTag(ArgumentHelper.matchesDouble(element) && (object.asBigDecimal().longValue() % 2) != 0);
         });
 
         // <--[tag]
