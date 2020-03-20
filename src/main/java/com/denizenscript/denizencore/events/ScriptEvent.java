@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntrySet;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -75,6 +76,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public String[] eventArgsLower;
         public String[] rawEventArgs;
         public List<ScriptEvent> matches = new ArrayList<>();
+        public TagContext context;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -131,6 +133,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             this.event = event;
             rawEventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
             this.container = container;
+            context = DenizenCore.getImplementation().getTagContext(container);
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);

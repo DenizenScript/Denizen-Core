@@ -372,6 +372,7 @@ public class ElementTag implements ObjectTag {
 
                 // Use the Comparable object as implemented for the IF command. First, a new Comparable!
                 Comparable com = new Comparable();
+                com.context = attribute.context;
 
                 // Check for negative logic
                 String operator;

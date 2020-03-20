@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -110,6 +111,8 @@ public interface DenizenImplementation {
     ListTag valueOfFlagListTag(String input);
 
     boolean matchesFlagListTag(String input);
+
+    TagContext getTagContext(ScriptContainer container);
 
     TagContext getTagContext(ScriptEntry entry);
 

@@ -555,6 +555,7 @@ public class IfCommand extends BracedCommand {
                 arg = "AND";
             }
             Comparable comparable = new Comparable();
+            comparable.context = scriptEntry.context;
             if (negative) {
                 comparable.logic = Comparable.Logic.NEGATIVE;
             }

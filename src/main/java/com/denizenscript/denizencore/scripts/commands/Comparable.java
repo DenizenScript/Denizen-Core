@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.commands;
 
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -64,6 +65,7 @@ public class Comparable {
     public Operator operator = Operator.EQUALS;
     public Object comparedto = "true";
     public Boolean outcome = null;
+    public TagContext context = null;
 
     public void setNegativeLogic() {
         logic = Logic.NEGATIVE;
@@ -84,7 +86,7 @@ public class Comparable {
             comparable = DurationTag.valueOf(arg).getSeconds();
         }
         else if (ListTag.matches(arg)) {
-            comparable = ListTag.valueOf(arg);
+            comparable = ListTag.valueOf(arg, context);
         }
         else {
             comparable = arg;
@@ -115,7 +117,7 @@ public class Comparable {
         }
         else if (comparable instanceof ListTag) {
             if (ListTag.matches(arg)) {
-                comparedto = ListTag.valueOf(arg);
+                comparedto = ListTag.valueOf(arg, context);
             }
             else {
                 comparedto = arg;

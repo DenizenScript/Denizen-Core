@@ -102,6 +102,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return objectForms.get(id);
     }
 
+    @Deprecated
     public static ListTag valueOf(String string) {
         return valueOf(string, null);
     }
