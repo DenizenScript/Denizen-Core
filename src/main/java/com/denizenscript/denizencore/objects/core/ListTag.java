@@ -303,7 +303,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger, boolean showFailure) {
-        TagContext context = DenizenCore.getImplementation().getTagContext(null);
+        TagContext context = DenizenCore.getImplementation().getTagContext((ScriptEntry) null);
         context.debug = debugger.shouldDebug();
         return filter(dClass, context, showFailure);
     }
