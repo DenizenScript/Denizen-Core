@@ -135,7 +135,7 @@ public class ArgumentHelper {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
-    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = ".eE";
+    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = ".eE-";
     private static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
     private static AsciiMatcher DOUBLE_AFTERFIRST_MATCHER = new AsciiMatcher(DIGITS + DOUBLE_CHARS);
 
