@@ -64,6 +64,9 @@ public class DurationTag implements ObjectTag {
         if (string.equals("instant")) {
             return new DurationTag(0);
         }
+        if (string.isEmpty()) {
+            return null;
+        }
         // Pick a duration between a high and low number if there is a '-' present, but it's not "E-2" style scientific notation.
         if (string.contains("-") && !string.contains("e-")) {
             String[] split = string.split("-", 2);
