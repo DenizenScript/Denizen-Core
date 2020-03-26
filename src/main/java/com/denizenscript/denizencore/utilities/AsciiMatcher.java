@@ -10,6 +10,16 @@ public class AsciiMatcher {
         }
     }
 
+    public int indexOfFirstNonMatch(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c > 255 || !accepted[c]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public boolean isMatch(char c) {
         return c < 256 && accepted[c];
     }

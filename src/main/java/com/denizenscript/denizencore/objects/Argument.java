@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -60,13 +61,15 @@ public class Argument implements Cloneable {
         object = new ElementTag(this.value);
     }
 
+    public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "_");
+
     public void fillStr(String string) {
         raw_value = string;
 
         int first_colon = string.indexOf(':');
-        int first_space = string.indexOf(' ');
+        int first_not_prefix = prefixCharsAllowed.indexOfFirstNonMatch(string);
 
-        if ((first_space > -1 && first_space < first_colon) || first_colon == -1) {
+        if ((first_not_prefix > -1 && first_not_prefix < first_colon) || first_colon == -1) {
             value = string;
             if (object == null) {
                 object = new ElementTag(value);
