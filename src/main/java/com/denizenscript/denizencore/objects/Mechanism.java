@@ -50,7 +50,7 @@ public class Mechanism {
     }
 
     public boolean hasValue() {
-        return value != null;
+        return value != null && !value.asString().isEmpty();
     }
 
     public boolean matches(String string) {
