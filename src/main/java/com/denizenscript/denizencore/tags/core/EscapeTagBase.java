@@ -127,7 +127,7 @@ public class EscapeTagBase {
         input = CoreUtilities.replace(input, "&fs", "/");
         input = CoreUtilities.replace(input, "&ss", "§");
         input = CoreUtilities.replace(input, "&ns", "#");
-        input = CoreUtilities.replace(input, "&sp", String.valueOf((char) 0x00A0));
+        input = CoreUtilities.replace(input, "&sp", CoreUtilities.NBSP);
         input = CoreUtilities.replace(input, "&amp", "&");
         return input;
     }

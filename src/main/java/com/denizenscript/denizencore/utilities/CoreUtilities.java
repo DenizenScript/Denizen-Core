@@ -22,6 +22,14 @@ import java.util.*;
 
 public class CoreUtilities {
 
+    public static final char NBSP_Char = (char) 0x00A0;
+
+    public static final String NBSP = String.valueOf(NBSP_Char);
+
+    public static String clearNBSPs(String input) {
+        return input.replace(NBSP_Char, ' ');
+    }
+
     public static TagContext noDebugContext;
     public static TagContext basicContext;
 

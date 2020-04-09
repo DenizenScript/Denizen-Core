@@ -1444,7 +1444,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.pad_left[...] must have a value.");
                 return null;
             }
-            String with = String.valueOf((char) 0x00A0);
+            String with = CoreUtilities.NBSP;
             int length = attribute.getIntContext(1);
 
             // <--[tag]
@@ -1481,7 +1481,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("The tag ElementTag.pad_right[...] must have a value.");
                 return null;
             }
-            String with = String.valueOf((char) 0x00A0);
+            String with = CoreUtilities.NBSP;
             int length = attribute.getIntContext(1);
 
             // <--[tag]
