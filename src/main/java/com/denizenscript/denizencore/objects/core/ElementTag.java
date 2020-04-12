@@ -1309,6 +1309,40 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.is_uppercase>
+        // @returns ElementTag(Boolean)
+        // @group element manipulation
+        // @description
+        // Returns whether all characters in the element are uppercase letters.
+        // Numbers and symbols will return false.
+        // -->
+        registerTag("is_uppercase", (attribute, object) -> {
+            for (char c : object.element.toCharArray()) {
+                if (!Character.isUpperCase(c)) {
+                    return new ElementTag(false);
+                }
+            }
+            return new ElementTag(true);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_lowercase>
+        // @returns ElementTag(Boolean)
+        // @group element manipulation
+        // @description
+        // Returns whether all characters in the element are lowercase.
+        // Numbers and symbols will return false.
+        // -->
+        registerTag("is_lowercase", (attribute, object) -> {
+            for (char c : object.element.toCharArray()) {
+                if (!Character.isLowerCase(c)) {
+                    return new ElementTag(false);
+                }
+            }
+            return new ElementTag(true);
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.to_uppercase>
         // @returns ElementTag
         // @group element manipulation
