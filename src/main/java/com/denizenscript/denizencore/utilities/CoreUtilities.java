@@ -30,6 +30,43 @@ public class CoreUtilities {
         return input.replace(NBSP_Char, ' ');
     }
 
+    public static String splitLinesByCharacterCount(String str, int length) {
+        if (length < 3) {
+            return str;
+        }
+        StringBuilder output = new StringBuilder(str.length() * 2);
+        int curLineLen = 0;
+        int lineStart = 0;
+        mainloop:
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '\n') {
+                output.append(str, lineStart, i);
+                curLineLen = 0;
+                lineStart = i + 1;
+                continue;
+            }
+            curLineLen++;
+            if (curLineLen > length) {
+                for (int x = i - 1; x > lineStart; x--) {
+                    char xc = str.charAt(x);
+                    if (xc == ' ') {
+                        output.append(str, lineStart, x).append("\n");
+                        curLineLen = 0;
+                        lineStart = x + 1;
+                        i = x;
+                        continue mainloop;
+                    }
+                }
+                output.append(str, lineStart, i);
+                curLineLen = 0;
+                lineStart = i;
+            }
+        }
+        output.append(str, lineStart, str.length());
+        return output.toString();
+    }
+
     public static TagContext noDebugContext;
     public static TagContext basicContext;
 

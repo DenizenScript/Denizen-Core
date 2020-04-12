@@ -1309,6 +1309,20 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.split_lines[<#>]>
+        // @returns ElementTag
+        // @group element manipulation
+        // @description
+        // Returns the element split into separate lines based on a maximum number of characters per line.
+        // This does not account for character width, so for example 20 "W"s and 20 "i"s will be treated as the same number of characters.
+        // Spaces will be preferred to become newlines, unless a line does not contain any spaces.
+        // -->
+        registerTag("split_lines", (attribute, object) -> {
+            int characterCount = attribute.getIntContext(1);
+            return new ElementTag(CoreUtilities.splitLinesByCharacterCount(object.element, characterCount));
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.is_uppercase>
         // @returns ElementTag(Boolean)
         // @group element manipulation
