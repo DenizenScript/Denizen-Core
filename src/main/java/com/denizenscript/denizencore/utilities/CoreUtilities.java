@@ -58,7 +58,7 @@ public class CoreUtilities {
                         continue mainloop;
                     }
                 }
-                output.append(str, lineStart, i);
+                output.append(str, lineStart, i).append("\n");
                 curLineLen = 0;
                 lineStart = i;
             }
