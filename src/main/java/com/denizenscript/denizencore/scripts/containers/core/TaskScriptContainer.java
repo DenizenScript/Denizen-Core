@@ -84,6 +84,6 @@ public class TaskScriptContainer extends ScriptContainer {
      * @return the new queue.
      */
     public ScriptQueue run(ScriptEntryData data, ContextSource context, Consumer<ScriptQueue> configure) {
-        return ScriptUtilities.createAndStartQueue(this, null, data, context, configure, null);
+        return ScriptUtilities.createAndStartQueue(this, null, data, context, configure, null, null, null, null);
     }
 }

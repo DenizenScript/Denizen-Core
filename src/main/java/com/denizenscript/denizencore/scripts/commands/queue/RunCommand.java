@@ -185,36 +185,16 @@ public class RunCommand extends AbstractCommand implements Holdable {
             speed = scriptEntry.getObjectTag("speed");
         }
 
-        final ScriptTag finalScript = script;
+        ListTag definitions = null;
+        if (scriptEntry.hasObject("definitions")) {
+            ElementTag raw_defintions = scriptEntry.getElement("definitions");
+            definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
+        }
+
         Consumer<ScriptQueue> configure = (queue) -> {
             // Set any delay
             if (scriptEntry.hasObject("delay")) {
                 queue.delayUntil(DenizenCore.serverTimeMillis + ((DurationTag) scriptEntry.getObject("delay")).getMillis());
-            }
-            // Set any definitions
-            if (scriptEntry.hasObject("definitions")) {
-                int x = 1;
-                ElementTag raw_defintions = scriptEntry.getElement("definitions");
-                ListTag definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
-                String[] definition_names = null;
-                try {
-                    String str = finalScript.getContainer().getString("definitions");
-                    if (str != null) {
-                        definition_names = str.split("\\|");
-                    }
-                }
-                catch (Exception ex) {
-                    Debug.echoError(ex);
-                }
-                for (String definition : definitions) {
-                    String name = definition_names != null && definition_names.length >= x ? definition_names[x - 1].trim() : String.valueOf(x);
-                    queue.addDefinition(name, definition);
-                    if (scriptEntry.dbCallShouldDebug()) {
-                        Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
-                    }
-                    x++;
-                }
-                queue.addDefinition("raw_context", raw_defintions.asString());
             }
             // Setup a callback if the queue is being waited on
             if (scriptEntry.shouldWaitFor()) {
@@ -223,6 +203,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
             // Save the queue for script referencing
             scriptEntry.addObject("created_queue", new QueueTag(queue));
         };
-        ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id);
+
+        ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id, definitions, scriptEntry);
     }
 }
