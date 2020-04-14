@@ -66,7 +66,15 @@ public class ScriptContainer implements Debuggable {
         this.name = scriptContainerName.toUpperCase();
     }
 
-    // The contents of the script container
+    /**
+     * Whether this script container type can run script logic.
+     * If this is false, this is a data-only script container.
+     */
+    public boolean canRunScripts = true;
+
+    /**
+     * The contents of the script container
+     */
     YamlConfiguration contents;
 
     /**
@@ -110,7 +118,9 @@ public class ScriptContainer implements Debuggable {
     //
     // -->
 
-    // The name of the script container
+    /**
+     * The name of the script container
+     */
     private String name;
 
     /**

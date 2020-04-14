@@ -31,5 +31,6 @@ public class YamlDataScriptContainer extends ScriptContainer {
 
     public YamlDataScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
+        canRunScripts = false;
     }
 }

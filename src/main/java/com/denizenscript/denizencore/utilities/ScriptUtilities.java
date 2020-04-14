@@ -25,6 +25,10 @@ public class ScriptUtilities {
      * @return the new queue.
      */
     public static ScriptQueue createAndStartQueue(ScriptContainer container, String path, ScriptEntryData data, ContextSource context, Consumer<ScriptQueue> configure) {
+        if (!container.canRunScripts) {
+            Debug.echoError("The script container '" + container.getName() + "' is of type '" + container.getContainerType() + "' which cannot run scripts. Consider using a task script instead.");
+            return null;
+        }
         if (data == null) {
             data = DenizenCore.getImplementation().getEmptyScriptEntryData();
         }
