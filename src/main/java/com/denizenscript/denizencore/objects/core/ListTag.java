@@ -1177,15 +1177,25 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.lowest>
+        // @attribute <ListTag.lowest[(<tag>)]>
         // @returns ElementTag(Decimal)
         // @description
         // returns the smallest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "1".
+        // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
+        // For example, <server.list_online_players.lowest[money]> returns the player with the least money currently online.
         // -->
         registerTag("lowest", (attribute, object) -> {
+            String tag = null;
+            if (attribute.hasContext(1)) {
+                tag = attribute.getContext(1);
+            }
             BigDecimal lowest = null;
-            for (String str : object) {
+            for (ObjectTag obj : object.objectForms) {
+                if (tag != null) {
+                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                }
+                String str = obj.toString();
                 if (ArgumentHelper.matchesDouble(str)) {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (lowest == null || lowest.compareTo(val) > 0) {
@@ -1200,15 +1210,25 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.highest>
+        // @attribute <ListTag.highest[(<tag>)]>
         // @returns ElementTag(Decimal)
         // @description
         // returns the highest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "10".
+        // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
+        // For example, <server.list_players.highest[money]> returns the player with the most money.
         // -->
         registerTag("highest", (attribute, object) -> {
+            String tag = null;
+            if (attribute.hasContext(1)) {
+                tag = attribute.getContext(1);
+            }
             BigDecimal highest = null;
-            for (String str : object) {
+            for (ObjectTag obj : object.objectForms) {
+                if (tag != null) {
+                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                }
+                String str = obj.toString();
                 if (ArgumentHelper.matchesDouble(str)) {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (highest == null || highest.compareTo(val) < 0) {
