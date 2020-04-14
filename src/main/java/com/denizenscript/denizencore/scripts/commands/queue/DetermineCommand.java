@@ -31,7 +31,7 @@ public class DetermineCommand extends AbstractCommand {
     // Sets the outcome of a script.
     // The most common use case is within script events (for example, to cancel the event).
     // This is also required for all procedure scripts.
-    // It may be useful in other cases (such as a task script that returns an result, via the save argument).
+    // It may be useful in other cases (such as a task script that returns a result, via the save argument).
     //
     // By default, the determine command will end the queue (similar to <@link command stop>).
     // If you wish to prevent this, specify the "passively" argument.

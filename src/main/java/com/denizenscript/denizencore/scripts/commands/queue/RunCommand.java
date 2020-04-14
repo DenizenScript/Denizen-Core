@@ -3,16 +3,15 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
-import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class RunCommand extends AbstractCommand implements Holdable {
 
@@ -161,111 +160,69 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
         // Get the script
         ScriptTag script = scriptEntry.getObjectTag("script");
-
-        // Get the entries
-        List<ScriptEntry> entries;
-        // If it's local
         if (scriptEntry.hasObject("local")) {
-            entries = scriptEntry.getScript().getContainer().getEntries(scriptEntry.entryData.clone(),
-                    scriptEntry.getElement("path").asString());
             script = scriptEntry.getScript();
         }
 
-        // If it has a path
-        else if (scriptEntry.hasObject("path") && scriptEntry.getObject("path") != null) {
-            entries = script.getContainer().getEntries(scriptEntry.entryData.clone(),
-                    scriptEntry.getElement("path").asString());
-        }
+        String path = scriptEntry.hasObject("path") ? scriptEntry.getElement("path").asString() : null;
 
-        // Else, assume standard path
-        else {
-            entries = script.getContainer().getBaseEntries(scriptEntry.entryData.clone());
+        if (script == null) {
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
+            return;
         }
-
-        if (entries == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path or script name)!");
+        if (!script.getContainer().getContents().isList(path)) {
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path)!");
             return;
         }
 
-        // Get the 'id' if specified
-        String id = (scriptEntry.hasObject("id") ?
-                "FORCE:" + (scriptEntry.getElement("id")).asString() : script.getContainer().getName());
+        String id = scriptEntry.hasObject("id") ? "FORCE:" + (scriptEntry.getElement("id")).asString() : null;
 
-        // Build the queue
-        ScriptQueue queue;
+        DurationTag speed = null;
         if (scriptEntry.hasObject("instant")) {
-            queue = new InstantQueue(id).addEntries(entries);
+            speed = new DurationTag(0);
         }
-        else {
-
-            DurationTag speed;
-            if (scriptEntry.hasObject("speed")) {
-                speed = scriptEntry.getObjectTag("speed");
-            }
-            else if (script != null && script.getContainer().contains("SPEED")) {
-                speed = DurationTag.valueOf(script.getContainer().getString("SPEED", "0"));
-            }
-            else {
-                speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
-            }
-            if (speed.getTicks() > 0) {
-                queue = new TimedQueue(id).setSpeed(speed.getTicks()).addEntries(entries);
-            }
-            else {
-                queue = new InstantQueue(id).addEntries(entries);
-            }
+        else if (scriptEntry.hasObject("speed")) {
+            speed = scriptEntry.getObjectTag("speed");
         }
 
-        // Set any delay
-        if (scriptEntry.hasObject("delay")) {
-            queue.delayUntil(DenizenCore.serverTimeMillis + ((DurationTag) scriptEntry.getObject("delay")).getMillis());
-        }
-
-        // Set any definitions
-        if (scriptEntry.hasObject("definitions")) {
-            int x = 1;
-            ElementTag raw_defintions = scriptEntry.getElement("definitions");
-            ListTag definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
-            String[] definition_names = null;
-            try {
-                if (script != null && script.getContainer() != null) {
-                    String str = script.getContainer().getString("definitions");
+        final ScriptTag finalScript = script;
+        Consumer<ScriptQueue> configure = (queue) -> {
+            // Set any delay
+            if (scriptEntry.hasObject("delay")) {
+                queue.delayUntil(DenizenCore.serverTimeMillis + ((DurationTag) scriptEntry.getObject("delay")).getMillis());
+            }
+            // Set any definitions
+            if (scriptEntry.hasObject("definitions")) {
+                int x = 1;
+                ElementTag raw_defintions = scriptEntry.getElement("definitions");
+                ListTag definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
+                String[] definition_names = null;
+                try {
+                    String str = finalScript.getContainer().getString("definitions");
                     if (str != null) {
                         definition_names = str.split("\\|");
                     }
                 }
-            }
-            catch (Exception ex) {
-                Debug.echoError(ex);
-            }
-            for (String definition : definitions) {
-                String name = definition_names != null && definition_names.length >= x ?
-                        definition_names[x - 1].trim() : String.valueOf(x);
-                queue.addDefinition(name, definition);
-                if (scriptEntry.dbCallShouldDebug()) {
-                    Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
+                catch (Exception ex) {
+                    Debug.echoError(ex);
                 }
-                x++;
-            }
-            queue.addDefinition("raw_context", raw_defintions.asString());
-        }
-
-        // Setup a callback if the queue is being waited on
-        if (scriptEntry.shouldWaitFor()) {
-            // Record the ScriptEntry
-            final ScriptEntry se = scriptEntry;
-            queue.callBack(new Runnable() {
-                @Override
-                public void run() {
-                    se.setFinished(true);
+                for (String definition : definitions) {
+                    String name = definition_names != null && definition_names.length >= x ? definition_names[x - 1].trim() : String.valueOf(x);
+                    queue.addDefinition(name, definition);
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, "Adding definition '" + name + "' as " + definition);
+                    }
+                    x++;
                 }
-            });
-        }
-
-        // Save the queue for script referencing
-        scriptEntry.addObject("created_queue", new QueueTag(queue));
-
-        // OK, GO!
-        queue.start();
+                queue.addDefinition("raw_context", raw_defintions.asString());
+            }
+            // Setup a callback if the queue is being waited on
+            if (scriptEntry.shouldWaitFor()) {
+                queue.callBack(() -> scriptEntry.setFinished(true));
+            }
+            // Save the queue for script referencing
+            scriptEntry.addObject("created_queue", new QueueTag(queue));
+        };
+        ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id);
     }
 }
