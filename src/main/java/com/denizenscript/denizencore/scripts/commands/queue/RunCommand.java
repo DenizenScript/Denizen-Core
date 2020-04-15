@@ -170,7 +170,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
             return;
         }
-        if (!script.getContainer().getContents().isList(path)) {
+        if (path != null && (!script.getContainer().contains(path) || !script.getContainer().getContents().isList(path))) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path)!");
             return;
         }
@@ -204,6 +204,10 @@ public class RunCommand extends AbstractCommand implements Holdable {
             scriptEntry.addObject("created_queue", new QueueTag(queue));
         };
 
-        ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id, definitions, scriptEntry);
+        ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id, definitions, scriptEntry);
+        if (result == null) {
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed!");
+            return;
+        }
     }
 }
