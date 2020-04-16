@@ -175,6 +175,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
     public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
+    // In Bukkit impl, Added 2020/04/16, deprecate officially by 2021.
+    public static Warning inventoryScriptName = new FutureWarning("The tag inventory.script_name is deprecated: use 'inventory.script' (optionally append '.name' for exact equivalence).");
+
     // In Bukkit impl, Added 2020/03/05, deprecate officially by 2022.
     public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
