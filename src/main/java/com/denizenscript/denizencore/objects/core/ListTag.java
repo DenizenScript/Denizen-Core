@@ -826,6 +826,29 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.shared_contents[...|...]>
+        // @returns ListTag
+        // @description
+        // returns a list of only items that appear in both this list and the input one.
+        // For example: .shared_contents[two|four|five|six] on a list of "one|two|three|four" will return "two|four".
+        // This will also inherently deduplicate the output as part of processing.
+        // -->
+        registerTag("shared_contents", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag ListTag.shared_contents[...] must have a value.");
+                return null;
+            }
+            ListTag secondList = getListFor(attribute.getContextObject(1), attribute.context);
+            ListTag output = new ListTag();
+            for (String val : object) {
+                if (secondList.containsCaseInsensitive(val) && !output.containsCaseInsensitive(val)) {
+                    output.add(val);
+                }
+            }
+            return output;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.replace[(regex:)<element>]>
         // @returns ElementTag
         // @description
@@ -1811,6 +1834,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("type", (attribute, object) -> {
             return new ElementTag("List");
         });
+    }
+
+    public boolean containsCaseInsensitive(String val) {
+        val = CoreUtilities.toLowerCase(val);
+        for (String str : this) {
+            if (CoreUtilities.toLowerCase(str).equals(val)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static ObjectTagProcessor<ListTag> tagProcessor = new ObjectTagProcessor<>();
