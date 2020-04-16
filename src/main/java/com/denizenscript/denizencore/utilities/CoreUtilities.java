@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
@@ -346,13 +347,14 @@ public class CoreUtilities {
         }
         return temp;
     }
+    public static DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
+    static {
+        df.setMaximumFractionDigits(340);
+    }
 
     public static String doubleToString(double input) {
-        String temp = String.valueOf(input);
-        if (temp.endsWith(".0")) {
-            return temp.substring(0, temp.length() - 2);
-        }
-        return temp;
+        return df.format(input);
     }
 
     /**
