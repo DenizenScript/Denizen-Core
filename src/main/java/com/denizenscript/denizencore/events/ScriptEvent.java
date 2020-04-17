@@ -15,6 +15,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 
@@ -77,6 +78,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public String[] rawEventArgs;
         public List<ScriptEvent> matches = new ArrayList<>();
         public TagContext context;
+        public boolean fireAfter = false;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -157,6 +159,23 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return container.getName() + ".events.on " + event;
         }
     }
+    // <--[language]
+    // @name Script Event After vs On
+    // @group Script Events
+    // @description
+    // Modern ScriptEvents let you choose between "on" and "after".
+    // An "on" event looks like "on player breaks block:" while an "after" event looks like "after player breaks block:".
+    //
+    // An "on" event fires *before* the event actually happens in the world. This means some relevant data won't be updated
+    // (for example, "<context.location.material>" would still show the block type that is going to be broken)
+    // and the result of the event can be changed (eg the event can be cancelled to stop it from actually going through).
+    //
+    // An "after" event, as the name implies, fires *after* the event actually happens. This means data will be already updated to the new state
+    // (so "<context.location.material>" would now show air) but could potentially contain an arbitrary new state from unrelated changes
+    // (for example "<context.location.material>" might now show a different block type, or the original one, if the event was changed,
+    // or another thing happened right after the event but before the 'after' event ran).
+    // This also means you cannot affect the outcome of the event at all (you can't cancel it or anything else - the "determine" command does nothing).
+    // -->
 
     public static void reload() {
         if (Debug.showLoading) {
@@ -188,8 +207,22 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 continue;
             }
             for (StringHolder evt1 : config.getKeys(false)) {
-                String evt = evt1.str.substring("on ".length()).replace("&dot", ".").replace("&amp", "&");
+                String evt;
+                boolean after = false;
+                if (evt1.low.startsWith("on ")) {
+                    evt = evt1.str.substring("on ".length());
+                }
+                else if (evt1.low.startsWith("after ")) {
+                    evt = evt1.str.substring("after ".length());
+                    after = true;
+                }
+                else {
+                    Debug.echoError("Script path '" + evt1.str + "' is invalid (missing 'on' or 'after').");
+                    continue;
+                }
+                evt = evt.replace("&dot", ".").replace("&amp", "&");
                 ScriptPath path = new ScriptPath(container, evt, evt1.str);
+                path.fireAfter = after;
                 if (path.set == null) {
                     Debug.echoError("Script path '" + path + "' is invalid (empty or misconfigured).");
                     continue;
@@ -368,11 +401,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(this, path)) {
-                    copy.run(path);
+                    if (path.fireAfter) {
+                        final ScriptPath finalPath = path;
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> copy.run(finalPath), 0.01f));
+                    }
+                    else {
+                        copy.run(path);
+                    }
                 }
             }
             catch (Exception e) {
-                Debug.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
+                Debug.echoError("Matching script " + path.container.getName() + " event path:" + path.event + ":::");
                 Debug.echoError(e);
             }
         }
@@ -381,18 +420,26 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private String currentEvent;
 
     public void run(ScriptPath path) {
-        stats.scriptFires++;
-        if (path.container.shouldDebug()) {
-            Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
-                    + " for script '<A>" + path.container.getName() + "<Y>'");
+        try {
+            stats.scriptFires++;
+            if (path.container.shouldDebug()) {
+                Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
+                        + " for script '<A>" + path.container.getName() + "<Y>'");
+            }
+            List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
+            ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
+            currentEvent = path.event;
+            queue.setContextSource(this);
+            if (!path.fireAfter) {
+                queue.determinationTarget = (o) -> applyDetermination(path, o);
+            }
+            queue.start();
+            stats.nanoTimes += System.nanoTime() - queue.startTime;
         }
-        List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
-        ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
-        currentEvent = path.event;
-        queue.setContextSource(this);
-        queue.determinationTarget = (o) -> applyDetermination(path, o);
-        queue.start();
-        stats.nanoTimes += System.nanoTime() - queue.startTime;
+        catch (Exception e) {
+            Debug.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
+            Debug.echoError(e);
+        }
     }
 
     // <--[language]
