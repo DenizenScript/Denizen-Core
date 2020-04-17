@@ -167,8 +167,7 @@ public class ScriptContainer implements Debuggable {
     // @name Script Type
     // @group Script Container System
     // @description
-    // The type of container that a script is in. For example, 'task script' is a script type that has some sort of
-    // utility script or
+    // The type of container that a script is in. For example, 'task script' is a script type that has some sort of utility.
     //
     // <code>
     // script name:

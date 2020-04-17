@@ -47,6 +47,7 @@ public class DefinitionTagBase {
         // @description
         // Returns a definition from the current queue.
         // The object will be returned as the most-valid type based on the input.
+        // In most usages, the tag name is left blank, like "<[defhere]>".
         // -->
         String defName = event.getNameContext();
 
