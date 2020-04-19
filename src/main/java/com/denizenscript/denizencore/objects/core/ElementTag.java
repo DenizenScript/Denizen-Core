@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.tags.*;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.SQLEscaper;
@@ -2224,6 +2225,48 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError(e);
                 return null;
             }
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.matches_character_set[<characters>]>
+        // @returns ElementTag(Boolean)
+        // @group element checking
+        // @description
+        // Returns true if the element contains only symbols from the given character set.
+        // The character set is expected to be ASCII only.
+        // This tag is case-sensitive.
+        // For example:
+        // "alphabet" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "true",
+        // "Alphabet" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "false" because it has a capital "A",
+        // and "alphabet1" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "false" because it has a "1".
+        // -->
+        registerTag("matches_character_set", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag ElementTag.matches_character_set[...] must have a value.");
+                return null;
+            }
+            return new ElementTag(new AsciiMatcher(attribute.getContext(1)).isOnlyMatches(object.element));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.trim_to_character_set[<characters>]>
+        // @returns ElementTag
+        // @group conversion
+        // @description
+        // Returns only the characters within the element that match the character set.
+        // The character set is expected to be ASCII only.
+        // This tag is case-sensitive.
+        // For example:
+        // "alphabet" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "alphabet",
+        // "Alphabet" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "lphabet" without the capital "A".
+        // and "alphabet1" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "alphabet" without the "1".
+        // -->
+        registerTag("trim_to_character_set", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag ElementTag.trim_to_character_set[...] must have a value.");
+                return null;
+            }
+            return new ElementTag(new AsciiMatcher(attribute.getContext(1)).trimToMatches(object.element));
         });
 
         // <--[tag]

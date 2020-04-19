@@ -33,4 +33,15 @@ public class AsciiMatcher {
         }
         return true;
     }
+
+    public String trimToMatches(String text) {
+        StringBuilder output = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c < 255 && accepted[c]) {
+                output.append(c);
+            }
+        }
+        return output.toString();
+    }
 }
