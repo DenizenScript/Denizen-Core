@@ -184,6 +184,9 @@ public class Deprecations {
     // Added 2020/03/14, deprecate officially by 2022.
     public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
 
+    // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
+    public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
