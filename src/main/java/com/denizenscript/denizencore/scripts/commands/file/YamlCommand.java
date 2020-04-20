@@ -861,6 +861,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // -->
         if (attribute.startsWith("has_changes")) {
             event.setReplaced(new ElementTag(getYaml(id).isDirty()).getAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
