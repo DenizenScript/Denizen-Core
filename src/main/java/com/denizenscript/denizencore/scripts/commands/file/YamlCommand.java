@@ -429,6 +429,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         fileObj.getParentFile().mkdirs();
                         YamlConfiguration yaml = yamls.get(id);
                         String outp = yaml.saveToString(false);
+                        yaml.setDirty(false);
                         Runnable saveRunnable = new Runnable() {
                             @Override
                             public void run() {
@@ -444,7 +445,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                     }
                                     writer.write(outp);
                                     writer.close();
-                                    yaml.setDirty(false);
                                 }
                                 catch (IOException e) {
                                     Debug.echoError(e);
