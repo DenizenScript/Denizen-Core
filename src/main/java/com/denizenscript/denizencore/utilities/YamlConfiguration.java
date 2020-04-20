@@ -39,6 +39,7 @@ public class YamlConfiguration {
     }
 
     Map<StringHolder, Object> contents;
+    boolean dirty;
 
     /**
      * Use StringHolders instead of strings.
@@ -107,6 +108,7 @@ public class YamlConfiguration {
 
     public YamlConfiguration() {
         contents = new HashMap<>();
+        dirty = false;
     }
 
     public Set<StringHolder> getKeys(boolean deep) {
@@ -186,6 +188,7 @@ public class YamlConfiguration {
                 else {
                     portion.put(new StringHolder(parts.get(i)), o);
                 }
+                dirty = true;
                 return;
             }
             else if (oPortion == null) {
@@ -308,5 +311,13 @@ public class YamlConfiguration {
             Debug.echoError(e);
         }
         return null;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 }
