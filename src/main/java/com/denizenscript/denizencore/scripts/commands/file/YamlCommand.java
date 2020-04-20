@@ -63,6 +63,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // That means, if you use "set" to make changes, those changes will not be saved to any file, until you use "savefile".
     // Similarly, "create" does not create any file, instead it only creates a YAML object in RAM.
     //
+    // In-memory changes to a loaded YAML object will mark that object as having changes. Before saving,
+    // you can check whether the YAML object needs to be written to disk with the has_changes tag.
+    //
     // Note that the '.yml' extension is not automatically appended, and you will have to include that in filenames.
     //
     // All usages of the YAML command must include the "id:" argument. This is any arbitrary name, as plaintext or from a tag,
@@ -76,6 +79,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // <yaml[<idname>].contains[<path>]>
     // <yaml[<idname>].read[<path>]>
     // <yaml[<idname>].list_keys[<path>]>
+    // <yaml[<idname>].has_changes>
     //
     // @Usage
     // Use to create a new YAML file.
@@ -423,7 +427,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             return;
                         }
                         fileObj.getParentFile().mkdirs();
-                        String outp = yamls.get(id).saveToString(false);
+                        YamlConfiguration yaml = yamls.get(id);
+                        String outp = yaml.saveToString(false);
                         Runnable saveRunnable = new Runnable() {
                             @Override
                             public void run() {
@@ -439,6 +444,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                     }
                                     writer.write(outp);
                                     writer.close();
+                                    yaml.setDirty(false);
                                 }
                                 catch (IOException e) {
                                     Debug.echoError(e);
@@ -845,6 +851,16 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 event.setReplaced(new ListTag(keys).getAttribute(attribute.fulfill(1)));
                 return;
             }
+        }
+
+        // <--[tag]
+        // @attribute <yaml[<id>].has_changes>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether this YAML object has had changes since the last save or load.
+        // -->
+        if (attribute.startsWith("has_changes")) {
+            event.setReplaced(new ElementTag(getYaml(id).isDirty()).getAttribute(attribute.fulfill(1)));
         }
 
         // <--[tag]
