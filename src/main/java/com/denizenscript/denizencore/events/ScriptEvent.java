@@ -400,7 +400,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         stats.fires++;
         for (ScriptPath path : eventPaths) {
             try {
-                if (matchesScript(this, path)) {
+                if (matchesScript(copy, path)) {
                     if (path.fireAfter) {
                         final ScriptPath finalPath = path;
                         DenizenCore.schedule(new OneTimeSchedulable(() -> copy.run(finalPath), 0.01f));
