@@ -22,44 +22,61 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     public WebGetCommand() {
         setName("webget");
         setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)");
-        setRequiredArguments(1, 5);
+        setRequiredArguments(1, 6);
     }
 
     // <--[command]
     // @Name Webget
-    // @Syntax webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)
+    // @Syntax webget [<url>] (data:<data>) (method:<method>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)
     // @Required 1
-    // @Maximum 5
-    // @Short Gets the contents of a web page.
+    // @Maximum 6
+    // @Short Gets the contents of a web page or API response.
     // @Group core
     //
     // @Description
-    // Connects to a webpage and downloads its contents, to be used via the save argument and corresponding entry tags.
+    // Connects to a webpage or API and downloads its contents, to be used via the save argument and corresponding entry tags.
     //
     // This should almost always be ~waited for.
     //
     // Note that while this will replace URL spaces to %20, you are responsible for any other necessary URL encoding.
-    // You may want to use the element.url_encode tag for this.
+    // You may want to use the <@link tag ElementTag.url_encode> tag for this.
     //
-    // Optionally, use "post:<data>" to specify a set of data to post to the server (changes the method from GET to POST).
+    // Optionally, use "data:<data>" to specify a set of data to send to the server (changes the default method from GET to POST).
     //
-    // Optionally, use "headers:" to specify a list of headers as list of key/value pairs separated by slashes.
+    // Optionally, use "method:<method>" to specify the HTTP method to use in your request.
     //
-    // Optionally use "savefile:" specify a path to save the gotten file to.
+    // Optionally, use "headers:" to specify a list of headers using a ListTag of key/value pairs separated by slashes.
+    //
+    // Optionally, use "savefile:" to specify a path to save the retrieved file to.
     // This will remove the 'result' entry savedata.
     // Path is relative to server base directory.
     //
     // Specify the "timeout:" to set how long the command should wait for a webpage to load before giving up. Defaults to 10 seconds.
     //
     // @Tags
-    // <entry[saveName].failed> returns whether the webget failed.
-    // <entry[saveName].result> returns the result of the webget, if it did not fail.
+    // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
+    // <entry[saveName].result> returns the result of the webget. This is null only if webget failed to connect to the url.
+    // <entry[saveName].status> returns the HTTP status code of the webget. This is null only if webget failed to connect to the url.
     // <ElementTag.url_encode>
     //
     // @Usage
     // Use to download the google home page.
     // - ~webget https://google.com save:google
     // - narrate <entry[google].result>
+    //
+    // @Usage
+    // Use to save a webpage to your server's base directory
+    // - ~webget https://google.com savefile:google.html
+    //
+    // @Usage
+    // Use to post data to a server.
+    // - ~webget https://api.mojang.com/orders/statistics 'data:{"metricKeys":["item_sold_minecraft"]}' "headers:Content-type/application/json" save:request
+    // - narrate <entry[request].result>
+    //
+    // @Usage
+    // Use to retrieve and load an API response into yaml.
+    // - ~webget https://api.mojang.com/users/profiles/minecraft/<player.name> save:request
+    // - yaml loadtext:<entry[request].result> id:player_data
     //
     // -->
 
@@ -72,9 +89,15 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("url", new ElementTag(arg.raw_value));
             }
 
-            else if (!scriptEntry.hasObject("post")
-                    && arg.matchesPrefix("post")) {
-                scriptEntry.addObject("post", arg.asElement());
+            else if (!scriptEntry.hasObject("data")
+                    && arg.matchesPrefix("data", "post")) {
+                scriptEntry.addObject("data", arg.asElement());
+            }
+
+            else if (!scriptEntry.hasObject("method")
+                    && arg.matchesPrefix("method")
+                    && arg.matches("get", "post", "head", "options", "put", "delete", "trace")) {
+                scriptEntry.addObject("method", arg.asElement());
             }
 
             else if (!scriptEntry.hasObject("timeout")
@@ -120,14 +143,16 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
 
         final ElementTag url = scriptEntry.getElement("url");
-        final ElementTag postData = scriptEntry.getElement("post");
+        final ElementTag data = scriptEntry.getElement("data");
+        final ElementTag method = scriptEntry.getElement("method");
         final DurationTag timeout = scriptEntry.getObjectTag("timeout");
         final ListTag headers = scriptEntry.getObjectTag("headers");
         final ElementTag saveFile = scriptEntry.getElement("savefile");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), url.debug()
-                            + (postData != null ? postData.debug() : "")
+                            + (data != null ? data.debug() : "")
+                            + (method != null ? method.debug() : "")
                             + (timeout != null ? timeout.debug() : "")
                             + (saveFile != null ? saveFile.debug() : "")
                             + (headers != null ? headers.debug() : ""));
@@ -136,21 +161,57 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, postData, url, timeout, headers, saveFile);
+                webGet(scriptEntry, data, method, url, timeout, headers, saveFile);
             }
         });
         thr.start();
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final ElementTag postData, ElementTag urlp, DurationTag timeout, ListTag headers, ElementTag saveFile) {
+    public void buildResult(BufferedReader buffIn, StringBuilder sb) {
+        // Probably a better way to do this bit.
+        while (true) {
+            try {
+                String temp = buffIn.readLine();
+                if (temp == null) {
+                    break;
+                }
+                sb.append(temp).append("\n");
+            }
+            catch (Exception ex) {
+                break;
+            }
+        }
+    }
 
+    public void writeToFile(InputStream in, ElementTag saveFile) throws Exception {
+        File file = new File(saveFile.asString());
+        if (!DenizenCore.getImplementation().canWriteToFile(file)) {
+            Debug.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
+        }
+        else {
+            FileOutputStream fout = new FileOutputStream(file);
+            byte[] buffer = new byte[8 * 1024];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                fout.write(buffer, 0, len);
+            }
+            fout.flush();
+            fout.close();
+        }
+    }
+
+    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, ElementTag urlp, DurationTag timeout, ListTag headers, ElementTag saveFile) {
         BufferedReader buffIn = null;
+        HttpURLConnection uc = null;
         try {
             URL url = new URL(urlp.asString().replace(" ", "%20"));
-            final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
-            if (postData != null) {
+            if (method != null) {
+                uc.setRequestMethod(method.asString().toUpperCase());
+            }
+            else if (data != null) {
                 uc.setRequestMethod("POST");
             }
             if (headers != null) {
@@ -163,54 +224,27 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             }
             uc.setConnectTimeout((int) timeout.getMillis());
             uc.connect();
-            if (postData != null) {
-                uc.getOutputStream().write(postData.asString().getBytes(StandardCharsets.UTF_8));
+            if (data != null) {
+                uc.getOutputStream().write(data.asString().getBytes(StandardCharsets.UTF_8));
             }
+
+            final int status = uc.getResponseCode();
             final StringBuilder sb = new StringBuilder();
             if (saveFile != null) {
-                File file = new File(saveFile.asString());
-                if (!DenizenCore.getImplementation().canWriteToFile(file)) {
-                    Debug.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
-                }
-                else {
-                    InputStream in = uc.getInputStream();
-                    FileOutputStream fout = new FileOutputStream(file);
-                    byte[] buffer = new byte[8 * 1024];
-                    int len;
-                    while ((len = in.read(buffer)) > 0) {
-                        fout.write(buffer, 0, len);
-                    }
-                    fout.flush();
-                    fout.close();
-                }
+                writeToFile(uc.getInputStream(), saveFile);
             }
             else {
                 buffIn = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-                // Probably a better way to do this bit.
-                while (true) {
-                    try {
-                        String temp = buffIn.readLine();
-                        if (temp == null) {
-                            break;
-                        }
-                        sb.append(temp).append("\n");
-                    }
-                    catch (Exception ex) {
-                        break;
-                    }
-                }
+                buildResult(buffIn, sb);
                 buffIn.close();
                 buffIn = null;
             }
+
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
-                    try {
-                        scriptEntry.addObject("failed", new ElementTag(uc.getResponseCode() == 200 ? "false" : "true"));
-                    }
-                    catch (Exception e) {
-                        Debug.echoError(e);
-                    }
+                    scriptEntry.addObject("status", new ElementTag(status));
+                    scriptEntry.addObject("failed", new ElementTag(status >= 200 && status < 400 ? "false" : "true"));
                     if (saveFile == null) {
                         scriptEntry.addObject("result", new ElementTag(sb.toString()));
                     }
@@ -220,20 +254,45 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             });
         }
         catch (Exception e) {
-            Debug.echoError(e);
-            try {
-                DenizenCore.schedule(new Schedulable() {
-                    @Override
-                    public boolean tick(float seconds) {
-                        scriptEntry.addObject("failed", new ElementTag("true"));
-                        scriptEntry.setFinished(true);
-                        return false;
+            int tempStatus = -1;
+            final StringBuilder sb = new StringBuilder();
+
+            if (uc != null) {
+                try {
+                    tempStatus = uc.getResponseCode();
+                    if (saveFile != null) {
+                        writeToFile(uc.getErrorStream(), saveFile);
                     }
-                });
+                    else {
+                        buffIn = new BufferedReader(new InputStreamReader(uc.getErrorStream()));
+                        buildResult(buffIn, sb);
+                        buffIn.close();
+                        buffIn = null;
+                    }
+                }
+                catch (Exception e2) {
+                    Debug.echoError(e2);
+                }
             }
-            catch (Exception e2) {
-                Debug.echoError(e2);
+            else {
+                Debug.echoError(e);
             }
+
+            final int status = tempStatus;
+            DenizenCore.schedule(new Schedulable() {
+                @Override
+                public boolean tick(float seconds) {
+                    scriptEntry.addObject("failed", new ElementTag("true"));
+                    if (status != -1) {
+                        scriptEntry.addObject("status", new ElementTag(status));
+                        if (saveFile == null) {
+                            scriptEntry.addObject("result", new ElementTag(sb.toString()));
+                        }
+                    }
+                    scriptEntry.setFinished(true);
+                    return false;
+                }
+            });
         }
         finally {
             try {
