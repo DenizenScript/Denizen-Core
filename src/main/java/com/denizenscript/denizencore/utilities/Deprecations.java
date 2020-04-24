@@ -155,6 +155,9 @@ public class Deprecations {
     // Added 2020/03/14
     public static Warning oldStyleRandomCommand = new SlowWarning("Using the 'random' command with an argument number is deprecated: use the modern colon syntax instead (refer to documentation).");
 
+    // In Bukkit impl, Added 2020/04/24 but deprecated long ago
+    public static Warning takeCommandInventory = new SlowWarning("'take inventory' is deprecated: use 'inventory clear' instead.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
