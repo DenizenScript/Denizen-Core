@@ -144,6 +144,6 @@ public class DefineCommand extends AbstractCommand {
             action.execute(scriptEntry.getContext());
             return;
         }
-        scriptEntry.getResidingQueue().addDefinition(definition.asString(), value);
+        scriptEntry.getResidingQueue().addDefinition(definition.asString(), value.duplicate());
     }
 }

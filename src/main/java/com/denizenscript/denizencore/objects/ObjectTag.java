@@ -147,6 +147,14 @@ public interface ObjectTag {
     String identifySimple();
 
     /**
+     * Create a duplicate of this object, if needed. Primarily for object types where this could specifically matter.
+     * Immutable ObjectTags do not need to implement.
+     */
+    default ObjectTag duplicate() {
+        return this;
+    }
+
+    /**
      * Sets the prefix for this argument, otherwise uses the default.
      *
      * @return the ObjectTag

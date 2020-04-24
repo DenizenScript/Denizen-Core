@@ -137,6 +137,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return flag || arg.contains("|") || arg.startsWith("li@");
     }
 
+    @Override
+    public ObjectTag duplicate() {
+        List<ObjectTag> objs = new ArrayList<>(size());
+        for (ObjectTag obj : objectForms) {
+            objs.add(obj == null ? null : obj.duplicate());
+        }
+        return new ListTag(objs);
+    }
+
     /////////////
     //   Constructors
     //////////
