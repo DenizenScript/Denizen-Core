@@ -143,7 +143,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         for (ObjectTag obj : objectForms) {
             objs.add(obj == null ? null : obj.duplicate());
         }
-        return new ListTag(objs);
+        ListTag result = new ListTag(objs);
+        result.flag = flag;
+        return result;
     }
 
     /////////////
