@@ -159,6 +159,9 @@ public class Deprecations {
     public static Warning takeCommandInventory = new SlowWarning("'take inventory' is deprecated: use 'inventory clear' instead.");
     public static Warning oldInventoryCommands = new SlowWarning("The 'inventory' command sub-options 'add' and 'remove' are deprecated: use 'give' or 'take' command instead.");
 
+    // In Bukkit impl, Added 2020/04/24.
+    public static Warning itemInventoryTag = new SlowWarning("The tag 'item.inventory' is deprecated: use inventory_contents instead.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
