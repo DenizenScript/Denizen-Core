@@ -24,6 +24,16 @@ public class AsciiMatcher {
         return c < 256 && accepted[c];
     }
 
+    public boolean containsAnyMatch(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c < 256 && accepted[c]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isOnlyMatches(String text) {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);

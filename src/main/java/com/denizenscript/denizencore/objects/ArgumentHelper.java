@@ -136,6 +136,7 @@ public class ArgumentHelper {
     }
 
     private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = ".eE-";
+    private static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher(DIGITS);
     private static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
     private static AsciiMatcher DOUBLE_AFTERFIRST_MATCHER = new AsciiMatcher(DIGITS + DOUBLE_CHARS);
 
@@ -144,6 +145,9 @@ public class ArgumentHelper {
             return false;
         }
         if (!INTEGER_MATCHER.isMatch(arg.charAt(0))) {
+            return false;
+        }
+        if (!DIGIT_MATCHER.containsAnyMatch(arg)) {
             return false;
         }
         for (int i = 1; i < arg.length(); i++) {
