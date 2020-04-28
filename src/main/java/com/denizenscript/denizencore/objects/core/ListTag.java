@@ -992,10 +992,18 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // @returns ListTag
                 // @description
                 // returns all elements in the range from the first index to the second.
-                // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three"
+                // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
+                // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
+                // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
                 // -->
                 if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                    int index2 = attribute.getIntContext(2) - 1;
+                    int index2;
+                    if (CoreUtilities.toLowerCase(attribute.getContext(2)).equals("last")) {
+                        index2 = object.size() - 1;
+                    }
+                    else {
+                        index2 = attribute.getIntContext(2) - 1;
+                    }
                     if (index2 >= object.size()) {
                         index2 = object.size() - 1;
                     }
