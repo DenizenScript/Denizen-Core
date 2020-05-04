@@ -155,6 +155,13 @@ public interface ObjectTag {
     }
 
     /**
+     * If any fixes need to be handled after properties are applied to an object, they should be handled here.
+     */
+    default ObjectTag fixAfterProperties() {
+        return this;
+    }
+
+    /**
      * Sets the prefix for this argument, otherwise uses the default.
      *
      * @return the ObjectTag

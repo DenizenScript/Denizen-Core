@@ -216,6 +216,7 @@ public class ObjectFetcher {
                     description = CoreUtilities.replace(description, "&sc", ";");
                     ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
                 }
+                gotten = (T) gotten.fixAfterProperties();
             }
             return gotten;
         }
