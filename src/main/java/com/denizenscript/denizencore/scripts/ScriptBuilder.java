@@ -21,10 +21,6 @@ public class ScriptBuilder {
         return rawLine.substring(infoEnd + 2); // Skip the symbol and the space after.
     }
 
-    /*
-     * Builds ScriptEntry(ies) of items read from a script
-     */
-
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
         List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
 
@@ -81,6 +77,7 @@ public class ScriptBuilder {
                 scriptCommands.add(newEntry);
             }
             catch (Exception e) {
+                Debug.echoError("Exception while building script '" + parent.getName() + "'...");
                 Debug.echoError(e);
             }
         }
