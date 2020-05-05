@@ -22,7 +22,6 @@ public class ScriptBuilder {
     }
 
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
-        List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
 
         if (contents == null || contents.isEmpty()) {
             if (Debug.showScriptBuilder) {
@@ -35,6 +34,7 @@ public class ScriptBuilder {
             Debug.echoDebug(parent, "Building script entries:");
         }
 
+        List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
         for (Object ientry : contents) {
 
             if (ientry == null) {
@@ -47,7 +47,12 @@ public class ScriptBuilder {
             if (ientry instanceof Map) {
                 Object key = ((Map) ientry).keySet().toArray()[0];
                 entry = key.toString();
-                inside = (List<Object>) ((Map) ientry).get(key);
+                Object rawValue = ((Map) ientry).get(key);
+                if (!(rawValue instanceof List)) {
+                    Debug.echoError("Script '" + parent.getName() + "' has invalid line " + ientry + ": line ends with ':' but no script body inside.");
+                    return null;
+                }
+                inside = (List<Object>) rawValue;
             }
             else {
                 entry = ientry.toString();
