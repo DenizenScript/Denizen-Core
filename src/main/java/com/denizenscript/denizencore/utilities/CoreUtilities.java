@@ -23,6 +23,11 @@ import java.util.*;
 
 public class CoreUtilities {
 
+    public static TagContext noDebugContext;
+    public static TagContext basicContext;
+
+    public static DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
+
     public static final char NBSP_Char = (char) 0x00A0;
 
     public static final String NBSP = String.valueOf(NBSP_Char);
@@ -68,10 +73,18 @@ public class CoreUtilities {
         return output.toString();
     }
 
-    public static TagContext noDebugContext;
-    public static TagContext basicContext;
-
-    public static DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
+    public static void fixNewLinesToListSeparation(ListTag list) {
+        for (int i = 0; i < list.size(); i++) {
+            String line = list.get(i);
+            if (line.contains("\n")) {
+                List<String> split = split(line, '\n');
+                list.set(i, split.get(0));
+                for (int x = 1; x < split.size(); x++) {
+                    list.add(i + x, split.get(x));
+                }
+            }
+        }
+    }
 
     public static String replace(String original, String findMe, String swapMeIn) {
         // This is jank but still better than Java's regex-driven String#replace method.

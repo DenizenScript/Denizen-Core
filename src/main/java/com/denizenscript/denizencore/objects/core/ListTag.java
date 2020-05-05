@@ -78,6 +78,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return true;
     }
 
+    @Override
+    public String set(int index, String value) {
+        String result = super.set(index, value);
+        objectForms.set(index, new ElementTag(value));
+        return result;
+    }
+
     public boolean addAll(ListTag inp) {
         objectForms.addAll(inp.objectForms);
         return super.addAll(inp);
