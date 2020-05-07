@@ -34,11 +34,23 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     //
     // These use the object notation "li@".
     // The identity format for ListTags is each item, one after the other, in order, separated by a pipe '|' symbol.
-    // For example, for a list of 'taco', 'potatoes', and 'cheese', it would be 'li@taco|potatoes|cheese'
+    // For example, for a list of 'taco', 'potatoes', and 'cheese', it would be 'li@taco|potatoes|cheese|'
     // A list with zero items in it is simply 'li@',
-    // and a list with one item is just the one item and no pipes.
+    // and a list with one item is just the one item and a pipe on the end.
+    //
+    // If the pipe symbol appears in a list entry, it will be replaced by "&pipe",
+    // similarly if an ampersand appears in a list entry, it will be replaced by "&amp".
+    // This is a subset of Denizen standard escaping, see <@link language property escaping>.
     //
     // -->
+
+    public static String escapeEntry(String value) {
+        return value.replace("&", "&amp").replace("|", "&pipe");
+    }
+
+    public static String unescapeEntry(String value) {
+        return value.replace("&pipe", "|").replace("&amp", "&");
+    }
 
     public final ArrayList<ObjectTag> objectForms;
 
@@ -180,31 +192,42 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
     public ListTag(String items, TagContext context) {
         if (items != null && items.length() > 0) {
-            // Count brackets
-            int brackets = 0;
-            // Record start position
-            int start = 0;
-            // Loop through characters
-            for (int i = 0; i < items.length(); i++) {
-                char chr = items.charAt(i);
-                // Count brackets
-                if (chr == '[') {
-                    brackets++;
-                }
-                else if (chr == ']') {
-                    if (brackets > 0) {
-                        brackets--;
-                    }
-                }
-                // Separate if an un-bracketed pipe is found
-                else if (brackets == 0 && chr == '|') {
-                    super.add(items.substring(start, i));
-                    start = i + 1;
+            if(items.endsWith("|")) {
+                int pipe = items.indexOf('|');
+                int lastPipe = 0;
+                while (pipe != -1) {
+                    super.add(unescapeEntry(items.substring(lastPipe, pipe)));
+                    lastPipe = pipe + 1;
+                    pipe = items.indexOf('|', lastPipe);
                 }
             }
-            // If there is an item waiting, add it too
-            if (start < items.length()) {
-                super.add(items.substring(start));
+            else {
+                // Count brackets
+                int brackets = 0;
+                // Record start position
+                int start = 0;
+                // Loop through characters
+                for (int i = 0; i < items.length(); i++) {
+                    char chr = items.charAt(i);
+                    // Count brackets
+                    if (chr == '[') {
+                        brackets++;
+                    }
+                    else if (chr == ']') {
+                        if (brackets > 0) {
+                            brackets--;
+                        }
+                    }
+                    // Separate if an un-bracketed pipe is found
+                    else if (brackets == 0 && chr == '|') {
+                        super.add(items.substring(start, i));
+                        start = i + 1;
+                    }
+                }
+                // If there is an item waiting, add it too
+                if (start < items.length()) {
+                    super.add(items.substring(start));
+                }
             }
         }
         objectForms = new ArrayList<>(size());
@@ -435,9 +458,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         StringBuilder output = new StringBuilder();
         output.append("li@");
         for (String item : this) {
-            output.append(item).append('|');
+            output.append(escapeEntry(item)).append('|');
         }
-        return output.substring(0, output.length() - 1);
+        return output.toString();
     }
 
     @Override
