@@ -48,11 +48,12 @@ public class ObjectFetcher {
     public static void registerCoreObjects() {
         // Initialize the ObjectFetcher
         registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
-        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
-        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
-        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
         registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
+        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
+        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
+        registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
         registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
+        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
     }
 
     public static MatchesInterface getMatchesFor(Class clazz) {

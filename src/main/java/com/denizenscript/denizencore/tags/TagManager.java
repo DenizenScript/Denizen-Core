@@ -23,6 +23,7 @@ public class TagManager {
         new DurationTagBase();
         new ElementTagBase();
         new ListTagBase();
+        new MapTagBase();
         new QueueTagBase();
         new ScriptTagBase();
 

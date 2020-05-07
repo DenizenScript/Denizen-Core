@@ -38,8 +38,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     // A list with zero items in it is simply 'li@',
     // and a list with one item is just the one item and a pipe on the end.
     //
-    // If the pipe symbol appears in a list entry, it will be replaced by "&pipe",
-    // similarly if an ampersand appears in a list entry, it will be replaced by "&amp".
+    // If the pipe symbol "|" appears in a list entry, it will be replaced by "&pipe",
+    // similarly if an ampersand "&" appears in a list entry, it will be replaced by "&amp".
     // This is a subset of Denizen standard escaping, see <@link language property escaping>.
     //
     // -->
@@ -157,7 +157,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     @Override
-    public ObjectTag duplicate() {
+    public ListTag duplicate() {
         List<ObjectTag> objs = new ArrayList<>(size());
         for (ObjectTag obj : objectForms) {
             objs.add(obj == null ? null : obj.duplicate());
