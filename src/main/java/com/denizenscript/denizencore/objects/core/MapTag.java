@@ -79,7 +79,7 @@ public class MapTag implements ObjectTag, Adjustable {
             }
             String key = string.substring(lastPipe, slash);
             String value = string.substring(slash + 1, pipe);
-            result.map.put(new StringHolder(unescapeEntry(key)), ObjectFetcher.pickObjectFor(value, context));
+            result.map.put(new StringHolder(unescapeEntry(key)), ObjectFetcher.pickObjectFor(unescapeEntry(value), context));
             lastPipe = pipe + 1;
             pipe = string.indexOf('|', lastPipe);
         }
@@ -202,8 +202,36 @@ public class MapTag implements ObjectTag, Adjustable {
         registerTag("get", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
+                return null;
             }
             return object.map.get(new StringHolder(attribute.getContext(1)));
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.with[<key>].as[<value>]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map, with the specified key set to the specified value.
+        // -->
+        registerTag("with", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.with' must have an input value.");
+                return null;
+            }
+            String key = attribute.getContext(1);
+            attribute.fulfill(1);
+            if (!attribute.matches("as")) {
+                attribute.echoError("The tag 'MapTag.with' must be followed by '.as'.");
+                return null;
+            }
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.with.as' must have an input value for 'as'.");
+                return null;
+            }
+            ObjectTag value = attribute.getContextObject(1);
+            MapTag result = object.duplicate();
+            result.map.put(new StringHolder(key), value);
+            return result;
         });
 
         // <--[tag]

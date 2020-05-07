@@ -141,8 +141,20 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             return list;
         }
 
+        if (string.startsWith("map@")) {
+            MapTag map = MapTag.valueOf(string, context);
+            list = new ListTag();
+            if (map == null) {
+                list.add(string);
+            }
+            else {
+                list.addObject(map);
+            }
+            return list;
+        }
+
         // Use value of string, which will separate values by the use of a pipe '|'
-        return new ListTag(string.startsWith("li@") ? string.substring(3) : string, context);
+        return new ListTag(string.startsWith("li@") ? string.substring("li@".length()) : string, context);
     }
 
     public static ListTag getListFor(ObjectTag inp, TagContext context) {
