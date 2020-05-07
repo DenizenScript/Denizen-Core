@@ -1,7 +1,6 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -366,21 +365,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
             if (obj == null) {
                 return null;
             }
-
-            if (obj instanceof List) {
-                ListTag list = new ListTag();
-                for (Object each : (List<Object>) obj) {
-                    if (each == null) {
-                        each = "null";
-                    }
-                    list.add(ScriptBuilder.stripLinePrefix(each.toString()));
-                }
-                return list;
-
-            }
-            else {
-                return new ElementTag(obj.toString());
-            }
+            return CoreUtilities.objectToTagForm(obj, attribute.context, true);
         });
 
         // <--[tag]

@@ -2,11 +2,13 @@ package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.properties.Property;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -34,6 +36,41 @@ public class CoreUtilities {
 
     public static String clearNBSPs(String input) {
         return input.replace(NBSP_Char, ' ');
+    }
+
+    public static ObjectTag objectToTagForm(Object obj, TagContext context) {
+        return objectToTagForm(obj, context, false);
+    }
+
+    public static ObjectTag objectToTagForm(Object obj, TagContext context, boolean scriptStrip) {
+        if (obj == null) {
+            return new ElementTag("null");
+        }
+        else if (obj instanceof List) {
+            ListTag listResult = new ListTag();
+            for (Object subObj : (List) obj) {
+                listResult.addObject(objectToTagForm(subObj, context, scriptStrip));
+            }
+            return listResult;
+        }
+        else if (obj instanceof Map) {
+            MapTag result = new MapTag();
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) obj).entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                if (scriptStrip) {
+                    key = ScriptBuilder.stripLinePrefix(key);
+                }
+                result.map.put(new StringHolder(key), CoreUtilities.objectToTagForm(entry.getValue(), context));
+            }
+            return result;
+        }
+        else {
+            String result = obj.toString();
+            if (scriptStrip) {
+                result = ScriptBuilder.stripLinePrefix(result);
+            }
+            return ObjectFetcher.pickObjectFor(result, context);
+        }
     }
 
     public static String splitLinesByCharacterCount(String str, int length) {

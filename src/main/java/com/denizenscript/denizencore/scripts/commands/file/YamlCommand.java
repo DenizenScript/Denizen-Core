@@ -715,7 +715,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         if (attribute.getAttribute(2).equalsIgnoreCase("list")) {
             ListTag list = new ListTag();
             list.addAll(yamls.keySet());
-            event.setReplaced(list.getAttribute(attribute.fulfill(2)));
+            event.setReplacedObject(list.getObjectAttribute(attribute.fulfill(2)));
             return;
         }
 
@@ -745,8 +745,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Otherwise, returns false.
         // -->
         if (attribute.startsWith("contains") && attribute.hasContext(1)) {
-            event.setReplaced(new ElementTag(getYaml(id).contains(attribute.getContext(1)))
-                    .getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(new ElementTag(getYaml(id).contains(attribute.getContext(1))).getObjectAttribute(attribute.fulfill(1)));
             return;
         }
 
@@ -757,8 +756,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns true if the specified path results in a list.
         // -->
         if (attribute.startsWith("is_list") && attribute.hasContext(1)) {
-            event.setReplaced(new ElementTag(getYaml(id).isList(attribute.getContext(1)))
-                    .getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(new ElementTag(getYaml(id).isList(attribute.getContext(1))).getObjectAttribute(attribute.fulfill(1)));
             return;
         }
 
@@ -770,29 +768,12 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // If the key is a list, returns a ListTag instead.
         // -->
         if (attribute.startsWith("read") && attribute.hasContext(1)) {
-
-            if (getYaml(id).isList(attribute.getContext(1))) {
-                List<String> value = getYaml(id).getStringList(attribute.getContext(1));
-                if (value == null) {
-                    // If value is null, the key at the specified path didn't exist.
-                    return;
-                }
-                else {
-                    event.setReplaced(new ListTag(value).getAttribute(attribute.fulfill(1)));
-                    return;
-                }
+            Object obj = getYaml(id).get(attribute.getContext(1));
+            if (obj == null) {
+                return;
             }
-            else {
-                String value = getYaml(id).getString(attribute.getContext(1));
-                if (value == null) {
-                    // If value is null, the key at the specified path didn't exist.
-                    return;
-                }
-                else {
-                    event.setReplaced(new ElementTag(value).getAttribute(attribute.fulfill(1)));
-                    return;
-                }
-            }
+            event.setReplacedObject(CoreUtilities.objectToTagForm(obj, attribute.context).getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -819,7 +800,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                event.setReplaced(new ListTag(keys).getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(new ListTag(keys).getObjectAttribute(attribute.fulfill(1)));
                 return;
             }
         }
@@ -848,7 +829,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                event.setReplaced(new ListTag(keys).getAttribute(attribute.fulfill(1)));
+                event.setReplacedObject(new ListTag(keys).getObjectAttribute(attribute.fulfill(1)));
                 return;
             }
         }
@@ -860,7 +841,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns whether this YAML object has had changes since the last save or load.
         // -->
         if (attribute.startsWith("has_changes")) {
-            event.setReplaced(new ElementTag(getYaml(id).isDirty()).getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(new ElementTag(getYaml(id).isDirty()).getObjectAttribute(attribute.fulfill(1)));
             return;
         }
 
@@ -872,7 +853,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // -->
         if (attribute.startsWith("to_json")) {
             JSONObject jsobj = new JSONObject(getYaml(id).getMap());
-            event.setReplaced(new ElementTag(jsobj.toString()).getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(new ElementTag(jsobj.toString()).getObjectAttribute(attribute.fulfill(1)));
             return;
         }
 
@@ -883,7 +864,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Converts the YAML container to raw YAML text.
         // -->
         if (attribute.startsWith("to_text")) {
-            event.setReplaced(new ElementTag(getYaml(id).saveToString(false)).getAttribute(attribute.fulfill(1)));
+            event.setReplacedObject(new ElementTag(getYaml(id).saveToString(false)).getObjectAttribute(attribute.fulfill(1)));
             return;
         }
     }
