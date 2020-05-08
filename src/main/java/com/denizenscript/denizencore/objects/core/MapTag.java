@@ -87,6 +87,10 @@ public class MapTag implements ObjectTag, Adjustable {
         return result;
     }
 
+    public static MapTag getMapFor(ObjectTag inp, TagContext context) {
+        return inp instanceof MapTag ? (MapTag) inp : valueOf(inp.toString(), context);
+    }
+
     public static boolean matches(String string) {
         // Starts with map@? Assume match.
         if (CoreUtilities.toLowerCase(string).startsWith("map@")) {
@@ -212,6 +216,8 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns a copy of the map, with the specified key set to the specified value.
+        // For example, on a map of "a/1|b/2|c/3|", using ".with[d].as[4]" will return "a/1|b/2|c/3|d/4|".
+        // Matching keys will be overridden. For example, on a map of "a/1|b/2|c/3|", using ".with[c].as[4]" will return "a/1|b/2|c/4|".
         // -->
         registerTag("with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -239,14 +245,55 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns an inverted copy of the map. That is, keys become values and values become keys.
-        // Note that the size of the result is not guaranteed to be the same as the input (as duplicate keys are not allowed, but duplicate values are).
         // For example, on a map of "a/1|b/2|c/3|", using "invert" will return "1/a|2/b|3/c|".
         // All values in the result will be ElementTags.
+        // Note that the size of the result is not guaranteed to be the same as the input (as duplicate keys are not allowed, but duplicate values are).
+        // In the case of duplicate new-keys, the last instance of the new-key will be preserved.
+        // For example, on a map of "a/1|b/2|c/2|", using "invert" will return "1/a|2/c|".
         // -->
         registerTag("invert", (attribute, object) -> {
             MapTag result = new MapTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                 result.map.put(new StringHolder(entry.getValue().identify()), new ElementTag(entry.getKey().str));
+            }
+            return result;
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.exclude[<key>|...]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map with the specified key(s) excluded.
+        // For example, on a map of "a/1|b/2|c/3|", using ".exclude[b]" will return "a/1|c/3|".
+        // -->
+        registerTag("exclude", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.exclude' must have an input value.");
+                return null;
+            }
+            MapTag result = object.duplicate();
+            for (String key : ListTag.getListFor(attribute.getContextObject(1), attribute.context)) {
+                result.map.remove(new StringHolder(key));
+            }
+            return result;
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.include[<map>]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map with the specified map's contents copied in.
+        // For example, on a map of "a/1|b/2|c/3|", using ".include[d/4|e/5|]" will return "a/1|b/2|c/3|d/4|e/5|".
+        // Matching keys will be overridden. For example, on a map of "a/1|b/2|c/3|", using ".include[b/4|c/5|]" will return "a/1|b/4|c/5|".
+        // -->
+        registerTag("include", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.include' must have an input value.");
+                return null;
+            }
+            MapTag result = object.duplicate();
+            for (Map.Entry<StringHolder, ObjectTag> entry : getMapFor(attribute.getContextObject(1), attribute.context).map.entrySet()) {
+                result.map.put(entry.getKey(), entry.getValue());
             }
             return result;
         });

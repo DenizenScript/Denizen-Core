@@ -608,6 +608,18 @@ public class ElementTag implements ObjectTag {
         }, "aslist");
 
         // <--[tag]
+        // @attribute <ElementTag.as_map>
+        // @returns MapTag
+        // @group conversion
+        // @description
+        // Returns the element as a MapTag.
+        // -->
+        registerTag("as_map", (attribute, object) -> {
+            String element = object.element;
+            return handleNull(element, MapTag.valueOf(element, attribute.context), "MapTag", attribute.hasAlternative());
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.as_custom>
         // @returns CustomObject
         // @group conversion
