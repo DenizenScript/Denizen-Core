@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.tags.TagRunnable;
@@ -678,6 +679,13 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     public void Set(YamlConfiguration yaml, int index, String key, String value) {
         if (index == -1) {
+            if (value.startsWith("map@")) {
+                MapTag map = MapTag.valueOf(value, CoreUtilities.noDebugContext);
+                if (map != null) {
+                    yaml.set(key, map.map);
+                    return;
+                }
+            }
             yaml.set(key, value);
         }
         else {
@@ -781,6 +789,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @returns ListTag
         // @description
         // Returns a ListTag of all the keys at the path and all subpaths.
+        // Use empty path input to represent the root of the yaml document tree.
         // -->
         if (attribute.startsWith("list_deep_keys") && attribute.hasContext(1)) {
             Set<StringHolder> keys;
@@ -809,7 +818,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @attribute <yaml[<id>].list_keys[<path>]>
         // @returns ListTag
         // @description
-        // Returns a ListTag of all the keys at the path.
+        // Returns a ListTag of all the keys at the path (and not sub-keys).
+        // Use empty path input to represent the root of the yaml document tree.
         // -->
         if (attribute.startsWith("list_keys") && attribute.hasContext(1)) {
             Set<StringHolder> keys;
