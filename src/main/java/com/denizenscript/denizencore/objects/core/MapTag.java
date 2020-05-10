@@ -292,9 +292,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 return null;
             }
             MapTag result = object.duplicate();
-            for (Map.Entry<StringHolder, ObjectTag> entry : getMapFor(attribute.getContextObject(1), attribute.context).map.entrySet()) {
-                result.map.put(entry.getKey(), entry.getValue());
-            }
+            result.map.putAll(getMapFor(attribute.getContextObject(1), attribute.context).map);
             return result;
         });
 

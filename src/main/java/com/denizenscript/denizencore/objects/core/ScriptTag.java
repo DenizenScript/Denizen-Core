@@ -348,7 +348,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
 
         registerTag("yaml_key", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ScriptTag.constant[...] must have a value.");
+                Debug.echoError("The tag ScriptTag.yaml_key[...] must have a value.");
                 return null;
             }
             ScriptContainer container = object.getContainer();

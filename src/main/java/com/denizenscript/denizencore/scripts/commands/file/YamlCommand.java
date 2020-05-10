@@ -59,6 +59,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // Refer to <@link language ~waitable>.
     //
     // For loading and saving, the starting path is within 'plugins/Denizen'.
+    // The file path follows standard system file path rules. That means '/' separators folders,
+    // and '..' as a folder name means go-up-one folder, for example '../WorldGuard/config.yml' would load the WorldGuard plugin config.
+    // Also be aware that some servers (Linux/Mac based) have case sensitive file systems while others (Windows based) don't.
+    // Generally, when using existing paths, make sure your casing is correct. When creating new paths, prefer all-lowercase to reduce risk of issues.
     //
     // Please note that all usages of the YAML command except for "load" and "savefile" arguments are purely in memory.
     // That means, if you use "set" to make changes, those changes will not be saved to any file, until you use "savefile".
