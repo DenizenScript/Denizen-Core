@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -446,6 +447,17 @@ public class UtilTagBase {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(format.format(currentDate))
                         , attribute));
             }
+        }
+
+        // <--[tag]
+        // @attribute <util.parse_yaml[<yaml>]>
+        // @returns MapTag
+        // @description
+        // Parses the input YAML or JSON text into a MapTag.
+        // -->
+        else if (attribute.matches("parse_yaml") && attribute.hasContext(1)) {
+            ObjectTag tagForm = CoreUtilities.objectToTagForm(YamlConfiguration.load(attribute.getContext(1)).contents, attribute.context);
+            event.setReplacedObject(CoreUtilities.autoAttrib(tagForm, attribute.fulfill(1)));
         }
     }
 
