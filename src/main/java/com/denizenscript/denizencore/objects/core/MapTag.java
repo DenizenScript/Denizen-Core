@@ -6,8 +6,10 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
+import org.json.JSONObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -324,6 +326,28 @@ public class MapTag implements ObjectTag, Adjustable {
                 result.addObject(entry);
             }
             return result;
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.to_json>
+        // @returns ElementTag
+        // @description
+        // Returns a JSON encoding of this map.
+        // -->
+        registerTag("to_json", (attribute, object) -> {
+            return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false)).toString());
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.to_yaml>
+        // @returns ElementTag
+        // @description
+        // Returns a YAML encoding of this map.
+        // -->
+        registerTag("to_yaml", (attribute, object) -> {
+            YamlConfiguration output = new YamlConfiguration();
+            output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true);
+            return new ElementTag(output.saveToString(false));
         });
     }
 

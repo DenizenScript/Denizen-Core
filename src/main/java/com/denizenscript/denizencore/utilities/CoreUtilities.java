@@ -73,6 +73,30 @@ public class CoreUtilities {
         }
     }
 
+
+    public static Object objectTagToJavaForm(ObjectTag obj, boolean stringHolder) {
+        if (obj == null) {
+            return null;
+        }
+        else if (obj instanceof ListTag) {
+            List<Object> output = new ArrayList<>(((ListTag) obj).size());
+            for (ObjectTag entry : ((ListTag) obj).objectForms) {
+                output.add(objectTagToJavaForm(entry, stringHolder));
+            }
+            return output;
+        }
+        else if (obj instanceof MapTag) {
+            Map<Object, Object> output = new LinkedHashMap<>();
+            for (Map.Entry<StringHolder, ObjectTag> entry : ((MapTag) obj).map.entrySet()) {
+                output.put(stringHolder ? entry.getKey() : entry.getKey().str, objectTagToJavaForm(entry.getValue(), stringHolder));
+            }
+            return output;
+        }
+        else {
+            return obj.toString();
+        }
+    }
+
     public static String splitLinesByCharacterCount(String str, int length) {
         if (length < 3) {
             return str;

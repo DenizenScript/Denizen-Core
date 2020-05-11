@@ -47,7 +47,7 @@ public class YamlConfiguration {
         return config;
     }
 
-    Map<StringHolder, Object> contents;
+    public Map<StringHolder, Object> contents;
     boolean dirty;
 
     /**
