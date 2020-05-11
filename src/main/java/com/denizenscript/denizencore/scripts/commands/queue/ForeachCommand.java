@@ -113,7 +113,7 @@ public class ForeachCommand extends BracedCommand {
         ElementTag stop = scriptEntry.getElement("stop");
         ElementTag next = scriptEntry.getElement("next");
         ElementTag callback = scriptEntry.getElement("callback");
-        ListTag list = (ListTag) scriptEntry.getObject("list");
+        ListTag list = scriptEntry.getObjectTag("list");
         ElementTag as_name = scriptEntry.getElement("as_name");
 
         if (stop != null && stop.asBoolean()) {

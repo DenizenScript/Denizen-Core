@@ -62,8 +62,8 @@ public class WaitCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        QueueTag queue = (QueueTag) scriptEntry.getObject("queue");
-        DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
+        QueueTag queue = scriptEntry.getObjectTag("queue");
+        DurationTag delay = scriptEntry.getObjectTag("delay");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(),

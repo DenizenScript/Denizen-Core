@@ -85,8 +85,8 @@ public class EventCommand extends AbstractCommand {
 
         Deprecations.eventCommand.warn(scriptEntry);
 
-        ListTag events = (ListTag) scriptEntry.getObject("events");
-        ListTag context = (ListTag) scriptEntry.getObject("context");
+        ListTag events = scriptEntry.getObjectTag("events");
+        ListTag context = scriptEntry.getObjectTag("context");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), events.debug() + context.debug());

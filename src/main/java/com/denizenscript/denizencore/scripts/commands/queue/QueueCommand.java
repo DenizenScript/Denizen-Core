@@ -117,9 +117,9 @@ public class QueueCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
 
-        QueueTag queue = (QueueTag) scriptEntry.getObject("queue");
+        QueueTag queue = scriptEntry.getObjectTag("queue");
         Action action = (Action) scriptEntry.getObject("action");
-        DurationTag delay = (DurationTag) scriptEntry.getObject("delay");
+        DurationTag delay = scriptEntry.getObjectTag("delay");
 
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), queue.debug()
