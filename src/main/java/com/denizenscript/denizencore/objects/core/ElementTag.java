@@ -1619,6 +1619,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the element plus a number, using integer math.
+        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
         // -->
         registerTag("add_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1634,6 +1635,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the element divided by a number.
+        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
         // -->
         registerTag("div_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1649,6 +1651,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the element multiplied by a number.
+        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
         // -->
         registerTag("mul_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1664,6 +1667,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the element minus a number.
+        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
         // -->
         registerTag("sub_int", (attribute, ele) -> {
             if (!ele.isDouble()) {
