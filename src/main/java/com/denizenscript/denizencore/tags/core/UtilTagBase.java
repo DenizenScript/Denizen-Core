@@ -172,6 +172,21 @@ public class UtilTagBase {
         }
 
         // <--[tag]
+        // @attribute <util.empty_list_entries[<#>]>
+        // @returns ListTag
+        // @description
+        // Returns a list of the specified size where each entry is blank (zero characters long).
+        // -->
+        if (attribute.startsWith("empty_list_entries") && attribute.hasContext(1)) {
+            int to = attribute.getIntContext(1);
+            ListTag result = new ListTag();
+            for (int i = 1; i <= to; i++) {
+                result.add("");
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.pi>
         // @returns ElementTag
         // @description
