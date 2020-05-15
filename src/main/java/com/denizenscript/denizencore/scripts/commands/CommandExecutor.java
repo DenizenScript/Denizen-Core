@@ -17,6 +17,9 @@ public class CommandExecutor {
     public static void debugSingleExecution(ScriptEntry scriptEntry) {
         StringBuilder output = new StringBuilder();
         output.append("<G>(line ").append(scriptEntry.internal.lineNumber).append(")<W> ");
+        if (scriptEntry.internal.waitfor) {
+            output.append("~");
+        }
         output.append(scriptEntry.getCommandName());
         if (scriptEntry.getOriginalArguments() == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
