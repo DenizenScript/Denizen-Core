@@ -702,6 +702,16 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.to_map>
+        // @returns MapTag
+        // @description
+        // Interprets a list of "key/value" pairs as a map, and returns the resulting MapTag.
+        // -->
+        registerTag("to_map", (attribute, object) -> {
+            return MapTag.valueOf(object.identifyList().substring("li@".length()), attribute.context);
+        });
+
+        // <--[tag]
         // @attribute <ListTag.size>
         // @returns ElementTag(Number)
         // @description
