@@ -149,7 +149,7 @@ public class UtilTagBase {
             // -->
             else if (attribute.startsWith("duuid")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(
-                        attribute.hasContext(1) ? attribute.getContext(1) : ScriptQueue.getNextId("DUUID")),
+                        ScriptQueue.getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
                         attribute.fulfill(1)));
             }
         }
