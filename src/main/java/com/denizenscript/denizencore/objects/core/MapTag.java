@@ -302,7 +302,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.list_keys>
         // @returns ListTag
         // @description
-        // Returns an list of all keys in this map.
+        // Returns a list of all keys in this map.
         // For example, on a map of "a/1|b/2|c/3|", using "list_keys" will return "a|b|c|".
         // -->
         registerTag("list_keys", (attribute, object) -> {
@@ -317,13 +317,28 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.list_values>
         // @returns ListTag
         // @description
-        // Returns an list of all values this map.
+        // Returns a list of all values in this map.
         // For example, on a map of "a/1|b/2|c/3|", using "list_values" will return "1|2|3|".
         // -->
         registerTag("list_values", (attribute, object) -> {
             ListTag result = new ListTag();
             for (ObjectTag entry : object.map.values()) {
                 result.addObject(entry);
+            }
+            return result;
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.to_list>
+        // @returns ListTag
+        // @description
+        // Returns a list of all key/value pairs in this map.
+        // Note that slash ('/') escaping will be lost, so maps that have slashes in their keys will not be possible to convert back to a map.
+        // -->
+        registerTag("to_list", (attribute, object) -> {
+            ListTag result = new ListTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                result.add(entry.getKey().str + "/" + entry.getValue().identify());
             }
             return result;
         });
