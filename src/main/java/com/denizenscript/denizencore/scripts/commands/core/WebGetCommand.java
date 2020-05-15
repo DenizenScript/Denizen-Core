@@ -57,6 +57,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
     // <entry[saveName].result> returns the result of the webget. This is null only if webget failed to connect to the url.
     // <entry[saveName].status> returns the HTTP status code of the webget. This is null only if webget failed to connect to the url.
+    // <entry[saveName].time_ran> returns a DurationTag indicating how long the web connection processing took.
     // <ElementTag.url_encode>
     //
     // @Usage
@@ -204,6 +205,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
+            long timeStart = System.currentTimeMillis();
             URL url = new URL(urlp.asString().replace(" ", "%20"));
             uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
@@ -239,6 +241,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 buffIn.close();
                 buffIn = null;
             }
+            final long timeDone = System.currentTimeMillis();
 
             DenizenCore.schedule(new Schedulable() {
                 @Override
@@ -248,6 +251,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     if (saveFile == null) {
                         scriptEntry.addObject("result", new ElementTag(sb.toString()));
                     }
+                    scriptEntry.addObject("time_ran", new DurationTag(timeDone / 1000.0));
                     scriptEntry.setFinished(true);
                     return false;
                 }
