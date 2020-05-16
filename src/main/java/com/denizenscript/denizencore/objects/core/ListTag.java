@@ -771,9 +771,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @attribute <ListTag.set[...|...].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the items specified inserted to the specified location, replacing the element
-        // already at that location.
+        // returns a new ListTag with the items specified inserted to the specified location(s), replacing the element
+        // already at that location. Adding multiple items will overwrite multiple items.
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
+        // For Example: .set[1|2].at[1] on a list of "one|two|three" will return "1|2|three".
         // -->
         registerTag("set", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -794,9 +795,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     index = result.size() - 1;
                 }
                 attribute.fulfill(1);
-                result.remove(index);
                 for (int i = 0; i < items.size(); i++) {
-                    result.addObject(index + i, items.objectForms.get(i));
+                    if (index + i >= result.size()) {
+                        result.addObject(items.objectForms.get(i));
+                    }
+                    else {
+                        result.setObject(index + i, items.objectForms.get(i));
+                    }
                 }
                 return result;
             }
@@ -913,17 +918,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.replace[(regex:)<element>]>
-        // @returns ElementTag
-        // @description
-        // Returns the list with all instances of an element removed.
-        // Specify regex: at the start of the replace element to replace elements that match the Regex.
-        // -->
-
-        // <--[tag]
-        // @attribute <ListTag.replace[(regex:)<element>].with[<element>]>
         // @returns ListTag
         // @description
-        // Returns the list with all instances of an element replaced with another.
+        // Returns the list with all instances of an element removed.
         // Specify regex: at the start of the replace element to replace elements that match the Regex.
         // -->
         registerTag("replace", (attribute, object) -> {
@@ -933,6 +930,14 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             String replace = attribute.getContext(1);
             ObjectTag replacement = null;
+
+            // <--[tag]
+            // @attribute <ListTag.replace[(regex:)<element>].with[<element>]>
+            // @returns ListTag
+            // @description
+            // Returns the list with all instances of an element replaced with another.
+            // Specify regex: at the start of the replace element to replace elements that match the Regex.
+            // -->
             if (attribute.startsWith("with", 2)) {
                 if (attribute.hasContext(2)) {
                     replacement = attribute.getContextObject(2);
