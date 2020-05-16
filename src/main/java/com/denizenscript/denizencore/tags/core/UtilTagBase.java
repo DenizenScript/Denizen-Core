@@ -172,18 +172,31 @@ public class UtilTagBase {
         }
 
         // <--[tag]
-        // @attribute <util.empty_list_entries[<#>]>
+        // @attribute <util.create_list[<#>]>
         // @returns ListTag
         // @description
         // Returns a list of the specified size where each entry is blank (zero characters long).
         // -->
-        if (attribute.startsWith("empty_list_entries") && attribute.hasContext(1)) {
+        if (attribute.startsWith("create_list") && attribute.hasContext(1)) {
             int to = attribute.getIntContext(1);
+            attribute.fulfill(1);
+            String value = "";
+
+            // <--[tag]
+            // @attribute <util.create_list[<#>].with[<...>]>
+            // @returns ListTag
+            // @description
+            // Returns a list of the specified size where each entry is the input value.
+            // -->
+            if (attribute.startsWith("with") && attribute.hasContext(1)) {
+                value = attribute.getContext(1);
+                attribute.fulfill(1);
+            }
             ListTag result = new ListTag();
             for (int i = 1; i <= to; i++) {
-                result.add("");
+                result.add(value);
             }
-            event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            event.setReplacedObject(result);
         }
 
         // <--[tag]
