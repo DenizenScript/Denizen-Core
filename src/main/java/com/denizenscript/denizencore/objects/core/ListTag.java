@@ -771,9 +771,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // @attribute <ListTag.set[...|...].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the items specified inserted to the specified location, replacing the element
-        // already at that location.
+        // returns a new ListTag with the items specified inserted to the specified location,
+        // replacing the element already at that location.
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
+        // For example: .set[potato|taco|hotdog].at[2] on a list of "one|two|three" will return "one|potato|taco|hotdog|three".
         // -->
         registerTag("set", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -802,6 +803,50 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             else {
                 Debug.echoError("The tag ListTag.set[...] must be followed by .at[#]!");
+                return null;
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.overwrite[...|...].at[<#>]>
+        // @returns ListTag
+        // @description
+        // returns a new ListTag with the index specified and beyond replaced with the input list.
+        // The result list will be the same size as the original list, unless (input_list.size + at_index) is greater than the original list size.
+        // For example: .overwrite[potato|taco].at[2] on a list of "one|two|three|four" will return "one|potato|taco|four".
+        // For example: .overwrite[potato|taco|hotdog|cheeseburger].at[2] on a list of "one|two|three" will return "one|potato|taco|hotdog|cheeseburger".
+        // -->
+        registerTag("overwrite", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag ListTag.overwrite[...] must have a value.");
+                return null;
+            }
+            if (object.isEmpty()) {
+                return null;
+            }
+            ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
+            if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
+                ListTag result = new ListTag(object);
+                int index = attribute.getIntContext(2) - 1;
+                if (index < 0) {
+                    index = 0;
+                }
+                if (index > result.size() - 1) {
+                    index = result.size() - 1;
+                }
+                attribute.fulfill(1);
+                for (int i = 0; i < items.size(); i++) {
+                    if (index + i >= result.size()) {
+                        result.addObject(items.objectForms.get(i));
+                    }
+                    else {
+                        result.setObject(index + i, items.objectForms.get(i));
+                    }
+                }
+                return result;
+            }
+            else {
+                Debug.echoError("The tag ListTag.overwrite[...] must be followed by .at[#]!");
                 return null;
             }
         });
