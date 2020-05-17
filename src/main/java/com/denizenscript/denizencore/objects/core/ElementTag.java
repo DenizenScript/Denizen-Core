@@ -91,10 +91,6 @@ public class ElementTag implements ObjectTag {
         if (string == null) {
             return null;
         }
-        // Allow construction of elements with el@val[<value>]
-        if (string.startsWith("el@val[") && string.endsWith("]")) {
-            return new ElementTag(string.substring("el@val[".length(), string.length() - "el@val[]".length()));
-        }
         return new ElementTag(CoreUtilities.toLowerCase(string).startsWith("el@") ? string.substring(3) : string);
     }
 
