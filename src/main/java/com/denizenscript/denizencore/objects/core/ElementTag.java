@@ -323,6 +323,11 @@ public class ElementTag implements ObjectTag {
     }
 
     @Override
+    public String savable() {
+        return "el@" + element;
+    }
+
+    @Override
     public String identifySimple() {
         return identify();
     }

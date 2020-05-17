@@ -128,6 +128,10 @@ public interface ObjectTag {
      */
     String identify();
 
+    default String savable() {
+        return identify();
+    }
+
     /**
      * Gets an overall string representation of this ObjectTag.
      * This should give the basic jist of the object being identified, but

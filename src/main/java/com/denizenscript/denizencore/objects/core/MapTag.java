@@ -161,7 +161,7 @@ public class MapTag implements ObjectTag, Adjustable {
         StringBuilder output = new StringBuilder();
         output.append("map@");
         for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
-            output.append(escapeEntry(entry.getKey().str)).append("/").append(escapeEntry(entry.getValue().identify())).append("|");
+            output.append(escapeEntry(entry.getKey().str)).append("/").append(escapeEntry(entry.getValue().savable())).append("|");
         }
         return output.toString();
     }

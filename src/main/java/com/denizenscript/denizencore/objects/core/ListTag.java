@@ -469,8 +469,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         }
         StringBuilder output = new StringBuilder();
         output.append("li@");
-        for (String item : this) {
-            output.append(escapeEntry(item)).append('|');
+        for (ObjectTag object : objectForms) {
+            output.append(escapeEntry(object.savable())).append('|');
         }
         return output.toString();
     }
