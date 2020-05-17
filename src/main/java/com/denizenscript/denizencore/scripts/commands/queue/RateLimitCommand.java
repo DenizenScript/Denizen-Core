@@ -37,6 +37,8 @@ public class RateLimitCommand extends AbstractCommand {
     // those are two separate rate limiters.
     // Additionally, if you have a 'ratelimit <player> 10s' and two different players run it, they each have a separate rate limit applied.
     //
+    // Note that this uses game delta tick time, not system realtime.
+    //
     // @Tags
     // None.
     //
