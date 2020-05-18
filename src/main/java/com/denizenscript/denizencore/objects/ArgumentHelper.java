@@ -135,10 +135,11 @@ public class ArgumentHelper {
         return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
-    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = ".eE-";
+    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = "eE";
     private static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher(DIGITS);
     private static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
-    private static AsciiMatcher DOUBLE_AFTERFIRST_MATCHER = new AsciiMatcher(DIGITS + DOUBLE_CHARS);
+    private static AsciiMatcher DOUBLE_SPECIAL_MATCHER = new AsciiMatcher(DOUBLE_CHARS);
+    private static AsciiMatcher PREFIX_MATCHER = new AsciiMatcher(PREFIXES);
 
     public static boolean matchesDouble(String arg) {
         if (arg.length() == 0) {
@@ -150,9 +151,24 @@ public class ArgumentHelper {
         if (!DIGIT_MATCHER.containsAnyMatch(arg)) {
             return false;
         }
+        boolean hadDoubleSyntax = false;
+        boolean hadDecimal = false;
         for (int i = 1; i < arg.length(); i++) {
-            if (!DOUBLE_AFTERFIRST_MATCHER.isMatch(arg.charAt(i))) {
-                return false;
+            if (!DIGIT_MATCHER.isMatch(arg.charAt(i))) {
+                if (hadDoubleSyntax) {
+                    return false;
+                }
+                if (arg.charAt(i) == '.' && !hadDecimal) {
+                    hadDecimal = true;
+                }
+                else if (i + 1 < arg.length() && DOUBLE_SPECIAL_MATCHER.isMatch(arg.charAt(i))
+                        && PREFIX_MATCHER.isMatch(arg.charAt(i + 1))) {
+                    hadDoubleSyntax = true;
+                    i++;
+                }
+                else {
+                    return false;
+                }
             }
         }
         return true;

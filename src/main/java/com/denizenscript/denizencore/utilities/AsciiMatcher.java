@@ -10,7 +10,7 @@ public class AsciiMatcher {
         }
     }
 
-    public int indexOfFirstNonMatch(String text) {
+    public final int indexOfFirstNonMatch(String text) {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c > 255 || !accepted[c]) {
@@ -20,11 +20,11 @@ public class AsciiMatcher {
         return -1;
     }
 
-    public boolean isMatch(char c) {
+    public final boolean isMatch(char c) {
         return c < 256 && accepted[c];
     }
 
-    public boolean containsAnyMatch(String text) {
+    public final boolean containsAnyMatch(String text) {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c < 256 && accepted[c]) {
@@ -34,7 +34,7 @@ public class AsciiMatcher {
         return false;
     }
 
-    public boolean isOnlyMatches(String text) {
+    public final boolean isOnlyMatches(String text) {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c > 255 || !accepted[c]) {
@@ -44,7 +44,7 @@ public class AsciiMatcher {
         return true;
     }
 
-    public String trimToMatches(String text) {
+    public final String trimToMatches(String text) {
         StringBuilder output = new StringBuilder(text.length());
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
