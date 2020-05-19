@@ -203,12 +203,15 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public ListTag(String items, TagContext context) {
+        objectForms = new ArrayList<>();
         if (items != null && items.length() > 0) {
             if(items.endsWith("|")) {
                 int pipe = items.indexOf('|');
                 int lastPipe = 0;
                 while (pipe != -1) {
-                    super.add(unescapeEntry(items.substring(lastPipe, pipe)));
+                    String value = unescapeEntry(items.substring(lastPipe, pipe));
+                    ObjectTag object = ObjectFetcher.pickObjectFor(value, context);
+                    addObject(object);
                     lastPipe = pipe + 1;
                     pipe = items.indexOf('|', lastPipe);
                 }
@@ -241,10 +244,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     super.add(items.substring(start));
                 }
             }
-        }
-        objectForms = new ArrayList<>(size());
-        for (String str : this) {
-            objectForms.add(ObjectFetcher.pickObjectFor(str, context));
+            for (String str : this) {
+                objectForms.add(ObjectFetcher.pickObjectFor(str, context));
+            }
         }
     }
 
