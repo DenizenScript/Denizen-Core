@@ -1331,6 +1331,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (attribute.hasContext(1)) {
                 tag = attribute.getContext(1);
             }
+            ObjectTag lowestObj = null;
             BigDecimal lowest = null;
             for (ObjectTag obj : object.objectForms) {
                 if (tag != null) {
@@ -1341,13 +1342,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (lowest == null || lowest.compareTo(val) > 0) {
                         lowest = val;
+                        lowestObj = obj;
                     }
                 }
             }
-            if (lowest == null) {
-                return null;
-            }
-            return new ElementTag(lowest);
+            return lowestObj;
         });
 
         // <--[tag]
@@ -1364,6 +1363,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (attribute.hasContext(1)) {
                 tag = attribute.getContext(1);
             }
+            ObjectTag highestObj = null;
             BigDecimal highest = null;
             for (ObjectTag obj : object.objectForms) {
                 if (tag != null) {
@@ -1374,13 +1374,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
                     if (highest == null || highest.compareTo(val) < 0) {
                         highest = val;
+                        highestObj = obj;
                     }
                 }
             }
-            if (highest == null) {
-                return null;
-            }
-            return new ElementTag(highest);
+            return highestObj;
         });
 
         // <--[tag]
