@@ -42,6 +42,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // or numerically in order if that isn't specified (starting with <[1]>).
     // To pass a list value in here as a single definition, use a list-within-a-list as the input
     // (the outer list is the list required by the 'def:' arg, the inner list is the single-def value).
+    // The 'list_single' tag is useful for creating lists-within-lists.
     //
     // Optionally, use the "speed:" argument to specify the queue command-speed to run the target script at,
     // or use the "instantly" argument to use an instant speed (no command delay applied).
@@ -76,7 +77,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to run 'MyTask' and pass a list as a single definition.
-    // - run MyTask def:<list[<list[a|big|list|here]>]>
+    // - run MyTask def:<list_single[<list[a|big|list|here]>]>
     // # MyTask can then get the list back by doing:
     // - define mylist <[1]>
     //

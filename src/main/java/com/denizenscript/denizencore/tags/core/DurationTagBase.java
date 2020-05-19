@@ -43,6 +43,5 @@ public class DurationTagBase {
 
         Attribute attribute = event.getAttributes();
         event.setReplacedObject(CoreUtilities.autoAttrib(duration, attribute.fulfill(1)));
-
     }
 }

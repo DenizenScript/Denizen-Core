@@ -37,6 +37,5 @@ public class ElementTagBase {
 
         Attribute attribute = event.getAttributes();
         event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(event.getNameContext()), attribute.fulfill(1)));
-
     }
 }

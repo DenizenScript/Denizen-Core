@@ -31,6 +31,7 @@ public class TagManager {
         new ContextTagBase();
         new DefinitionTagBase();
         new EscapeTagBase();
+        new ListSingleTagBase();
         new ProcedureScriptTagBase();
         new TernaryTagBase();
         new UtilTagBase();

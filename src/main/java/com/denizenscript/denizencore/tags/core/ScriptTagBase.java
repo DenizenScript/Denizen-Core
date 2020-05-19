@@ -79,6 +79,5 @@ public class ScriptTagBase {
 
         // Else, get the attribute from the script
         event.setReplacedObject(CoreUtilities.autoAttrib(script, attribute.fulfill(1)));
-
     }
 }

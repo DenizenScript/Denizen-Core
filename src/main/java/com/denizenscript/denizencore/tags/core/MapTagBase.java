@@ -38,6 +38,5 @@ public class MapTagBase {
         }
         Attribute attribute = event.getAttributes();
         event.setReplacedObject(CoreUtilities.autoAttrib(map, attribute.fulfill(1)));
-
     }
 }
