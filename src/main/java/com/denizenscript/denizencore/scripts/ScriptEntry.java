@@ -325,7 +325,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 crunchInto(argVal, arg, refContext);
                 if (argVal.aHArg.needsFill || argVal.aHArg.hasSpecialPrefix) {
-                    tempProcessArgs.add(i);
+                    tempProcessArgs.add(aHArgs.size());
                 }
                 aHArgs.add(argVal.aHArg);
             }
