@@ -1,7 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;

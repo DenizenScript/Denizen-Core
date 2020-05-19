@@ -40,8 +40,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // Optionally, use the "def:" argument to specify definition values to pass to the script,
     // the definitions will be named via the "definitions:" script key on the script being ran,
     // or numerically in order if that isn't specified (starting with <[1]>).
-    // To pass a list value in here as a single definition, use <@link tag ElementTag.escaped> in the run command line,
-    // and <@link tag ElementTag.unescaped> in the final task script to read it back.
+    // To pass a list value in here as a single definition, use a list-within-a-list as the input
+    // (the outer list is the list required by the 'def:' arg, the inner list is the single-def value).
     //
     // Optionally, use the "speed:" argument to specify the queue command-speed to run the target script at,
     // or use the "instantly" argument to use an instant speed (no command delay applied).
@@ -76,9 +76,9 @@ public class RunCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to run 'MyTask' and pass a list as a single definition.
-    // - run MyTask def:<list[a|big|list|here].escaped>
+    // - run MyTask def:<list[<list[a|big|list|here]>]>
     // # MyTask can then get the list back by doing:
-    // - define mylist:<[1].unescaped>
+    // - define mylist <[1]>
     //
     // -->
 
@@ -187,8 +187,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
         ListTag definitions = null;
         if (scriptEntry.hasObject("definitions")) {
-            ElementTag raw_defintions = scriptEntry.getElement("definitions");
-            definitions = ListTag.valueOf(raw_defintions.asString(), scriptEntry.getContext());
+            ElementTag raw_definitions = scriptEntry.getElement("definitions");
+            definitions = ListTag.valueOf(raw_definitions.asString(), scriptEntry.getContext());
         }
 
         Consumer<ScriptQueue> configure = (queue) -> {
