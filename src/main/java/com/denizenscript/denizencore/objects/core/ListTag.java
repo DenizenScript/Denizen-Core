@@ -243,9 +243,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 if (start < items.length()) {
                     super.add(items.substring(start));
                 }
-            }
-            for (String str : this) {
-                objectForms.add(ObjectFetcher.pickObjectFor(str, context));
+                for (String str : this) {
+                    objectForms.add(ObjectFetcher.pickObjectFor(str, context));
+                }
             }
         }
     }
