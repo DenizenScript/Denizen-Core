@@ -162,6 +162,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/04/24.
     public static Warning itemInventoryTag = new SlowWarning("The tag 'item.inventory' is deprecated: use inventory_contents instead.");
 
+    // In Bukkit impl, Added 2020/05/21.
+    public static Warning itemSkinFullTag = new SlowWarning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
