@@ -202,6 +202,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         this(items, null);
     }
 
+    public boolean wasLegacy = false;
+
     public ListTag(String items, TagContext context) {
         objectForms = new ArrayList<>();
         if (items != null && items.length() > 0) {
@@ -217,6 +219,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
             }
             else {
+                wasLegacy = true;
                 // Count brackets
                 int brackets = 0;
                 // Record start position
