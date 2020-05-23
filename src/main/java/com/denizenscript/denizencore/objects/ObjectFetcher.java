@@ -216,6 +216,8 @@ public class ObjectFetcher {
                     if (description.indexOf('&') != -1) {
                         description = CoreUtilities.replace(description, "&amp", "&");
                         description = CoreUtilities.replace(description, "&sc", ";");
+                        description = CoreUtilities.replace(description, "&lb", "[");
+                        description = CoreUtilities.replace(description, "&rb", "]");
                     }
                     ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
                 }

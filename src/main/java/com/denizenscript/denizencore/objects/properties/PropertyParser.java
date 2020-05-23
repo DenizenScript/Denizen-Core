@@ -165,6 +165,8 @@ public class PropertyParser {
                     if (needsEscapingMatcher.containsAnyMatch(description)) {
                         description = CoreUtilities.replace(description, "&", "&amp");
                         description = CoreUtilities.replace(description, ";", "&sc");
+                        description = CoreUtilities.replace(description, "[", "&lb");
+                        description = CoreUtilities.replace(description, "]", "&rb");
                     }
                     prop_string.append(property.getPropertyId()).append('=').append(description).append(';');
                 }
