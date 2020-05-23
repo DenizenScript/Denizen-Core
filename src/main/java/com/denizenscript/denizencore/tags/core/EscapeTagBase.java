@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags.core;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -67,6 +68,8 @@ public class EscapeTagBase {
     //
     // -->
 
+    public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&|<>\n;[]:@.\\'\"!/§#");
+
     /**
      * A quick function to escape book Strings.
      * This is just to prevent tag reading errors.
@@ -77,6 +80,9 @@ public class EscapeTagBase {
     public static String escape(String input) {
         if (input == null) {
             return null;
+        }
+        if (!needsEscapingMatcher.containsAnyMatch(input)) {
+            return input;
         }
         input = CoreUtilities.replace(input, "&", "&amp");
         input = CoreUtilities.replace(input, "|", "&pipe");
@@ -109,6 +115,9 @@ public class EscapeTagBase {
     public static String unEscape(String input) {
         if (input == null) {
             return null;
+        }
+        if (input.indexOf('&') == -1) {
+            return input;
         }
         input = CoreUtilities.replace(input, "&pipe", "|");
         input = CoreUtilities.replace(input, "&lt", "<");

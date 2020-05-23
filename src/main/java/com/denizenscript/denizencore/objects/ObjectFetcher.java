@@ -213,8 +213,10 @@ public class ObjectFetcher {
                         continue;
                     }
                     String description = data.get(1);
-                    description = CoreUtilities.replace(description, "&amp", "&");
-                    description = CoreUtilities.replace(description, "&sc", ";");
+                    if (description.indexOf('&') != -1) {
+                        description = CoreUtilities.replace(description, "&amp", "&");
+                        description = CoreUtilities.replace(description, "&sc", ";");
+                    }
                     ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
                 }
                 gotten = (T) gotten.fixAfterProperties();
