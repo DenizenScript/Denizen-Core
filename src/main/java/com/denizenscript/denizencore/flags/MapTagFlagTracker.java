@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.flags;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
@@ -29,7 +29,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         if (expirationObj == null) {
             return false;
         }
-        if (System.currentTimeMillis() > ((DurationTag) expirationObj).getMillis()) {
+        if (TimeTag.now().millis() > ((TimeTag) expirationObj).millis()) {
             return true;
         }
         return false;
@@ -63,7 +63,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
     }
 
     @Override
-    public DurationTag getFlagExpirationTime(String key) {
+    public TimeTag getFlagExpirationTime(String key) {
         return null;
     }
 
@@ -97,7 +97,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
     }
 
     @Override
-    public void setFlag(String key, ObjectTag value, DurationTag expiration) {
+    public void setFlag(String key, ObjectTag value, TimeTag expiration) {
         if (needsClean) {
             doClean(map);
         }

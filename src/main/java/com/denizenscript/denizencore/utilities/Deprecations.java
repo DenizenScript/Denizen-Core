@@ -165,6 +165,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/05/21.
     public static Warning itemSkinFullTag = new SlowWarning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
 
+    // Added 2020/05/23.
+    public static Warning timeTagRewrite = new SlowWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:

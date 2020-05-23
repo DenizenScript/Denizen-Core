@@ -54,6 +54,7 @@ public class ObjectFetcher {
         registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
         registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
         registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
+        registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor); // time@
     }
 
     public static MatchesInterface getMatchesFor(Class clazz) {

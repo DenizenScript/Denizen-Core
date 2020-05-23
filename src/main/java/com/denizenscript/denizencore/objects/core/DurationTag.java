@@ -5,12 +5,10 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
@@ -432,98 +430,9 @@ public class DurationTag implements ObjectTag {
             return new DurationTag(object.getTicks() + DurationTag.valueOf(attribute.getContext(1)).getTicks());
         });
 
-        // <--[tag]
-        // @attribute <DurationTag.time>
-        // @returns ElementTag
-        // @description
-        // returns the date-time specified by the duration object.
-        // -->
         registerTag("time", (attribute, object) -> {
-            Date currentDate = new Date(object.getTicks() * 50);
-            SimpleDateFormat format = new SimpleDateFormat();
-
-            // <--[tag]
-            // @attribute <DurationTag.time.year>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current year of the time specified by the duration object.
-            // -->
-            if (attribute.startsWith("year", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getYear() + 1900 /* ??? */);
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.month>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current month of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("month", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getMonth() + 1);
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.day>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current day of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("day", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getDate());
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.day_of_week>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current day-of-the-week of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("day_of_week", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getDay());
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.hour>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current hour of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("hour", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getHours());
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.minute>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current minute of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("minute", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getMinutes());
-            }
-
-            // <--[tag]
-            // @attribute <DurationTag.time.second>
-            // @returns ElementTag(Number)
-            // @description
-            // Returns the current second of the time specified by the duration object.
-            // -->
-            else if (attribute.startsWith("second", 2)) {
-                attribute.fulfill(1);
-                return new ElementTag(currentDate.getSeconds());
-            }
-
-            // TODO: Custom format option
-            else {
-                format.applyPattern("EEE, d MMM yyyy HH:mm:ss");
-                return new ElementTag(format.format(currentDate));
-            }
+            Deprecations.timeTagRewrite.warn(attribute.context);
+            return new TimeTag(object.getMillis());
         });
 
         // <--[tag]
