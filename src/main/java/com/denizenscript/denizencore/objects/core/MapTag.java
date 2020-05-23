@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -41,11 +42,19 @@ public class MapTag implements ObjectTag, Adjustable {
     //
     // -->
 
+    public static AsciiMatcher needsEscpingMatcher = new AsciiMatcher("&|/");
+
     public static String escapeEntry(String value) {
+        if (!needsEscpingMatcher.containsAnyMatch(value)) {
+            return value;
+        }
         return value.replace("&", "&amp").replace("|", "&pipe").replace("/", "&fs");
     }
 
     public static String unescapeEntry(String value) {
+        if (value.indexOf('&') == -1) {
+            return value;
+        }
         return value.replace("&fs", "/").replace("&pipe", "|").replace("&amp", "&");
     }
 

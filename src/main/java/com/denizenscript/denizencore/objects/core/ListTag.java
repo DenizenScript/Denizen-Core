@@ -9,6 +9,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -44,11 +45,19 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     //
     // -->
 
+    public static AsciiMatcher needsEscpingMatcher = new AsciiMatcher("&|");
+
     public static String escapeEntry(String value) {
+        if (!needsEscpingMatcher.containsAnyMatch(value)) {
+            return value;
+        }
         return value.replace("&", "&amp").replace("|", "&pipe");
     }
 
     public static String unescapeEntry(String value) {
+        if (value.indexOf('&') == -1) {
+            return value;
+        }
         return value.replace("&pipe", "|").replace("&amp", "&");
     }
 
