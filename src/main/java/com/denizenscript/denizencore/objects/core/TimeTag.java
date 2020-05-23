@@ -138,7 +138,7 @@ public class TimeTag implements ObjectTag, Adjustable {
     @Override
     public String debuggable() {
         StringBuilder output = new StringBuilder();
-        output.append("<G>time@<Y>");
+        output.append("<G>time@ <Y>");
         // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
         output.append(pad0(instant.get(ChronoField.YEAR), 4)).append("<G> / <Y>")
                 .append(pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2))
@@ -398,7 +398,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 return null;
             }
             TimeTag toSub = TimeTag.valueOf(attribute.getContext(1), attribute.context);
-            return new DurationTag(object.millis() - toSub.millis());
+            return new DurationTag((object.millis() - toSub.millis()) / 1000.0);
         });
 
         // <--[tag]
