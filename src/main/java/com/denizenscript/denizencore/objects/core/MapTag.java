@@ -131,6 +131,8 @@ public class MapTag implements ObjectTag, Adjustable {
 
     String prefix = "Map";
 
+    public boolean isFlagMap = false;
+
     @Override
     public String getPrefix() {
         return prefix;
