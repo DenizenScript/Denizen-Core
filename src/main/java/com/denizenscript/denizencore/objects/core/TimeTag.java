@@ -402,17 +402,16 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
-        // @attribute <TimeTag.format[<format>]>
+        // @attribute <TimeTag.format[(<format>)]>
         // @returns ElementTag
         // @description
-        // Returns the time, formatted to the ISO standard date format specification given.
+        // Returns the time, formatted to the date format specification given.
+        // If no format input is given, uses "yyyy/MM/dd hh:mm:ss".
+        // For the full format specification, refer to "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
         // -->
         registerTag("format", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag TimeTag.format[...] must have an input.");
-                return null;
-            }
-            DateTimeFormatter format = DateTimeFormatter.ofPattern(attribute.getContext(1));
+            String formatText = attribute.hasContext(1) ? attribute.getContext(1) : "yyyy/MM/dd hh:mm:ss";
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(formatText);
             return new ElementTag(object.instant.format(format));
         });
 
