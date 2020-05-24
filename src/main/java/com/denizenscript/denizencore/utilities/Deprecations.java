@@ -201,6 +201,10 @@ public class Deprecations {
     // Added 2020/05/23, deprecate officially by 2022.
     public static Warning timeTagRewrite = new FutureWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
 
+    // Added 2020/05/24, deprecate officially by 2022.
+    public static Warning flagIsExpiredTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");
+    public static Warning flagExpirationTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].expiration' is deprecated: use 'flag_expiration[...]' instead.");
+
     // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
     public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
 
