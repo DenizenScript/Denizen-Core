@@ -225,6 +225,31 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.get_subset[<key>|...]>
+        // @returns MapTag
+        // @description
+        // Returns the subset of the map represented by the given keys, ordered based on the input list.
+        // For example, on a map of "a/1|b/2|c/3|", using ".get_subset[b|a]" will return "b/2|a/1|".
+        // Keys that aren't present in the original map will be ignored.
+        // -->
+        registerTag("get_subset", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.get_subset' must have an input value.");
+                return null;
+            }
+            ListTag keys = ListTag.getListFor(attribute.getContextObject(1), attribute.context);
+            MapTag output = new MapTag();
+            for (String key : keys) {
+                StringHolder keyHolder = new StringHolder(key);
+                ObjectTag value = object.map.get(keyHolder);
+                if (value != null) {
+                    output.map.put(keyHolder, value);
+                }
+            }
+            return output;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.with[<key>].as[<value>]>
         // @returns MapTag
         // @description
