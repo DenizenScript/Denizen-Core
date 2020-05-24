@@ -18,6 +18,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -722,7 +723,17 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // Interprets a list of "key/value" pairs as a map, and returns the resulting MapTag.
         // -->
         registerTag("to_map", (attribute, object) -> {
-            return MapTag.valueOf(object.identifyList().substring("li@".length()), attribute.context);
+            MapTag map = new MapTag();
+            for (String entry : object) {
+                int slash = entry.indexOf('/');
+                if (slash == -1) {
+                    return null;
+                }
+                String key = entry.substring(0, slash);
+                String value = entry.substring(slash + 1);
+                map.map.put(new StringHolder(key), new ElementTag(value));
+            }
+            return map;
         });
 
         // <--[tag]
