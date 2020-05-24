@@ -165,9 +165,6 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/05/21.
     public static Warning itemSkinFullTag = new SlowWarning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
 
-    // Added 2020/05/23.
-    public static Warning timeTagRewrite = new SlowWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
-
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
@@ -200,6 +197,9 @@ public class Deprecations {
 
     // Added 2020/03/14, deprecate officially by 2022.
     public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
+
+    // Added 2020/05/23, deprecate officially by 2022.
+    public static Warning timeTagRewrite = new FutureWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
 
     // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
     public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
