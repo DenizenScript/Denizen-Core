@@ -686,7 +686,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             if (value.startsWith("map@")) {
                 MapTag map = MapTag.valueOf(value, CoreUtilities.noDebugContext);
                 if (map != null) {
-                    yaml.set(key, map.map);
+                    yaml.set(key, CoreUtilities.objectTagToJavaForm(map, true));
                     return;
                 }
             }
