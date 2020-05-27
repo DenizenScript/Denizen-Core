@@ -877,6 +877,23 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.include_single[<value>]>
+        // @returns ListTag
+        // @description
+        // returns a new ListTag including the value specified as a new entry.
+        // If the value input is a list, that list becomes a list-within-a-list, still only occupying one space in the outer list.
+        // -->
+        registerTag("include_single", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag ListTag.include_single[...] must have a value.");
+                return null;
+            }
+            ListTag copy = new ListTag(object);
+            copy.addObject(attribute.getContextObject(1));
+            return copy;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.include[...|...]>
         // @returns ListTag
         // @description
