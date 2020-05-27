@@ -103,7 +103,7 @@ public class ProcedureScriptTagBase {
                 event.hasTypeContext()) {
             attribs = 2;
             int x = 1;
-            ListTag definitions = new ListTag(event.getTypeContext());
+            ListTag definitions = ListTag.valueOf(event.getTypeContext(), attr.context);
             List<String> definition_names = null;
             if (script.getContainer().getContents().contains("definitions")) {
                 definition_names = CoreUtilities.split(script.getContainer().getString("definitions"), '|');
