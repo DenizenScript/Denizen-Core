@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -630,28 +631,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             return sub_list;
         });
 
-        // <--[tag]
-        // @attribute <ListTag.map_get[<element>|...]>
-        // @returns ListTag or ElementTag
-        // @description
-        // Interprets a list of "key/value" pairs as a map, and returns the value for the given key.
-        // For example: one/a|two/b.map_get[one] returns a.
-        // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
-        // -->
         registerTag("map_get", (attribute, object) -> {
+            Deprecations.listOldMapTags.warn(attribute.context);
             if (object.isEmpty()) {
                 return new ElementTag("");
             }
             ListTag input = getListFor(attribute.getContextObject(1), attribute.context);
 
-            // <--[tag]
-            // @attribute <ListTag.map_get[<element>|...].split_by[<element>]>
-            // @returns ListTag or ElementTag
-            // @description
-            // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
-            // For example: one/a|two/b.map_get[one].split_by[/] returns a.
-            // Optionally, specify a list of keys to get a list back. If any listed keys are not present, will give null.
-            // -->
             String split = "/";
             if (attribute.startsWith("split_by", 2)) {
                 if (attribute.hasContext(2) && attribute.getContext(2).length() > 0) {
@@ -682,23 +668,9 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             return null;
         });
 
-        // <--[tag]
-        // @attribute <ListTag.map_find_key[<element>]>
-        // @returns ElementTag
-        // @description
-        // Interprets a list of "key/value" pairs as a map, and returns the key for the given value.
-        // For example: one/a|two/b.map_find_key[a] returns one.
-        // -->
         registerTag("map_find_key", (attribute, object) -> {
+            Deprecations.listOldMapTags.warn(attribute.context);
             String input = attribute.getContext(1);
-
-            // <--[tag]
-            // @attribute <ListTag.map_find_key[<element>].split_by[<element>]>
-            // @returns ElementTag
-            // @description
-            // Interprets a list of "key" + "value" pairs split by the input symbol as a map, and returns the value for the given key.
-            // For example: one/a|two/b.map_find_key[a].split_by[/] returns one.
-            // -->
 
             String split = "/";
             if (attribute.startsWith("split_by", 2)) {

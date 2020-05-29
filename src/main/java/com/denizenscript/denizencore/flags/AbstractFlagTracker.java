@@ -43,7 +43,7 @@ public abstract class AbstractFlagTracker {
             return new ElementTag(!hasFlag(attribute.getContext(1)));
         }
         else if (attribute.getAttributeWithoutContext(2).equals("expiration")) {
-            Deprecations.flagIsExpiredTag.warn(attribute.context);
+            Deprecations.flagExpirationTag.warn(attribute.context);
             return getFlagExpirationTime(attribute.getContext(1));
         }
         return getFlagValue(attribute.getContext(1));
