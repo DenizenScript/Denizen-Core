@@ -19,6 +19,7 @@ public class RandomCommand extends BracedCommand {
         setName("random");
         setSyntax("random [<commands>]");
         setRequiredArguments(0, 1);
+        isProcedural = true;
     }
 
     // <--[command]

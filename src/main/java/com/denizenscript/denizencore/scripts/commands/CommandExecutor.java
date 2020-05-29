@@ -61,6 +61,10 @@ public class CommandExecutor {
         TagManager.recentTagError = false;
         AbstractCommand command = scriptEntry.internal.actualCommand;
         currentQueue = scriptEntry.getResidingQueue();
+        if (currentQueue.procedural && !command.isProcedural) {
+            Debug.echoError("Command " + command.name + " is not accepted within a procedure. Procedures may not produce a change in the world, they may only process logic.");
+            return false;
+        }
         String saveName = null;
         try {
             scriptEntry.generateAHArgs();

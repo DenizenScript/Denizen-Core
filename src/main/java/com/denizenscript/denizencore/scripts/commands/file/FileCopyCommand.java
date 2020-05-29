@@ -21,6 +21,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         setName("filecopy");
         setSyntax("filecopy [origin:<origin>] [destination:<destination>] (overwrite)");
         setRequiredArguments(2, 3);
+        isProcedural = false;
     }
 
     // <--[command]

@@ -15,6 +15,7 @@ public class RepeatCommand extends BracedCommand {
         setName("repeat");
         setSyntax("repeat [stop/next/<amount>] (as:<name>) [<commands>]");
         setRequiredArguments(1, 2);
+        isProcedural = true;
     }
 
     // <--[command]

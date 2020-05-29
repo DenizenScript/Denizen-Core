@@ -11,6 +11,7 @@ public class ReloadCommand extends AbstractCommand {
         setName("reload");
         setSyntax("reload");
         setRequiredArguments(0, 0);
+        isProcedural = false;
     }
 
     // <--[command]

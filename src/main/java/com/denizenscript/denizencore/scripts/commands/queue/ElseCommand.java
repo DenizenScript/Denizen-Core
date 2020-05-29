@@ -11,6 +11,7 @@ public class ElseCommand extends AbstractCommand {
         setName("else");
         setSyntax("else (if <comparison logic>)");
         setRequiredArguments(0, -1);
+        isProcedural = true;
     }
 
     // <--[command]

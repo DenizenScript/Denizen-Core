@@ -15,6 +15,7 @@ public class DebugCommand extends AbstractCommand {
         setName("debug");
         setSyntax("debug [<type>] [<message>] (name:<name>)");
         setRequiredArguments(2, 3);
+        isProcedural = true;
     }
 
     // <--[command]

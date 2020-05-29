@@ -23,6 +23,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         setName("webget");
         setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)");
         setRequiredArguments(1, 6);
+        isProcedural = false;
     }
 
     // <--[command]

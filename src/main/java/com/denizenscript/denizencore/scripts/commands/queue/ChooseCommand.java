@@ -17,6 +17,7 @@ public class ChooseCommand extends BracedCommand {
         setName("choose");
         setSyntax("choose [<option>] [<cases>]");
         setRequiredArguments(1, 1);
+        isProcedural = true;
     }
 
     // <--[command]

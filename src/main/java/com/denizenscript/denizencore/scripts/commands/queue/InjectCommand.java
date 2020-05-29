@@ -16,6 +16,7 @@ public class InjectCommand extends AbstractCommand {
         setName("inject");
         setSyntax("inject (locally) [<script>] (path:<name>) (instantly)");
         setRequiredArguments(1, 4);
+        isProcedural = true;
     }
 
     // <--[command]

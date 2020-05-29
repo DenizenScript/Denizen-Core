@@ -18,6 +18,7 @@ public class RateLimitCommand extends AbstractCommand {
         setName("ratelimit");
         setSyntax("ratelimit [<object>] [<duration>]");
         setRequiredArguments(2, 2);
+        isProcedural = true;
     }
 
     // <--[command]

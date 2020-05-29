@@ -15,6 +15,7 @@ public class WaitCommand extends AbstractCommand {
         setName("wait");
         setSyntax("wait (<duration>) (queue:<name>)");
         setRequiredArguments(0, 2);
+        isProcedural = false; // A procedure can't wait
     }
 
     // <--[command]

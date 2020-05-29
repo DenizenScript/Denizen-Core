@@ -90,6 +90,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public boolean was_cleared = false;
 
     /**
+     * Whether this queue is locked to procedural commands only.
+     */
+    public boolean procedural = false;
+
+    /**
      * Optional secondary debug output method.
      */
     public Consumer<String> debugOutput = null;

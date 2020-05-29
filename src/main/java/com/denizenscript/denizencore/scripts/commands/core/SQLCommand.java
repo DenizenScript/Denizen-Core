@@ -25,6 +25,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         setName("sql");
         setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]");
         setRequiredArguments(2, 5);
+        isProcedural = false;
     }
 
     // <--[command]

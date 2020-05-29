@@ -19,6 +19,7 @@ public class EventCommand extends AbstractCommand {
         setName("event");
         setSyntax("event [<event name>|...] (context:<name>|<object>|...)");
         setRequiredArguments(1, 2);
+        isProcedural = false;
     }
 
     // <--[command]

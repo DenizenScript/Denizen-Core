@@ -40,6 +40,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 yaml(event);
             }
         }, "yaml");
+        isProcedural = false;
     }
 
     // <--[command]

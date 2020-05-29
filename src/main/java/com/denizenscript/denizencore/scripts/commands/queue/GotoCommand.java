@@ -15,6 +15,7 @@ public class GotoCommand extends AbstractCommand {
         setName("goto");
         setSyntax("goto [<name>]");
         setRequiredArguments(1, 1);
+        isProcedural = true;
     }
 
     // <--[command]

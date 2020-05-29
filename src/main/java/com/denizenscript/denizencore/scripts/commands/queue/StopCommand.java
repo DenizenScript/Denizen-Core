@@ -13,6 +13,7 @@ public class StopCommand extends AbstractCommand {
         setName("stop");
         setSyntax("stop");
         setRequiredArguments(0, 0);
+        isProcedural = true;
     }
 
     // <--[command]

@@ -15,6 +15,7 @@ public class DebugInvalidCommand extends AbstractCommand {
         setName("debug-invalid-command");
         setSyntax("");
         setRequiredArguments(0, Integer.MAX_VALUE);
+        isProcedural = true;
     }
 
     @Override

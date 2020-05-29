@@ -23,6 +23,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         setRequiredArguments(1, -1);
         setParseArgs(false);
         forceHold = true;
+        isProcedural = false; // A procedure can't wait
     }
 
     // <--[command]

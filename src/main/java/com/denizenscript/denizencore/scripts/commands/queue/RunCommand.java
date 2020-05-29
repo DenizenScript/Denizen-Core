@@ -19,6 +19,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         setName("run");
         setSyntax("run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
         setRequiredArguments(1, 6);
+        isProcedural = true;
     }
 
     // <--[command]
@@ -203,6 +204,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
             }
             // Save the queue for script referencing
             scriptEntry.addObject("created_queue", new QueueTag(queue));
+            // Preserve procedural status
+            queue.procedural = scriptEntry.getResidingQueue().procedural;
         };
 
         ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id, definitions, scriptEntry);

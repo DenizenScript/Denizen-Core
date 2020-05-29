@@ -16,6 +16,7 @@ public class DetermineCommand extends AbstractCommand {
         setName("determine");
         setSyntax("determine (passively) [<value>]");
         setRequiredArguments(1, 2);
+        isProcedural = true;
     }
 
     // <--[command]

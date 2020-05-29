@@ -20,6 +20,7 @@ public class IfCommand extends BracedCommand {
         setSyntax("if [<value>] (!)(<operator> <value>) (&&/|| ...) [<commands>]");
         setRequiredArguments(1, -1);
         setParseArgs(false);
+        isProcedural = true;
     }
 
     // <--[command]

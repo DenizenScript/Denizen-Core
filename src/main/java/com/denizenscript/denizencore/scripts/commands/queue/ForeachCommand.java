@@ -16,6 +16,7 @@ public class ForeachCommand extends BracedCommand {
         setName("foreach");
         setSyntax("foreach [stop/next/<object>|...] (as:<name>) [<commands>]");
         setRequiredArguments(1, 2);
+        isProcedural = true;
     }
 
     // <--[command]

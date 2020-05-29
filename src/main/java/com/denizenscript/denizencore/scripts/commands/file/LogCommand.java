@@ -20,6 +20,7 @@ public class LogCommand extends AbstractCommand {
         setName("log");
         setSyntax("log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]");
         setRequiredArguments(2, 3);
+        isProcedural = false;
     }
 
     // <--[command]

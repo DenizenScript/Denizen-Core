@@ -13,6 +13,7 @@ public class MarkCommand extends AbstractCommand {
         setName("mark");
         setSyntax("mark [<name>]");
         setRequiredArguments(1, 1);
+        isProcedural = true;
     }
 
     // <--[command]

@@ -120,9 +120,8 @@ public class ProcedureScriptTagBase {
 
             queue.addDefinition("raw_context", event.getTypeContext());
         }
-
+        queue.procedural = true;
         queue.start();
-
         if (queue.determinations != null && queue.determinations.size() > 0) {
             event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0)
                     , attr.fulfill(attribs)));

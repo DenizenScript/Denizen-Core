@@ -16,6 +16,7 @@ public class QueueCommand extends AbstractCommand {
         setName("queue");
         setSyntax("queue (<queue>) [clear/stop/pause/resume/delay:<duration>]");
         setRequiredArguments(1, 2);
+        isProcedural = true; //  TODO: Should be false, but historical '- queue clear' usage might apply
     }
 
     // <--[command]

@@ -54,6 +54,11 @@ public abstract class AbstractCommand {
 
     public int maximumArguments = Integer.MAX_VALUE;
 
+    /**
+     * Whether this command is valid for usage in procedural logic.
+     */
+    public boolean isProcedural = false;
+
     public void setRequiredArguments(int min, int max) {
         minimumArguments = min;
         maximumArguments = max == -1 ? Integer.MAX_VALUE : max;

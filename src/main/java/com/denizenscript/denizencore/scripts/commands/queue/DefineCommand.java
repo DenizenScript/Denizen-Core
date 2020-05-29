@@ -23,6 +23,7 @@ public class DefineCommand extends AbstractCommand {
         setName("define");
         setSyntax("define [<id>](:<action>)[:<value>]");
         setRequiredArguments(1, 2);
+        isProcedural = true;
     }
 
     // <--[command]

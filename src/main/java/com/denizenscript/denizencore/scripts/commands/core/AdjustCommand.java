@@ -19,6 +19,7 @@ public class AdjustCommand extends AbstractCommand {
         setName("adjust");
         setSyntax("adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)");
         setRequiredArguments(2, 2);
+        isProcedural = true;
     }
 
     // <--[command]
