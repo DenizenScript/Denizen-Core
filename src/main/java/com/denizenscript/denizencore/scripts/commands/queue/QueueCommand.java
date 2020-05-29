@@ -122,6 +122,11 @@ public class QueueCommand extends AbstractCommand {
         Action action = (Action) scriptEntry.getObject("action");
         DurationTag delay = scriptEntry.getObjectTag("delay");
 
+        if (scriptEntry.getResidingQueue().procedural && !queue.getQueue().id.equals(scriptEntry.getResidingQueue().id)) {
+            Debug.echoError("Cannot modify other queues from a procedural queue.");
+            return;
+        }
+
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), queue.debug()
                     + ArgumentHelper.debugObj("Action", action.toString())
