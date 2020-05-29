@@ -7,13 +7,13 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.json.JSONObject;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MapTag implements ObjectTag, Adjustable {
 
@@ -207,6 +207,44 @@ public class MapTag implements ObjectTag, Adjustable {
         // -->
         registerTag("is_empty", (attribute, object) -> {
             return new ElementTag(object.map.isEmpty());
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.sort_by_value[(<tag>)]>
+        // @returns MapTag
+        // @description
+        // returns a copy of the map, sorted alphanumerically by the value under each key.
+        // Optionally, specify a tag to apply to the value.
+        // To sort by key, use <@link tag MapTag.get_subset> with list sort tags, like 'map.get_subset[map.list_keys.sort_by_value[...]]'.
+        // This also lets you apply list filters or similar to the keyset.
+        // To apply a '.parse' to the values, use <@link tag ListTag.map_with>, like 'map.list_keys.map_with[map.list_values.parse[...]]'
+        // -->
+        registerTag("sort_by_value", (attribute, object) -> {
+            ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
+            final NaturalOrderComparator comparator = new NaturalOrderComparator();
+            final String tag = attribute.hasContext(1) ? attribute.getContext(1) : null;
+            try {
+                Collections.sort(entryList, new Comparator<Map.Entry<StringHolder, ObjectTag>>() {
+                    @Override
+                    public int compare(Map.Entry<StringHolder, ObjectTag> e1, Map.Entry<StringHolder, ObjectTag> e2) {
+                        ObjectTag o1 = e1.getValue();
+                        ObjectTag o2 = e2.getValue();
+                        if (tag != null) {
+                            o1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                            o2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        }
+                        return comparator.compare(o1, o2);
+                    }
+                });
+            }
+            catch (Exception ex) {
+                Debug.echoError(ex);
+            }
+            MapTag output = new MapTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : entryList) {
+                output.map.put(entry.getKey(), entry.getValue());
+            }
+            return output;
         });
 
         // <--[tag]
