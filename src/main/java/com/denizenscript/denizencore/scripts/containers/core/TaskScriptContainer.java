@@ -1,18 +1,12 @@
 package com.denizenscript.denizencore.scripts.containers.core;
 
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
-import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class TaskScriptContainer extends ScriptContainer {

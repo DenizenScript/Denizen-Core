@@ -150,6 +150,10 @@ public class AdjustCommand extends AbstractCommand {
             return object;
         }
         object = ObjectFetcher.pickObjectFor(objectString, mechanism.context); // Create duplicate of object, instead of adjusting original
+        if (entry.getResidingQueue().procedural && object.isUnique()) {
+            Debug.echoError("Cannot adjust a unique object within a procedural queue.");
+            return null;
+        }
         ((Adjustable) object).safeAdjust(mechanism);
         return object;
     }
