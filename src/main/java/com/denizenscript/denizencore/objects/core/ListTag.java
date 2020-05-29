@@ -709,6 +709,28 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.map_with[<value>|...]>
+        // @returns MapTag
+        // @description
+        // Interprets this list as a list of keys, and the input as a list of values,
+        // and forms a mapping from keys to values based on list index.
+        // Both lists must have the same size.
+        // For example, on a list of "a|b|c|", using ".map_with[1|2|3|]" will return a MapTag of "a/1|b/2|c/3|"
+        // -->
+        registerTag("map_with", (attribute, object) -> {
+            ListTag inputList = getListFor(attribute.getContextObject(1), attribute.context);
+            if (object.size() != inputList.size()) {
+                attribute.echoError("List.map_with tag failed: lists must be the same size!");
+                return null;
+            }
+            MapTag map = new MapTag();
+            for (int i = 0; i < object.size(); i++) {
+                map.map.put(new StringHolder(object.get(i)), inputList.getObject(i));
+            }
+            return map;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.size>
         // @returns ElementTag(Number)
         // @description
