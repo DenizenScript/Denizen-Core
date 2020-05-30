@@ -50,8 +50,8 @@ public class ForeachCommand extends BracedCommand {
     // @Usage
     // Use to iterate through entries in any tag that returns a list
     // - foreach <server.list_online_players> as:player:
-    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!" player:<[player]>
-    //     - give <[player]> money qty:50
+    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!" targets:<[player]>
+    //     - give money qty:50 player:<[player]>
     //
     // -->
 
