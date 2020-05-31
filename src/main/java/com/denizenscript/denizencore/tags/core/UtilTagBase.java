@@ -188,6 +188,66 @@ public class UtilTagBase {
         }
 
         // <--[tag]
+        // @attribute <util.short_max>
+        // @returns ElementTag
+        // @description
+        // Returns the maximum value of a 16 bit signed integer (a java 'short'): 32767
+        // -->
+        else if (attribute.startsWith("short_max")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Short.MAX_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.short_min>
+        // @returns ElementTag
+        // @description
+        // Returns the minimum value of a 16 bit signed integer (a java 'short'): -32768
+        // -->
+        else if (attribute.startsWith("short_min")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Short.MIN_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.int_max>
+        // @returns ElementTag
+        // @description
+        // Returns the maximum value of a 32 bit signed integer (a java 'int'): 2147483647
+        // -->
+        else if (attribute.startsWith("int_max")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Integer.MAX_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.int_min>
+        // @returns ElementTag
+        // @description
+        // Returns the minimum value of a 32 bit signed integer (a java 'int'): -2147483648
+        // -->
+        else if (attribute.startsWith("int_min")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Integer.MIN_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.long_max>
+        // @returns ElementTag
+        // @description
+        // Returns the maximum value of a 64 bit signed integer (a java 'long'): 9223372036854775807
+        // -->
+        else if (attribute.startsWith("long_max")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Long.MAX_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.long_min>
+        // @returns ElementTag
+        // @description
+        // Returns the minimum value of a 64 bit signed integer (a java 'long'): -9223372036854775808
+        // -->
+        else if (attribute.startsWith("long_min")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Long.MIN_VALUE), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.pi>
         // @returns ElementTag
         // @description
