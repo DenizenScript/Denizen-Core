@@ -165,6 +165,13 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/05/21.
     public static Warning itemSkinFullTag = new SlowWarning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
 
+    // In Bukkit impl, Added 2020/06/03 but deprecated long ago.
+    public static Warning oldBossBarMech = new SlowWarning("The show_boss_bar mechanism is deprecated: use the bossbar command instead.");
+    public static Warning oldTimeMech = new SlowWarning("The player.*time mechanisms are deprecated: use the time command instead.");
+    public static Warning oldWeatherMech = new SlowWarning("The player.*weather mechanisms are deprecated: use the weather command instead.");
+    public static Warning oldKickMech = new SlowWarning("The player.kick mechanism is deprecated: use the kick command instead.");
+    public static Warning oldMoneyMech = new SlowWarning("The player.money mechanism is deprecated: use the money command instead.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
