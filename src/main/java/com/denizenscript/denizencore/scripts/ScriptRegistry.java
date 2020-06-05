@@ -37,13 +37,7 @@ public class ScriptRegistry {
             return false;
         }
         ScriptContainer script = scriptContainers.get(CoreUtilities.toLowerCase(id));
-        String type = null;
-        for (Map.Entry<String, Class<? extends ScriptContainer>> entry : scriptContainerTypes.entrySet()) {
-            if (entry.getValue() == scriptContainerType) {
-                type = entry.getKey();
-            }
-        }
-        return type != null && (script.getContainerType().equalsIgnoreCase(type));
+        return scriptContainerType.isInstance(script);
     }
 
     public static YamlConfiguration fullYaml;

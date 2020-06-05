@@ -43,9 +43,6 @@ public class Deprecations {
     // Added on 2019/07/13
     public static Warning oldEscapeTags = new SlowWarning("'escape:' tags are deprecated. Please use '.escaped' element tags instead.");
 
-    // In Bukkit impl, Added on 2019/07/25
-    public static Warning oldStylePlayerBreaksItemEvent = new StrongWarning("Event 'player breaks <item>' is old. Use 'player breaks held <item>' instead (this is to prevent conflict with breaks block)");
-
     // In Bukkit impl, Added on 2019/08/11
     public static Warning oldEconomyTags = new SlowWarning("player.money.currency* tags are deprecated in favor of server.economy.currency* tags.");
 

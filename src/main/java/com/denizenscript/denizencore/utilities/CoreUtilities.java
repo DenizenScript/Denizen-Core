@@ -321,7 +321,7 @@ public class CoreUtilities {
                 int atIndex = simple.indexOf('@');
                 if (atIndex != -1) {
                     String code = simple.substring(0, atIndex);
-                    if (!code.equals(knownCode)) {
+                    if (!code.equals(knownCode) && !code.equals("el")) {
                         return false;
                     }
                 }
