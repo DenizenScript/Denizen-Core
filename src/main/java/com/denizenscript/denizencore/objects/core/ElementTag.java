@@ -1493,6 +1493,9 @@ public class ElementTag implements ObjectTag {
             else {
                 split_string = "(?i)" + Pattern.quote(split_string);
             }
+            if (split_string.isEmpty()) {
+                attribute.echoError("Cannot split over empty value. Did you mean to use 'to_list'?");
+            }
             String[] split;
 
             // <--[tag]

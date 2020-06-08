@@ -3,11 +3,13 @@ package com.denizenscript.denizencore.tags;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Attribute {
 
@@ -189,6 +191,72 @@ public class Attribute {
         }
         hasContextFailed = true;
         return false;
+    }
+
+    public static class OverridingDefinitionProvider implements DefinitionProvider {
+        public DefinitionProvider originalProvider;
+        public String altDefName;
+        public ObjectTag altDefObj;
+        public OverridingDefinitionProvider(DefinitionProvider original, String altName, ObjectTag altObj) {
+            originalProvider = original;
+            altDefName = altName;
+            altDefObj = altObj;
+        }
+        @Override
+        public void addDefinition(String definition, String value) {
+            originalProvider.addDefinition(definition, value);
+        }
+        @Override
+        public Map<String, ObjectTag> getAllDefinitions() {
+            return originalProvider.getAllDefinitions();
+        }
+        @Override
+        public ObjectTag getDefinitionObject(String definition) {
+            if (definition.equalsIgnoreCase(altDefName)) {
+                return altDefObj;
+            }
+            return originalProvider.getDefinitionObject(definition);
+        }
+
+        @Override
+        public String getDefinition(String definition) {
+            if (definition.equalsIgnoreCase(altDefName)) {
+                return altDefObj == null ? null : altDefObj.toString();
+            }
+            return originalProvider.getDefinition(definition);
+        }
+
+        @Override
+        public boolean hasDefinition(String definition) {
+            if (definition.equalsIgnoreCase(altDefName)) {
+                return true;
+            }
+            return originalProvider.hasDefinition(definition);
+        }
+
+        @Override
+        public void removeDefinition(String definition) {
+            originalProvider.removeDefinition(definition);
+        }
+    }
+
+    public ObjectTag parseDynamicContext(int attribute, OverridingDefinitionProvider customProvider) {
+        attribute += fulfilled - 1;
+        if (attribute < 0 || attribute >= attributes.length) {
+            return null;
+        }
+        String inp = attributes[attribute].context;
+        if (inp == null) {
+            return null;
+        }
+        DefinitionProvider originalProvider = context.definitionProvider;
+        context.definitionProvider = customProvider;
+        try {
+            return TagManager.tagObject(inp, context);
+        }
+        finally {
+            context.definitionProvider = originalProvider;
+        }
     }
 
     public ObjectTag getContextObject(int attribute) {

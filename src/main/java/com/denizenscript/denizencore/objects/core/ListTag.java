@@ -1719,6 +1719,62 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.filter_tag[<dynamic-boolean>]>
+        // @returns ListTag
+        // @description
+        // returns a copy of the list with all its contents parsed through the given input tag and only including ones that returned 'true'.
+        // This requires a fully formed tag as input, making use of the 'filter_value' definition.
+        // For example: a list of '1|2|3|4|5' .filter_tag[<list[4|5].contains[<[filter_value]>]>] returns a list of '4|5'.
+        // -->
+        registerTag("filter_tag", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("Must have input to filter_tag[...]");
+                return null;
+            }
+            ListTag newlist = new ListTag();
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider, "filter_value", null);
+            try {
+                for (ObjectTag obj : object.objectForms) {
+                    provider.altDefObj = obj;
+                    if (attribute.parseDynamicContext(1, provider).toString().equalsIgnoreCase("true")) {
+                        newlist.addObject(obj);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Debug.echoError(ex);
+            }
+            return newlist;
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.parse_tag[<parseable-value>]>
+        // @returns ListTag
+        // @description
+        // returns a copy of the list with all its contents parsed through the given tag.
+        // This requires a fully formed tag as input, making use of the 'parse_value' definition.
+        // For example: a list of '3|1|2' .parse_tag[<list[alpha|bravo|charlie].get[<[parse_value]>]>] returns a list of 'charlie|alpha|bravo'.
+        // -->
+        registerTag("parse_tag", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("Must have input to parse_tag[...]");
+                return null;
+            }
+            ListTag newlist = new ListTag();
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider, "parse_value", null);
+            try {
+                for (ObjectTag obj : object.objectForms) {
+                    provider.altDefObj = obj;
+                    newlist.addObject(attribute.parseDynamicContext(1, provider));
+                }
+            }
+            catch (Exception ex) {
+                Debug.echoError(ex);
+            }
+            return newlist;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.pad_left[<#>]>
         // @returns ListTag
         // @description
