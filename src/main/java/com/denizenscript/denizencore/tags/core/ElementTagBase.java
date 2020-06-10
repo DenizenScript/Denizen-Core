@@ -16,6 +16,7 @@ public class ElementTagBase {
         // @returns ElementTag
         // @description
         // Returns an element constructed from the input value.
+        // Refer to <@link language ElementTag objects>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override

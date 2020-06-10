@@ -18,6 +18,7 @@ public class ScriptTagBase {
         // @returns ScriptTag
         // @description
         // Returns a script object constructed from the input value.
+        // Refer to <@link language ScriptTag objects>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override

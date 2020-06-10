@@ -44,7 +44,7 @@ public class ElementTag implements ObjectTag {
     // For example: <element[This_is_a_test].to_uppercase>
     // will result in the value 'THIS_IS_A_TEST'.
     //
-    // Note that while other objects often return their object identifier (p@, li@, e@, etc.), elements do not.
+    // Note that while other objects often return their object identifier (p@, li@, e@, etc.), elements usually do not (except special type-validation circumstances).
     // They will, however, recognize the object notation "el@" if it is used.
     //
     // -->

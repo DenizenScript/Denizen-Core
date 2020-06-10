@@ -16,6 +16,7 @@ public class DurationTagBase {
         // @returns DurationTag
         // @description
         // Returns a duration object constructed from the input value.
+        // Refer to <@link language DurationTag objects>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override

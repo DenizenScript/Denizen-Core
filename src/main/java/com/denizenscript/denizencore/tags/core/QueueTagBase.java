@@ -20,6 +20,7 @@ public class QueueTagBase {
         // @returns QueueTag
         // @description
         // Returns a queue object constructed from the input value.
+        // Refer to <@link language QueueTag objects>.
         // If no input is given, returns the current queue.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {

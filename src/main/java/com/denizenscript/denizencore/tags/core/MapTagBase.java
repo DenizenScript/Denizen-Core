@@ -16,6 +16,7 @@ public class MapTagBase {
         // @returns MapTag
         // @description
         // Returns a map object constructed from the input value.
+        // Refer to <@link language MapTag objects>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
