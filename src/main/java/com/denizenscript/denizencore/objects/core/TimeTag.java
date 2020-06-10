@@ -455,6 +455,36 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.start_of_year>
+        // @returns TimeTag
+        // @description
+        // Returns this time tag, with the month/day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same month).
+        // -->
+        registerTag("start_of_year", (attribute, object) -> {
+            return new TimeTag(object.year(), 1, 1, 0, 0, 0, 0, object.instant.getOffset());
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.start_of_month>
+        // @returns TimeTag
+        // @description
+        // Returns this time tag, with the day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same month).
+        // -->
+        registerTag("start_of_month", (attribute, object) -> {
+            return new TimeTag(object.year(), object.month(), 1, 0, 0, 0, 0, object.instant.getOffset());
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.start_of_day>
+        // @returns TimeTag
+        // @description
+        // Returns this time tag, with the hour/minute/second/millisecond zeroed (that is, midnight the morning of the same day).
+        // -->
+        registerTag("start_of_day", (attribute, object) -> {
+            return new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.add[<duration>]>
         // @returns TimeTag
         // @description
