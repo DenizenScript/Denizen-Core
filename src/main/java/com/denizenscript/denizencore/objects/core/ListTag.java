@@ -1111,12 +1111,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             if (indices.size() > 0) {
                 int index = Integer.parseInt(indices.get(0)) - 1;
                 if (index >= object.size()) {
-                    if (!attribute.hasAlternative()) {
-                        Debug.echoError("Invalid list.get index.");
-                    }
+                    attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... list is only " + object.size() + " long.");
                     return null;
                 }
                 if (index < 0) {
+                    attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... must be at least 1.");
                     index = 0;
                 }
 

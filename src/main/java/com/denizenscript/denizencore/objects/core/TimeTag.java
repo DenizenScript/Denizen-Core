@@ -28,6 +28,10 @@ public class TimeTag implements ObjectTag, Adjustable {
     // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill_offset"
     // So, for example, 'time@2020/05/23_02:20:31:0123_-7:00'
     //
+    // TimeTags can also be constructed from 'yyyy/mm/dd', 'yyyy/mm/dd_hh:mm:ss', or 'yyyy/mm/dd_hh:mm:ss:mill'.
+    // (Meaning: the offset is optional, the milliseconds are optional, and the time-of-day is optional,
+    // but if you exclude an optional part, you must immediately end the input there, without specifying more).
+    //
     // -->
 
     public static TimeTag now() {
@@ -48,28 +52,39 @@ public class TimeTag implements ObjectTag, Adjustable {
             string = string.substring("time@".length());
         }
         List<String> coreParts = CoreUtilities.split(string, '_');
-        if (coreParts.size() != 3) {
+        if (coreParts.size() > 3) {
             return null;
         }
         List<String> dateParts = CoreUtilities.split(coreParts.get(0), '/');
         if (dateParts.size() != 3) {
             return null;
         }
-        List<String> timeParts = CoreUtilities.split(coreParts.get(1), ':');
-        if (timeParts.size() != 3 && timeParts.size() != 4) {
-            return null;
+
+        List<String> timeParts = null;
+        if (coreParts.size() > 1) {
+            timeParts = CoreUtilities.split(coreParts.get(1), ':');
+            if (timeParts.size() != 3 && timeParts.size() != 4) {
+                return null;
+            }
         }
         try {
             int year = Integer.parseInt(dateParts.get(0));
             int month = Integer.parseInt(dateParts.get(1));
             int day = Integer.parseInt(dateParts.get(2));
-            int hour = Integer.parseInt(timeParts.get(0));
-            int minute = Integer.parseInt(timeParts.get(1));
-            int second = Integer.parseInt(timeParts.get(2));
-            int millisecond = timeParts.size() == 3 ? 0 : Integer.parseInt(timeParts.get(3));
-            ZoneOffset offset = ZoneOffset.of(coreParts.get(2));
-            ZonedDateTime dateTime = ZonedDateTime.of(year, month, day, hour, minute, second, millisecond * 1_000_000, offset);
-            return new TimeTag(dateTime);
+            int hour = 0, minute = 0, second = 0, millisecond = 0;
+            if (timeParts != null) {
+                hour = Integer.parseInt(timeParts.get(0));
+                minute = Integer.parseInt(timeParts.get(1));
+                second = Integer.parseInt(timeParts.get(2));
+                if (timeParts.size() == 4) {
+                    millisecond = Integer.parseInt(timeParts.get(3));
+                }
+            }
+            ZoneOffset offset = ZoneOffset.UTC;
+            if (coreParts.size() > 2) {
+                offset = ZoneOffset.of(coreParts.get(2));
+            }
+            return new TimeTag(year, month, day, hour, minute, second, millisecond, offset);
         }
         catch (NumberFormatException ex) {
             if (context == null || context.debug) {
@@ -77,8 +92,6 @@ public class TimeTag implements ObjectTag, Adjustable {
             }
             return null;
         }
-
-        // TODO
     }
 
     public static boolean matches(String string) {
@@ -92,6 +105,10 @@ public class TimeTag implements ObjectTag, Adjustable {
     public ZonedDateTime instant;
 
     public TimeTag() {
+    }
+
+    public TimeTag(int year, int month, int day, int hour, int minute, int second, int millisecond, ZoneOffset offset) {
+        this(ZonedDateTime.of(year, month, day, hour, minute, second, millisecond * 1_000_000, offset));
     }
 
     public TimeTag(ZonedDateTime instant) {
