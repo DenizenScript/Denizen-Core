@@ -14,6 +14,8 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
     //
     // @Regex ^on console output$
     //
+    // @Group Core
+    //
     // @Cancellable true
     //
     // @Triggers when any message is printed to console. (Requires <@link mechanism system.redirect_logging> be set true.)

@@ -12,6 +12,8 @@ public class PreScriptReloadScriptEvent extends ScriptEvent {
     //
     // @Regex ^on pre script reload$
     //
+    // @Group Core
+    //
     // @Triggers immediately before Denizen scripts are reloaded.
     //
     // -->

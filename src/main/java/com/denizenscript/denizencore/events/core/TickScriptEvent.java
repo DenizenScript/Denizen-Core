@@ -16,6 +16,8 @@ public class TickScriptEvent extends ScriptEvent {
     //
     // @Regex ^on tick$
     //
+    // @Group Core
+    //
     // @Warning This event fires very rapidly and is usually not the most ideal way to handle things.
     //
     // @Triggers every single tick.

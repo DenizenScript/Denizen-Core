@@ -16,6 +16,8 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
     //
     // @Regex ^on delta time (hourly|minutely|secondly)$
     //
+    // @Group Core
+    //
     // @Triggers every <count> seconds, minutes, or hours of game calculation time. Default repetitions count of 1.
     // This is specifically based on the rate of time advancement in the game server,
     // which is not necessarily equivalent to the real passage of time

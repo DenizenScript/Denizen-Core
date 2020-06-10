@@ -18,6 +18,8 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     //
     // @Regex ^on ((reload scripts)|(script reload))$
     //
+    // @Group Core
+    //
     // @Triggers when Denizen scripts are reloaded.
     //
     // @Context
