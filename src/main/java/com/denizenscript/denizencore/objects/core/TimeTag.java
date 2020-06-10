@@ -196,6 +196,34 @@ public class TimeTag implements ObjectTag, Adjustable {
         return identify();
     }
 
+    public int year() {
+        return instant.get(ChronoField.YEAR);
+    }
+
+    public int month() {
+        return instant.get(ChronoField.MONTH_OF_YEAR);
+    }
+
+    public int day() {
+        return instant.get(ChronoField.DAY_OF_MONTH);
+    }
+
+    public int hour() {
+        return instant.get(ChronoField.HOUR_OF_DAY);
+    }
+
+    public int minute() {
+        return instant.get(ChronoField.MINUTE_OF_HOUR);
+    }
+
+    public int second() {
+        return instant.get(ChronoField.SECOND_OF_MINUTE);
+    }
+
+    public int millisecondComponent() {
+        return instant.get(ChronoField.MILLI_OF_SECOND);
+    }
+
     public static void registerTags() {
 
         // <--[tag]
@@ -205,7 +233,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the year of this TimeTag, like '2020'.
         // -->
         registerTag("year", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.YEAR));
+            return new ElementTag(object.year());
         });
 
         // <--[tag]
@@ -215,7 +243,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the month of this TimeTag, where January is 1 and December is 12.
         // -->
         registerTag("month", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.MONTH_OF_YEAR));
+            return new ElementTag(object.month());
         });
 
         // <--[tag]
@@ -225,7 +253,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the name of the month of this TimeTag, like 'JANUARY'.
         // -->
         registerTag("month_name", (attribute, object) -> {
-            return new ElementTag(Month.of(object.instant.get(ChronoField.MONTH_OF_YEAR)).name());
+            return new ElementTag(Month.of(object.month()).name());
         });
 
         // <--[tag]
@@ -235,7 +263,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the day-of-month of this TimeTag, starting at 1.
         // -->
         registerTag("day", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.DAY_OF_MONTH));
+            return new ElementTag(object.day());
         });
 
         // <--[tag]
@@ -265,7 +293,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the hour-of-day of this TimeTag, from 1 to 24.
         // -->
         registerTag("hour", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.HOUR_OF_DAY));
+            return new ElementTag(object.hour());
         });
 
         // <--[tag]
@@ -275,7 +303,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the minute-of-hour of this TimeTag, from 0 to 59.
         // -->
         registerTag("minute", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.MINUTE_OF_HOUR));
+            return new ElementTag(object.minute());
         });
 
         // <--[tag]
@@ -285,7 +313,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the second-of-minute of this TimeTag, from 0 to 59.
         // -->
         registerTag("second", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.SECOND_OF_MINUTE));
+            return new ElementTag(object.second());
         });
 
         // <--[tag]
@@ -295,7 +323,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // Returns the millisecond of this TimeTag, from 0 to 999.
         // -->
         registerTag("millisecond", (attribute, object) -> {
-            return new ElementTag(object.instant.get(ChronoField.MILLI_OF_SECOND));
+            return new ElementTag(object.millisecondComponent());
         });
 
         // <--[tag]
