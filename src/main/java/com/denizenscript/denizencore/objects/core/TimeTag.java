@@ -534,6 +534,36 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.is_after[<time>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if this time object comes after the input time value, or false if it's before (or equal).
+        // -->
+        registerTag("is_after", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag TimeTag.is_after[...] must have an input.");
+                return null;
+            }
+            TimeTag toCompare = TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            return new ElementTag(object.millis() > toCompare.millis());
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.is_before[<time>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if this time object comes before the input time value, or false if it's after (or equal).
+        // -->
+        registerTag("is_before", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag TimeTag.is_before[...] must have an input.");
+                return null;
+            }
+            TimeTag toCompare = TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            return new ElementTag(object.millis() < toCompare.millis());
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.format[(<format>)]>
         // @returns ElementTag
         // @description
