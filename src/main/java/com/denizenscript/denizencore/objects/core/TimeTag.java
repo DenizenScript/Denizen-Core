@@ -13,6 +13,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 
@@ -395,6 +396,62 @@ public class TimeTag implements ObjectTag, Adjustable {
         // -->
         registerTag("to_utc", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneOffset.UTC));
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.last_day_of_week[<day>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag of the previous day of the specified input day-of-week (like 'sunday').
+        // The hour/minute/second/millisecond will be zeroed.
+        // -->
+        registerTag("last_day_of_week", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.last_day_of_week[...] must have input.");
+                return null;
+            }
+            DayOfWeek day;
+            try {
+                day = DayOfWeek.valueOf(attribute.getContext(1).toUpperCase());
+            }
+            catch (IllegalArgumentException ex) {
+                attribute.echoError("'" + attribute.getContext(1) + "' is not a valid day-of-week.");
+                return null;
+            }
+            ZonedDateTime time = object.instant;
+            while (!time.getDayOfWeek().equals(day)) {
+                time = time.minus(12, ChronoUnit.HOURS); // Subtract by 12 hours instead of 1 day to avoid most edge-cases.
+            }
+            TimeTag outTime = new TimeTag(time);
+            return new TimeTag(outTime.year(), outTime.month(), outTime.day(), 0, 0, 0, 0, object.instant.getOffset());
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.next_day_of_week[<day>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag of the next day of the specified input day-of-week (like 'thursday').
+        // The hour/minute/second/millisecond will be zeroed.
+        // -->
+        registerTag("next_day_of_week", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.next_day_of_week[...] must have input.");
+                return null;
+            }
+            DayOfWeek day;
+            try {
+                day = DayOfWeek.valueOf(attribute.getContext(1).toUpperCase());
+            }
+            catch (IllegalArgumentException ex) {
+                attribute.echoError("'" + attribute.getContext(1) + "' is not a valid day-of-week.");
+                return null;
+            }
+            ZonedDateTime time = object.instant;
+            while (!time.getDayOfWeek().equals(day)) {
+                time = time.plus(12, ChronoUnit.HOURS); // Subtract by 12 hours instead of 1 day to avoid most edge-cases.
+            }
+            TimeTag outTime = new TimeTag(time);
+            return new TimeTag(outTime.year(), outTime.month(), outTime.day(), 0, 0, 0, 0, object.instant.getOffset());
         });
 
         // <--[tag]
