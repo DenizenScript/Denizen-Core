@@ -82,6 +82,7 @@ public class ElementTag implements ObjectTag {
     // In some cases, this will also be documented as "<#.#>".
     // -->
 
+    @Deprecated
     public static ElementTag valueOf(String string) {
         return valueOf(string, null);
     }

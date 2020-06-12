@@ -27,7 +27,7 @@ public class TimeTag implements ObjectTag, Adjustable {
     //
     // These use the object notation "time@".
     // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill_offset"
-    // So, for example, 'time@2020/05/23_02:20:31:0123_-7:00'
+    // So, for example, 'time@2020/05/23_02:20:31:123_-07:00'
     //
     // TimeTags can also be constructed from 'yyyy/mm/dd', 'yyyy/mm/dd_hh:mm:ss', or 'yyyy/mm/dd_hh:mm:ss:mill'.
     // (Meaning: the offset is optional, the milliseconds are optional, and the time-of-day is optional,
@@ -37,10 +37,6 @@ public class TimeTag implements ObjectTag, Adjustable {
 
     public static TimeTag now() {
         return new TimeTag(ZonedDateTime.now());
-    }
-
-    public static TimeTag valueOf(String string) {
-        return valueOf(string, null);
     }
 
     @Fetchable("time")

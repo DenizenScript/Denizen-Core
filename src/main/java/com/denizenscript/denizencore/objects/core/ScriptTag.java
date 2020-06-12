@@ -89,6 +89,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // Object Fetcher
     /////////////
 
+    @Deprecated
     public static ScriptTag valueOf(String string) {
         return valueOf(string, null);
     }

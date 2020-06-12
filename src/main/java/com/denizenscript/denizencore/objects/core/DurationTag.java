@@ -46,6 +46,7 @@ public class DurationTag implements ObjectTag {
     //   OBJECT FETCHER
     /////////////////
 
+    @Deprecated
     public static DurationTag valueOf(String string) {
         return valueOf(string, null);
     }
@@ -413,7 +414,7 @@ public class DurationTag implements ObjectTag {
                 Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() - DurationTag.valueOf(attribute.getContext(1)).getTicks());
+            return new DurationTag(object.getTicks() - DurationTag.valueOf(attribute.getContext(1), attribute.context).getTicks());
         });
 
         // <--[tag]
@@ -427,7 +428,7 @@ public class DurationTag implements ObjectTag {
                 Debug.echoError("The tag DurationTag.add[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() + DurationTag.valueOf(attribute.getContext(1)).getTicks());
+            return new DurationTag(object.getTicks() + DurationTag.valueOf(attribute.getContext(1), attribute.context).getTicks());
         });
 
         registerTag("time", (attribute, object) -> {

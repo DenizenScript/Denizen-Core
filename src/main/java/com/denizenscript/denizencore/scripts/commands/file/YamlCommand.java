@@ -522,7 +522,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             }
                             index = -1;
                         }
-                        key = ElementTag.valueOf(key.asString().split("\\[")[0]);
+                        key = new ElementTag(key.asString().split("\\[")[0]);
                     }
 
                     String keyStr = key.asString();

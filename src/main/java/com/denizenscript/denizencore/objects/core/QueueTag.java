@@ -30,6 +30,7 @@ public class QueueTag implements ObjectTag, Adjustable {
     //
     // -->
 
+    @Deprecated
     public static QueueTag valueOf(String string) {
         return valueOf(string, null);
     }

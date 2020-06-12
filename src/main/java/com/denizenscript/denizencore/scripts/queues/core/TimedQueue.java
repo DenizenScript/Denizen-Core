@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -39,7 +40,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     }
 
     public TimedQueue(String id) {
-        this(id, DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed()));
+        this(id, DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed(), CoreUtilities.basicContext));
     }
 
     public TimedQueue(String id, long ticks) {

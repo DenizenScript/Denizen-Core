@@ -83,7 +83,7 @@ public class Comparable {
             comparable = Double.parseDouble(arg);
         }
         else if (DurationTag.matches(arg)) {
-            comparable = DurationTag.valueOf(arg).getSeconds();
+            comparable = DurationTag.valueOf(arg, context).getSeconds();
         }
         else if (ListTag.matches(arg)) {
             comparable = ListTag.valueOf(arg, context);
@@ -105,7 +105,7 @@ public class Comparable {
                 comparedto = Double.parseDouble(arg);
             }
             else if (DurationTag.matches(arg)) {
-                comparedto = DurationTag.valueOf(arg).getSeconds();
+                comparedto = DurationTag.valueOf(arg, context).getSeconds();
             }
             else {
                 comparable = String.valueOf(comparable);

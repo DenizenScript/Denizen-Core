@@ -68,10 +68,10 @@ public class ScriptUtilities {
         ScriptQueue queue;
         if (speed == null) {
             if (container.contains("SPEED")) {
-                speed = DurationTag.valueOf(container.getString("SPEED", "0"));
+                speed = DurationTag.valueOf(container.getString("SPEED", "0"), DenizenCore.getImplementation().getTagContext(container));
             }
             if (speed == null) {
-                speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed());
+                speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed(), DenizenCore.getImplementation().getTagContext(container));
             }
         }
         if (speed.getTicks() > 0) {

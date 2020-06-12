@@ -58,10 +58,6 @@ public class MapTag implements ObjectTag, Adjustable {
         return value.replace("&fs", "/").replace("&pipe", "|").replace("&amp", "&");
     }
 
-    public static MapTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
     @Fetchable("map")
     public static MapTag valueOf(String string, TagContext context) {
         if (string == null) {

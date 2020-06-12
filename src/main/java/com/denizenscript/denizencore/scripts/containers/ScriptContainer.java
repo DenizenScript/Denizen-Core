@@ -160,7 +160,7 @@ public class ScriptContainer implements Debuggable {
      * @return a ScriptTag object linking this script container.
      */
     public ScriptTag getAsScriptArg() {
-        return ScriptTag.valueOf(name);
+        return new ScriptTag(this);
     }
 
     // <--[language]

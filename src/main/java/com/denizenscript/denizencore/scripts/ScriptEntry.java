@@ -541,7 +541,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public ScriptEntry setScript(String scriptName) {
-        internal.script = ScriptTag.valueOf(scriptName);
+        internal.script = ScriptTag.valueOf(scriptName, CoreUtilities.basicContext);
         return this;
     }
 

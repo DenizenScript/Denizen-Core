@@ -59,11 +59,11 @@ public class ProcedureScriptTagBase {
             if (event.getNameContext().indexOf('.') > 0) {
                 String[] split = event.getNameContext().split("\\.", 2);
                 path = split[1];
-                script = ScriptTag.valueOf(split[0]);
+                script = ScriptTag.valueOf(split[0], attr.context);
 
             }
             else {
-                script = ScriptTag.valueOf(event.getNameContext());
+                script = ScriptTag.valueOf(event.getNameContext(), attr.context);
             }
 
         }

@@ -1567,7 +1567,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("sort", (attribute, object) -> {
             ListTag obj = new ListTag(object);
-            final ProcedureScriptContainer script = (ProcedureScriptContainer) ScriptTag.valueOf(attribute.getContext(1)).getContainer();
+            final ProcedureScriptContainer script = (ProcedureScriptContainer) ScriptTag.valueOf(attribute.getContext(1), attribute.context).getContainer();
             if (script == null) {
                 Debug.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
                 return obj;
