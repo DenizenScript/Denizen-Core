@@ -46,7 +46,7 @@ public class Mechanism {
     }
 
     public <T extends ObjectTag> T valueAsType(Class<T> dClass) {
-        return ObjectFetcher.getObjectFrom(dClass, getValue().asString(), context);
+        return getValue().asType(dClass, context);
     }
 
     public boolean hasValue() {

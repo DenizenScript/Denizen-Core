@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -257,6 +258,14 @@ public class Attribute {
         finally {
             context.definitionProvider = originalProvider;
         }
+    }
+
+    public <T extends ObjectTag> T contextAsType(int attribute, Class<T> dClass) {
+        ObjectTag contextObj = getContextObject(attribute);
+        if (contextObj == null) {
+            return null;
+        }
+        return CoreUtilities.asType(contextObj, dClass, context);
     }
 
     public ObjectTag getContextObject(int attribute) {
