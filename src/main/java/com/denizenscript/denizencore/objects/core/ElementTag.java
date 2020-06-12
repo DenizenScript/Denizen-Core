@@ -751,7 +751,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_any_case_sensitive", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(attribute.getContext(1), attribute.context);
+            ListTag list = attribute.contextAsType(1, ListTag.class);
             for (String list_element : list) {
                 if (element.contains(list_element)) {
                     return new ElementTag(true);
@@ -864,7 +864,7 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("contains_all_case_sensitive", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(attribute.getContext(1), attribute.context);
+            ListTag list = attribute.contextAsType(1, ListTag.class);
             for (String list_element : list) {
                 if (!element.contains(list_element)) {
                     return new ElementTag("false");

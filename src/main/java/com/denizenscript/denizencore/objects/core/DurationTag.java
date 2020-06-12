@@ -414,7 +414,7 @@ public class DurationTag implements ObjectTag {
                 Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() - DurationTag.valueOf(attribute.getContext(1), attribute.context).getTicks());
+            return new DurationTag(object.getTicks() - attribute.contextAsType(1, DurationTag.class).getTicks());
         });
 
         // <--[tag]
@@ -428,7 +428,7 @@ public class DurationTag implements ObjectTag {
                 Debug.echoError("The tag DurationTag.add[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() + DurationTag.valueOf(attribute.getContext(1), attribute.context).getTicks());
+            return new DurationTag(object.getTicks() + attribute.contextAsType(1, DurationTag.class).getTicks());
         });
 
         registerTag("time", (attribute, object) -> {

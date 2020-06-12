@@ -492,7 +492,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag TimeTag.add[...] must have an input.");
                 return null;
             }
-            DurationTag toAdd = DurationTag.valueOf(attribute.getContext(1), attribute.context);
+            DurationTag toAdd = attribute.contextAsType(1, DurationTag.class);
             return new TimeTag(object.millis() + toAdd.getMillis());
         });
 
@@ -508,7 +508,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag TimeTag.sub[...] must have an input.");
                 return null;
             }
-            DurationTag toSub = DurationTag.valueOf(attribute.getContext(1), attribute.context);
+            DurationTag toSub = attribute.contextAsType(1, DurationTag.class);
             return new TimeTag(object.millis() - toSub.getMillis());
         });
 
@@ -525,7 +525,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag TimeTag.duration_since[...] must have an input.");
                 return null;
             }
-            TimeTag toSub = TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            TimeTag toSub = attribute.contextAsType(1, TimeTag.class);
             return new DurationTag((object.millis() - toSub.millis()) / 1000.0);
         });
 
@@ -540,7 +540,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag TimeTag.is_after[...] must have an input.");
                 return null;
             }
-            TimeTag toCompare = TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            TimeTag toCompare = attribute.contextAsType(1, TimeTag.class);
             return new ElementTag(object.millis() > toCompare.millis());
         });
 
@@ -555,7 +555,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag TimeTag.is_before[...] must have an input.");
                 return null;
             }
-            TimeTag toCompare = TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            TimeTag toCompare = attribute.contextAsType(1, TimeTag.class);
             return new ElementTag(object.millis() < toCompare.millis());
         });
 
