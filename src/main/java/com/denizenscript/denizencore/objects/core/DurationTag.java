@@ -30,6 +30,8 @@ public class DurationTag implements ObjectTag {
     // in between the range specified. The smaller value should be first. Examples:
     // '10s-25s', '1m-2m'.
     //
+    // The input of 'instant' or 'infinite' will be interpreted as 0 (for use with commands where instant/infinite logic applies).
+    //
     // These use the object notation "d@".
     // The identity format for DurationTags is the number of seconds, followed by an 's'.
     //
@@ -60,7 +62,7 @@ public class DurationTag implements ObjectTag {
         if (string.startsWith("d@")) {
             string = string.substring("d@".length());
         }
-        if (string.equals("instant")) {
+        if (string.equals("instant") || string.equals("infinite")) {
             return new DurationTag(0);
         }
         if (string.isEmpty()) {
