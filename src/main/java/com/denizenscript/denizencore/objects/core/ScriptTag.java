@@ -408,17 +408,6 @@ public class ScriptTag implements ObjectTag, Adjustable {
         tagProcessor.registerFutureTagDeprecation("to_yaml", "to_text");
 
         // <--[tag]
-        // @attribute <ScriptTag.type>
-        // @returns ElementTag
-        // @description
-        // Always returns 'Script' for ScriptTag objects. All objects fetchable by the Object Fetcher will return the
-        // type of object that is fulfilling this attribute.
-        // -->
-        registerTag("type", (attribute, object) -> {
-            return new ElementTag("Script");
-        });
-
-        // <--[tag]
         // @attribute <ScriptTag.queues>
         // @returns ListTag(Queue)
         // @description

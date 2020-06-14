@@ -438,17 +438,6 @@ public class DurationTag implements ObjectTag {
             return new TimeTag(object.getMillis());
         });
 
-        // <--[tag]
-        // @attribute <DurationTag.type>
-        // @returns ElementTag
-        // @description
-        // Always returns 'Duration' for DurationTag objects. All objects fetchable by the Object Fetcher will return the
-        // type of object that is fulfilling this attribute.
-        // -->
-        registerTag("type", (attribute, object) -> {
-            return new ElementTag("Duration");
-        });
-
         /////////////////////
         //   FORMAT ATTRIBUTES
         /////////////////

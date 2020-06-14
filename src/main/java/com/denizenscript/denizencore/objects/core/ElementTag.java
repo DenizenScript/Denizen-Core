@@ -2311,17 +2311,6 @@ public class ElementTag implements ObjectTag {
             }
             return new ElementTag(new AsciiMatcher(attribute.getContext(1)).trimToMatches(object.element));
         });
-
-        // <--[tag]
-        // @attribute <ElementTag.type>
-        // @returns ElementTag
-        // @description
-        // Always returns 'Element' for ElementTag objects. All objects fetchable by the Object Fetcher will return the
-        // type of object that is fulfilling this attribute.
-        // -->
-        registerTag("type", (attribute, object) -> {
-            return new ElementTag("Element");
-        });
     }
 
     public static ObjectTagProcessor<ElementTag> tagProcessor = new ObjectTagProcessor<>();

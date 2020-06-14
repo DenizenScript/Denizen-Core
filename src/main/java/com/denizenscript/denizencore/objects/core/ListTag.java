@@ -2030,17 +2030,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // Special handler for flag lists.
             return new ListTag(object);
         }, "aslist");
-
-        // <--[tag]
-        // @attribute <ListTag.type>
-        // @returns ElementTag
-        // @description
-        // Always returns 'List' for ListTag objects. All objects fetchable by the Object Fetcher will return the
-        // type of object that is fulfilling this attribute.
-        // -->
-        registerTag("type", (attribute, object) -> {
-            return new ElementTag("List");
-        });
     }
 
     public boolean containsCaseInsensitive(String val) {
