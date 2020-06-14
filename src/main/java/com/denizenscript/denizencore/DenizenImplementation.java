@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 /**
  * Interface representing all the information that an implementation must provide to the engine.
@@ -159,4 +160,10 @@ public interface DenizenImplementation {
     boolean allowStrangeYAMLSaves();
 
     String queueHeaderInfo(ScriptEntry entry);
+
+    void startRecording();
+
+    void stopRecording();
+
+    void submitRecording(Consumer<String> processResult);
 }
