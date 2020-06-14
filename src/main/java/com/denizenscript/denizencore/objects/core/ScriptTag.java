@@ -384,7 +384,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
         // @returns ElementTag
         // @description
         // Converts the Script Container to a JSON array.
-        // Best used with 'yaml data' type scripts.
+        // Best used with 'data' type scripts.
         // -->
         registerTag("to_json", (attribute, object) -> {
             JSONObject jsobj = new JSONObject(YamlConfiguration.reverse(object.container.getContents().getMap(), true));
@@ -397,7 +397,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
         // @returns ElementTag
         // @description
         // Converts the Script Container to raw YAML text.
-        // Best used with 'yaml data' type scripts.
+        // Best used with 'data' type scripts.
         // -->
         registerTag("to_yaml", (attribute, object) -> {
             YamlConfiguration config = new YamlConfiguration();

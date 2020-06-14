@@ -30,7 +30,7 @@ public class ScriptHelper {
             hadError = true;
             DenizenCore.getImplementation().debugError("Could not load scripts!");
             DenizenCore.getImplementation().debugException(e);
-            _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: yaml data\n");
+            _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: data\n");
         }
 
         ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);

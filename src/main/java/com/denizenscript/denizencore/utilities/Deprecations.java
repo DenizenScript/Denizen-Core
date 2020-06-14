@@ -218,6 +218,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
     public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
 
+    // Added 2020/06/13.
+    public static Warning yamlDataContainer = new FutureWarning("'yaml data' containers are now just called 'data' containers.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

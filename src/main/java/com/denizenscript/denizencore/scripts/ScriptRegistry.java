@@ -25,7 +25,8 @@ public class ScriptRegistry {
         _registerType("task", TaskScriptContainer.class);
         _registerType("procedure", ProcedureScriptContainer.class);
         _registerType("world", WorldScriptContainer.class);
-        _registerType("yaml data", YamlDataScriptContainer.class);
+        _registerType("data", DataScriptContainer.class);
+        _registerType("yaml data", DataScriptContainer.class);
     }
 
     public static boolean containsScript(String id) {
