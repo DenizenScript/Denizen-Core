@@ -53,7 +53,7 @@ public class QueueCommand extends AbstractCommand {
     // <queue.list>
     // <queue.stats>
     // <queue.exists[queue_id]>
-    // <ScriptTag.list_queues>
+    // <ScriptTag.queues>
     //
     // @Usage
     // Use to force-stop a given queue.

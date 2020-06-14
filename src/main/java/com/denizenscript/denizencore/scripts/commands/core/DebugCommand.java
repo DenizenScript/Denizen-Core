@@ -48,7 +48,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // TODO: Should [<type>] be required? Perhaps default to 'debug' mode?
     //
     // @Tags
-    // <entry[saveName].submitted>
+    // <entry[saveName].submitted> returns the submit link (if any).
     //
     // @Usage
     // Use to show an error.
@@ -178,8 +178,8 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                         }
                         else {
                             Debug.echoDebug(scriptEntry, "Submitted to " + s);
+                            scriptEntry.addObject("submitted", new ElementTag(s));
                         }
-                        scriptEntry.addObject("submitted", new ElementTag(s));
                         scriptEntry.setFinished(true);
                     });
                 }
