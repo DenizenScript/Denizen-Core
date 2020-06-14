@@ -1357,7 +1357,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the smallest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "1".
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
-        // For example, <server.list_online_players.lowest[money]> returns the player with the least money currently online.
+        // For example, <server.online_players.lowest[money]> returns the player with the least money currently online.
         // -->
         registerTag("lowest", (attribute, object) -> {
             String tag = null;
@@ -1390,7 +1390,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns the highest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "10".
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
-        // For example, <server.list_players.highest[money]> returns the player with the most money.
+        // For example, <server.players.highest[money]> returns the player with the most money.
         // -->
         registerTag("highest", (attribute, object) -> {
             String tag = null;

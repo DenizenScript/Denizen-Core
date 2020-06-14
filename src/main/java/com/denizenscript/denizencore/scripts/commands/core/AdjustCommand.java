@@ -50,7 +50,7 @@ public class AdjustCommand extends AbstractCommand {
     //
     // @Usage
     // Use to set the skin of every online player.
-    // - adjust <server.list_online_players> skin:Notch
+    // - adjust <server.online_players> skin:Notch
     //
     // @Usage
     // Use to modify an item held in a definition.
