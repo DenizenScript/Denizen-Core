@@ -112,10 +112,14 @@ public class TimeTag implements ObjectTag, Adjustable {
         this.instant = instant;
     }
 
+    public TimeTag(long millis, ZoneId zone) {
+        this(Instant.ofEpochSecond(millis / 1000, (millis % 1000) * 1_000_000).atZone(zone));
+    }
+
     public static ZoneId UTC_Zone = ZoneId.of("UTC");
 
     public TimeTag(long millis) {
-        this(Instant.ofEpochSecond(millis / 1000, (millis % 1000) * 1_000_000).atZone(UTC_Zone));
+        this(millis, UTC_Zone);
     }
 
     String prefix = "Time";
@@ -493,7 +497,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 return null;
             }
             DurationTag toAdd = attribute.contextAsType(1, DurationTag.class);
-            return new TimeTag(object.millis() + toAdd.getMillis());
+            return new TimeTag(object.millis() + toAdd.getMillis(), object.instant.getZone());
         });
 
         // <--[tag]
@@ -509,7 +513,7 @@ public class TimeTag implements ObjectTag, Adjustable {
                 return null;
             }
             DurationTag toSub = attribute.contextAsType(1, DurationTag.class);
-            return new TimeTag(object.millis() - toSub.getMillis());
+            return new TimeTag(object.millis() - toSub.getMillis(), object.instant.getZone());
         });
 
         // <--[tag]
