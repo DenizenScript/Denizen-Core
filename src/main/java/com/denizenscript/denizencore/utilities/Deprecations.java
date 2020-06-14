@@ -169,6 +169,9 @@ public class Deprecations {
     public static Warning oldKickMech = new SlowWarning("The player.kick mechanism is deprecated: use the kick command instead.");
     public static Warning oldMoneyMech = new SlowWarning("The player.money mechanism is deprecated: use the money command instead.");
 
+    // Added 2020/06/13.
+    public static Warning scriptConstantTag = new SlowWarning("The script.constant system has been deprecated in favor of just using data_key.");
+
     // ==================== SPECIAL deprecations: Minecraft version ====================
 
     // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
