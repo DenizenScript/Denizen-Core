@@ -163,9 +163,9 @@ public class Argument implements Cloneable {
     public boolean matchesEnumList(Enum<?>[] values) {
         ListTag list = getList();
         for (String string : list) {
-            String tval = string.replace("_", "").toUpperCase();
+            String tval = string.replace("_", "");
             for (Enum<?> value : values) {
-                if (value.name().replace("_", "").equalsIgnoreCase(tval)) {
+                if (CoreUtilities.equalsIgnoreCase(value.name().replace("_", ""), tval)) {
                     return true;
                 }
             }

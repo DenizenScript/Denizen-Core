@@ -154,9 +154,9 @@ public class DataAction {
                     list.remove(index - 1);
                 }
                 requiresInputValue();
-                String findValue = CoreUtilities.toLowerCase(inputValue.toString());
+                String findValue = inputValue.toString();
                 for (int i = 0; i < list.size(); i++) {
-                    if (CoreUtilities.toLowerCase(list.get(i)).equals(findValue)) {
+                    if (CoreUtilities.equalsIgnoreCase(list.get(i), findValue)) {
                         list.remove(i);
                         break;
                     }

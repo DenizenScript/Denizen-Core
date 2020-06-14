@@ -356,7 +356,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         List<String> list = new ArrayList<>(values.length);
         for (String string : this) {
             for (Enum value : values) {
-                if (value.name().equalsIgnoreCase(string)) {
+                if (CoreUtilities.equalsIgnoreCase(value.name(), string)) {
                     list.add(string);
                 }
             }
@@ -412,7 +412,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             String entry = get(i);
             boolean duplicate = false;
             for (int x = 0; x < i; x++) {
-                if (get(x).equalsIgnoreCase(entry)) {
+                if (CoreUtilities.equalsIgnoreCase(get(x), entry)) {
                     duplicate = true;
                     break;
                 }
@@ -922,7 +922,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // Iterate through
             for (String exclusion : exclusions) {
                 for (int i = 0; i < copy.size(); i++) {
-                    if (copy.get(i).equalsIgnoreCase(exclusion)) {
+                    if (CoreUtilities.equalsIgnoreCase(copy.get(i), exclusion)) {
                         copy.remove(i--);
                     }
                 }
@@ -948,10 +948,10 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             ListTag copy = new ListTag(object);
             for (String index : indices) {
                 int remove;
-                if (index.equalsIgnoreCase("last")) {
+                if (CoreUtilities.equalsIgnoreCase(index, "last")) {
                     remove = copy.size() - 1;
                 }
-                else if (index.equalsIgnoreCase("first")) {
+                else if (CoreUtilities.equalsIgnoreCase(index, "first")) {
                     remove = 0;
                 }
                 else {
@@ -1038,9 +1038,8 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
             }
             else {
-                String lower = CoreUtilities.toLowerCase(replace);
                 for (int i = 0; i < object.size(); i++) {
-                    if (CoreUtilities.toLowerCase(object.get(i)).equals(lower)) {
+                    if (CoreUtilities.equalsIgnoreCase(object.get(i), replace)) {
                         if (replacement != null) {
                             list.addObject(replacement);
                         }
@@ -1130,7 +1129,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 // -->
                 if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
                     int index2;
-                    if (CoreUtilities.toLowerCase(attribute.getContext(2)).equals("last")) {
+                    if (CoreUtilities.equalsIgnoreCase(attribute.getContext(2), "last")) {
                         index2 = object.size() - 1;
                     }
                     else {
@@ -1272,7 +1271,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             String element = attribute.getContext(1);
             int count = 0;
             for (int i = 0; i < object.size(); i++) {
-                if (object.get(i).equalsIgnoreCase(element)) {
+                if (CoreUtilities.equalsIgnoreCase(object.get(i), element)) {
                     count++;
                 }
             }
@@ -1657,7 +1656,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                             attribute.getScriptEntry(), attribute.context);
                     tempAttrib.setHadAlternative(true);
                     ObjectTag objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
-                    if ((objs == null) ? defaultValue : CoreUtilities.toLowerCase(objs.toString()).equals("true")) {
+                    if ((objs == null) ? defaultValue : CoreUtilities.equalsIgnoreCase(objs.toString(), "true")) {
                         newlist.addObject(obj);
                     }
                 }
@@ -1735,7 +1734,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             try {
                 for (ObjectTag obj : object.objectForms) {
                     provider.altDefObj = obj;
-                    if (attribute.parseDynamicContext(1, provider).toString().equalsIgnoreCase("true")) {
+                    if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
                         newlist.addObject(obj);
                     }
                 }
@@ -1919,7 +1918,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             full_set:
             for (String element : object) {
                 for (String sub_element : list) {
-                    if (element.equalsIgnoreCase(sub_element)) {
+                    if (CoreUtilities.equalsIgnoreCase(element, sub_element)) {
                         state = true;
                         break full_set;
                     }
@@ -1968,7 +1967,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
             for (String check : needed) {
                 for (String element : object) {
-                    if (element.equalsIgnoreCase(check)) {
+                    if (CoreUtilities.equalsIgnoreCase(element, check)) {
                         gotten++;
                         break;
                     }
@@ -2036,6 +2035,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         val = CoreUtilities.toLowerCase(val);
         for (String str : this) {
             if (CoreUtilities.toLowerCase(str).equals(val)) {
+            //if (CoreUtilities.equalsIgnoreCase(str, val)) {
                 return true;
             }
         }

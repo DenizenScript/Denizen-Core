@@ -213,7 +213,7 @@ public class Attribute {
         }
         @Override
         public ObjectTag getDefinitionObject(String definition) {
-            if (definition.equalsIgnoreCase(altDefName)) {
+            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
                 return altDefObj;
             }
             return originalProvider.getDefinitionObject(definition);
@@ -221,7 +221,7 @@ public class Attribute {
 
         @Override
         public String getDefinition(String definition) {
-            if (definition.equalsIgnoreCase(altDefName)) {
+            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
                 return altDefObj == null ? null : altDefObj.toString();
             }
             return originalProvider.getDefinition(definition);
@@ -229,7 +229,7 @@ public class Attribute {
 
         @Override
         public boolean hasDefinition(String definition) {
-            if (definition.equalsIgnoreCase(altDefName)) {
+            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
                 return true;
             }
             return originalProvider.hasDefinition(definition);

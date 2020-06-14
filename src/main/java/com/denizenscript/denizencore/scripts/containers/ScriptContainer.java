@@ -279,7 +279,7 @@ public class ScriptContainer implements Debuggable {
                 shouldDebug = DenizenCore.getImplementation().getDefaultDebugMode();
             }
             else {
-                shouldDebug = !contents.getString("debug").equalsIgnoreCase("false");
+                shouldDebug = !CoreUtilities.equalsIgnoreCase(contents.getString("debug"), "false");
             }
         }
         return shouldDebug;

@@ -502,6 +502,27 @@ public class CoreUtilities {
         return strings;
     }
 
+    public static boolean equalsIgnoreCase(String input, String compared) {
+        int inLength = input.length();
+        if (inLength != compared.length()) {
+            return false;
+        }
+        for (int i = 0; i < inLength; i++) {
+            char a = input.charAt(i);
+            char b = compared.charAt(i);
+            if (a >= 'A' && a <= 'Z') {
+                a -= 'A' - 'a';
+            }
+            if (b >= 'A' && b <= 'Z') {
+                b -= 'A' - 'a';
+            }
+            if (a != b) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static String toLowerCase(String input) {
         char[] data = input.toCharArray();
         for (int i = 0; i < data.length; i++) {

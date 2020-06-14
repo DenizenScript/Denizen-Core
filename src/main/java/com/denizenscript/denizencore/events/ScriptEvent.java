@@ -128,7 +128,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (pathValue == null) {
                 return true;
             }
-            return CoreUtilities.toLowerCase(pathValue).equals(value);
+            return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
         public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
@@ -139,7 +139,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
-                if (split.size() > 1 && !split.get(0).equalsIgnoreCase("regex")) {
+                if (split.size() > 1 && !CoreUtilities.equalsIgnoreCase(split.get(0), "regex")) {
                     switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
                 }
                 else {
@@ -149,8 +149,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             eventLower = CoreUtilities.toLowerCase(String.join(" ", eventLabel));
             eventArgs = eventLabel.toArray(new String[0]);
             eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
-            switch_cancelled = switches.containsKey("cancelled") ? switches.get("cancelled").equalsIgnoreCase("true") : null;
-            switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? switches.get("ignorecancelled").equalsIgnoreCase("true") : null;
+            switch_cancelled = switches.containsKey("cancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("cancelled"), "true") : null;
+            switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("ignorecancelled"), "true") : null;
             set = container.getSetFor("events." + rawEventPath);
         }
 
@@ -182,7 +182,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             Debug.log("Reloading script events...");
         }
         for (ScriptContainer container : worldContainers) {
-            if (!container.getContents().getString("enabled", "true").equalsIgnoreCase("true")) {
+            if (!CoreUtilities.equalsIgnoreCase(container.getContents().getString("enabled", "true"),"true")) {
                 continue;
             }
             YamlConfiguration config = container.getConfigurationSection("events");

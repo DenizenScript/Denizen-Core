@@ -233,7 +233,7 @@ public class ElementTag implements ObjectTag {
     }
 
     public boolean asBoolean() {
-        return CoreUtilities.toLowerCase(element).equals("true");
+        return CoreUtilities.equalsIgnoreCase(element, "true");
     }
 
     public String asString() {
@@ -241,7 +241,7 @@ public class ElementTag implements ObjectTag {
     }
 
     public boolean isBoolean() {
-        return element.equalsIgnoreCase("true") || element.equalsIgnoreCase("false");
+        return CoreUtilities.equalsIgnoreCase(element, "true") || CoreUtilities.equalsIgnoreCase(element, "false");
     }
 
     public boolean isDouble() {
@@ -292,7 +292,7 @@ public class ElementTag implements ObjectTag {
 
     public boolean matchesEnum(Enum[] values) {
         for (Enum value : values) {
-            if (value.name().equalsIgnoreCase(element)) {
+            if (CoreUtilities.equalsIgnoreCase(value.name(), element)) {
                 return true;
             }
         }
@@ -426,9 +426,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is a boolean ('true' or 'false').
         // -->
         registerTag("is_boolean", (attribute, object) -> {
-            String element = object.element;
-            return new ElementTag(element.equalsIgnoreCase("true")
-                    || element.equalsIgnoreCase("false"));
+            return new ElementTag(object.isBoolean());
         });
 
         // <--[tag]

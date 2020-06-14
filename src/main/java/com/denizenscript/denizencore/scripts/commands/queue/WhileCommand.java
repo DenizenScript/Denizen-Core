@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -59,10 +60,10 @@ public class WhileCommand extends BracedCommand {
         List<String> comparisons = new ArrayList<>();
         if (scriptEntry.getArguments().size() == 1) {
             String arg = scriptEntry.getArguments().get(0);
-            if (arg.equalsIgnoreCase("stop")) {
+            if (CoreUtilities.equalsIgnoreCase(arg, "stop")) {
                 scriptEntry.addObject("stop", new ElementTag(true));
             }
-            else if (arg.equalsIgnoreCase("next")) {
+            else if (CoreUtilities.equalsIgnoreCase(arg, "next")) {
                 scriptEntry.addObject("next", new ElementTag(true));
             }
             else if (arg.equals("\0CALLBACK")) {

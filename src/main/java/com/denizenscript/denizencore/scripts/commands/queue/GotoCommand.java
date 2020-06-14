@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -72,12 +73,14 @@ public class GotoCommand extends AbstractCommand {
             Debug.report(scriptEntry, getName(), mName.debug());
         }
 
+        String markName = mName.asString();
+
         // Jump forth
         boolean hasmark = false;
         for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
             ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
             List<String> args = entry.getOriginalArguments();
-            if (entry.getCommandName().equalsIgnoreCase("mark") && args.size() > 0 && args.get(0).equalsIgnoreCase(mName.asString())) {
+            if (CoreUtilities.equalsIgnoreCase(entry.getCommandName(), "mark") && args.size() > 0 && CoreUtilities.equalsIgnoreCase(args.get(0), markName)) {
                 hasmark = true;
                 break;
             }
@@ -86,7 +89,7 @@ public class GotoCommand extends AbstractCommand {
             while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
                 ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
                 List<String> args = entry.getOriginalArguments();
-                if (entry.getCommandName().equalsIgnoreCase("mark") && args.size() > 0 && args.get(0).equalsIgnoreCase(mName.asString())) {
+                if (CoreUtilities.equalsIgnoreCase(entry.getCommandName(), "mark") && args.size() > 0 && CoreUtilities.equalsIgnoreCase(args.get(0), markName)) {
                     break;
                 }
                 scriptEntry.getResidingQueue().removeEntry(0);

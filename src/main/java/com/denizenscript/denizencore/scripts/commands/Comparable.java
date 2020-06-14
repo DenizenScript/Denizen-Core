@@ -113,7 +113,7 @@ public class Comparable {
             }
         }
         else if (comparable instanceof Boolean) {
-            comparedto = arg.equalsIgnoreCase("true");
+            comparedto = CoreUtilities.equalsIgnoreCase(arg, "true");
         }
         else if (comparable instanceof ListTag) {
             if (ListTag.matches(arg)) {
@@ -221,7 +221,7 @@ public class Comparable {
                         }
                     }
                     else if (comparedto instanceof String) {
-                        if (string.equalsIgnoreCase((String) comparedto)) {
+                        if (CoreUtilities.equalsIgnoreCase(string, (String) comparedto)) {
                             outcome = true;
                             break;
                         }
@@ -255,7 +255,7 @@ public class Comparable {
             case EQUALS:
                 if (comparedto instanceof ListTag) {
                     ListTag list2 = (ListTag) comparedto;
-                    outcome = list2.identify().equalsIgnoreCase(comparable.identify());
+                    outcome = CoreUtilities.equalsIgnoreCase(list2.identify(), comparable.identify());
                 }
                 break;
         }
@@ -274,7 +274,7 @@ public class Comparable {
                 outcome = comparable.length() == 0;
                 break;
             case EQUALS:
-                outcome = comparable.equalsIgnoreCase(comparedto);
+                outcome = CoreUtilities.equalsIgnoreCase(comparable, comparedto);
                 break;
             case CONTAINS:
                 Deprecations.oldMatchesOperator.warn();
