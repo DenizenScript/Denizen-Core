@@ -221,6 +221,9 @@ public class Deprecations {
     // Added 2020/06/13.
     public static Warning yamlDataContainer = new FutureWarning("'yaml data' containers are now just called 'data' containers.");
 
+    // In Bukkit impl, Added 2020/06/13.
+    public static Warning listStyleTags = new FutureWarning("'list_' tags are deprecated: just remove the 'list_' prefix.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
