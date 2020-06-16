@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -121,7 +120,7 @@ public class Attribute {
         this.context = context;
         attributes = ref.attributes;
         contexts = new ObjectTag[attributes.length];
-        hadAlternative = ref.hadAlternative;
+        setHadAlternative(ref.hadAlternative);
     }
 
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
@@ -340,6 +339,10 @@ public class Attribute {
 
     public void setHadAlternative(boolean hadAlternative) {
         this.hadAlternative = hadAlternative;
+        if (context != null && context.debug && hadAlternative) {
+            context = context.clone();
+            context.debug = false;
+        }
     }
 
     public long getLongContext(int attribute) {

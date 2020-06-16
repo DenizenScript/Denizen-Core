@@ -5,13 +5,25 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.SimpleDefinitionProvider;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
-public abstract class TagContext implements Debuggable {
+public abstract class TagContext implements Debuggable, Cloneable {
     public boolean debug;
     public ScriptEntry entry;
     public ScriptTag script;
     public DefinitionProvider definitionProvider;
+
+    @Override
+    public TagContext clone() {
+        try {
+            return (TagContext) super.clone();
+        }
+        catch (CloneNotSupportedException ex) {
+            Debug.echoError(ex);
+            return null;
+        }
+    }
 
     @Override
     public boolean shouldDebug() {
