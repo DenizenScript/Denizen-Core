@@ -524,6 +524,34 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.sub_lists[<#>]>
+        // @returns ListTag(ListTag)
+        // @description
+        // returns a list containing sublists of this list capped to a specific length.
+        // For example, a list of a|b|c|d|e|f .sub_lists[2] will return a list containing lists "a|b", "c|d", and "e|f".
+        // -->
+        registerTag("sub_lists", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("list.sub_lists[...] tag must have an input.");
+                return null;
+            }
+            int subListLength = Math.max(1, attribute.getIntContext(1));
+            ListTag output = new ListTag();
+            ListTag building = new ListTag();
+            for (int i = 0; i < object.size(); i++) {
+                building.addObject(object.getObject(i));
+                if (building.size() == subListLength) {
+                    output.addObject(building);
+                    building = new ListTag();
+                }
+            }
+            if (!building.isEmpty()) {
+                output.addObject(building);
+            }
+            return output;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.space_separated>
         // @returns ElementTag
         // @description
@@ -603,7 +631,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             // character, make note that it is CASE SENSITIVE.
             // For example: .get_sub_items[1].split_by[-] on a list of "one-alpha|two-beta" will return "one|two".
             // -->
-
             String split = "/";
             if (attribute.startsWith("split_by", 2)) {
                 if (attribute.hasContext(2) && attribute.getContext(2).length() > 0) {
@@ -1652,8 +1679,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             ListTag newlist = new ListTag();
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    Attribute tempAttrib = new Attribute(tag,
-                            attribute.getScriptEntry(), attribute.context);
+                    Attribute tempAttrib = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
                     tempAttrib.setHadAlternative(true);
                     ObjectTag objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                     if ((objs == null) ? defaultValue : CoreUtilities.equalsIgnoreCase(objs.toString(), "true")) {
@@ -1700,8 +1726,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    Attribute tempAttrib = new Attribute(tag,
-                            attribute.getScriptEntry(), attribute.context);
+                    Attribute tempAttrib = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
                     tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
                     ObjectTag objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                     if (objs == null) {
