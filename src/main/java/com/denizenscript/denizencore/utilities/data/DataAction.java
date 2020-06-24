@@ -27,7 +27,8 @@ public class DataAction {
     public ObjectTag inputValue = null;
 
     public String debug() {
-        return ArgumentHelper.debugObj("action", "(" + key + "[" + index + "]:" + type + ":" + inputValue + ")");
+        String keyDebug = index == 0 ? key : (key + "[" + index + "]");
+        return ArgumentHelper.debugObj("action", "(" + keyDebug + ":" + type + ":" + inputValue + ")");
     }
 
     public ListTag autoList(String key, TagContext context) {
@@ -177,7 +178,7 @@ public class DataAction {
                 break;
             case SET:
                 requiresInputValue();
-                provider.setValueAt(key, autoDup(inputValue));
+                autoSet(autoDup(inputValue), context);
                 break;
             case AUTO_SET:
                 provider.setValueAt(key, new ElementTag(true));

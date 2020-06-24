@@ -1003,6 +1003,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // returns a list of only items that appear in both this list and the input one.
         // For example: .shared_contents[two|four|five|six] on a list of "one|two|three|four" will return "two|four".
         // This will also inherently deduplicate the output as part of processing.
+        // This will retain the list order of the list object the tag is on (so, for example "a|b|c" .shared_contents[c|b] returns "b|c").
         // -->
         registerTag("shared_contents", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
