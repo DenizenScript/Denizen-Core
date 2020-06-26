@@ -12,10 +12,11 @@ public class MapTagBase {
     public MapTagBase() {
 
         // <--[tag]
-        // @attribute <map[<map>]>
+        // @attribute <map[(<map>)]>
         // @returns MapTag
         // @description
         // Returns a map object constructed from the input value.
+        // Give no input to create an empty map.
         // Refer to <@link language MapTag objects>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
@@ -30,9 +31,12 @@ public class MapTagBase {
         if (!event.matches("map") || event.replaced()) {
             return;
         }
-        MapTag map = null;
+        MapTag map;
         if (event.hasNameContext()) {
             map = MapTag.valueOf(event.getNameContext(), event.getAttributes().context);
+        }
+        else {
+            map = new MapTag();
         }
         if (map == null) {
             return;
