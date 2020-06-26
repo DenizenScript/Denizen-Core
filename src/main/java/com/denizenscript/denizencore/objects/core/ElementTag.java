@@ -1244,7 +1244,7 @@ public class ElementTag implements ObjectTag {
                 return new ElementTag(object.element.replaceFirst(replace.substring("firstregex:".length()), replacement));
             }
             else {
-                return new ElementTag(object.element.replaceAll("(?i)" + Pattern.quote(replace), replacement));
+                return new ElementTag(object.element.replaceAll("(?i)" + Pattern.quote(replace), Matcher.quoteReplacement(replacement)));
             }
         });
         tagProcessor.registerFutureTagDeprecation("replace_text", "replace");
