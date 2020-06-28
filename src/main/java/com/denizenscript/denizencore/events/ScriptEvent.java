@@ -538,7 +538,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
         @Override
         public boolean doesMatch(String input) {
-            return text.equals(input);
+            return CoreUtilities.equalsIgnoreCase(text, input);
         }
     }
 
@@ -552,7 +552,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
         @Override
         public boolean doesMatch(String input) {
-            return input.endsWith(text);
+            return CoreUtilities.toLowerCase(input).endsWith(text);
         }
     }
 
@@ -566,7 +566,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
         @Override
         public boolean doesMatch(String input) {
-            return input.startsWith(text);
+            return CoreUtilities.toLowerCase(input).startsWith(text);
         }
     }
 
@@ -581,6 +581,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         @Override
         public boolean doesMatch(String input) {
             int index = 0;
+            input = CoreUtilities.toLowerCase(input);
             for (String text : texts) {
                 if (text.isEmpty()) {
                     continue;
@@ -598,7 +599,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static class RegexMatchHelper extends MatchHelper {
 
         public RegexMatchHelper(String regex) {
-            this.regex = Pattern.compile(regex);
+            this.regex = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         }
 
         public Pattern regex;
