@@ -172,16 +172,6 @@ public class Deprecations {
     // Added 2020/06/13.
     public static Warning scriptConstantTag = new SlowWarning("The script.constant system has been deprecated in favor of just using data_key.");
 
-    // ==================== SPECIAL deprecations: Minecraft version ====================
-
-    // In Bukit impl, To be removed when Minecraft 1.12.2 is no longer supported by the Bukkit impl:
-    public static Warning materialIds = new StrongWarning("Material ID and data magic number support is deprecated and WILL be removed in a future release.");
-    public static Warning materialIdsSuggestProperties = new StrongWarning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use relevant properties instead.");
-    public static Warning materialIdsSuggestNames = new StrongWarning("Material ID and data magic number support is deprecated and WILL be removed in a future release. Use material names instead.");
-    public static Warning skullSkinMaterials = new StrongWarning("As of Minecraft version 1.13 you may only set the skin of a PLAYER_HEAD or PLAYER_WALL_HEAD.");
-    public static Warning flowerpotMechanism = new StrongWarning("As of Minecraft version 1.13 potted flowers each have their own material, such as POTTED_CACTUS.");
-    public static Warning fullTags = new StrongWarning("As of Minecraft version 1.13 '.full' tags are unneeded. Remove the '.full' from the tag, and leave it otherwise the same.");
-
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.

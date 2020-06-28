@@ -234,8 +234,8 @@ public class DurationTag implements ObjectTag {
      * @return the number of milliseconds.
      */
     public long getMillis() {
-        Double millis = seconds * 1000;
-        return millis.longValue();
+        double millis = seconds * 1000;
+        return (long) millis;
     }
 
     /**

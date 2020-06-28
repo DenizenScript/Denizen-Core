@@ -319,7 +319,6 @@ public class TagManager {
         if (arg == null) {
             return null;
         }
-        arg = arg;
         List<ParseableTagPiece> pieces = preCalced.get(arg);
         if (pieces != null) {
             return pieces;
