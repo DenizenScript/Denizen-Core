@@ -515,90 +515,189 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance.
     // -->
 
-    public static final HashMap<String, Pattern> knownPatterns = new HashMap<>();
+    public static abstract class MatchHelper {
 
-    public static String quotify(String input) {
-        StringBuilder output = new StringBuilder(input.length());
-        int last = 0;
-        int index = input.indexOf('*');
-        while (index >= 0) {
-            output.append(Pattern.quote(input.substring(last, index))).append("(.*)");
-            last = index + 1;
-            index = input.indexOf('*', last);
-        }
-        output.append(Pattern.quote(input.substring(last)));
-        return output.toString();
+        public abstract boolean doesMatch(String input);
     }
 
-    public static boolean isRegexMatchable(String input) {
+    public static class AlwaysMatchHelper extends MatchHelper {
+
+        @Override
+        public boolean doesMatch(String input) {
+            return true;
+        }
+    }
+
+    public static class ExactMatchHelper extends MatchHelper {
+
+        public ExactMatchHelper(String text) {
+            this.text = text;
+        }
+
+        public String text;
+
+        @Override
+        public boolean doesMatch(String input) {
+            return text.equals(input);
+        }
+    }
+
+    public static class PrefixAsteriskMatchHelper extends MatchHelper {
+
+        public PrefixAsteriskMatchHelper(String text) {
+            this.text = text;
+        }
+
+        public String text;
+
+        @Override
+        public boolean doesMatch(String input) {
+            return input.endsWith(text);
+        }
+    }
+
+    public static class PostfixAsteriskMatchHelper extends MatchHelper {
+
+        public PostfixAsteriskMatchHelper(String text) {
+            this.text = text;
+        }
+
+        public String text;
+
+        @Override
+        public boolean doesMatch(String input) {
+            return input.startsWith(text);
+        }
+    }
+
+    public static class MultipleAsteriskMatchHelper extends MatchHelper {
+
+        public MultipleAsteriskMatchHelper(String[] texts) {
+            this.texts = texts;
+        }
+
+        public String[] texts;
+
+        @Override
+        public boolean doesMatch(String input) {
+            int index = 0;
+            for (String text : texts) {
+                if (text.isEmpty()) {
+                    continue;
+                }
+                index = input.indexOf(text, index);
+                if (index == -1) {
+                    return false;
+                }
+                index += text.length();
+            }
+            return true;
+        }
+    }
+
+    public static class RegexMatchHelper extends MatchHelper {
+
+        public RegexMatchHelper(String regex) {
+            this.regex = Pattern.compile(regex);
+        }
+
+        public Pattern regex;
+
+        @Override
+        public boolean doesMatch(String input) {
+            return regex.matcher(input).matches();
+        }
+    }
+
+    public static class MultipleMatchesHelper extends MatchHelper {
+
+        public MultipleMatchesHelper(MatchHelper[] matches) {
+            this.matches = matches;
+        }
+
+        public MatchHelper[] matches;
+
+        @Override
+        public boolean doesMatch(String input) {
+            for (MatchHelper match : matches) {
+                if (match.doesMatch(input)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static final HashMap<String, MatchHelper> knownMatchers = new HashMap<>();
+
+    public static boolean isAdvancedMatchable(String input) {
         return input.startsWith("regex:") || CoreUtilities.contains(input, '|') || CoreUtilities.contains(input, '*');
     }
 
-    public static Pattern regexHandle(String input) {
-        Pattern result = knownPatterns.get(input);
+    public static MatchHelper createMatcher(String input) {
+        MatchHelper result = knownMatchers.get(input);
         if (result != null) {
             return result;
         }
-        String output;
+        int asterisk;
         if (input.startsWith("regex:")) {
-            output = input.substring("regex:".length());
+            return new RegexMatchHelper(input.substring("regex:".length()));
         }
         else if (CoreUtilities.contains(input, '|')) {
             String[] split = input.split("\\|");
+            MatchHelper[] matchers = new MatchHelper[split.length];
             for (int i = 0; i < split.length; i++) {
-                split[i] = quotify(split[i]);
+                matchers[i] = createMatcher(split[i]);
             }
-            output = String.join("|", split);
+            result = new MultipleMatchesHelper(matchers);
         }
-        else if (CoreUtilities.contains(input, '*')) {
-            output = quotify(input);
+        else if ((asterisk = input.indexOf('*')) != -1) {
+            if (input.length() == 1) {
+                result = new AlwaysMatchHelper();
+            }
+            else if (asterisk == 0 && input.indexOf('*', 1) == -1) {
+                result = new PrefixAsteriskMatchHelper(input.substring(1));
+            }
+            else if (asterisk == input.length() - 1) {
+                result = new PostfixAsteriskMatchHelper(input.substring(0, input.length() - 1));
+            }
+            else {
+                result = new MultipleAsteriskMatchHelper(input.split("\\*"));
+            }
         }
         else {
-            return null;
+            result = new ExactMatchHelper(input);
         }
-        if (Debug.verbose) {
-            Debug.log("Event regex compile: " + output);
-        }
-        result = Pattern.compile(output);
-        knownPatterns.put(input, result);
+        knownMatchers.put(input, result);
         return result;
     }
 
-    public static boolean equalityCheck(String input, String compared, Pattern regexed) {
-        input = CoreUtilities.toLowerCase(input);
-        return input.equals(compared) || (regexed != null && regexed.matcher(input).matches());
-    }
-
-    public boolean runGenericCheck(String inputValue, String trueValue) {
-        if (inputValue != null) {
-            trueValue = CoreUtilities.toLowerCase(trueValue);
-            inputValue = CoreUtilities.toLowerCase(inputValue);
-            if (inputValue.equals(trueValue)) {
-                return true;
-            }
-            Pattern regexd = regexHandle(inputValue);
-            if (!equalityCheck(trueValue, inputValue, regexd)) {
-                return false;
-            }
+    public boolean runGenericCheck(String matchableValue, String trueValue) {
+        if (matchableValue == null) {
+            return false;
+        }
+        trueValue = CoreUtilities.toLowerCase(trueValue);
+        matchableValue = CoreUtilities.toLowerCase(matchableValue);
+        MatchHelper matcher = createMatcher(matchableValue);
+        if (!matcher.doesMatch(trueValue)) {
+            return false;
         }
         return true;
     }
 
     public boolean runGenericSwitchCheck(ScriptPath path, String switchName, String value) {
         String with = path.switches.get(switchName);
-        if (with != null) {
-            if (value == null) {
-                return false;
-            }
-            value = CoreUtilities.toLowerCase(value);
-            with = CoreUtilities.toLowerCase(with);
-            if (with.equals(value)) {
-                return true;
-            }
-            Pattern regexd = regexHandle(with);
-            if (!equalityCheck(value, with, regexd)) {
-                return false;
-            }
+        if (with == null) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        value = CoreUtilities.toLowerCase(value);
+        with = CoreUtilities.toLowerCase(with);
+        MatchHelper matcher = createMatcher(with);
+        if (!matcher.doesMatch(value)) {
+            return false;
         }
         return true;
     }

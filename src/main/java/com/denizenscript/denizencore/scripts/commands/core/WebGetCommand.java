@@ -226,7 +226,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             if (data != null) {
                 uc.getOutputStream().write(data.asString().getBytes(StandardCharsets.UTF_8));
             }
-
             final int status = uc.getResponseCode();
             final StringBuilder sb = new StringBuilder();
             if (saveFile != null) {
@@ -239,7 +238,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 buffIn = null;
             }
             final long timeDone = System.currentTimeMillis();
-
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
@@ -248,7 +246,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     if (saveFile == null) {
                         scriptEntry.addObject("result", new ElementTag(sb.toString()));
                     }
-                    scriptEntry.addObject("time_ran", new DurationTag(timeDone / 1000.0));
+                    scriptEntry.addObject("time_ran", new DurationTag((timeDone - timeStart) / 1000.0));
                     scriptEntry.setFinished(true);
                     return false;
                 }
