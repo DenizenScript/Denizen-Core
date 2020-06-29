@@ -41,13 +41,13 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         String endKey = splitKey.get(splitKey.size() - 1);
         MapTag map = this.map;
         for (int i = 0; i < splitKey.size() - 1; i++) {
-            ObjectTag subMap = map.map.get(new StringHolder(splitKey.get(i)));
+            ObjectTag subMap = map.getObject(splitKey.get(i));
             if (!(subMap instanceof MapTag) || !((MapTag) subMap).isFlagMap) {
                 return null;
             }
             map = (MapTag) subMap;
         }
-        ObjectTag obj = map.map.get(new StringHolder(endKey));
+        ObjectTag obj = map.getObject(endKey);
         if (obj instanceof MapTag) {
             ObjectTag value = ((MapTag) obj).map.get(valueString);
             if (value == null) {
@@ -104,11 +104,11 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         List<String> splitKey = CoreUtilities.split(key, '.');
         String endKey = splitKey.get(splitKey.size() - 1);
         for (int i = 0; i < splitKey.size() - 1; i++) {
-            ObjectTag subMap = map.map.get(new StringHolder(splitKey.get(i)));
+            ObjectTag subMap = map.getObject(splitKey.get(i));
             if (!(subMap instanceof MapTag) || !((MapTag) subMap).isFlagMap) {
                 subMap = new MapTag();
                 ((MapTag) subMap).isFlagMap = true;
-                map.map.put(new StringHolder(splitKey.get(i)), subMap);
+                map.putObject(splitKey.get(i), subMap);
             }
             map = (MapTag) subMap;
         }
@@ -116,6 +116,6 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         resultMap.isFlagMap = true;
         resultMap.map.put(valueString, value);
         resultMap.map.put(expirationString, expiration);
-        map.map.put(new StringHolder(endKey), resultMap);
+        map.putObject(endKey, resultMap);
     }
 }

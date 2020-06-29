@@ -86,7 +86,7 @@ public class MapTag implements ObjectTag, Adjustable {
             }
             String key = string.substring(lastPipe, slash);
             String value = string.substring(slash + 1, pipe);
-            result.map.put(new StringHolder(unescapeEntry(key)), ObjectFetcher.pickObjectFor(unescapeEntry(value), context));
+            result.putObject(unescapeEntry(key), ObjectFetcher.pickObjectFor(unescapeEntry(value), context));
             lastPipe = pipe + 1;
             pipe = string.indexOf('|', lastPipe);
         }
@@ -183,6 +183,14 @@ public class MapTag implements ObjectTag, Adjustable {
         return identify();
     }
 
+    public ObjectTag getObject(String key) {
+        return map.get(new StringHolder(key));
+    }
+
+    public void putObject(String key, ObjectTag value) {
+        map.put(new StringHolder(key), value);
+    }
+
     public static void registerTags() {
 
         // <--[tag]
@@ -255,7 +263,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
                 return null;
             }
-            return object.map.get(new StringHolder(attribute.getContext(1)));
+            return object.getObject(attribute.getContext(1));
         });
 
         // <--[tag]
@@ -308,7 +316,7 @@ public class MapTag implements ObjectTag, Adjustable {
             }
             ObjectTag value = attribute.getContextObject(1);
             MapTag result = object.duplicate();
-            result.map.put(new StringHolder(key), value);
+            result.putObject(key, value);
             return result;
         });
 

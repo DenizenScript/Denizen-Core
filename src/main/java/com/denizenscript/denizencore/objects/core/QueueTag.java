@@ -11,7 +11,6 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.Map;
 
@@ -223,7 +222,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         registerTag("definition_map", (attribute, object) -> {
             MapTag map = new MapTag();
             for (Map.Entry<String, ObjectTag> entry : object.getQueue().getAllDefinitions().entrySet()) {
-                map.map.put(new StringHolder(entry.getKey()), entry.getValue());
+                map.putObject(entry.getKey(), entry.getValue());
             }
             return map;
         });

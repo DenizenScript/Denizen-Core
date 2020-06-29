@@ -19,7 +19,6 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
-import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -730,7 +729,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
                 String key = entry.substring(0, slash);
                 String value = entry.substring(slash + 1);
-                map.map.put(new StringHolder(key), new ElementTag(value));
+                map.putObject(key, new ElementTag(value));
             }
             return map;
         });
@@ -752,7 +751,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             MapTag map = new MapTag();
             for (int i = 0; i < object.size(); i++) {
-                map.map.put(new StringHolder(object.get(i)), inputList.getObject(i));
+                map.putObject(object.get(i), inputList.getObject(i));
             }
             return map;
         });

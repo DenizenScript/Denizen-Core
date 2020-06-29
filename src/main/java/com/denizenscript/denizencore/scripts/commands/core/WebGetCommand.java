@@ -116,7 +116,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 for (String str : arg.asType(ListTag.class)) {
                     int ind = str.indexOf('/');
                     if (ind > 0) {
-                        map.map.put(new StringHolder(str.substring(0, ind)), new ElementTag(str.substring(ind + 1)));
+                        map.putObject(str.substring(0, ind), new ElementTag(str.substring(ind + 1)));
                     }
                 }
                 scriptEntry.addObject("headers", map);
