@@ -826,21 +826,20 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 Debug.echoError("The tag ListTag.set[...] must have a value.");
                 return null;
             }
-            if (object.isEmpty()) {
-                return null;
-            }
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
                 int index = attribute.getIntContext(2) - 1;
-                if (index < 0) {
-                    index = 0;
-                }
                 if (index > result.size() - 1) {
                     index = result.size() - 1;
                 }
+                if (index < 0) {
+                    index = 0;
+                }
                 attribute.fulfill(1);
-                result.remove(index);
+                if (!result.isEmpty()) {
+                    result.remove(index);
+                }
                 for (int i = 0; i < items.size(); i++) {
                     result.addObject(index + i, items.objectForms.get(i));
                 }
@@ -848,6 +847,41 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             else {
                 Debug.echoError("The tag ListTag.set[...] must be followed by .at[#]!");
+                return null;
+            }
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.set_single[<value>].at[<#>]>
+        // @returns ListTag
+        // @description
+        // returns a new ListTag with the single item specified inserted to the specified location, replacing the element already at that location.
+        // For example: .set_single[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
+        // -->
+        registerTag("set_single", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag ListTag.set_single[...] must have a value.");
+                return null;
+            }
+            ObjectTag value = attribute.getContextObject(1);
+            if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
+                ListTag result = new ListTag(object);
+                int index = attribute.getIntContext(2) - 1;
+                if (index > result.size() - 1) {
+                    index = result.size() - 1;
+                }
+                if (index < 0) {
+                    index = 0;
+                }
+                attribute.fulfill(1);
+                if (!result.isEmpty()) {
+                    result.remove(index);
+                }
+                result.addObject(index, value);
+                return result;
+            }
+            else {
+                Debug.echoError("The tag ListTag.set_single[...] must be followed by .at[#]!");
                 return null;
             }
         });
