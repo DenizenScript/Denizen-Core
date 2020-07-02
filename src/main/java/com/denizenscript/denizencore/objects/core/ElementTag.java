@@ -1453,6 +1453,17 @@ public class ElementTag implements ObjectTag {
         }, "substr");
 
         // <--[tag]
+        // @attribute <ElementTag.split_args>
+        // @returns ListTag
+        // @group element manipulation
+        // @description
+        // Returns a list of portions of this element, split the same way command arguments are split.
+        // -->
+        registerTag("split_args", (attribute, object) -> {
+            return new ListTag(Arrays.asList(ArgumentHelper.buildArgs(object.element)));
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.split[(regex:)<string>]>
         // @returns ListTag
         // @group element manipulation
