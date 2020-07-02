@@ -1505,7 +1505,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.alphanumeric>
-        // @returns ElementTag
+        // @returns ListTag
         // @description
         // returns the list sorted to be in alphabetical/numerical order.
         // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
@@ -1518,7 +1518,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.alphabetical>
-        // @returns ElementTag
+        // @returns ListTag
         // @description
         // returns the list sorted to be in alphabetical order.
         // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".

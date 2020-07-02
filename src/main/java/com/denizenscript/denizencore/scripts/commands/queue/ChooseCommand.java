@@ -108,7 +108,6 @@ public class ChooseCommand extends BracedCommand {
                 String cmdName = CoreUtilities.toLowerCase(se.getCommandName());
                 if (cmdName.equals("default")) {
                     lookupTable.put("\0DEFAULT", i);
-                    break;
                 }
                 else if (cmdName.equals("case")) {
                     if (se.getArguments().size() > 0) {

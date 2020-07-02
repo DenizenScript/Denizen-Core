@@ -1458,6 +1458,7 @@ public class ElementTag implements ObjectTag {
         // @group element manipulation
         // @description
         // Returns a list of portions of this element, split the same way command arguments are split.
+        // That is, split by spaces but respecting the use of "quotes" to contain spaces within a single argument.
         // -->
         registerTag("split_args", (attribute, object) -> {
             return new ListTag(Arrays.asList(ArgumentHelper.buildArgs(object.element)));
