@@ -208,11 +208,14 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
     public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
 
-    // Added 2020/06/13.
+    // Added 2020/06/13, deprecate officially by 2022.
     public static Warning yamlDataContainer = new FutureWarning("'yaml data' containers are now just called 'data' containers.");
 
-    // In Bukkit impl, Added 2020/06/13.
+    // In Bukkit impl, Added 2020/06/13, deprecate officially by 2022.
     public static Warning listStyleTags = new FutureWarning("'list_' tags are deprecated: just remove the 'list_' prefix.");
+
+    // In Bukkit impl, Added 2020/07/03, deprecate officially by 2022.
+    public static Warning attachToMech = new FutureWarning("The entity 'attach_to' mechanism is deprecated: use the new 'attach' command instead!");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
