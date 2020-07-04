@@ -175,6 +175,7 @@ public class Deprecations {
     // In Bukkit impl, added 2020/07/04.
     public static Warning cuboidFullTag = new SlowWarning("The tag cuboid.full is deprecated: this should just never be used.");
     public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
+    public static Warning playerTimePlayedTags = new SlowWarning("The tags player.first_played, last_played, ban_expiration, and ban_created have been replaced by tags of the same name with '_time' added to the end (using TimeTag now).");
 
     // ==================== FUTURE deprecations ====================
 
