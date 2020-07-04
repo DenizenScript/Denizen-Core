@@ -172,6 +172,10 @@ public class Deprecations {
     // Added 2020/06/13.
     public static Warning scriptConstantTag = new SlowWarning("The script.constant system has been deprecated in favor of just using data_key.");
 
+    // In Bukkit impl, added 2020/07/04.
+    public static Warning cuboidFullTag = new SlowWarning("The tag cuboid.full is deprecated: this should just never be used.");
+    public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.
