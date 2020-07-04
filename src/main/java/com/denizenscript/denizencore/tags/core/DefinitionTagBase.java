@@ -83,7 +83,7 @@ public class DefinitionTagBase {
             return;
         }
 
-        event.setReplacedObject(CoreUtilities.autoAttribTyped(def, atttribute));
+        event.setReplacedObject(CoreUtilities.autoAttrib(def, atttribute));
     }
 }
 
