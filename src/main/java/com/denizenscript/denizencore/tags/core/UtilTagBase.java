@@ -109,7 +109,7 @@ public class UtilTagBase {
 
             // <--[tag]
             // @attribute <util.random.decimal>
-            // @returns ElementTag
+            // @returns ElementTag(Decimal)
             // @description
             // Returns a random decimal number from 0 to 1
             // -->
@@ -120,7 +120,7 @@ public class UtilTagBase {
 
             // <--[tag]
             // @attribute <util.random.gauss>
-            // @returns ElementTag
+            // @returns ElementTag(Decimal)
             // @description
             // Returns a random decimal number with a gaussian distribution.
             // 70% of all results will be within the range of -1 to 1.
@@ -189,7 +189,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.short_max>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the maximum value of a 16 bit signed integer (a java 'short'): 32767
         // -->
@@ -199,7 +199,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.short_min>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the minimum value of a 16 bit signed integer (a java 'short'): -32768
         // -->
@@ -209,7 +209,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.int_max>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the maximum value of a 32 bit signed integer (a java 'int'): 2147483647
         // -->
@@ -219,7 +219,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.int_min>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the minimum value of a 32 bit signed integer (a java 'int'): -2147483648
         // -->
@@ -229,7 +229,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.long_max>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the maximum value of a 64 bit signed integer (a java 'long'): 9223372036854775807
         // -->
@@ -239,7 +239,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.long_min>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the minimum value of a 64 bit signed integer (a java 'long'): -9223372036854775808
         // -->
@@ -249,7 +249,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.pi>
-        // @returns ElementTag
+        // @returns ElementTag(Decimal)
         // @description
         // Returns PI: 3.14159265358979323846
         // -->
@@ -259,7 +259,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.tau>
-        // @returns ElementTag
+        // @returns ElementTag(Decimal)
         // @description
         // Returns Tau: 6.28318530717958647692
         // -->
@@ -269,7 +269,7 @@ public class UtilTagBase {
 
         // <--[tag]
         // @attribute <util.e>
-        // @returns ElementTag
+        // @returns ElementTag(Decimal)
         // @description
         // Returns e: 2.7182818284590452354
         // -->

@@ -1220,7 +1220,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.find_all_partial[<element>]>
-        // @returns ListTag(ElementTag(Number))
+        // @returns ListTag
         // @description
         // returns all the numbered locations of elements that contain the text within a list,
         // or an empty list if the list does not contain that item.
@@ -1244,7 +1244,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.find_all[<element>]>
-        // @returns ListTag(ElementTag(Number))
+        // @returns ListTag
         // @description
         // returns all the numbered locations of elements that match the text within a list,
         // or an empty list if the list does not contain that item.
@@ -1635,7 +1635,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             final ScriptEntry entry = attribute.getScriptEntry();
             // <--[tag]
             // @attribute <ListTag.sort[<procedure>].context[<context>]>
-            // @returns ElementTag
+            // @returns ListTag
             // @description
             // Sort a list, with context. See <@link tag ListTag.sort[<procedure>]> for general sort details.
             // -->

@@ -119,7 +119,7 @@ public class QueueTag implements ObjectTag, Adjustable {
 
         // <--[tag]
         // @attribute <QueueTag.size>
-        // @returns ElementTag
+        // @returns ElementTag(Number)
         // @description
         // Returns the number of script entries in the queue.
         // -->
