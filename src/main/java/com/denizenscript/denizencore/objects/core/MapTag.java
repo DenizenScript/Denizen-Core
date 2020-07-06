@@ -377,34 +377,34 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
-        // @attribute <MapTag.list_keys>
+        // @attribute <MapTag.keys>
         // @returns ListTag
         // @description
         // Returns a list of all keys in this map.
         // For example, on a map of "a/1|b/2|c/3|", using "list_keys" will return "a|b|c|".
         // -->
-        registerTag("list_keys", (attribute, object) -> {
+        registerTag("keys", (attribute, object) -> {
             ListTag result = new ListTag();
             for (StringHolder entry : object.map.keySet()) {
                 result.add(entry.str);
             }
             return result;
-        });
+        }, "list_keys");
 
         // <--[tag]
-        // @attribute <MapTag.list_values>
+        // @attribute <MapTag.values>
         // @returns ListTag
         // @description
         // Returns a list of all values in this map.
         // For example, on a map of "a/1|b/2|c/3|", using "list_values" will return "1|2|3|".
         // -->
-        registerTag("list_values", (attribute, object) -> {
+        registerTag("values", (attribute, object) -> {
             ListTag result = new ListTag();
             for (ObjectTag entry : object.map.values()) {
                 result.addObject(entry);
             }
             return result;
-        });
+        }, "list_values");
 
         // <--[tag]
         // @attribute <MapTag.to_list>

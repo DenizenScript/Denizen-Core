@@ -25,7 +25,7 @@ public class ElseCommand extends AbstractCommand {
     //
     // @Description
     // A helper command for ':' syntax if commands.
-    // See IF command documentation.
+    // See <@link command if> command documentation.
     //
     // @Tags
     // See IF command documentation.
