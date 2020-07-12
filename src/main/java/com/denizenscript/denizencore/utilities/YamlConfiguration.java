@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
+import org.yaml.snakeyaml.scanner.ScannerImpl;
 
 import java.util.*;
 
@@ -15,6 +16,10 @@ import java.util.*;
  * Represents a YAML file.
  */
 public class YamlConfiguration {
+
+    static {
+        ScannerImpl.ESCAPE_REPLACEMENTS.put('/', "/");
+    }
 
     public static class CustomResolver extends Resolver {
         @Override
