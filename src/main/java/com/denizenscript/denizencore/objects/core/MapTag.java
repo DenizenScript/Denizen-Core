@@ -292,6 +292,40 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.default[<key>].as[<value>]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map, with the specified key defaulted to the specified value.
+        // If the map does not already have the specified key, this is equivalent to the 'with[key].as[value]' tag.
+        // If the map already has the specified key, this will return the original map, unmodified.
+        // For example, on a map of "a/1|b/2|c/3|", using ".default[d].as[4]" will return "a/1|b/2|c/3|d/4|".
+        // For example, on a map of "a/1|b/2|c/3|", using ".default[c].as[4]" will return "a/1|b/2|c/3|".
+        // -->
+        registerTag("default", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.default' must have an input value.");
+                return null;
+            }
+            String key = attribute.getContext(1);
+            attribute.fulfill(1);
+            if (!attribute.matches("as")) {
+                attribute.echoError("The tag 'MapTag.default' must be followed by '.as'.");
+                return null;
+            }
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.default.as' must have an input value for 'as'.");
+                return null;
+            }
+            if (object.map.containsKey(new StringHolder(key))) {
+                return object;
+            }
+            ObjectTag value = attribute.getContextObject(1);
+            MapTag result = object.duplicate();
+            result.putObject(key, value);
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.with[<key>].as[<value>]>
         // @returns MapTag
         // @description
