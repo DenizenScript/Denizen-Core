@@ -43,8 +43,6 @@ public class EventCommand extends AbstractCommand {
     // NOTE: This command is outdated and bound to be updated.
     //
     // @Tags
-    // <server.has_event[<event_name>]>
-    // <server.event_handlers[<event_name>]>
     // <entry[saveName].determinations> returns a list of the determined values (if any) from the event.
     //
     // @Usage

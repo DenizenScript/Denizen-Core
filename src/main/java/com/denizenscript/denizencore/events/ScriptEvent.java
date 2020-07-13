@@ -423,7 +423,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         try {
             stats.scriptFires++;
             if (path.container.shouldDebug()) {
-                Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + path.event + "<Y>'"
+                Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + (path.fireAfter ? "after " : "on ") + path.event + "<Y>'"
                         + " for script '<A>" + path.container.getName() + "<Y>'");
             }
             List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
