@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 public interface ObjectTag {
@@ -174,6 +175,10 @@ public interface ObjectTag {
 
     default Class<? extends ObjectTag> getObjectTagClass() {
         return getClass();
+    }
+
+    default <T extends ObjectTag> T asType(Class<T> type, TagContext context) {
+        return CoreUtilities.asType(this, type, context);
     }
 
     /**
