@@ -222,6 +222,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/07/03, deprecate officially by 2022.
     public static Warning attachToMech = new FutureWarning("The entity 'attach_to' mechanism is deprecated: use the new 'attach' command instead!");
 
+    // In Bukkit impl, Added 2020/07/12, deprecate officially by 2022.
+    public static Warning entityEquipmentSubtags = new FutureWarning(pointlessSubtagPrefix + " 'entity.equipment.slotname' is deprecated: use 'entity.equipment_map.get[slotname]' instead.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
