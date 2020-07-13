@@ -60,7 +60,7 @@ public class CoreUtilities {
                 if (scriptStrip) {
                     key = ScriptBuilder.stripLinePrefix(key);
                 }
-                result.putObject(key, CoreUtilities.objectToTagForm(entry.getValue(), context));
+                result.putObject(key, CoreUtilities.objectToTagForm(entry.getValue(), context, scriptStrip));
             }
             return result;
         }
