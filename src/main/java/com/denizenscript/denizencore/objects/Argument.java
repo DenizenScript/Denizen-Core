@@ -211,21 +211,17 @@ public class Argument implements Cloneable {
 
     // Check if this argument matches any of multiple ObjectTag types
     public boolean matchesArgumentTypes(Class<? extends ObjectTag>... dClasses) {
-
         for (Class<? extends ObjectTag> c : dClasses) {
             if (matchesArgumentType(c)) {
                 return true;
             }
         }
-
         return false;
     }
 
     // Check if this argument matches a ListTag of a certain ObjectTag
     public boolean matchesArgumentList(Class<? extends ObjectTag> dClass) {
-
         ListTag list = getList();
-
         return list.isEmpty() || list.containsObjectsFrom(dClass);
     }
 

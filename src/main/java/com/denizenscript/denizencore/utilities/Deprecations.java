@@ -177,6 +177,10 @@ public class Deprecations {
     public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
     public static Warning playerTimePlayedTags = new SlowWarning("The tags player.first_played, last_played, ban_expiration, and ban_created have been replaced by tags of the same name with '_time' added to the end (using TimeTag now).");
 
+    // In Bukkit impl, added 2020/07/19.
+    public static Warning airLevelEventDuration = new SlowWarning("The 'entity changes air level' event uses 'air_duration' context now instead of the old tick count number.");
+    public static Warning damageEventTypeMap = new SlowWarning("The 'entity damaged' context 'damage_[TYPE]' is deprecated in favor of 'damage_type_map', which is operated as a MapTag.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.

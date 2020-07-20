@@ -337,17 +337,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         return this;
     }
 
-    // Returns if the list contains objects from the specified dClass
-    // by using the matches() method.
     public boolean containsObjectsFrom(Class<? extends ObjectTag> dClass) {
-
-        // Iterate through elements until one matches() the dClass
         for (ObjectTag testable : objectForms) {
             if (CoreUtilities.canPossiblyBeType(testable, dClass)) {
                 return true;
             }
         }
-
         return false;
     }
 

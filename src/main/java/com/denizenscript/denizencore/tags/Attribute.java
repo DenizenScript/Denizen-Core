@@ -63,10 +63,10 @@ public class Attribute {
             if (chr == '[') {
                 braced++;
             }
-            else if (x == attrInp.length - 1) {
+            if (x == attrInp.length - 1) {
                 x2 = x + 1;
             }
-            else if (chr == ']') {
+            if (chr == ']') {
                 if (braced > 0) {
                     braced--;
                 }
