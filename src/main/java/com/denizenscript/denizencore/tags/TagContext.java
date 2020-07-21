@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
+import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.SimpleDefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -13,6 +14,7 @@ public abstract class TagContext implements Debuggable, Cloneable {
     public ScriptEntry entry;
     public ScriptTag script;
     public DefinitionProvider definitionProvider;
+    public ContextSource contextSource;
 
     @Override
     public TagContext clone() {
@@ -40,6 +42,9 @@ public abstract class TagContext implements Debuggable, Cloneable {
         this.script = script;
         this.definitionProvider = definitionProvider != null ? definitionProvider :
                 (entry != null ? entry.getResidingQueue() : new SimpleDefinitionProvider());
+        if (entry != null && entry.getResidingQueue() != null) {
+            this.contextSource = entry.getResidingQueue().contextSource;
+        }
     }
 
     public abstract ScriptEntryData getScriptEntryData();

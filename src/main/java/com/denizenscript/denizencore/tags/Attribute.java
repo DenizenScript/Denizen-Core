@@ -207,6 +207,10 @@ public class Attribute {
             originalProvider.addDefinition(definition, value);
         }
         @Override
+        public void addDefinition(String definition, ObjectTag value) {
+            originalProvider.addDefinition(definition, value);
+        }
+        @Override
         public Map<String, ObjectTag> getAllDefinitions() {
             return originalProvider.getAllDefinitions();
         }

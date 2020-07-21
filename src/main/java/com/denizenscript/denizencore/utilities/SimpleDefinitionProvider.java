@@ -11,8 +11,13 @@ public class SimpleDefinitionProvider implements DefinitionProvider {
     private final Map<String, ObjectTag> definitions = new HashMap<>();
 
     @Override
+    public void addDefinition(String definition, ObjectTag value) {
+        this.definitions.put(CoreUtilities.toLowerCase(definition), value);
+    }
+
+    @Override
     public void addDefinition(String definition, String value) {
-        this.definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
+        this.addDefinition(definition, new ElementTag(value));
     }
 
     @Override

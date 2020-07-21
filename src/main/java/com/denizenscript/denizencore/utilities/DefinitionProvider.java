@@ -8,6 +8,8 @@ public interface DefinitionProvider {
 
     void addDefinition(String definition, String value);
 
+    void addDefinition(String definition, ObjectTag value);
+
     Map<String, ObjectTag> getAllDefinitions();
 
     ObjectTag getDefinitionObject(String definition);

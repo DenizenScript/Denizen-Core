@@ -30,21 +30,21 @@ public class ContextTagBase {
     }
 
     public void contextTags(ReplaceableTagEvent event) {
-        if (!event.matches("context", "c") || event.getScriptEntry() == null) {
+        Attribute attribute = event.getAttributes();
+        if (!event.matches("context", "c") || attribute.context.contextSource == null) {
             return;
         }
-        if (event.matches("c") && (event.getScriptEntry() == null || event.getScriptEntry().shouldDebug())) {
+        if (event.matches("c") && attribute.context.debug) {
             Deprecations.contextShorthand.warn(event.getScriptEntry());
         }
-        String object = event.getType();
-        ObjectTag obj = event.getScriptEntry().getResidingQueue().getContext(object);
+        String contextName = attribute.getAttributeWithoutContext(2);
+        ObjectTag obj = event.getAttributes().context.contextSource.getContext(contextName);
         if (obj != null) {
-            Attribute attribute = event.getAttributes();
             event.setReplacedObject(CoreUtilities.autoAttrib(obj, attribute.fulfill(2)));
             return;
         }
         if (!event.hasAlternative()) {
-            Debug.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + object + "'!");
+            Debug.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + contextName + "'!");
         }
     }
 
