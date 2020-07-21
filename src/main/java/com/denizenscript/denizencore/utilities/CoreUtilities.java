@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.utilities;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.properties.Property;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
@@ -43,13 +44,17 @@ public class CoreUtilities {
     }
 
     public static ObjectTag objectToTagForm(Object obj, TagContext context, boolean scriptStrip) {
+        return objectToTagForm(obj, context, scriptStrip, false);
+    }
+
+    public static ObjectTag objectToTagForm(Object obj, TagContext context, boolean scriptStrip, boolean doParse) {
         if (obj == null) {
             return new ElementTag("null");
         }
         else if (obj instanceof List) {
             ListTag listResult = new ListTag();
             for (Object subObj : (List) obj) {
-                listResult.addObject(objectToTagForm(subObj, context, scriptStrip));
+                listResult.addObject(objectToTagForm(subObj, context, scriptStrip, doParse));
             }
             return listResult;
         }
@@ -60,7 +65,7 @@ public class CoreUtilities {
                 if (scriptStrip) {
                     key = ScriptBuilder.stripLinePrefix(key);
                 }
-                result.putObject(key, CoreUtilities.objectToTagForm(entry.getValue(), context, scriptStrip));
+                result.putObject(key, CoreUtilities.objectToTagForm(entry.getValue(), context, scriptStrip, doParse));
             }
             return result;
         }
@@ -68,6 +73,9 @@ public class CoreUtilities {
             String result = obj.toString();
             if (scriptStrip) {
                 result = ScriptBuilder.stripLinePrefix(result);
+            }
+            if (doParse) {
+                return TagManager.tagObject(result, context);
             }
             return ObjectFetcher.pickObjectFor(result, context);
         }

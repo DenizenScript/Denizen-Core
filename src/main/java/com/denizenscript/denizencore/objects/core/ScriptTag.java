@@ -322,6 +322,36 @@ public class ScriptTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <ScriptTag.parsed_key[<constant_name>]>
+        // @returns ObjectTag
+        // @description
+        // Returns the value from a data key on the script as an ElementTag, ListTag, or MapTag.
+        // Will automatically parse any tags contained within the value of the key, preserving key data structure
+        // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
+        // -->
+        registerTag("parsed_key", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                Debug.echoError("The tag ScriptTag.parsed_key[...] must have a value.");
+                return null;
+            }
+            ScriptContainer container = object.getContainer();
+            if (container == null) {
+                Debug.echoError("Script '" + object.getName() + "' is missing script container?!");
+                return null;
+            }
+            YamlConfiguration section = container.getConfigurationSection("");
+            if (section == null) {
+                Debug.echoError("Script '" + container.getName() + "' missing root section?!");
+                return null;
+            }
+            Object obj = section.get(attribute.getContext(1).toUpperCase());
+            if (obj == null) {
+                return null;
+            }
+            return CoreUtilities.objectToTagForm(obj, attribute.context, true, true);
+        });
+
+        // <--[tag]
         // @attribute <ScriptTag.data_key[<constant_name>]>
         // @returns ObjectTag
         // @description
