@@ -4,13 +4,16 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.UtilTagBase;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class AdjustCommand extends AbstractCommand {
@@ -38,6 +41,8 @@ public class AdjustCommand extends AbstractCommand {
     //
     // Specify "def:<name>" as an input to adjust a definition and automatically save the result back to the definition.
     //
+    // You can optionally adjust a MapTag of mechanisms to values.
+    //
     // To adjust an item in an inventory, use <@link command inventory>, as '- inventory adjust slot:<#> <mechanism>:<value>'.
     //
     // @Tags
@@ -60,7 +65,6 @@ public class AdjustCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("object")) {
                 if (arg.object instanceof ListTag) {
@@ -74,26 +78,27 @@ public class AdjustCommand extends AbstractCommand {
                     scriptEntry.addObject("object", arg.asType(ListTag.class));
                 }
             }
-            else if (!scriptEntry.hasObject("mechanism")) {
-                if (arg.hasPrefix()) {
+            else if (!scriptEntry.hasObject("mechanism")
+                && !scriptEntry.hasObject("mechanism_map")) {
+                if (arg.raw_value.startsWith("map@")) {
+                    scriptEntry.addObject("mechanism_map", arg.asType(MapTag.class));
+                }
+                else if (arg.hasPrefix()) {
                     scriptEntry.addObject("mechanism", new ElementTag(arg.getPrefix().getValue()));
                     scriptEntry.addObject("mechanism_value", arg.asElement());
                 }
                 else {
                     scriptEntry.addObject("mechanism", arg.asElement());
                 }
-
             }
             else {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("object")) {
             throw new InvalidArgumentsException("You must specify an object!");
         }
-
-        if (!scriptEntry.hasObject("mechanism")) {
+        if (!scriptEntry.hasObject("mechanism") && !scriptEntry.hasObject("mechanism_map")) {
             throw new InvalidArgumentsException("You must specify a mechanism!");
         }
     }
@@ -160,30 +165,30 @@ public class AdjustCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag mechanism = scriptEntry.getElement("mechanism");
         ElementTag value = scriptEntry.getElement("mechanism_value");
-
         ListTag objects = scriptEntry.getObjectTag("object");
-
+        MapTag mechanismMap = scriptEntry.getObjectTag("mechanism_map");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(),
                     objects.debug()
-                            + mechanism.debug()
-                            + (value == null ? "" : value.debug()));
+                            + (mechanismMap == null ? mechanism.debug() + (value == null ? "" : value.debug()) : mechanismMap.debug()));
         }
-
         ListTag result = new ListTag();
-
         for (ObjectTag object : objects.objectForms) {
-            object = adjust(object, mechanism, value, scriptEntry);
+            if (mechanismMap != null) {
+                for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
+                    object = adjust(object, new ElementTag(entry.getKey().str), new ElementTag(entry.getValue().toString()), scriptEntry);
+                }
+            }
+            else {
+                object = adjust(object, mechanism, value, scriptEntry);
+            }
             if (objects.size() == 1) {
                 scriptEntry.addObject("result", object);
             }
             result.addObject(object);
         }
-
         scriptEntry.addObject("result_list", result);
-
     }
 }

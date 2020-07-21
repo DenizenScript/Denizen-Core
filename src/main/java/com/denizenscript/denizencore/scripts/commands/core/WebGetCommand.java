@@ -48,6 +48,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // Optionally, use "data:<data>" to specify a set of data to send to the server (changes the default method from GET to POST).
     //
     // Optionally, use "method:<method>" to specify the HTTP method to use in your request.
+    // Can be: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE.
     //
     // Optionally, use "headers:" to specify a MapTag of headers.
     //
