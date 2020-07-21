@@ -204,6 +204,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         this(Arrays.asList(objects));
     }
 
+    public ListTag(int capacity) {
+        super(capacity);
+        objectForms = new ArrayList<>(capacity);
+    }
+
     public ListTag() {
         objectForms = new ArrayList<>();
     }
