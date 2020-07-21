@@ -240,12 +240,16 @@ public class Attribute {
         }
     }
 
-    public ObjectTag parseDynamicContext(int attribute, OverridingDefinitionProvider customProvider) {
+    public String getRawContext(int attribute) {
         attribute += fulfilled - 1;
         if (attribute < 0 || attribute >= attributes.length) {
             return null;
         }
-        String inp = attributes[attribute].context;
+        return attributes[attribute].context;
+    }
+
+    public ObjectTag parseDynamicContext(int attribute, OverridingDefinitionProvider customProvider) {
+        String inp = getRawContext(attribute);
         if (inp == null) {
             return null;
         }

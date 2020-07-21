@@ -27,8 +27,8 @@ public enum DataActionType {
     // Divide: '/': divides the value at the key by the input value. Example: - define x:/:5
     // List insert: '->': adds the input value as a single new entry in the list (see also 'List split'). Example: - define x:->:new_value
     // List remove: '<-': removes the input value from the list. Example: - define x:<-:old_value
-    // List split: '|': splits the input list and adds each value into the list at the key. Example: - define x:|:a|b|c
-    // Split to new: '!|': similar to list split, but removes the existing value at the key first. Example: - define x:!|:a|b|c
+    // List split: '|': splits the input list and adds each value into an existing list at the key. Example: - define x:|:a|b|c
+    // Split to new: '!|': similar to list split, but removes any existing value at the key first. Example: - define x:!|:a|b|c
     //
     // Special cases:
     // In some commands, specifying no action or input value will automatically set the key's value to 'true'.

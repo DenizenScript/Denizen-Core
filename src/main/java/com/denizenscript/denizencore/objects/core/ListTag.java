@@ -1417,7 +1417,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("lowest", (attribute, object) -> {
             String tag = null;
             if (attribute.hasContext(1)) {
-                tag = attribute.getContext(1);
+                tag = attribute.getRawContext(1);
             }
             ObjectTag lowestObj = null;
             BigDecimal lowest = null;
@@ -1450,7 +1450,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("highest", (attribute, object) -> {
             String tag = null;
             if (attribute.hasContext(1)) {
-                tag = attribute.getContext(1);
+                tag = attribute.getRawContext(1);
             }
             ObjectTag highestObj = null;
             BigDecimal highest = null;
@@ -1540,12 +1540,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         registerTag("sort_by_value", (attribute, object) -> {
             ListTag newlist = new ListTag(object);
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
+            final String tag = attribute.getRawContext(1);
             try {
                 Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
                     @Override
                     public int compare(ObjectTag o1, ObjectTag o2) {
-                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
-                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
                         return comparator.compare(or1, or2);
                     }
                 });
@@ -1572,12 +1573,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 return null;
             }
             ListTag newlist = new ListTag(object);
+            final String tag = attribute.getRawContext(1);
             try {
                 Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
                     @Override
                     public int compare(ObjectTag o1, ObjectTag o2) {
-                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
-                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(attribute.getContext(1), attribute.getScriptEntry(), attribute.context));
+                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
                         try {
                             double r1 = Double.parseDouble(or1.toString());
                             double r2 = Double.parseDouble(or2.toString());
@@ -1700,7 +1702,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // -->
         registerTag("filter", (attribute, object) -> {
-            String tag = attribute.getContext(1);
+            String tag = attribute.getRawContext(1);
             boolean defaultValue = tag.endsWith("||true");
             if (defaultValue) {
                 tag = tag.substring(0, tag.length() - "||true".length());
@@ -1731,7 +1733,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("parse", (attribute, object) -> {
             ListTag newlist = new ListTag();
-            String tag = attribute.getContext(1);
+            String tag = attribute.getRawContext(1);
             String defaultValue = "null";
             boolean fallback = false;
             if (tag.contains("||")) {

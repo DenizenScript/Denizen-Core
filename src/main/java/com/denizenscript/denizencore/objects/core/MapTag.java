@@ -226,7 +226,7 @@ public class MapTag implements ObjectTag, Adjustable {
         registerTag("sort_by_value", (attribute, object) -> {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
-            final String tag = attribute.hasContext(1) ? attribute.getContext(1) : null;
+            final String tag = attribute.hasContext(1) ? attribute.getRawContext(1) : null;
             try {
                 Collections.sort(entryList, new Comparator<Map.Entry<StringHolder, ObjectTag>>() {
                     @Override
