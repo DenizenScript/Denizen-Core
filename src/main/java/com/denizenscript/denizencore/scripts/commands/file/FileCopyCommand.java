@@ -34,9 +34,12 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     //
     // @Description
     // Copies a file from one location to another.
+    //
     // The starting directory is server/plugins/Denizen.
+    //
     // May overwrite existing copies of files.
-    // Note that in most cases this command should be ~waited for (like "- ~filecopy ...")
+    //
+    // Note that in most cases this command should be ~waited for (like "- ~filecopy ..."). Refer to <@link language ~waitable>.
     //
     // @Tags
     // <entry[saveName].success> returns whether the copy succeeded (if not, either an error or occurred, or there is an existing file in the destination.)
@@ -50,9 +53,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!scriptEntry.hasObject("origin")
                     && arg.matchesPrefix("origin", "o")) {
                 scriptEntry.addObject("origin", arg.asElement());
@@ -69,15 +70,12 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("origin")) {
             throw new InvalidArgumentsException("Must have a valid origin!");
         }
-
         if (!scriptEntry.hasObject("destination")) {
             throw new InvalidArgumentsException("Must have a valid destination!");
         }
-
         scriptEntry.defaultObject("overwrite", new ElementTag("false"));
     }
 
@@ -86,24 +84,20 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         ElementTag origin = scriptEntry.getElement("origin");
         ElementTag destination = scriptEntry.getElement("destination");
         ElementTag overwrite = scriptEntry.getElement("overwrite");
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
         }
-
         if (!DenizenCore.getImplementation().allowFileCopy()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
-
         File o = new File(DenizenCore.getImplementation().getDataFolder(), origin.asString());
         File d = new File(DenizenCore.getImplementation().getDataFolder(), destination.asString());
         boolean ow = overwrite.asBoolean();
         boolean dexists = d.exists();
         boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
-
         if (!DenizenCore.getImplementation().canReadFile(o)) {
             Debug.echoError("Server config denies reading files in that location.");
             scriptEntry.addObject("success", new ElementTag("false"));
@@ -116,14 +110,12 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
             return;
         }
-
         if (!DenizenCore.getImplementation().canWriteToFile(d)) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
-
         if (dexists && !disdir && !ow) {
             Debug.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
             scriptEntry.addObject("success", new ElementTag("false"));

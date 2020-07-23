@@ -9,7 +9,6 @@ import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
 
@@ -23,7 +22,7 @@ public class ProcedureScriptTagBase {
             public void run(ReplaceableTagEvent event) {
                 procedureTag(event);
             }
-        }, "proc", "pr");
+        }, "proc");
     }
 
     public void procedureTag(ReplaceableTagEvent event) {
@@ -41,12 +40,8 @@ public class ProcedureScriptTagBase {
         // @description
         // Returns the 'determine' result of a procedure script.
         // -->
-        if (!event.matches("proc", "pr")) {
+        if (!event.matches("proc")) {
             return;
-        }
-
-        if (event.matches("pr")) {
-            Deprecations.procShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attr = event.getAttributes();

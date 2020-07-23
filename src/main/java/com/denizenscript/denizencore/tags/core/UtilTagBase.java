@@ -30,16 +30,12 @@ public class UtilTagBase {
             public void run(ReplaceableTagEvent event) {
                 utilTag(event);
             }
-        }, "util", "u");
+        }, "util");
     }
 
     public void utilTag(ReplaceableTagEvent event) {
-        if (!event.matches("util", "u")) {
+        if (!event.matches("util")) {
             return;
-        }
-
-        if (event.matches("u")) {
-            Deprecations.utilShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attribute = event.getAttributes().fulfill(1);
@@ -295,7 +291,7 @@ public class UtilTagBase {
         // Returns a list of all currently loaded Denizen tag bases (including "player", "context", "util", "server", etc).
         // -->
         else if (attribute.startsWith("list_tag_bases")) {
-            ListTag result = new ListTag(TagManager.handlers.keySet());
+            ListTag result = new ListTag(TagManager.rootFormHandlers.keySet());
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
         }
 

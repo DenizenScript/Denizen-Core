@@ -1,11 +1,7 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.core.MapTag;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
-import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 public class MapTagBase {
 
@@ -19,29 +15,11 @@ public class MapTagBase {
         // Give no input to create an empty map.
         // Refer to <@link language MapTag objects>.
         // -->
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                mapTags(event);
+        TagManager.registerTagHandler("map", (attribute) -> {
+            if (!attribute.hasContext(1)) {
+                return new MapTag();
             }
-        }, "map");
-    }
-
-    public void mapTags(ReplaceableTagEvent event) {
-        if (!event.matches("map") || event.replaced()) {
-            return;
-        }
-        MapTag map;
-        if (event.hasNameContext()) {
-            map = MapTag.valueOf(event.getNameContext(), event.getAttributes().context);
-        }
-        else {
-            map = new MapTag();
-        }
-        if (map == null) {
-            return;
-        }
-        Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(map, attribute.fulfill(1)));
+            return MapTag.getMapFor(attribute.getContextObject(1), attribute.context);
+        });
     }
 }

@@ -1,10 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 
 public class DurationTagBase {
@@ -18,31 +14,12 @@ public class DurationTagBase {
         // Returns a duration object constructed from the input value.
         // Refer to <@link language DurationTag objects>.
         // -->
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                durationTags(event);
+        TagManager.registerTagHandler("duration", (attribute) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("Duration tag base must have input.");
+                return null;
             }
-        }, "duration");
-    }
-
-    public void durationTags(ReplaceableTagEvent event) {
-
-        if (!event.matches("duration") || event.replaced()) {
-            return;
-        }
-
-        DurationTag duration = null;
-
-        if (event.hasNameContext()) {
-            duration = DurationTag.valueOf(event.getNameContext(), event.getAttributes().context);
-        }
-
-        if (duration == null) {
-            return;
-        }
-
-        Attribute attribute = event.getAttributes();
-        event.setReplacedObject(CoreUtilities.autoAttrib(duration, attribute.fulfill(1)));
+            return DurationTag.valueOf(attribute.getContext(1), attribute.context);
+        });
     }
 }

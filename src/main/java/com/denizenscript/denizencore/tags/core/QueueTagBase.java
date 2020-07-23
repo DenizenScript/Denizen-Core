@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.tags.TagManager;
 
 public class QueueTagBase {
@@ -28,7 +27,7 @@ public class QueueTagBase {
             public void run(ReplaceableTagEvent event) {
                 queueTag(event);
             }
-        }, "queue", "q");
+        }, "queue");
     }
 
     //////////
@@ -37,12 +36,8 @@ public class QueueTagBase {
 
     public void queueTag(ReplaceableTagEvent event) {
 
-        if (!event.matches("queue", "q")) {
+        if (!event.matches("queue")) {
             return;
-        }
-
-        if (event.matches("q")) {
-            Deprecations.queueShorthand.warn(event.getScriptEntry());
         }
 
         // Handle <queue[id]. ...> tags
