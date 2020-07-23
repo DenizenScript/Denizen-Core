@@ -38,21 +38,28 @@ public class TagManager {
         new UtilTagBase();
     }
 
-    public static HashMap<String, TagRunnable.RootForm> handlers = new HashMap<>();
+    public static HashMap<String, TagRunnable.RootForm> rootFormHandlers = new HashMap<>();
+
+    public static HashMap<String, TagRunnable.BaseInterface> baseHandlers = new HashMap<>();
 
     public static HashSet<String> properTagBases = new HashSet<>();
+
+    public static void registerTagHandler(String name, TagRunnable.BaseInterface run) {
+        properTagBases.add(name);
+        baseHandlers.put(name, run);
+    }
 
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
         properTagBases.add(names[0]);
         if (names.length == 1) {
             run.name = names[0];
-            handlers.put(run.name, run);
+            rootFormHandlers.put(run.name, run);
         }
         else {
             for (String name : names) {
                 TagRunnable.RootForm rtemp = run.clone();
                 rtemp.name = name;
-                handlers.put(rtemp.name, rtemp);
+                rootFormHandlers.put(rtemp.name, rtemp);
             }
         }
     }
@@ -61,7 +68,23 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
-        TagRunnable.RootForm handler = event.mainRef.baseHandler;
+        TagRunnable.BaseInterface baseHandler = event.mainRef.tagBaseHandler;
+        if (baseHandler != null) {
+            Attribute attribute = event.getAttributes();
+            try {
+                ObjectTag result = baseHandler.run(attribute);
+                if (result != null) {
+                    event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
+                    return;
+                }
+            }
+            catch (Throwable ex) {
+                Debug.echoError(ex);
+            }
+            attribute.echoError("Tag-base '" + attribute.getAttributeWithoutContext(1) + "' returned null.");
+            return;
+        }
+        TagRunnable.RootForm handler = event.mainRef.rootFormHandler;
         if (handler != null) {
             try {
                 if (Debug.verbose) {
@@ -86,54 +109,6 @@ public class TagManager {
         }
         if (Debug.verbose) {
             Debug.log("Tag unhandled!");
-        }
-    }
-
-    public static void fetchObject(ReplaceableTagEvent event) {
-        String object_type = CoreUtilities.toLowerCase(CoreUtilities.split(event.getAttributes().attributes[0].rawKey, '@').get(0));
-        Class object_class = ObjectFetcher.getObjectClass(object_type);
-
-        if (object_class == null) {
-            if (!event.hasAlternative()) {
-                Debug.echoError("Invalid object type! Could not fetch '" + object_type + "'!");
-                event.setReplaced("null");
-            }
-            return;
-        }
-
-        ObjectTag arg;
-        try {
-
-            String tagObjectFull = event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                    : event.getAttributes().attributes[0].rawKey;
-            if (!ObjectFetcher.checkMatch(object_class, tagObjectFull)) {
-                if (!event.hasAlternative()) {
-                    Debug.echoDebug(event.getScriptEntry(), "Returning null. '" + event.getAttributes().attributes[0].rawKey + "' is an invalid " + object_class.getSimpleName() + ".");
-                    event.setReplaced("null");
-                }
-                return;
-            }
-
-            arg = ObjectFetcher.getObjectFrom(object_class, tagObjectFull, event.getContext());
-
-            if (arg == null) {
-                if (!event.hasAlternative()) {
-                    Debug.echoError(((event.hasNameContext() ? event.getAttributes().attributes[0].rawKey + '[' + event.getNameContext() + ']'
-                            : event.getAttributes().attributes[0].rawKey) + " is an invalid ObjectTag!"));
-                    event.setReplaced("null");
-                }
-                return;
-            }
-
-            Attribute attribute = event.getAttributes();
-            event.setReplacedObject(CoreUtilities.autoAttrib(arg, attribute.fulfill(1)));
-        }
-        catch (Exception e) {
-            Debug.echoError("Uh oh! Report this to the Denizen developers! Err: TagManagerObjectReflection");
-            Debug.echoError(e);
-            if (!event.hasAlternative()) {
-                event.setReplaced("null");
-            }
         }
     }
 

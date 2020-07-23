@@ -11,6 +11,11 @@ public abstract class TagRunnable implements Cloneable {
         ObjectTag run(Attribute attribute, T object);
     }
 
+    @FunctionalInterface
+    public interface BaseInterface {
+
+        ObjectTag run(Attribute attribute);
+    }
     public static abstract class RootForm implements Cloneable {
 
         @Override

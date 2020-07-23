@@ -4,19 +4,11 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
 
 public class ReplaceableTagEvent {
-
-    public static TagRunnable.RootForm objectTagBaseHandler = new TagRunnable.RootForm() {
-        @Override
-        public void run(ReplaceableTagEvent event) {
-            TagManager.fetchObject(event);
-        }
-    };
 
     private final TagContext context;
 
@@ -54,7 +46,9 @@ public class ReplaceableTagEvent {
 
         public String value = null;
 
-        public TagRunnable.RootForm baseHandler = null;
+        public TagRunnable.RootForm rootFormHandler = null;
+
+        public TagRunnable.BaseInterface tagBaseHandler = null;
     }
 
     public ReferenceData mainRef = null;
@@ -115,12 +109,10 @@ public class ReplaceableTagEvent {
         mainRef.rawTag = raw_tag;
 
         String startValue = getName();
-        if (CoreUtilities.contains(startValue, '@')) {
-            mainRef.baseHandler = objectTagBaseHandler;
-        }
-        else {
-            mainRef.baseHandler = TagManager.handlers.get(startValue);
-            if (mainRef.baseHandler == null) {
+        mainRef.tagBaseHandler = TagManager.baseHandlers.get(startValue);
+        if (mainRef.tagBaseHandler == null) {
+            mainRef.rootFormHandler = TagManager.rootFormHandlers.get(startValue);
+            if (mainRef.rootFormHandler == null) {
                 if (!hasAlternative()) {
                     Debug.echoError("(Initial detection) No tag-base handler for '" + startValue + "'.");
                 }
