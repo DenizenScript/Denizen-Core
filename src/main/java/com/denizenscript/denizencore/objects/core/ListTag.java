@@ -787,7 +787,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("insert", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.insert[...] must have a value.");
+                attribute.echoError("The tag ListTag.insert[...] must have a value.");
                 return null;
             }
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
@@ -823,7 +823,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("set", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.set[...] must have a value.");
+                attribute.echoError("The tag ListTag.set[...] must have a value.");
                 return null;
             }
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
@@ -860,7 +860,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("set_single", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.set_single[...] must have a value.");
+                attribute.echoError("The tag ListTag.set_single[...] must have a value.");
                 return null;
             }
             ObjectTag value = attribute.getContextObject(1);
@@ -897,7 +897,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("overwrite", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.overwrite[...] must have a value.");
+                attribute.echoError("The tag ListTag.overwrite[...] must have a value.");
                 return null;
             }
             if (object.isEmpty()) {
@@ -939,7 +939,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("include_single", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.include_single[...] must have a value.");
+                attribute.echoError("The tag ListTag.include_single[...] must have a value.");
                 return null;
             }
             ListTag copy = new ListTag(object);
@@ -956,7 +956,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("include", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.include[...] must have a value.");
+                attribute.echoError("The tag ListTag.include[...] must have a value.");
                 return null;
             }
             ListTag copy = new ListTag(object);
@@ -973,7 +973,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("exclude", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.exclude[...] must have a value.");
+                attribute.echoError("The tag ListTag.exclude[...] must have a value.");
                 return null;
             }
             ListTag exclusions = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1001,7 +1001,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("remove", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.remove[#] must have a value.");
+                attribute.echoError("The tag ListTag.remove[#] must have a value.");
                 return null;
             }
             ListTag indices = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1040,7 +1040,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("shared_contents", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.shared_contents[...] must have a value.");
+                attribute.echoError("The tag ListTag.shared_contents[...] must have a value.");
                 return null;
             }
             ListTag secondList = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1148,13 +1148,11 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ListTag> getRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.get[...] must have a value.");
+                attribute.echoError("The tag ListTag.get[...] must have a value.");
                 return null;
             }
             if (object.isEmpty()) {
-                if (!attribute.hasAlternative()) {
-                    Debug.echoError("Can't get from an empty list.");
-                }
+                attribute.echoError("Can't get from an empty list.");
                 return null;
             }
             ListTag indices = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1229,7 +1227,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("find_all_partial", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.find_all_partial[...] must have a value.");
+                attribute.echoError("The tag ListTag.find_all_partial[...] must have a value.");
                 return null;
             }
             String test = attribute.getContext(1).toUpperCase();
@@ -1253,7 +1251,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("find_all", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.find_all[...] must have a value.");
+                attribute.echoError("The tag ListTag.find_all[...] must have a value.");
                 return null;
             }
             ListTag positions = new ListTag();
@@ -1276,7 +1274,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("find_partial", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.find_partial[...] must have a value.");
+                attribute.echoError("The tag ListTag.find_partial[...] must have a value.");
                 return null;
             }
             String test = attribute.getContext(1).toUpperCase();
@@ -1299,7 +1297,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("find", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.find[...] must have a value.");
+                attribute.echoError("The tag ListTag.find[...] must have a value.");
                 return null;
             }
             for (int i = 0; i < object.size(); i++) {
@@ -1326,7 +1324,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("count", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.count[...] must have a value.");
+                attribute.echoError("The tag ListTag.count[...] must have a value.");
                 return null;
             }
             String element = attribute.getContext(1);
@@ -1631,7 +1629,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             ListTag obj = new ListTag(object);
             final ProcedureScriptContainer script = (ProcedureScriptContainer) attribute.contextAsType(1, ScriptTag.class).getContainer();
             if (script == null) {
-                Debug.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
+                attribute.echoError("'" + attribute.getContext(1) + "' is not a valid procedure script!");
                 return obj;
             }
             final ScriptEntry entry = attribute.getScriptEntry();
@@ -1842,7 +1840,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("pad_left", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.pad_left[...] must have a value.");
+                attribute.echoError("The tag ListTag.pad_left[...] must have a value.");
                 return null;
             }
             ObjectTag with = new ElementTag("");
@@ -1877,7 +1875,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("pad_right", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.pad_right[...] must have a value.");
+                attribute.echoError("The tag ListTag.pad_right[...] must have a value.");
                 return null;
             }
             ObjectTag with = new ElementTag("");
@@ -1943,7 +1941,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("contains_any_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.contains_any_case_sensitive[...] must have a value.");
+                attribute.echoError("The tag ListTag.contains_any_case_sensitive[...] must have a value.");
                 return null;
             }
             ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1970,7 +1968,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("contains_any", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.contains_any[...] must have a value.");
+                attribute.echoError("The tag ListTag.contains_any[...] must have a value.");
                 return null;
             }
             ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
@@ -1997,7 +1995,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("contains_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.contains_case_sensitive[...] must have a value.");
+                attribute.echoError("The tag ListTag.contains_case_sensitive[...] must have a value.");
                 return null;
             }
             boolean state = false;
@@ -2020,7 +2018,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         // -->
         registerTag("contains", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                Debug.echoError("The tag ListTag.contains[...] must have a value.");
+                attribute.echoError("The tag ListTag.contains[...] must have a value.");
                 return null;
             }
             ListTag needed = getListFor(attribute.getContextObject(1), attribute.context);
