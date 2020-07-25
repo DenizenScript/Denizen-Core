@@ -22,14 +22,13 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // @description
     // A somewhat vague term used to describe a collection of script entries and other script parts.
     //
-    // For example, 'Hey, check out this script I just wrote!', probably refers to a collection of script entries
-    // that make up some kind of script container. Perhaps it is a NPC Assignment Script Container that provides
-    // waypoint functionality, or a world script that implements and keeps track of a new player stat. 'Script' can
-    // refer to a single container, as well as a collection of containers that share a common theme.
+    // For example, 'Hey, check out this script I just wrote!', probably refers to a collection of script entries that make up some kind of script container.
+    // Perhaps it is a NPC Assignment Script Container that provides waypoint functionality, or a world script that implements and keeps track of a new player stat.
+    // 'Script' can refer to a single container, as well as a collection of containers that share a common theme.
     //
-    // Scripts that contain a collection of containers are typically kept to a single file. Multiple containers are
-    // permitted inside a single file, but it should be noted that container names are stored on a global level. That
-    // is, naming scripts should be done with care to avoid duplicate script names.
+    // Scripts that contain a collection of containers are typically kept to a single file.
+    // Multiple containers are permitted inside a single file, but it should be noted that container names are stored on a global level.
+    // That is, naming scripts should be done with care to avoid duplicate script names.
     //
     // -->
 
@@ -38,8 +37,8 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // @group Denizen Scripting Language
     // @description
     // The overall 'scripting language' that Denizen implements is referred to as 'dScripting', or 'dScript'.
-    // dScripts use a YAML-styled layout + Denizen's Scripting API to parse scripts that are stored as .yml files. Scripts
-    // go in the .../plugins/Denizen/scripts folder.
+    // dScripts use the Denizen script syntax and the Denizen Scripting API to parse scripts that are stored as .dsc files.
+    // Scripts go in the 'plugins/Denizen/scripts' folder.
     //
     // -->
 
@@ -49,13 +48,17 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // @description
     // The syntax of Denizen is broken into multiple abstraction layers.
     //
-    // At the highest level, Denizen scripts are stored in YAML-like files, which use the '.yml' suffix but do not
-    // fully conform to the YAML specification. In particular, there are several changes made to support looser syntax rules
+    // At the highest level, Denizen scripts are stored in script files, which use the '.dsc' suffix
+    //
+    // Denizen script syntax is approximately based on YAML configuration files,
+    // and is intended to seem generally as easy to edit as a YAML configuration.
+    // However, several key differences exist between the Denizen script syntax and YAML syntax.
+    // In particular, there are several changes made to support looser syntax rules
     // and avoid some of the issues that would result from writing code directly into a plain YAML file.
     //
-    // Within those YAML files are 'script containers', which is the actual unit of separating individual scripts apart.
-    // (Whereas putting containers across different files results in no actual difference - file and folder separation
-    // is purely for your own organization, and doesn't matter to the Denizen parser).
+    // Within those 'script files' are 'script containers', which are the actual unit of separating individual 'scripts' apart.
+    // (Whereas putting containers across different files results in no actual difference:
+    // file and folder separation is purely for your own organization, and doesn't matter to the Denizen parser).
     // Each script container has a 'type' such as 'task' or 'world' that defines how it functions.
     //
     // Within a script container are individual script paths, such as 'script:' in a 'task' script container,
@@ -64,8 +67,8 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // When a path is executed, a 'script queue' is formed to process the contents of that script path.
     //
     // Within any script path is a list of 'script entries', which are the commands to be executed.
-    // These can be raw commands themselves (like 'narrate') with their arguments, or commands that contain
-    // additional commands within their entry (as 'if' and 'foreach' for example both do).
+    // These can be raw commands themselves (like 'narrate') with their arguments,
+    // or commands that contain additional commands within their entry (as 'if' and 'foreach' for example both do).
     //
     // -->
 
@@ -73,13 +76,11 @@ public class ScriptTag implements ObjectTag, Adjustable {
     // @name ScriptTag Objects
     // @group Object System
     // @description
-    // A ObjectTag that represents a script container. ScriptTags contain all information inside the script, and can be
-    // used in a variety of commands that require script arguments. For example, run and inject will 'execute'
-    // script entries inside of a script container when given a matching ScriptTag object.
+    // A ObjectTag that represents a script container. ScriptTags contain all information inside the script,
+    // and can be used in a variety of commands that require script arguments.
+    // For example, run and inject will 'execute' script entries inside of a script container when given a matching ScriptTag object.
     //
-    // ScriptTags also provide a way to access attributes accessed by the replaceable tag system by using the object
-    // fetcher or any other entry point to a ScriptTag object. ScriptTag objects have the object identifier of 's@'.
-    // For example: ScriptTag_name
+    // ScriptTags also provide a way to access attributes accessed by the replaceable tag system by using the object fetcher or any other entry point to a ScriptTag object.
     //
     // These use the object notation "s@".
     // The identity format for scripts is simply the script name.
