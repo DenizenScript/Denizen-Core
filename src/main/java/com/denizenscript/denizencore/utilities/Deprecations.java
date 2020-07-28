@@ -173,6 +173,9 @@ public class Deprecations {
     public static Warning airLevelEventDuration = new SlowWarning("The 'entity changes air level' event uses 'air_duration' context now instead of the old tick count number.");
     public static Warning damageEventTypeMap = new SlowWarning("The 'entity damaged' context 'damage_[TYPE]' is deprecated in favor of 'damage_type_map', which is operated as a MapTag.");
 
+    // In Bukkit impl, added 2020/07/28.
+    public static Warning headCommand = new SlowWarning("The 'head' command is deprecated: use the 'equip' command with a 'player_head' item using the 'skull_skin' mechanism.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.
