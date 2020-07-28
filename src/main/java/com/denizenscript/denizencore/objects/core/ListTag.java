@@ -715,6 +715,27 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.merge_maps>
+        // @returns MapTag
+        // @description
+        // If this list is a list of MapTags, returns a single MapTag of all the maps combined together.
+        // So a list that contains map of 'a/1|b/2' and a map of 'x/3|y/4' will return a single map of 'a/1|b/2|x/3|y/4'
+        // Duplicate keys will have the the last value that appears in the list.
+        // -->
+        registerTag("merge_maps", (attribute, object) -> {
+            MapTag map = new MapTag();
+            for (ObjectTag entry : object.objectForms) {
+                MapTag subMap = MapTag.getMapFor(entry, attribute.context);
+                if (subMap == null) {
+                    attribute.echoError("Invalid map '" + entry + "' for merge_maps tag.");
+                    return null;
+                }
+                map.map.putAll(subMap.map);
+            }
+            return map;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.to_map>
         // @returns MapTag
         // @description
