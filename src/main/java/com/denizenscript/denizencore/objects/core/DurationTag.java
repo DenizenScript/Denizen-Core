@@ -23,7 +23,7 @@ public class DurationTag implements ObjectTag {
     // Many commands and features that require a duration can be satisfied by specifying a number
     // and unit of time, especially command arguments that are prefixed 'duration:', etc.
     // The unit of time can be specified by using one of the following:
-    // T=ticks, M=minutes, S=seconds, H=hours, D=days, W=Weeks.
+    // t=ticks, s=seconds, m=minutes, h=hours, d=days, w=weeks.
     // Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 20.
     //
     // Specifying a range of duration will result in a randomly selected duration that is

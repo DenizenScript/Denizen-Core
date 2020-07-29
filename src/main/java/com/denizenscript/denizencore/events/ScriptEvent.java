@@ -99,16 +99,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // Modern script events support the concept of 'switches'.
         // A switch is a specification of additional requirements in an event line other than what's in the event label it.
         //
-        // A switch consists of a name and a value input, and are can be added anywhere in an event line as "name:<value>"
-        // For example, "on delta time secondly every:5:" is a valid event, where "delta time secondly" is the event itself,
-        // and "every:<#>" is a switch available to the event.
+        // A switch consists of a name and a value input, and are can be added anywhere in an event line as "name:<value>".
+        // For example, "on delta time secondly every:5:" is a valid event, where "delta time secondly" is the event itself, and "every:<#>" is a switch available to the event.
         //
         // A traditional Denizen 1 event might look like "on <entity> damaged",
         // where "<entity>" can be filled with "entity" or any entity type (like "player").
         // A switch-using event would instead take the format "on entity damaged" with switch "type:<entity type>"
         // meaning you can do "on entity damaged" for any entity, or "on entity damaged type:player:" for players specifically.
-        // This is both more efficient to process and more explicit in what's going on, however it is less
-        // clear/readable to the average user, so it is not often used.
+        // This is both more efficient to process and more explicit in what's going on, however it is less clear/readable to the average user, so it is not often used.
         // Some events may have switches for less-often specified data, and use the event line for other options.
         //
         // Most switches take input in the form of a simplified name or value.
@@ -118,9 +116,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // A "<cuboid>" input will expect the name of a notable cuboid, never a fully written out cuboid object.
         //
         // One of the most common switches across many Denizen events is "in:<area>".
-        // In these switches, 'area' is a world, notable cuboid, or notable ellipsoid.
+        // In these switches, 'area' is a world, noted cuboid, or noted ellipsoid.
         // So for example you might have an event line like "on player breaks block in:space:"
         // where space is the name of a world or of a notable cuboid.
+        // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
         // -->
 
         public boolean checkSwitch(String key, String value) {
@@ -510,9 +509,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // '*_pickaxe|stone' will match any pickaxe or specifically stone. It will NOT match other types of stone, as it interprets
     // the match to be a list of "*_pickaxe" and "stone", NOT "*" followed by a list of "pickaxe" or "stone".
     //
-    // Additionally, when you're really deseparate for a good matcher, you may use 'regex:'
+    // Additionally, when you're really desperate for a good matcher, you may use 'regex:'
     // For example, "on player breaks regex:(?i)\d+_customitem:"
-    // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance.
+    // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance, and may have unexpected edge case errors.
     // -->
 
     public static abstract class MatchHelper {

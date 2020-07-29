@@ -90,7 +90,7 @@ public interface ObjectTag {
     // - How you adjust an object (eg change the lore of an item, or teleport an entity).
     // For example: you can't teleport the generic concept of a creeper, but you can certainly teleport a specific single creeper in the world.
     // - How reliable tags on the object are.
-    // For example: the result of 'ItemTag.lore' on the item 'i@stick[lore=hi]' will always be 'hi' (because ItemTag are generic),
+    // For example: the result of 'ItemTag.lore' on the item 'i@stick[lore=hi]' will always be 'hi' (because ItemTags are generic),
     // but the result of 'EntityTag.location' on the entity 'e@abc123' will change every tick as the entity moves,
     // or even become invalid if the entity dies (because that EntityTag is unique).
     //
