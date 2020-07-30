@@ -24,12 +24,12 @@ public class InjectCommand extends AbstractCommand {
     // @Syntax inject (locally) [<script>] (path:<name>) (instantly)
     // @Required 1
     // @Maximum 4
-    // @Short Runs a script in the current ScriptQueue.
+    // @Short Runs a script in the current queue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
     //
     // @Description
-    // Injects a script into the current ScriptQueue.
+    // Injects a script into the current queue.
     // This means this task will run with all of the original queue's definitions and tags.
     // It will also now be part of the queue, so any delays or definitions used in the injected script will be
     // accessible in the original queue.

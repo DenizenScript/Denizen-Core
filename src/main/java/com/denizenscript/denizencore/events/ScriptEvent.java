@@ -102,23 +102,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // A switch consists of a name and a value input, and are can be added anywhere in an event line as "name:<value>".
         // For example, "on delta time secondly every:5:" is a valid event, where "delta time secondly" is the event itself, and "every:<#>" is a switch available to the event.
         //
-        // A traditional Denizen 1 event might look like "on <entity> damaged",
+        // A traditional Denizen event might look like "on <entity> damaged",
         // where "<entity>" can be filled with "entity" or any entity type (like "player").
         // A switch-using event would instead take the format "on entity damaged" with switch "type:<entity type>"
         // meaning you can do "on entity damaged" for any entity, or "on entity damaged type:player:" for players specifically.
         // This is both more efficient to process and more explicit in what's going on, however it is less clear/readable to the average user, so it is not often used.
         // Some events may have switches for less-often specified data, and use the event line for other options.
         //
-        // Most switches take input in the form of a simplified name or value.
-        // For example an "<entity>" input will usually accept the name of an entity type like "zombie",
-        // not a full entity UUID or other specific-entity identifier.
-        // An "<item>" input will expect a material name or item script name, not a fully detailed item description with property syntax.
-        // A "<cuboid>" input will expect the name of a notable cuboid, never a fully written out cuboid object.
-        //
         // One of the most common switches across many Denizen events is "in:<area>".
         // In these switches, 'area' is a world, noted cuboid, or noted ellipsoid.
         // So for example you might have an event line like "on player breaks block in:space:"
-        // where space is the name of a world or of a notable cuboid.
+        // where space is the name of a world or of a noted cuboid.
         // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
         // -->
 

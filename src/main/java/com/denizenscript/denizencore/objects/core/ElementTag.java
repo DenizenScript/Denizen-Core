@@ -649,8 +649,8 @@ public class ElementTag implements ObjectTag {
         // @returns QueueTag
         // @group conversion
         // @description
-        // Returns the element as a ScriptQueue.
-        // Note: the value must be a valid ScriptQueue.
+        // Returns the element as a QueueTag.
+        // Note: the value must be a valid QueueTag.
         // -->
         registerTag("as_queue", (attribute, object) -> {
             String element = object.element;

@@ -100,7 +100,7 @@ public class DurationTag implements ObjectTag {
             }
         }
         String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
-        // Standard Duration. Check the type and create new DurationTag object accordingly.
+        // Standard DurationTag. Check the type and create new DurationTag object accordingly.
         try {
             if (string.endsWith("t")) {
                 // Matches TICKS, so 1 tick = .05 seconds
@@ -144,7 +144,7 @@ public class DurationTag implements ObjectTag {
     }
 
     /**
-     * Checks to see if the string is a valid Duration.
+     * Checks to see if the string is a valid DurationTag.
      *
      * @param string the String to match.
      * @return true if valid.
@@ -329,7 +329,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_years>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of years in the Duration.
+        // returns the number of years in the duration.
         // -->
         registerTag("in_years", (attribute, object) -> {
             return new ElementTag(object.seconds / (86400 * 365));
@@ -339,7 +339,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_weeks>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of weeks in the Duration.
+        // returns the number of weeks in the duration.
         // -->
         registerTag("in_weeks", (attribute, object) -> {
             return new ElementTag(object.seconds / 604800);
@@ -349,7 +349,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_days>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of days in the Duration.
+        // returns the number of days in the duration.
         // -->
         registerTag("in_days", (attribute, object) -> {
             return new ElementTag(object.seconds / 86400);
@@ -359,7 +359,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_hours>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of hours in the Duration.
+        // returns the number of hours in the duration.
         // -->
         registerTag("in_hours", (attribute, object) -> {
             return new ElementTag(object.seconds / 3600);
@@ -369,7 +369,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_minutes>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of minutes in the Duration.
+        // returns the number of minutes in the duration.
         // -->
         registerTag("in_minutes", (attribute, object) -> {
             return new ElementTag(object.seconds / 60);
@@ -379,7 +379,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_seconds>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of seconds in the Duration.
+        // returns the number of seconds in the duration.
         // -->
         registerTag("in_seconds", (attribute, object) -> {
             return new ElementTag(object.seconds);
@@ -389,7 +389,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_milliseconds>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the number of milliseconds in the Duration.
+        // returns the number of milliseconds in the duration.
         // -->
         registerTag("in_milliseconds", (attribute, object) -> {
             return new ElementTag(object.seconds * 1000);
@@ -399,7 +399,7 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.in_ticks>
         // @returns ElementTag(Number)
         // @description
-        // returns the number of ticks in the Duration. (20t/second)
+        // returns the number of ticks in the duration. (20t/second)
         // -->
         registerTag("in_ticks", (attribute, object) -> {
             return new ElementTag((long) (object.seconds * 20L));
@@ -407,7 +407,7 @@ public class DurationTag implements ObjectTag {
 
         // <--[tag]
         // @attribute <DurationTag.sub[<duration>]>
-        // @returns ElementTag(Number)
+        // @returns DurationTag
         // @description
         // returns this duration minus another.
         // -->
@@ -421,7 +421,7 @@ public class DurationTag implements ObjectTag {
 
         // <--[tag]
         // @attribute <DurationTag.add[<duration>]>
-        // @returns ElementTag(Number)
+        // @returns DurationTag
         // @description
         // returns this duration plus another.
         // -->
