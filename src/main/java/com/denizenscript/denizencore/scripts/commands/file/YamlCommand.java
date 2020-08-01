@@ -7,7 +7,6 @@ import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -19,7 +18,6 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import org.json.JSONObject;
 
@@ -34,12 +32,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         setName("yaml");
         setSyntax("yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]");
         setRequiredArguments(2, 4);
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                yaml(event);
-            }
-        }, "yaml");
+        TagManager.registerTagHandler("yaml", this::yamlTagProcess);
         isProcedural = false;
     }
 
@@ -124,14 +117,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // - yaml id:myfile copykey:my.first.key my.new.key to_id:myotherfile
     // -->
 
-    Map<String, YamlConfiguration> yamls = new HashMap<>();
+    public Map<String, YamlConfiguration> yamlDocuments = new HashMap<>();
 
     private YamlConfiguration getYaml(String id) {
         if (id == null) {
             Debug.echoError("Trying to get YAML file with NULL ID!");
             return null;
         }
-        return yamls.get(id.toUpperCase());
+        return yamlDocuments.get(CoreUtilities.toLowerCase(id));
     }
 
     public enum Action {LOAD, LOADTEXT, UNLOAD, CREATE, SAVE, SET, COPYKEY}
@@ -143,10 +136,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         boolean isSet = false;
         boolean isCopyKey = false;
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("load")) {
@@ -208,7 +199,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     arg.matches("fix_formatting")) {
                 scriptEntry.addObject("fix_formatting", new ElementTag("true"));
             }
-
             // Check for key:value/action
             else if (isSet &&
                     !scriptEntry.hasObject("value") &&
@@ -239,7 +229,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
                 }
             }
-
             // Check for key:action:value
             else if (isSet &&
                     !scriptEntry.hasObject("value") &&
@@ -278,7 +267,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 }
                 scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
             }
-
             else if (isCopyKey && !scriptEntry.hasObject("value")) {
                 scriptEntry.addObject("value", arg.asElement());
             }
@@ -286,22 +274,18 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("id")) {
             throw new InvalidArgumentsException("Must specify an id!");
         }
-
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify an action!");
         }
-
         scriptEntry.defaultObject("value", new ElementTag(""));
         scriptEntry.defaultObject("fix_formatting", new ElementTag("false"));
     }
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-
         ElementTag filename = scriptEntry.getElement("filename");
         ElementTag rawText = scriptEntry.getElement("raw_text");
         ElementTag key = scriptEntry.getElement("key");
@@ -312,11 +296,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         ElementTag idElement = scriptEntry.getElement("id");
         ElementTag fixFormatting = scriptEntry.getElement("fix_formatting");
         ElementTag toId = scriptEntry.getElement("to_id");
-
         YamlConfiguration yamlConfiguration;
-
         if (scriptEntry.dbCallShouldDebug()) {
-
             Debug.report(scriptEntry, getName(),
                     idElement.debug()
                             + actionElement.debug()
@@ -327,12 +308,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             + (split != null ? split.debug() : "")
                             + (rawText != null ? rawText.debug() : "")
                             + (toId != null ? toId.debug() : ""));
-
         }
 
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());
-        String id = idElement.asString().toUpperCase();
+        final String id = CoreUtilities.toLowerCase(idElement.asString());
 
         if (action != Action.LOAD && action != Action.SAVE && scriptEntry.shouldWaitFor()) {
             scriptEntry.setFinished(true);
@@ -355,8 +335,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 Runnable onLoadCompleted = new Runnable() {
                     @Override
                     public void run() {
-                        yamls.remove(id);
-                        yamls.put(id, runnableConfigs[0]);
+                        yamlDocuments.remove(id);
+                        yamlDocuments.put(id, runnableConfigs[0]);
                         scriptEntry.setFinished(true);
                     }
                 };
@@ -398,14 +378,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case LOADTEXT:
                 String str = rawText.asString();
                 YamlConfiguration config = YamlConfiguration.load(str);
-                yamls.remove(id);
-                yamls.put(id, config);
+                yamlDocuments.remove(id);
+                yamlDocuments.put(id, config);
                 scriptEntry.setFinished(true);
                 break;
 
             case UNLOAD:
-                if (yamls.containsKey(id)) {
-                    yamls.remove(id);
+                if (yamlDocuments.containsKey(id)) {
+                    yamlDocuments.remove(id);
                 }
                 else {
                     Debug.echoError("Unknown YAML ID '" + id + "'");
@@ -413,7 +393,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 break;
 
             case SAVE:
-                if (yamls.containsKey(id)) {
+                if (yamlDocuments.containsKey(id)) {
                     try {
                         if (!DenizenCore.getImplementation().allowStrangeYAMLSaves()) {
                             File fileObj = new File(DenizenCore.getImplementation().
@@ -433,7 +413,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             return;
                         }
                         fileObj.getParentFile().mkdirs();
-                        YamlConfiguration yaml = yamls.get(id);
+                        YamlConfiguration yaml = yamlDocuments.get(id);
                         String outp = yaml.saveToString(false);
                         yaml.setDirty(false);
                         Runnable saveRunnable = new Runnable() {
@@ -476,16 +456,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 break;
 
             case COPYKEY: {
-                if (!yamls.containsKey(id)) {
+                if (!yamlDocuments.containsKey(id)) {
                     break;
                 }
-                YamlConfiguration yaml = yamls.get(id);
+                YamlConfiguration yaml = yamlDocuments.get(id);
                 YamlConfiguration destYaml = yaml;
                 if (toId != null) {
-                    if (yamls.containsKey(toId.toString().toUpperCase())) {
-                        destYaml = yamls.get(toId.toString().toUpperCase());
-                    }
-                    else {
+                    destYaml = getYaml(toId.toString());
+                    if (destYaml == null) {
                         Debug.echoError("Unknown YAML TO-ID '" + id + "'");
                         break;
                     }
@@ -501,12 +479,12 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
 
             case SET:
-                if (yamls.containsKey(id)) {
+                if (yamlDocuments.containsKey(id)) {
                     if (yaml_action == null || key == null || value == null) {
                         Debug.echoError("Must specify a YAML action and value!");
                         return;
                     }
-                    YamlConfiguration yaml = yamls.get(id);
+                    YamlConfiguration yaml = yamlDocuments.get(id);
 
                     int index = -1;
                     if (key.asString().contains("[")) {
@@ -643,9 +621,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 break;
 
             case CREATE:
-                yamls.remove(id);
+                yamlDocuments.remove(id);
                 yamlConfiguration = new YamlConfiguration();
-                yamls.put(id.toUpperCase(), yamlConfiguration);
+                yamlDocuments.put(id, yamlConfiguration);
                 break;
         }
 
@@ -711,13 +689,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public void yaml(ReplaceableTagEvent event) {
-
-        if (!event.matches("yaml")) {
-            return;
-        }
-
-        Attribute attribute = event.getAttributes();
+    public ObjectTag yamlTagProcess(Attribute attribute) {
+        String id = attribute.hasContext(1) ? CoreUtilities.toLowerCase(attribute.getContext(1)) : null;
+        attribute.fulfill(1);
 
         // <--[tag]
         // @attribute <yaml.list>
@@ -725,30 +699,20 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns a list of all currently loaded YAML ID's.
         // -->
-        if (attribute.getAttribute(2).equalsIgnoreCase("list")) {
+        if (attribute.startsWith("list")) {
             ListTag list = new ListTag();
-            list.addAll(yamls.keySet());
-            event.setReplacedObject(list.getObjectAttribute(attribute.fulfill(2)));
-            return;
+            list.addAll(yamlDocuments.keySet());
+            return list;
         }
-
-        String id = attribute.getContext(1).toUpperCase();
-
-        // Check if there is a yaml file loaded with the specified id
-        if (!yamls.containsKey(id)) {
-            if (!attribute.hasAlternative()) {
-                Debug.echoError("YAML tag '" + event.raw_tag + "' has specified an invalid ID, or the specified id has already" +
-                        " been closed. Tag replacement aborted. ID given: '" + id + "'.");
-            }
-            return;
+        if (id == null) {
+            attribute.echoError("yaml[...] tag must specify a YAML id.");
+            return null;
         }
-
-        // Catch up with what has already been processed.
-        attribute.fulfill(1);
-
-        //
-        // Check attributes
-        //
+        YamlConfiguration yaml = getYaml(id);
+        if (yaml == null) {
+            attribute.echoError("YAML tag has specified an invalid ID, or the specified id has already been closed. Tag replacement aborted. ID given: '" + id + "'.");
+            return null;
+        }
 
         // <--[tag]
         // @attribute <yaml[<id>].contains[<path>]>
@@ -758,8 +722,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Otherwise, returns false.
         // -->
         if (attribute.startsWith("contains") && attribute.hasContext(1)) {
-            event.setReplacedObject(new ElementTag(getYaml(id).contains(attribute.getContext(1))).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return new ElementTag(yaml.contains(attribute.getContext(1)));
         }
 
         // <--[tag]
@@ -769,8 +732,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns true if the specified path results in a list.
         // -->
         if (attribute.startsWith("is_list") && attribute.hasContext(1)) {
-            event.setReplacedObject(new ElementTag(getYaml(id).isList(attribute.getContext(1))).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return new ElementTag(yaml.isList(attribute.getContext(1)));
         }
 
         // <--[tag]
@@ -780,14 +742,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
         // Will automatically parse any tags contained within the value of the key, preserving key data structure
         // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
+        // Generally, prefer to use <@link tag yaml.read>.
         // -->
-        if (attribute.startsWith("read") && attribute.hasContext(1)) {
-            Object obj = getYaml(id).get(attribute.getContext(1));
+        if (attribute.startsWith("parsed_key") && attribute.hasContext(1)) {
+            Object obj = yaml.get(attribute.getContext(1));
             if (obj == null) {
-                return;
+                return null;
             }
-            event.setReplacedObject(CoreUtilities.objectToTagForm(obj, attribute.context, false, true).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return CoreUtilities.objectToTagForm(obj, attribute.context, false, true);
         }
 
         // <--[tag]
@@ -797,12 +759,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
         // -->
         if (attribute.startsWith("read") && attribute.hasContext(1)) {
-            Object obj = getYaml(id).get(attribute.getContext(1));
+            Object obj = yaml.get(attribute.getContext(1));
             if (obj == null) {
-                return;
+                return null;
             }
-            event.setReplacedObject(CoreUtilities.objectToTagForm(obj, attribute.context).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return CoreUtilities.objectToTagForm(obj, attribute.context);
         }
 
         // <--[tag]
@@ -816,22 +777,21 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             Set<StringHolder> keys;
             String path = attribute.getContext(1);
             if (path != null && path.length() > 0) {
-                YamlConfiguration section = getYaml(id).getConfigurationSection(path);
+                YamlConfiguration section = yaml.getConfigurationSection(path);
                 if (section == null) {
-                    return;
+                    return null;
                 }
                 keys = section.getKeys(true);
             }
             else {
-                keys = getYaml(id).getKeys(true);
+                keys = yaml.getKeys(true);
             }
             if (keys == null) {
-                return;
+                return null;
 
             }
             else {
-                event.setReplacedObject(new ListTag(keys).getObjectAttribute(attribute.fulfill(1)));
-                return;
+                return new ListTag(keys);
             }
         }
 
@@ -846,22 +806,21 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             Set<StringHolder> keys;
             String path = attribute.getContext(1);
             if (path != null && path.length() > 0) {
-                YamlConfiguration section = getYaml(id).getConfigurationSection(path);
+                YamlConfiguration section = yaml.getConfigurationSection(path);
                 if (section == null) {
-                    return;
+                    return null;
                 }
                 keys = section.getKeys(false);
             }
             else {
-                keys = getYaml(id).getKeys(false);
+                keys = yaml.getKeys(false);
             }
             if (keys == null) {
-                return;
+                return null;
 
             }
             else {
-                event.setReplacedObject(new ListTag(keys).getObjectAttribute(attribute.fulfill(1)));
-                return;
+                return new ListTag(keys);
             }
         }
 
@@ -872,8 +831,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns whether this YAML object has had changes since the last save or load.
         // -->
         if (attribute.startsWith("has_changes")) {
-            event.setReplacedObject(new ElementTag(getYaml(id).isDirty()).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return new ElementTag(yaml.isDirty());
         }
 
         // <--[tag]
@@ -883,9 +841,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Converts the YAML container to a JSON array.
         // -->
         if (attribute.startsWith("to_json")) {
-            JSONObject jsobj = new JSONObject(getYaml(id).getMap());
-            event.setReplacedObject(new ElementTag(jsobj.toString()).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return new ElementTag(new JSONObject(yaml.getMap()).toString());
         }
 
         // <--[tag]
@@ -895,8 +851,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Converts the YAML container to raw YAML text.
         // -->
         if (attribute.startsWith("to_text")) {
-            event.setReplacedObject(new ElementTag(getYaml(id).saveToString(false)).getObjectAttribute(attribute.fulfill(1)));
-            return;
+            return new ElementTag(yaml.saveToString(false));
         }
+        return null;
     }
 }
