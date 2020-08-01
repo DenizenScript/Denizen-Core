@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class ListTag extends ArrayList<String> implements ObjectTag {
+public class ListTag implements List<String>, ObjectTag {
 
     // <--[language]
     // @name ListTag Objects
@@ -66,14 +66,12 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
     @Override
     public boolean add(String addMe) {
-        objectForms.add(new ElementTag(addMe));
-        return super.add(addMe);
+        return objectForms.add(new ElementTag(addMe));
     }
 
     @Override
     public void add(int index, String addMe) {
         objectForms.add(index, new ElementTag(addMe));
-        super.add(index, addMe);
     }
 
     @Override
@@ -85,14 +83,210 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     @Override
+    public boolean addAll(int index, Collection<? extends String> c) {
+        for (String str : c) {
+            add(index++, str);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        boolean allGone = true;
+        for (Object obj : c) {
+            if (!remove(obj)) {
+                allGone = false;
+            }
+        }
+        return allGone;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void clear() {
+        objectForms.clear();
+    }
+
+    @Override
+    public boolean contains(Object obj) {
+        return indexOf(obj) != -1;
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        for (Object obj : c) {
+            if (!contains(obj)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return listIterator(0);
+    }
+
+    @Override
+    public ListIterator<String> listIterator() {
+        return listIterator(0);
+    }
+
+    @Override
+    public ListIterator<String> listIterator(final int index) {
+        return new ListTagStringIterator(this, index);
+    }
+
+    public static class ListTagStringIterator implements ListIterator<String> {
+
+        public ListTag list;
+
+        int index;
+
+        public ListTagStringIterator(ListTag list, int index) {
+            this.list = list;
+            this.index = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < list.size();
+        }
+
+        @Override
+        public String next() {
+            return list.get(index++);
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return index > 0;
+        }
+
+        @Override
+        public String previous() {
+            return list.get(--index);
+        }
+
+        @Override
+        public int nextIndex() {
+            return index;
+        }
+
+        @Override
+        public int previousIndex() {
+            return index - 1;
+        }
+
+        @Override
+        public void remove() {
+            list.remove(index--);
+        }
+
+        @Override
+        public void set(String s) {
+            list.set(index, s);
+        }
+
+        @Override
+        public void add(String s) {
+            list.add(index++, s);
+        }
+    }
+
+    @Override
+    public Object[] toArray() {
+        Object[] stringArr = new Object[size()];
+        for (int i = 0; i < stringArr.length; i++) {
+            stringArr[i] = String.valueOf(getObject(i));
+        }
+        return stringArr;
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        String[] stringArr = new String[size()];
+        for (int i = 0; i < stringArr.length; i++) {
+            stringArr[i] = String.valueOf(getObject(i));
+        }
+        return (T[]) stringArr;
+    }
+
+    @Override
+    public ListTag subList(int fromIndex, int toIndex) {
+        return new ListTag(objectForms.subList(fromIndex, toIndex));
+    }
+
+    @Override
+    public int indexOf(Object obj) {
+        int size = size();
+        if (obj == null) {
+            for (int i = 0; i < size; i++) {
+                if (getObject(i) == null) {
+                    return i;
+                }
+            }
+        }
+        else if (obj instanceof String) {
+            for (int i = 0; i < size; i++) {
+                if (obj.equals(String.valueOf(getObject(i)))) {
+                    return i;
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < size; i++) {
+                if (obj.equals(getObject(i))) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int lastIndexOf(Object obj) {
+        int size = size() - 1;
+        if (obj == null) {
+            for (int i = size; i >= 0; i--) {
+                if (getObject(i) == null) {
+                    return i;
+                }
+            }
+        }
+        else if (obj instanceof String) {
+            for (int i = size; i >= 0; i--) {
+                if (obj.equals(String.valueOf(getObject(i)))) {
+                    return i;
+                }
+            }
+        }
+        else {
+            for (int i = size; i >= 0; i--) {
+                if (obj.equals(getObject(i))) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public ObjectTag removeObject(int index) {
+        return objectForms.remove(index);
+    }
+
+    @Override
     public String remove(int index) {
-        objectForms.remove(index);
-        return super.remove(index);
+        return String.valueOf(removeObject(index));
     }
 
     @Override
     public boolean remove(Object key) {
-        int ind = super.indexOf(key);
+        int ind = indexOf(key);
         if (ind < 0 || ind >= size()) {
             return false;
         }
@@ -101,30 +295,39 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     @Override
+    public int size() {
+        return objectForms.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return objectForms.isEmpty();
+    }
+
+    @Override
+    public String get(int index) {
+        return String.valueOf(objectForms.get(index));
+    }
+
+    @Override
     public String set(int index, String value) {
-        String result = super.set(index, value);
-        objectForms.set(index, new ElementTag(value));
-        return result;
+        return String.valueOf(setObject(index, new ElementTag(value)));
     }
 
     public boolean addAll(ListTag inp) {
-        objectForms.addAll(inp.objectForms);
-        return super.addAll(inp);
+        return objectForms.addAll(inp.objectForms);
     }
 
     public boolean addObject(ObjectTag obj) {
-        objectForms.add(obj);
-        return super.add(obj.toString());
+        return objectForms.add(obj);
     }
 
     public void addObject(int index, ObjectTag obj) {
         objectForms.add(index, obj);
-        super.add(index, obj.toString());
     }
 
-    public void setObject(int index, ObjectTag obj) {
-        objectForms.set(index, obj);
-        super.set(index, obj.toString());
+    public ObjectTag setObject(int index, ObjectTag obj) {
+        return objectForms.set(index, obj);
     }
 
     public ObjectTag getObject(int id) {
@@ -195,9 +398,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
     public ListTag(Collection<? extends ObjectTag> objectTagList) {
         objectForms = new ArrayList<>(objectTagList);
-        for (ObjectTag obj : objectTagList) {
-            super.add(obj.identify());
-        }
     }
 
     public ListTag(ObjectTag... objects) {
@@ -205,7 +405,6 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     }
 
     public ListTag(int capacity) {
-        super(capacity);
         objectForms = new ArrayList<>(capacity);
     }
 
@@ -253,16 +452,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                     }
                     // Separate if an un-bracketed pipe is found
                     else if (brackets == 0 && chr == '|') {
-                        super.add(items.substring(start, i));
+                        addObject(ObjectFetcher.pickObjectFor(items.substring(start, i)));
                         start = i + 1;
                     }
                 }
                 // If there is an item waiting, add it too
                 if (start < items.length()) {
-                    super.add(items.substring(start));
-                }
-                for (String str : this) {
-                    objectForms.add(ObjectFetcher.pickObjectFor(str, context));
+                    addObject(ObjectFetcher.pickObjectFor(items.substring(start)));
                 }
             }
         }
@@ -272,32 +468,20 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
         if (is_flag) {
             this.flag = flag;
         }
-        for (String it : flag_contents) {
-            super.add(it);
-        }
-        objectForms = new ArrayList<>(size());
-        for (String str : this) {
+        objectForms = new ArrayList<>(flag_contents.size());
+        for (String str : flag_contents) {
             objectForms.add(new ElementTag(str));
         }
     }
 
     public ListTag(ListTag input) {
         objectForms = new ArrayList<>(input.objectForms);
-        super.ensureCapacity(input.size());
-        for (String str : input) {
-            super.add(str);
-        }
     }
 
     // A List<String> of items
     public ListTag(List<String> items) {
-        if (items != null) {
-            for (String it : items) {
-                super.add(it);
-            }
-        }
-        objectForms = new ArrayList<>(size());
-        for (String str : this) {
+        objectForms = new ArrayList<>(items.size());
+        for (String str : items) {
             objectForms.add(new ElementTag(str));
         }
     }
@@ -305,28 +489,13 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
     // A Set<Object> of items
     public ListTag(Set<?> items) {
         objectForms = new ArrayList<>(items.size());
-        if (items != null) {
-            for (Object o : items) {
-                String strd = o.toString();
-                super.add(strd);
-                if (o instanceof ObjectTag) {
-                    objectForms.add((ObjectTag) o);
-                }
-                else {
-                    objectForms.add(new ElementTag(strd));
-                }
+        for (Object o : items) {
+            if (o instanceof ObjectTag) {
+                objectForms.add((ObjectTag) o);
             }
-        }
-    }
-
-    // A List<String> of items, with a prefix
-    public ListTag(List<String> items, String prefix) {
-        for (String element : items) {
-            super.add(prefix + element);
-        }
-        objectForms = new ArrayList<>(size());
-        for (String str : this) {
-            objectForms.add(new ElementTag(str));
+            else {
+                objectForms.add(new ElementTag(o.toString()));
+            }
         }
     }
 
@@ -859,7 +1028,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
                 attribute.fulfill(1);
                 if (!result.isEmpty()) {
-                    result.remove(index);
+                    result.removeObject(index);
                 }
                 for (int i = 0; i < items.size(); i++) {
                     result.addObject(index + i, items.objectForms.get(i));
@@ -896,7 +1065,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
                 }
                 attribute.fulfill(1);
                 if (!result.isEmpty()) {
-                    result.remove(index);
+                    result.removeObject(index);
                 }
                 result.addObject(index, value);
                 return result;
@@ -1004,7 +1173,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             for (String exclusion : exclusions) {
                 for (int i = 0; i < copy.size(); i++) {
                     if (CoreUtilities.equalsIgnoreCase(copy.get(i), exclusion)) {
-                        copy.remove(i--);
+                        copy.removeObject(i--);
                     }
                 }
             }
@@ -1044,7 +1213,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
             }
             for (int i = 0; i < copy.size(); i++) {
                 if (copy.get(i).equals("\0")) {
-                    copy.remove(i--);
+                    copy.removeObject(i--);
                 }
             }
             return copy;
@@ -1076,7 +1245,7 @@ public class ListTag extends ArrayList<String> implements ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.replace[(regex:)<element>]>
-        // @returns ElementTag
+        // @returns ListTag
         // @description
         // Returns the list with all instances of an element removed.
         // Specify regex: at the start of the replace element to replace elements that match the Regex.
