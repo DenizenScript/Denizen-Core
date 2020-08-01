@@ -63,20 +63,16 @@ public class MapTag implements ObjectTag, Adjustable {
         if (string == null) {
             return null;
         }
-
-        if (string.startsWith("map@") && string.length() > "map@".length()) {
+        if (string.startsWith("map@")) {
             string = string.substring("map@".length());
         }
-
         MapTag result = new MapTag();
-
         if (string.length() == 0) {
             return result;
         }
         if (!string.endsWith("|")) {
             string += "|";
         }
-
         int pipe = string.indexOf('|');
         int lastPipe = 0;
         while (pipe != -1) {
@@ -90,7 +86,6 @@ public class MapTag implements ObjectTag, Adjustable {
             lastPipe = pipe + 1;
             pipe = string.indexOf('|', lastPipe);
         }
-
         return result;
     }
 
@@ -147,7 +142,7 @@ public class MapTag implements ObjectTag, Adjustable {
 
     @Override
     public String getObjectType() {
-        return "map";
+        return "Map";
     }
 
     @Override
