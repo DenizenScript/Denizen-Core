@@ -774,11 +774,27 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
 
         // <--[tag]
+        // @attribute <yaml[<id>].parsed_key[<path>]>
+        // @returns ElementTag
+        // @description
+        // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
+        // Will automatically parse any tags contained within the value of the key, preserving key data structure
+        // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
+        // -->
+        if (attribute.startsWith("read") && attribute.hasContext(1)) {
+            Object obj = getYaml(id).get(attribute.getContext(1));
+            if (obj == null) {
+                return;
+            }
+            event.setReplacedObject(CoreUtilities.objectToTagForm(obj, attribute.context, false, true).getObjectAttribute(attribute.fulfill(1)));
+            return;
+        }
+
+        // <--[tag]
         // @attribute <yaml[<id>].read[<path>]>
         // @returns ElementTag
         // @description
-        // Returns the value of the key at the path.
-        // If the key is a list, returns a ListTag instead.
+        // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
         // -->
         if (attribute.startsWith("read") && attribute.hasContext(1)) {
             Object obj = getYaml(id).get(attribute.getContext(1));
