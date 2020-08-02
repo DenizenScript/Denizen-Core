@@ -166,6 +166,9 @@ public class YamlConfiguration {
     }
 
     public Object get(String path) {
+        if (path.isEmpty()) {
+            return contents;
+        }
         List<String> parts = CoreUtilities.split(path, '.');
         Map<StringHolder, Object> portion = contents;
         for (int i = 0; i < parts.size(); i++) {
