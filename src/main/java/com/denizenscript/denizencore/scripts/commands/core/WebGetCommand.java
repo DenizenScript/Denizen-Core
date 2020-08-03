@@ -256,18 +256,20 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         catch (Exception e) {
             int tempStatus = -1;
             final StringBuilder sb = new StringBuilder();
-
             if (uc != null) {
                 try {
                     tempStatus = uc.getResponseCode();
-                    if (saveFile != null) {
-                        writeToFile(uc.getErrorStream(), saveFile);
-                    }
-                    else {
-                        buffIn = new BufferedReader(new InputStreamReader(uc.getErrorStream()));
-                        buildResult(buffIn, sb);
-                        buffIn.close();
-                        buffIn = null;
+                    InputStream errorStream = uc.getErrorStream();
+                    if (errorStream != null) {
+                        if (saveFile != null) {
+                            writeToFile(errorStream, saveFile);
+                        }
+                        else {
+                            buffIn = new BufferedReader(new InputStreamReader(errorStream));
+                            buildResult(buffIn, sb);
+                            buffIn.close();
+                            buffIn = null;
+                        }
                     }
                 }
                 catch (Exception e2) {

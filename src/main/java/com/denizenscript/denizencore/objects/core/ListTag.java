@@ -344,16 +344,10 @@ public class ListTag implements List<String>, ObjectTag {
         if (string == null) {
             return null;
         }
-
-        ///////
-        // Match @object format
-
         ListTag list = DenizenCore.getImplementation().valueOfFlagListTag(string);
-
         if (list != null) {
             return list;
         }
-
         if (string.startsWith("map@")) {
             MapTag map = MapTag.valueOf(string, context);
             list = new ListTag();
@@ -365,8 +359,6 @@ public class ListTag implements List<String>, ObjectTag {
             }
             return list;
         }
-
-        // Use value of string, which will separate values by the use of a pipe '|'
         return new ListTag(string.startsWith("li@") ? string.substring("li@".length()) : string, context);
     }
 
