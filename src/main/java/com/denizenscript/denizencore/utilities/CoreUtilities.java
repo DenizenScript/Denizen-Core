@@ -596,6 +596,17 @@ public class CoreUtilities {
         return closest;
     }
 
+    public static int indexOfAny(String str, int start, char... chars) {
+        int earliest = -1;
+        for (char c : chars) {
+            int index = str.indexOf(c, start);
+            if (index != -1 && (earliest == -1 || index < earliest)) {
+                earliest = index;
+            }
+        }
+        return earliest;
+    }
+
     public static int getLevenshteinDistance(String s, String t) {
         if (s == null || t == null) {
             throw new IllegalArgumentException("Strings must not be null");
