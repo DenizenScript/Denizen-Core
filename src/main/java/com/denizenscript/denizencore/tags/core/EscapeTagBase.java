@@ -28,14 +28,16 @@ public class EscapeTagBase {
     }
 
     // <--[language]
-    // @name Property Escaping
+    // @name Escape Tags
     // @group Useful Lists
     // @description
-    // Some item properties (and corresponding mechanisms) need to escape their
-    // text output/input to prevent players using them to cheat the system
-    // (EG, if a player set the display name of an item to:
-    //      'name;enchantments=damage_all,3', they would get a free enchantment!)
-    // These are the escape codes used to prevent that:
+    // Sometimes, you need to avoid having symbols that might be misinterpreted in your data.
+    // Denizen provides the tags <@link tag ElementTag.escaped> and <@link tag ElementTag.unescaped> to help deal with that.
+    // Escaped replaces symbols with the relevant escape-code, and unescaped replaces the escape-codes with the real symbols.
+    //
+    // Some older style tags and mechanisms may automatically use this same escaping system.
+    //
+    // The mapping of symbols to escape codes is as follows:
     //
     // | = &pipe
     // < = &lt
@@ -59,12 +61,6 @@ public class EscapeTagBase {
     // Also, you can input a non-breaking space via &sp
     //
     // Note that these are NOT tag names. They are exclusively used by the escaping system.
-    //
-    // These symbols are automatically used by the internal system, if you are
-    // writing your own property string and need to escape some symbols, you
-    // can just directly type them in, EG: stick[display_name=&ltFancy&spStick&gt]
-    //
-    // You can use these escape codes in a tag via <@link tag ElementTag.escaped> and <@link tag ElementTag.unescaped>.
     //
     // -->
 

@@ -42,7 +42,7 @@ public class ListTag implements List<String>, ObjectTag {
     //
     // If the pipe symbol "|" appears in a list entry, it will be replaced by "&pipe",
     // similarly if an ampersand "&" appears in a list entry, it will be replaced by "&amp".
-    // This is a subset of Denizen standard escaping, see <@link language property escaping>.
+    // This is a subset of Denizen standard escaping, see <@link language Escape Tags>.
     //
     // -->
 
@@ -1885,6 +1885,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
+        // One should generally prefer <@link tag ListTag.filter>.
         // -->
         registerTag("filter", (attribute, object) -> {
             String tag = attribute.getRawContext(1);
@@ -1915,6 +1916,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given tag.
         // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
+        // One should generally prefer <@link tag ListTag.parse>.
         // -->
         registerTag("parse", (attribute, object) -> {
             ListTag newlist = new ListTag();
@@ -1963,6 +1965,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_value' definition.
+        // For example: a list of '1|2|3|4|5' .filter[<[filter_value].is[or_more].than[3]>] returns a list of '3|4|5'.
         // For example: a list of '1|2|3|4|5' .filter_tag[<list[4|5].contains[<[filter_value]>]>] returns a list of '4|5'.
         // -->
         registerTag("filter_tag", (attribute, object) -> {
@@ -1992,6 +1995,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given tag.
         // This requires a fully formed tag as input, making use of the 'parse_value' definition.
+        // For example: a list of 'one|two' .parse_tag[<[parse_value].to_uppercase>] returns a list of 'ONE|TWO'.
         // For example: a list of '3|1|2' .parse_tag[<list[alpha|bravo|charlie].get[<[parse_value]>]>] returns a list of 'charlie|alpha|bravo'.
         // -->
         registerTag("parse_tag", (attribute, object) -> {
@@ -2089,7 +2093,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents escaped.
         // Inverts <@link tag ListTag.unescape_contents>.
-        // See <@link language property escaping>.
+        // See <@link language Escape Tags>.
         // -->
         registerTag("escape_contents", (attribute, object) -> {
             ListTag escaped = new ListTag();
@@ -2105,7 +2109,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents unescaped.
         // Inverts <@link tag ListTag.escape_contents>.
-        // See <@link language property escaping>.
+        // See <@link language Escape Tags>.
         // -->
         registerTag("unescape_contents", (attribute, object) -> {
             ListTag escaped = new ListTag();
