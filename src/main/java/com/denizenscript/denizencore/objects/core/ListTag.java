@@ -413,7 +413,10 @@ public class ListTag implements List<String>, ObjectTag {
     public ListTag(String items, TagContext context) {
         objectForms = new ArrayList<>();
         if (items != null && items.length() > 0) {
-            if(items.endsWith("|")) {
+            if (!items.contains("|")) {
+                addObject(ObjectFetcher.pickObjectFor(items, context));
+            }
+            else if (items.endsWith("|")) {
                 int pipe = items.indexOf('|');
                 int lastPipe = 0;
                 while (pipe != -1) {
