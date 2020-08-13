@@ -447,13 +447,13 @@ public class ListTag implements List<String>, ObjectTag {
                     }
                     // Separate if an un-bracketed pipe is found
                     else if (brackets == 0 && chr == '|') {
-                        addObject(ObjectFetcher.pickObjectFor(items.substring(start, i)));
+                        addObject(ObjectFetcher.pickObjectFor(items.substring(start, i), context));
                         start = i + 1;
                     }
                 }
                 // If there is an item waiting, add it too
                 if (start < items.length()) {
-                    addObject(ObjectFetcher.pickObjectFor(items.substring(start)));
+                    addObject(ObjectFetcher.pickObjectFor(items.substring(start), context));
                 }
             }
         }
