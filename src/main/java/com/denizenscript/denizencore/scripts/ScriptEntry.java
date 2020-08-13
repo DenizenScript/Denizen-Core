@@ -82,6 +82,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public List<Argument> getProcessedArgs() {
         for (Argument arg : aHArgs) {
+            arg.scriptEntry = this;
             if (arg.object instanceof ElementTag && arg.prefix == null) {
                 arg.fillStr(arg.object.toString());
             }
