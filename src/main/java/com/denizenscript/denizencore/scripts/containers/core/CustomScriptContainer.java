@@ -28,6 +28,11 @@ public class CustomScriptContainer extends ScriptContainer {
     // @description
     // Custom script containers are used to define a template type for a custom object.
     //
+    // Usage of these should generally be avoided, as they can be considered 'over-engineering'...
+    // That is, using a very complicated solution to solve a problem that can be solved much more simply.
+    //
+    // Custom objects exist for experimental reasons. Use at your own risk.
+    //
     // Custom script containers have no required keys but several optional ones.
     // Use 'tags' key to define scripted tags,
     // 'mechanisms' to define scripted mechanisms,

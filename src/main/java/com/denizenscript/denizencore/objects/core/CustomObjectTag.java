@@ -1,11 +1,11 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.CustomScriptContainer;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -13,7 +13,6 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 
 import java.util.Map;
-import java.util.regex.Matcher;
 
 public class CustomObjectTag implements ObjectTag, Adjustable {
 
@@ -21,11 +20,13 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     // @name Custom Objects
     // @group Object System
     // @description
-    // Custom objects are custom object types. They use a script basis to create an object
-    // similar to the base object types (ListTag, PlayerTags, etc).
+    // Custom objects are custom object types.
+    // They use a script basis to create an object similar to the base object types (ListTag, PlayerTags, etc).
     //
     // Usage of these should generally be avoided, as they can be considered 'over-engineering'...
     // That is, using a very complicated solution to solve a problem that can be solved much more simply.
+    //
+    // Custom objects exist for experimental reasons. Use at your own risk.
     //
     // These use the object notation "custom@".
     // The identity format for custom objects is the script name, followed by property syntax listing all fields with their values.
@@ -34,18 +35,12 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
 
     @Fetchable("custom")
     public static CustomObjectTag valueOf(String string, TagContext context) {
-        Matcher m;
-
-        ///////
-        // Handle objects with properties through the object fetcher
         if (ObjectFetcher.isObjectWithProperties(string)) {
             return ObjectFetcher.getObjectFrom(CustomObjectTag.class, string, context);
         }
-
         if (string.startsWith("custom@")) {
             string = string.substring("custom@".length());
         }
-
         String typeData = string;
         ScriptContainer sc = ScriptRegistry.getScriptContainer(typeData);
         if (sc == null) {
@@ -90,7 +85,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     public String identify() {
         StringBuilder outp = new StringBuilder();
         for (Map.Entry<String, ObjectTag> var : vars.entrySet()) {
-            outp.append(var.getKey()).append("=").append(EscapeTagBase.escape(var.getValue().toString())).append(";");
+            outp.append(var.getKey()).append("=").append(PropertyParser.escapePropertyValue(var.getValue().toString())).append(";");
         }
         return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1) : "") + "]";
     }
@@ -128,11 +123,9 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         if (attribute == null) {
             return null;
         }
-
         if (attribute.isComplete()) {
             return this;
         }
-
         ObjectTag res = vars.get(attribute.getAttribute(1));
         if (res != null) {
             return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));

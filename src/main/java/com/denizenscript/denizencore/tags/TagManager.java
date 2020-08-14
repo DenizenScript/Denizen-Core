@@ -20,6 +20,7 @@ public class TagManager {
 
     public void registerCoreTags() {
         // Objects
+        new CustomTagBase();
         new DurationTagBase();
         new ElementTagBase();
         new ListTagBase();
