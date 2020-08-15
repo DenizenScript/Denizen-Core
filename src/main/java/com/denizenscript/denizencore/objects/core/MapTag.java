@@ -446,6 +446,23 @@ public class MapTag implements ObjectTag, Adjustable {
         }, "list_values");
 
         // <--[tag]
+        // @attribute <MapTag.to_pair_lists>
+        // @returns ListTag
+        // @description
+        // Returns a list of all key/value pairs in this map, where each entry in the list is itself a list with 2 entries: the key, then the value.
+        // -->
+        registerTag("to_pair_lists", (attribute, object) -> {
+            ListTag result = new ListTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                ListTag pair = new ListTag();
+                pair.add(entry.getKey().str);
+                pair.addObject(entry.getValue());
+                result.addObject(pair);
+            }
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.to_list>
         // @returns ListTag
         // @description
