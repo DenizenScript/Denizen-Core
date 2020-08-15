@@ -195,12 +195,9 @@ public class Attribute {
 
     public static class OverridingDefinitionProvider implements DefinitionProvider {
         public DefinitionProvider originalProvider;
-        public String altDefName;
-        public ObjectTag altDefObj;
-        public OverridingDefinitionProvider(DefinitionProvider original, String altName, ObjectTag altObj) {
+        public HashMap<String, ObjectTag> altDefs = new HashMap<>();
+        public OverridingDefinitionProvider(DefinitionProvider original) {
             originalProvider = original;
-            altDefName = altName;
-            altDefObj = altObj;
         }
         @Override
         public void addDefinition(String definition, String value) {
@@ -216,23 +213,26 @@ public class Attribute {
         }
         @Override
         public ObjectTag getDefinitionObject(String definition) {
-            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
-                return altDefObj;
+            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            if (result != null) {
+                return result;
             }
             return originalProvider.getDefinitionObject(definition);
         }
 
         @Override
         public String getDefinition(String definition) {
-            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
-                return altDefObj == null ? null : altDefObj.toString();
+            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            if (result != null) {
+                return result.toString();
             }
             return originalProvider.getDefinition(definition);
         }
 
         @Override
         public boolean hasDefinition(String definition) {
-            if (CoreUtilities.equalsIgnoreCase(definition, altDefName)) {
+            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            if (result != null) {
                 return true;
             }
             return originalProvider.hasDefinition(definition);

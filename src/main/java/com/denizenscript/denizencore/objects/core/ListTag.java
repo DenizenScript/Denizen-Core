@@ -1977,10 +1977,10 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag newlist = new ListTag();
-            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider, "filter_value", null);
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefObj = obj;
+                    provider.altDefs.put("filter_value", obj);
                     if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
                         newlist.addObject(obj);
                     }
@@ -2007,10 +2007,10 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag newlist = new ListTag();
-            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider, "parse_value", null);
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefObj = obj;
+                    provider.altDefs.put("parse_value", obj);
                     newlist.addObject(attribute.parseDynamicContext(1, provider));
                 }
             }
