@@ -247,16 +247,26 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
-        // @attribute <MapTag.get[<key>]>
+        // @attribute <MapTag.get[<key>|...]>
         // @returns ObjectTag
         // @description
         // Returns the object value at the specified key.
+        // If a list is given as input, returns a list of values.
         // For example, on a map of "a/1|b/2|c/3|", using ".get[b]" will return "2".
+        // For example, on a map of "a/1|b/2|c/3|", using ".get[b|c]" will return a list of "2|3".
         // -->
         registerTag("get", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
                 return null;
+            }
+            if (attribute.getContext(1).contains("|")) {
+                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+                ListTag valList = new ListTag();
+                for (String key : keyList) {
+                    valList.addObject(object.getObject(key));
+                }
+                return valList;
             }
             return object.getObject(attribute.getContext(1));
         });
