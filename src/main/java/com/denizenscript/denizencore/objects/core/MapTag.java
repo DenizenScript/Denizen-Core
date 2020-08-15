@@ -247,6 +247,34 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.parse_value_tag[<parseable-value>]>
+        // @returns MapTag
+        // @description
+        // returns a copy of the map with all its values updated through the given tag.
+        // This requires a fully formed tag as input, making use of the 'parse_key' and 'parse_value' definition.
+        // For example: a map of 'alpha/one|bravo/two' .parse_value_tag[<[parse_value].to_uppercase>] returns a map of 'alpha/ONE|bravo/TWO'.
+        // -->
+        registerTag("parse_value_tag", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("Must have input to parse_value_tag[...]");
+                return null;
+            }
+            MapTag newMap = new MapTag();
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
+            try {
+                for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                    provider.altDefs.put("parse_key", new ElementTag(entry.getKey().str));
+                    provider.altDefs.put("parse_value", entry.getValue());
+                    newMap.map.put(entry.getKey(), attribute.parseDynamicContext(1, provider));
+                }
+            }
+            catch (Exception ex) {
+                Debug.echoError(ex);
+            }
+            return newMap;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.get[<key>|...]>
         // @returns ObjectTag
         // @description
