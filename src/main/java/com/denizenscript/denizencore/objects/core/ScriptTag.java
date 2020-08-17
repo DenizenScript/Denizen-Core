@@ -440,7 +440,7 @@ public class ScriptTag implements ObjectTag, Adjustable {
 
         // <--[tag]
         // @attribute <ScriptTag.queues>
-        // @returns ListTag(Queue)
+        // @returns ListTag(QueueTag)
         // @description
         // Returns all queues which are running for this script.
         // -->

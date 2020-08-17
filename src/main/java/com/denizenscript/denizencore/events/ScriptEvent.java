@@ -670,13 +670,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (matchableValue == null) {
             return false;
         }
-        trueValue = CoreUtilities.toLowerCase(trueValue);
         matchableValue = CoreUtilities.toLowerCase(matchableValue);
+        trueValue = CoreUtilities.toLowerCase(trueValue);
         MatchHelper matcher = createMatcher(matchableValue);
-        if (!matcher.doesMatch(trueValue)) {
-            return false;
-        }
-        return true;
+        return matcher.doesMatch(trueValue);
     }
 
     public boolean runGenericSwitchCheck(ScriptPath path, String switchName, String value) {
@@ -687,12 +684,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (value == null) {
             return false;
         }
-        value = CoreUtilities.toLowerCase(value);
         with = CoreUtilities.toLowerCase(with);
+        value = CoreUtilities.toLowerCase(value);
         MatchHelper matcher = createMatcher(with);
-        if (!matcher.doesMatch(value)) {
-            return false;
-        }
-        return true;
+        return matcher.doesMatch(value);
     }
 }

@@ -84,7 +84,7 @@ public class QueueTagBase {
 
         // <--[tag]
         // @attribute <queue.list>
-        // @returns ListTag(Queue)
+        // @returns ListTag(QueueTag)
         // @description
         // Returns a list of all currently running queues on the server.
         // -->
