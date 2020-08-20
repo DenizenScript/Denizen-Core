@@ -305,6 +305,32 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.contains[<key>|...]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether the map contains the specified key.
+        // If a list is given as input, returns whether the map contains all of the specified keys.
+        // -->
+        registerTag("contains", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.contains' must have an input value.");
+                return null;
+            }
+            if (attribute.getContext(1).contains("|")) {
+                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+                boolean contains = true;
+                for (String key : keyList) {
+                    if (object.getObject(key) == null) {
+                        contains = false;
+                        break;
+                    }
+                }
+                return new ElementTag(contains);
+            }
+            return new ElementTag(object.getObject(attribute.getContext(1)) != null);
+        });
+
+        // <--[tag]
         // @attribute <MapTag.get[<key>|...]>
         // @returns ObjectTag
         // @description

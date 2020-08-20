@@ -84,38 +84,30 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!scriptEntry.hasObject("type")
                     && arg.matchesEnum(DBINFO)) {
                 scriptEntry.addObject("type", arg.asElement());
             }
-
             else if (!scriptEntry.hasObject("debug")) {
                 scriptEntry.addObject("debug", new ElementTag(arg.raw_value));
             }
-
             else if (!scriptEntry.hasObject("name")
                     && arg.matchesPrefix("name")) {
                 scriptEntry.addObject("name", arg.asElement());
             }
-
             else {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {
             throw new InvalidArgumentsException("Must specify a definition and value!");
         }
         scriptEntry.defaultObject("name", new ElementTag("name"));
-
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag debug = scriptEntry.getElement("debug");
         ElementTag type = scriptEntry.getElement("type");
         ElementTag name = scriptEntry.getElement("name");

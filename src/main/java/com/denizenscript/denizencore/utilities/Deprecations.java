@@ -180,6 +180,9 @@ public class Deprecations {
     public static Warning entityRemoveWhenFar = new SlowWarning("The EntityTag remove_when_far_away property is deprecated in favor of the persistent property (which is the exact inverse).");
     public static Warning entityPlayDeath = new SlowWarning("The EntityTag 'play_death' mechanism is deprecated: use the animate command.");
 
+    // In Bukkit impl, added 2020/08/19.
+    public static Warning npcSpawnMechanism = new SlowWarning("The NPCTag 'spawn' mechanism is deprecated: use the spawn command.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Relevant as of 2019/09/25, deprecate officially by 2021.

@@ -243,7 +243,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 if (arg.equals("{")) {
                     if (!hasBraces) {
-                        Deprecations.oldBraceSyntax.warn(this);
+                        if (getScript() != null) { // ex command allowed to bypass
+                            Deprecations.oldBraceSyntax.warn(this);
+                        }
                         hasBraces = true;
                     }
                     nested_depth++;
