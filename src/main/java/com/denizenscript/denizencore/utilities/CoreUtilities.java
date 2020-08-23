@@ -28,6 +28,7 @@ public class CoreUtilities {
 
     public static TagContext noDebugContext;
     public static TagContext basicContext;
+    public static TagContext errorButNoDebugContext;
 
     public static DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
 

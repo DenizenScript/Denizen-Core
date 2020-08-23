@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
 public abstract class TagContext implements Debuggable, Cloneable {
     public boolean debug;
+    public boolean showErrors;
     public ScriptEntry entry;
     public ScriptTag script;
     public DefinitionProvider definitionProvider;
@@ -25,6 +26,10 @@ public abstract class TagContext implements Debuggable, Cloneable {
             Debug.echoError(ex);
             return null;
         }
+    }
+
+    public boolean showErrors() {
+        return debug || showErrors;
     }
 
     @Override
