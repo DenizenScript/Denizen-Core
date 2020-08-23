@@ -2310,6 +2310,23 @@ public class ElementTag implements ObjectTag {
         return tagProcessor.getObjectAttribute(this, attribute);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ElementTag)) {
+            return false;
+        }
+        ElementTag other = (ElementTag) o;
+        return element.equals(other.element);
+    }
+
+    @Override
+    public int hashCode() {
+        return element.hashCode();
+    }
+
     public static class FailedObjectTag implements ObjectTag {
         @Override
         public String getPrefix() {
