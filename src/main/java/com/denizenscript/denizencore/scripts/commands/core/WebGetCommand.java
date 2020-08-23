@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class WebGetCommand extends AbstractCommand implements Holdable {
@@ -61,6 +62,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
     // <entry[saveName].result> returns the result of the webget. This is null only if webget failed to connect to the url.
+    // <entry[saveName].result_headers> returns a MapTag of the headers returned from the webserver. Every value in the result is a list.
     // <entry[saveName].status> returns the HTTP status code of the webget. This is null only if webget failed to connect to the url.
     // <entry[saveName].time_ran> returns a DurationTag indicating how long the web connection processing took.
     // <ElementTag.url_encode>
@@ -238,6 +240,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 buffIn.close();
                 buffIn = null;
             }
+            MapTag resultHeaders = new MapTag();
+            for (Map.Entry<String, List<String>> header : uc.getHeaderFields().entrySet()) {
+                resultHeaders.putObject(header.getKey(), new ListTag(header.getValue()));
+            }
             final long timeDone = System.currentTimeMillis();
             DenizenCore.schedule(new Schedulable() {
                 @Override
@@ -246,6 +252,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     scriptEntry.addObject("failed", new ElementTag(status >= 200 && status < 400 ? "false" : "true"));
                     if (saveFile == null) {
                         scriptEntry.addObject("result", new ElementTag(sb.toString()));
+                        scriptEntry.addObject("result_headers", resultHeaders);
                     }
                     scriptEntry.addObject("time_ran", new DurationTag((timeDone - timeStart) / 1000.0));
                     scriptEntry.setFinished(true);

@@ -52,9 +52,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         List<String> arguments = scriptEntry.getArguments();
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (arg.matchesPrefix("rate")) {
                 scriptEntry.addObject("rate", arg.asType(DurationTag.class));
@@ -63,28 +61,22 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
             }
             break;
         }
-
         scriptEntry.addObject("comparisons", arguments);
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
         DurationTag rate = scriptEntry.getObjectTag("rate");
-
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run)
                     + (rate == null ? "" : rate.debug()));
         }
-
         if (run) {
             scriptEntry.setFinished(true);
             return;
         }
-
         if (rate == null) {
             if (scriptEntry.getResidingQueue() instanceof TimedQueue) {
                 rate = ((TimedQueue) scriptEntry.getResidingQueue()).getSpeed();
@@ -93,7 +85,6 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 rate = new DurationTag((long) 1);
             }
         }
-
         final RepeatingSchedulable schedulable = new RepeatingSchedulable(null, (float) rate.getSeconds());
         schedulable.run = new Runnable() {
             public int counter = 0;

@@ -31,8 +31,10 @@ public class ListTag implements List<String>, ObjectTag {
     // @group Object System
     // @description
     // A ListTag is a list of any data. It can hold any number of objects in any order.
-    // The objects can be of any basic Denizen object type, including another list
-    // (escaping sub-lists is strongly recommended).
+    // The objects can be of any Denizen object type, including another list.
+    //
+    // List indices start at 1 (so, the tag 'get[1]' gets the very first entry)
+    // and extend to however many entries the list has (so, if a list has 15 entries, the tag 'get[15]' gets the very last entry).
     //
     // These use the object notation "li@".
     // The identity format for ListTags is each item, one after the other, in order, separated by a pipe '|' symbol.
