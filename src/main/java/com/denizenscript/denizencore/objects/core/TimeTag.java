@@ -84,7 +84,7 @@ public class TimeTag implements ObjectTag, Adjustable {
             return new TimeTag(year, month, day, hour, minute, second, millisecond, offset);
         }
         catch (NumberFormatException ex) {
-            if (context == null || context.debug) {
+            if (context == null || context.showErrors()) {
                 Debug.echoError(ex);
             }
             return null;

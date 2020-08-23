@@ -36,7 +36,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     @Fetchable("custom")
     public static CustomObjectTag valueOf(String string, TagContext context) {
         if (ObjectFetcher.isObjectWithProperties(string)) {
-            return ObjectFetcher.getObjectFrom(CustomObjectTag.class, string, context);
+            return ObjectFetcher.getObjectFromWithProperties(CustomObjectTag.class, string, context);
         }
         if (string.startsWith("custom@")) {
             string = string.substring("custom@".length());
@@ -44,13 +44,13 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         String typeData = string;
         ScriptContainer sc = ScriptRegistry.getScriptContainer(typeData);
         if (sc == null) {
-            if (context == null || context.debug) {
+            if (context == null || context.showErrors()) {
                 Debug.echoError("Null script container for " + typeData);
             }
             return null;
         }
         if (!(sc instanceof CustomScriptContainer)) {
-            if (context == null || context.debug) {
+            if (context == null || context.showErrors()) {
                 Debug.echoError("Wrong-typed script container for " + typeData);
             }
             return null;

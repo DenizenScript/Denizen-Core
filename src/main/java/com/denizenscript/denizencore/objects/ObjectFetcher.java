@@ -164,11 +164,6 @@ public class ObjectFetcher {
 
     }
 
-    @Deprecated
-    public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value) {
-        return getObjectFrom(dClass, value, CoreUtilities.basicContext);
-    }
-
     public static List<String> separateProperties(String input) {
         if (!isObjectWithProperties(input)) {
             return null;
@@ -201,27 +196,50 @@ public class ObjectFetcher {
         return getObjectFrom((ObjectType<T>) objectsByClass.get(dClass), value, context);
     }
 
+    public static <T extends ObjectTag> T getObjectFromWithProperties(Class<T> dClass, String value, TagContext context) {
+        return getObjectFromWithProperties((ObjectType<T>) objectsByClass.get(dClass), value, context);
+    }
+
+    public static String unescapeProperty(String description) {
+        if (description.indexOf('&') != -1) {
+            description = CoreUtilities.replace(description, "&amp", "&");
+            description = CoreUtilities.replace(description, "&sc", ";");
+            description = CoreUtilities.replace(description, "&lb", "[");
+            description = CoreUtilities.replace(description, "&rb", "]");
+        }
+        return description;
+    }
+
+    public static void applyPropertySet(Adjustable object, TagContext context, List<String> properties) {
+        for (int i = 1; i < properties.size(); i++) {
+            List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
+            if (data.size() != 2) {
+                Debug.echoError("Invalid property string '" + properties.get(i) + "'!");
+                continue;
+            }
+            String description = unescapeProperty(data.get(1));
+            object.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
+        }
+    }
+
     public static <T extends ObjectTag> T getObjectFrom(ObjectType<T> type, String value, TagContext context) {
+        try {
+            return type.valueOf.valueOf(value, context);
+        }
+        catch (Exception e) {
+            Debug.echoError(e);
+        }
+
+        return null;
+    }
+
+    public static <T extends ObjectTag> T getObjectFromWithProperties(ObjectType<T> type, String value, TagContext context) {
         try {
             List<String> matches = separateProperties(value);
             boolean matched = matches != null && type.isAdjustable;
             T gotten = type.valueOf.valueOf(matched ? matches.get(0) : value, context);
             if (gotten != null && matched) {
-                for (int i = 1; i < matches.size(); i++) {
-                    List<String> data = CoreUtilities.split(matches.get(i), '=', 2);
-                    if (data.size() != 2) {
-                        Debug.echoError("Invalid property string '" + matches.get(i) + "'!");
-                        continue;
-                    }
-                    String description = data.get(1);
-                    if (description.indexOf('&') != -1) {
-                        description = CoreUtilities.replace(description, "&amp", "&");
-                        description = CoreUtilities.replace(description, "&sc", ";");
-                        description = CoreUtilities.replace(description, "&lb", "[");
-                        description = CoreUtilities.replace(description, "&rb", "]");
-                    }
-                    ((Adjustable) gotten).safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
-                }
+                applyPropertySet((Adjustable) gotten, context, matches);
                 gotten = (T) gotten.fixAfterProperties();
             }
             return gotten;
