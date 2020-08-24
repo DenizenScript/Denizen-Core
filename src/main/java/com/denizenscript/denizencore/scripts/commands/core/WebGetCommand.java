@@ -25,16 +25,16 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     public WebGetCommand() {
         setName("webget");
-        setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)");
-        setRequiredArguments(1, 6);
+        setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)");
+        setRequiredArguments(1, 7);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name Webget
-    // @Syntax webget [<url>] (data:<data>) (method:<method>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>)
+    // @Syntax webget [<url>] (data:<data>) (method:<method>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)
     // @Required 1
-    // @Maximum 6
+    // @Maximum 7
     // @Short Gets the contents of a web page or API response.
     // @Group core
     //
@@ -57,7 +57,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // This will remove the 'result' entry savedata.
     // Path is relative to server base directory.
     //
-    // Specify the "timeout:" to set how long the command should wait for a webpage to load before giving up. Defaults to 10 seconds.
+    // Optionally, specify the "timeout:" to set how long the command should wait for a webpage to load before giving up. Defaults to 10 seconds.
+    //
+    // Optionally, specify 'hide_failure' to indicate that connection errors are acceptable and shouldn't display in logs.
     //
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
@@ -102,6 +104,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("method")
                     && arg.matches("get", "post", "head", "options", "put", "delete", "trace")) {
                 scriptEntry.addObject("method", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("hide_failure")
+                    && arg.matches("hide_failure")) {
+                scriptEntry.addObject("hide_failure", new ElementTag(true));
             }
             else if (!scriptEntry.hasObject("timeout")
                     && arg.matchesPrefix("timeout", "t")
@@ -154,18 +160,20 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         final DurationTag timeout = scriptEntry.getObjectTag("timeout");
         final MapTag headers = scriptEntry.getObjectTag("headers");
         final ElementTag saveFile = scriptEntry.getElement("savefile");
+        final ElementTag hideFailure = scriptEntry.getElement("hide_failure");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), url.debug()
                             + (data != null ? data.debug() : "")
                             + (method != null ? method.debug() : "")
                             + (timeout != null ? timeout.debug() : "")
                             + (saveFile != null ? saveFile.debug() : "")
+                            + (hideFailure != null ? hideFailure.debug() : "")
                             + (headers != null ? headers.debug() : ""));
         }
         Thread thr = new Thread(new Runnable() {
             @Override
             public void run() {
-                webGet(scriptEntry, data, method, url, timeout, headers, saveFile);
+                webGet(scriptEntry, data, method, url, timeout, headers, saveFile, hideFailure);
             }
         });
         thr.start();
@@ -204,7 +212,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, ElementTag urlp, DurationTag timeout, MapTag headers, ElementTag saveFile) {
+    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, ElementTag urlp, DurationTag timeout, MapTag headers, ElementTag saveFile, ElementTag hideFailure) {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
@@ -242,7 +250,11 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             }
             MapTag resultHeaders = new MapTag();
             for (Map.Entry<String, List<String>> header : uc.getHeaderFields().entrySet()) {
-                resultHeaders.putObject(header.getKey(), new ListTag(header.getValue()));
+                String key = header.getKey();
+                if (key == null) {
+                    key = "null";
+                }
+                resultHeaders.putObject(key, new ListTag(header.getValue()));
             }
             final long timeDone = System.currentTimeMillis();
             DenizenCore.schedule(new Schedulable() {
@@ -261,6 +273,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             });
         }
         catch (Exception e) {
+            if (hideFailure == null || !hideFailure.asBoolean()) {
+                Debug.echoError(e);
+            }
             int tempStatus = -1;
             final StringBuilder sb = new StringBuilder();
             if (uc != null) {
@@ -284,7 +299,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
             }
             else {
-                Debug.echoError(e);
+                if (hideFailure != null && hideFailure.asBoolean()) {
+                    Debug.echoError(e);
+                }
             }
             final int status = tempStatus;
             DenizenCore.schedule(new Schedulable() {
