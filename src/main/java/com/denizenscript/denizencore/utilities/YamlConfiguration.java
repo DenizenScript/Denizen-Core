@@ -68,8 +68,22 @@ public class YamlConfiguration {
             if (str.getValue() instanceof Map) {
                 Map map = (Map<StringHolder, Object>) str.getValue();
                 switchKeys(map);
-                objs.remove(map);
                 objs.put(str.getKey(), map);
+            }
+            else if (str.getValue() instanceof List) {
+                List list = (List) str.getValue();
+                List outList = new ArrayList();
+                for (Object obj : list) {
+                    if (obj instanceof Map) {
+                        Map map = new HashMap((Map) obj);
+                        switchKeys(map);
+                        outList.add(map);
+                    }
+                    else {
+                        outList.add(obj);
+                    }
+                }
+                objs.put(str.getKey(), outList);
             }
         }
     }
@@ -80,14 +94,22 @@ public class YamlConfiguration {
             if (obj.getValue() instanceof Map) {
                 map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue(), patchLines));
             }
-            else if (patchLines && obj.getValue() instanceof List) {
+            else if (obj.getValue() instanceof List) {
                 List vals = (List) obj.getValue();
-                List<String> output = new ArrayList<>(vals.size());
+                List output = new ArrayList<>(vals.size());
                 for (Object val : vals) {
                     if (val == null) {
                         continue;
                     }
-                    output.add(ScriptBuilder.stripLinePrefix(val.toString()));
+                    if (val instanceof Map) {
+                        output.add(reverse((Map) val, patchLines));
+                    }
+                    else if (patchLines) {
+                        output.add(ScriptBuilder.stripLinePrefix(val.toString()));
+                    }
+                    else {
+                        output.add(val.toString());
+                    }
                 }
                 map.put(obj.getKey().str, output);
             }
