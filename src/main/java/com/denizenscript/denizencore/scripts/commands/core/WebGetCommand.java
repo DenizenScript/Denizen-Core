@@ -8,6 +8,8 @@ import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -212,6 +214,26 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
     }
 
+    public static boolean patchAlreadyPatched = false;
+
+    /**
+     * This fixes the methods field in HttpURLConnection class to support the PATCH method.
+     * I named this fix method this way because the name deserves to be as stupid as the concept.
+     */
+    public static void patchPatchMethodMethodsField() {
+        if (patchAlreadyPatched) {
+            return;
+        }
+        patchAlreadyPatched = true;
+        String[] methods = ReflectionHelper.getFieldValue(HttpURLConnection.class, "methods", null);
+        String[] outMethods = new String[methods.length + 1];
+        for (int i = 0; i < methods.length; i++) {
+            outMethods[i] = methods[i];
+        }
+        outMethods[methods.length] = "PATCH";
+        ReflectionHelper.setFieldValue(HttpURLConnection.class, "methods", null, outMethods);
+    }
+
     public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, ElementTag urlp, DurationTag timeout, MapTag headers, ElementTag saveFile, ElementTag hideFailure) {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
@@ -222,6 +244,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             uc.setDoInput(true);
             uc.setDoOutput(true);
             if (method != null) {
+                if (CoreUtilities.equalsIgnoreCase(method.asString(), "patch")) {
+                    patchPatchMethodMethodsField();
+                }
                 uc.setRequestMethod(method.asString().toUpperCase());
             }
             else if (data != null) {
