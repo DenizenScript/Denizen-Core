@@ -1386,7 +1386,8 @@ public class ElementTag implements ObjectTag {
         // Returns the value of an element in all lowercase letters.
         // -->
         registerTag("to_lowercase", (attribute, object) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element));
+            // Intentionally do not use CoreUtilities here as users may expect multi-language compat.
+            return new ElementTag(object.element.toLowerCase());
         }, "lower");
 
         // <--[tag]
@@ -1402,7 +1403,8 @@ public class ElementTag implements ObjectTag {
             }
             StringBuilder TitleCase = new StringBuilder(object.element.length());
             String Upper = object.element.toUpperCase();
-            String Lower = CoreUtilities.toLowerCase(object.element);
+            // Intentionally do not use CoreUtilities here as users may expect multi-language compat.
+            String Lower = object.element.toLowerCase();
             TitleCase.append(Upper.charAt(0));
             for (int i = 1; i < object.element.length(); i++) {
                 if (object.element.charAt(i - 1) == ' ') {
