@@ -252,7 +252,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // returns a copy of the map with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_key' and 'filter_value' definition.
-        // For example: a map of 'a/1|b/2|c/3|d/4|e/5' .filter[<[filter_value].is[or_more].than[3]>] returns a list of 'c/3|d/4|e/5'.
+        // For example: a map of 'a/1|b/2|c/3|d/4|e/5' .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of 'c/3|d/4|e/5'.
         // -->
         registerTag("filter_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -266,7 +266,7 @@ public class MapTag implements ObjectTag, Adjustable {
                     provider.altDefs.put("filter_key", new ElementTag(entry.getKey().str));
                     provider.altDefs.put("filter_value", entry.getValue());
                     if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
-                        newMap.map.put(entry.getKey(), attribute.parseDynamicContext(1, provider));
+                        newMap.map.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
