@@ -1,6 +1,8 @@
 package com.denizenscript.denizencore.objects.properties;
 
 import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
@@ -183,6 +185,24 @@ public class PropertyParser {
         else {
             return "";
         }
+    }
+
+    public static MapTag getPropertiesMap(ObjectTag object) {
+        MapTag map = new MapTag();
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        if (properties == null) {
+            return map;
+        }
+        for (PropertyGetter getter : properties.propertiesWithMechs) {
+            Property property = getter.get(object);
+            if (property != null) {
+                String description = property.getPropertyString();
+                if (description != null) {
+                    map.putObject(property.getPropertyId(), new ElementTag(description));
+                }
+            }
+        }
+        return map;
     }
 
     public static List<Property> empty = new ArrayList<>();
