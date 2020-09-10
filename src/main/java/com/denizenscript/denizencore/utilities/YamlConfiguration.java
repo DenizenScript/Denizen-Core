@@ -62,7 +62,7 @@ public class YamlConfiguration {
         for (Object o : new HashSet<Object>(objs.keySet())) {
             Object got = objs.get(o);
             objs.remove(o);
-            objs.put(new StringHolder(o.toString()), got);
+            objs.put(o == null ? null : new StringHolder(o.toString()), got);
         }
         for (Map.Entry<StringHolder, Object> str : objs.entrySet()) {
             if (str.getValue() instanceof Map) {
