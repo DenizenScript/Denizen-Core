@@ -236,6 +236,7 @@ public class Argument implements Cloneable {
         T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
         if (arg == null) {
             Debug.echoError("Cannot process argument '" + object + "' as type '" + clazz.getSimpleName() + "' (conversion returned null).");
+            return null;
         }
         arg.setPrefix(prefix);
         return arg;
