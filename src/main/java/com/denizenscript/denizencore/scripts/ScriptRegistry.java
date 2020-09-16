@@ -97,6 +97,7 @@ public class ScriptRegistry {
             return;
         }
         Set<StringHolder> scripts = yamlScripts.getKeys(false);
+        Debug.log("Loading " + scripts.size() + " scripts...");
         for (StringHolder scriptName : scripts) {
             attemptLoadSingle(scriptName.str, false);
         }

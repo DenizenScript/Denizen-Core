@@ -256,6 +256,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 Debug.log("Event " + path + " is not matched to any ScriptEvents.");
             }
         }
+        Debug.log("Processed " + paths.size() + " script event paths.");
     }
 
     // <--[language]
