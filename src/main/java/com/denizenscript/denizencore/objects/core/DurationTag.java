@@ -20,15 +20,13 @@ public class DurationTag implements ObjectTag {
     // @group Object System
     // @description
     // Durations are a unified and convenient way to get a 'unit of time' throughout Denizen.
-    // Many commands and features that require a duration can be satisfied by specifying a number
-    // and unit of time, especially command arguments that are prefixed 'duration:', etc.
+    // Many commands and features that require a duration can be satisfied by specifying a number and unit of time, especially command arguments that are prefixed 'duration:', etc.
     // The unit of time can be specified by using one of the following:
     // t=ticks, s=seconds, m=minutes, h=hours, d=days, w=weeks.
     // Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 20.
     //
-    // Specifying a range of duration will result in a randomly selected duration that is
-    // in between the range specified. The smaller value should be first. Examples:
-    // '10s-25s', '1m-2m'.
+    // Specifying a range of duration will result in a randomly selected duration that is in between the range specified.
+    // The smaller value should be first. Examples: '10s-25s', '1m-2m'.
     //
     // The input of 'instant' or 'infinite' will be interpreted as 0 (for use with commands where instant/infinite logic applies).
     //
@@ -68,8 +66,8 @@ public class DurationTag implements ObjectTag {
         if (string.isEmpty()) {
             return null;
         }
-        // Pick a duration between a high and low number if there is a '-' present, but it's not "E-2" style scientific notation.
-        if (string.contains("-") && !string.contains("e-")) {
+        // Pick a duration between a high and low number if there is a '-' present, but it's not "E-2" style scientific notation nor a negative.
+        if (string.contains("-") && !string.startsWith("-") && !string.contains("e-")) {
             String[] split = string.split("-", 2);
             if (split.length == 2) {
                 DurationTag low = DurationTag.valueOf(split[0], context);
@@ -169,9 +167,6 @@ public class DurationTag implements ObjectTag {
      */
     public DurationTag(double seconds) {
         this.seconds = seconds;
-        if (this.seconds < 0) {
-            this.seconds = 0;
-        }
     }
 
     /**
@@ -181,9 +176,6 @@ public class DurationTag implements ObjectTag {
      */
     public DurationTag(int seconds) {
         this.seconds = seconds;
-        if (this.seconds < 0) {
-            this.seconds = 0;
-        }
     }
 
     /**
@@ -193,9 +185,6 @@ public class DurationTag implements ObjectTag {
      */
     public DurationTag(long ticks) {
         this.seconds = ticks / 20.0;
-        if (this.seconds < 0) {
-            this.seconds = 0;
-        }
     }
 
     /////////////////////
@@ -468,17 +457,19 @@ public class DurationTag implements ObjectTag {
     }
 
     public String formatted() {
+        double secondsCopy = seconds;
+        boolean isNegative = secondsCopy < 0;
+        if (isNegative) {
+            secondsCopy *= -1;
+        }
         // Make sure you don't change these longs into doubles
         // and break the code
-
-        long seconds = (long) this.seconds;
+        long seconds = (long) secondsCopy;
         long days = seconds / 86400;
         long hours = (seconds - days * 86400) / 3600;
         long minutes = (seconds - days * 86400 - hours * 3600) / 60;
         seconds = seconds - days * 86400 - hours * 3600 - minutes * 60;
-
         String timeString = "";
-
         if (days > 0) {
             timeString = days + "d ";
         }
@@ -491,16 +482,14 @@ public class DurationTag implements ObjectTag {
         if (seconds > 0 && minutes < 10 && hours == 0 && days == 0) {
             timeString = timeString + seconds + "s";
         }
-
         if (timeString.isEmpty()) {
-            if (this.seconds <= 0) {
+            if (secondsCopy == 0) {
                 timeString = "forever";
             }
             else {
-                timeString = ((double) ((long) (this.seconds * 100)) / 100d) + "s";
+                timeString = ((double) ((long) (secondsCopy * 100)) / 100d) + "s";
             }
         }
-
-        return timeString.trim();
+        return (isNegative ? "negative " : "") + timeString.trim();
     }
 }
