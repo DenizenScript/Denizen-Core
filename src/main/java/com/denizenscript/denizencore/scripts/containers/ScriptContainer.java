@@ -258,6 +258,9 @@ public class ScriptContainer implements Debuggable {
             return null;
         }
         List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(stringEntries, this, null);
+        if (entries == null) {
+            return null;
+        }
         got = new ScriptEntrySet(entries);
         scriptsMap.put(path, got);
         return got;

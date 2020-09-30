@@ -39,7 +39,7 @@ public class DurationTag implements ObjectTag {
     //   STATIC METHODS AND FIELDS
     /////////////////
 
-    // Define a 'ZERO' Duration
+    @Deprecated
     final public static DurationTag ZERO = new DurationTag(0);
 
     /////////////////////

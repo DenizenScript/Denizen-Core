@@ -145,6 +145,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             switch_cancelled = switches.containsKey("cancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("cancelled"), "true") : null;
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("ignorecancelled"), "true") : null;
             set = container.getSetFor("events." + rawEventPath);
+            if (set == null || set.entries == null) {
+                Debug.echoError("Invalid script (formatting error?) in container '" + container.getName() + " at event '" + rawEventPath + "'.");
+            }
         }
 
         @Override
@@ -419,6 +422,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (path.container.shouldDebug()) {
                 Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + (path.fireAfter ? "after " : "on ") + path.event + "<Y>'"
                         + " for script '<A>" + path.container.getName() + "<Y>'");
+            }
+            if (path.set == null) {
+                return;
             }
             List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
             ScriptQueue queue = new InstantQueue(path.container.getName()).addEntries(entries);
