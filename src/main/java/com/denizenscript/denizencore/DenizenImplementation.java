@@ -113,6 +113,8 @@ public interface DenizenImplementation {
 
     boolean matchesFlagListTag(String input);
 
+    boolean serverHasFlag(String flag);
+
     TagContext getTagContext(ScriptContainer container);
 
     TagContext getTagContext(ScriptEntry entry);

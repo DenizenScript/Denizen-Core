@@ -68,7 +68,7 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
         if (!path.checkSwitch("had_error", hadError ? "true" : "false")) {
             return false;
         }
-        return true;
+        return super.matches(path);
     }
 
     @Override

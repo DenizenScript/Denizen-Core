@@ -114,6 +114,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // So for example you might have an event line like "on player breaks block in:space:"
         // where space is the name of a world or of a noted cuboid.
         // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
+        //
+        // There are also some standard switches available to every script event, and some available to an entire category of script events.
+        //
+        // One switch available to every event is "server_flagged:<flag name>", which requires that there be a server flag under the given name.
+        // For example, "on console output server_flagged:recording:" will only run the handler for console output when the "recording" flag is set on the server.
+        //
+        // All script events have priority switches (see <@link language script event priority>),
+        // All Bukkit events have bukkit priority switches (see <@link language bukkit event priority>),
+        // All cancellable script events have cancellation switches (see <@link language script event cancellation>),
+        // All player script events have flagged/permission switches (see <@link language player event switches>).
         // -->
 
         public boolean checkSwitch(String key, String value) {
@@ -387,7 +397,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public boolean matches(ScriptPath path) {
-        throw new UnsupportedOperationException("Matches not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
+        String flag = path.switches.get("server_flagged");
+        if (flag != null) {
+            if (!DenizenCore.getImplementation().serverHasFlag(flag)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public abstract String getName();

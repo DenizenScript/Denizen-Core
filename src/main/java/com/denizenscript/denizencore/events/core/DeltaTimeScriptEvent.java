@@ -46,23 +46,32 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         String countString = path.switches.get("every");
         int count = countString == null ? 1 : Integer.parseInt(countString);
         if (time.equals("secondly")) {
-            return seconds % count == 0;
+            if (seconds % count != 0) {
+                return false;
+            }
         }
-        if (time.equals("minutely")) {
+        else if (time.equals("minutely")) {
             if (seconds % 60 != 0) {
                 return false;
             }
             long minutes = seconds / 60;
-            return minutes % count == 0;
+            if (minutes % count != 0) {
+                return false;
+            }
         }
-        if (time.equals("hourly")) {
+        else if (time.equals("hourly")) {
             if (seconds % 3600 != 0) {
                 return false;
             }
             long hours = seconds / 3600;
-            return hours % count == 0;
+            if (hours % count != 0) {
+                return false;
+            }
         }
-        return false;
+        else {
+            return false;
+        }
+        return super.matches(path);
     }
 
     public ScriptEntryData data = null;

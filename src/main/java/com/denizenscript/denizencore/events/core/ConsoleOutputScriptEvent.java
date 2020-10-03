@@ -54,11 +54,6 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public boolean matches(ScriptPath path) {
-        return true;
-    }
-
-    @Override
     public String getName() {
         return "ConsoleOutput";
     }

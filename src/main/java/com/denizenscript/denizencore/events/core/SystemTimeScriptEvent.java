@@ -61,23 +61,32 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         String countString = path.switches.get("every");
         int count = countString == null ? 1 : Integer.parseInt(countString);
         if (time.equals("secondly")) {
-            return seconds % count == 0;
+            if (seconds % count != 0) {
+                return false;
+            }
         }
-        if (time.equals("minutely")) {
+        else if (time.equals("minutely")) {
             if (!minuteChanged) {
                 return false;
             }
             long minutes = seconds / 60;
-            return minutes % count == 0;
+            if (minutes % count != 0) {
+                return false;
+            }
         }
-        if (time.equals("hourly")) {
+        else if (time.equals("hourly")) {
             if (!minuteChanged || lM != 0) {
                 return false;
             }
             long hours = seconds / 3600;
-            return hours % count == 0;
+            if (hours % count != 0) {
+                return false;
+            }
         }
-        return minuteChanged && time.equals(hour.asString() + ":" + minute.asString());
+        else if (!minuteChanged || !time.equals(hour.asString() + ":" + minute.asString())) {
+            return false;
+        }
+        return super.matches(path);
     }
 
     @Override
