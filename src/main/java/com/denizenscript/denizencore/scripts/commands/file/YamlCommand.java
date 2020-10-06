@@ -41,11 +41,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
     // @Required 2
     // @Maximum 4
-    // @Short Edits a YAML configuration file.
+    // @Short Edits YAML data, especially for YAML files.
     // @Group file
     //
     // @Description
-    // Edits a YAML configuration file.
+    // Edits YAML configuration data.
     // This can be used for interacting with other plugins' configuration files.
     // It can also be used for storing your own script's data.
     //

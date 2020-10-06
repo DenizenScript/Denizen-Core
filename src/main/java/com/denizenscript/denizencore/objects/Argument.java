@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -130,11 +131,14 @@ public class Argument implements Cloneable {
         return value;
     }
 
-    public ListTag getList() {
+    public ListTag getList(TagContext context) {
         if (object instanceof ListTag) {
             return (ListTag) object;
         }
-        return ListTag.valueOf(value, scriptEntry == null ? null : scriptEntry.getContext());
+        if (context == null && scriptEntry != null) {
+            context = scriptEntry.getContext();
+        }
+        return ListTag.valueOf(value, context);
     }
 
     public static HashSet<String> precalcEnum(Enum<?>[] values) {
@@ -161,7 +165,7 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesEnumList(Enum<?>[] values) {
-        ListTag list = getList();
+        ListTag list = getList(CoreUtilities.noDebugContext);
         for (String string : list) {
             String tval = string.replace("_", "");
             for (Enum<?> value : values) {
@@ -221,7 +225,7 @@ public class Argument implements Cloneable {
 
     // Check if this argument matches a ListTag of a certain ObjectTag
     public boolean matchesArgumentList(Class<? extends ObjectTag> dClass) {
-        ListTag list = getList();
+        ListTag list = getList(CoreUtilities.noDebugContext);
         return list.isEmpty() || list.containsObjectsFrom(dClass);
     }
 
