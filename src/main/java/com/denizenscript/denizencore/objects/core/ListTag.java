@@ -902,20 +902,25 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.to_map>
+        // @attribute <ListTag.to_map[(<separator>)]>
         // @returns MapTag
         // @description
         // Interprets a list of "key/value" pairs as a map, and returns the resulting MapTag.
+        // Optionally specify the map separator symbol, by default '/'.
         // -->
         registerTag("to_map", (attribute, object) -> {
+            String symbol = "/";
+            if (attribute.hasContext(1)) {
+                symbol = attribute.getContext(1);
+            }
             MapTag map = new MapTag();
             for (String entry : object) {
-                int slash = entry.indexOf('/');
+                int slash = entry.indexOf(symbol);
                 if (slash == -1) {
                     return null;
                 }
                 String key = entry.substring(0, slash);
-                String value = entry.substring(slash + 1);
+                String value = entry.substring(slash + symbol.length());
                 map.putObject(key, new ElementTag(value));
             }
             return map;
