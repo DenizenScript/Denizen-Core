@@ -376,13 +376,23 @@ public class CoreUtilities {
                 });
     }
 
-    public static void copyDirectory(File source, File destination) throws IOException {
-        copyDirectory(source.toPath(), destination.toPath());
+    public static void copyDirectory(File source, File destination, HashSet<String> excludeExtensions) throws IOException {
+        copyDirectory(source.toPath(), destination.toPath(), excludeExtensions);
     }
 
-    public static void copyDirectory(Path source, Path destination) throws IOException {
+    public static void copyDirectory(Path source, Path destination, HashSet<String> excludeExtensions) throws IOException {
         Files.walk(source).forEach(file -> {
             try {
+                if (excludeExtensions != null) {
+                    String name = file.getFileName().toString();
+                    int dot = name.indexOf('.');
+                    if (dot >= 0) {
+                        String ext = toLowerCase(name.substring(dot + 1));
+                        if (excludeExtensions.contains(ext)) {
+                            return;
+                        }
+                    }
+                }
                 Files.copy(file, destination.resolve(source.relativize(file)));
             }
             catch (IOException ex) {
