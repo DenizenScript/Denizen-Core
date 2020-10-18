@@ -205,6 +205,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     arg.hasPrefix()) {
                 if (!arg.canBeElement) {
                     scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                    scriptEntry.addObject("key", new ElementTag(arg.prefix));
                     scriptEntry.addObject("value", arg.object);
                 }
                 else {
