@@ -81,7 +81,7 @@ public class CommandExecutor {
                 }
             }
             if (scriptEntry.internal.actualCommand.shouldPreParse()) {
-                TagManager.fillArgumentsObjects(scriptEntry.processed_arguments, scriptEntry.internal.args_ref, scriptEntry.aHArgs, context, scriptEntry.internal.processArgs);
+                TagManager.fillArgumentsObjects(scriptEntry.internal.args_ref, scriptEntry.aHArgs, context, scriptEntry.internal.processArgs);
             }
             command.parseArgs(scriptEntry);
             command.execute(scriptEntry);

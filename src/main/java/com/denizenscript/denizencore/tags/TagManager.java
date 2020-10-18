@@ -407,9 +407,9 @@ public class TagManager {
         holder[0] = -1;
     }
 
-    public static void fillArgumentsObjects(List<ObjectTag> args, List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, TagContext context, int[] targets) {
+    public static void fillArgumentsObjects(List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, TagContext context, int[] targets) {
         if (Debug.verbose) {
-            Debug.log("Fill argument objects: " + args + ", " + targets.length + "...");
+            Debug.log("Fill argument objects: " + aHArgs + ", " + targets.length + "...");
         }
         for (int argId : targets) {
             Argument aharg = aHArgs.get(argId);
@@ -422,12 +422,9 @@ public class TagManager {
                 if (aharg.needsFill) {
                     aharg.object = parseChainObject(piece.value, context);
                 }
-                String fullx = aharg.prefix + ":" + aharg.object.toString();
-                args.set(argId, new ElementTag(fullx));
             }
             else {
                 ObjectTag created = parseChainObject(piece.value, context);
-                args.set(argId, created);
                 aharg.object = created;
                 aharg.prefix = null;
                 aharg.lower_prefix = null;
