@@ -86,6 +86,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
             if (arg.object instanceof ElementTag && arg.prefix == null) {
                 arg.fillStr(arg.object.toString());
             }
+            else {
+                arg.unsetValue();
+            }
             arg.canBeElement = arg.object instanceof ElementTag;
         }
         return aHArgs;

@@ -40,6 +40,10 @@ public class Argument implements Cloneable {
 
     public boolean canBeElement = true;
 
+    public void unsetValue() {
+        raw_value = null;
+    }
+
     public String getRawValue() {
         requireValue();
         return raw_value;
