@@ -202,70 +202,75 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             // Check for key:value/action
             else if (isSet &&
                     !scriptEntry.hasObject("value") &&
-                    arg.getRawValue().split(":", 3).length == 2) {
-
-                String[] flagArgs = arg.getRawValue().split(":", 2);
-                scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
-
-                if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                    scriptEntry.addObject("value", new ElementTag(1));
-                }
-                else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                    scriptEntry.addObject("value", new ElementTag(1));
-                }
-                else if (flagArgs[1].equals("!")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
-                    scriptEntry.addObject("value", new ElementTag(false));
-                }
-                else if (flagArgs[1].equals("<-")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                    scriptEntry.addObject("value", new ElementTag(false));
+                    arg.hasPrefix()) {
+                if (!arg.canBeElement) {
+                    scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                    scriptEntry.addObject("value", arg.object);
                 }
                 else {
-                    // No ACTION, we're just setting a value...
-                    scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
-                }
-            }
-            // Check for key:action:value
-            else if (isSet &&
-                    !scriptEntry.hasObject("value") &&
-                    arg.getRawValue().split(":", 3).length == 3) {
-                String[] flagArgs = arg.getRawValue().split(":", 3);
-                scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
+                    int split = arg.getRawValue().split(":", 3).length;
+                    if (split == 2) {
+                        String[] flagArgs = arg.getRawValue().split(":", 2);
+                        scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
-                if (flagArgs[1].equals("->")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
+                        if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
+                            scriptEntry.addObject("value", new ElementTag(1));
+                        }
+                        else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
+                            scriptEntry.addObject("value", new ElementTag(1));
+                        }
+                        else if (flagArgs[1].equals("!")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
+                            scriptEntry.addObject("value", new ElementTag(false));
+                        }
+                        else if (flagArgs[1].equals("<-")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
+                            scriptEntry.addObject("value", new ElementTag(false));
+                        }
+                        else {
+                            // No ACTION, we're just setting a value...
+                            scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                            scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
+                        }
+                    }
+                    else if (split == 3) {
+                        String[] flagArgs = arg.getRawValue().split(":", 3);
+                        scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
+
+                        if (flagArgs[1].equals("->")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
+                        }
+                        else if (flagArgs[1].equals("<-")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
+                        }
+                        else if (flagArgs[1].equals("||") || flagArgs[1].equals("|")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.SPLIT);
+                        }
+                        else if (flagArgs[1].equals("!|")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.SPLIT_NEW);
+                        }
+                        else if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
+                        }
+                        else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
+                        }
+                        else if (flagArgs[1].equals("**") || flagArgs[1].equals("*")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.MULTIPLY);
+                        }
+                        else if (flagArgs[1].equals("//") || flagArgs[1].equals("/")) {
+                            scriptEntry.addObject("yaml_action", YAML_Action.DIVIDE);
+                        }
+                        else {
+                            scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                            scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
+                            continue;
+                        }
+                        scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
+                    }
                 }
-                else if (flagArgs[1].equals("<-")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                }
-                else if (flagArgs[1].equals("||") || flagArgs[1].equals("|")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.SPLIT);
-                }
-                else if (flagArgs[1].equals("!|")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.SPLIT_NEW);
-                }
-                else if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                }
-                else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                }
-                else if (flagArgs[1].equals("**") || flagArgs[1].equals("*")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.MULTIPLY);
-                }
-                else if (flagArgs[1].equals("//") || flagArgs[1].equals("/")) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.DIVIDE);
-                }
-                else {
-                    scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
-                    continue;
-                }
-                scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
             }
             else if (isCopyKey && !scriptEntry.hasObject("value")) {
                 scriptEntry.addObject("value", arg.asElement());
