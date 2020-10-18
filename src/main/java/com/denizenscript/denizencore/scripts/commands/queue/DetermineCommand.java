@@ -63,7 +63,7 @@ public class DetermineCommand extends AbstractCommand {
                 scriptEntry.addObject("passively", new ElementTag(true));
             }
             else if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", arg.hasPrefix() ? new ElementTag(arg.raw_value) : arg.object);
+                scriptEntry.addObject("outcome", arg.hasPrefix() ? new ElementTag(arg.getRawValue()) : arg.object);
             }
             else {
                 arg.reportUnhandled();

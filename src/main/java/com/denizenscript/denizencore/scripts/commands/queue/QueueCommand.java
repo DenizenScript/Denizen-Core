@@ -97,7 +97,7 @@ public class QueueCommand extends AbstractCommand {
 
             // ...but we also need to error out this command if the queue was not found.
             else {
-                throw new InvalidArgumentsException("The specified queue could not be found: " + arg.raw_value);
+                throw new InvalidArgumentsException("The specified queue could not be found: " + arg.getRawValue());
             }
 
         }

@@ -98,17 +98,17 @@ public class DefineCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("definition")) {
-                if (CoreUtilities.contains(arg.raw_value, ':')) {
+                if (CoreUtilities.contains(arg.getRawValue(), ':')) {
                     DefinitionActionProvider provider = new DefinitionActionProvider();
                     provider.queue = scriptEntry.getResidingQueue();
-                    scriptEntry.addObject("action", DataActionHelper.parse(provider, arg.raw_value));
+                    scriptEntry.addObject("action", DataActionHelper.parse(provider, arg.getRawValue()));
                 }
                 else {
                     scriptEntry.addObject("definition", new ElementTag(CoreUtilities.toLowerCase(arg.getValue())));
                 }
             }
             else if (!scriptEntry.hasObject("value")) {
-                scriptEntry.addObject("value", arg.object instanceof ElementTag ? new ElementTag(arg.raw_value) : arg.object);
+                scriptEntry.addObject("value", arg.object instanceof ElementTag ? new ElementTag(arg.getRawValue()) : arg.object);
             }
             else {
                 arg.reportUnhandled();

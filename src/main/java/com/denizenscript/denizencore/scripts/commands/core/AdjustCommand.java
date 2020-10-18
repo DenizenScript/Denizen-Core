@@ -74,7 +74,7 @@ public class AdjustCommand extends AbstractCommand {
                 }
                 else if (arg.object instanceof ElementTag) {
                     // Special parse to avoid prefixing issues
-                    scriptEntry.addObject("object", ListTag.valueOf(arg.raw_value, scriptEntry.getContext()));
+                    scriptEntry.addObject("object", ListTag.valueOf(arg.getRawValue(), scriptEntry.getContext()));
                 }
                 else {
                     scriptEntry.addObject("object", arg.asType(ListTag.class));
@@ -82,7 +82,7 @@ public class AdjustCommand extends AbstractCommand {
             }
             else if (!scriptEntry.hasObject("mechanism")
                 && !scriptEntry.hasObject("mechanism_map")) {
-                if (arg.raw_value.startsWith("map@")) {
+                if (arg.getRawValue().startsWith("map@")) {
                     scriptEntry.addObject("mechanism_map", arg.asType(MapTag.class));
                 }
                 else if (arg.hasPrefix()) {

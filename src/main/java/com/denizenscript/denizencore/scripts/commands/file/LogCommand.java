@@ -90,7 +90,7 @@ public class LogCommand extends AbstractCommand {
                 scriptEntry.addObject("file", arg.asElement());
             }
             else if (!scriptEntry.hasObject("message")) {
-                scriptEntry.addObject("message", new ElementTag(arg.raw_value));
+                scriptEntry.addObject("message", new ElementTag(arg.getRawValue()));
             }
             else {
                 arg.reportUnhandled();

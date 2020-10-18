@@ -86,11 +86,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             if (arg.object instanceof ElementTag && arg.prefix == null) {
                 arg.fillStr(arg.object.toString());
             }
-            else {
-                arg.value = arg.object.toString();
-                arg.lower_value = CoreUtilities.toLowerCase(arg.value);
-                arg.raw_value = arg.generateRaw();
-            }
+            arg.canBeElement = arg.object instanceof ElementTag;
         }
         return aHArgs;
     }
@@ -166,14 +162,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         return internal.insideList;
     }
 
-    /**
-     * Get a hot, fresh, script entry, ready for execution! Just supply a valid command,
-     * some arguments, and bonus points for a script container (can be null)!
-     *
-     * @param command   the name of the command this entry will be handed to
-     * @param arguments an array of the arguments
-     * @param script    optional ScriptContainer reference
-     */
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) {
         this(command, arguments, script, null);
     }
@@ -189,7 +177,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 internal.hasTags = true;
             }
         }
-        argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.raw_value, arg);
+        argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.getRawValue(), arg);
         argVal.aHArg.needsFill = isTag;
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }

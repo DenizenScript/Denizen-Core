@@ -25,10 +25,10 @@ public class Argument implements Cloneable {
         }
     }
 
-    public String raw_value;
+    private String raw_value;
     public String prefix = null;
     public String lower_prefix = null;
-    public String value;
+    private String value;
     public String lower_value;
 
     public ObjectTag object = null;
@@ -38,8 +38,19 @@ public class Argument implements Cloneable {
 
     public ScriptEntry scriptEntry = null;
 
-    public String generateRaw() {
-        return prefix == null ? value : prefix + ":" + value;
+    public boolean canBeElement = true;
+
+    public String getRawValue() {
+        requireValue();
+        return raw_value;
+    }
+
+    public void requireValue() {
+        if (raw_value == null && object != null) {
+            value = object.toString();
+            lower_value = CoreUtilities.toLowerCase(value);
+            raw_value = prefix == null ? value : prefix + ":" + value;
+        }
     }
 
     public Argument(String prefix, String value) {
@@ -66,7 +77,6 @@ public class Argument implements Cloneable {
 
     public void fillStr(String string) {
         raw_value = string;
-
         int first_colon = string.indexOf(':');
         int first_not_prefix = prefixCharsAllowed.indexOfFirstNonMatch(string);
 
@@ -100,6 +110,10 @@ public class Argument implements Cloneable {
     }
 
     public boolean startsWith(String string) {
+        if (!canBeElement && !CoreUtilities.contains(string, '@')) {
+            return false;
+        }
+        requireValue();
         return lower_value.startsWith(string);
     }
 
@@ -115,10 +129,18 @@ public class Argument implements Cloneable {
     }
 
     public boolean matches(String value) {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         return value.equals(lower_value);
     }
 
     public boolean matches(String... values) {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         for (String value : values) {
             if (value.equals(lower_value)) {
                 return true;
@@ -128,6 +150,7 @@ public class Argument implements Cloneable {
     }
 
     public String getValue() {
+        requireValue();
         return value;
     }
 
@@ -135,10 +158,16 @@ public class Argument implements Cloneable {
         if (object instanceof ListTag) {
             return (ListTag) object;
         }
-        if (context == null && scriptEntry != null) {
-            context = scriptEntry.getContext();
+        if (object instanceof ElementTag) {
+            if (context == null && scriptEntry != null) {
+                context = scriptEntry.getContext();
+            }
+            requireValue();
+            return ListTag.valueOf(value, context);
         }
-        return ListTag.valueOf(value, context);
+        ListTag result = new ListTag();
+        result.addObject(object);
+        return result;
     }
 
     public static HashSet<String> precalcEnum(Enum<?>[] values) {
@@ -150,11 +179,19 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesEnum(HashSet<String> values) {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         String upper = value.replace("_", "").toUpperCase();
         return values.contains(upper);
     }
 
     public boolean matchesEnum(Enum<?>[] values) {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         String upper = value.replace("_", "").toUpperCase();
         for (Enum<?> value : values) {
             if (value.name().replace("_", "").equals(upper)) {
@@ -197,6 +234,10 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesBoolean() {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         return lower_value.equals("true") || lower_value.equals("false");
     }
 
@@ -205,6 +246,10 @@ public class Argument implements Cloneable {
     }
 
     public boolean matchesFloat() {
+        if (!canBeElement) {
+            return false;
+        }
+        requireValue();
         return ArgumentHelper.matchesDouble(lower_value);
     }
 
@@ -233,6 +278,7 @@ public class Argument implements Cloneable {
         if (object instanceof ElementTag) {
             return (ElementTag) object;
         }
+        requireValue();
         return new ElementTag(prefix, value);
     }
 
@@ -248,14 +294,14 @@ public class Argument implements Cloneable {
 
     public void reportUnhandled() {
         if (TagManager.recentTagError) {
-            Debug.echoError('\'' + raw_value + "' is an unknown argument! This was probably caused by a tag not parsing properly.");
+            Debug.echoError('\'' + getRawValue() + "' is an unknown argument! This was probably caused by a tag not parsing properly.");
             return;
         }
         if (prefix != null) {
-            Debug.echoError('\'' + raw_value + "' is an unknown argument! Did you mess up the command syntax?");
+            Debug.echoError('\'' + getRawValue() + "' is an unknown argument! Did you mess up the command syntax?");
         }
         else {
-            Debug.echoError('\'' + raw_value + "' is an unknown argument! Did you forget quotes, or did you mess up the command syntax?");
+            Debug.echoError('\'' + getRawValue() + "' is an unknown argument! Did you forget quotes, or did you mess up the command syntax?");
         }
         if (scriptEntry != null && scriptEntry.getCommand() != null) {
             Debug.log("Command usage: " + scriptEntry.getCommand().getUsageHint());
@@ -264,6 +310,6 @@ public class Argument implements Cloneable {
 
     @Override
     public String toString() {
-        return raw_value;
+        return getRawValue();
     }
 }

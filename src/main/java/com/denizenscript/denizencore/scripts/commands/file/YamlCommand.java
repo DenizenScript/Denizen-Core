@@ -202,9 +202,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             // Check for key:value/action
             else if (isSet &&
                     !scriptEntry.hasObject("value") &&
-                    arg.raw_value.split(":", 3).length == 2) {
+                    arg.getRawValue().split(":", 3).length == 2) {
 
-                String[] flagArgs = arg.raw_value.split(":", 2);
+                String[] flagArgs = arg.getRawValue().split(":", 2);
                 scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
                 if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
@@ -232,8 +232,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             // Check for key:action:value
             else if (isSet &&
                     !scriptEntry.hasObject("value") &&
-                    arg.raw_value.split(":", 3).length == 3) {
-                String[] flagArgs = arg.raw_value.split(":", 3);
+                    arg.getRawValue().split(":", 3).length == 3) {
+                String[] flagArgs = arg.getRawValue().split(":", 3);
                 scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
                 if (flagArgs[1].equals("->")) {
@@ -262,7 +262,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 }
                 else {
                     scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("value", new ElementTag(arg.raw_value.split(":", 2)[1]));
+                    scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
                     continue;
                 }
                 scriptEntry.addObject("value", new ElementTag(flagArgs[2]));

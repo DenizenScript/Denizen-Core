@@ -58,7 +58,7 @@ public class RateLimitCommand extends AbstractCommand {
                 scriptEntry.addObject("duration", arg.asType(DurationTag.class));
             }
             else if (!scriptEntry.hasObject("object")) {
-                scriptEntry.addObject("object", new ElementTag(arg.raw_value));
+                scriptEntry.addObject("object", new ElementTag(arg.getRawValue()));
             }
             else {
                 arg.reportUnhandled();

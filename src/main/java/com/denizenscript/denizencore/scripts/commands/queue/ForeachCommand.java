@@ -103,7 +103,7 @@ public class ForeachCommand extends BracedCommand {
                     scriptEntry.addObject("map", MapTag.getMapFor(arg.object, scriptEntry.context));
                 }
                 else {
-                    scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.raw_value, scriptEntry.getContext()));
+                    scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.getRawValue(), scriptEntry.getContext()));
                 }
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
