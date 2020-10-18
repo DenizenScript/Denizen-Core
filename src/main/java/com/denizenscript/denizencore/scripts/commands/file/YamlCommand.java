@@ -504,7 +504,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     }
 
                     String keyStr = key.asString();
-                    String valueStr = value.identify();
+                    String valueStr = yaml_action == YAML_Action.SET_VALUE ? null : value.identify();
 
                     switch (yaml_action) {
                         case INCREASE: {
@@ -669,7 +669,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
             }
-            yaml.set(key, value);
+            yaml.set(key, value.toString());
         }
         else {
             List<String> list = yaml.getStringList(key);
