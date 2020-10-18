@@ -326,10 +326,12 @@ public class CoreUtilities {
     static {
         registerTypeAsTrueAlways(ElementTag.class);
         registerTypeAsTrueAlways(ListTag.class);
-        registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
-        registerTypeAsNoOtherTypeCode(DurationTag.class, "d");
         registerTypeAsNoOtherTypeCode(CustomObjectTag.class, "custom");
+        registerTypeAsNoOtherTypeCode(DurationTag.class, "d");
+        registerTypeAsNoOtherTypeCode(MapTag.class, "map");
         registerTypeAsNoOtherTypeCode(QueueTag.class, "q");
+        registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
+        registerTypeAsNoOtherTypeCode(TimeTag.class, "d");
     }
 
     public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {
