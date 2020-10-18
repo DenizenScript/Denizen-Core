@@ -338,15 +338,25 @@ public class CoreUtilities {
         typeCheckers.put(type, new TypeComparisonRunnable() {
             @Override
             public boolean canBecome(ObjectTag inp) {
-                String simple = inp.identifySimple();
-                int atIndex = simple.indexOf('@');
-                if (atIndex != -1) {
-                    String code = simple.substring(0, atIndex);
-                    if (!code.equals(knownCode) && !code.equals("el")) {
-                        return false;
-                    }
+                if (inp == null) {
+                    return false;
                 }
-                return true;
+                Class<? extends ObjectTag> inpType = inp.getObjectTagClass();
+                if (inpType == type) {
+                    return true;
+                }
+                else if (inpType == ElementTag.class) {
+                    String simple = inp.identifySimple();
+                    int atIndex = simple.indexOf('@');
+                    if (atIndex != -1) {
+                        String code = simple.substring(0, atIndex);
+                        if (!code.equals(knownCode) && !code.equals("el")) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                return false;
             }
         });
     }
