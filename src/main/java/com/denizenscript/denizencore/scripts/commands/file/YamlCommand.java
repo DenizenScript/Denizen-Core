@@ -559,7 +559,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             yaml.set(keyStr, null);
                             break;
                         case SET_VALUE:
-                            Set(yaml, index, keyStr, valueStr);
+                            Set(yaml, index, keyStr, value);
                             break;
                         case INSERT: {
                             List<String> list = yaml.getStringList(keyStr);
@@ -660,10 +660,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public void Set(YamlConfiguration yaml, int index, String key, String value) {
+    public void Set(YamlConfiguration yaml, int index, String key, Object value) {
         if (index == -1) {
-            if (value.startsWith("map@")) {
-                MapTag map = MapTag.valueOf(value, CoreUtilities.noDebugContext);
+            if (value instanceof MapTag || ((value instanceof ElementTag || value instanceof String) &&  value.toString().startsWith("map@"))) {
+                MapTag map = value instanceof MapTag ? (MapTag) value : MapTag.valueOf(value.toString(), CoreUtilities.noDebugContext);
                 if (map != null) {
                     yaml.set(key, CoreUtilities.objectTagToJavaForm(map, true));
                     return;
@@ -680,10 +680,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 index = 0;
             }
             if (index >= list.size()) {
-                list.add(value);
+                list.add(value.toString());
             }
             else {
-                list.set(index, value);
+                list.set(index, value.toString());
             }
             yaml.set(key, list);
         }
