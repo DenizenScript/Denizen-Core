@@ -234,6 +234,9 @@ public class Deprecations {
     // Added 2020/07/23, deprecate officially by 2022.
     public static Warning defExistsTag = new FutureWarning("The def[].exists tag is deprecated: use a fallback and null check, or just set definitions more consistently.");
 
+    // In Bukkit impl, Added 2020/10/18, deprecate officially by 2022.
+    public static Warning itemDisplayNameMechanism = new FutureWarning("The item 'display_name' mechanism is now just the 'display' mechanism.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
