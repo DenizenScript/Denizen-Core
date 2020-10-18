@@ -48,14 +48,20 @@ public class MapTag implements ObjectTag, Adjustable {
         if (!needsEscpingMatcher.containsAnyMatch(value)) {
             return value;
         }
-        return value.replace("&", "&amp").replace("|", "&pipe").replace("/", "&fs");
+        value = CoreUtilities.replace(value, "&", "&amp");
+        value = CoreUtilities.replace(value, "|", "&pipe");
+        value = CoreUtilities.replace(value, "/", "&fs");
+        return value;
     }
 
     public static String unescapeEntry(String value) {
         if (value.indexOf('&') == -1) {
             return value;
         }
-        return value.replace("&fs", "/").replace("&pipe", "|").replace("&amp", "&");
+        value = CoreUtilities.replace(value, "&fs", "/");
+        value = CoreUtilities.replace(value, "&pipe", "|");
+        value = CoreUtilities.replace(value, "&amp", "&");
+        return value;
     }
 
     @Fetchable("map")

@@ -157,13 +157,23 @@ public class CoreUtilities {
     }
 
     public static String replace(String original, String findMe, String swapMeIn) {
-        // This is jank but still better than Java's regex-driven String#replace method.
-        int lastIndex = original.indexOf(findMe);
-        while (lastIndex >= 0) {
-            original = original.substring(0, lastIndex) + swapMeIn + original.substring(lastIndex + findMe.length());
-            lastIndex = original.indexOf(findMe, lastIndex + swapMeIn.length());
+        int firstIndex = original.indexOf(findMe);
+        if (firstIndex < 0) {
+            return original;
         }
-        return original;
+        int lastIndex = original.lastIndexOf(findMe);
+        if (firstIndex == lastIndex) {
+            return original.substring(0, firstIndex) + swapMeIn + original.substring((lastIndex + findMe.length()));
+        }
+        StringBuilder output = new StringBuilder(original.length() * 2);
+        int prevIndex = 0;
+        while (firstIndex != -1) {
+            output.append(original, prevIndex, firstIndex).append(swapMeIn);
+            prevIndex = firstIndex + findMe.length();
+            firstIndex = original.indexOf(findMe, prevIndex);
+        }
+        output.append(original, prevIndex, original.length());
+        return output.toString();
     }
 
     public static String join(String delim, List objects) {
