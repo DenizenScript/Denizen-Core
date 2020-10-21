@@ -487,7 +487,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case SET:
                 if (yamlDocuments.containsKey(id)) {
                     if (yaml_action == null || key == null || value == null) {
-                        Debug.echoError("Must specify a YAML action and value!");
+                        Debug.echoError("Must specify a YAML action, key, and value!");
                         return;
                     }
                     YamlConfiguration yaml = yamlDocuments.get(id);

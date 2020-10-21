@@ -351,7 +351,9 @@ public class CoreUtilities {
                     if (atIndex != -1) {
                         String code = simple.substring(0, atIndex);
                         if (!code.equals(knownCode) && !code.equals("el")) {
-                            return false;
+                            if (ObjectFetcher.objectsByPrefix.containsKey(code)) {
+                                return false;
+                            }
                         }
                     }
                     return true;
