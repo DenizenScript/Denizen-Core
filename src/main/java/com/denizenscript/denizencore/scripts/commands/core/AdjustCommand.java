@@ -117,25 +117,29 @@ public class AdjustCommand extends AbstractCommand {
     }
 
     public ObjectTag adjust(ObjectTag object, Mechanism mechanism, ScriptEntry entry) {
-        String objectString = object.toString();
-        String lowerObjectString = CoreUtilities.toLowerCase(objectString);
-        Consumer<Mechanism> specialAdjustable = specialAdjustables.get(lowerObjectString);
-        if (specialAdjustable != null) {
-            specialAdjustable.accept(mechanism);
-            return object;
-        }
-        if (lowerObjectString.startsWith("def:")) {
-            String defName = lowerObjectString.substring("def:".length());
-            ObjectTag def = entry.getResidingQueue().getDefinitionObject(defName);
-            if (def == null) {
-                Debug.echoError("Invalid definition name '" + defName + "', cannot adjust");
-                return object;
-            }
-            def = adjust(def, mechanism, entry);
-            entry.getResidingQueue().addDefinition(defName, def);
-            return def;
+        if (object == null) {
+            Debug.echoError("Cannot adjust null object.");
+            return null;
         }
         if (object instanceof ElementTag) {
+            String objectString = object.toString();
+            String lowerObjectString = CoreUtilities.toLowerCase(objectString);
+            Consumer<Mechanism> specialAdjustable = specialAdjustables.get(lowerObjectString);
+            if (specialAdjustable != null) {
+                specialAdjustable.accept(mechanism);
+                return object;
+            }
+            if (lowerObjectString.startsWith("def:")) {
+                String defName = lowerObjectString.substring("def:".length());
+                ObjectTag def = entry.getResidingQueue().getDefinitionObject(defName);
+                if (def == null) {
+                    Debug.echoError("Invalid definition name '" + defName + "', cannot adjust");
+                    return object;
+                }
+                def = adjust(def, mechanism, entry);
+                entry.getResidingQueue().addDefinition(defName, def);
+                return def;
+            }
             object = ObjectFetcher.pickObjectFor(objectString, entry.entryData.getTagContext());
             if (object instanceof ElementTag) {
                 Debug.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
@@ -151,9 +155,11 @@ public class AdjustCommand extends AbstractCommand {
             }
             return result;
         }
-        object = ObjectFetcher.pickObjectFor(objectString, mechanism.context); // Create duplicate of object, instead of adjusting original
+        if (!object.isUnique()) {
+            object = ObjectFetcher.pickObjectFor(object.identify(), mechanism.context); // Create duplicate of object, instead of adjusting original
+        }
         if (!(object instanceof Adjustable)) {
-            Debug.echoError("'" + objectString + "' is not an adjustable object type.");
+            Debug.echoError("'" + object + "' is not an adjustable object type.");
             return object;
         }
         if (entry.getResidingQueue().procedural && object.isUnique()) {
