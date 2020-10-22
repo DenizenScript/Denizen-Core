@@ -151,12 +151,11 @@ public class AdjustCommand extends AbstractCommand {
             }
             return result;
         }
-        // Make sure this object is Adjustable
+        object = ObjectFetcher.pickObjectFor(objectString, mechanism.context); // Create duplicate of object, instead of adjusting original
         if (!(object instanceof Adjustable)) {
             Debug.echoError("'" + objectString + "' is not an adjustable object type.");
             return object;
         }
-        object = ObjectFetcher.pickObjectFor(objectString, mechanism.context); // Create duplicate of object, instead of adjusting original
         if (entry.getResidingQueue().procedural && object.isUnique()) {
             Debug.echoError("Cannot adjust a unique object within a procedural queue.");
             return null;
