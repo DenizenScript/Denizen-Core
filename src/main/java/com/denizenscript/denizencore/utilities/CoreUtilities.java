@@ -345,7 +345,10 @@ public class CoreUtilities {
                 if (inpType == type) {
                     return true;
                 }
-                else if (inpType == ElementTag.class) {
+                if (inpType == ListTag.class && ((ListTag) inp).flag != null) {
+                    inpType = ElementTag.class;
+                }
+                if (inpType == ElementTag.class) {
                     String simple = inp.identifySimple();
                     int atIndex = simple.indexOf('@');
                     if (atIndex != -1) {

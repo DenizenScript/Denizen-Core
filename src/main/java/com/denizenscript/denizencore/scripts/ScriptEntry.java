@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -89,7 +90,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             else {
                 arg.unsetValue();
             }
-            arg.canBeElement = arg.object instanceof ElementTag;
+            arg.canBeElement = arg.object instanceof ElementTag
+                || (arg.object instanceof ListTag && ((ListTag) arg.object).flag != null);
         }
         return aHArgs;
     }
