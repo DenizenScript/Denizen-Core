@@ -194,12 +194,12 @@ public class ScriptHelper {
                             sb.append(saved).append("\r\n");
                         }
                         else {
-                            Debug.echoError("Woah! Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
+                            Debug.echoError("Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
                             hadError = true;
                         }
                     }
                     catch (Exception e) {
-                        Debug.echoError("Woah! Error parsing " + fileName + "!");
+                        Debug.echoError("Error parsing " + fileName + "!");
                         hadError = true;
                         Debug.echoError(e);
                     }
@@ -210,12 +210,12 @@ public class ScriptHelper {
                 return sb.toString();
             }
             else {
-                Debug.echoError("Woah! No scripts in /plugins/Denizen/scripts/ to load!");
+                Debug.log("No scripts in /plugins/Denizen/scripts/ to load!");
                 hadError = true;
             }
         }
         catch (Exception e) {
-            Debug.echoError("Woah! No script folder found in " + DenizenCore.getImplementation().getScriptFolder());
+            Debug.echoError("No script folder found in " + DenizenCore.getImplementation().getScriptFolder());
             hadError = true;
             Debug.echoError(e);
         }
