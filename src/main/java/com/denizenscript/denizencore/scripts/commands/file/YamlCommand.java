@@ -197,7 +197,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("fix_formatting") &&
                     arg.matches("fix_formatting")) {
-                scriptEntry.addObject("fix_formatting", new ElementTag("true"));
+                Deprecations.yamlFixFormatting.warn(scriptEntry);
             }
             // Check for key:value/action
             else if (isSet &&
@@ -287,7 +287,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             throw new InvalidArgumentsException("Must specify an action!");
         }
         scriptEntry.defaultObject("value", new ElementTag(""));
-        scriptEntry.defaultObject("fix_formatting", new ElementTag("false"));
     }
 
     @Override
@@ -300,7 +299,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         YAML_Action yaml_action = (YAML_Action) scriptEntry.getObject("yaml_action");
         ElementTag actionElement = scriptEntry.getElement("action");
         ElementTag idElement = scriptEntry.getElement("id");
-        ElementTag fixFormatting = scriptEntry.getElement("fix_formatting");
         ElementTag toId = scriptEntry.getElement("to_id");
         YamlConfiguration yamlConfiguration;
         if (scriptEntry.dbCallShouldDebug()) {
@@ -352,10 +350,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         try {
                             FileInputStream fis = new FileInputStream(file);
                             String str = ScriptHelper.convertStreamToString(fis);
-                            if (fixFormatting.asBoolean()) {
-                                str = ScriptHelper.clearComments("", str, false);
-                                Deprecations.yamlFixFormatting.warn(scriptEntry);
-                            }
                             runnableConfigs[0] = YamlConfiguration.load(str);
                             fis.close();
                             if (runnableConfigs[0] == null) {

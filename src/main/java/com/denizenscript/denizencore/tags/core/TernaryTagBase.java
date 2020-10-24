@@ -17,7 +17,7 @@ public class TernaryTagBase {
             public void run(ReplaceableTagEvent event) {
                 ternaryTag(event);
             }
-        }, "tern", "ternary", "t");
+        }, "tern", "ternary");
     }
 
     // <--[tag]
@@ -29,11 +29,8 @@ public class TernaryTagBase {
     // Example: '<tern[<player.is_spawned>].pass[Player is spawned!].fail[Player is not spawned!]>'
     // -->
     public void ternaryTag(ReplaceableTagEvent event) {
-        if (!event.matches("ternary", "tern", "t")) {
+        if (!event.matches("ternary", "tern")) {
             return;
-        }
-        if (event.matches("t")) {
-            Deprecations.ternShorthand.warn(event.getScriptEntry());
         }
 
         Attribute attribute = event.getAttributes();
