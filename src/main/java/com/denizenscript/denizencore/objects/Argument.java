@@ -83,7 +83,6 @@ public class Argument implements Cloneable {
         raw_value = string;
         int first_colon = string.indexOf(':');
         int first_not_prefix = prefixCharsAllowed.indexOfFirstNonMatch(string);
-
         if ((first_not_prefix > -1 && first_not_prefix < first_colon) || first_colon == -1) {
             value = string;
             if (object == null) {

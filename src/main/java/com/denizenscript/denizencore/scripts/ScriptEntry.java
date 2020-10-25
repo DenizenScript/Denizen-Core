@@ -307,11 +307,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 }
                 InternalArgument argVal = new InternalArgument();
                 internal.args_ref.set(i, argVal);
-                int colon = TagManager.findColonNotTagNorSpace(arg);
-                if (colon > 0) {
+                int first_colon = arg.indexOf(':');
+                int first_not_prefix = Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
+                if (first_colon > 0 && first_not_prefix >= first_colon) {
                     argVal.prefix = new InternalArgument();
-                    crunchInto(argVal.prefix, arg.substring(0, colon), refContext);
-                    arg = arg.substring(colon + 1);
+                    crunchInto(argVal.prefix, arg.substring(0, first_colon), refContext);
+                    arg = arg.substring(first_colon + 1);
                     if (!argVal.prefix.aHArg.needsFill) {
                         internal.argPrefixMap.put(argVal.prefix.aHArg.lower_value, i);
                     }
