@@ -201,8 +201,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             // Check for key:value/action
             else if (isSet &&
-                    !scriptEntry.hasObject("value") &&
-                    arg.hasPrefix()) {
+                    !scriptEntry.hasObject("value")) {
                 if (!arg.canBeElement) {
                     scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
                     scriptEntry.addObject("key", new ElementTag(arg.prefix));
@@ -270,6 +269,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             continue;
                         }
                         scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
+                    }
+                    else {
+                        arg.reportUnhandled();
                     }
                 }
             }
