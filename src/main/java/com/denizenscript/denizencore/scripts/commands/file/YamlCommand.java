@@ -30,7 +30,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     public YamlCommand() {
         setName("yaml");
-        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]");
+        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]");
         setRequiredArguments(2, 4);
         TagManager.registerTagHandler("yaml", this::yamlTagProcess);
         isProcedural = false;
@@ -38,7 +38,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Yaml
-    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source key> <target key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
+    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
     // @Required 2
     // @Maximum 4
     // @Short Edits YAML data, especially for YAML files.
@@ -167,7 +167,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     arg.matchesPrefix("copykey")) {
                 scriptEntry.addObject("action", new ElementTag("COPYKEY"));
                 scriptEntry.addObject("key", arg.asElement());
-                isSet = true;
                 isCopyKey = true;
             }
             else if (!scriptEntry.hasObject("action") &&
@@ -324,7 +323,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
         }
         switch (action) {
-
             case LOAD:
                 File file = new File(DenizenCore.getImplementation().getDataFolder(), filename.asString());
                 if (!DenizenCore.getImplementation().canReadFile(file)) {
@@ -376,7 +374,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     loadRunnable.run();
                 }
                 break;
-
             case LOADTEXT:
                 String str = rawText.asString();
                 YamlConfiguration config = YamlConfiguration.load(str);
@@ -384,7 +381,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 yamlDocuments.put(id, config);
                 scriptEntry.setFinished(true);
                 break;
-
             case UNLOAD:
                 if (yamlDocuments.containsKey(id)) {
                     yamlDocuments.remove(id);
@@ -393,7 +389,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
-
             case SAVE:
                 if (yamlDocuments.containsKey(id)) {
                     try {
@@ -456,7 +451,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                 }
                 break;
-
             case COPYKEY: {
                 if (!yamlDocuments.containsKey(id)) {
                     break;
@@ -479,7 +473,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 destYaml.set(value.toString(), newSection);
                 break;
             }
-
             case SET:
                 if (yamlDocuments.containsKey(id)) {
                     if (yaml_action == null || key == null || value == null) {
@@ -621,14 +614,12 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     Debug.echoError("Unknown YAML ID '" + id + "'");
                 }
                 break;
-
             case CREATE:
                 yamlDocuments.remove(id);
                 yamlConfiguration = new YamlConfiguration();
                 yamlDocuments.put(id, yamlConfiguration);
                 break;
         }
-
     }
 
     public YamlConfiguration copySection(YamlConfiguration section) {
