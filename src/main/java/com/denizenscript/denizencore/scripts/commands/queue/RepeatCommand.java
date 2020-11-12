@@ -60,7 +60,7 @@ public class RepeatCommand extends BracedCommand {
 
             if (!handled
                     && arg.matchesInteger()) {
-                scriptEntry.addObject("qty", arg.asElement());
+                scriptEntry.addObject("quantity", arg.asElement());
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }
@@ -102,15 +102,12 @@ public class RepeatCommand extends BracedCommand {
     @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag stop = scriptEntry.getElement("stop");
         ElementTag next = scriptEntry.getElement("next");
         ElementTag callback = scriptEntry.getElement("callback");
-        ElementTag quantity = scriptEntry.getElement("qty");
+        ElementTag quantity = scriptEntry.getElement("quantity");
         ElementTag as_name = scriptEntry.getElement("as_name");
-
         if (stop != null && stop.asBoolean()) {
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
@@ -140,7 +137,6 @@ public class RepeatCommand extends BracedCommand {
             return;
         }
         else if (next != null && next.asBoolean()) {
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
@@ -207,16 +203,13 @@ public class RepeatCommand extends BracedCommand {
                 return;
             }
             List<ScriptEntry> bracedCommandsList = data.get(0).value;
-
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
                 Debug.echoError("Empty braces!");
                 return;
             }
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), quantity.debug() + as_name.debug());
             }
-
             int target = quantity.asInt();
             if (target <= 0) {
                 if (scriptEntry.dbCallShouldDebug()) {

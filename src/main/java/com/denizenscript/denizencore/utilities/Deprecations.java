@@ -47,7 +47,7 @@ public class Deprecations {
     public static Warning serverRedirectLogging = new StrongWarning("server mechanism redirect_logging is deprecated: use the system mechanism by the same name.");
 
     // In Bukkit impl, Added on 2019/09/25, but was deprecated earlier.
-    public static Warning qtyTags = new StrongWarning("'qty' in a tag is deprecated: use 'quantity'.");
+    public static Warning qtyTags = new StrongWarning("'qty' in a tag or command is deprecated: use 'quantity'.");
     public static Warning playerStepTag = new StrongWarning("'player.current_step[script]' tag is deprecated: use 'script.step[player]'.");
 
     // In Bukkit impl, Added on 2019/09/25
