@@ -125,10 +125,6 @@ public class OldEventManager {
         return parsed;
     }
 
-    public static boolean eventExists(String original) {
-        return events.containsKey("ON " + original.toUpperCase());
-    }
-
     public static List<String> addAlternates(List<String> events) {
 
         // Strip object identifiers from world event names and add the results
@@ -163,15 +159,6 @@ public class OldEventManager {
         finalEvents.addAll(events);
         finalEvents.addAll(newEvents);
         return finalEvents;
-    }
-
-    public static String StripIdentifiers(String original) {
-        if (original.matches(".*?[a-z]+@[\\w ]+")) {
-            return original.replaceAll("[a-z]+@", "");
-        }
-        else {
-            return original;
-        }
     }
 
     ///////////////////
@@ -252,17 +239,6 @@ public class OldEventManager {
         @Override
         public ObjectTag getContext(String name) {
             return contexts.get(name);
-        }
-    }
-
-    ////////////////////
-    //  REGISTRATION
-    //////////////
-
-    public static void registerSmartEvent(OldSmartEvent event) {
-        // Seems simple enough
-        if (event != null) {
-            smart_events.add(event);
         }
     }
 }

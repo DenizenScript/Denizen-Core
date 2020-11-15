@@ -89,19 +89,19 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                     && arg.matchesEnum(DBINFO)) {
                 scriptEntry.addObject("type", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("debug")) {
-                scriptEntry.addObject("debug", new ElementTag(arg.getRawValue()));
-            }
             else if (!scriptEntry.hasObject("name")
                     && arg.matchesPrefix("name")) {
                 scriptEntry.addObject("name", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("debug")) {
+                scriptEntry.addObject("debug", new ElementTag(arg.getRawValue()));
             }
             else {
                 arg.reportUnhandled();
             }
         }
         if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {
-            throw new InvalidArgumentsException("Must specify a definition and value!");
+            throw new InvalidArgumentsException("Must specify a debug type and message!");
         }
         scriptEntry.defaultObject("name", new ElementTag("name"));
     }
