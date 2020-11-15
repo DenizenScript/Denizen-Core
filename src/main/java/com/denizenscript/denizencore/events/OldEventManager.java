@@ -26,9 +26,6 @@ public class OldEventManager {
     // Map for keeping the names of events
     public static Map<String, List<WorldScriptContainer>> events = new HashMap<>();
 
-    // Map for keeping track of registered smart_events
-    public static Set<OldSmartEvent> smart_events = new HashSet<>();
-
     //////////////////
     // PERFORMANCE
     ///////////
@@ -74,20 +71,6 @@ public class OldEventManager {
                 }
                 else {
                     Debug.echoError("Script '" + script.getName() + "' does not have an events block!");
-                }
-            }
-            // dB.echoApproval("Built events map: " + events);
-
-            // Breakdown all SmartEvents (if still being used, they will reinitialize next)
-            for (OldSmartEvent smartEvent : smart_events) {
-                smartEvent.breakDown();
-            }
-
-            // Pass these along to each SmartEvent so they can determine whether they can be enabled or not
-            for (OldSmartEvent smartEvent : smart_events) {
-                // If it should initialize, run _initialize!
-                if (smartEvent.shouldInitialize(events.keySet())) {
-                    smartEvent._initialize();
                 }
             }
         }
