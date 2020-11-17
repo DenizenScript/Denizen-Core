@@ -20,7 +20,10 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
     //
     // @Cancellable true
     //
+    // @Warning Abusing this event can cause significant failures in the Denizen debug system. Use only with extreme caution.
+    //
     // @Triggers when an exception occurs on the server.
+    //
     // @Context
     // <context.message> returns the Exception message.
     // <context.full_trace> returns the full exception trace+message output details.

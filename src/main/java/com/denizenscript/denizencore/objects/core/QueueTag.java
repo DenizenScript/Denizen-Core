@@ -105,6 +105,11 @@ public class QueueTag implements ObjectTag, Adjustable {
         return identify();
     }
 
+    @Override
+    public String debuggable() {
+        return "q@" + queue.debugId;
+    }
+
     public static void registerTags() {
 
         // <--[tag]

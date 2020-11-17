@@ -21,7 +21,10 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
     //
     // @Cancellable true
     //
+    // @Warning Abusing this event can cause significant failures in the Denizen debug system. Use only with extreme caution.
+    //
     // @Triggers when a script generates an error.
+    //
     // @Context
     // <context.message> returns the error message.
     // <context.queue> returns the queue that caused the error, if any.
