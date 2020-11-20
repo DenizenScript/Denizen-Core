@@ -28,7 +28,7 @@ public class EscapeTagBase {
     }
 
     // <--[language]
-    // @name Escape Tags
+    // @name Escaping System
     // @group Useful Lists
     // @description
     // Sometimes, you need to avoid having symbols that might be misinterpreted in your data.

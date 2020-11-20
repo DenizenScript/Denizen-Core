@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.tags.*;
@@ -893,6 +894,21 @@ public class ElementTag implements ObjectTag {
             }
             return new ElementTag(object.element.equals(attribute.getContext(1)));
         }, "equals_with_case");
+
+        // <--[tag]
+        // @attribute <ElementTag.advanced_matches[<matcher>]>
+        // @returns ElementTag(Boolean)
+        // @group element checking
+        // @description
+        // Returns whether the element matches some matcher text, using the system behind <@link language Advanced Script Event Matching>.
+        // -->
+        registerTag("advanced_matches", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag ElementTag.advanced_matches[...] must have a value.");
+                return null;
+            }
+            return new ElementTag(ScriptEvent.createMatcher(attribute.getContext(1)).doesMatch(object.element));
+        });
 
         // <--[tag]
         // @attribute <ElementTag.matches[<regex>]>
