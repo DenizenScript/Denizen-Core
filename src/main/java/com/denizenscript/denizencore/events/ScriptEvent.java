@@ -549,7 +549,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static class ExactMatchHelper extends MatchHelper {
 
         public ExactMatchHelper(String text) {
-            this.text = text;
+            this.text = CoreUtilities.toLowerCase(text);
         }
 
         public String text;
@@ -563,7 +563,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static class PrefixAsteriskMatchHelper extends MatchHelper {
 
         public PrefixAsteriskMatchHelper(String text) {
-            this.text = text;
+            this.text = CoreUtilities.toLowerCase(text);
         }
 
         public String text;
@@ -577,7 +577,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static class PostfixAsteriskMatchHelper extends MatchHelper {
 
         public PostfixAsteriskMatchHelper(String text) {
-            this.text = text;
+            this.text = CoreUtilities.toLowerCase(text);
         }
 
         public String text;

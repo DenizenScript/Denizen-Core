@@ -56,7 +56,6 @@ public class WhileCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         List<String> comparisons = new ArrayList<>();
         if (scriptEntry.getArguments().size() == 1) {
             String arg = scriptEntry.getArguments().get(0);
@@ -87,13 +86,10 @@ public class WhileCommand extends BracedCommand {
     @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag stop = scriptEntry.getElement("stop");
         ElementTag next = scriptEntry.getElement("next");
         ElementTag callback = scriptEntry.getElement("callback");
-
         if (stop != null && stop.asBoolean()) {
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
@@ -123,7 +119,6 @@ public class WhileCommand extends BracedCommand {
             return;
         }
         else if (next != null && next.asBoolean()) {
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
