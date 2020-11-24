@@ -38,7 +38,7 @@ public class MapTag implements ObjectTag, Adjustable {
     //
     // If the pipe symbol "|" appears in a key or value, it will be replaced by "&pipe",
     // a slash "/" will become "&fs", and an ampersand "&" will become "&amp".
-    // This is a subset of Denizen standard escaping, see <@link language Escape Tags>.
+    // This is a subset of Denizen standard escaping, see <@link language Escaping System>.
     //
     // -->
 

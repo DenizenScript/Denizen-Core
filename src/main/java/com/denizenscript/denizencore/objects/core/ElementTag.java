@@ -678,7 +678,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element, escaped for safe reuse.
         // Inverts <@link tag ElementTag.unescaped>.
-        // See <@link language Escape Tags>.
+        // See <@link language Escaping System>.
         // -->
         registerTag("escaped", (attribute, object) -> {
             String element = object.element;
@@ -704,7 +704,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element, unescaped.
         // Inverts <@link tag ElementTag.escaped>.
-        // See <@link language Escape Tags>.
+        // See <@link language Escaping System>.
         // -->
         registerTag("unescaped", (attribute, object) -> {
             String element = object.element;

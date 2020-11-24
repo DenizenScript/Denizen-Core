@@ -44,7 +44,7 @@ public class ListTag implements List<String>, ObjectTag {
     //
     // If the pipe symbol "|" appears in a list entry, it will be replaced by "&pipe",
     // similarly if an ampersand "&" appears in a list entry, it will be replaced by "&amp".
-    // This is a subset of Denizen standard escaping, see <@link language Escape Tags>.
+    // This is a subset of Denizen standard escaping, see <@link language Escaping System>.
     //
     // -->
 
@@ -2103,7 +2103,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents escaped.
         // Inverts <@link tag ListTag.unescape_contents>.
-        // See <@link language Escape Tags>.
+        // See <@link language Escaping System>.
         // -->
         registerTag("escape_contents", (attribute, object) -> {
             ListTag escaped = new ListTag();
@@ -2119,7 +2119,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents unescaped.
         // Inverts <@link tag ListTag.escape_contents>.
-        // See <@link language Escape Tags>.
+        // See <@link language Escaping System>.
         // -->
         registerTag("unescape_contents", (attribute, object) -> {
             ListTag escaped = new ListTag();
