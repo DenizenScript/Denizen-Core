@@ -1733,6 +1733,10 @@ public class ListTag implements List<String>, ObjectTag {
         // For example, you might sort a list of players based on their names, via .sort_by_value[name] on the list of valid players.
         // -->
         registerTag("sort_by_value", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag list.sort_by_value[...] must have input!");
+                return null;
+            }
             ListTag newlist = new ListTag(object);
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.getRawContext(1);
@@ -1764,7 +1768,7 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("sort_by_number", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("Sort_By_Number must have an input value.");
+                attribute.echoError("Sort_By_Number[...] must have an input value.");
                 return null;
             }
             ListTag newlist = new ListTag(object);

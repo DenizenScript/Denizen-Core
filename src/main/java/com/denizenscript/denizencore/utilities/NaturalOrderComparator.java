@@ -20,9 +20,15 @@ misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
 
+// Note additional alterations prefixed 'mcmonkey'
+
+import com.denizenscript.denizencore.objects.ArgumentHelper;
+
 import java.util.Comparator;
 
 public class NaturalOrderComparator implements Comparator {
+    public static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher("0123456789"); // mcmonkey - micro-optimization
+
     int compareRight(String a, String b) {
         int bias = 0;
         int ia = 0;
@@ -34,13 +40,13 @@ public class NaturalOrderComparator implements Comparator {
         for (; ; ia++, ib++) {
             char ca = charAt(a, ia);
             char cb = charAt(b, ib);
-            if (!Character.isDigit(ca) && !Character.isDigit(cb)) {
+            if (!DIGIT_MATCHER.isMatch(ca) && !DIGIT_MATCHER.isMatch(cb)) {
                 return bias;
             }
-            else if (!Character.isDigit(ca)) {
+            else if (!DIGIT_MATCHER.isMatch(ca)) {
                 return -1;
             }
-            else if (!Character.isDigit(cb)) {
+            else if (!DIGIT_MATCHER.isMatch(cb)) {
                 return +1;
             }
             else if (ca < cb) {
@@ -75,6 +81,16 @@ public class NaturalOrderComparator implements Comparator {
         int nza, nzb;
         char ca, cb;
         int result;
+        if (ArgumentHelper.matchesDouble(a) && ArgumentHelper.matchesDouble(b)) { // mcmonkey - improve number handling
+            try {
+                double numA = Double.parseDouble(a);
+                double numB = Double.parseDouble(b);
+                return Double.compare(numA, numB);
+            }
+            catch (NumberFormatException ex) {
+                // Ignore
+            }
+        }
         while (true) {
             // only count the number of zeroes leading the last number compared
             nza = nzb = 0;
@@ -102,7 +118,7 @@ public class NaturalOrderComparator implements Comparator {
                 cb = charAt(b, ++ib);
             }
             // process run of digits
-            if (Character.isDigit(ca) && Character.isDigit(cb)) {
+            if (DIGIT_MATCHER.isMatch(ca) && DIGIT_MATCHER.isMatch(cb)) {
                 if ((result = compareRight(a.substring(ia), b.substring(ib))) != 0) {
                     return result;
                 }
