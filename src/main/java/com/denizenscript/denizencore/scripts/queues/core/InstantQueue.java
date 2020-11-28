@@ -56,7 +56,7 @@ public class InstantQueue extends ScriptQueue {
     }
 
     @Override
-    protected void revolve() {
+    public void revolve() {
         if (script_entries.isEmpty()) {
             stop();
             return;
@@ -74,7 +74,7 @@ public class InstantQueue extends ScriptQueue {
     }
 
     @Override
-    protected boolean shouldRevolve() {
+    public boolean shouldRevolve() {
         // Instant queues aren't picky!
         return true;
     }

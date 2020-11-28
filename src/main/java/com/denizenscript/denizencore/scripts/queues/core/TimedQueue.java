@@ -107,20 +107,22 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         revolve();
         if (script_entries.isEmpty()) {
             return;
         }
-        Schedulable schedulable = new RepeatingSchedulable(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        revolve();
-                    }
-                }, (ticks <= 0 ? 1 : ticks) / 20f);
-        this.schedulable = schedulable;
-        DenizenCore.schedule(schedulable);
+        if (schedulable == null) {
+            Schedulable schedulable = new RepeatingSchedulable(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            revolve();
+                        }
+                    }, (ticks <= 0 ? 1 : ticks) / 20f);
+            this.schedulable = schedulable;
+            DenizenCore.schedule(schedulable);
+        }
     }
 
     @Override
@@ -132,11 +134,12 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     protected void onStop() {
         if (schedulable != null) {
             schedulable.cancel();
+            schedulable = null;
         }
     }
 
     @Override
-    protected boolean shouldRevolve() {
+    public boolean shouldRevolve() {
         // Check if this Queue isn't paused
         if (paused) {
             return false;

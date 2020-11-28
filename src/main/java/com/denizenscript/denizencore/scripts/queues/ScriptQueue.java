@@ -280,7 +280,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return newQueue;
     }
 
-    protected abstract void onStart();
+    public abstract void onStart();
 
     public boolean is_started;
 
@@ -378,6 +378,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public boolean isStopped = false;
 
+    /**
+     * If set true, the queue will simply freeze and wait when it's empty.
+     * Otherwise (set false), it will fully stop and remove itself when empty.
+     */
+    public boolean waitWhenEmpty = false;
+
     public void stop() {
         if (is_stopping) {
             return;
@@ -403,18 +409,20 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         lastEntryExecuted = entry;
     }
 
-    protected abstract boolean shouldRevolve();
+    public abstract boolean shouldRevolve();
 
-    protected void revolve() {
+    public void revolve() {
         if (script_entries.isEmpty()) {
-            stop();
+            if (!waitWhenEmpty) {
+                stop();
+            }
             return;
         }
         if (!shouldRevolve()) {
             return;
         }
         DenizenCore.getScriptEngine().revolve(this);
-        if (script_entries.isEmpty()) {
+        if (script_entries.isEmpty() && !waitWhenEmpty) {
             stop();
         }
     }
