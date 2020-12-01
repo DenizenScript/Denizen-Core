@@ -175,6 +175,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/11/22.
     public static Warning biomeSpawnableTag = new SlowWarning(pointlessSubtagPrefix + "The tag BiomeTag.spawnable_entities.(type) is deprecated: the type is now an input context instead.");
 
+    // In Bukkit impl, Added 2020/11/30.
+    public static Warning npcDespawnMech = new SlowWarning("The NPCTag despawn mechanism is deprecated: use the despawn command.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.
