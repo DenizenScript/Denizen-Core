@@ -810,10 +810,8 @@ public class ElementTag implements ObjectTag {
         registerTag("contains_text", (attribute, object) -> {
             String element = object.element;
             String contains = attribute.getContext(1);
-
             if (CoreUtilities.toLowerCase(contains).startsWith("regex:")) {
-
-                if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).matches()) {
+                if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).find()) {
                     return new ElementTag("true");
                 }
                 else {
