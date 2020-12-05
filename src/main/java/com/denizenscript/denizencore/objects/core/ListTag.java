@@ -211,9 +211,12 @@ public class ListTag implements List<String>, ObjectTag {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        String[] stringArr = new String[size()];
-        for (int i = 0; i < stringArr.length; i++) {
+        String[] stringArr = (a instanceof String[] && a.length >= size()) ? (String[]) a : new String[size()];
+        for (int i = 0; i < size(); i++) {
             stringArr[i] = String.valueOf(getObject(i));
+        }
+        for (int i = size(); i < stringArr.length; i++) {
+            stringArr[i] = null;
         }
         return (T[]) stringArr;
     }
