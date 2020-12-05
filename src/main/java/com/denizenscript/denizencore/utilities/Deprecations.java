@@ -48,7 +48,6 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2019/09/25, but was deprecated earlier.
     public static Warning qtyTags = new StrongWarning("'qty' in a tag or command is deprecated: use 'quantity'.");
-    public static Warning playerStepTag = new StrongWarning("'player.current_step[script]' tag is deprecated: use 'script.step[player]'.");
 
     // In Bukkit impl, Added on 2019/09/25
     // Prime candidate for functionality removal - tags were only recently added, and were always jank.

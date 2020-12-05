@@ -40,14 +40,16 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         return false;
     }
 
-    @Override
-    public ObjectTag getFlagValue(String key) {
+    public ObjectTag getFlagValueOfType(String key, StringHolder type) {
         List<String> splitKey = CoreUtilities.split(key, '.');
         String endKey = splitKey.get(splitKey.size() - 1);
         MapTag map = this.map;
         for (int i = 0; i < splitKey.size() - 1; i++) {
             MapTag subMap = (MapTag) map.getObject(splitKey.get(i));
             if (subMap == null) {
+                return null;
+            }
+            if (isExpired(subMap.map.get(expirationString))) {
                 return null;
             }
             ObjectTag subValue = subMap.map.get(valueString);
@@ -60,7 +62,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         if (obj == null) {
             return null;
         }
-        ObjectTag value = obj.map.get(valueString);
+        ObjectTag value = obj.map.get(type);
         if (value == null) {
             return null;
         }
@@ -71,6 +73,11 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
             return deflaggedSubMap((MapTag) value);
         }
         return value;
+    }
+
+    @Override
+    public ObjectTag getFlagValue(String key) {
+        return getFlagValueOfType(key, valueString);
     }
 
     public MapTag deflaggedSubMap(MapTag map) {
@@ -91,7 +98,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
 
     @Override
     public TimeTag getFlagExpirationTime(String key) {
-        return null;
+        return (TimeTag) getFlagValueOfType(key, expirationString);
     }
 
     @Override

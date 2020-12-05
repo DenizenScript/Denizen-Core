@@ -57,6 +57,10 @@ public class FlagCommand extends AbstractCommand {
     // <@link tag server.npcs_flagged>, <@link tag InventoryTag.contains.flagged>, <@link tag InventoryTag.quantity.flagged>, ...
     // Flags can also be required by script event lines, as explained at <@link language Script Event Switches> and <@link language Player Event Switches>.
     // Item flags can also be used as a requirement in <@link command take>.
+    //
+    // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
+    // This includes '__interact_step' which is used for interact script steps, related to <@link command zap>,
+    // and '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
     // -->
 
     // <--[command]
