@@ -169,7 +169,7 @@ public class Deprecations {
     public static Warning npcSpawnMechanism = new SlowWarning("The NPCTag 'spawn' mechanism is deprecated: use the spawn command.");
 
     // In Bukkit impl, Added 2020/05/17, made current on 2020/10/24.
-    public static Warning itemFlagsProperty = new SlowWarning("The item.flags property has been renamed to item.hides.");
+    public static Warning itemFlagsProperty = new StrongWarning("The item.flags property has been renamed to item.hides, to avoid confusion with the new flaggable itemtags system.");
 
     // In Bukkit impl, Added 2020/11/22.
     public static Warning biomeSpawnableTag = new SlowWarning(pointlessSubtagPrefix + "The tag BiomeTag.spawnable_entities.(type) is deprecated: the type is now an input context instead.");

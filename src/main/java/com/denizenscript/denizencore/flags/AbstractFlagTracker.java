@@ -114,6 +114,7 @@ public abstract class AbstractFlagTracker {
                 attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is not map-based.");
                 return null;
             }
+            listFlagsTagWarning.warn(attribute.context);
             return ((MapTagFlagTracker) tracker).map;
         });
     }
@@ -154,7 +155,7 @@ public abstract class AbstractFlagTracker {
         return getFlagExpirationTime(attribute.getContext(1));
     }
 
-    public static Warning listFlagsTagWarning = new SlowWarning("The list_flags tag is meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
+    public static Warning listFlagsTagWarning = new SlowWarning("The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
 
     public ListTag doListFlagsTag(Attribute attribute) {
         listFlagsTagWarning.warn(attribute.context);
