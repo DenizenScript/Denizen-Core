@@ -30,13 +30,13 @@ public abstract class AbstractFlagTracker {
     public static <T extends FlaggableObject> void registerFlagHandlers(ObjectTagProcessor<T> processor) {
 
         // <--[tag]
-        // @attribute <FlaggableObject.flag[<name>]>
+        // @attribute <FlaggableObject.flag[<flag_name>]>
         // @returns ObjectTag
         // @description
         // Returns the specified flag from the flaggable object.
         // If the flag is expired, will return null.
         // Consider also using <@link tag FlaggableObject.has_flag>.
-        // See <@link language Flag System>.
+        // See <@link language flag system>.
         // -->
         processor.registerTag("flag", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
@@ -52,7 +52,7 @@ public abstract class AbstractFlagTracker {
         // @returns ElementTag(Boolean)
         // @description
         // Returns true if the flaggable object has the specified flag, otherwise returns false.
-        // See <@link language Flag System>.
+        // See <@link language flag system>.
         // -->
         processor.registerTag("has_flag", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
@@ -68,7 +68,7 @@ public abstract class AbstractFlagTracker {
         // @returns TimeTag
         // @description
         // Returns a TimeTag indicating when the specified flag will expire.
-        // See <@link language Flag System>.
+        // See <@link language flag system>.
         // -->
         processor.registerTag("flag_expiration", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
@@ -85,7 +85,7 @@ public abstract class AbstractFlagTracker {
         // @description
         // Returns a list of the flaggable object's flags.
         // Note that this is exclusively for debug/testing reasons, and should never be used in a real script.
-        // See <@link language Flag System>.
+        // See <@link language flag system>.
         // -->
         processor.registerTag("list_flags", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();

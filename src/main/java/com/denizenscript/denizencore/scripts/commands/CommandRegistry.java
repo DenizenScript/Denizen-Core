@@ -94,6 +94,7 @@ public abstract class CommandRegistry {
         registerCommand(DebugCommand.class);
         // Intentionally do not register the DebugInvalidCommand
         registerCommand(EventCommand.class);
+        registerCommand(FlagCommand.class);
         registerCommand(ReloadCommand.class);
         registerCommand(SQLCommand.class);
         registerCommand(WebGetCommand.class);

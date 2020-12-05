@@ -401,7 +401,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public boolean matches(ScriptPath path) {
         String flag = path.switches.get("server_flagged");
         if (flag != null) {
-            if (!DenizenCore.getImplementation().serverHasFlag(flag)) {
+            if (!DenizenCore.getImplementation().getServerFlags().hasFlag(flag)) {
                 return false;
             }
         }

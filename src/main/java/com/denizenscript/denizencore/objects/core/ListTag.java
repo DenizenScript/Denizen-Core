@@ -349,10 +349,7 @@ public class ListTag implements List<String>, ObjectTag {
         if (string == null) {
             return null;
         }
-        ListTag list = DenizenCore.getImplementation().valueOfFlagListTag(string);
-        if (list != null) {
-            return list;
-        }
+        ListTag list;
         if (string.startsWith("map@")) {
             MapTag map = MapTag.valueOf(string, context);
             list = new ListTag();
@@ -372,10 +369,7 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public static boolean matches(String arg) {
-
-        boolean flag = DenizenCore.getImplementation().matchesFlagListTag(arg);
-
-        return flag || arg.contains("|") || arg.startsWith("li@");
+        return arg.contains("|") || arg.startsWith("li@");
     }
 
     @Override
@@ -385,7 +379,6 @@ public class ListTag implements List<String>, ObjectTag {
             objs.add(obj == null ? null : obj.duplicate());
         }
         ListTag result = new ListTag(objs);
-        result.flag = flag;
         return result;
     }
 
@@ -461,16 +454,6 @@ public class ListTag implements List<String>, ObjectTag {
                     addObject(ObjectFetcher.pickObjectFor(items.substring(start), context));
                 }
             }
-        }
-    }
-
-    public ListTag(String flag, boolean is_flag, List<String> flag_contents) {
-        if (is_flag) {
-            this.flag = flag;
-        }
-        objectForms = new ArrayList<>(flag_contents.size());
-        for (String str : flag_contents) {
-            objectForms.add(new ElementTag(str));
         }
     }
 
@@ -627,11 +610,9 @@ public class ListTag implements List<String>, ObjectTag {
         return debugText.substring(0, debugText.length() - " <G>|<Y> ".length());
     }
 
-    public String flag = null;
-
     @Override
     public boolean isUnique() {
-        return flag != null;
+        return false;
     }
 
     @Override
@@ -641,9 +622,6 @@ public class ListTag implements List<String>, ObjectTag {
 
     @Override
     public String identify() {
-        if (flag != null && size() == 1) {
-            return get(0);
-        }
         return identifyList();
     }
 
@@ -2313,11 +2291,6 @@ public class ListTag implements List<String>, ObjectTag {
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         return tagProcessor.getObjectAttribute(this, attribute);
-    }
-
-    @Override
-    public ObjectTag getNextObjectTypeDown() {
-        return (flag != null && size() == 1) ? getObject(0) : new ElementTag(identifyList());
     }
 
     @Override
