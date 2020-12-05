@@ -27,7 +27,7 @@ public abstract class AbstractFlagTracker {
         return getFlagValue(key) != null;
     }
 
-    public <T extends FlaggableObject> void registerFlagHandlers(ObjectTagProcessor<T> processor) {
+    public static <T extends FlaggableObject> void registerFlagHandlers(ObjectTagProcessor<T> processor) {
 
         // <--[tag]
         // @attribute <FlaggableObject.flag[<name>]>
@@ -39,7 +39,12 @@ public abstract class AbstractFlagTracker {
         // See <@link language Flag System>.
         // -->
         processor.registerTag("flag", (attribute, object) -> {
-            return object.getFlagTracker().doFlagTag(attribute);
+            AbstractFlagTracker tracker = object.getFlagTracker();
+            if (tracker == null) {
+                attribute.echoError("Cannot read flag tag for '" + object + "': flag tracker is invalid or unavailable.");
+                return null;
+            }
+            return tracker.doFlagTag(attribute);
         });
 
         // <--[tag]
@@ -50,7 +55,12 @@ public abstract class AbstractFlagTracker {
         // See <@link language Flag System>.
         // -->
         processor.registerTag("has_flag", (attribute, object) -> {
-            return object.getFlagTracker().doHasFlagTag(attribute);
+            AbstractFlagTracker tracker = object.getFlagTracker();
+            if (tracker == null) {
+                attribute.echoError("Cannot read has_flag tag for '" + object + "': flag tracker is invalid or unavailable.");
+                return null;
+            }
+            return tracker.doHasFlagTag(attribute);
         });
 
         // <--[tag]
@@ -61,7 +71,12 @@ public abstract class AbstractFlagTracker {
         // See <@link language Flag System>.
         // -->
         processor.registerTag("flag_expiration", (attribute, object) -> {
-            return object.getFlagTracker().doFlagExpirationTag(attribute);
+            AbstractFlagTracker tracker = object.getFlagTracker();
+            if (tracker == null) {
+                attribute.echoError("Cannot read flag_expiration tag for '" + object + "': flag tracker is invalid or unavailable.");
+                return null;
+            }
+            return tracker.doFlagExpirationTag(attribute);
         });
 
         // <--[tag]
@@ -73,7 +88,12 @@ public abstract class AbstractFlagTracker {
         // See <@link language Flag System>.
         // -->
         processor.registerTag("list_flags", (attribute, object) -> {
-            return object.getFlagTracker().doListFlagsTag(attribute);
+            AbstractFlagTracker tracker = object.getFlagTracker();
+            if (tracker == null) {
+                attribute.echoError("Cannot read list_flags tag for '" + object + "': flag tracker is invalid or unavailable.");
+                return null;
+            }
+            return tracker.doListFlagsTag(attribute);
         });
     }
 
