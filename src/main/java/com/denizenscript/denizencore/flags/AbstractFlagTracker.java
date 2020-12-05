@@ -95,6 +95,27 @@ public abstract class AbstractFlagTracker {
             }
             return tracker.doListFlagsTag(attribute);
         });
+
+        // <--[tag]
+        // @attribute <FlaggableObject.flag_map>
+        // @returns MapTag
+        // @description
+        // Returns a raw map of the objects internal flag data.
+        // Note that this is exclusively for debug/testing reasons, and should never be used in a real script.
+        // See <@link language flag system>.
+        // -->
+        processor.registerTag("flag_map", (attribute, object) -> {
+            AbstractFlagTracker tracker = object.getFlagTracker();
+            if (tracker == null) {
+                attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is invalid or unavailable.");
+                return null;
+            }
+            if (!(tracker instanceof MapTagFlagTracker)) {
+                attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is not map-based.");
+                return null;
+            }
+            return ((MapTagFlagTracker) tracker).map;
+        });
     }
 
     public ElementTag doHasFlagTag(Attribute attribute) {
