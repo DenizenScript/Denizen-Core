@@ -25,6 +25,39 @@ public class FlagCommand extends AbstractCommand {
         setRequiredArguments(1, 3);
         isProcedural = false;
     }
+    // <--[language]
+    // @name Flag System
+    // @group Denizen Scripting Language
+    // @description
+    // The flag system is a core feature of Denizen, that allows for persistent data storage linked to objects.
+    //
+    // "Persistent" means the data is still around even after a server restart or anything else, and is only removed when you choose for it to be removed.
+    // "Linked to objects" means rather than purely global values, flags are associated with a player, or an NPC, or a block, or whatever else.
+    //
+    // See also the guide page at <@link url https://guide.denizenscript.com/guides/basics/flags.html>.
+    //
+    // For non-persistent temporary memory, see instead <@link command define>.
+    // For more generic memory options, see <@link command yaml> or <@link command sql>.
+    //
+    // Flags can be sub-mapped with the '.' key, meaning a flag named 'x.y.z' is actually a flag 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final flag value.
+    //
+    // The currently supported flag targets are:
+    // - 'server', essentially a global flag target
+    // - PlayerTag, which will store data in the playerdata file.
+    // - NPCTag (Citizens), which will store data in the Citizens saves file as the 'denizen_flags' trait.
+    // - EntityTag, which will store data in the entity's NBT in the world file.
+    // - LocationTag, for block flags, which will store data in the chunk file.
+    // - ItemTag, which will store data in the item's NBT.
+    //
+    // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link mechanism ItemTag.flag>.
+    // Any supported object type, including the 'server' base tag, can use the tags
+    // <@link tag FlaggableObject.flag>, <@link tag FlaggableObject.has_flag>, <@link tag FlaggableObject.flag_expiration>, <@link tag FlaggableObject.list_flags>.
+    //
+    // Additionally, flags be searched for with tags like <@link tag server.online_players_flagged>, <@link tag.server.players_flagged>, <@link tag server.spawned_npcs_flagged>,
+    // <@link tag server.npcs_flagged>, <@link tag InventoryTag.contains.flagged>, <@link tag InventoryTag.quantity.flagged>, ...
+    // Flags can also be required by script event lines, as explained at <@link language Script Event Switches> and <@link language Player Event Switches>.
+    // Item flags can also be used as a requirement in <@link command take>.
+    // -->
 
     // <--[command]
     // @Name Flag
