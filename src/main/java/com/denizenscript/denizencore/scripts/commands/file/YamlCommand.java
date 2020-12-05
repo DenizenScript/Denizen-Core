@@ -350,8 +350,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         try {
                             FileInputStream fis = new FileInputStream(file);
                             String str = ScriptHelper.convertStreamToString(fis);
-                            runnableConfigs[0] = YamlConfiguration.load(str);
                             fis.close();
+                            runnableConfigs[0] = YamlConfiguration.load(str);
                             if (runnableConfigs[0] == null) {
                                 runnableConfigs[0] = new YamlConfiguration();
                             }
