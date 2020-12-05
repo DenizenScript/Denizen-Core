@@ -40,6 +40,7 @@ public class FlagCommand extends AbstractCommand {
     // For more generic memory options, see <@link command yaml> or <@link command sql>.
     //
     // Flags can be sub-mapped with the '.' key, meaning a flag named 'x.y.z' is actually a flag 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final flag value.
+    // In other words, "<server.flag[a.b.c]>" is equivalent to "<server.flag[a].get[b].get[c]>"
     //
     // The currently supported flag targets are:
     // - 'server', essentially a global flag target
@@ -90,11 +91,11 @@ public class FlagCommand extends AbstractCommand {
     //
     // @Usage
     // Use to create or set a flag on a player.
-    // - flag player playstyle:aggressive
+    // - flag <player> playstyle:aggressive
     //
     // @Usage
     // Use to flag an npc with a given tag value.
-    // - flag npc location:<npc.location>
+    // - flag <npc> location:<npc.location>
     //
     // @Usage
     // Use to apply mathematical changes to a flag's value on a unique object.
@@ -191,8 +192,14 @@ public class FlagCommand extends AbstractCommand {
                 tracker = ((FlaggableObject) object).getFlagTracker();
             }
             else {
-                Debug.echoError("Cannot flag '" + object + "': that object type is not flaggable!");
-                continue;
+                FlaggableObject obj = DenizenCore.getImplementation().simpleWordToFlaggable(object.toString(), scriptEntry);
+                if (obj != null) {
+                    tracker = obj.getFlagTracker();
+                }
+                else {
+                    Debug.echoError("Cannot flag '" + object + "': that object type is not flaggable!");
+                    continue;
+                }
             }
             ((FlagActionProvider) flagAction.provider).tracker = tracker;
             flagAction.execute(scriptEntry.getContext());

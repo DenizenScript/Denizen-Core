@@ -132,6 +132,7 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
     public void setFlag(String key, ObjectTag value, TimeTag expiration) {
         List<String> splitKey = CoreUtilities.split(key, '.');
         String endKey = splitKey.get(splitKey.size() - 1);
+        MapTag map = this.map;
         for (int i = 0; i < splitKey.size() - 1; i++) {
             MapTag flagMap = (MapTag) map.getObject(splitKey.get(i));
             if (flagMap == null) {
@@ -147,8 +148,12 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
             map = (MapTag) innerMapTag;
         }
         MapTag resultMap = new MapTag();
-        resultMap.map.put(valueString, value);
-        resultMap.map.put(expirationString, expiration);
+        if (value != null) {
+            resultMap.map.put(valueString, value);
+            if (expiration != null) {
+                resultMap.map.put(expirationString, expiration);
+            }
+        }
         map.putObject(endKey, resultMap);
     }
 
