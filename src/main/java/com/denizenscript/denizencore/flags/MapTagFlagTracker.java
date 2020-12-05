@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.flags;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -128,6 +129,21 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         }
     }
 
+    public MapTag flaggifyMapTag(MapTag map) {
+        MapTag toReturn = new MapTag();
+        for (Map.Entry<StringHolder, ObjectTag> pair : map.map.entrySet()) {
+            MapTag flagMap = new MapTag();
+            if (pair.getValue() instanceof MapTag) {
+                flagMap.map.put(valueString, flaggifyMapTag((MapTag) pair.getValue()));
+            }
+            else {
+                flagMap.map.put(valueString, pair.getValue());
+            }
+            toReturn.map.put(pair.getKey(), flagMap);
+        }
+        return toReturn;
+    }
+
     @Override
     public void setFlag(String key, ObjectTag value, TimeTag expiration) {
         List<String> splitKey = CoreUtilities.split(key, '.');
@@ -149,6 +165,15 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
         }
         MapTag resultMap = new MapTag();
         if (value != null) {
+            if (value instanceof MapTag) {
+                value = flaggifyMapTag((MapTag) value);
+            }
+            else if (value instanceof ElementTag && value.toString().startsWith("map@")) {
+                MapTag mappified = MapTag.valueOf(value.toString(), CoreUtilities.noDebugContext);
+                if (mappified != null) {
+                    value = flaggifyMapTag(mappified);
+                }
+            }
             resultMap.map.put(valueString, value);
             if (expiration != null) {
                 resultMap.map.put(expirationString, expiration);

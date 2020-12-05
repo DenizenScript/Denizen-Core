@@ -201,6 +201,10 @@ public class FlagCommand extends AbstractCommand {
                     continue;
                 }
             }
+            if (tracker == null) {
+                Debug.echoError("Something went wrong, cannot flag '" + object + "'...");
+                continue;
+            }
             ((FlagActionProvider) flagAction.provider).tracker = tracker;
             flagAction.execute(scriptEntry.getContext());
             if (object instanceof FlaggableObject) {
