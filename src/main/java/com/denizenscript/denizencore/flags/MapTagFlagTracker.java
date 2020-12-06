@@ -163,8 +163,11 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
             }
             map = (MapTag) innerMapTag;
         }
-        MapTag resultMap = new MapTag();
-        if (value != null) {
+        if (value == null) {
+            map.map.remove(new StringHolder(endKey));
+        }
+        else {
+            MapTag resultMap = new MapTag();
             if (value instanceof MapTag) {
                 value = flaggifyMapTag((MapTag) value);
             }
@@ -178,8 +181,8 @@ public class MapTagFlagTracker extends AbstractFlagTracker {
             if (expiration != null) {
                 resultMap.map.put(expirationString, expiration);
             }
+            map.putObject(endKey, resultMap);
         }
-        map.putObject(endKey, resultMap);
     }
 
     @Override
