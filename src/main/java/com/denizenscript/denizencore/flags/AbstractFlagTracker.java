@@ -1,10 +1,7 @@
 package com.denizenscript.denizencore.flags;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.TimeTag;
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.Deprecations;
@@ -110,12 +107,17 @@ public abstract class AbstractFlagTracker {
                 attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is invalid or unavailable.");
                 return null;
             }
-            if (!(tracker instanceof MapTagFlagTracker)) {
-                attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is not map-based.");
-                return null;
-            }
             listFlagsTagWarning.warn(attribute.context);
-            return ((MapTagFlagTracker) tracker).map;
+            if (tracker instanceof MapTagFlagTracker) {
+                return ((MapTagFlagTracker) tracker).map;
+            }
+            else {
+                MapTag result = new MapTag();
+                for (String key : tracker.listAllFlags()) {
+                    result.putObject(key, tracker.getFlagValue(key));
+                }
+                return result;
+            }
         });
     }
 
