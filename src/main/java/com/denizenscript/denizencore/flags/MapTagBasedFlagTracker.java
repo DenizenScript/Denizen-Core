@@ -150,10 +150,11 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         MapTag map = rootMap;
         String endKey = splitKey.get(splitKey.size() - 1);
         for (int i = 0; i < splitKey.size() - 1; i++) {
-            MapTag flagMap = i == 0 ? map : (MapTag) map.getObject(splitKey.get(i));
+            MapTag flagMap = i == 0 ? rootMap : (MapTag) map.getObject(splitKey.get(i));
             if (flagMap == null) {
                 flagMap = new MapTag();
                 if (i == 0) {
+                    rootMap = flagMap;
                     setRootMap(splitKey.get(0), flagMap);
                 }
                 else {
@@ -188,8 +189,11 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
             }
             if (splitKey.size() != 1) {
                 map.putObject(endKey, resultMap);
+                setRootMap(splitKey.get(0), rootMap);
             }
-            setRootMap(splitKey.get(0), resultMap);
+            else {
+                setRootMap(key, resultMap);
+            }
         }
     }
 }

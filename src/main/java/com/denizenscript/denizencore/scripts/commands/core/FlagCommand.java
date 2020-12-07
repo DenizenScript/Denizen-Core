@@ -43,8 +43,8 @@ public class FlagCommand extends AbstractCommand {
     // In other words, "<server.flag[a.b.c]>" is equivalent to "<server.flag[a].get[b].get[c]>"
     //
     // The currently supported flag targets are:
-    // - 'server', essentially a global flag target
-    // - PlayerTag, which will store data in the playerdata file.
+    // - 'server', essentially a global flag target, that will store data in the file "plugins/Denizen/server_flags.dat"
+    // - PlayerTag, which will store data in the file "plugins/Denizen/player_flags/[UUID_HERE].dat"
     // - NPCTag (Citizens), which will store data in the Citizens saves file as the 'denizen_flags' trait.
     // - EntityTag, which will store data in the entity's NBT in the world file.
     // - LocationTag, for block flags, which will store data in the chunk file.
