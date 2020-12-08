@@ -40,10 +40,10 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         if (isExpired(map.map.get(expirationString))) {
             return null;
         }
-        ObjectTag rootValue = map.map.get(valueString);
         if (splitKey.size() == 1) {
-            return rootValue;
+            return map.map.get(type);
         }
+        ObjectTag rootValue = map.map.get(valueString);
         if (!(rootValue instanceof MapTag)) {
             return null;
         }
