@@ -50,7 +50,7 @@ public class FlagCommand extends AbstractCommand {
     // - LocationTag, for block flags, which will store data in the chunk file.
     // - ItemTag, which will store data in the item's NBT.
     //
-    // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link mechanism ItemTag.flag>.
+    // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link command inventory> with the 'flag' argument.
     // Any supported object type, including the 'server' base tag, can use the tags
     // <@link tag FlaggableObject.flag>, <@link tag FlaggableObject.has_flag>, <@link tag FlaggableObject.flag_expiration>, <@link tag FlaggableObject.list_flags>.
     //

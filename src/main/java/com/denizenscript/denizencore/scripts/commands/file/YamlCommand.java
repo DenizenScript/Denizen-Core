@@ -173,15 +173,6 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     arg.matches("unload")) {
                 scriptEntry.addObject("action", new ElementTag("UNLOAD"));
             }
-            else if (!scriptEntry.hasObject("value") &&
-                    arg.matchesPrefix("value")) {
-                if (arg.matchesArgumentType(ListTag.class)) {
-                    scriptEntry.addObject("value", arg.asType(ListTag.class));
-                }
-                else {
-                    scriptEntry.addObject("value", arg.asElement());
-                }
-            }
             else if (!scriptEntry.hasObject("id") &&
                     arg.matchesPrefix("id")) {
                 scriptEntry.addObject("id", arg.asElement());
@@ -314,11 +305,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             + (rawText != null ? rawText.debug() : "")
                             + (toId != null ? toId.debug() : ""));
         }
-
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());
         final String id = CoreUtilities.toLowerCase(idElement.asString());
-
         if (action != Action.LOAD && action != Action.SAVE && scriptEntry.shouldWaitFor()) {
             scriptEntry.setFinished(true);
         }

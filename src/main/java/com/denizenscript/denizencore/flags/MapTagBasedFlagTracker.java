@@ -171,6 +171,7 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         }
         if (value == null) {
             map.map.remove(new StringHolder(endKey));
+            setRootMap(splitKey.get(0), rootMap);
         }
         else {
             MapTag resultMap = new MapTag();
