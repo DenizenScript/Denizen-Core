@@ -41,7 +41,11 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
             return null;
         }
         if (splitKey.size() == 1) {
-            return map.map.get(type);
+            ObjectTag returnValue = map.map.get(type);
+            if (returnValue instanceof MapTag) {
+                return deflaggedSubMap((MapTag) returnValue);
+            }
+            return returnValue;
         }
         ObjectTag rootValue = map.map.get(valueString);
         if (!(rootValue instanceof MapTag)) {

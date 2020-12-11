@@ -107,17 +107,7 @@ public abstract class AbstractFlagTracker {
                 attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is invalid or unavailable.");
                 return null;
             }
-            listFlagsTagWarning.warn(attribute.context);
-            if (tracker instanceof MapTagFlagTracker) {
-                return ((MapTagFlagTracker) tracker).map;
-            }
-            else {
-                MapTag result = new MapTag();
-                for (String key : tracker.listAllFlags()) {
-                    result.putObject(key, tracker.getFlagValue(key));
-                }
-                return result;
-            }
+            return tracker.doFlagMapTag(attribute);
         });
     }
 
@@ -164,5 +154,19 @@ public abstract class AbstractFlagTracker {
         ListTag list = new ListTag();
         list.addAll(listAllFlags());
         return list;
+    }
+
+    public MapTag doFlagMapTag(Attribute attribute) {
+        listFlagsTagWarning.warn(attribute.context);
+        if (this instanceof MapTagFlagTracker) {
+            return ((MapTagFlagTracker) this).map;
+        }
+        else {
+            MapTag result = new MapTag();
+            for (String key : listAllFlags()) {
+                result.putObject(key, getFlagValue(key));
+            }
+            return result;
+        }
     }
 }
