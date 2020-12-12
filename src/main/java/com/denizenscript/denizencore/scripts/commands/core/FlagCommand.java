@@ -139,7 +139,7 @@ public class FlagCommand extends AbstractCommand {
                 scriptEntry.addObject("duration", arg.asType(DurationTag.class));
             }
             else if (!scriptEntry.hasObject("flag_action")) {
-                scriptEntry.addObject("flag_action", DataActionHelper.parse(new FlagActionProvider(), arg.getRawValue()));
+                scriptEntry.addObject("flag_action", DataActionHelper.parse(new FlagActionProvider(), arg, scriptEntry.context));
             }
             else {
                 arg.reportUnhandled();

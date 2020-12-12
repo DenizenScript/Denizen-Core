@@ -52,7 +52,7 @@ public class DataAction {
         if (object instanceof ListTag) {
             return autoList((ListTag) object);
         }
-        return new ElementTag(object.toString());
+        return object.duplicate();
     }
 
     public BigDecimal autoNumber(TagContext context) {

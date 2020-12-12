@@ -101,7 +101,7 @@ public class DefineCommand extends AbstractCommand {
                 if (CoreUtilities.contains(arg.getRawValue(), ':')) {
                     DefinitionActionProvider provider = new DefinitionActionProvider();
                     provider.queue = scriptEntry.getResidingQueue();
-                    scriptEntry.addObject("action", DataActionHelper.parse(provider, arg.getRawValue()));
+                    scriptEntry.addObject("action", DataActionHelper.parse(provider, arg, scriptEntry.context));
                 }
                 else {
                     scriptEntry.addObject("definition", new ElementTag(CoreUtilities.toLowerCase(arg.getValue())));
