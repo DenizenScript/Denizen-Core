@@ -517,10 +517,25 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.from_now>
+        // @returns DurationTag
+        // @description
+        // Returns the DurationTag between this time object and the real current system time.
+        // The value will always be positive.
+        // This is equivalent to the absolute value of ".duration_since[<util.time_now>]", and exists primarily as a convenience tag.
+        // For example, a TimeTag for Tuesday will return a DurationTag of '1d' when the tag is used on a Monday.
+        // A TimeTag for Sunday will also return a DurationTag of '1d' when used on a Monday.
+        // If positive/negative differences are required, consider instead using <@link tag TimeTag.duration_since>.
+        // -->
+        registerTag("from_now", (attribute, object) -> {
+            return new DurationTag(Math.abs(object.millis() - now().millis()) / 1000.0);
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.duration_since[<time>]>
         // @returns DurationTag
         // @description
-        // Returns the DurationTime that passed between the input time and this time.
+        // Returns the DurationTag that passed between the input time and this time.
         // That is, a.duration_since[b] returns (a - b).
         // For example, a time on Monday, .duration_since[a time on Sunday], will return '1d'.
         // -->
