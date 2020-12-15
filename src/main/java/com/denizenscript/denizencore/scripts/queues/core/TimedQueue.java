@@ -7,7 +7,27 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
-public class TimedQueue extends ScriptQueue implements Delayable {
+public class TimedQueue extends ScriptQueue {
+
+    @FunctionalInterface
+    public interface DelayTracker {
+
+        boolean isDelayed();
+    }
+
+    public static class DeltaTimeDelayTracker implements DelayTracker {
+
+        public long serverTimeEnd;
+
+        public DeltaTimeDelayTracker(long millis) {
+            serverTimeEnd = DenizenCore.serverTimeMillis + millis;
+        }
+
+        @Override
+        public boolean isDelayed() {
+            return serverTimeEnd > DenizenCore.serverTimeMillis;
+        }
+    }
 
     /////////////////////
     // Private instance fields and constructors
@@ -19,14 +39,14 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     protected boolean paused = false;
 
-    protected long delay_ticks = 0;
+    public DelayTracker delay;
 
     public void delayFor(DurationTag duration) {
-        delay_ticks = DenizenCore.serverTimeMillis + duration.getMillis();
+        delay = new DeltaTimeDelayTracker(duration.getMillis());
     }
 
     public boolean isDelayed() {
-        return (delay_ticks > DenizenCore.serverTimeMillis);
+        return delay != null && delay.isDelayed();
     }
 
     public TimedQueue(String id) {

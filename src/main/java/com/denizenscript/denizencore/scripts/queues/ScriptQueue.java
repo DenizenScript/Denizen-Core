@@ -244,7 +244,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      * @param delay how long to delay initially.
      * @return the newly created queue.
      */
-    public TimedQueue forceToTimed(DurationTag delay) {
+    public TimedQueue forceToTimed(TimedQueue.DelayTracker delay) {
         Runnable r = callback;
         callback = null;
         TimedQueue newQueue = new TimedQueue("FORCE:" + id, 0);
@@ -269,9 +269,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
         clear();
-        if (delay != null) {
-            newQueue.delayFor(delay);
-        }
+        newQueue.delay = delay;
         newQueue.startTime = startTime;
         newQueue.startTimeMilli = startTimeMilli;
         newQueue.script = script;

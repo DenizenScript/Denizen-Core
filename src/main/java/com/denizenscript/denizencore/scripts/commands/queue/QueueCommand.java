@@ -134,7 +134,7 @@ public class QueueCommand extends AbstractCommand {
                     ((TimedQueue) queue.queue).setPaused(true);
                 }
                 else {
-                    queue.queue.forceToTimed(new DurationTag(1L)).setPaused(true);
+                    queue.queue.forceToTimed(new TimedQueue.DeltaTimeDelayTracker(1)).setPaused(true);
                 }
                 return;
             case RESUME:
@@ -147,7 +147,7 @@ public class QueueCommand extends AbstractCommand {
                     ((TimedQueue) queue.queue).delayFor(delay);
                 }
                 else {
-                    queue.queue.forceToTimed(delay);
+                    queue.queue.forceToTimed(new TimedQueue.DeltaTimeDelayTracker(delay.getMillis()));
                 }
                 return;
         }
