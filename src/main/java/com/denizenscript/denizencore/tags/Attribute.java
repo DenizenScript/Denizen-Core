@@ -364,7 +364,6 @@ public class Attribute {
                 Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
             }
         }
-
         return 0;
     }
 
@@ -379,7 +378,6 @@ public class Attribute {
                 Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
             }
         }
-
         return 0;
     }
 

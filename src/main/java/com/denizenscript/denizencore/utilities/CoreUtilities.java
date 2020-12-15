@@ -52,7 +52,10 @@ public class CoreUtilities {
         if (obj == null) {
             return new ElementTag("null");
         }
-        else if (obj instanceof List) {
+        if (obj instanceof YamlConfiguration) {
+            obj = ((YamlConfiguration) obj).contents;
+        }
+        if (obj instanceof List) {
             ListTag listResult = new ListTag();
             for (Object subObj : (List) obj) {
                 listResult.addObject(objectToTagForm(subObj, context, scriptStrip, doParse));
