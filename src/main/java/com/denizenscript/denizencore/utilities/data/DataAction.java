@@ -154,12 +154,14 @@ public class DataAction {
                 if (index != 0) {
                     list.remove(index - 1);
                 }
-                requiresInputValue();
-                String findValue = inputValue.toString();
-                for (int i = 0; i < list.size(); i++) {
-                    if (CoreUtilities.equalsIgnoreCase(list.get(i), findValue)) {
-                        list.remove(i);
-                        break;
+                else {
+                    requiresInputValue();
+                    String findValue = inputValue.toString();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (CoreUtilities.equalsIgnoreCase(list.get(i), findValue)) {
+                            list.remove(i);
+                            break;
+                        }
                     }
                 }
                 provider.setValueAt(key, list);
