@@ -3,13 +3,13 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 
 public class QueueCommand extends AbstractCommand {
 
@@ -130,21 +130,21 @@ public class QueueCommand extends AbstractCommand {
                 queue.queue.stop();
                 return;
             case PAUSE:
-                if (queue.queue instanceof Delayable) {
-                    ((Delayable) queue.queue).setPaused(true);
+                if (queue.queue instanceof TimedQueue) {
+                    ((TimedQueue) queue.queue).setPaused(true);
                 }
                 else {
                     queue.queue.forceToTimed(new DurationTag(1L)).setPaused(true);
                 }
                 return;
             case RESUME:
-                if (queue.queue instanceof Delayable) {
-                    ((Delayable) queue.queue).setPaused(false);
+                if (queue.queue instanceof TimedQueue) {
+                    ((TimedQueue) queue.queue).setPaused(false);
                 }
                 return;
             case DELAY:
-                if (queue.queue instanceof Delayable) {
-                    ((Delayable) queue.queue).delayFor(delay);
+                if (queue.queue instanceof TimedQueue) {
+                    ((TimedQueue) queue.queue).delayFor(delay);
                 }
                 else {
                     queue.queue.forceToTimed(delay);

@@ -15,26 +15,16 @@ public class TimedQueue extends ScriptQueue implements Delayable {
 
     private Schedulable schedulable;
 
-    // The speed of the engine, the # of ticks
-    // between each revolution. Use setSpeed()
-    // to change this.
     private long ticks;
 
-    // ScriptQueues can be paused mid-rotation.
-    // The next entry will be held up until
-    // un-paused.
     protected boolean paused = false;
 
-    // The delay in ticks can put off the
-    // start of a queue
     protected long delay_ticks = 0;
 
-    @Override
     public void delayFor(DurationTag duration) {
         delay_ticks = DenizenCore.serverTimeMillis + duration.getMillis();
     }
 
-    @Override
     public boolean isDelayed() {
         return (delay_ticks > DenizenCore.serverTimeMillis);
     }
@@ -57,7 +47,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
     // Public instance setters and getters
     /////////////////////
 
-    @Override
     public boolean isInstantSpeed() {
         return ticks <= 0;
     }
@@ -79,8 +68,7 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      *
      * @param paused whether the queue should be paused
      */
-    @Override
-    public Delayable setPaused(boolean paused) {
+    public TimedQueue setPaused(boolean paused) {
         this.paused = paused;
         return this;
     }
@@ -90,7 +78,6 @@ public class TimedQueue extends ScriptQueue implements Delayable {
      *
      * @return true if paused.
      */
-    @Override
     public boolean isPaused() {
         return paused;
     }

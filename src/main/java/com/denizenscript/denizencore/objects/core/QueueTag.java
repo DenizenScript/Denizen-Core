@@ -3,7 +3,6 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.scripts.queues.core.Delayable;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
@@ -161,7 +160,7 @@ public class QueueTag implements ObjectTag, Adjustable {
         // -->
         registerTag("state", (attribute, object) -> {
             String state;
-            if ((object.getQueue() instanceof Delayable) && ((Delayable) object.getQueue()).isPaused()) {
+            if ((object.getQueue() instanceof TimedQueue) && ((TimedQueue) object.getQueue()).isPaused()) {
                 state = "paused";
             }
             else if (object.getQueue().is_started) {

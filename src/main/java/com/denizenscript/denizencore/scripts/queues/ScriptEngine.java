@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.scripts.queues;
 
 import com.denizenscript.denizencore.scripts.commands.CommandExecutor;
-import com.denizenscript.denizencore.scripts.queues.core.Delayable;
+import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
@@ -14,13 +14,13 @@ public class ScriptEngine {
     }
 
     boolean shouldHold(ScriptQueue scriptQueue) {
-        if (scriptQueue instanceof Delayable && ((Delayable) scriptQueue).isPaused()) {
+        if (scriptQueue instanceof TimedQueue && ((TimedQueue) scriptQueue).isPaused()) {
             return true;
         }
         if (scriptQueue.getLastEntryExecuted() == null || !scriptQueue.getLastEntryExecuted().shouldWaitFor()) {
             return false;
         }
-        if (!(scriptQueue instanceof Delayable)) {
+        if (!(scriptQueue instanceof TimedQueue)) {
             Debug.echoDebug(scriptQueue.getLastEntryExecuted(), "Forcing queue " + scriptQueue.id + " into a timed queue...");
             scriptQueue.forceToTimed(null);
         }
@@ -54,8 +54,8 @@ public class ScriptEngine {
             scriptEntry.updateContext();
             scriptQueue.setLastEntryExecuted(scriptEntry);
             commandExecutor.execute(scriptEntry);
-            if (scriptQueue instanceof Delayable) {
-                Delayable delayedQueue = (Delayable) scriptQueue;
+            if (scriptQueue instanceof TimedQueue) {
+                TimedQueue delayedQueue = (TimedQueue) scriptQueue;
                 if (delayedQueue.isDelayed() || delayedQueue.isPaused()) {
                     break;
                 }
