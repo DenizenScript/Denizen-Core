@@ -225,6 +225,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/12/05, deprecate officially by 2022.
     public static Warning itemNbt = new FutureWarning("The item 'nbt' property is deprecated: use ItemTag flags instead!");
 
+    // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, deprecate officially by 2022.
+    public static Warning queueClear = new FutureWarning("Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

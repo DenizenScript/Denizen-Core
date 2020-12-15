@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
@@ -76,9 +77,7 @@ public class QueueCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!scriptEntry.hasObject("action")
                     && arg.matchesEnum(Action.values())) {
                 scriptEntry.addObject("action", Action.valueOf(arg.getValue().toUpperCase()));
@@ -87,63 +86,49 @@ public class QueueCommand extends AbstractCommand {
                     scriptEntry.addObject("delay", arg.asType(DurationTag.class));
                 }
             }
-
-            // No prefix required to specify the queue
             else if ((arg.matchesArgumentType(QueueTag.class)
                     || arg.matchesPrefix("queue"))
                     && !scriptEntry.hasObject("queue")) {
                 scriptEntry.addObject("queue", arg.asType(QueueTag.class));
             }
-
-            // ...but we also need to error out this command if the queue was not found.
             else {
                 throw new InvalidArgumentsException("The specified queue could not be found: " + arg.getRawValue());
             }
-
         }
-
-        // If no queues have been added, assume 'residing queue'
         scriptEntry.defaultObject("queue", new QueueTag(scriptEntry.getResidingQueue()));
-
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify an action. Valid: CLEAR, DELAY, PAUSE, RESUME");
         }
-
         if (scriptEntry.getObject("action") == Action.DELAY && !scriptEntry.hasObject("delay")) {
             throw new InvalidArgumentsException("Must specify a delay.");
         }
-
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         QueueTag queue = scriptEntry.getObjectTag("queue");
         Action action = (Action) scriptEntry.getObject("action");
         DurationTag delay = scriptEntry.getObjectTag("delay");
-
         if (scriptEntry.getResidingQueue().procedural && !queue.getQueue().id.equals(scriptEntry.getResidingQueue().id)) {
             Debug.echoError("Cannot modify other queues from a procedural queue.");
             return;
         }
-
+        if (queue.getQueue().id.equals(scriptEntry.getResidingQueue().id) && (action == Action.CLEAR || action == Action.STOP)) {
+            Deprecations.queueClear.warn(scriptEntry);
+        }
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), queue.debug()
                     + ArgumentHelper.debugObj("Action", action.toString())
                     + (action == Action.DELAY ? delay.debug() : ""));
         }
-
         switch (action) {
-
             case CLEAR:
                 queue.queue.clear();
                 return;
-
             case STOP:
                 queue.queue.clear();
                 queue.queue.stop();
                 return;
-
             case PAUSE:
                 if (queue.queue instanceof Delayable) {
                     ((Delayable) queue.queue).setPaused(true);
@@ -152,13 +137,11 @@ public class QueueCommand extends AbstractCommand {
                     queue.queue.forceToTimed(new DurationTag(1L)).setPaused(true);
                 }
                 return;
-
             case RESUME:
                 if (queue.queue instanceof Delayable) {
                     ((Delayable) queue.queue).setPaused(false);
                 }
                 return;
-
             case DELAY:
                 if (queue.queue instanceof Delayable) {
                     ((Delayable) queue.queue).delayFor(delay);
