@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -56,6 +57,30 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             }
             startOfLine = eol + 1;
             eol = input.indexOf('\n', eol + 1);
+        }
+        doTotalClean();
+    }
+
+    public void doTotalClean() {
+        if (MapTagBasedFlagTracker.skipAllCleanings) {
+            return;
+        }
+        ArrayList<StringHolder> toRemove = new ArrayList<>();
+        for (Map.Entry<StringHolder, SaveOptimizedFlag> entry : map.entrySet()) {
+            if (isExpired(entry.getValue().getMap().map.get(expirationString))) {
+                toRemove.add(entry.getKey());
+            }
+            else {
+                ObjectTag subValue = entry.getValue().getMap().map.get(valueString);
+                if (subValue instanceof MapTag) {
+                    if (doClean((MapTag) subValue)) {
+                        entry.getValue().string = null;
+                    }
+                }
+            }
+        }
+        for (StringHolder str : toRemove) {
+            map.remove(str);
         }
     }
 

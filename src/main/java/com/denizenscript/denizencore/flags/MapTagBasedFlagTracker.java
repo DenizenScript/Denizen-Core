@@ -17,6 +17,8 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
 
     public static StringHolder expirationString = new StringHolder("__expiration");
 
+    public static boolean skipAllCleanings = false;
+
     public abstract MapTag getRootMap(String key);
 
     public abstract void setRootMap(String key, MapTag map);
@@ -110,22 +112,29 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         return (TimeTag) getFlagValueOfType(key, expirationString);
     }
 
-    public void doClean(MapTag map) {
+    public boolean doClean(MapTag map) {
+        if (skipAllCleanings) {
+            return false;
+        }
+        boolean anyCleaned = false;
         ArrayList<StringHolder> toRemove = new ArrayList<>();
         for (Map.Entry<StringHolder, ObjectTag> entry : map.map.entrySet()) {
             if (isExpired(((MapTag) entry.getValue()).map.get(expirationString))) {
                 toRemove.add(entry.getKey());
+                anyCleaned = true;
             }
             else {
                 ObjectTag subValue = ((MapTag) entry.getValue()).map.get(valueString);
                 if (subValue instanceof MapTag) {
-                    doClean((MapTag) subValue);
+                    boolean didClean = doClean((MapTag) subValue);
+                    anyCleaned = anyCleaned || didClean;
                 }
             }
         }
         for (StringHolder str : toRemove) {
             map.map.remove(str);
         }
+        return anyCleaned;
     }
 
     public MapTag flaggifyMapTag(MapTag map) {
