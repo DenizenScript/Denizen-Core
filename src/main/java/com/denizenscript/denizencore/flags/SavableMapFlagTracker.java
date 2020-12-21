@@ -19,6 +19,8 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
 
         public String string;
 
+        public boolean canExpire;
+
         public MapTag getMap() {
             if (map == null) {
                 map = MapTag.valueOf(string, CoreUtilities.errorButNoDebugContext);
@@ -49,9 +51,15 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         while (eol != -1) {
             int colon = input.indexOf(':', startOfLine);
             if (colon != -1) {
-                String key = unescapeKey(input.substring(startOfLine, colon));
+                String key = input.substring(startOfLine, colon);
+                boolean expirable = key.startsWith("\\ex");
+                if (expirable) {
+                    key = key.substring("\\ex".length());
+                }
+                key = unescapeKey(key);
                 String value = unescapeValue(input.substring(colon + 1, eol));
                 SaveOptimizedFlag flag = new SaveOptimizedFlag();
+                flag.canExpire = expirable;
                 flag.string = value;
                 map.put(new StringHolder(key), flag);
             }
@@ -67,6 +75,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         }
         ArrayList<StringHolder> toRemove = new ArrayList<>();
         for (Map.Entry<StringHolder, SaveOptimizedFlag> entry : map.entrySet()) {
+            if (!entry.getValue().canExpire) {
+                continue;
+            }
             if (isExpired(entry.getValue().getMap().map.get(expirationString))) {
                 toRemove.add(entry.getKey());
                 modified = true;
@@ -105,6 +116,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         SaveOptimizedFlag flag = new SaveOptimizedFlag();
         flag.map = value;
         flag.string = null;
+        if (value.map.containsKey(expirationString) || value.map.get(valueString) instanceof MapTag) {
+            flag.canExpire = true;
+        }
         map.put(new StringHolder(key), flag);
     }
 
@@ -143,9 +157,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         if (!CoreUtilities.contains(key, '\\')) {
             return key;
         }
-        key = CoreUtilities.replace(key, "\\amp", "&");
         key = CoreUtilities.replace(key, "\\co", ":");
         key = CoreUtilities.replace(key, "\\nl", "\n");
+        key = CoreUtilities.replace(key, "\\bs", "\\");
         return key;
     }
 
@@ -163,6 +177,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     public String toString() {
         StringBuilder toOutput = new StringBuilder(map.size() * 100);
         for (Map.Entry<StringHolder, SavableMapFlagTracker.SaveOptimizedFlag> flag : map.entrySet()) {
+            if (flag.getValue().canExpire) {
+                toOutput.append("\\ex");
+            }
             toOutput.append(escapeKey(flag.getKey().str)).append(":").append(escapeValue(flag.getValue().getString())).append('\n');
         }
         return toOutput.toString();
