@@ -69,12 +69,14 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         for (Map.Entry<StringHolder, SaveOptimizedFlag> entry : map.entrySet()) {
             if (isExpired(entry.getValue().getMap().map.get(expirationString))) {
                 toRemove.add(entry.getKey());
+                modified = true;
             }
             else {
                 ObjectTag subValue = entry.getValue().getMap().map.get(valueString);
                 if (subValue instanceof MapTag) {
                     if (doClean((MapTag) subValue)) {
                         entry.getValue().string = null;
+                        modified = true;
                     }
                 }
             }
