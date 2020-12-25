@@ -131,7 +131,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         return keys;
     }
 
-    public static AsciiMatcher valueEscapeNeededMatcher = new AsciiMatcher("\n\\");
+    public static AsciiMatcher valueEscapeNeededMatcher = new AsciiMatcher("\0\n\\");
 
     public static String unescapeValue(String key) {
         if (!CoreUtilities.contains(key, '\\')) {
@@ -148,10 +148,11 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         }
         key = CoreUtilities.replace(key, "\\", "\\bs");
         key = CoreUtilities.replace(key, "\n", "\\nl");
+        key = CoreUtilities.replace(key, "\0", "");
         return key;
     }
 
-    public static AsciiMatcher keyEscapeNeededMatcher = new AsciiMatcher(":\n\\");
+    public static AsciiMatcher keyEscapeNeededMatcher = new AsciiMatcher("\0:\n\\");
 
     public static String unescapeKey(String key) {
         if (!CoreUtilities.contains(key, '\\')) {
@@ -170,6 +171,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         key = CoreUtilities.replace(key, "\\", "\\bs");
         key = CoreUtilities.replace(key, ":", "\\co");
         key = CoreUtilities.replace(key, "\n", "\\nl");
+        key = CoreUtilities.replace(key, "\0", "");
         return key;
     }
 
