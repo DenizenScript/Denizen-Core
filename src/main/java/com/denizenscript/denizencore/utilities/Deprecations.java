@@ -228,6 +228,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, deprecate officially by 2022.
     public static Warning queueClear = new FutureWarning("Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
 
+    // In Bukkit impl, Added 2020/12/25, deprecate official by 2022.
+    public static Warning itemEnchantmentTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
