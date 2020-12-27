@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
@@ -23,14 +24,25 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
 
         public MapTag getMap() {
             if (map == null) {
-                map = MapTag.valueOf(string, CoreUtilities.errorButNoDebugContext);
+                if (string.startsWith("map@")) {
+                    map = MapTag.valueOf(string, CoreUtilities.errorButNoDebugContext);
+                }
+                else {
+                    map = new MapTag();
+                    map.map.put(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.errorButNoDebugContext));
+                }
             }
             return map;
         }
 
         public String getString() {
             if (string == null) {
-                string = map.toString();
+                if (map.map.containsKey(expirationString) || map.map.get(valueString) instanceof MapTag) {
+                    string = map.savable();
+                }
+                else {
+                    string = map.map.get(valueString).savable();
+                }
             }
             return string;
         }
