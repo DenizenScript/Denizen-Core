@@ -119,6 +119,9 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         boolean anyCleaned = false;
         ArrayList<StringHolder> toRemove = new ArrayList<>();
         for (Map.Entry<StringHolder, ObjectTag> entry : map.map.entrySet()) {
+            if (!(entry.getValue() instanceof MapTag)) {
+                continue;
+            }
             if (isExpired(((MapTag) entry.getValue()).map.get(expirationString))) {
                 toRemove.add(entry.getKey());
                 anyCleaned = true;

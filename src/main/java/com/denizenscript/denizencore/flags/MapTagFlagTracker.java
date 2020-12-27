@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -39,7 +40,16 @@ public class MapTagFlagTracker extends MapTagBasedFlagTracker {
 
     @Override
     public MapTag getRootMap(String key) {
-        return (MapTag) map.getObject(key);
+        ObjectTag subObj = map.getObject(key);
+        if (subObj == null) {
+            return null;
+        }
+        if (subObj instanceof MapTag) {
+            return (MapTag) subObj;
+        }
+        MapTag toReturn = new MapTag();
+        toReturn.map.put(valueString, subObj);
+        return toReturn;
     }
 
     @Override
@@ -48,7 +58,13 @@ public class MapTagFlagTracker extends MapTagBasedFlagTracker {
             map.map.remove(new StringHolder(key));
         }
         else {
-            map.putObject(key, value);
+            ObjectTag subValue = value.map.get(valueString);
+            if (value.map.containsKey(expirationString) || subValue instanceof MapTag) {
+                map.putObject(key, value);
+            }
+            else {
+                map.putObject(key, subValue);
+            }
         }
     }
 }
