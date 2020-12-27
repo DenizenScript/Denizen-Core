@@ -187,7 +187,12 @@ public class MapTag implements ObjectTag, Adjustable {
     }
 
     public void putObject(String key, ObjectTag value) {
-        map.put(new StringHolder(key), value);
+        if (value == null) {
+            map.remove(new StringHolder(key));
+        }
+        else {
+            map.put(new StringHolder(key), value);
+        }
     }
 
     public static void registerTags() {
