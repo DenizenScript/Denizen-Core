@@ -467,10 +467,17 @@ public class CoreUtilities {
         }
         return temp;
     }
+
     public static DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    public static DecimalFormat floatFormat = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     static {
         df.setMaximumFractionDigits(340);
+        floatFormat.setMaximumFractionDigits(8);
+    }
+
+    public static String doubleToString(float input) {
+        return floatFormat.format(input);
     }
 
     public static String doubleToString(double input) {
