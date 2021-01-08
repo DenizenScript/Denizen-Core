@@ -49,6 +49,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // It is recommended you hold the command by doing "- ~sql ..." rather than just "- sql ..."
     // as this will delay the commands following the SQL command until after the SQL operation is complete.
     //
+    // If you have an SQL database server other than MySQL, be sure to include the driver prefix (defaults to "mysql://" when unspecified).
+    //
     // @Tags
     // <entry[saveName].result> returns a ListTag of all rows from a query or update command, of the form escaped_text/escaped_text|escaped_text/escaped_text
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
@@ -164,7 +166,6 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-
         ElementTag action = scriptEntry.getElement("action");
         final ElementTag server = scriptEntry.getElement("server");
         final ElementTag username = scriptEntry.getElement("username");
@@ -172,23 +173,18 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         final ElementTag ssl = scriptEntry.getElement("ssl");
         final ElementTag sqlID = scriptEntry.getElement("sqlid");
         final ElementTag query = scriptEntry.getElement("query");
-
         if (scriptEntry.dbCallShouldDebug()) {
-
             Debug.report(scriptEntry, getName(), sqlID.debug()
                     + action.debug()
                     + (server != null ? server.debug() : "")
                     + (username != null ? username.debug() : "")
                     + (password != null ? ArgumentHelper.debugObj("password", "NotLogged") : "")
                     + (query != null ? query.debug() : ""));
-
         }
-
         if (!action.asString().equalsIgnoreCase("connect") &&
                 (!action.asString().equalsIgnoreCase("query") || !scriptEntry.shouldWaitFor())) {
             scriptEntry.setFinished(true);
         }
-
         try {
             if (action.asString().equalsIgnoreCase("connect")) {
                 if (server == null) {
@@ -389,6 +385,9 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         connectionProps.put("password", password);
         connectionProps.put("useSSL", ssl);
         connectionProps.put("LoginTimeout", "7");
-        return DriverManager.getConnection("jdbc:mysql://" + server, connectionProps);
+        if (!server.contains("://")) {
+            server = "mysql://" + server;
+        }
+        return DriverManager.getConnection("jdbc:" + server, connectionProps);
     }
 }
