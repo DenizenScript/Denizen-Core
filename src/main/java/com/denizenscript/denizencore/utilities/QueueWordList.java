@@ -94,15 +94,23 @@ public class QueueWordList {
 
     public static final List<String> FinalWordList;
 
+    public static final String[] injectedWordsList = new String[] {
+            "Minecraft", "Mine", "Craft", // Minecraft
+            "Citizens", "Denizen", "Sentinel", // Plugins
+            "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", // Dev contributors
+            "Anthony", "Ricky", "Xeane", // Veterans list
+            "Behr", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer" // Helpers list
+    };
+
     static {
         FinalWordList = CoreUtilities.split(WordList, ' ');
         FinalWordList.addAll(CoreUtilities.split(WordList2, ' '));
         // Weight the chances a bit heavily
-        FinalWordList.addAll(repeat("Minecraft", 50));
-        FinalWordList.addAll(repeat("Citizens", 50));
-        FinalWordList.addAll(repeat("Denizen", 100));
-        FinalWordList.addAll(repeat("Mine", 50));
-        FinalWordList.addAll(repeat("Craft", 50));
+        FinalWordList.addAll(repeat("Denizen", 50));
+        for (String word : injectedWordsList) {
+            FinalWordList.addAll(repeat(word, 25));
+        }
+        // Total word count is approximately 10,000 + 50 + (22 * 50) = 10,600
     }
 
     static List<String> repeat(String str, int times) {
