@@ -182,6 +182,22 @@ public class MapTag implements ObjectTag, Adjustable {
         return identify();
     }
 
+    public ObjectTag getDeepObject(String key) {
+        if (!CoreUtilities.contains(key, '.')) {
+            return getObject(key);
+        }
+        MapTag current = this;
+        List<String> subkeys = CoreUtilities.split(key, '.');
+        for (int i = 0; i < subkeys.size() - 1; i++) {
+            ObjectTag subValue = current.getObject(subkeys.get(i));
+            if (!(subValue instanceof MapTag)) {
+                return null;
+            }
+            current = (MapTag) subValue;
+        }
+        return current.getObject(subkeys.get(subkeys.size() - 1));
+    }
+
     public ObjectTag getObject(String key) {
         return map.get(new StringHolder(key));
     }
@@ -362,6 +378,31 @@ public class MapTag implements ObjectTag, Adjustable {
                 return valList;
             }
             return object.getObject(attribute.getContext(1));
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.deep_get[<key>|...]>
+        // @returns ObjectTag
+        // @description
+        // Returns the object value at the specified key, using deep key paths separated by the '.' symbol.
+        // This means if you have a MapTag with key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue"),
+        // then ".deep_get[root.leaf]" will return "myvalue".
+        // If a list is given as input, returns a list of values.
+        // -->
+        registerTag("deep_get", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.deep_get' must have an input value.");
+                return null;
+            }
+            if (attribute.getContext(1).contains("|")) {
+                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+                ListTag valList = new ListTag();
+                for (String key : keyList) {
+                    valList.addObject(object.getDeepObject(key));
+                }
+                return valList;
+            }
+            return object.getDeepObject(attribute.getContext(1));
         });
 
         // <--[tag]
