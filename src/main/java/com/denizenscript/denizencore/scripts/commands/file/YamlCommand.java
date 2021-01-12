@@ -630,6 +630,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) obj).entrySet()) {
                 newMap.put(deepCopyObject(entry.getKey()), deepCopyObject(entry.getValue()));
             }
+            return newMap;
         }
         return obj;
     }
