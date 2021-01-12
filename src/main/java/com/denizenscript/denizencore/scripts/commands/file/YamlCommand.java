@@ -611,14 +611,34 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
     }
 
+    public Object deepCopyObject(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof YamlConfiguration) {
+            return copySection((YamlConfiguration) obj);
+        }
+        else if (obj instanceof List) {
+            ArrayList outList = new ArrayList(((List) obj).size());
+            for (Object subValue : (List) obj) {
+                outList.add(deepCopyObject(subValue));
+            }
+            return outList;
+        }
+        else if (obj instanceof Map) {
+            LinkedHashMap newMap = new LinkedHashMap();
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) obj).entrySet()) {
+                newMap.put(deepCopyObject(entry.getKey()), deepCopyObject(entry.getValue()));
+            }
+        }
+        return obj;
+    }
+
     public YamlConfiguration copySection(YamlConfiguration section) {
         YamlConfiguration newSection = new YamlConfiguration();
         for (StringHolder key : section.getKeys(false)) {
             Object obj = section.get(key.str);
-            if (obj instanceof YamlConfiguration) {
-                obj = copySection((YamlConfiguration) obj);
-            }
-            newSection.set(key.str, obj);
+            newSection.set(key.str, deepCopyObject(obj));
         }
         return newSection;
     }
