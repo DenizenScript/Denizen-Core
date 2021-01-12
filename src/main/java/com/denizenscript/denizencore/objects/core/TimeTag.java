@@ -583,11 +583,11 @@ public class TimeTag implements ObjectTag, Adjustable {
         // @returns ElementTag
         // @description
         // Returns the time, formatted to the date format specification given.
-        // If no format input is given, uses "yyyy/MM/dd hh:mm:ss".
+        // If no format input is given, uses "yyyy/MM/dd HH:mm:ss".
         // For the full format specification, refer to "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
         // -->
         registerTag("format", (attribute, object) -> {
-            String formatText = attribute.hasContext(1) ? attribute.getContext(1) : "yyyy/MM/dd hh:mm:ss";
+            String formatText = attribute.hasContext(1) ? attribute.getContext(1) : "yyyy/MM/dd HH:mm:ss";
             DateTimeFormatter format = DateTimeFormatter.ofPattern(formatText);
             return new ElementTag(object.instant.format(format));
         });
