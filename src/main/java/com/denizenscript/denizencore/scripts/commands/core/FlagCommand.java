@@ -56,7 +56,7 @@ public class FlagCommand extends AbstractCommand {
     //
     // Additionally, flags be searched for with tags like <@link tag server.online_players_flagged>, <@link tag server.players_flagged>, <@link tag server.spawned_npcs_flagged>,
     // <@link tag server.npcs_flagged>, <@link tag InventoryTag.contains.flagged>, <@link tag InventoryTag.quantity.flagged>, ...
-    // Flags can also be required by script event lines, as explained at <@link language Script Event Switches> and <@link language Player Event Switches>.
+    // Flags can also be required by script event lines, as explained at <@link language Script Event Switches>.
     // Item flags can also be used as a requirement in <@link command take>.
     //
     // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.

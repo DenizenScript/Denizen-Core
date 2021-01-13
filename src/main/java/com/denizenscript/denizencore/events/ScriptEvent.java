@@ -111,21 +111,32 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // This is both more efficient to process and more explicit in what's going on, however it is less clear/readable to the average user, so it is not often used.
         // Some events may have switches for less-often specified data, and use the event line for other options.
         //
-        // One of the most common switches across many Denizen events is "in:<area>".
-        // In these switches, 'area' is a world, noted cuboid, or noted ellipsoid.
-        // So for example you might have an event line like "on player breaks block in:space:"
-        // where space is the name of a world or of a noted cuboid.
-        // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
-        //
         // There are also some standard switches available to every script event, and some available to an entire category of script events.
         //
         // One switch available to every event is "server_flagged:<flag name>", which requires that there be a server flag under the given name.
         // For example, "on console output server_flagged:recording:" will only run the handler for console output when the "recording" flag is set on the server.
         //
+        // Events that have a player linked have the "flagged" and "permission" switches available.
+        // Will always fail if the event doesn't have a linked player.
+        // The "flagged:<flag name>" will limit the event to only fire when the player has the flag with the specified name.
+        // It can be used like "on player breaks block flagged:nobreak:" (that would be used alongside "- flag player nobreak").
+        // The "permission:<perm key>" will limit the event to only fire when the player has the specified permission key.
+        // It can be used like "on player breaks block permission:denizen.my.perm:"
+        // As with any advanced switch, for multiple flag or permission requirements, just list them separated by '|' pipes, like "flagged:a|b|c".
+        //
+        // Events that occur at a specific location have the "in:<area>" and "location_flagged" switches.
+        // This switches will be ignored (not counted one way or the other) for events that don't have a known location.
+        // For "in:<area>" switches, 'area' is a world, noted cuboid, or noted ellipsoid.
+        // So for example you might have an event line like "on player breaks block in:space:"
+        // where space is the name of a world or of a noted cuboid.
+        // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
+        // "location_flagged:<flag name>" works just like "server_flagged" or the player "flagged" switches, but for locations.
+        //
         // All script events have priority switches (see <@link language script event priority>),
         // All Bukkit events have bukkit priority switches (see <@link language bukkit event priority>),
-        // All cancellable script events have cancellation switches (see <@link language script event cancellation>),
-        // All player script events have flagged/permission switches (see <@link language player event switches>).
+        // All cancellable script events have cancellation switches (see <@link language script event cancellation>).
+        //
+        // See also <@link language advanced script event matching>.
         // -->
 
         public boolean checkSwitch(String key, String value) {
@@ -399,10 +410,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public boolean matches(ScriptPath path) {
-        String flag = path.switches.get("server_flagged");
-        if (flag != null) {
-            if (!DenizenCore.getImplementation().getServerFlags().hasFlag(flag)) {
-                return false;
+        String flagSwitch = path.switches.get("server_flagged");
+        if (flagSwitch != null) {
+            for (String flag : CoreUtilities.split(flagSwitch, '|')) {
+                if (!DenizenCore.getImplementation().getServerFlags().hasFlag(flag)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -531,6 +544,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // Additionally, when you're really desperate for a good matcher, you may use 'regex:'
     // For example, "on player breaks regex:(?i)\d+_customitem:"
     // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance, and may have unexpected edge case errors.
+    //
+    // See also <@link language script event object matchables>.
     // -->
 
     public static abstract class MatchHelper {
