@@ -126,7 +126,9 @@ public abstract class AbstractFlagTracker {
         }
         if (attribute.getAttributeWithoutContext(2).equals("is_expired")) {
             Deprecations.flagIsExpiredTag.warn(attribute.context);
-            return new ElementTag(!hasFlag(attribute.getContext(1)));
+            boolean result = !hasFlag(attribute.getContext(1));
+            attribute.fulfill(1);
+            return new ElementTag(result);
         }
         else if (attribute.getAttributeWithoutContext(2).equals("expiration")) {
             Deprecations.flagExpirationTag.warn(attribute.context);
@@ -134,7 +136,8 @@ public abstract class AbstractFlagTracker {
             if (time == null) {
                 return null;
             }
-            return new DurationTag((TimeTag.now().millis() - time.millis()) / 1000.0);
+            attribute.fulfill(1);
+            return new DurationTag((time.millis() - TimeTag.now().millis()) / 1000.0);
         }
         return getFlagValue(attribute.getContext(1));
     }
