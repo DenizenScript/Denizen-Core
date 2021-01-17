@@ -909,19 +909,19 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.matches[<regex>]>
+        // @attribute <ElementTag.regex_matches[<regex>]>
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
         // Returns whether the element matches a regex input.
         // -->
-        registerTag("matches", (attribute, object) -> {
+        registerTag("regex_matches", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.matches[...] must have a value.");
                 return null;
             }
             return new ElementTag(object.element.matches(attribute.getContext(1)));
-        });
+        }, "matches");
 
         // <--[tag]
         // @attribute <ElementTag.regex[<regex>].group[<group>]>
