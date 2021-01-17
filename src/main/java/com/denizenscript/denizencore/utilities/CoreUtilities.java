@@ -314,8 +314,9 @@ public class CoreUtilities {
         if (inp.getObjectTagClass() == type) {
             return (T) inp;
         }
-        if (type == ElementTag.class) {
-            return (T) new ElementTag(inp.toString());
+        TagTypeConverter converter = typeConverters.get(type);
+        if (converter != null) {
+            return (T) converter.convert(inp, context);
         }
         return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
     }
@@ -324,7 +325,14 @@ public class CoreUtilities {
         public abstract boolean canBecome(ObjectTag inp);
     }
 
-    public final static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
+    @FunctionalInterface
+    public static interface TagTypeConverter {
+        public abstract ObjectTag convert(ObjectTag inp, TagContext context);
+    }
+
+    public static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
+
+    public static Map<Class<? extends ObjectTag>, TagTypeConverter> typeConverters = new HashMap<>();
 
     static {
         registerTypeAsTrueAlways(ElementTag.class);
@@ -335,6 +343,9 @@ public class CoreUtilities {
         registerTypeAsNoOtherTypeCode(QueueTag.class, "q");
         registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
         registerTypeAsNoOtherTypeCode(TimeTag.class, "d");
+        typeConverters.put(ElementTag.class, (obj, c) -> (obj instanceof ElementTag) ? obj : new ElementTag(obj.toString()));
+        typeConverters.put(ListTag.class, ListTag::getListFor);
+        typeConverters.put(MapTag.class, MapTag::getMapFor);
     }
 
     public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {

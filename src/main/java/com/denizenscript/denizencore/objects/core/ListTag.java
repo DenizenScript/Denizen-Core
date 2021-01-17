@@ -365,7 +365,15 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public static ListTag getListFor(ObjectTag inp, TagContext context) {
-        return inp instanceof ListTag ? (ListTag) inp : valueOf(inp.toString(), context);
+        if (inp instanceof ListTag) {
+            return (ListTag) inp;
+        }
+        if (inp instanceof ElementTag) {
+            return valueOf(inp.toString(), context);
+        }
+        ListTag output = new ListTag(1);
+        output.addObject(inp);
+        return output;
     }
 
     public static boolean matches(String arg) {

@@ -104,17 +104,6 @@ public class UtilTagBase {
             }
 
             // <--[tag]
-            // @attribute <util.random.boolean>
-            // @returns ElementTag(Boolean)
-            // @description
-            // Returns a random boolean (true or false). Essentially a coin flip.
-            // -->
-            else if (attribute.startsWith("boolean")) {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextBoolean())
-                        , attribute.fulfill(1)));
-            }
-
-            // <--[tag]
             // @attribute <util.random.decimal>
             // @returns ElementTag(Decimal)
             // @description
@@ -122,6 +111,17 @@ public class UtilTagBase {
             // -->
             else if (attribute.startsWith("decimal")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble())
+                        , attribute.fulfill(1)));
+            }
+
+            // <--[tag]
+            // @attribute <util.random.boolean>
+            // @returns ElementTag(Boolean)
+            // @description
+            // Returns a random boolean (true or false). Essentially a coin flip.
+            // -->
+            else if (attribute.startsWith("boolean")) {
+                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextBoolean())
                         , attribute.fulfill(1)));
             }
 
