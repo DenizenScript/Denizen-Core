@@ -1,6 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -140,8 +142,12 @@ public class AdjustCommand extends AbstractCommand {
                 entry.getResidingQueue().addDefinition(defName, def);
                 return def;
             }
-            object = ObjectFetcher.pickObjectFor(objectString, entry.entryData.getTagContext());
+            object = ObjectFetcher.pickObjectFor(objectString, entry.context);
             if (object instanceof ElementTag) {
+                FlaggableObject altObject = DenizenCore.getImplementation().simpleWordToFlaggable(objectString, entry);
+                if (altObject != null && !(altObject instanceof ElementTag)) {
+                    return altObject;
+                }
                 Debug.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
                 return object;
             }
