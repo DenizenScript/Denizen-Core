@@ -153,7 +153,20 @@ public class ArgumentHelper {
         return true;
     }
 
+    private static final int MIN_LONG_LENGTH = Long.toString(Long.MIN_VALUE).length();
+    private static final int MAX_LONG_LENGTH = Long.toString(Long.MAX_VALUE).length();
+
     public static boolean matchesInteger(String arg) {
-        return matchesDouble(arg) && INTEGER_MATCHER.isOnlyMatches(arg);
+        if (!INTEGER_MATCHER.isOnlyMatches(arg)) {
+            return false;
+        }
+        if (!matchesDouble(arg)) {
+            return false;
+        }
+        char firstChar = arg.charAt(0);
+        if (arg.length() > ((firstChar == '-' || firstChar == '+') ? MIN_LONG_LENGTH : MAX_LONG_LENGTH)) {
+            return false;
+        }
+        return true;
     }
 }
