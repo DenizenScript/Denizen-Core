@@ -465,6 +465,68 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.last_day_of_month[<day>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag of the specified day in the next month.
+        // For example, last_day_of_month[1] on a TimeTag in February will return the 1st of January.
+        // The hour/minute/second/millisecond will be zeroed.
+        // Be careful with inputs of 29/30/31, as only some months contain those days.
+        // -->
+        registerTag("last_day_of_month", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.last_day_of_month[...] must have input.");
+                return null;
+            }
+            int day = attribute.getIntContext(1);
+            if (day < 1 || day > 31) {
+                return null;
+            }
+            if (object.day() < day) {
+                if (object.month() == 1) {
+                    return new TimeTag(object.year(), 12, day, 0, 0, 0, 0, object.instant.getOffset());
+                }
+                else {
+                    return new TimeTag(object.year(), object.month() - 1, day, 0, 0, 0, 0, object.instant.getOffset());
+                }
+            }
+            else {
+                return new TimeTag(object.year(), object.month(), day, 0, 0, 0, 0, object.instant.getOffset());
+            }
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.next_day_of_month[<day>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag of the specified day in the next month.
+        // For example, next_day_of_month[1] on a TimeTag in January will return the 1st of February.
+        // The hour/minute/second/millisecond will be zeroed.
+        // Be careful with inputs of 29/30/31, as only some months contain those days.
+        // -->
+        registerTag("next_day_of_month", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.next_day_of_month[...] must have input.");
+                return null;
+            }
+            int day = attribute.getIntContext(1);
+            if (day < 1 || day > 31) {
+                return null;
+            }
+            if (object.day() >= day) {
+                if (object.month() == 12) {
+                    return new TimeTag(object.year(), 1, day, 0, 0, 0, 0, object.instant.getOffset());
+                }
+                else {
+                    return new TimeTag(object.year(), object.month() + 1, day, 0, 0, 0, 0, object.instant.getOffset());
+                }
+            }
+            else {
+                return new TimeTag(object.year(), object.month(), day, 0, 0, 0, 0, object.instant.getOffset());
+            }
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.start_of_year>
         // @returns TimeTag
         // @description
