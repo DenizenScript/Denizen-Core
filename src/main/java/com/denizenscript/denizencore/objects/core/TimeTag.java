@@ -258,6 +258,16 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.days_in_month>
+        // @returns ElementTag(Number)
+        // @description
+        // Returns the number of days in the month that this TimeTag is within.
+        // -->
+        registerTag("days_in_month", (attribute, object) -> {
+            return new ElementTag(YearMonth.of(object.year(), object.month()).lengthOfMonth());
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.day>
         // @returns ElementTag(Number)
         // @description
