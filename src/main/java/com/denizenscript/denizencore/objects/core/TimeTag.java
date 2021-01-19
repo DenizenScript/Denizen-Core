@@ -468,8 +468,9 @@ public class TimeTag implements ObjectTag, Adjustable {
         // @attribute <TimeTag.last_day_of_month[<day>]>
         // @returns TimeTag
         // @description
-        // Returns the timetag of the specified day in the next month.
-        // For example, last_day_of_month[1] on a TimeTag in February will return the 1st of January.
+        // Returns the timetag of the last occurrence of the specified day-of-month.
+        // This can either be in the same month, or the previous month.
+        // For example, last_day_of_month[3] on a TimeTag on February 1st will return the 3rd of January.
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
@@ -484,7 +485,7 @@ public class TimeTag implements ObjectTag, Adjustable {
             }
             if (object.day() < day) {
                 if (object.month() == 1) {
-                    return new TimeTag(object.year(), 12, day, 0, 0, 0, 0, object.instant.getOffset());
+                    return new TimeTag(object.year() - 1, 12, day, 0, 0, 0, 0, object.instant.getOffset());
                 }
                 else {
                     return new TimeTag(object.year(), object.month() - 1, day, 0, 0, 0, 0, object.instant.getOffset());
@@ -499,8 +500,9 @@ public class TimeTag implements ObjectTag, Adjustable {
         // @attribute <TimeTag.next_day_of_month[<day>]>
         // @returns TimeTag
         // @description
-        // Returns the timetag of the specified day in the next month.
-        // For example, next_day_of_month[1] on a TimeTag in January will return the 1st of February.
+        // Returns the timetag of the next occurrence of the specified day-of-month.
+        // This can either be in the same month, or the next month.
+        // For example, next_day_of_month[1] on a TimeTag on January 3rd will return the 1st of February.
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
@@ -515,7 +517,7 @@ public class TimeTag implements ObjectTag, Adjustable {
             }
             if (object.day() >= day) {
                 if (object.month() == 12) {
-                    return new TimeTag(object.year(), 1, day, 0, 0, 0, 0, object.instant.getOffset());
+                    return new TimeTag(object.year() + 1, 1, day, 0, 0, 0, 0, object.instant.getOffset());
                 }
                 else {
                     return new TimeTag(object.year(), object.month() + 1, day, 0, 0, 0, 0, object.instant.getOffset());
