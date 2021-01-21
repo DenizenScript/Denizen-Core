@@ -278,6 +278,16 @@ public class TimeTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.day_of_year>
+        // @returns ElementTag(Number)
+        // @description
+        // Returns the day-of-year of this TimeTag, from 1 to 365 (or 366 in leap years).
+        // -->
+        registerTag("day_of_year", (attribute, object) -> {
+            return new ElementTag(object.instant.get(ChronoField.DAY_OF_YEAR));
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.day_of_week>
         // @returns ElementTag(Number)
         // @description
