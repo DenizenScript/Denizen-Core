@@ -596,11 +596,31 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.deep_keys>
+        // @returns ListTag
+        // @description
+        // Returns a list of all keys in this map, including keys in any sub-maps (map values that are in turn MapTags), using deep key paths separated by the '.' symbol.
+        // No returned key value will refer to a MapTag instance.
+        // -->
+        registerTag("deep_keys", (attribute, object) -> {
+            ListTag result = new ListTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                if (entry.getValue() instanceof MapTag) {
+                    ((MapTag) entry.getValue()).appendDeepKeys(entry.getKey().str, result);
+                }
+                else {
+                    result.add(entry.getKey().str);
+                }
+            }
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.keys>
         // @returns ListTag
         // @description
         // Returns a list of all keys in this map.
-        // For example, on a map of "a/1|b/2|c/3|", using "list_keys" will return "a|b|c|".
+        // For example, on a map of "a/1|b/2|c/3|", using "keys" will return "a|b|c|".
         // -->
         registerTag("keys", (attribute, object) -> {
             ListTag result = new ListTag();
@@ -615,7 +635,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns ListTag
         // @description
         // Returns a list of all values in this map.
-        // For example, on a map of "a/1|b/2|c/3|", using "list_values" will return "1|2|3|".
+        // For example, on a map of "a/1|b/2|c/3|", using "values" will return "1|2|3|".
         // -->
         registerTag("values", (attribute, object) -> {
             ListTag result = new ListTag();
@@ -678,6 +698,17 @@ public class MapTag implements ObjectTag, Adjustable {
             output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true);
             return new ElementTag(output.saveToString(false));
         });
+    }
+
+    public void appendDeepKeys(String path, ListTag result) {
+        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
+            if (entry.getValue() instanceof MapTag) {
+                ((MapTag) entry.getValue()).appendDeepKeys(path + "." + entry.getKey().str, result);
+            }
+            else {
+                result.add(path + "." + entry.getKey().str);
+            }
+        }
     }
 
     public static ObjectTagProcessor<MapTag> tagProcessor = new ObjectTagProcessor<>();

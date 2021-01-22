@@ -126,10 +126,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         //
         // Events that occur at a specific location have the "in:<area>" and "location_flagged" switches.
         // This switches will be ignored (not counted one way or the other) for events that don't have a known location.
-        // For "in:<area>" switches, 'area' is a world, noted cuboid, or noted ellipsoid.
+        // For "in:<area>" switches, 'area' is a world, noted cuboid, noted ellipsoid, or noted polygon.
         // So for example you might have an event line like "on player breaks block in:space:"
         // where space is the name of a world or of a noted cuboid.
-        // This also works as "in:cuboid" or "in:ellipsoid" to match for *any* noted cuboid or ellipsoid.
+        // This also works as "in:cuboid" or "in:ellipsoid" or "in:polygon" to match for *any* noted cuboid, ellipsoid, or polygon.
         // "location_flagged:<flag name>" works just like "server_flagged" or the player "flagged" switches, but for locations.
         //
         // All script events have priority switches (see <@link language script event priority>),
