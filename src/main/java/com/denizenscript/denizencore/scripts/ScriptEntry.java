@@ -163,7 +163,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) {
-        this(command, arguments, script, null);
+        this(command, arguments, script, null, 0);
     }
 
     public void crunchInto(InternalArgument argVal, String arg, TagContext refContext) {
@@ -182,11 +182,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
 
-    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides) {
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides, int lineNum) {
         if (command == null) {
             throw new RuntimeException("Command name cannot be null!");
         }
         internal = new ScriptEntryInternal();
+        internal.lineNumber = lineNum;
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
         internal.command = command.toUpperCase();
         internal.insideList = insides;
@@ -207,12 +208,15 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     internal.waitfor = true;
                 }
                 else if (internal.actualCommand != null) {
-                    Debug.echoError("The command '" + internal.command + "' cannot be waited for!");
+                    Debug.echoError(this, "The command '" + internal.command + "' cannot be waited for!");
                 }
             }
             internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
             if (internal.actualCommand != null && internal.actualCommand.forceHold) {
                 internal.waitfor = true;
+            }
+            if (internal.actualCommand == null) {
+                Debug.echoError(this, "Unknown command '" + internal.command + "'.");
             }
         }
         else {
@@ -255,7 +259,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 if (parg.endsWith("{")) {
                     after = "{";
                     parg = parg.substring(0, parg.length() - 1);
-                    Debug.echoError("Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
+                    Debug.echoError(this, "Command '" + command + "' in script '" + (script == null ? "(None)" : script.getName()) + "' has typo: brace written without space... like 'arg{' when it should be 'arg {'.");
                 }
                 Argument argObj = new Argument(arg);
                 if (argObj.hasPrefix()) {

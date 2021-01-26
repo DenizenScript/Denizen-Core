@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
 public class Debug {
@@ -29,6 +30,21 @@ public class Debug {
 
     public static void echoError(String error) {
         DenizenCore.getImplementation().debugError(error);
+    }
+
+    public static void echoError(ScriptEntry entry, String error) {
+        if (entry == null) {
+            DenizenCore.getImplementation().debugError(error);
+        }
+        else if (entry.getResidingQueue() == null) {
+            if (entry.getScript() != null) {
+                error = "<R>In script '<A>" + entry.getScript().getName() + "<R>' on line <A>" + entry.internal.lineNumber + "<W>: " + error;
+            }
+            DenizenCore.getImplementation().debugError(error);
+        }
+        else {
+            DenizenCore.getImplementation().debugError(entry.getResidingQueue(), error);
+        }
     }
 
     public static void echoError(ScriptQueue queue, String error) {
