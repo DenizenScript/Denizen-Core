@@ -1888,7 +1888,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
-        // One should generally prefer <@link tag ListTag.filter>.
+        // One should generally prefer <@link tag ListTag.filter_tag>.
         // -->
         registerTag("filter", (attribute, object) -> {
             String tag = attribute.getRawContext(1);
@@ -1919,7 +1919,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given tag.
         // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
-        // One should generally prefer <@link tag ListTag.parse>.
+        // One should generally prefer <@link tag ListTag.parse_tag>.
         // -->
         registerTag("parse", (attribute, object) -> {
             ListTag newlist = new ListTag();

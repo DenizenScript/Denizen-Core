@@ -202,10 +202,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
             }
             else if (command.charAt(0) == '~') {
                 internal.command = command.substring(1);
-                if (DenizenCore.getCommandRegistry().get(internal.command) instanceof Holdable) {
+                internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
+                if (internal.actualCommand instanceof Holdable) {
                     internal.waitfor = true;
                 }
-                else {
+                else if (internal.actualCommand != null) {
                     Debug.echoError("The command '" + internal.command + "' cannot be waited for!");
                 }
             }
