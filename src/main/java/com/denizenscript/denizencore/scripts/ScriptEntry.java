@@ -216,7 +216,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
                 internal.waitfor = true;
             }
             if (internal.actualCommand == null) {
-                Debug.echoError(this, "Unknown command '" + internal.command + "'.");
+                if (!AbstractCommand.noErrorCommandNames.contains(CoreUtilities.toLowerCase(internal.command))) {
+                    Debug.echoError(this, "Unknown command '" + internal.command + "'.");
+                }
             }
         }
         else {

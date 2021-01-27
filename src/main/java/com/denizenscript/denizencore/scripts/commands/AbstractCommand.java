@@ -7,9 +7,16 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public abstract class AbstractCommand {
+
+    /**
+     * Special extra command names that should still not error.
+     */
+    public static HashSet<String> noErrorCommandNames = new HashSet<>(Arrays.asList("case", "default"));
 
     public String syntax = "No usage defined! See documentation for more information!";
 
