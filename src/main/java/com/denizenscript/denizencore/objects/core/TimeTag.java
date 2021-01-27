@@ -671,9 +671,7 @@ public class TimeTag implements ObjectTag, Adjustable {
         // For the full format specification, refer to "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
         // -->
         registerTag("format", (attribute, object) -> {
-            String formatText = attribute.hasContext(1) ? attribute.getContext(1) : "yyyy/MM/dd HH:mm:ss";
-            DateTimeFormatter format = DateTimeFormatter.ofPattern(formatText);
-            return new ElementTag(object.instant.format(format));
+            return new ElementTag(object.format(attribute.hasContext(1) ? attribute.getContext(1) : null));
         });
 
         registerTag("duration_compat", (attribute, object) -> {
@@ -685,6 +683,18 @@ public class TimeTag implements ObjectTag, Adjustable {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return object;
         });
+    }
+
+    public String format() {
+        return format(null);
+    }
+
+    public String format(String formatText) {
+        if (formatText == null) {
+            formatText = "yyyy/MM/dd HH:mm:ss";
+        }
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(formatText);
+        return instant.format(format);
     }
 
     public long millis() {
