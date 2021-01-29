@@ -42,6 +42,9 @@ public class DefinitionTagBase {
                 attribute.echoError("Invalid definition name '" + defName + "'.");
                 return null;
             }
+            if (attribute.attributes.length == 1) {
+                return def;
+            }
             return CoreUtilities.fixType(def, attribute.context);
         };
         TagManager.registerTagHandler("def", defTag);

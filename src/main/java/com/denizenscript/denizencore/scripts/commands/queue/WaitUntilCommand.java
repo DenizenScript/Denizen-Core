@@ -48,6 +48,10 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Use to delay the current queue until the player respawns (useful in a death event, for example).
     // - waituntil <player.is_spawned>
+    //
+    // @Usage
+    // Use to delay the current queue until the player is healed, only checking once per second.
+    // - waituntil rate:1s <player.health> > 15
     // -->
 
     @Override
