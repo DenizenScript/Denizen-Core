@@ -494,11 +494,8 @@ public class ListTag implements List<String>, ObjectTag {
     //   Instance Fields/Methods
     //////////
 
-    public ListTag addObjects(List<ObjectTag> ObjectTags) {
-        for (ObjectTag obj : ObjectTags) {
-            addObject(obj);
-        }
-
+    public ListTag addObjects(List<ObjectTag> objectTags) {
+        objectForms.addAll(objectTags);
         return this;
     }
 
@@ -659,6 +656,18 @@ public class ListTag implements List<String>, ObjectTag {
         }
         return dScriptArg.toString().substring(0,
                 dScriptArg.length() - spacer.length());
+    }
+
+    public int parseIndex(String index) {
+        if (CoreUtilities.equalsIgnoreCase(index, "last")) {
+            return size() - 1;
+        }
+        else if (CoreUtilities.equalsIgnoreCase(index, "first")) {
+            return 0;
+        }
+        else {
+            return new ElementTag(index).asInt() - 1;
+        }
     }
 
     public static void registerTags() {
@@ -1187,17 +1196,31 @@ public class ListTag implements List<String>, ObjectTag {
             }
             ListTag indices = getListFor(attribute.getContextObject(1), attribute.context);
             ListTag copy = new ListTag(object);
+
+            // <--[tag]
+            // @attribute <ListTag.remove[<#>].to[<#>]>
+            // @returns ListTag
+            // @description
+            // returns a new ListTag excluding the items in the specified index range.
+            // For example: .remove[2].to[4] on a list of "one|two|three|four|five" will return "one|five".
+            // Also supports [first] and [last] values.
+            // -->
+            if (indices.size() == 1 && attribute.startsWith("to", 2)) {
+                if (!attribute.hasContext(2)) {
+                    attribute.echoError("The tag ListTag.remove[#].to[#] must have a to value.");
+                    return null;
+                }
+                int fromIndex = Math.max(0, object.parseIndex(indices.get(0)));
+                int toIndex = Math.min(object.size() - 1, object.parseIndex(attribute.getContext(2)));
+                attribute.fulfill(1);
+                if (toIndex < fromIndex) {
+                    return copy;
+                }
+                copy.objectForms.subList(fromIndex, toIndex + 1).clear();
+                return copy;
+            }
             for (String index : indices) {
-                int remove;
-                if (CoreUtilities.equalsIgnoreCase(index, "last")) {
-                    remove = copy.size() - 1;
-                }
-                else if (CoreUtilities.equalsIgnoreCase(index, "first")) {
-                    remove = 0;
-                }
-                else {
-                    remove = new ElementTag(index).asInt() - 1;
-                }
+                int remove = copy.parseIndex(index);
                 if (remove >= 0 && remove < copy.size()) {
                     copy.set(remove, "\0");
                 }
