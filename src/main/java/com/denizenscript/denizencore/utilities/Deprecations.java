@@ -231,6 +231,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/12/25, deprecate official by 2022.
     public static Warning itemEnchantmentTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
 
+    // In Bukkit impl, Added 2021/02/03, deprecate official by 2023.
+    public static Warning itemScriptNameTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.scriptname and .has_script tags are deprecated: use '.script.name' or a null check on .script.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
