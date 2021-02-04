@@ -62,6 +62,14 @@ public class FlagCommand extends AbstractCommand {
     // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
     // This includes '__interact_step' which is used for interact script steps, related to <@link command zap>,
     // and '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
+    //
+    // Flags have an expiration system, which is used by specifying a duration after which they should expire (which then internally calculates the date/time of expiration by adding the duration input to the current date/time).
+    // Expirations are then *checked for* in flag tags - meaning, the flag tags will internally compare a stored date/time against the real current date/time,
+    // and if the flag's expiration time is in the past, the flag tag will return values equivalent to if the flag doesn't exist.
+    // There is no system actively monitoring for flag expirations or applying them. There is no event for expirations occurring, as they don't "occur" per se.
+    // In other words, it is correct to say a flag "is expired" or a flag "is not expired",
+    // but it is incorrect to say a flag "expires", as it is not an active action (those this wording can be convenient when speaking informally).
+    // Expired flags are sometimes 'cleaned up' (meaning, any expired flags get actually removed from internal storage), usually when a flag save file is loaded into the server.
     // -->
 
     // <--[command]
