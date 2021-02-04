@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.utilities.Deprecations;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -175,6 +176,7 @@ public class DataAction {
                 break;
             }
             case SPLIT_NEW:
+                Deprecations.splitNewDataAction.warn(context);
                 requiresInputValue();
                 provider.setValueAt(key, autoList(ListTag.getListFor(inputValue, context)));
                 break;

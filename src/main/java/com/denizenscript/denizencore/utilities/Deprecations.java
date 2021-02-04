@@ -232,7 +232,10 @@ public class Deprecations {
     public static Warning itemEnchantmentTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
 
     // In Bukkit impl, Added 2021/02/03, deprecate official by 2023.
-    public static Warning itemScriptNameTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.scriptname and .has_script tags are deprecated: use '.script.name' or a null check on .script.");
+    public static Warning itemScriptNameTags = new FutureWarning("The ItemTag.scriptname and .has_script tags are deprecated: use '.script.name' or a null check on .script.");
+
+    // Added 2021/02/04, deprecate official by 2024.
+    public static Warning splitNewDataAction = new FutureWarning("The 'split to new list' data action ('key:!|:value') is deprecated: this no longer has a purpose, as you can instead just set to the list.");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
