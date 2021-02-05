@@ -38,13 +38,16 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // @Description
     // This command is used to interact with a MySQL server. It can update the database or query it for information.
+    //
+    // This commands exists primarily for interoperability with pre-existing databases and external services.
+    // It should never be used for storing data that only Denizen needs to use. Consider instead using <@link command flag>.
+    //
     // The general usage order is connect -> update/query -> disconnect.
     // It is not required that you disconnect right after using, and in fact encouraged that you keep a connection open where possible.
     // When connecting, the server format is IP:Port/Database, EG 'localhost:3306/test'.
     // You can switch whether SSL is used for the connection (defaults to false).
     // Note that when using tag, it is recommended you escape unusual inputs to avoid SQL injection.
-    // The SQL command is merely a wrapper for SQL queries, and further usage details should be gathered from an official
-    // MySQL query reference rather than from Denizen command help.
+    // The SQL command is merely a wrapper for SQL queries, and further usage details should be gathered from an official MySQL query reference rather than from Denizen command help.
     // SQL connections are not instant - they can take several seconds, or just never connect at all.
     // It is recommended you hold the command by doing "- ~sql ..." rather than just "- sql ..."
     // as this will delay the commands following the SQL command until after the SQL operation is complete.
@@ -107,9 +110,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!scriptEntry.hasObject("sqlid")
                     && arg.matchesPrefix("id")) {
                 scriptEntry.addObject("sqlid", arg.asElement());
@@ -150,15 +151,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("sqlid")) {
             throw new InvalidArgumentsException("Must specify an ID!");
         }
-
         if (!scriptEntry.hasObject("ssl")) {
             scriptEntry.defaultObject("ssl", new ElementTag("false"));
         }
-
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify an action!");
         }
@@ -386,6 +384,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         connectionProps.put("useSSL", ssl);
         connectionProps.put("LoginTimeout", "7");
         if (!server.contains("://")) {
+            try {
+                // This is a weird hack that the internet recommends to guarantee the MySQL driver will be registered
+                Class.forName("com.mysql.jdbc.Driver");
+            }
+            catch (Throwable ex) {
+                Debug.echoError(ex);
+            }
             server = "mysql://" + server;
         }
         return DriverManager.getConnection("jdbc:" + server, connectionProps);
