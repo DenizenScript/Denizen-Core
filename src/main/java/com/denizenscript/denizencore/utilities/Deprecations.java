@@ -237,6 +237,9 @@ public class Deprecations {
     // Added 2021/02/04, deprecate official by 2024.
     public static Warning splitNewDataAction = new FutureWarning("The 'split to new list' data action ('key:!|:value') is deprecated: this no longer has a purpose, as you can instead just set to the list.");
 
+    // Added 2021/02/05, deprecate official by 2023.
+    public static Warning itemProjectile = new FutureWarning("The item_projectile custom entity type is deprecated: modern minecraft lets you set the item of any projectile, like 'snowball[item=stick]'");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

@@ -46,8 +46,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     //
     // @Description
     // Edits YAML configuration data.
-    // This can be used for interacting with other plugins' configuration files.
-    // It can also be used for storing your own script's data.
+    //
+    // This commands exists primarily for interoperability with pre-existing data files and other plugins.
+    // It should never be used for storing data that only Denizen needs to use. Consider instead using <@link command flag>.
     //
     // Use waitable syntax ("- ~yaml load:...") with load or savefile actions to avoid locking up the server during file IO.
     // Refer to <@link language ~waitable>.

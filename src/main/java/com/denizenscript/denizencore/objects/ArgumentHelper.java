@@ -100,7 +100,7 @@ public class ArgumentHelper {
         }
         StringBuilder sb = new StringBuilder();
         for (ObjectTag obj : objects) {
-            sb.append(obj.debuggable()).append("<G>, ");
+            sb.append(obj == null ? "null" : obj.debuggable()).append("<G>, ");
         }
         if (sb.length() == 0) {
             return debugObj(prefix, sb);
