@@ -11,7 +11,6 @@ import com.denizenscript.denizencore.utilities.SQLEscaper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
-import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -2220,7 +2219,7 @@ public class ElementTag implements ObjectTag {
         // Encodes the element using hexadecimal encoding.
         // -->
         registerTag("hex_encode", (attribute, object) -> {
-            String encoded = DatatypeConverter.printHexBinary(object.element.getBytes());
+            String encoded = CoreUtilities.hexEncode(object.element.getBytes());
             return new ElementTag(encoded);
         });
 
@@ -2232,7 +2231,7 @@ public class ElementTag implements ObjectTag {
         // Decodes the element using hexadecimal encoding. Must be valid hexadecimal input.
         // -->
         registerTag("hex_decode", (attribute, object) -> {
-            String decoded = new String(DatatypeConverter.parseHexBinary(object.element));
+            String decoded = new String(CoreUtilities.hexDecode(object.element));
             return new ElementTag(decoded);
         });
 

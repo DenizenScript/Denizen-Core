@@ -715,4 +715,41 @@ public class CoreUtilities {
         // actually has the most recent cost counts
         return p[n];
     }
+
+    private static byte[] valueOfHex = new byte[256];
+
+    public static char[] charForByte = "0123456789abcdef".toCharArray();
+
+    static {
+        for (byte i = 0; i < 10; i++) {
+            valueOfHex['0' + i] = i;
+        }
+        for (byte i = 0; i < 6; i++) {
+            valueOfHex['a' + i] = (byte) (i + 10);
+            valueOfHex['A' + i] = (byte) (i + 10);
+        }
+    }
+
+    public static byte[] hexDecode(String str) {
+        byte[] output = new byte[str.length() >> 1];
+        for (int i = 0; i < output.length; i++) {
+            char a = str.charAt(i << 1);
+            char b = str.charAt((i << 1) + 1);
+            byte valA = (byte) (valueOfHex[a] << 4);
+            byte valB = valueOfHex[b];
+            output[i] = (byte) (valA + valB);
+        }
+        return output;
+    }
+
+    public static String hexEncode(byte[] value) {
+        char[] output = new char[value.length * 2];
+        for (int i = 0; i < value.length; i++) {
+            byte valA = (byte) ((value[i] & 0xF0) >> 4);
+            byte valB = (byte) (value[i] & 0x0F);
+            output[i << 1] = charForByte[valA];
+            output[(i << 1) + 1] = charForByte[valB];
+        }
+        return new String(output);
+    }
 }
