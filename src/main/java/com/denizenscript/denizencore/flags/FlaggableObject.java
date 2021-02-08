@@ -7,4 +7,8 @@ public interface FlaggableObject extends ObjectTag {
     AbstractFlagTracker getFlagTracker();
 
     void reapplyTracker(AbstractFlagTracker tracker);
+
+    default String getReasonNotFlaggable() {
+        return "unknown reason - something went wrong";
+    }
 }

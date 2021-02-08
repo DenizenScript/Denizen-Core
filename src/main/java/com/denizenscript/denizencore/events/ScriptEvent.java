@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.events;
 
 import com.denizenscript.denizencore.events.core.*;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -130,6 +131,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // So for example you might have an event line like "on player breaks block in:space:"
         // where space is the name of a world or of a noted cuboid.
         // This also works as "in:cuboid" or "in:ellipsoid" or "in:polygon" to match for *any* noted cuboid, ellipsoid, or polygon.
+        // In addition to world names, you can specify "world_flagged:" followed by a flag name, like "on player breaks block in:world_flagged:myflag:"
         // "location_flagged:<flag name>" works just like "server_flagged" or the player "flagged" switches, but for locations.
         //
         // All script events have priority switches (see <@link language script event priority>),
@@ -147,6 +149,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
+        public static HashSet<String> notSwitches = new HashSet<>(Arrays.asList("regex", "item_flagged", "world_flagged"));
+
         public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
             this.event = event;
             rawEventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
@@ -155,7 +159,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
-                if (split.size() > 1 && !CoreUtilities.equalsIgnoreCase(split.get(0), "regex") && !CoreUtilities.equalsIgnoreCase(split.get(0), "item_flagged")) {
+                if (split.size() > 1 && !ArgumentHelper.matchesInteger(split.get(0)) && !notSwitches.contains(CoreUtilities.toLowerCase(split.get(0)))) {
                     switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
                 }
                 else {
