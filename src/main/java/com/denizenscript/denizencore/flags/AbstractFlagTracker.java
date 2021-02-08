@@ -38,7 +38,7 @@ public abstract class AbstractFlagTracker {
         processor.registerTag("flag", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
             if (tracker == null) {
-                attribute.echoError("Cannot read flag tag for '" + object + "': flag tracker is invalid or unavailable.");
+                attribute.echoError("Cannot read flag tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
             }
             return tracker.doFlagTag(attribute);
@@ -54,7 +54,7 @@ public abstract class AbstractFlagTracker {
         processor.registerTag("has_flag", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
             if (tracker == null) {
-                attribute.echoError("Cannot read has_flag tag for '" + object + "': flag tracker is invalid or unavailable.");
+                attribute.echoError("Cannot read has_flag tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
             }
             return tracker.doHasFlagTag(attribute);
@@ -70,7 +70,7 @@ public abstract class AbstractFlagTracker {
         processor.registerTag("flag_expiration", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
             if (tracker == null) {
-                attribute.echoError("Cannot read flag_expiration tag for '" + object + "': flag tracker is invalid or unavailable.");
+                attribute.echoError("Cannot read flag_expiration tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
             }
             return tracker.doFlagExpirationTag(attribute);
@@ -87,7 +87,7 @@ public abstract class AbstractFlagTracker {
         processor.registerTag("list_flags", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
             if (tracker == null) {
-                attribute.echoError("Cannot read list_flags tag for '" + object + "': flag tracker is invalid or unavailable.");
+                attribute.echoError("Cannot read list_flags tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
             }
             return tracker.doListFlagsTag(attribute);
@@ -104,7 +104,7 @@ public abstract class AbstractFlagTracker {
         processor.registerTag("flag_map", (attribute, object) -> {
             AbstractFlagTracker tracker = object.getFlagTracker();
             if (tracker == null) {
-                attribute.echoError("Cannot read flag_map tag for '" + object + "': flag tracker is invalid or unavailable.");
+                attribute.echoError("Cannot read flag_map tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
             }
             return tracker.doFlagMapTag(attribute);

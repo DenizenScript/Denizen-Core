@@ -49,7 +49,11 @@ public class FlagCommand extends AbstractCommand {
     // - EntityTag, which will store data in the entity's NBT in the world file.
     // - LocationTag, for block flags, which will store data in the chunk file.
     // - ItemTag, which will store data in the item's NBT.
-    // - WorldTag, which will store in the world folder in a file named 'denizen_flags.dat', like "server/world/denizen_flags.dat"
+    // - WorldTag, which will store in the world folder in a file named 'denizen_flags.dat', like "server/world/denizen_flags.dat".
+    // - InventoryTag, when noted, will store in the notes save file.
+    // - CuboidTag, when noted, will store in the notes save file.
+    // - EllipsoidTag, when noted, will store in the notes save file.
+    // - PolygonTag, when noted, will store in the notes save file.
     //
     // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link command inventory> with the 'flag' argument.
     // Any supported object type, including the 'server' base tag, can use the tags
