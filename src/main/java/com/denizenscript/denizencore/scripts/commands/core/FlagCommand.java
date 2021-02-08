@@ -49,6 +49,7 @@ public class FlagCommand extends AbstractCommand {
     // - EntityTag, which will store data in the entity's NBT in the world file.
     // - LocationTag, for block flags, which will store data in the chunk file.
     // - ItemTag, which will store data in the item's NBT.
+    // - WorldTag, which will store in the world folder in a file named 'denizen_flags.dat', like "server/world/denizen_flags.dat"
     //
     // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link command inventory> with the 'flag' argument.
     // Any supported object type, including the 'server' base tag, can use the tags
@@ -174,6 +175,9 @@ public class FlagCommand extends AbstractCommand {
 
         @Override
         public void setValueAt(String keyName, ObjectTag value) {
+            if (keyName.startsWith("__")) {
+                Debug.echoError("Assigning flag value to reserved '__' namespace (key: '" + keyName + "')");
+            }
             tracker.setFlag(keyName, value, expiration);
         }
     }
