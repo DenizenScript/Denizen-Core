@@ -3,10 +3,17 @@ package com.denizenscript.denizencore.flags;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -197,5 +204,68 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             toOutput.append(escapeKey(flag.getKey().str)).append(":").append(escapeValue(flag.getValue().getString())).append('\n');
         }
         return toOutput.toString();
+    }
+
+    public static SavableMapFlagTracker loadFlagFile(String filePath) {
+        try {
+            File realPath;
+            File flagFile = new File(filePath + ".dat");
+            if (flagFile.exists()) {
+                realPath = flagFile;
+            }
+            else {
+                File bakFile = new File(filePath + ".dat~2");
+                if (bakFile.exists()) {
+                    realPath = bakFile;
+                }
+                // Note: ~1 are likely corrupted, so ignore them.
+                else {
+                    return new SavableMapFlagTracker();
+                }
+            }
+            FileInputStream fis = new FileInputStream(realPath);
+            String str = ScriptHelper.convertStreamToString(fis);
+            fis.close();
+            return new SavableMapFlagTracker(str);
+        }
+        catch (Throwable ex) {
+            Debug.echoError("Failed to load flag data for path '" + filePath + "'");
+            Debug.echoError(ex);
+            return new SavableMapFlagTracker();
+        }
+    }
+
+    public void saveToFile(String filePath) {
+        saveToFile(filePath, toString());
+    }
+
+    public static void saveToFile(String filePath, String flagData) {
+        File saveToFile = new File(filePath + ".dat~1");
+        try {
+            Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+            FileOutputStream fiout = new FileOutputStream(saveToFile);
+            OutputStreamWriter writer;
+            if (charset == null) {
+                writer = new OutputStreamWriter(fiout);
+            }
+            else {
+                writer = new OutputStreamWriter(fiout, charset);
+            }
+            writer.write(flagData);
+            writer.close();
+            File bakFile = new File(filePath + ".dat~2");
+            File realFile = new File(filePath + ".dat");
+            if (realFile.exists()) {
+                realFile.renameTo(bakFile);
+            }
+            saveToFile.renameTo(realFile);
+            if (bakFile.exists()) {
+                bakFile.delete();
+            }
+        }
+        catch (Throwable ex) {
+            Debug.echoError("Failed to save flag data to path '" + filePath + "'");
+            Debug.echoError(ex);
+        }
     }
 }
