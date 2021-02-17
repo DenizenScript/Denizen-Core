@@ -118,7 +118,6 @@ public class ScriptHelper {
                     else if (endsColon && !startsDash) {
                         if (curLine.contains(".")) {
                             curLine = curLine.replace("&", "&amp").replace(".", "&dot");
-                            Debug.log("Originally " + trimmedLine + " became " + curLine);
                         }
                     }
                     if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {

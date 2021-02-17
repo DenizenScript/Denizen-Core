@@ -1614,7 +1614,7 @@ public class ListTag implements List<String>, ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.lowest[(<tag>)]>
-        // @returns ElementTag(Decimal)
+        // @returns ObjectTag
         // @description
         // returns the smallest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "1".
@@ -1625,6 +1625,51 @@ public class ListTag implements List<String>, ObjectTag {
             String tag = null;
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
+            }
+
+            // <--[tag]
+            // @attribute <ListTag.lowest[(<tag>)].count[<#>]>
+            // @returns ObjectTag
+            // @description
+            // returns a list of the smallest values in a list of decimal numbers.
+            // For example: a list of "3|5|2|1|10" with .count[2] will return "1|2".
+            // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
+            // For example, <server.online_players.lowest[money].count[5]> returns the 5 players with the least money currently online.
+            // Note: if you want to sort the entire list, rather than just getting a few values, use a sort tag link <@link tag listtag.sort_by_number>
+            // -->
+            if (attribute.startsWith("count", 2) && attribute.hasContext(2)) {
+                int count = Math.min(attribute.getIntContext(2), object.size());
+                attribute.fulfill(1);
+                int[] indices = new int[count];
+                BigDecimal[] values = new BigDecimal[count];
+                for (int i = 0; i < object.size(); i++) {
+                    ObjectTag obj = object.getObject(i);
+                    if (tag != null) {
+                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    }
+                    String str = obj.toString();
+                    if (ArgumentHelper.matchesDouble(str)) {
+                        BigDecimal val = new ElementTag(str).asBigDecimal();
+                        for (int x = 0; x < count; x++) {
+                            if (values[x] == null || values[x].compareTo(val) > 0) {
+                                for (int j = count - 1; j > x; j--) {
+                                    values[j] = values[j - 1];
+                                    indices[j] = indices[j - 1];
+                                }
+                                values[x] = val;
+                                indices[x] = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                ListTag output = new ListTag(count);
+                for (int i = 0; i < count; i++) {
+                    if (values[i] != null) {
+                        output.addObject(object.getObject(indices[i]));
+                    }
+                }
+                return output;
             }
             ObjectTag lowestObj = null;
             BigDecimal lowest = null;
@@ -1647,7 +1692,7 @@ public class ListTag implements List<String>, ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.highest[(<tag>)]>
-        // @returns ElementTag(Decimal)
+        // @returns ObjectTag
         // @description
         // returns the highest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "10".
@@ -1658,6 +1703,51 @@ public class ListTag implements List<String>, ObjectTag {
             String tag = null;
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
+            }
+
+            // <--[tag]
+            // @attribute <ListTag.highest[(<tag>)].count[<#>]>
+            // @returns ObjectTag
+            // @description
+            // returns a list of the highest values in a list of decimal numbers.
+            // For example: a list of "3|5|2|1|10" with .count[2] will return "10|5".
+            // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
+            // For example, <server.players.highest[money].count[5]> returns the 5 players with the most money.
+            // Note: if you want to sort the entire list, rather than just getting a few values, use a sort tag link <@link tag listtag.sort_by_number>
+            // -->
+            if (attribute.startsWith("count", 2) && attribute.hasContext(2)) {
+                int count = Math.min(attribute.getIntContext(2), object.size());
+                attribute.fulfill(1);
+                int[] indices = new int[count];
+                BigDecimal[] values = new BigDecimal[count];
+                for (int i = 0; i < object.size(); i++) {
+                    ObjectTag obj = object.getObject(i);
+                    if (tag != null) {
+                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    }
+                    String str = obj.toString();
+                    if (ArgumentHelper.matchesDouble(str)) {
+                        BigDecimal val = new ElementTag(str).asBigDecimal();
+                        for (int x = 0; x < count; x++) {
+                            if (values[x] == null || values[x].compareTo(val) < 0) {
+                                for (int j = count - 1; j > x; j--) {
+                                    values[j] = values[j - 1];
+                                    indices[j] = indices[j - 1];
+                                }
+                                values[x] = val;
+                                indices[x] = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                ListTag output = new ListTag(count);
+                for (int i = 0; i < count; i++) {
+                    if (values[i] != null) {
+                        output.addObject(object.getObject(indices[i]));
+                    }
+                }
+                return output;
             }
             ObjectTag highestObj = null;
             BigDecimal highest = null;
