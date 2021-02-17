@@ -1629,7 +1629,7 @@ public class ListTag implements List<String>, ObjectTag {
 
             // <--[tag]
             // @attribute <ListTag.lowest[(<tag>)].count[<#>]>
-            // @returns ObjectTag
+            // @returns ListTag
             // @description
             // returns a list of the smallest values in a list of decimal numbers.
             // For example: a list of "3|5|2|1|10" with .count[2] will return "1|2".
@@ -1707,7 +1707,7 @@ public class ListTag implements List<String>, ObjectTag {
 
             // <--[tag]
             // @attribute <ListTag.highest[(<tag>)].count[<#>]>
-            // @returns ObjectTag
+            // @returns ListTag
             // @description
             // returns a list of the highest values in a list of decimal numbers.
             // For example: a list of "3|5|2|1|10" with .count[2] will return "10|5".
@@ -2203,15 +2203,8 @@ public class ListTag implements List<String>, ObjectTag {
             return newList;
         });
 
-        // <--[tag]
-        // @attribute <ListTag.escape_contents>
-        // @returns ListTag
-        // @description
-        // returns a copy of the list with all its contents escaped.
-        // Inverts <@link tag ListTag.unescape_contents>.
-        // See <@link language Escaping System>.
-        // -->
         registerTag("escape_contents", (attribute, object) -> {
+            Deprecations.listEscapeContents.warn(attribute.context);
             ListTag escaped = new ListTag();
             for (String entry : object) {
                 escaped.add(EscapeTagBase.escape(entry));
@@ -2219,15 +2212,8 @@ public class ListTag implements List<String>, ObjectTag {
             return escaped;
         });
 
-        // <--[tag]
-        // @attribute <ListTag.unescape_contents>
-        // @returns ListTag
-        // @description
-        // returns a copy of the list with all its contents unescaped.
-        // Inverts <@link tag ListTag.escape_contents>.
-        // See <@link language Escaping System>.
-        // -->
         registerTag("unescape_contents", (attribute, object) -> {
+            Deprecations.listEscapeContents.warn(attribute.context);
             ListTag escaped = new ListTag();
             for (String entry : object) {
                 escaped.add(EscapeTagBase.unEscape(entry));
