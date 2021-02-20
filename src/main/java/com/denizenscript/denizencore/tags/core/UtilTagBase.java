@@ -278,7 +278,7 @@ public class UtilTagBase {
         // @attribute <util.e>
         // @returns ElementTag(Decimal)
         // @description
-        // Returns e: 2.7182818284590452354
+        // Returns e (Euler's number): 2.7182818284590452354
         // -->
         else if (attribute.matches("e")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.E), attribute.fulfill(1)));

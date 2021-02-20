@@ -480,9 +480,9 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public <T extends ObjectTag> T getObjectTag(String key) {
+    // TODO: Rename this method
+    public <T> T getObjectTag(String key) {
         try {
-            // If an ENUM, return as an Element
             Object gotten = objects.get(key);
             if (gotten == null) {
                 return null;
@@ -490,9 +490,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             if (gotten instanceof Enum) {
                 return (T) new ElementTag(((Enum) gotten).name());
             }
-            // Otherwise, just return the stored ObjectTag
             return (T) gotten;
-            // If not a ObjectTag, return null
         }
         catch (Exception ex) {
             if (Debug.verbose) {

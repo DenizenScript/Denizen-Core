@@ -44,9 +44,7 @@ public class InjectCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (arg.matches("instant", "instantly")) {
                 scriptEntry.addObject("instant", new ElementTag(true));
             }
@@ -75,9 +73,7 @@ public class InjectCommand extends AbstractCommand {
             else {
                 arg.reportUnhandled();
             }
-
         }
-
         if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("local")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be injected.");
         }
@@ -90,26 +86,26 @@ public class InjectCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ScriptTag script = scriptEntry.getObjectTag("script");
         if (script == null) {
             script = scriptEntry.getScript();
         }
-
+        ElementTag instant = scriptEntry.getElement("instant");
+        ElementTag path = scriptEntry.getElement("path");
+        ElementTag local = scriptEntry.getElement("local");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), script.debug()
-                            + (scriptEntry.hasObject("instant") ? scriptEntry.getObjectTag("instant").debug() : "")
-                            + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
-                            + (scriptEntry.hasObject("local") ? scriptEntry.getElement("local").debug() : ""));
+                            + (instant != null ? instant.debug() : "")
+                            + (path != null ? path.debug() : "")
+                            + (local != null ? local.debug() : ""));
         }
-
         List<ScriptEntry> entries;
-        if (scriptEntry.hasObject("local")) {
-            String pathName = scriptEntry.hasObject("path") ? scriptEntry.getElement("path").asString() : script.getName();
+        if (local != null && local.asBoolean()) {
+            String pathName = path != null ? path.asString() : script.getName();
             entries = scriptEntry.getScript().getContainer().getEntries(scriptEntry.entryData.clone(), pathName);
         }
-        else if (scriptEntry.hasObject("path")) {
-            entries = script.getContainer().getEntries(scriptEntry.entryData.clone(), scriptEntry.getElement("path").asString());
+        else if (path != null) {
+            entries = script.getContainer().getEntries(scriptEntry.entryData.clone(), path.asString());
         }
         else {
             entries = script.getContainer().getBaseEntries(scriptEntry.entryData.clone());
@@ -119,8 +115,7 @@ public class InjectCommand extends AbstractCommand {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid path or script name)!");
             return;
         }
-
-        if (scriptEntry.hasObject("instant")) {
+        if (instant != null && instant.asBoolean()) {
             scriptEntry.getResidingQueue().runNow(entries);
         }
         else {

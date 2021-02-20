@@ -86,14 +86,12 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (arg.matchesPrefix("i", "id")) {
                 scriptEntry.addObject("id", arg.asElement());
             }
             else if (arg.matchesPrefix("d", "def", "define", "c", "context")) {
-                scriptEntry.addObject("definitions", arg.asElement());
+                scriptEntry.addObject("definitions", arg.asType(ListTag.class));
             }
             else if (arg.matches("instant", "instantly")) {
                 scriptEntry.addObject("instant", new ElementTag(true));
@@ -132,9 +130,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
             else {
                 arg.reportUnhandled();
             }
-
         }
-
         if (!scriptEntry.hasObject("script") && (!scriptEntry.hasObject("local") || scriptEntry.getScript() == null)) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be run.");
         }
@@ -142,32 +138,21 @@ public class RunCommand extends AbstractCommand implements Holdable {
         if (!scriptEntry.hasObject("path") && scriptEntry.hasObject("local")) {
             throw new InvalidArgumentsException("Must specify a PATH.");
         }
-
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(),
-                    (scriptEntry.hasObject("script") ? scriptEntry.getObjectTag("script").debug() : scriptEntry.getScript().debug())
-                            + (scriptEntry.hasObject("instant") ? scriptEntry.getObjectTag("instant").debug() : "")
-                            + (scriptEntry.hasObject("path") ? scriptEntry.getElement("path").debug() : "")
-                            + (scriptEntry.hasObject("local") ? scriptEntry.getElement("local").debug() : "")
-                            + (scriptEntry.hasObject("delay") ? scriptEntry.getObjectTag("delay").debug() : "")
-                            + (scriptEntry.hasObject("id") ? scriptEntry.getObjectTag("id").debug() : "")
-                            + (scriptEntry.hasObject("definitions") ? scriptEntry.getObjectTag("definitions").debug() : "")
-                            + (scriptEntry.hasObject("speed") ? scriptEntry.getObjectTag("speed").debug() : ""));
-        }
-
-        // Get the script
+        ElementTag pathElement = scriptEntry.getElement("path");
         ScriptTag script = scriptEntry.getObjectTag("script");
-        if (scriptEntry.hasObject("local")) {
+        ElementTag local = scriptEntry.getElement("local");
+        ElementTag instant = scriptEntry.getElement("instant");
+        ElementTag id = scriptEntry.getElement("id");
+        DurationTag speed = scriptEntry.getObjectTag("speed");
+        DurationTag delay = scriptEntry.getObjectTag("delay");
+        if (local != null && local.asBoolean()) {
             script = scriptEntry.getScript();
         }
-
-        String path = scriptEntry.hasObject("path") ? scriptEntry.getElement("path").asString() : null;
-
+        String path = pathElement != null ? pathElement.asString() : null;
         if (script == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
             return;
@@ -176,27 +161,25 @@ public class RunCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path)!");
             return;
         }
-
-        String id = scriptEntry.hasObject("id") ? "FORCE:" + (scriptEntry.getElement("id")).asString() : null;
-
-        DurationTag speed = null;
-        if (scriptEntry.hasObject("instant")) {
+        if (instant != null && instant.asBoolean()) {
             speed = new DurationTag(0);
         }
-        else if (scriptEntry.hasObject("speed")) {
-            speed = scriptEntry.getObjectTag("speed");
+        ListTag definitions = scriptEntry.getObjectTag("definitions");
+        if (scriptEntry.dbCallShouldDebug()) {
+            Debug.report(scriptEntry, getName(),
+                    (script.debug())
+                            + (pathElement != null ? pathElement.debug() : "")
+                            + (local != null ? local.debug() : "")
+                            + (instant != null ? instant.debug() : "")
+                            + (speed != null ? speed.debug() : "")
+                            + (delay != null ? delay.debug() : "")
+                            + (id != null ? id.debug() : "")
+                            + (definitions != null ? definitions.debug() : ""));
         }
-
-        ListTag definitions = null;
-        if (scriptEntry.hasObject("definitions")) {
-            ElementTag raw_definitions = scriptEntry.getElement("definitions");
-            definitions = ListTag.valueOf(raw_definitions.asString(), scriptEntry.getContext());
-        }
-
         Consumer<ScriptQueue> configure = (queue) -> {
             // Set any delay
-            if (scriptEntry.hasObject("delay")) {
-                queue.delayUntil(DenizenCore.serverTimeMillis + ((DurationTag) scriptEntry.getObject("delay")).getMillis());
+            if (delay != null) {
+                queue.delayUntil(DenizenCore.serverTimeMillis + delay.getMillis());
             }
             // Setup a callback if the queue is being waited on
             if (scriptEntry.shouldWaitFor()) {
@@ -207,8 +190,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
             // Preserve procedural status
             queue.procedural = scriptEntry.getResidingQueue().procedural;
         };
-
-        ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, id, definitions, scriptEntry);
+        String idString = id != null ? "FORCE:" + id.asString() : null;
+        ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, idString, definitions, scriptEntry);
         if (result == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed!");
             return;
