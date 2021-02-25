@@ -22,8 +22,9 @@ public class DurationTag implements ObjectTag {
     // Durations are a unified and convenient way to get a 'unit of time' throughout Denizen.
     // Many commands and features that require a duration can be satisfied by specifying a number and unit of time, especially command arguments that are prefixed 'duration:', etc.
     // The unit of time can be specified by using one of the following:
-    // t=ticks, s=seconds, m=minutes, h=hours, d=days, w=weeks.
-    // Not using a unit will imply seconds. Examples: 10s, 50m, 1d, 20.
+    // t=ticks (0.05 seconds), s=seconds, m=minutes (60 seconds), h=hours (60 minutes), d=days (24 hours), w=weeks (7 days), y=years (365 days).
+    // Not using a unit will imply seconds.
+    // Examples: 10s, 50m, 1d, 20.
     //
     // Specifying a range of duration will result in a randomly selected duration that is in between the range specified.
     // The smaller value should be first. Examples: '10s-25s', '1m-2m'.
@@ -100,29 +101,28 @@ public class DurationTag implements ObjectTag {
         String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
         // Standard DurationTag. Check the type and create new DurationTag object accordingly.
         try {
-            if (string.endsWith("t")) {
-                // Matches TICKS, so 1 tick = .05 seconds
-                return new DurationTag(Double.valueOf(numericString) * 0.05);
-            }
-            else if (string.endsWith("d")) {
-                // Matches DAYS, so 1 day = 86400 seconds
-                return new DurationTag(Double.valueOf(numericString) * 86400);
+            double numVal = Double.valueOf(numericString);
+            if (string.endsWith("y")) {
+                return new DurationTag(numVal * (60 * 60 * 24 * 365));
             }
             else if (string.endsWith("w")) {
-                // Matches WEEKS, so 1 week = 604800 seconds
-                return new DurationTag(Double.valueOf(numericString) * 604800);
+                return new DurationTag(numVal * (60 * 60 * 24 * 7));
             }
-            else if (string.endsWith("m")) {
-                // Matches MINUTES, so 1 minute = 60 seconds
-                return new DurationTag(Double.valueOf(numericString) * 60);
+            else if (string.endsWith("d")) {
+                return new DurationTag(numVal * (60 * 60 * 24));
             }
             else if (string.endsWith("h")) {
-                // Matches HOURS, so 1 hour = 3600 seconds
-                return new DurationTag(Double.valueOf(numericString) * 3600);
+                return new DurationTag(numVal * (60 * 60));
+            }
+            else if (string.endsWith("m")) {
+                return new DurationTag(numVal * 60);
             }
             else if (string.endsWith("s")) {
                 // seconds
-                return new DurationTag(Double.valueOf(numericString));
+                return new DurationTag(numVal);
+            }
+            else if (string.endsWith("t")) {
+                return new DurationTag(numVal * 0.05);
             }
             else if (numericString.equals(string)) {
                 // seconds

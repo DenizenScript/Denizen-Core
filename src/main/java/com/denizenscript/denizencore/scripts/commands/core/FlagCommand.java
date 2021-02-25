@@ -67,7 +67,8 @@ public class FlagCommand extends AbstractCommand {
     // Item flags can also be used as a requirement in <@link command take>.
     //
     // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
-    // This includes '__interact_step' which is used for interact script steps, related to <@link command zap>,
+    // This includes '__scripts' which is where script flags are stored inside of server flags,
+    // and '__interact_step' which is used for interact script steps, related to <@link command zap>,
     // and '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
     //
     // Flags have an expiration system, which is used by specifying a duration after which they should expire (which then internally calculates the date/time of expiration by adding the duration input to the current date/time).
