@@ -180,6 +180,9 @@ public class Deprecations {
     // Added 2021/02/17.
     public static Warning listEscapeContents = new SlowWarning("The tags ListTag.escape_contents and unescape_contents are deprecated: use parse[escaped] and parse[unescaped], or just don't escape in the first place as most list escapes are no longer needed.");
 
+    // Added 2021/02/25.
+    public static Warning zapPrefix = new SlowWarning("The 'zap' command should be used with the scriptname and step as two separate arguments, not just one.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.
