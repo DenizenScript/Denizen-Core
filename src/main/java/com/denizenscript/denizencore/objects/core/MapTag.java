@@ -229,6 +229,14 @@ public class MapTag implements ObjectTag, Adjustable {
         }
     }
 
+    public ListTag keys() {
+        ListTag result = new ListTag();
+        for (StringHolder entry : map.keySet()) {
+            result.add(entry.str);
+        }
+        return result;
+    }
+
     public static void registerTags() {
 
         // <--[tag]
@@ -623,11 +631,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of "a/1|b/2|c/3|", using "keys" will return "a|b|c|".
         // -->
         registerTag("keys", (attribute, object) -> {
-            ListTag result = new ListTag();
-            for (StringHolder entry : object.map.keySet()) {
-                result.add(entry.str);
-            }
-            return result;
+            return object.keys();
         }, "list_keys");
 
         // <--[tag]

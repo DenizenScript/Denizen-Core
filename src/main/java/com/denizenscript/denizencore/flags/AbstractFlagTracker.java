@@ -159,17 +159,16 @@ public abstract class AbstractFlagTracker {
         return list;
     }
 
+    public MapTag getFlagMap() {
+        MapTag result = new MapTag();
+        for (String key : listAllFlags()) {
+            result.putObject(key, getFlagValue(key));
+        }
+        return result;
+    }
+
     public MapTag doFlagMapTag(Attribute attribute) {
         listFlagsTagWarning.warn(attribute.context);
-        if (this instanceof MapTagFlagTracker) {
-            return ((MapTagFlagTracker) this).map;
-        }
-        else {
-            MapTag result = new MapTag();
-            for (String key : listAllFlags()) {
-                result.putObject(key, getFlagValue(key));
-            }
-            return result;
-        }
+        return getFlagMap();
     }
 }

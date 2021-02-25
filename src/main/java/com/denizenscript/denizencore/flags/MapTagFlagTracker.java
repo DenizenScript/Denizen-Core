@@ -67,4 +67,9 @@ public class MapTagFlagTracker extends MapTagBasedFlagTracker {
             }
         }
     }
+
+    @Override
+    public MapTag getFlagMap() {
+        return map;
+    }
 }

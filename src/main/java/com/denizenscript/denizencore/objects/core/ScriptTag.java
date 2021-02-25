@@ -1,5 +1,8 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.flags.AbstractFlagTracker;
+import com.denizenscript.denizencore.flags.FlaggableObject;
+import com.denizenscript.denizencore.flags.RedirectionFlagTracker;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -14,7 +17,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class ScriptTag implements ObjectTag, Adjustable {
+public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
     // <--[language]
     // @name Script
@@ -239,7 +242,19 @@ public class ScriptTag implements ObjectTag, Adjustable {
         return true;
     }
 
+    @Override
+    public AbstractFlagTracker getFlagTracker() {
+        return new RedirectionFlagTracker(DenizenCore.getImplementation().getServerFlags(), "__scripts." + name.replace(".", "&dot"));
+    }
+
+    @Override
+    public void reapplyTracker(AbstractFlagTracker tracker) {
+        // Nothing to do.
+    }
+
     public static void registerTags() {
+
+        AbstractFlagTracker.registerFlagHandlers(tagProcessor);
 
         // <--[tag]
         // @attribute <ScriptTag.container_type>
