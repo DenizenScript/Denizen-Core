@@ -273,7 +273,7 @@ public class DurationTag implements ObjectTag {
 
     @Override
     public String debuggable() {
-        return "d@" + seconds + "s <GR>(" + formatted() + ")";
+        return "d@" + seconds + "s <GR>(" + formatted(false) + ")";
     }
 
     @Override
@@ -435,14 +435,25 @@ public class DurationTag implements ObjectTag {
         // @attribute <DurationTag.formatted>
         // @returns ElementTag
         // @description
-        // returns the value of the duration in an easily readable
-        // format like 2h 30m, where minutes are only shown if there
-        // is less than a day left and seconds are only shown if
-        // there are less than 10 minutes left.
+        // returns the value of the duration in an easily readable format like 2h 30m,
+        // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
+        // Will show seconds, minutes, hours, days, and/or years.
         // -->
         registerTag("formatted", (attribute, object) -> {
-            return new ElementTag(object.formatted());
+            return new ElementTag(object.formatted(false));
         }, "value");
+
+        // <--[tag]
+        // @attribute <DurationTag.formatted_words>
+        // @returns ElementTag
+        // @description
+        // returns the value of the duration in an easily readable format like "2 hours 30 minutes",
+        // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
+        // Will show seconds, minutes, hours, days, and/or years.
+        // -->
+        registerTag("formatted_words", (attribute, object) -> {
+            return new ElementTag(object.formatted(true));
+        });
     }
 
     public static ObjectTagProcessor<DurationTag> tagProcessor = new ObjectTagProcessor<>();
@@ -456,7 +467,7 @@ public class DurationTag implements ObjectTag {
         return tagProcessor.getObjectAttribute(this, attribute);
     }
 
-    public String formatted() {
+    public String formatted(boolean words) {
         double secondsCopy = seconds;
         boolean isNegative = secondsCopy < 0;
         if (isNegative) {
@@ -465,22 +476,30 @@ public class DurationTag implements ObjectTag {
         // Make sure you don't change these longs into doubles
         // and break the code
         long seconds = (long) secondsCopy;
-        long days = seconds / 86400;
-        long hours = (seconds - days * 86400) / 3600;
-        long minutes = (seconds - days * 86400 - hours * 3600) / 60;
-        seconds = seconds - days * 86400 - hours * 3600 - minutes * 60;
+        long yearsRaw = seconds / (60 * 60 * 24 * 365);
+        long daysRaw = seconds / (60 * 60 * 24);
+        long hoursRaw = seconds / (60 * 60);
+        long minutesRaw = seconds / (60);
+        long years = yearsRaw;
+        long days = daysRaw - (years * 365);
+        long hours = hoursRaw - (daysRaw * 24);
+        long minutes = minutesRaw - (hours * 60);
+        seconds -= minutesRaw * 60;
         String timeString = "";
+        if (years > 0) {
+            timeString = years + (words ? " years " :  "y ");
+        }
         if (days > 0) {
-            timeString = days + "d ";
+            timeString += days + (words ? " days " :  "d ");
         }
-        if (hours > 0) {
-            timeString = timeString + hours + "h ";
+        if (hours > 0 && years == 0) {
+            timeString += hours + (words ? " hours " :  "h ");
         }
-        if (minutes > 0 && days == 0) {
-            timeString = timeString + minutes + "m ";
+        if (minutes > 0 && days == 0 && years == 0) {
+            timeString += minutes + (words ? " minutes " :  "m ");
         }
-        if (seconds > 0 && minutes < 10 && hours == 0 && days == 0) {
-            timeString = timeString + seconds + "s";
+        if (seconds > 0 && minutes < 10 && hours == 0 && days == 0 && years == 0) {
+            timeString += seconds + (words ? " seconds" :  "s ");
         }
         if (timeString.isEmpty()) {
             if (secondsCopy == 0) {
