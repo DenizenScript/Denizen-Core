@@ -100,7 +100,7 @@ public class ArgumentHelper {
         }
         StringBuilder sb = new StringBuilder();
         for (ObjectTag obj : objects) {
-            sb.append(obj == null ? "null" : obj.debuggable()).append("<G>, ");
+            sb.append(obj == null ? "null" : obj.debuggable()).append("<G>,<Y> ");
         }
         if (sb.length() == 0) {
             return debugObj(prefix, sb);
@@ -108,10 +108,6 @@ public class ArgumentHelper {
         else {
             return debugObj(prefix, "[" + sb.substring(0, sb.length() - "<G>, ".length()) + "<Y>]");
         }
-    }
-
-    public static String debugUniqueObj(String prefix, String id, Object value) {
-        return "<G>" + prefix + "='<A>" + id + "<Y>(" + (value != null ? value.toString() : "null") + ")<G>'  ";
     }
 
     private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = "eE";

@@ -1431,6 +1431,20 @@ public class ElementTag implements ObjectTag {
         }, "totitlecase");
 
         // <--[tag]
+        // @attribute <ElementTag.to_sentence_case>
+        // @returns ElementTag
+        // @group element manipulation
+        // @description
+        // Returns the value in sentence case (the first letter capitalized, the rest lowercase).
+        // -->
+        registerTag("to_sentence_case", (attribute, object) -> {
+            if (object.element.length() == 0) {
+                return new ElementTag("");
+            }
+            return new ElementTag(Character.toUpperCase(object.element.charAt(0)) + object.element.substring(1).toLowerCase());
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.substring[<#>(,<#>)]>
         // @returns ElementTag
         // @group element manipulation
