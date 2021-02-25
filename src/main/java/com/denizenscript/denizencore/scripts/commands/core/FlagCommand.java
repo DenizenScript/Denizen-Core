@@ -48,6 +48,7 @@ public class FlagCommand extends AbstractCommand {
     // - NPCTag (Citizens), which will store data in the Citizens saves file as the 'denizen_flags' trait.
     // - EntityTag, which will store data in the entity's NBT in the world file.
     // - LocationTag, for block flags, which will store data in the chunk file.
+    // - ChunkTag, for block flags, which will store data in the chunk file.
     // - ItemTag, which will store data in the item's NBT.
     // - WorldTag, which will store in the world folder in a file named 'denizen_flags.dat', like "server/world/denizen_flags.dat".
     // - InventoryTag, when noted, will store in the notes save file.

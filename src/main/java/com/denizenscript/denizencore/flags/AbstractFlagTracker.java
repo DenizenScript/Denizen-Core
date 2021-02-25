@@ -36,7 +36,7 @@ public abstract class AbstractFlagTracker {
         // See <@link language flag system>.
         // -->
         processor.registerTag("flag", (attribute, object) -> {
-            AbstractFlagTracker tracker = object.getFlagTracker();
+            AbstractFlagTracker tracker = object.getFlagTrackerForTag();
             if (tracker == null) {
                 attribute.echoError("Cannot read flag tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
@@ -52,7 +52,7 @@ public abstract class AbstractFlagTracker {
         // See <@link language flag system>.
         // -->
         processor.registerTag("has_flag", (attribute, object) -> {
-            AbstractFlagTracker tracker = object.getFlagTracker();
+            AbstractFlagTracker tracker = object.getFlagTrackerForTag();
             if (tracker == null) {
                 attribute.echoError("Cannot read has_flag tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
@@ -68,7 +68,7 @@ public abstract class AbstractFlagTracker {
         // See <@link language flag system>.
         // -->
         processor.registerTag("flag_expiration", (attribute, object) -> {
-            AbstractFlagTracker tracker = object.getFlagTracker();
+            AbstractFlagTracker tracker = object.getFlagTrackerForTag();
             if (tracker == null) {
                 attribute.echoError("Cannot read flag_expiration tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
@@ -85,7 +85,7 @@ public abstract class AbstractFlagTracker {
         // See <@link language flag system>.
         // -->
         processor.registerTag("list_flags", (attribute, object) -> {
-            AbstractFlagTracker tracker = object.getFlagTracker();
+            AbstractFlagTracker tracker = object.getFlagTrackerForTag();
             if (tracker == null) {
                 attribute.echoError("Cannot read list_flags tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;
@@ -102,7 +102,7 @@ public abstract class AbstractFlagTracker {
         // See <@link language flag system>.
         // -->
         processor.registerTag("flag_map", (attribute, object) -> {
-            AbstractFlagTracker tracker = object.getFlagTracker();
+            AbstractFlagTracker tracker = object.getFlagTrackerForTag();
             if (tracker == null) {
                 attribute.echoError("Cannot read flag_map tag for '" + object + "': " + object.getReasonNotFlaggable());
                 return null;

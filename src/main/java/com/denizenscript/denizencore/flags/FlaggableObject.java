@@ -6,6 +6,10 @@ public interface FlaggableObject extends ObjectTag {
 
     AbstractFlagTracker getFlagTracker();
 
+    default AbstractFlagTracker getFlagTrackerForTag() {
+        return getFlagTracker();
+    }
+
     void reapplyTracker(AbstractFlagTracker tracker);
 
     default String getReasonNotFlaggable() {
