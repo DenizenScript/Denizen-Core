@@ -183,6 +183,9 @@ public class Deprecations {
     // Added 2021/02/25.
     public static Warning zapPrefix = new SlowWarning("The 'zap' command should be used with the scriptname and step as two separate arguments, not just one.");
 
+    // Added 2021/02/26 as a temporary warning.
+    public static Warning handTypedMapTags = new SlowWarning("MapTag syntax is not final and will change in the coming future. Do not hand-type MapTag values - use <map.with[key].as[value]> if you must manually construct an inline map.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.

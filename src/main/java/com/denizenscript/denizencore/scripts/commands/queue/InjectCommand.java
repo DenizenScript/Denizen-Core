@@ -77,11 +77,9 @@ public class InjectCommand extends AbstractCommand {
         if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("local")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be injected.");
         }
-
         if (scriptEntry.hasObject("local") && !scriptEntry.hasObject("path") && !scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must specify a PATH.");
         }
-
     }
 
     @Override
@@ -112,7 +110,7 @@ public class InjectCommand extends AbstractCommand {
         }
 
         if (entries == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid path or script name)!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid script path '" + path + "')!");
             return;
         }
         if (instant != null && instant.asBoolean()) {

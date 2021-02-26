@@ -5,10 +5,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.utilities.AsciiMatcher;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
-import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.json.JSONObject;
@@ -69,6 +66,7 @@ public class MapTag implements ObjectTag, Adjustable {
         if (string == null) {
             return null;
         }
+        String original = string;
         if (string.startsWith("map@")) {
             string = string.substring("map@".length());
         }
@@ -91,6 +89,11 @@ public class MapTag implements ObjectTag, Adjustable {
             result.putObject(unescapeEntry(key), ObjectFetcher.pickObjectFor(unescapeEntry(value), context));
             lastPipe = pipe + 1;
             pipe = string.indexOf('|', lastPipe);
+        }
+        if (!original.startsWith("map@") || (original.length() > 4 && !original.endsWith("|"))) {
+            if (context != CoreUtilities.noDebugContext) {
+                Deprecations.handTypedMapTags.warn(context);
+            }
         }
         return result;
     }
