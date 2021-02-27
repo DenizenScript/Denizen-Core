@@ -615,6 +615,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public boolean doesMatch(String input) {
             int index = 0;
             input = CoreUtilities.toLowerCase(input);
+            if (!input.startsWith(texts[0]) || !input.endsWith(texts[texts.length - 1])) {
+                return false;
+            }
             for (String text : texts) {
                 if (text.isEmpty()) {
                     continue;
