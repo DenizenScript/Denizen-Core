@@ -488,10 +488,28 @@ public class CoreUtilities {
     }
 
     public static String doubleToString(float input) {
+        if (Float.isNaN(input)) {
+            return "NaN";
+        }
+        else if (Float.isInfinite(input)) {
+            if (input < 0) {
+                return "-infinity";
+            }
+            return "infinity";
+        }
         return floatFormat.format(input);
     }
 
     public static String doubleToString(double input) {
+        if (Double.isNaN(input)) {
+            return "NaN";
+        }
+        else if (Double.isInfinite(input)) {
+            if (input < 0) {
+                return "-infinity";
+            }
+            return "infinity";
+        }
         return df.format(input);
     }
 

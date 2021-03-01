@@ -1850,10 +1850,14 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the square root of the element.
+        // Null for negative numbers.
         // -->
         registerTag("sqrt", (attribute, ele) -> {
             if (!ele.isDouble()) {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
+                return null;
+            }
+            if (ele.asDouble() < 0) {
                 return null;
             }
             return new ElementTag(Math.sqrt(ele.asDouble()));
