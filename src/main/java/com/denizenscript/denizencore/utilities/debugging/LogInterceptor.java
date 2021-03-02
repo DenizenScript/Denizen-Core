@@ -10,7 +10,7 @@ import java.io.PrintStream;
  * Disabled by default in config.yml
  */
 public class LogInterceptor extends PrintStream {
-    boolean redirected = false;
+    public boolean redirected = false;
     public PrintStream standardOut;
 
     public LogInterceptor() {
@@ -43,13 +43,16 @@ public class LogInterceptor extends PrintStream {
         print(new String(buf));
     }
 
-    private boolean antiLoop = false;
+    public boolean antiLoop = false;
 
     public void redirectOutput() {
         if (redirected) {
             return;
         }
-        standardOut = System.out;
+        redirected = true;
+        if (System.out != this) {
+            standardOut = System.out;
+        }
         System.setOut(this);
     }
 
@@ -57,6 +60,7 @@ public class LogInterceptor extends PrintStream {
         if (!redirected) {
             return;
         }
+        redirected = false;
         System.setOut(standardOut);
     }
 }
