@@ -242,6 +242,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     public static void saveToFile(String filePath, String flagData) {
         File saveToFile = new File(filePath + ".dat~1");
         try {
+            saveToFile.getParentFile().mkdirs();
             Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
             FileOutputStream fiout = new FileOutputStream(saveToFile);
             OutputStreamWriter writer;
