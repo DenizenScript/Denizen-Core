@@ -88,6 +88,9 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // These use the object notation "s@".
     // The identity format for scripts is simply the script name.
     //
+    // This object type is flaggable.
+    // Flags on this object type will be stored in the server saves file, under special sub-key "__scripts"
+    //
     // -->
 
     ///////////////

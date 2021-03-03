@@ -42,20 +42,9 @@ public class FlagCommand extends AbstractCommand {
     // Flags can be sub-mapped with the '.' key, meaning a flag named 'x.y.z' is actually a flag 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final flag value.
     // In other words, "<server.flag[a.b.c]>" is equivalent to "<server.flag[a].get[b].get[c]>"
     //
-    // The currently supported flag targets are:
-    // - 'server', essentially a global flag target, that will store data in the file "plugins/Denizen/server_flags.dat"
-    // - ScriptTag, which will store flags in the server flags under the "__scripts" reserved key.
-    // - PlayerTag, which will store data in the file "plugins/Denizen/player_flags/[UUID_HERE].dat"
-    // - NPCTag (Citizens), which will store data in the Citizens saves file as the 'denizen_flags' trait.
-    // - EntityTag, which will store data in the entity's NBT in the world file.
-    // - LocationTag, for block flags, which will store data in the chunk file.
-    // - ChunkTag, for block flags, which will store data in the chunk file.
-    // - ItemTag, which will store data in the item's NBT.
-    // - WorldTag, which will store in the world folder in a file named 'denizen_flags.dat', like "server/world/denizen_flags.dat".
-    // - InventoryTag, when noted, will store in the notes save file.
-    // - CuboidTag, when noted, will store in the notes save file.
-    // - EllipsoidTag, when noted, will store in the notes save file.
-    // - PolygonTag, when noted, will store in the notes save file.
+    // Server flags can be set by specifying 'server' as the object, essentially a global flag target, that will store data in the file "plugins/Denizen/server_flags.dat"
+    //
+    // Most unique object types are flaggable - refer to any given object type's language documentation for details.
     //
     // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link command inventory> with the 'flag' argument.
     // Any supported object type, including the 'server' base tag, can use the tags
