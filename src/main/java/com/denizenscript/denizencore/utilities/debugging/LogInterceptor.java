@@ -24,13 +24,17 @@ public class LogInterceptor extends PrintStream {
             return;
         }
         antiLoop = true;
-        ConsoleOutputScriptEvent event = ConsoleOutputScriptEvent.instance;
-        event.message = DenizenCore.getImplementation().cleanseLogString(s);
-        event.fire();
-        if (!event.cancelled) {
-            super.print(s);
+        try {
+            ConsoleOutputScriptEvent event = ConsoleOutputScriptEvent.instance;
+            event.message = DenizenCore.getImplementation().cleanseLogString(s);
+            event = (ConsoleOutputScriptEvent) event.fire();
+            if (!event.cancelled) {
+                super.print(s);
+            }
         }
-        antiLoop = false;
+        finally {
+            antiLoop = false;
+        }
     }
 
     @Override

@@ -249,6 +249,9 @@ public class Deprecations {
     // Added 2021/02/05, deprecate official by 2023.
     public static Warning itemProjectile = new FutureWarning("The item_projectile custom entity type is deprecated: modern minecraft lets you set the item of any projectile, like 'snowball[item=stick]'");
 
+    // Added 2021/03/02, deprecate official by 2023.
+    public static Warning itemScriptColor = new FutureWarning("The item script 'color' key is deprecated: use the 'color' mechanism under the 'mechanisms' key instead.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

@@ -423,7 +423,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public abstract String getName();
 
-    public void fire() {
+    public ScriptEvent fire() {
         ScriptEvent copy = clone();
         stats.fires++;
         for (ScriptPath path : eventPaths) {
@@ -443,6 +443,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 Debug.echoError(e);
             }
         }
+        return copy;
     }
 
     private String currentEvent;
