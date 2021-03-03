@@ -1,5 +1,9 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.flags.AbstractFlagTracker;
+import com.denizenscript.denizencore.flags.FlaggableObject;
+import com.denizenscript.denizencore.flags.RedirectionFlagTracker;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
@@ -17,7 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 
-public class TimeTag implements ObjectTag, Adjustable {
+public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     // <--[language]
     // @name TimeTag Objects
@@ -32,6 +36,9 @@ public class TimeTag implements ObjectTag, Adjustable {
     // TimeTags can also be constructed from 'yyyy/mm/dd', 'yyyy/mm/dd_hh:mm:ss', or 'yyyy/mm/dd_hh:mm:ss:mill'.
     // (Meaning: the offset is optional, the milliseconds are optional, and the time-of-day is optional,
     // but if you exclude an optional part, you must immediately end the input there, without specifying more).
+    //
+    // This object type is flaggable.
+    // Flags on this object type will be stored in the server saves file, under special sub-key "__time"
     //
     // -->
 
@@ -225,7 +232,19 @@ public class TimeTag implements ObjectTag, Adjustable {
         return instant.get(ChronoField.MILLI_OF_SECOND);
     }
 
+    @Override
+    public AbstractFlagTracker getFlagTracker() {
+        return new RedirectionFlagTracker(DenizenCore.getImplementation().getServerFlags(), "__time." + millis());
+    }
+
+    @Override
+    public void reapplyTracker(AbstractFlagTracker tracker) {
+        // Nothing to do.
+    }
+
     public static void registerTags() {
+
+        AbstractFlagTracker.registerFlagHandlers(tagProcessor);
 
         // <--[tag]
         // @attribute <TimeTag.year>

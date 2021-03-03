@@ -1,5 +1,8 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.flags.AbstractFlagTracker;
+import com.denizenscript.denizencore.flags.FlaggableObject;
+import com.denizenscript.denizencore.flags.MapTagBasedFlagTracker;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -11,9 +14,10 @@ import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import java.util.Collection;
 import java.util.Map;
 
-public class QueueTag implements ObjectTag, Adjustable {
+public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
 
     // <--[language]
     // @name QueueTag Objects
@@ -25,6 +29,9 @@ public class QueueTag implements ObjectTag, Adjustable {
     //
     // These use the object notation "q@".
     // The identity format for queues is simply the queue ID.
+    //
+    // This object type is flaggable.
+    // Flags on this object type will be reinterpreted as definitions.
     //
     // -->
 
@@ -109,7 +116,37 @@ public class QueueTag implements ObjectTag, Adjustable {
         return "q@" + queue.debugId;
     }
 
+    public class QueueFakeFlagTracker extends MapTagBasedFlagTracker {
+
+        @Override
+        public MapTag getRootMap(String key) {
+            return (MapTag) getQueue().getDefinitionObject(key);
+        }
+
+        @Override
+        public void setRootMap(String key, MapTag map) {
+            getQueue().addDefinition(key, map);
+        }
+
+        @Override
+        public Collection<String> listAllFlags() {
+            return getQueue().getAllDefinitions().keySet();
+        }
+    }
+
+    @Override
+    public AbstractFlagTracker getFlagTracker() {
+        return new QueueFakeFlagTracker();
+    }
+
+    @Override
+    public void reapplyTracker(AbstractFlagTracker tracker) {
+        // Nothing to do.
+    }
+
     public static void registerTags() {
+
+        AbstractFlagTracker.registerFlagHandlers(tagProcessor);
 
         // <--[tag]
         // @attribute <QueueTag.id>
