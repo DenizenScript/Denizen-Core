@@ -2081,7 +2081,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // returns a copy of the list with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_value' definition.
-        // For example: a list of '1|2|3|4|5' .filter[<[filter_value].is[or_more].than[3]>] returns a list of '3|4|5'.
+        // For example: a list of '1|2|3|4|5' .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of '3|4|5'.
         // For example: a list of '1|2|3|4|5' .filter_tag[<list[4|5].contains[<[filter_value]>]>] returns a list of '4|5'.
         // -->
         registerTag("filter_tag", (attribute, object) -> {

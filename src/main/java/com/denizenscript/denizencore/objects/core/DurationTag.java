@@ -467,6 +467,10 @@ public class DurationTag implements ObjectTag {
         return tagProcessor.getObjectAttribute(this, attribute);
     }
 
+    private static String autoS(long val) {
+        return val == 1 ? " " : "s ";
+    }
+
     public String formatted(boolean words) {
         double secondsCopy = seconds;
         boolean isNegative = secondsCopy < 0;
@@ -487,19 +491,19 @@ public class DurationTag implements ObjectTag {
         seconds -= minutesRaw * 60;
         String timeString = "";
         if (years > 0) {
-            timeString = years + (words ? " years " :  "y ");
+            timeString = years + (words ? " year" + autoS(years) :  "y ");
         }
         if (days > 0) {
-            timeString += days + (words ? " days " :  "d ");
+            timeString += days + (words ? " day" + autoS(days) :  "d ");
         }
         if (hours > 0 && years == 0) {
-            timeString += hours + (words ? " hours " :  "h ");
+            timeString += hours + (words ? " hour" + autoS(hours) :  "h ");
         }
         if (minutes > 0 && days == 0 && years == 0) {
-            timeString += minutes + (words ? " minutes " :  "m ");
+            timeString += minutes + (words ? " minute" + autoS(minutes) :  "m ");
         }
         if (seconds > 0 && minutes < 10 && hours == 0 && days == 0 && years == 0) {
-            timeString += seconds + (words ? " seconds" :  "s ");
+            timeString += seconds + (words ? " second" + autoS(seconds) :  "s ");
         }
         if (timeString.isEmpty()) {
             if (secondsCopy == 0) {
