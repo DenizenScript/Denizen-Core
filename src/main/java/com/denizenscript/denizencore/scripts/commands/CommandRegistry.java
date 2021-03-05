@@ -21,10 +21,9 @@ public abstract class CommandRegistry {
     public final Map<String, AbstractCommand> instances = new HashMap<>();
     public final Map<Class<? extends AbstractCommand>, String> classes = new HashMap<>();
 
-    public boolean register(String commandName, AbstractCommand commandInstance) {
+    public void register(String commandName, AbstractCommand commandInstance) {
         this.instances.put(CoreUtilities.toLowerCase(commandName), commandInstance);
         this.classes.put(((AbstractCommand) commandInstance).getClass(), CoreUtilities.toLowerCase(commandName));
-        return true;
     }
 
     public Map<String, AbstractCommand> list() {

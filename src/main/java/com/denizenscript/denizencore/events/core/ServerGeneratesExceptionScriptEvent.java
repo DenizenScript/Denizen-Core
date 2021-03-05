@@ -52,17 +52,18 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("message")) {
-            return new ElementTag(exception.getMessage());
-        }
-        else if (name.equals("full_trace")) {
-            return new ElementTag(fullTrace);
-        }
-        else if (name.equals("type")) {
-            return new ElementTag(exception.getClass().getSimpleName());
-        }
-        else if (name.equals("queue") && queue != null) {
-            return new QueueTag(queue);
+        switch (name) {
+            case "message":
+                return new ElementTag(exception.getMessage());
+            case "full_trace":
+                return new ElementTag(fullTrace);
+            case "type":
+                return new ElementTag(exception.getClass().getSimpleName());
+            case "queue":
+                if (queue != null) {
+                    return new QueueTag(queue);
+                }
+                break;
         }
         return super.getContext(name);
     }

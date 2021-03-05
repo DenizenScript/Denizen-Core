@@ -1777,19 +1777,16 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("numerical", (attribute, object) -> {
             ArrayList<String> sortable = new ArrayList<>(object);
-            Collections.sort(sortable, new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    double value = new ElementTag(o1).asDouble() - new ElementTag(o2).asDouble();
-                    if (value == 0) {
-                        return 0;
-                    }
-                    else if (value > 0) {
-                        return 1;
-                    }
-                    else {
-                        return -1;
-                    }
+            sortable.sort((o1, o2) -> {
+                double value = new ElementTag(o1).asDouble() - new ElementTag(o2).asDouble();
+                if (value == 0) {
+                    return 0;
+                }
+                else if (value > 0) {
+                    return 1;
+                }
+                else {
+                    return -1;
                 }
             });
             return new ListTag(sortable);
@@ -1804,7 +1801,7 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("alphanumeric", (attribute, object) -> {
             ArrayList<String> sortable = new ArrayList<>(object);
-            Collections.sort(sortable, new NaturalOrderComparator());
+            sortable.sort(new NaturalOrderComparator());
             return new ListTag(sortable);
         });
 
@@ -1817,12 +1814,7 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("alphabetical", (attribute, object) -> {
             ArrayList<String> sortable = new ArrayList<>(object);
-            Collections.sort(sortable, new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    return o1.compareToIgnoreCase(o2);
-                }
-            });
+            sortable.sort(String::compareToIgnoreCase);
             return new ListTag(sortable);
         });
 
@@ -1843,13 +1835,10 @@ public class ListTag implements List<String>, ObjectTag {
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.getRawContext(1);
             try {
-                Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
-                    @Override
-                    public int compare(ObjectTag o1, ObjectTag o2) {
-                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        return comparator.compare(or1, or2);
-                    }
+                newlist.objectForms.sort((o1, o2) -> {
+                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    return comparator.compare(or1, or2);
                 });
                 return new ListTag(newlist.objectForms);
             }
@@ -1876,29 +1865,26 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag newlist = new ListTag(object);
             final String tag = attribute.getRawContext(1);
             try {
-                Collections.sort(newlist.objectForms, new Comparator<ObjectTag>() {
-                    @Override
-                    public int compare(ObjectTag o1, ObjectTag o2) {
-                        ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        try {
-                            double r1 = Double.parseDouble(or1.toString());
-                            double r2 = Double.parseDouble(or2.toString());
-                            double value = r1 - r2;
-                            if (value == 0) {
-                                return 0;
-                            }
-                            else if (value > 0) {
-                                return 1;
-                            }
-                            else {
-                                return -1;
-                            }
-                        }
-                        catch (NumberFormatException ex) {
-                            attribute.echoError("Invalid non-numerical input to sort_by_number tag: " + or1.toString() + ", " + or2.toString());
+                newlist.objectForms.sort((o1, o2) -> {
+                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    try {
+                        double r1 = Double.parseDouble(or1.toString());
+                        double r2 = Double.parseDouble(or2.toString());
+                        double value = r1 - r2;
+                        if (value == 0) {
                             return 0;
                         }
+                        else if (value > 0) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                    catch (NumberFormatException ex) {
+                        attribute.echoError("Invalid non-numerical input to sort_by_number tag: " + or1.toString() + ", " + or2.toString());
+                        return 0;
                     }
                 });
                 return new ListTag(newlist.objectForms);
@@ -1945,48 +1931,37 @@ public class ListTag implements List<String>, ObjectTag {
             final ListTag context_send = context;
             List<String> list = new ArrayList<>(obj);
             try {
-                Collections.sort(list, new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        List<ScriptEntry> entries = script.getBaseEntries(entry == null ?
-                                DenizenCore.getImplementation().getEmptyScriptEntryData() : entry.entryData.clone());
-                        if (entries.isEmpty()) {
-                            return 0;
-                        }
-                        InstantQueue queue = new InstantQueue("LISTTAG_SORT");
-                        queue.addEntries(entries);
-                        int x = 1;
-                        ListTag definitions = new ListTag();
-                        definitions.add(o1);
-                        definitions.add(o2);
-                        definitions.addAll(context_send);
-                        String[] definition_names = null;
-                        try {
-                            definition_names = script.getString("definitions").split("\\|");
-                        }
-                        catch (Exception e) { /* IGNORE */ }
-                        for (String definition : definitions) {
-                            String name = definition_names != null && definition_names.length >= x ?
-                                    definition_names[x - 1].trim() : String.valueOf(x);
-                            queue.addDefinition(name, definition);
-                            Debug.echoDebug(entries.get(0), "Adding definition '" + name + "' as " + definition);
-                            x++;
-                        }
-                        queue.start();
-                        int res = 0;
-                        if (queue.determinations != null && queue.determinations.size() > 0) {
-                            res = new ElementTag(queue.determinations.get(0)).asInt();
-                        }
-                        if (res < 0) {
-                            return -1;
-                        }
-                        else if (res > 0) {
-                            return 1;
-                        }
-                        else {
-                            return 0;
-                        }
+                list.sort((o1, o2) -> {
+                    List<ScriptEntry> entries = script.getBaseEntries(entry == null ?
+                            DenizenCore.getImplementation().getEmptyScriptEntryData() : entry.entryData.clone());
+                    if (entries.isEmpty()) {
+                        return 0;
                     }
+                    InstantQueue queue = new InstantQueue("LISTTAG_SORT");
+                    queue.addEntries(entries);
+                    int x = 1;
+                    ListTag definitions = new ListTag();
+                    definitions.add(o1);
+                    definitions.add(o2);
+                    definitions.addAll(context_send);
+                    String[] definition_names = null;
+                    try {
+                        definition_names = script.getString("definitions").split("\\|");
+                    }
+                    catch (Exception e) { /* IGNORE */ }
+                    for (String definition : definitions) {
+                        String name = definition_names != null && definition_names.length >= x ?
+                                definition_names[x - 1].trim() : String.valueOf(x);
+                        queue.addDefinition(name, definition);
+                        Debug.echoDebug(entries.get(0), "Adding definition '" + name + "' as " + definition);
+                        x++;
+                    }
+                    queue.start();
+                    int res = 0;
+                    if (queue.determinations != null && queue.determinations.size() > 0) {
+                        res = new ElementTag(queue.determinations.get(0)).asInt();
+                    }
+                    return Integer.compare(res, 0);
                 });
             }
             catch (Exception e) {

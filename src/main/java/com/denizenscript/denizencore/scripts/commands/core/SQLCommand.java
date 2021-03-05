@@ -201,53 +201,41 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + sqlID.asString() + "'!");
                     return;
                 }
-                DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(new Runnable() {
-                    @Override
-                    public void run() {
-                        Connection con = null;
-                        if (Debug.verbose) {
-                            Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
-                        }
-                        try {
-                            con = getConnection(username.asString(), password.asString(), server.asString(), ssl.asString());
-                        }
-                        catch (final Exception e) {
-                            DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
-                                    scriptEntry.setFinished(true);
-                                    if (Debug.verbose) {
-                                        Debug.echoError(scriptEntry.getResidingQueue(), e);
-                                    }
-                                }
-                            }, 0));
-                        }
-                        if (Debug.verbose) {
-                            Debug.echoDebug(scriptEntry, "Connection did not error");
-                        }
-                        final Connection conn = con;
-                        if (con != null) {
-                            DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    connections.put(sqlID.asString().toUpperCase(), conn);
-                                    Debug.echoDebug(scriptEntry, "Successfully connected to " + server);
-                                    scriptEntry.setFinished(true);
-                                }
-                            }, 0));
-                        }
-                        else {
-                            DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    scriptEntry.setFinished(true);
-                                    if (Debug.verbose) {
-                                        Debug.echoDebug(scriptEntry, "Connecting errored!");
-                                    }
-                                }
-                            }, 0));
-                        }
+                DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+                    Connection con = null;
+                    if (Debug.verbose) {
+                        Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
+                    }
+                    try {
+                        con = getConnection(username.asString(), password.asString(), server.asString(), ssl.asString());
+                    }
+                    catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (Debug.verbose) {
+                                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                            }
+                        }, 0));
+                    }
+                    if (Debug.verbose) {
+                        Debug.echoDebug(scriptEntry, "Connection did not error");
+                    }
+                    final Connection conn = con;
+                    if (con != null) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            connections.put(sqlID.asString().toUpperCase(), conn);
+                            Debug.echoDebug(scriptEntry, "Successfully connected to " + server);
+                            scriptEntry.setFinished(true);
+                        }, 0));
+                    }
+                    else {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            scriptEntry.setFinished(true);
+                            if (Debug.verbose) {
+                                Debug.echoDebug(scriptEntry, "Connecting errored!");
+                            }
+                        }, 0));
                     }
                 }, 0)));
             }
@@ -290,12 +278,9 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         }
                         scriptEntry.addObject("result", rows);
                         final int finalCount = count;
-                        DenizenCore.schedule(new OneTimeSchedulable(new Runnable() {
-                            @Override
-                            public void run() {
-                                Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
-                                scriptEntry.setFinished(true);
-                            }
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
+                            scriptEntry.setFinished(true);
                         }, 0));
                     }
                     catch (final Exception ex) {

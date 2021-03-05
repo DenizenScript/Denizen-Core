@@ -277,17 +277,14 @@ public class MapTag implements ObjectTag, Adjustable {
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.hasContext(1) ? attribute.getRawContext(1) : null;
             try {
-                Collections.sort(entryList, new Comparator<Map.Entry<StringHolder, ObjectTag>>() {
-                    @Override
-                    public int compare(Map.Entry<StringHolder, ObjectTag> e1, Map.Entry<StringHolder, ObjectTag> e2) {
-                        ObjectTag o1 = e1.getValue();
-                        ObjectTag o2 = e2.getValue();
-                        if (tag != null) {
-                            o1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                            o2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        }
-                        return comparator.compare(o1, o2);
+                entryList.sort((e1, e2) -> {
+                    ObjectTag o1 = e1.getValue();
+                    ObjectTag o2 = e2.getValue();
+                    if (tag != null) {
+                        o1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        o2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
                     }
+                    return comparator.compare(o1, o2);
                 });
             }
             catch (Exception ex) {

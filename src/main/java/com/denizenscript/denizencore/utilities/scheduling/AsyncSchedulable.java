@@ -13,15 +13,12 @@ public class AsyncSchedulable extends Schedulable {
     public AsyncSchedulable(Schedulable schedulable) {
         this.schedulable = schedulable;
         final Runnable runnable = schedulable.run;
-        this.schedulable.run = new Runnable() {
-            @Override
-            public void run() {
-                if (DenizenCore.MAIN_THREAD == Thread.currentThread()) {
-                    executor.execute(runnable);
-                }
-                else {
-                    runnable.run();
-                }
+        this.schedulable.run = () -> {
+            if (DenizenCore.MAIN_THREAD == Thread.currentThread()) {
+                executor.execute(runnable);
+            }
+            else {
+                runnable.run();
             }
         };
     }

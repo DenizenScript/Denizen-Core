@@ -150,34 +150,36 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 break;
             case RECORD:
                 String form = CoreUtilities.toLowerCase(debug.asString());
-                if (form.equals("start")) {
-                    Debug.echoDebug(scriptEntry, "Starting debug recording...");
-                    DenizenCore.getImplementation().startRecording();
-                    scriptEntry.setFinished(true);
-                }
-                else if (form.equals("cancel")) {
-                    Debug.echoDebug(scriptEntry, "Stopping debug recording...");
-                    DenizenCore.getImplementation().stopRecording();
-                    scriptEntry.setFinished(true);
-                }
-                else if (form.equals("submit")) {
-                    DenizenCore.getImplementation().submitRecording(s -> {
-                        if (s == null) {
-                            Debug.echoDebug(scriptEntry, "Submit failed.");
-                        }
-                        else if (s.equals("disabled")) {
-                            Debug.echoDebug(scriptEntry, "Submit failed: not recording");
-                        }
-                        else {
-                            Debug.echoDebug(scriptEntry, "Submitted to " + s);
-                            scriptEntry.addObject("submitted", new ElementTag(s));
-                        }
+                switch (form) {
+                    case "start":
+                        Debug.echoDebug(scriptEntry, "Starting debug recording...");
+                        DenizenCore.getImplementation().startRecording();
                         scriptEntry.setFinished(true);
-                    });
-                }
-                else {
-                    Debug.echoError("Debug 'record' command failed: unknown record form '" + form + "'");
-                    scriptEntry.setFinished(true);
+                        break;
+                    case "cancel":
+                        Debug.echoDebug(scriptEntry, "Stopping debug recording...");
+                        DenizenCore.getImplementation().stopRecording();
+                        scriptEntry.setFinished(true);
+                        break;
+                    case "submit":
+                        DenizenCore.getImplementation().submitRecording(s -> {
+                            if (s == null) {
+                                Debug.echoDebug(scriptEntry, "Submit failed.");
+                            }
+                            else if (s.equals("disabled")) {
+                                Debug.echoDebug(scriptEntry, "Submit failed: not recording");
+                            }
+                            else {
+                                Debug.echoDebug(scriptEntry, "Submitted to " + s);
+                                scriptEntry.addObject("submitted", new ElementTag(s));
+                            }
+                            scriptEntry.setFinished(true);
+                        });
+                        break;
+                    default:
+                        Debug.echoError("Debug 'record' command failed: unknown record form '" + form + "'");
+                        scriptEntry.setFinished(true);
+                        break;
                 }
                 break;
         }

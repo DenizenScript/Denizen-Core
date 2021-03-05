@@ -535,26 +535,29 @@ public class IfCommand extends BracedCommand {
                 arg = arg.substring(1);
                 negative = true;
             }
-            if (arg.equals("==") || arg.equals("=")) {
-                arg = "EQUALS";
-            }
-            else if (arg.equals(">=")) {
-                arg = "OR_MORE";
-            }
-            else if (arg.equals("<=")) {
-                arg = "OR_LESS";
-            }
-            else if (arg.equals("<")) {
-                arg = "LESS";
-            }
-            else if (arg.equals(">")) {
-                arg = "MORE";
-            }
-            else if (arg.equals("||")) {
-                arg = "OR";
-            }
-            else if (arg.equals("&&")) {
-                arg = "AND";
+            switch (arg) {
+                case "==":
+                case "=":
+                    arg = "EQUALS";
+                    break;
+                case ">=":
+                    arg = "OR_MORE";
+                    break;
+                case "<=":
+                    arg = "OR_LESS";
+                    break;
+                case "<":
+                    arg = "LESS";
+                    break;
+                case ">":
+                    arg = "MORE";
+                    break;
+                case "||":
+                    arg = "OR";
+                    break;
+                case "&&":
+                    arg = "AND";
+                    break;
             }
             Comparable comparable = new Comparable();
             comparable.context = scriptEntry.context;

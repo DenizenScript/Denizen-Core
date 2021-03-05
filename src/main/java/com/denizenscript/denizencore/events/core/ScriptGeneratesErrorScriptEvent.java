@@ -55,17 +55,21 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("message")) {
-            return new ElementTag(message);
-        }
-        else if (name.equals("script")) {
-            return script;
-        }
-        else if (name.equals("line") && line != -1) {
-            return new ElementTag(line);
-        }
-        else if (name.equals("queue") && queue != null) {
-            return new QueueTag(queue);
+        switch (name) {
+            case "message":
+                return new ElementTag(message);
+            case "script":
+                return script;
+            case "line":
+                if (line != -1) {
+                    return new ElementTag(line);
+                }
+                break;
+            case "queue":
+                if (queue != null) {
+                    return new QueueTag(queue);
+                }
+                break;
         }
         return super.getContext(name);
     }

@@ -119,23 +119,20 @@ public class TagManager {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
-        Future<?> future = executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DenizenCore.getImplementation().preTagExecute();
-                    if (isInTag) {
-                        fireEvent(event);
-                    }
-                    else {
-                        isInTag = true;
-                        fireEvent(event);
-                        isInTag = false;
-                    }
+        Future<?> future = executor.submit(() -> {
+            try {
+                DenizenCore.getImplementation().preTagExecute();
+                if (isInTag) {
+                    fireEvent(event);
                 }
-                finally {
-                    DenizenCore.getImplementation().postTagExecute();
+                else {
+                    isInTag = true;
+                    fireEvent(event);
+                    isInTag = false;
                 }
+            }
+            finally {
+                DenizenCore.getImplementation().postTagExecute();
             }
         });
 

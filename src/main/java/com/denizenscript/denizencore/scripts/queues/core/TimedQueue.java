@@ -121,12 +121,7 @@ public class TimedQueue extends ScriptQueue {
         }
         if (schedulable == null) {
             Schedulable schedulable = new RepeatingSchedulable(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            revolve();
-                        }
-                    }, (ticks <= 0 ? 1 : ticks) / 20f);
+                    this::revolve, (ticks <= 0 ? 1 : ticks) / 20f);
             this.schedulable = schedulable;
             DenizenCore.schedule(schedulable);
         }

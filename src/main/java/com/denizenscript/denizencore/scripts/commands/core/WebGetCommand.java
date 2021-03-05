@@ -172,12 +172,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                             + (hideFailure != null ? hideFailure.debug() : "")
                             + (headers != null ? headers.debug() : ""));
         }
-        Thread thr = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                webGet(scriptEntry, data, method, url, timeout, headers, saveFile, hideFailure);
-            }
-        });
+        Thread thr = new Thread(() -> webGet(scriptEntry, data, method, url, timeout, headers, saveFile, hideFailure));
         thr.start();
     }
 
@@ -227,9 +222,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         patchAlreadyPatched = true;
         String[] methods = ReflectionHelper.getFieldValue(HttpURLConnection.class, "methods", null);
         String[] outMethods = new String[methods.length + 1];
-        for (int i = 0; i < methods.length; i++) {
-            outMethods[i] = methods[i];
-        }
+        System.arraycopy(methods, 0, outMethods, 0, methods.length);
         outMethods[methods.length] = "PATCH";
         ReflectionHelper.setFieldValue(HttpURLConnection.class, "methods", null, outMethods);
     }

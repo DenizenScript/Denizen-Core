@@ -204,60 +204,70 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         String[] flagArgs = arg.getRawValue().split(":", 2);
                         scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
-                        if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                            scriptEntry.addObject("value", new ElementTag(1));
-                        }
-                        else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                            scriptEntry.addObject("value", new ElementTag(1));
-                        }
-                        else if (flagArgs[1].equals("!")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
-                            scriptEntry.addObject("value", new ElementTag(false));
-                        }
-                        else if (flagArgs[1].equals("<-")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                            scriptEntry.addObject("value", new ElementTag(false));
-                        }
-                        else {
-                            // No ACTION, we're just setting a value...
-                            scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                            scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
+                        switch (flagArgs[1]) {
+                            case "++":
+                            case "+":
+                                scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
+                                scriptEntry.addObject("value", new ElementTag(1));
+                                break;
+                            case "--":
+                            case "-":
+                                scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
+                                scriptEntry.addObject("value", new ElementTag(1));
+                                break;
+                            case "!":
+                                scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
+                                scriptEntry.addObject("value", new ElementTag(false));
+                                break;
+                            case "<-":
+                                scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
+                                scriptEntry.addObject("value", new ElementTag(false));
+                                break;
+                            default:
+                                // No ACTION, we're just setting a value...
+                                scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                                scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
+                                break;
                         }
                     }
                     else if (split == 3) {
                         String[] flagArgs = arg.getRawValue().split(":", 3);
                         scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
 
-                        if (flagArgs[1].equals("->")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
-                        }
-                        else if (flagArgs[1].equals("<-")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                        }
-                        else if (flagArgs[1].equals("||") || flagArgs[1].equals("|")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.SPLIT);
-                        }
-                        else if (flagArgs[1].equals("!|")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.SPLIT_NEW);
-                        }
-                        else if (flagArgs[1].equals("++") || flagArgs[1].equals("+")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                        }
-                        else if (flagArgs[1].equals("--") || flagArgs[1].equals("-")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                        }
-                        else if (flagArgs[1].equals("**") || flagArgs[1].equals("*")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.MULTIPLY);
-                        }
-                        else if (flagArgs[1].equals("//") || flagArgs[1].equals("/")) {
-                            scriptEntry.addObject("yaml_action", YAML_Action.DIVIDE);
-                        }
-                        else {
-                            scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                            scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
-                            continue;
+                        switch (flagArgs[1]) {
+                            case "->":
+                                scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
+                                break;
+                            case "<-":
+                                scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
+                                break;
+                            case "||":
+                            case "|":
+                                scriptEntry.addObject("yaml_action", YAML_Action.SPLIT);
+                                break;
+                            case "!|":
+                                scriptEntry.addObject("yaml_action", YAML_Action.SPLIT_NEW);
+                                break;
+                            case "++":
+                            case "+":
+                                scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
+                                break;
+                            case "--":
+                            case "-":
+                                scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
+                                break;
+                            case "**":
+                            case "*":
+                                scriptEntry.addObject("yaml_action", YAML_Action.MULTIPLY);
+                                break;
+                            case "//":
+                            case "/":
+                                scriptEntry.addObject("yaml_action", YAML_Action.DIVIDE);
+                                break;
+                            default:
+                                scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                                scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
+                                continue;
                         }
                         scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
                     }
@@ -326,35 +336,29 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 YamlConfiguration[] runnableConfigs = new YamlConfiguration[1];
-                Runnable onLoadCompleted = new Runnable() {
-                    @Override
-                    public void run() {
-                        yamlDocuments.remove(id);
-                        yamlDocuments.put(id, runnableConfigs[0]);
-                        scriptEntry.setFinished(true);
-                    }
+                Runnable onLoadCompleted = () -> {
+                    yamlDocuments.remove(id);
+                    yamlDocuments.put(id, runnableConfigs[0]);
+                    scriptEntry.setFinished(true);
                 };
-                Runnable loadRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            FileInputStream fis = new FileInputStream(file);
-                            String str = ScriptHelper.convertStreamToString(fis);
-                            fis.close();
-                            runnableConfigs[0] = YamlConfiguration.load(str);
-                            if (runnableConfigs[0] == null) {
-                                runnableConfigs[0] = new YamlConfiguration();
-                            }
-                            if (scriptEntry.shouldWaitFor()) {
-                                DenizenCore.schedule(new OneTimeSchedulable(onLoadCompleted, 0));
-                            }
-                            else {
-                                onLoadCompleted.run();
-                            }
+                Runnable loadRunnable = () -> {
+                    try {
+                        FileInputStream fis = new FileInputStream(file);
+                        String str = ScriptHelper.convertStreamToString(fis);
+                        fis.close();
+                        runnableConfigs[0] = YamlConfiguration.load(str);
+                        if (runnableConfigs[0] == null) {
+                            runnableConfigs[0] = new YamlConfiguration();
                         }
-                        catch (Exception e) {
-                            Debug.echoError("Failed to load yaml file: " + e);
+                        if (scriptEntry.shouldWaitFor()) {
+                            DenizenCore.schedule(new OneTimeSchedulable(onLoadCompleted, 0));
                         }
+                        else {
+                            onLoadCompleted.run();
+                        }
+                    }
+                    catch (Exception e) {
+                        Debug.echoError("Failed to load yaml file: " + e);
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
@@ -403,27 +407,24 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         YamlConfiguration yaml = yamlDocuments.get(id);
                         String outp = yaml.saveToString(false);
                         yaml.setDirty(false);
-                        Runnable saveRunnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
-                                    FileOutputStream fiout = new FileOutputStream(fileObj);
-                                    OutputStreamWriter writer;
-                                    if (charset == null) {
-                                        writer = new OutputStreamWriter(fiout);
-                                    }
-                                    else {
-                                        writer = new OutputStreamWriter(fiout, charset);
-                                    }
-                                    writer.write(outp);
-                                    writer.close();
+                        Runnable saveRunnable = () -> {
+                            try {
+                                Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+                                FileOutputStream fiout = new FileOutputStream(fileObj);
+                                OutputStreamWriter writer;
+                                if (charset == null) {
+                                    writer = new OutputStreamWriter(fiout);
                                 }
-                                catch (IOException e) {
-                                    Debug.echoError(e);
+                                else {
+                                    writer = new OutputStreamWriter(fiout, charset);
                                 }
-                                scriptEntry.setFinished(true);
+                                writer.write(outp);
+                                writer.close();
                             }
+                            catch (IOException e) {
+                                Debug.echoError(e);
+                            }
+                            scriptEntry.setFinished(true);
                         };
                         if (scriptEntry.shouldWaitFor()) {
                             DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(saveRunnable, 0)));

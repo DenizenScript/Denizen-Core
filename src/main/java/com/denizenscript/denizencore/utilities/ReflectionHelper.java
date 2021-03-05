@@ -107,11 +107,7 @@ public class ReflectionHelper {
     }
 
     public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
-        Map<String, MethodHandle> map = cachedFieldSetters.get(clazz);
-        if (map == null) {
-            map = new HashMap<>();
-            cachedFieldSetters.put(clazz, map);
-        }
+        Map<String, MethodHandle> map = cachedFieldSetters.computeIfAbsent(clazz, k -> new HashMap<>());
         MethodHandle result = map.get(field);
         if (result != null) {
             return result;

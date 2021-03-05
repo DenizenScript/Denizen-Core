@@ -45,31 +45,32 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         long seconds = DenizenCore.serverTimeMillis / 1000;
         String countString = path.switches.get("every");
         int count = countString == null ? 1 : Integer.parseInt(countString);
-        if (time.equals("secondly")) {
-            if (seconds % count != 0) {
+        switch (time) {
+            case "secondly":
+                if (seconds % count != 0) {
+                    return false;
+                }
+                break;
+            case "minutely":
+                if (seconds % 60 != 0) {
+                    return false;
+                }
+                long minutes = seconds / 60;
+                if (minutes % count != 0) {
+                    return false;
+                }
+                break;
+            case "hourly":
+                if (seconds % 3600 != 0) {
+                    return false;
+                }
+                long hours = seconds / 3600;
+                if (hours % count != 0) {
+                    return false;
+                }
+                break;
+            default:
                 return false;
-            }
-        }
-        else if (time.equals("minutely")) {
-            if (seconds % 60 != 0) {
-                return false;
-            }
-            long minutes = seconds / 60;
-            if (minutes % count != 0) {
-                return false;
-            }
-        }
-        else if (time.equals("hourly")) {
-            if (seconds % 3600 != 0) {
-                return false;
-            }
-            long hours = seconds / 3600;
-            if (hours % count != 0) {
-                return false;
-            }
-        }
-        else {
-            return false;
         }
         return super.matches(path);
     }

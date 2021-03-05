@@ -122,33 +122,30 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
             return;
         }
-        Runnable runme = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (dexists && !disdir) {
-                        d.delete();
-                    }
-                    if (disdir && !dexists) {
-                        d.mkdirs();
-                    }
-                    else if (!dexists && !d.getParentFile().exists()) {
-                        d.getParentFile().mkdirs();
-                    }
-                    if (o.isDirectory()) {
-                        CoreUtilities.copyDirectory(o, d, null);
-                    }
-                    else {
-                        Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
-                    }
-                    scriptEntry.addObject("success", new ElementTag("true"));
-                    scriptEntry.setFinished(true);
+        Runnable runme = () -> {
+            try {
+                if (dexists && !disdir) {
+                    d.delete();
                 }
-                catch (Exception e) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), e);
-                    scriptEntry.addObject("success", new ElementTag("false"));
-                    scriptEntry.setFinished(true);
+                if (disdir && !dexists) {
+                    d.mkdirs();
                 }
+                else if (!dexists && !d.getParentFile().exists()) {
+                    d.getParentFile().mkdirs();
+                }
+                if (o.isDirectory()) {
+                    CoreUtilities.copyDirectory(o, d, null);
+                }
+                else {
+                    Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
+                }
+                scriptEntry.addObject("success", new ElementTag("true"));
+                scriptEntry.setFinished(true);
+            }
+            catch (Exception e) {
+                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                scriptEntry.addObject("success", new ElementTag("false"));
+                scriptEntry.setFinished(true);
             }
         };
         if (scriptEntry.shouldWaitFor()) {

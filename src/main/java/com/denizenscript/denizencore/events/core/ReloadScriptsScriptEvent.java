@@ -37,8 +37,9 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("had_error")) {
-            return new ElementTag(hadError);
+        switch (name) {
+            case "had_error":
+                return new ElementTag(hadError);
         }
         return super.getContext(name);
     }

@@ -347,12 +347,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         catch (NumberFormatException ex) {
             Debug.echoError("Failed to sort events: not-a-number priority value! " + ex.getMessage());
         }
-        Collections.sort(eventPaths, new Comparator<ScriptPath>() {
-            @Override
-            public int compare(ScriptPath scriptPath, ScriptPath t1) {
-                int rel = scriptPath.priority - t1.priority;
-                return rel < 0 ? -1 : (rel > 0 ? 1 : 0);
-            }
+        eventPaths.sort((scriptPath, t1) -> {
+            int rel = scriptPath.priority - t1.priority;
+            return Integer.compare(rel, 0);
         });
     }
 
@@ -377,27 +374,25 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
         String low = CoreUtilities.toLowerCase(determination.toString());
-        if (low.equals("cancelled")) {
-            Debug.echoDebug(path.container, "Event cancelled!");
-            cancelled = true;
-            cancellationChanged();
-            return true;
-        }
-        else if (low.equals("cancelled:true")) {
-            Debug.echoDebug(path.container, "Event cancelled!");
-            cancelled = true;
-            cancellationChanged();
-            return true;
-        }
-        else if (low.equals("cancelled:false")) {
-            Debug.echoDebug(path.container, "Event uncancelled!");
-            cancelled = false;
-            cancellationChanged();
-            return true;
-        }
-        else {
-            Debug.echoError("Unknown determination '" + determination + "'");
-            return false;
+        switch (low) {
+            case "cancelled":
+                Debug.echoDebug(path.container, "Event cancelled!");
+                cancelled = true;
+                cancellationChanged();
+                return true;
+            case "cancelled:true":
+                Debug.echoDebug(path.container, "Event cancelled!");
+                cancelled = true;
+                cancellationChanged();
+                return true;
+            case "cancelled:false":
+                Debug.echoDebug(path.container, "Event uncancelled!");
+                cancelled = false;
+                cancellationChanged();
+                return true;
+            default:
+                Debug.echoError("Unknown determination '" + determination + "'");
+                return false;
         }
     }
 
@@ -488,14 +483,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("cancelled")) {
-            return new ElementTag(cancelled);
-        }
-        else if (name.equals("event_header")) {
-            return new ElementTag(currentEvent);
-        }
-        else if (name.equals("event_name")) {
-            return new ElementTag(getName());
+        switch (name) {
+            case "cancelled":
+                return new ElementTag(cancelled);
+            case "event_header":
+                return new ElementTag(currentEvent);
+            case "event_name":
+                return new ElementTag(getName());
         }
         return null;
     }

@@ -46,52 +46,56 @@ public class DataActionHelper {
         }
         String action = split.get(1);
         if (split.size() == 2) {
-            if (action.equals("++")) {
-                toReturn.type = DataActionType.INCREMENT;
-            }
-            else if (action.equals("--")) {
-                toReturn.type = DataActionType.DECREMENT;
-            }
-            else if (action.equals("!")) {
-                toReturn.type = DataActionType.CLEAR;
-            }
-            else if (action.equals("<-")) {
-                toReturn.type = DataActionType.REMOVE;
-            }
-            else {
-                toReturn.type = DataActionType.SET;
-                toReturn.inputValue = ObjectFetcher.pickObjectFor(action, context);
+            switch (action) {
+                case "++":
+                    toReturn.type = DataActionType.INCREMENT;
+                    break;
+                case "--":
+                    toReturn.type = DataActionType.DECREMENT;
+                    break;
+                case "!":
+                    toReturn.type = DataActionType.CLEAR;
+                    break;
+                case "<-":
+                    toReturn.type = DataActionType.REMOVE;
+                    break;
+                default:
+                    toReturn.type = DataActionType.SET;
+                    toReturn.inputValue = ObjectFetcher.pickObjectFor(action, context);
+                    break;
             }
             return toReturn;
         }
         toReturn.inputValue = ObjectFetcher.pickObjectFor(split.get(2), context);
-        if (action.equals("->")) {
-            toReturn.type = DataActionType.INSERT;
-        }
-        else if (action.equals("<-")) {
-            toReturn.type = DataActionType.REMOVE;
-        }
-        else if (action.equals("|")) {
-            toReturn.type = DataActionType.SPLIT;
-        }
-        else if (action.equals("!|")) {
-            toReturn.type = DataActionType.SPLIT_NEW;
-        }
-        else if (action.equals("+")) {
-            toReturn.type = DataActionType.ADD;
-        }
-        else if (action.equals("-")) {
-            toReturn.type = DataActionType.SUBTRACT;
-        }
-        else if (action.equals("*")) {
-            toReturn.type = DataActionType.MULTIPLY;
-        }
-        else if (action.equals("/")) {
-            toReturn.type = DataActionType.DIVIDE;
-        }
-        else {
-            toReturn.type = DataActionType.SET;
-            toReturn.inputValue = ObjectFetcher.pickObjectFor(split.get(1) + ":" + split.get(2), context);
+        switch (action) {
+            case "->":
+                toReturn.type = DataActionType.INSERT;
+                break;
+            case "<-":
+                toReturn.type = DataActionType.REMOVE;
+                break;
+            case "|":
+                toReturn.type = DataActionType.SPLIT;
+                break;
+            case "!|":
+                toReturn.type = DataActionType.SPLIT_NEW;
+                break;
+            case "+":
+                toReturn.type = DataActionType.ADD;
+                break;
+            case "-":
+                toReturn.type = DataActionType.SUBTRACT;
+                break;
+            case "*":
+                toReturn.type = DataActionType.MULTIPLY;
+                break;
+            case "/":
+                toReturn.type = DataActionType.DIVIDE;
+                break;
+            default:
+                toReturn.type = DataActionType.SET;
+                toReturn.inputValue = ObjectFetcher.pickObjectFor(split.get(1) + ":" + split.get(2), context);
+                break;
         }
         return toReturn;
     }

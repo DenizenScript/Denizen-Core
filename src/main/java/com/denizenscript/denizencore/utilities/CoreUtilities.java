@@ -326,8 +326,8 @@ public class CoreUtilities {
     }
 
     @FunctionalInterface
-    public static interface TagTypeConverter {
-        public abstract ObjectTag convert(ObjectTag inp, TagContext context);
+    public interface TagTypeConverter {
+        ObjectTag convert(ObjectTag inp, TagContext context);
     }
 
     public static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
@@ -448,19 +448,17 @@ public class CoreUtilities {
     static FilenameFilter scriptsFilter;
 
     static {
-        scriptsFilter = new FilenameFilter() {
-            public boolean accept(File file, String fileName) {
-                if (fileName.startsWith(".")) {
-                    return false;
-                }
-
-                String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-                if (ext.equalsIgnoreCase("DSCRIPT")) {
-                    Debug.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
-                    return true;
-                }
-                return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSC");
+        scriptsFilter = (file, fileName) -> {
+            if (fileName.startsWith(".")) {
+                return false;
             }
+
+            String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+            if (ext.equalsIgnoreCase("DSCRIPT")) {
+                Debug.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
+                return true;
+            }
+            return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSC");
         };
     }
 
