@@ -91,11 +91,17 @@ public class DenizenCore {
      * Call postLoadScripts after.
      */
     public static void preloadScripts() {
-        PreScriptReloadScriptEvent.instance.fire();
-        ScriptEvent.worldContainers.clear();
-        implementation.preScriptReload();
-        ScriptHelper.resetError();
-        ScriptHelper.reloadScripts();
+        try {
+            PreScriptReloadScriptEvent.instance.fire();
+            ScriptEvent.worldContainers.clear();
+            implementation.preScriptReload();
+            ScriptHelper.resetError();
+            ScriptHelper.reloadScripts();
+        }
+        catch (Exception ex) {
+            implementation.debugMessage("Error loading scripts:");
+            implementation.debugException(ex);
+        }
     }
 
     /**
@@ -108,7 +114,6 @@ public class DenizenCore {
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
-
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");
