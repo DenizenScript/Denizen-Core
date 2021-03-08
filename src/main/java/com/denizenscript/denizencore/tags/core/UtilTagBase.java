@@ -48,7 +48,7 @@ public class UtilTagBase {
             // @attribute <util.random.int[<#>].to[<#>]>
             // @returns ElementTag(Number)
             // @description
-            // Returns a random number between the 2 specified numbers, inclusive.
+            // Returns a random integer number between the 2 specified integer numbers, inclusive.
             // For example: random.int[1].to[3] could return 1, 2, or 3.
             // -->
             if (attribute.startsWith("int")) {
@@ -77,7 +77,7 @@ public class UtilTagBase {
             // @attribute <util.random.decimal[<#.#>].to[<#.#>]>
             // @returns ElementTag(Decimal)
             // @description
-            // Returns a random number between the 2 specified numbers, inclusive.
+            // Returns a random decimal number between the 2 specified decimal numbers, inclusive.
             // For example: random.decimal[1].to[2] could return 1.5, 1.75, or a massive number of other options.
             // -->
             if (attribute.startsWith("decimal")
@@ -107,7 +107,7 @@ public class UtilTagBase {
             // @attribute <util.random.decimal>
             // @returns ElementTag(Decimal)
             // @description
-            // Returns a random decimal number from 0 to 1
+            // Returns a random decimal number from 0 to 1.
             // -->
             else if (attribute.startsWith("decimal")) {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble())
@@ -166,7 +166,7 @@ public class UtilTagBase {
         // @attribute <util.list_numbers_to[<#>]>
         // @returns ListTag
         // @description
-        // Returns a list of numbers from 1 to the specified input number (inclusive).
+        // Returns a list of integer numbers from 1 to the specified input number (inclusive).
         // Note that you should NEVER use this as the input to a "foreach" command. Instead, use "repeat".
         // In most cases, there's a better way to do what you're trying to accomplish than using this tag.
         // -->

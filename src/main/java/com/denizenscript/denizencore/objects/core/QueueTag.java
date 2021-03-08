@@ -32,6 +32,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     //
     // This object type is flaggable.
     // Flags on this object type will be reinterpreted as definitions.
+    // Flags on queues should just not be used. Use definitions directly.
     //
     // -->
 
@@ -45,15 +46,12 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         if (string == null) {
             return null;
         }
-
         if (string.startsWith("q@") && string.length() > 2) {
             string = string.substring(2);
         }
-
         if (ScriptQueue.queueExists(string)) {
             return new QueueTag(ScriptQueue.getExistingQueue(string));
         }
-
         return null;
     }
 

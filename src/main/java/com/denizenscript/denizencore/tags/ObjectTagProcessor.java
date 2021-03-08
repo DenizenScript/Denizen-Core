@@ -26,15 +26,15 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         });
 
         // <--[tag]
-        // @attribute <ObjectTag.type>
+        // @attribute <ObjectTag.object_type>
         // @returns ElementTag
         // @description
         // Returns the name of the tag type that is processing this tag, like 'List'.
         // This tag is made available to help you debug script issues, for example if you think an object isn't processing its own type correctly.
         // -->
-        registerTag("type", (attribute, object) -> {
+        registerTag("object_type", (attribute, object) -> {
             return new ElementTag(object.getObjectType());
-        });
+        }, "type");
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

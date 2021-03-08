@@ -51,7 +51,6 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         if (string == null) {
             return null;
         }
-
         if (string.startsWith("time@") && string.length() > "time@".length()) {
             string = string.substring("time@".length());
         }
@@ -63,7 +62,6 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         if (dateParts.size() != 3) {
             return null;
         }
-
         List<String> timeParts = null;
         if (coreParts.size() > 1) {
             timeParts = CoreUtilities.split(coreParts.get(1), ':');
