@@ -50,25 +50,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
     }
 
-    public static String getNextId(String prefix) {
-        // DUUIDs v2.1
-        int size = QueueWordList.FinalWordList.size();
-        String id = prefix + "_"
-                + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
-                + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
-                + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
-        // DUUIDs v3.1
-        /*
-        String id = prefix.replace(' ', '_')
-                + "_"
-                + randomEntry(QueueWordList.Pronouns)
-                + randomEntry(QueueWordList.Verbs)
-                + randomEntry(QueueWordList.Modifiers)
-                + randomEntry(QueueWordList.Adjectives)
-                + randomEntry(QueueWordList.Nouns);*/
-        return allQueues.containsKey(id) ? getNextId(prefix) : id;
-    }
-
     protected static LinkedHashMap<String, ScriptQueue> allQueues = new LinkedHashMap<>();
 
     public static Collection<ScriptQueue> getQueues() {
@@ -122,7 +103,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     protected ScriptQueue(String id) {
         this.id = id;
-        generateId(id);
+        generateId(id, 0);
         total_queues++;
     }
 
@@ -213,7 +194,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     // Public 'functional' methods
     //////////////////
 
-    public void generateId(String prefix) {
+    public void generateId(String prefix, int depth) {
         if (prefix.startsWith("FORCE:")) {
             id = prefix.substring("FORCE:".length());
             debugId = id;
@@ -224,16 +205,19 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         Random random = CoreUtilities.getRandom();
         String wordOne = QueueWordList.FinalWordList.get(random.nextInt(size));
         String wordTwo = QueueWordList.FinalWordList.get(random.nextInt(size));
-        String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
-        id = prefix + "_" + wordOne + wordTwo + wordThree;
-        if (queueExists(id)) {
-            generateId(prefix);
-            return;
-        }
         String colorOne = DenizenCore.getImplementation().getRandomColor();
         String colorTwo = DenizenCore.getImplementation().getRandomColor();
-        String colorThree = DenizenCore.getImplementation().getRandomColor();
-        debugId = prefix + "_" + colorOne + wordOne + colorTwo + wordTwo + colorThree + wordThree;
+        id = prefix + "_" + wordOne + wordTwo;
+        debugId = "<LG>" + prefix + "_" + colorOne + wordOne + colorTwo + wordTwo;
+        for (int i = 0; i < depth; i++) {
+            String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
+            String colorThree = DenizenCore.getImplementation().getRandomColor();
+            id += wordThree;
+            debugId += colorThree + wordThree;
+        }
+        if (queueExists(id)) {
+            generateId(prefix, depth + 1);
+        }
     }
 
     public ScriptQueue replacementQueue = null;

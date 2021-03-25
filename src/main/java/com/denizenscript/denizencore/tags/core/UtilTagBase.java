@@ -5,10 +5,10 @@ import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -156,9 +156,12 @@ public class UtilTagBase {
             // Optionally specify the source context to base the value on.
             // -->
             else if (attribute.startsWith("duuid")) {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(
-                        ScriptQueue.getNextId(attribute.hasContext(1) ? attribute.getContext(1) : "DUUID")),
-                        attribute.fulfill(1)));
+                int size = QueueWordList.FinalWordList.size();
+                String id = (attribute.hasContext(1) ? attribute.getContext(1) : "DUUID") + "_"
+                        + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
+                        + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
+                        + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
+                event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(id), attribute.fulfill(1)));
             }
         }
 
