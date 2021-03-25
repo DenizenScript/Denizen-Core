@@ -80,9 +80,15 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         ObjectTag returned;
         TagRunnable.ObjectInterface<T> otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
+            if (Debug.verbose) {
+                Debug.log("TagProcessor - Sub-tag found for " + attrLow);
+            }
             attribute.seemingSuccesses.add(attrLow);
             returned = otr.run(attribute, object);
             if (returned == null) {
+                if (Debug.verbose) {
+                    Debug.log("TagProcessor - result was null");
+                }
                 return null;
             }
             return returned.getObjectAttribute(attribute.fulfill(1));

@@ -55,7 +55,7 @@ public class PropertyParser {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
-                    Debug.echoError("Property '" + propertyClass.getSimpleName() + "' does not describe the input object.");
+                    attribute.echoError("Property '" + propertyClass.getSimpleName() + "' does not describe the input object.");
                 }
                 return null;
             }

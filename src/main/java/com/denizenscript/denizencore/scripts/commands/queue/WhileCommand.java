@@ -193,13 +193,13 @@ public class WhileCommand extends BracedCommand {
             List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
             List<BracedData> data = ((List<BracedData>) scriptEntry.getObject("braces"));
             if (data == null || data.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = data.get(0).value;
 
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
                 return;
             }
             boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);

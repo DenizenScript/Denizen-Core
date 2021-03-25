@@ -348,10 +348,6 @@ public class ReplaceableTagEvent {
         wasReplaced = string != null;
     }
 
-    public boolean hasScriptEntryAttached() {
-        return context.entry != null;
-    }
-
     public ScriptEntry getScriptEntry() {
         return context.entry;
     }

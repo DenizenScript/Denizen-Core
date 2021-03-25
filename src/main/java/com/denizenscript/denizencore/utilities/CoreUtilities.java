@@ -301,7 +301,7 @@ public class CoreUtilities {
 
     public static ObjectTag autoAttrib(ObjectTag inp, Attribute attribute) {
         if (inp == null) {
-            Debug.echoError("Tag parse failed (null return) for tag <" + attribute.toString() + ">!");
+            Debug.echoError("Tag parse failed (null return) for tag <LG><" + attribute.toString() + "<LG>><W>!");
             return null;
         }
         if (attribute.isComplete()) {

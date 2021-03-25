@@ -198,13 +198,12 @@ public class RepeatCommand extends BracedCommand {
         else {
             List<BracedCommand.BracedData> data = ((List<BracedCommand.BracedData>) scriptEntry.getObject("braces"));
             if (data == null || data.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = data.get(0).value;
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError("Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
                 return;
             }
             if (scriptEntry.dbCallShouldDebug()) {

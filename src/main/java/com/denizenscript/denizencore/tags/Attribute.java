@@ -102,6 +102,9 @@ public class Attribute {
     public boolean hasContextFailed = false;
 
     public void resetErrorTrack() {
+        if (Debug.verbose) {
+            Debug.echoError("(Verbose) Attribute - error track reset");
+        }
         seemingSuccesses.clear();
         hasContextFailed = false;
     }
@@ -142,10 +145,10 @@ public class Attribute {
         if (fulfilled >= attributes.length) {
             return false;
         }
+        if (Debug.verbose) {
+            Debug.log("Trying tag startsWith " + string + " on tag " + toString());
+        }
         if (string.indexOf('.') >= 0) {
-            if (Debug.verbose) {
-                Debug.log("Trying tag startsWith " + string + " on tag " + toString());
-            }
             List<String> tmp = CoreUtilities.split(string, '.');
             if (tmp.size() + fulfilled > attributes.length) {
                 return false;
@@ -155,10 +158,16 @@ public class Attribute {
                     return false;
                 }
             }
+            if (Debug.verbose) {
+                Debug.log("Chain-Tag found!");
+            }
             seemingSuccesses.add(string);
             return true;
         }
         if (attributes[fulfilled].key.equals(string)) {
+            if (Debug.verbose) {
+                Debug.log("Sub-tag found!");
+            }
             seemingSuccesses.add(string);
             return true;
         }
@@ -188,6 +197,9 @@ public class Attribute {
         }
         if (attributes[attribute].context != null) {
             return true;
+        }
+        if (Debug.verbose) {
+            Debug.log("Attribute " + attribute + " is missing context, hasContextFailed");
         }
         hasContextFailed = true;
         return false;
@@ -443,11 +455,15 @@ public class Attribute {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < attributes.length; i++) {
+            sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<R>" : "<Y>")).append(attributes[i].key);
             if (contexts[i] != null) {
-                sb.append(attributes[i].key).append("[").append(contexts[i]).append("].");
+                sb.append("<LG>[<A>").append(contexts[i]).append("<LG>].");
+            }
+            else if (attributes[i].context != null) {
+                sb.append("<LG>[<R>").append(attributes[i].context).append("<LG>].");
             }
             else {
-                sb.append(attributes[i].toString()).append(".");
+                sb.append("<LG>.");
             }
         }
         if (sb.length() > 0) {

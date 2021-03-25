@@ -13,7 +13,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added on 2018/12/23
     // Bad candidate for functionality removal - a bit handy to use in "/ex", despite being clearly bad in standard scripts.
-    public static Warning playerByNameWarning = new SlowWarning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
+    public static Warning playerByNameWarning = new Warning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
 
     // ==================== Tag shorthands ====================
     // ====== All added on 2019/02/06 ======

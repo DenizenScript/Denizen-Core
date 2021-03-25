@@ -187,12 +187,26 @@ public class TagManager {
         }
         if (!event.replaced()) {
             ScriptQueue queue = context.entry != null ? context.entry.getResidingQueue() : null;
-            String tagStr = "<" + event.toString() + ">";
+            String tagStr = "<LG><" + event.toString() + "<LG>><W>";
             Debug.echoError(queue, "Tag " + tagStr + " is invalid!");
             recentTagError = true;
             if (OBJECTTAG_CONFUSION_PATTERN.matcher(tagStr).matches()) {
                 Debug.echoError(queue, "'ObjectTag' notation is for documentation purposes, and not to be used literally."
                     + " An actual object must be inserted instead. If confused, join our Discord at https://discord.gg/Q6pZGSR to ask for help!");
+            }
+            if (!event.hasAlternative()) {
+                if (event.getAttributes().fulfilled < event.getAttributes().attributes.length) {
+                    Debug.echoDebug(event.getScriptEntry(), "   Unfilled or unrecognized sub-tag(s) '<R>" + event.getAttributes().unfilledString() + "<W>' for tag <LG><" + event.getAttributes().origin + "<LG>><W>!");
+                    if (event.getAttributes().seemingSuccesses.size() > 0) {
+                        String almost = event.getAttributes().seemingSuccesses.get(event.getAttributes().seemingSuccesses.size() - 1);
+                        if (event.getAttributes().hasContextFailed) {
+                            Debug.echoDebug(event.getScriptEntry(), "   Almost matched but failed (missing [context] parameter?): " + almost);
+                        }
+                        else {
+                            Debug.echoDebug(event.getScriptEntry(), "   Almost matched but failed (possibly bad input?): " + almost);
+                        }
+                    }
+                }
             }
             return new ElementTag(event.raw_tag);
         }

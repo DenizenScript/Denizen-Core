@@ -230,12 +230,12 @@ public class ForeachCommand extends BracedCommand {
         else {
             List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
             if (bdlist == null || bdlist.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces (internal)!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty braces!");
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
                 return;
             }
             if (scriptEntry.dbCallShouldDebug()) {
