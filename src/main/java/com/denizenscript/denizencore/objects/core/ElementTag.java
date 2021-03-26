@@ -434,21 +434,6 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.equals_case_sensitive[<element>]>
-        // @returns ElementTag(Boolean)
-        // @group comparison
-        // @description
-        // Returns whether the element is equal to another element, with a case sensitive check.
-        // Usually prefer <@link tag ElementTag.equals>.
-        // -->
-        registerTag("equals_case_sensitive", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
-                return null;
-            }
-            return new ElementTag(object.asString().equals(attribute.getContext(1)));
-        });
-
-        // <--[tag]
         // @attribute <ElementTag.is_more_than[<number>]>
         // @returns ElementTag(Boolean)
         // @group comparison

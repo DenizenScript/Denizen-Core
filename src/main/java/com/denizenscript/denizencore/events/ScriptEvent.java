@@ -660,10 +660,24 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
+    public static class InverseMatchHelper extends MatchHelper {
+
+        public InverseMatchHelper(MatchHelper matcher) {
+            this.matcher = matcher;
+        }
+
+        public MatchHelper matcher;
+
+        @Override
+        public boolean doesMatch(String input) {
+            return !matcher.doesMatch(input);
+        }
+    }
+
     public static final HashMap<String, MatchHelper> knownMatchers = new HashMap<>();
 
     public static boolean isAdvancedMatchable(String input) {
-        return input.startsWith("regex:") || CoreUtilities.contains(input, '|') || CoreUtilities.contains(input, '*');
+        return input.startsWith("regex:") || CoreUtilities.contains(input, '|') || CoreUtilities.contains(input, '*') || input.startsWith("!");
     }
 
     public static MatchHelper createMatcher(String input) {
@@ -672,8 +686,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return result;
         }
         int asterisk;
-        if (input.startsWith("regex:")) {
-            return new RegexMatchHelper(input.substring("regex:".length()));
+        if (input.startsWith("!")) {
+            result = new InverseMatchHelper(createMatcher(input.substring(1)));
+        }
+        else if (input.startsWith("regex:")) {
+            result = new RegexMatchHelper(input.substring("regex:".length()));
         }
         else if (CoreUtilities.contains(input, '|')) {
             String[] split = input.split("\\|");
