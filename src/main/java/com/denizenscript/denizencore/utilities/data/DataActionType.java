@@ -18,7 +18,7 @@ public enum DataActionType {
     // Actions that take no input value:
     // Increment: '++': raises the value numerically up by 1. Example: - define x:++
     // Decrement: '--': lowers the value numerically down by 1. Example: - define x:--
-    // Clear: '!': removes the value entirely. Example: - define x:!
+    // Remove: '!': removes the value entirely. Example: - define x:!
     //
     // Actions that take an input value:
     // Add: '+': adds the input value to the value at the key. Example: - define x:+:5

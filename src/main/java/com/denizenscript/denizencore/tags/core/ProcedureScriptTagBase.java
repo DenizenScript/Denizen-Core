@@ -1,18 +1,16 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
-import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagManager;
-
-import java.util.List;
 
 public class ProcedureScriptTagBase {
 
@@ -28,14 +26,7 @@ public class ProcedureScriptTagBase {
     public void procedureTag(ReplaceableTagEvent event) {
 
         // <--[tag]
-        // @attribute <proc[ProcedureScript].context[<element>|...]>
-        // @returns ObjectTag
-        // @description
-        // Returns the 'determine' result of a procedure script with the given context.
-        // -->
-
-        // <--[tag]
-        // @attribute <proc[ProcedureScript]>
+        // @attribute <proc[<procedure_script_name>]>
         // @returns ObjectTag
         // @description
         // Returns the 'determine' result of a procedure script.
@@ -44,82 +35,54 @@ public class ProcedureScriptTagBase {
             return;
         }
 
-        Attribute attr = event.getAttributes();
+        Attribute attribute = event.getAttributes();
         int attribs = 1;
-
         ScriptTag script;
         String path = null;
-
-        if (event.hasNameContext()) {
-            if (event.getNameContext().indexOf('.') > 0) {
-                String[] split = event.getNameContext().split("\\.", 2);
+        if (attribute.hasContext(1)) {
+            if (attribute.getContext(1).indexOf('.') > 0) {
+                String[] split = attribute.getContext(1).split("\\.", 2);
                 path = split[1];
-                script = ScriptTag.valueOf(split[0], attr.context);
-
+                script = ScriptTag.valueOf(split[0], attribute.context);
             }
             else {
-                script = ScriptTag.valueOf(event.getNameContext(), attr.context);
+                script = attribute.contextAsType(1, ScriptTag.class);
             }
-
         }
         else {
             Debug.echoError("Invalid procedure script tag!");
             return;
         }
-
         if (script == null) {
-            Debug.echoError("Missing script for procedure script tag '" + event.getNameContext() + "'!");
+            attribute.echoError("Missing script for procedure script tag '" + attribute.getContext(1) + "'!");
             return;
         }
-
         if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
-            Debug.echoError("Chosen script is not a procedure script!");
+            attribute.echoError("Chosen script is not a procedure script!");
             return;
         }
+        attribute.fulfill(1);
+        ListTag definitions = null;
 
-        // Build script entries
-        List<ScriptEntry> entries;
-        if (path != null) {
-            entries = script.getContainer().getEntries(event.getContext().getScriptEntryData(), path);
+        // <--[tag]
+        // @attribute <proc[<procedure_script_name>].context[<element>|...]>
+        // @returns ObjectTag
+        // @description
+        // Returns the 'determine' result of a procedure script with the given context.
+        // -->
+        if (attribute.startsWith("context")) {
+            definitions = attribute.contextAsType(1, ListTag.class);
+            attribute.fulfill(1);
         }
-        else {
-            entries = script.getContainer().getBaseEntries(event.getContext().getScriptEntryData());
-        }
-
-        // Return if no entries built
-        if (entries.isEmpty()) {
+        ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, event.getContext().getScriptEntryData(), null, (q) -> {
+            q.procedural = true;
+        }, null, null, definitions, script.getContainer());
+        if (queue == null) {
+            attribute.echoError("Procedure queue start failed.");
             return;
         }
-
-        InstantQueue queue = new InstantQueue(script.getContainer().getName());
-        queue.addEntries(entries);
-        if (event.hasType() &&
-                event.getType().equalsIgnoreCase("context") &&
-                event.hasTypeContext()) {
-            attribs = 2;
-            int x = 1;
-            ListTag definitions = ListTag.valueOf(event.getTypeContext(), attr.context);
-            List<String> definition_names = null;
-            if (script.getContainer().getContents().contains("definitions")) {
-                definition_names = CoreUtilities.split(script.getContainer().getString("definitions"), '|');
-            }
-            for (String definition : definitions) {
-                String name = definition_names != null && definition_names.size() >= x ?
-                        definition_names.get(x - 1).trim() : String.valueOf(x);
-                queue.addDefinition(name, definition);
-                Debug.echoDebug(event.getScriptEntry() == null ? (event.getScript() == null ? script.getContainer() :
-                                event.getScript().getContainer()) : event.getScriptEntry(),
-                        "Adding definition '" + name + "' as " + definition);
-                x++;
-            }
-
-            queue.addDefinition("raw_context", event.getTypeContext());
-        }
-        queue.procedural = true;
-        queue.start();
         if (queue.determinations != null && queue.determinations.size() > 0) {
-            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0)
-                    , attr.fulfill(attribs)));
+            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute.fulfill(attribs)));
         }
     }
 }

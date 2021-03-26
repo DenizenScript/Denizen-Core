@@ -21,6 +21,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -1543,15 +1544,15 @@ public class ListTag implements List<String>, ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.sum>
-        // @returns ElementTag(Number)
+        // @returns ElementTag(Decimal)
         // @description
         // returns the sum of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("sum", (attribute, object) -> {
-            double sum = 0;
+            BigDecimal sum = BigDecimal.ZERO;
             for (String entry : object) {
                 if (ArgumentHelper.matchesDouble(entry)) {
-                    sum += Double.parseDouble(entry);
+                    sum = sum.add(new ElementTag(entry).asBigDecimal());
                 }
             }
             return new ElementTag(sum);
@@ -1559,21 +1560,26 @@ public class ListTag implements List<String>, ObjectTag {
 
         // <--[tag]
         // @attribute <ListTag.average>
-        // @returns ElementTag(Number)
+        // @returns ElementTag(Decimal)
         // @description
-        // returns the average of all numbers in the list. Ignores non-numerical values.
+        // returns the mean average of all numbers in the list. Ignores non-numerical values.
         // -->
         registerTag("average", (attribute, object) -> {
             if (object.isEmpty()) {
                 return new ElementTag(0);
             }
-            double sum = 0;
+            BigDecimal sum = BigDecimal.ZERO;
             for (String entry : object) {
                 if (ArgumentHelper.matchesDouble(entry)) {
-                    sum += Double.parseDouble(entry);
+                    sum = sum.add(new ElementTag(entry).asBigDecimal());
                 }
             }
-            return new ElementTag(sum / object.size());
+            try {
+                return new ElementTag(sum.divide(new BigDecimal(object.size()), 64, RoundingMode.HALF_UP));
+            }
+            catch (Throwable e) {
+                return new ElementTag(sum.doubleValue() / object.size());
+            }
         });
 
         // <--[tag]
