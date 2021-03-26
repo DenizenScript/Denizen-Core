@@ -2330,6 +2330,26 @@ public class ElementTag implements ObjectTag {
             }
             return new ElementTag(new AsciiMatcher(attribute.getContext(1)).trimToMatches(object.element));
         });
+
+        // <--[tag]
+        // @attribute <ElementTag.if_true[<object>].if_false[<object>]>
+        // @returns ObjectTag
+        // @group element checking
+        // @description
+        // If this element is 'true', returns the first given object. If it isn't 'true', returns the second given object.
+        // If the input objects are tags, only the matching tag will be parsed.
+        // For example: "<player.exists.if_true[<player.name>].if_false[server]>"
+        // will return the player's name if there's a player present, or if not will return 'server', and won't show any errors from the '<player.name>' tag even without a player linked.
+        // -->
+        registerTag("if_true", (attribute, object) -> {
+            if (!attribute.hasContext(1) || !attribute.startsWith("if_false", 2) || !attribute.hasContext(2)) {
+                attribute.echoError("ElementTag.if_true[...].if_false[...] malformed and missing at least one required part.");
+                return null;
+            }
+            ObjectTag result = attribute.getContextObject(object.asBoolean() ? 1 : 2);
+            attribute.fulfill(1);
+            return result;
+        });
     }
 
     public static ObjectTagProcessor<ElementTag> tagProcessor = new ObjectTagProcessor<>();

@@ -27,6 +27,7 @@ public class TernaryTagBase {
     // Returns either the 'pass' input, or 'fail' input depending on the outcome of the condition.
     // The 'pass' input will be returned when the condition returns 'true', otherwise the 'fail' input will be returned.
     // Example: '<tern[<player.is_spawned>].pass[Player is spawned!].fail[Player is not spawned!]>'
+    // Consider instead using <@link tag ElementTag.if_true.if_false>
     // -->
     public void ternaryTag(ReplaceableTagEvent event) {
         if (!event.matches("ternary", "tern")) {
