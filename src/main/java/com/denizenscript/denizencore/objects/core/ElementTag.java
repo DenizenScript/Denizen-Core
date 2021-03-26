@@ -419,6 +419,96 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.equals[<element>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is equal to another element.
+        // Equivalent to if comparison: ==
+        // -->
+        registerTag("equals", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(CoreUtilities.equalsIgnoreCase(object.asString(), attribute.getContext(1)));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.equals_case_sensitive[<element>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether the element is equal to another element, with a case sensitive check.
+        // Usually prefer <@link tag ElementTag.equals>.
+        // -->
+        registerTag("equals_case_sensitive", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.asString().equals(attribute.getContext(1)));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_more_than[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this decimal number is greater than the input decimal number.
+        // Equivalent to if comparison: >
+        // -->
+        registerTag("is_more_than", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) > 0);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_less_than[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this decimal number is less than the input decimal number.
+        // Equivalent to if comparison: <
+        // -->
+        registerTag("is_less_than", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) < 0);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_more_than_or_equal_to[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this decimal number is greater than or equal to the input decimal number.
+        // Equivalent to if comparison: >=
+        // -->
+        registerTag("is_more_than_or_equal_to", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) >= 0);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.is_less_than_or_equal_to[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this decimal number is less than or equal to the input decimal number.
+        // Equivalent to if comparison: <=
+        // -->
+        registerTag("is_less_than_or_equal_to", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) <= 0);
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.is_boolean>
         // @returns ElementTag(Boolean)
         // @group comparison
