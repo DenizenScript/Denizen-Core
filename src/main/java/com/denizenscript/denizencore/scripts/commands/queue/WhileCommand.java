@@ -78,7 +78,6 @@ public class WhileCommand extends BracedCommand {
         if (comparisons.isEmpty() && !scriptEntry.hasObject("stop") && !scriptEntry.hasObject("next") && !scriptEntry.hasObject("callback")) {
             throw new InvalidArgumentsException("Must specify a comparison value or 'stop' or 'next'!");
         }
-        scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
         scriptEntry.addObject("comparisons", comparisons);
 
     }
@@ -191,39 +190,35 @@ public class WhileCommand extends BracedCommand {
         }
         else {
             List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
-            List<BracedData> data = ((List<BracedData>) scriptEntry.getObject("braces"));
-            if (data == null || data.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = data.get(0).value;
-
-            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
-                return;
-            }
             boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);
-
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_loop", run));
             }
-
             if (!run) {
                 return;
             }
-
             WhileData datum = new WhileData();
             datum.index = 1;
             datum.value = comparisons;
             datum.LastChecked = System.currentTimeMillis();
             datum.instaTicks = 1;
+            scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
+            List<BracedData> data = getBracedCommands(scriptEntry);
+            if (data == null || data.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
+                return;
+            }
+            List<ScriptEntry> bracedCommandsList = data.get(0).value;
+            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
+                return;
+            }
             bracedCommandsList.add(callbackEntry);
-            scriptEntry.getResidingQueue().addDefinition("loop_index", "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);
             }

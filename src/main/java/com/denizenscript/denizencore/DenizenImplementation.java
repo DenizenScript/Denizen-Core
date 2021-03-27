@@ -3,6 +3,7 @@ package com.denizenscript.denizencore;
 import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -167,4 +168,8 @@ public interface DenizenImplementation {
     void submitRecording(Consumer<String> processResult);
 
     FlaggableObject simpleWordToFlaggable(String word, ScriptEntry entry);
+
+    ObjectTag getSpecialDef(String def, ScriptQueue queue);
+
+    boolean setSpecialDef(String def, ScriptQueue queue, ObjectTag value);
 }

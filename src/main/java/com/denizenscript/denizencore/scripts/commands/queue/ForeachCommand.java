@@ -71,9 +71,7 @@ public class ForeachCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         boolean handled = false;
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!handled
                     && arg.matches("stop")) {
@@ -105,7 +103,6 @@ public class ForeachCommand extends BracedCommand {
                 else {
                     scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.getRawValue(), scriptEntry.getContext()));
                 }
-                scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }
             else if (arg.matches("{")) {
@@ -208,11 +205,11 @@ public class ForeachCommand extends BracedCommand {
                     scriptEntry.getResidingQueue().addDefinition(as_name.asString(), data.list.getObject(data.index - 1));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = scriptEntry.clone();
-                    callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
                     bracedCommands.add(callbackEntry);
-                    for (int i = 0; i < bracedCommands.size(); i++) {
-                        bracedCommands.get(i).setInstant(true);
+                    for (ScriptEntry cmd : bracedCommands) {
+                        cmd.setInstant(true);
+                        cmd.copyFrom(scriptEntry);
                     }
                     scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
                 }
@@ -226,18 +223,7 @@ public class ForeachCommand extends BracedCommand {
                 Debug.echoError(scriptEntry.getResidingQueue(), "Foreach CALLBACK invalid: not a real callback!");
             }
         }
-
         else {
-            List<BracedData> bdlist = (List<BracedData>) scriptEntry.getObject("braces");
-            if (bdlist == null || bdlist.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
-            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
-                return;
-            }
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), (list == null ? map.debug() + key_as.debug() : list.debug()) + as_name.debug());
             }
@@ -262,19 +248,29 @@ public class ForeachCommand extends BracedCommand {
                 datum.list = list;
             }
             datum.index = 1;
-            scriptEntry.setData(datum);
-            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString(), "key:" + key_as.asString()},
-                    (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-            callbackEntry.copyFrom(scriptEntry);
-            callbackEntry.setOwner(scriptEntry);
-            bracedCommandsList.add(callbackEntry);
             if (datum.keys != null) {
                 scriptEntry.getResidingQueue().addDefinition(key_as.asString(), datum.keys.get(0));
             }
             scriptEntry.getResidingQueue().addDefinition(as_name.asString(), datum.list.getObject(0));
             scriptEntry.getResidingQueue().addDefinition("loop_index", new ElementTag("1"));
-            for (int i = 0; i < bracedCommandsList.size(); i++) {
-                bracedCommandsList.get(i).setInstant(true);
+            scriptEntry.setData(datum);
+            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString(), "key:" + key_as.asString()},
+                    (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+            callbackEntry.copyFrom(scriptEntry);
+            callbackEntry.setOwner(scriptEntry);
+            List<BracedData> bdlist = getBracedCommands(scriptEntry);
+            if (bdlist == null || bdlist.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
+                return;
+            }
+            List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
+            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
+                return;
+            }
+            bracedCommandsList.add(callbackEntry);
+            for (ScriptEntry cmd : bracedCommandsList) {
+                cmd.setInstant(true);
             }
             scriptEntry.setInstant(true);
             scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);

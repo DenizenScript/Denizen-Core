@@ -138,11 +138,22 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (definition == null) {
             return null;
         }
+        if (definition.startsWith("__")) {
+            ObjectTag value = DenizenCore.getImplementation().getSpecialDef(definition, this);
+            if (value != null) {
+                return value;
+            }
+        }
         return definitions.getDeepObject(CoreUtilities.toLowerCase(definition));
     }
 
     @Override
     public void addDefinition(String definition, ObjectTag value) {
+        if (definition.startsWith("__")) {
+            if (DenizenCore.getImplementation().setSpecialDef(definition, this, value)) {
+                return;
+            }
+        }
         definitions.putDeepObject(definition, value);
     }
 

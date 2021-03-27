@@ -53,15 +53,11 @@ public class RepeatCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         boolean handled = false;
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!handled
                     && arg.matchesInteger()) {
                 scriptEntry.addObject("quantity", arg.asElement());
-                scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
                 handled = true;
             }
             else if (!handled
@@ -90,13 +86,10 @@ public class RepeatCommand extends BracedCommand {
                 arg.reportUnhandled();
             }
         }
-
         if (!handled) {
             throw new InvalidArgumentsException("Must specify a quantity or 'stop' or 'next'!");
         }
-
         scriptEntry.defaultObject("as_name", new ElementTag("value"));
-
     }
 
     @SuppressWarnings("unchecked")
@@ -196,16 +189,6 @@ public class RepeatCommand extends BracedCommand {
             }
         }
         else {
-            List<BracedCommand.BracedData> data = ((List<BracedCommand.BracedData>) scriptEntry.getObject("braces"));
-            if (data == null || data.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = data.get(0).value;
-            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
-                return;
-            }
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), quantity.debug() + as_name.debug());
             }
@@ -219,13 +202,23 @@ public class RepeatCommand extends BracedCommand {
             RepeatData datum = new RepeatData();
             datum.target = target;
             datum.index = 1;
+            scriptEntry.getResidingQueue().addDefinition(as_name.asString(), "1");
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK", "as:" + as_name.asString()},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
+            List<BracedCommand.BracedData> data = getBracedCommands(scriptEntry);
+            if (data == null || data.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
+                return;
+            }
+            List<ScriptEntry> bracedCommandsList = data.get(0).value;
+            if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
+                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
+                return;
+            }
             bracedCommandsList.add(callbackEntry);
-            scriptEntry.getResidingQueue().addDefinition(as_name.asString(), "1");
             for (int i = 0; i < bracedCommandsList.size(); i++) {
                 bracedCommandsList.get(i).setInstant(true);
             }

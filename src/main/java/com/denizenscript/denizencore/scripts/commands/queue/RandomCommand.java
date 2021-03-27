@@ -62,15 +62,11 @@ public class RandomCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         List<BracedData> bdat = getBracedCommands(scriptEntry);
-
         if (bdat != null && bdat.size() > 0) {
             scriptEntry.addObject("braces", bdat);
         }
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (arg.matches("{")) {
                 break;
             }
@@ -82,23 +78,18 @@ public class RandomCommand extends BracedCommand {
             else {
                 arg.reportUnhandled();
             }
-
         }
-
         if (!scriptEntry.hasObject("braces")) {
             if (!scriptEntry.hasObject("possibilities")) {
                 throw new InvalidArgumentsException("Missing possibilities!");
             }
-
             if (scriptEntry.getElement("possibilities").asInt() <= 1) {
                 throw new InvalidArgumentsException("Must randomly select more than one item.");
             }
-
             if (scriptEntry.getResidingQueue().getQueueSize() < scriptEntry.getElement("possibilities").asInt()) {
                 throw new InvalidArgumentsException("Invalid Size! Random # must not be larger than the script!");
             }
         }
-
     }
 
     private int previous = 0;
@@ -108,7 +99,6 @@ public class RandomCommand extends BracedCommand {
     @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         int possibilities;
         ScriptQueue queue = scriptEntry.getResidingQueue();
         List<ScriptEntry> bracedCommands = null;
@@ -120,7 +110,6 @@ public class RandomCommand extends BracedCommand {
             bracedCommands = ((List<BracedData>) scriptEntry.getObject("braces")).get(0).value;
             possibilities = bracedCommands.size();
         }
-
         int selected = CoreUtilities.getRandom().nextInt(possibilities);
         // Try to not duplicate
         if (selected == previous || selected == previous2 || selected == previous3) {
@@ -134,19 +123,13 @@ public class RandomCommand extends BracedCommand {
         previous = selected;
         scriptEntry.addObject("possibilities", new ElementTag(possibilities));
         scriptEntry.addObject("selected", new ElementTag(selected));
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("possibilities", possibilities) + ArgumentHelper.debugObj("choice", selected + 1));
         }
-
         scriptEntry.setInstant(true);
-
         if (bracedCommands == null) {
-
             ScriptEntry keeping = null;
-
             for (int x = 0; x < possibilities; x++) {
-
                 if (x != selected) {
                     queue.removeEntry(0);
                 }
@@ -156,11 +139,8 @@ public class RandomCommand extends BracedCommand {
                     keeping = queue.getEntry(0);
                     queue.removeEntry(0);
                 }
-
             }
-
             queue.injectEntry(keeping, 0);
-
         }
         else {
             queue.injectEntry(bracedCommands.get(selected), 0);
