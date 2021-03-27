@@ -725,7 +725,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return result;
     }
 
-    public boolean runGenericCheck(String matchableValue, String trueValue) {
+    public static boolean runGenericCheck(String matchableValue, String trueValue) {
         if (matchableValue == null) {
             return false;
         }
@@ -735,7 +735,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return matcher.doesMatch(trueValue);
     }
 
-    public boolean runGenericSwitchCheck(ScriptPath path, String switchName, String value) {
+    public static boolean runGenericSwitchCheck(ScriptPath path, String switchName, String value) {
         String with = path.switches.get(switchName);
         if (with == null) {
             return true;

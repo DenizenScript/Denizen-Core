@@ -961,7 +961,6 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("equals_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ElementTag.equals_case_sensitive[...] must have a value.");
                 return null;
             }
             return new ElementTag(object.element.equals(attribute.getContext(1)));
@@ -976,7 +975,6 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("advanced_matches_text", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ElementTag.advanced_matches[...] must have a value.");
                 return null;
             }
             return new ElementTag(ScriptEvent.createMatcher(attribute.getContext(1)).doesMatch(object.element));
@@ -991,7 +989,6 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("regex_matches", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ElementTag.matches[...] must have a value.");
                 return null;
             }
             return new ElementTag(object.element.matches(attribute.getContext(1)));
@@ -1008,7 +1005,6 @@ public class ElementTag implements ObjectTag {
         // -->
         registerTag("regex", (attribute, object) -> {
             if (!attribute.hasContext(1) || !attribute.hasContext(2)) {
-                attribute.echoError("The tag ElementTag.regex[...] must have a value.");
                 return null;
             }
             String regex = attribute.getContext(1);
