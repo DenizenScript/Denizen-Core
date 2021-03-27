@@ -33,11 +33,6 @@ public class DefinitionTagBase {
                 return null;
             }
             ObjectTag def = definitionProvider.getDefinitionObject(defName);
-            if (attribute.startsWith("exists", 2)) {
-                Deprecations.defExistsTag.warn(attribute.context);
-                attribute.fulfill(1);
-                return new ElementTag(def != null);
-            }
             if (def == null) {
                 attribute.echoError("Invalid definition name '" + defName + "'.");
                 return null;

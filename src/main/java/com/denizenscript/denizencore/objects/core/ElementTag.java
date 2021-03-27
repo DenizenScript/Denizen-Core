@@ -968,19 +968,19 @@ public class ElementTag implements ObjectTag {
         }, "equals_with_case");
 
         // <--[tag]
-        // @attribute <ElementTag.advanced_matches[<matcher>]>
+        // @attribute <ElementTag.advanced_matches_text[<matcher>]>
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
         // Returns whether the element matches some matcher text, using the system behind <@link language Advanced Script Event Matching>.
         // -->
-        registerTag("advanced_matches", (attribute, object) -> {
+        registerTag("advanced_matches_text", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.advanced_matches[...] must have a value.");
                 return null;
             }
             return new ElementTag(ScriptEvent.createMatcher(attribute.getContext(1)).doesMatch(object.element));
-        });
+        }, "advanced_matches");
 
         // <--[tag]
         // @attribute <ElementTag.regex_matches[<regex>]>

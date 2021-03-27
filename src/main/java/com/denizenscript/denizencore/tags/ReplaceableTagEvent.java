@@ -292,6 +292,6 @@ public class ReplaceableTagEvent {
 
     @Override
     public String toString() {
-        return core_attributes.toString() + (hasValue() ? ":" + mainRef.value : "") + (hasAlternative() ? "||" + mainRef.alternative : "");
+        return core_attributes.toString() + (hasValue() ? ":" + mainRef.value : "") + (mainRef.alternative != null ? "||" + mainRef.alternative : "");
     }
 }

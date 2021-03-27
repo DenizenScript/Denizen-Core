@@ -225,9 +225,6 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/07/12, deprecate officially by 2022.
     public static Warning entityEquipmentSubtags = new FutureWarning(pointlessSubtagPrefix + " 'entity.equipment.slotname' is deprecated: use 'entity.equipment_map.get[slotname]' instead.");
 
-    // Added 2020/07/23, deprecate officially by 2022.
-    public static Warning defExistsTag = new FutureWarning("The def[].exists tag is deprecated: use a fallback and null check, or just set definitions more consistently.");
-
     // In Bukkit impl, Added 2020/10/18, deprecate officially by 2022.
     public static Warning itemDisplayNameMechanism = new FutureWarning("The item 'display_name' mechanism is now just the 'display' mechanism.");
 
