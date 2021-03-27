@@ -10,19 +10,21 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import java.util.Map;
+
 public class DefineMapCommand extends AbstractCommand {
 
     public DefineMapCommand() {
         setName("definemap");
         setSyntax("definemap [<name>] [<key>:<value> ...]");
-        setRequiredArguments(2, -1);
+        setRequiredArguments(1, -1);
         isProcedural = true;
     }
 
     // <--[command]
     // @Name DefineMap
     // @Syntax definemap [<name>] [<key>:<value> ...]
-    // @Required 2
+    // @Required 1
     // @Maximum -1
     // @Short Creates a MapTag definition with key/value pairs constructed from the input arguments.
     // @Group queue
@@ -37,6 +39,16 @@ public class DefineMapCommand extends AbstractCommand {
     // @Usage
     // Use to make a MapTag definition with three inputs.
     // - definemap my_map count:5 type:Taco smell:Tasty
+    //
+    // @Usage
+    // Use to make a MapTag definition with complex input.
+    // - definemap my_map:
+    //     count: 5
+    //     some_list:
+    //     - a
+    //     - b
+    //     some_submap:
+    //         some_subkey: taco
     //
     // -->
 
@@ -54,6 +66,10 @@ public class DefineMapCommand extends AbstractCommand {
             else {
                 arg.reportUnhandled();
             }
+        }
+        if (scriptEntry.internal.yamlSubcontent instanceof Map) {
+            MapTag map = (MapTag) CoreUtilities.objectToTagForm(scriptEntry.internal.yamlSubcontent, scriptEntry.entryData.getTagContext(), true, true);
+            value.map.putAll(map.map);
         }
         scriptEntry.addObject("map", value);
         if (!scriptEntry.hasObject("definition") || !scriptEntry.hasObject("map")) {

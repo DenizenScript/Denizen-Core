@@ -40,7 +40,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public ScriptTag script = null;
 
-        public List<Object> insideList = null;
+        public Object yamlSubcontent = null;
 
         public boolean instant = false;
 
@@ -159,7 +159,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public List<Object> getInsideList() {
-        return internal.insideList;
+        if (internal.yamlSubcontent instanceof List) {
+            return (List<Object>) internal.yamlSubcontent;
+        }
+        return null;
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script) {
@@ -182,7 +185,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
 
-    public ScriptEntry(String command, String[] arguments, ScriptContainer script, List<Object> insides, int lineNum) {
+    public ScriptEntry(String command, String[] arguments, ScriptContainer script, Object insides, int lineNum) {
         if (command == null) {
             throw new RuntimeException("Command name cannot be null!");
         }
@@ -190,7 +193,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         internal.lineNumber = lineNum;
         entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
         internal.command = command.toUpperCase();
-        internal.insideList = insides;
+        internal.yamlSubcontent = insides;
         internal.argPrefixMap = new HashMap<>();
         if (script != null) {
             internal.script = script.getAsScriptArg();

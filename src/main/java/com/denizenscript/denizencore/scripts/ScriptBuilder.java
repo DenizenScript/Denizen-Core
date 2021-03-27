@@ -37,16 +37,16 @@ public class ScriptBuilder {
                 ientry = "null";
             }
             String entry;
-            List<Object> inside;
+            Object inside;
             if (ientry instanceof Map) {
                 Object key = ((Map) ientry).keySet().toArray()[0];
                 entry = key.toString();
                 Object rawValue = ((Map) ientry).get(key);
-                if (!(rawValue instanceof List)) {
+                if (!(rawValue instanceof List) && !(rawValue instanceof Map)) {
                     Debug.echoError("Script '" + parent.getName() + "' has invalid line " + ientry + ": line ends with ':' but no script body inside.");
                     return null;
                 }
-                inside = (List<Object>) rawValue;
+                inside = rawValue;
             }
             else {
                 entry = ientry.toString();
