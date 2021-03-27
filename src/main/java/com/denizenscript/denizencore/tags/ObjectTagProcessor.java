@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -109,6 +110,63 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // -->
         registerTag("exists", (attribute, object) -> {
             return new ElementTag(true);
+        });
+
+        // <--[tag]
+        // @attribute <ObjectTag.null_if[<tag>]>
+        // @returns ObjectTag
+        // @description
+        // Parses the given tag on the object, expecting a boolean return.
+        // If the return is 'true', the 'null_if' tag returns null.
+        // If the return is 'false', the 'null_if' tag returns the original object.
+        // Consider also <@link tag ObjectTag.null_if_tag>.
+        // -->
+        registerTag("null_if", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            String tag = attribute.getContext(1);
+            boolean defaultValue = tag.endsWith("||true");
+            if (defaultValue) {
+                tag = tag.substring(0, tag.length() - "||true".length());
+            }
+            Attribute subAttribute;
+            try {
+                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
+            Attribute tempAttrib = new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context);
+            tempAttrib.setHadAlternative(true);
+            ObjectTag objs = CoreUtilities.autoAttribTyped(object, tempAttrib);
+            if ((objs == null) ? defaultValue : CoreUtilities.equalsIgnoreCase(objs.toString(), "true")) {
+                return null;
+            }
+            return object;
+        });
+
+        // <--[tag]
+        // @attribute <ObjectTag.null_if_tag[<dynamic-boolean>]>
+        // @returns ObjectTag
+        // @description
+        // Parses the given tag on the object, expecting a boolean return.
+        // This requires a fully formed tag as input, making use of the 'null_if_value' definition.
+        // If the return is 'true', the 'null_if' tag returns null.
+        // If the return is 'false', the 'null_if' tag returns the original object.
+        // Consider also <@link tag ObjectTag.null_if_tag>.
+        // -->
+        registerTag("null_if_tag", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
+            provider.altDefs.put("null_if_value", object);
+            if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
+                return null;
+            }
+            return object;
         });
     }
 
