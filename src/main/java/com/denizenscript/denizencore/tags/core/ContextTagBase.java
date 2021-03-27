@@ -50,16 +50,18 @@ public class ContextTagBase {
 
     public void savedEntryTags(ReplaceableTagEvent event) {
         if (!event.matches("entry", "e")
-                || event.getScriptEntry() == null
-                || !event.hasNameContext()) {
+                || event.getScriptEntry() == null) {
+            return;
+        }
+        Attribute attribute = event.getAttributes();
+        if (attribute.hasContext(1)) {
             return;
         }
         if (event.matches("e")) {
             Deprecations.entryShorthand.warn(event.getScriptEntry());
         }
         if (event.getScriptEntry().getResidingQueue() != null) {
-            String id = event.getNameContext();
-            Attribute attribute = event.getAttributes();
+            String id = attribute.getContext(1);
             ScriptEntry held = event.getScriptEntry().getResidingQueue().getHeldScriptEntry(id);
             if (held == null) {
                 if (!event.hasAlternative()) {

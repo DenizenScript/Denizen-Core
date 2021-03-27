@@ -69,7 +69,7 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
-        TagRunnable.BaseInterface baseHandler = event.mainRef.tagBaseHandler;
+        TagRunnable.BaseInterface baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBaseHandler;
         if (baseHandler != null) {
             Attribute attribute = event.getAttributes();
             try {
@@ -167,8 +167,7 @@ public class TagManager {
 
     public static boolean recentTagError = true;
 
-    public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
-        // Call Event
+    public static ObjectTag readSingleTagObjectNoDebug(TagContext context, ReplaceableTagEvent event) {
         int tT = DenizenCore.getImplementation().getTagTimeout();
         if (Debug.verbose) {
             Debug.log("Tag read: " + event.raw_tag + ", " + tT + "...");
@@ -182,6 +181,11 @@ public class TagManager {
         if (!event.replaced() && event.hasAlternative()) {
             event.setReplacedObject(event.getAlternative());
         }
+        return event.getReplacedObj();
+    }
+
+    public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
+        readSingleTagObjectNoDebug(context, event);
         if (context.debug && event.replaced()) {
             DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplacedObj().debuggable());
         }

@@ -540,6 +540,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // For example, "on player breaks regex:(?i)\d+_customitem:"
     // Note that generally regex should be avoided whenever you can, as it's inherently hard to track exactly what it's doing at-a-glance, and may have unexpected edge case errors.
     //
+    // If you want to match anything *except* a specific value, just prefix the matcher with '!'
+    // For example, on player breaks !stone:" will fire for a player breaking any block type OTHER THAN stone.
+    // This can be combined with other match modes, like "on player breaks !*wood|*planks|*log:" will fire for any block break other than any wood variant.
+    //
     // See also <@link language script event object matchables>.
     // -->
 

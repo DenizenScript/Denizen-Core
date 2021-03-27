@@ -14,7 +14,6 @@ public class ReplaceableTagEvent {
 
     private boolean wasReplaced = false;
 
-    private ObjectTag alternative_tagged = null;
     private String replaced;
     private String value_tagged = null;
     private Attribute core_attributes = null;
@@ -192,92 +191,11 @@ public class ReplaceableTagEvent {
         return false;
     }
 
-    ////////
-    // Replaceable Tag 'Parts'
-    // <name.type.subtype.specifier:value>
-
-    // Name
-
     public String getName() {
         return core_attributes.getAttributeWithoutContext(1);
     }
 
-    public String getNameContext() {
-        return core_attributes.getContext(1);
-    }
-
-    public boolean hasNameContext() {
-        return core_attributes.hasContext(1);
-    }
-
-    // Type
-
     @Deprecated
-    public String getType() {
-        return core_attributes.getAttributeWithoutContext(2);
-    }
-
-    @Deprecated
-    public boolean hasType() {
-        return core_attributes.getAttribute(2).length() > 0;
-    }
-
-    @Deprecated
-    public String getTypeContext() {
-        return core_attributes.getContext(2);
-    }
-
-    @Deprecated
-    public boolean hasTypeContext() {
-        return core_attributes.hasContext(2);
-    }
-
-    // Subtype
-
-    @Deprecated
-    public String getSubType() {
-        return core_attributes.getAttributeWithoutContext(3);
-    }
-
-    @Deprecated
-    public boolean hasSubType() {
-        return core_attributes.getAttribute(3).length() > 0;
-    }
-
-    @Deprecated
-    public String getSubTypeContext() {
-        return core_attributes.getContext(3);
-    }
-
-    @Deprecated
-    public boolean hasSubTypeContext() {
-        return core_attributes.hasContext(3);
-    }
-
-    // Specifier
-
-    @Deprecated
-    public String getSpecifier() {
-        return core_attributes.getAttributeWithoutContext(4);
-    }
-
-    @Deprecated
-    public boolean hasSpecifier() {
-        return core_attributes.getAttribute(4).length() > 0;
-    }
-
-    @Deprecated
-    public String getSpecifierContext() {
-        return core_attributes.getContext(4);
-    }
-
-    @Deprecated
-    public boolean hasSpecifierContext() {
-        return core_attributes.hasContext(4);
-    }
-
-    // Value
-
     public String getValue() {
         if (value_tagged == null) {
             value_tagged = TagManager.tag(mainRef.value, context);
@@ -285,25 +203,34 @@ public class ReplaceableTagEvent {
         return value_tagged;
     }
 
+    @Deprecated
     public boolean hasValue() {
         return mainRef.value != null;
     }
 
-    // Alternative
+    public TagRunnable.BaseInterface alternateBase;
 
     public ObjectTag getAlternative() {
-        if (!hasAlternative()) {
-            return null;
+        int index = core_attributes.getFallbackTagIndex();
+        if (index != -1) {
+            if (core_attributes.filled != null) {
+                core_attributes.filled[core_attributes.fulfilled] = Boolean.FALSE;
+            }
+            core_attributes.fulfilled = index;
+            alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutContext(1));
+            return TagManager.readSingleTagObjectNoDebug(context, this);
         }
-        if (alternative_tagged != null) {
-            return alternative_tagged;
+        if (mainRef.alternative != null) {
+            return TagManager.tagObject(mainRef.alternative, context);
         }
-        alternative_tagged = TagManager.tagObject(mainRef.alternative, context);
-        return alternative_tagged;
+        return null;
     }
 
     public boolean hasAlternative() {
-        return mainRef.alternative != null;
+        if (mainRef.alternative != null) {
+            return true;
+        }
+        return core_attributes.hasAlternative();
     }
 
     // Other internal mechanics

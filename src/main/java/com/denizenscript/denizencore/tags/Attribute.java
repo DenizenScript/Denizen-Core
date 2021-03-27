@@ -1,15 +1,13 @@
 package com.denizenscript.denizencore.tags;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Attribute {
 
@@ -91,6 +89,7 @@ public class Attribute {
 
     public AttributeComponent[] attributes;
     public ObjectTag[] contexts;
+    public Boolean[] filled;
 
     ScriptEntry scriptEntry;
     public TagContext context;
@@ -124,6 +123,9 @@ public class Attribute {
         attributes = ref.attributes;
         contexts = new ObjectTag[attributes.length];
         setHadAlternative(ref.hadAlternative);
+        if (context == null || context.debug) {
+            filled = new Boolean[attributes.length];
+        }
     }
 
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
@@ -132,6 +134,9 @@ public class Attribute {
         this.context = context;
         this.attributes = separate_attributes(attributes);
         contexts = new ObjectTag[this.attributes.length];
+        if (context == null || context.debug) {
+            filled = new Boolean[this.attributes.length];
+        }
     }
 
     public boolean matches(String string) {
@@ -186,6 +191,11 @@ public class Attribute {
 
     public Attribute fulfill(int attributes) {
         resetErrorTrack();
+        if (filled != null) {
+            for (int i = 0; i < attributes; i++) {
+                filled[fulfilled + i] = Boolean.TRUE;
+            }
+        }
         fulfilled += attributes;
         return this;
     }
@@ -353,8 +363,34 @@ public class Attribute {
     // You want to solve errors in testing, not ten months later when a player mentions to you "that shop NPC let me buy things even when I had $0"!
     //
     // -->
+    public static final HashMap<String, TagRunnable.BaseInterface> fallbackTags = new HashMap<>();
+
+    static {
+        fallbackTags.put("if_null", (attribute) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return attribute.getContextObject(1);
+        });
+        fallbackTags.put("exists", (attribute) -> {
+            return new ElementTag(false);
+        });
+    }
+
     public boolean hasAlternative() {
-        return hadAlternative;
+        if (hadAlternative) {
+            return true;
+        }
+        return getFallbackTagIndex() != -1;
+    }
+
+    public int getFallbackTagIndex() {
+        for (int i = fulfilled + 1; i < attributes.length; i++) {
+            if (fallbackTags.containsKey(attributes[i].key)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void setHadAlternative(boolean hadAlternative) {
@@ -455,12 +491,18 @@ public class Attribute {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < attributes.length; i++) {
-            sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<R>" : "<Y>")).append(attributes[i].key);
+            if (filled != null) {
+                sb.append(filled[i] == null ? "<Y>" : (filled[i] ? "<GR>" : "<R>"));
+            }
+            else {
+                sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<R>" : "<Y>"));
+            }
+            sb.append(attributes[i].key);
             if (contexts[i] != null) {
                 sb.append("<LG>[<A>").append(contexts[i]).append("<LG>].");
             }
             else if (attributes[i].context != null) {
-                sb.append("<LG>[<R>").append(attributes[i].context).append("<LG>].");
+                sb.append("<LG>[<Y>").append(attributes[i].context).append("<LG>].");
             }
             else {
                 sb.append("<LG>.");

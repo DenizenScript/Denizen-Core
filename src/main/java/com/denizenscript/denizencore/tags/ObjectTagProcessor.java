@@ -83,6 +83,33 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return null;
         });
+
+        // <--[tag]
+        // @attribute <ObjectTag.if_null[<object>]>
+        // @returns ObjectTag
+        // @description
+        // If the object is null (or the tag errors), this will return the input object.
+        // If the object isn't null, the input won't be parsed, and the original object will be returned.
+        // For example, "<player.if_null[<npc>]>" will return the player if there is a player, and otherwise will return the NPC.
+        // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
+        // -->
+        registerTag("if_null", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return object;
+        });
+
+        // <--[tag]
+        // @attribute <ObjectTag.exists>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if the object exists (is non-null). Returns false if the object doesn't exist, is null, or the tag errored.
+        // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
+        // -->
+        registerTag("exists", (attribute, object) -> {
+            return new ElementTag(true);
+        });
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

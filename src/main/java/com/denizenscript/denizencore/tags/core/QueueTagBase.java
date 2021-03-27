@@ -42,18 +42,18 @@ public class QueueTagBase {
 
         // Handle <queue[id]. ...> tags
 
-        if (event.hasNameContext()) {
-            if (!ScriptQueue.queueExists(event.getNameContext())) {
+        Attribute attribute = event.getAttributes();
+
+        if (attribute.hasContext(1)) {
+            QueueTag queue = attribute.contextAsType(1, QueueTag.class);
+            if (queue == null) {
                 return;
             }
-            else {
-                event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(ScriptQueue.getExistingQueue(event.getNameContext())),
-                        event.getAttributes().fulfill(1)));
-            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(queue, event.getAttributes().fulfill(1)));
             return;
         }
 
-        Attribute attribute = event.getAttributes().fulfill(1);
+        attribute = attribute.fulfill(1);
 
         // Otherwise, try to use queue in a static manner.
 

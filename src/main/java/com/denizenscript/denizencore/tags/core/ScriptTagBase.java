@@ -28,32 +28,23 @@ public class ScriptTagBase {
     }
 
     public void scriptTags(ReplaceableTagEvent event) {
-
         if (!event.matches("script") || event.replaced()) {
             return;
         }
-
-        // Stage the location
+        Attribute attribute = event.getAttributes();
         ScriptTag script = null;
-
-        // Check name context for a specified script, or check
-        // the ScriptEntry for a 'script' context
-        if (event.hasNameContext()) {
-            if (!ScriptTag.matches(event.getNameContext())) {
-                if (!event.hasAlternative()) {
-                    Debug.echoError("Script '" + event.getNameContext() + "' does not exist.");
-                }
+        if (attribute.hasContext(1)) {
+            script = attribute.contextAsType(1, ScriptTag.class);
+            if (script == null) {
+                event.getAttributes().echoError("Script '" + attribute.getContext(1) + "' does not exist.");
                 return;
             }
-            script = ScriptTag.valueOf(event.getNameContext(), event.getAttributes().context);
         }
         else if (event.getScript() != null) {
             script = event.getScript();
         }
         else if (event.getScriptEntry() == null) {
-            if (!event.hasAlternative()) {
-                Debug.echoError("No applicable script for <script> tag.");
-            }
+            attribute.echoError("No applicable script for <script> tag.");
             return;
         }
         else if (event.getScriptEntry().getScript() != null) {
@@ -62,18 +53,12 @@ public class ScriptTagBase {
         else if (event.getScriptEntry().hasObject("script")) {
             script = (ScriptTag) event.getScriptEntry().getObject("script");
         }
-
-        // Build and fill attributes
-        Attribute attribute = event.getAttributes();
-
         if (script == null) {
             if (!event.hasAlternative()) {
                 Debug.echoError("No applicable script for <script> tag.");
             }
             return;
         }
-
-        // Else, get the attribute from the script
         event.setReplacedObject(CoreUtilities.autoAttrib(script, attribute.fulfill(1)));
     }
 }
