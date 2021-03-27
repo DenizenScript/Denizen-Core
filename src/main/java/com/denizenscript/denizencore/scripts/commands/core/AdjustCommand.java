@@ -89,7 +89,7 @@ public class AdjustCommand extends AbstractCommand {
                 }
                 else if (arg.hasPrefix()) {
                     scriptEntry.addObject("mechanism", new ElementTag(arg.getPrefix().getValue()));
-                    scriptEntry.addObject("mechanism_value", arg.asElement());
+                    scriptEntry.addObject("mechanism_value", arg.object);
                 }
                 else {
                     scriptEntry.addObject("mechanism", arg.asElement());
@@ -113,7 +113,7 @@ public class AdjustCommand extends AbstractCommand {
         specialAdjustables.put("system", UtilTagBase::adjustSystem);
     }
 
-    public ObjectTag adjust(ObjectTag object, ElementTag mechanismName, ElementTag value, ScriptEntry entry) {
+    public ObjectTag adjust(ObjectTag object, ElementTag mechanismName, ObjectTag value, ScriptEntry entry) {
         Mechanism mechanism = new Mechanism(mechanismName, value, entry.entryData.getTagContext());
         return adjust(object, mechanism, entry);
     }
@@ -179,7 +179,7 @@ public class AdjustCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ElementTag mechanism = scriptEntry.getElement("mechanism");
-        ElementTag value = scriptEntry.getElement("mechanism_value");
+        ObjectTag value = scriptEntry.getObjectTag("mechanism_value");
         ListTag objects = scriptEntry.getObjectTag("object");
         MapTag mechanismMap = scriptEntry.getObjectTag("mechanism_map");
         if (scriptEntry.dbCallShouldDebug()) {
@@ -191,7 +191,7 @@ public class AdjustCommand extends AbstractCommand {
         for (ObjectTag object : objects.objectForms) {
             if (mechanismMap != null) {
                 for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
-                    object = adjust(object, new ElementTag(entry.getKey().str), new ElementTag(entry.getValue().toString()), scriptEntry);
+                    object = adjust(object, new ElementTag(entry.getKey().str), entry.getValue(), scriptEntry);
                 }
             }
             else {

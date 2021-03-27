@@ -9,19 +9,19 @@ public class Mechanism {
 
     private boolean fulfilled;
     private String raw_mechanism;
-    private ElementTag value;
+    public ObjectTag value;
 
     public TagContext context;
 
     public boolean isProperty = false;
 
-    public Mechanism(ElementTag mechanism, ElementTag value) {
+    public Mechanism(ElementTag mechanism, ObjectTag value) {
         fulfilled = false;
         raw_mechanism = CoreUtilities.toLowerCase(mechanism.asString());
         this.value = value;
     }
 
-    public Mechanism(ElementTag mechanism, ElementTag value, TagContext context) {
+    public Mechanism(ElementTag mechanism, ObjectTag value, TagContext context) {
         this(mechanism, value);
         this.context = context;
     }
@@ -42,7 +42,7 @@ public class Mechanism {
         if (value == null) {
             return new ElementTag("");
         }
-        return value;
+        return new ElementTag(value.toString());
     }
 
     public <T extends ObjectTag> T valueAsType(Class<T> dClass) {
@@ -50,7 +50,13 @@ public class Mechanism {
     }
 
     public boolean hasValue() {
-        return value != null && !value.asString().isEmpty();
+        if (value == null) {
+            return false;
+        }
+        if (value instanceof ElementTag && ((ElementTag) value).asString().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public boolean matches(String string) {
@@ -63,7 +69,7 @@ public class Mechanism {
 
     public String forMechanismText() {
         return "For input to mechanism '" + raw_mechanism + "'"
-                + (value == null ? "" : " with value '" + value.asString() + "'")
+                + (value == null ? "" : " with value '" + value.toString() + "'")
                 + ": ";
     }
 
@@ -92,7 +98,7 @@ public class Mechanism {
     }
 
     public boolean requireBoolean(String error) {
-        if (hasValue() && value.isBoolean()) {
+        if (hasValue() && getValue().isBoolean()) {
             return true;
         }
         echoError(error);
@@ -100,7 +106,7 @@ public class Mechanism {
     }
 
     public boolean requireDouble(String error) {
-        if (hasValue() && value.isDouble()) {
+        if (hasValue() && getValue().isDouble()) {
             return true;
         }
         echoError(error);
@@ -108,6 +114,10 @@ public class Mechanism {
     }
 
     public boolean requireEnum(String error, boolean allowInt, Enum<?>... values) {
+        if (!hasValue()) {
+            return false;
+        }
+        ElementTag value = getValue();
         if (hasValue() && allowInt && value.isInt() && value.asInt() < values.length) {
             return true;
         }
@@ -130,7 +140,7 @@ public class Mechanism {
     }
 
     public boolean requireFloat(String error) {
-        if (hasValue() && value.isFloat()) {
+        if (hasValue() && getValue().isFloat()) {
             return true;
         }
         echoError(error);
@@ -138,7 +148,7 @@ public class Mechanism {
     }
 
     public boolean requireInteger(String error) {
-        if (hasValue() && value.isInt()) {
+        if (hasValue() && getValue().isInt()) {
             return true;
         }
         echoError(error);
@@ -146,7 +156,7 @@ public class Mechanism {
     }
 
     public <T extends ObjectTag> boolean requireObject(String error, Class<T> type) {
-        if (hasValue() && value.matchesType(type)) {
+        if (hasValue() && CoreUtilities.canPossiblyBeType(value, type)) {
             return true;
         }
         if (error == null) {

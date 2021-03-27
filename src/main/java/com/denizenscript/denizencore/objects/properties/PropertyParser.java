@@ -1,5 +1,7 @@
 package com.denizenscript.denizencore.objects.properties;
 
+import com.denizenscript.denizencore.objects.Adjustable;
+import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
@@ -9,6 +11,7 @@ import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
@@ -238,5 +241,87 @@ public class PropertyParser {
             }
         }
         return props;
+    }
+
+    public static <T extends Adjustable> void registerPropertyTagHandlers(ObjectTagProcessor<T> processor) {
+
+        // <--[tag]
+        // @attribute <PropertyHolderObject.with[<mechanism>=<value>;...]>
+        // @returns ObjectTag
+        // @group properties
+        // @description
+        // Returns a copy of the object with mechanism adjustments applied.
+        // -->
+        processor.registerTag("with", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            Adjustable instance = (Adjustable) object.duplicate();
+            List<String> properties = ObjectFetcher.separateProperties("[" + attribute.getContext(1) + "]");
+            for (int i = 1; i < properties.size(); i++) {
+                List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
+                if (data.size() != 2) {
+                    Debug.echoError("Invalid property string '" + properties.get(i) + "'!");
+                }
+                else {
+                    instance.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(data.get(1)), attribute.context));
+                }
+            }
+            return instance;
+        });
+
+        // <--[tag]
+        // @attribute <PropertyHolderObject.with_map[<property-map>]>
+        // @returns ObjectTag
+        // @group properties
+        // @description
+        // Returns a copy of the object with the MapTag of mechanism adjustments applied.
+        // -->
+        processor.registerTag("with_map", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            MapTag properties = attribute.contextAsType(1, MapTag.class);
+            Adjustable instance = (Adjustable) object.duplicate();
+            for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
+                instance.safeApplyProperty(new Mechanism(new ElementTag(pair.getKey().low), pair.getValue(), attribute.context));
+            }
+            return instance;
+        });
+
+        // <--[tag]
+        // @attribute <PropertyHolderObject.supports[<property-name>]>
+        // @returns ElementTag(Boolean)
+        // @group properties
+        // @description
+        // Returns true if the property named is supported by the object.
+        // This does not necessarily mean it has a valid current value, just that it's supported at all.
+        // -->
+        processor.registerTag("supports", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            String propertyName = attribute.getContext(1);
+            ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+            if (properties == null) {
+                return new ElementTag(false);
+            }
+            PropertyGetter getter = properties.propertiesByMechanism.get(CoreUtilities.toLowerCase(propertyName));
+            if (getter == null) {
+                return new ElementTag(false);
+            }
+            return new ElementTag(getter.get(object) != null);
+        });
+
+        // <--[tag]
+        // @attribute <PropertyHolderObject.property_map>
+        // @returns MapTag
+        // @group properties
+        // @description
+        // Returns the object's property map.
+        // -->
+        processor.registerTag("property_map", (attribute, object) -> {
+            return getPropertiesMap(object);
+        });
     }
 }
