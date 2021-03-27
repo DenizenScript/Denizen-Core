@@ -15,7 +15,6 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
 
@@ -128,7 +127,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
 
         @Override
         public Collection<String> listAllFlags() {
-            return getQueue().getAllDefinitions().keySet();
+            return getQueue().getAllDefinitions().keys();
         }
     }
 
@@ -249,7 +248,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the names of all definitions that were added to the current queue.
         // -->
         registerTag("definitions", (attribute, object) -> {
-            return new ListTag(object.getQueue().getAllDefinitions().keySet());
+            return object.getQueue().getAllDefinitions().keys();
         });
 
         // <--[tag]
@@ -259,11 +258,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns a map of all definitions on the queue.
         // -->
         registerTag("definition_map", (attribute, object) -> {
-            MapTag map = new MapTag();
-            for (Map.Entry<String, ObjectTag> entry : object.getQueue().getAllDefinitions().entrySet()) {
-                map.putObject(entry.getKey(), entry.getValue());
-            }
-            return map;
+            return object.getQueue().getAllDefinitions().duplicate();
         });
 
         // <--[tag]

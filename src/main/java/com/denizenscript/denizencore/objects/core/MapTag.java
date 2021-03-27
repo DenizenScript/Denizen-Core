@@ -216,6 +216,9 @@ public class MapTag implements ObjectTag, Adjustable {
         for (int i = 0; i < subkeys.size() - 1; i++) {
             ObjectTag subValue = current.getObject(subkeys.get(i));
             if (!(subValue instanceof MapTag)) {
+                if (value == null) {
+                    return;
+                }
                 subValue = new MapTag();
                 current.putObject(subkeys.get(i), subValue);
             }
@@ -424,7 +427,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // then ".deep_get[root.leaf]" will return "myvalue".
         // If a list is given as input, returns a list of values.
         // -->
-        registerTag("deep_get", (attribute, object) -> {
+        TagRunnable.ObjectInterface<MapTag> deepGetRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.deep_get' must have an input value.");
                 return null;
@@ -438,7 +441,9 @@ public class MapTag implements ObjectTag, Adjustable {
                 return valList;
             }
             return object.getDeepObject(attribute.getContext(1));
-        });
+        };
+        registerTag("deep_get", deepGetRunnable);
+        registerTag("", deepGetRunnable);
 
         // <--[tag]
         // @attribute <MapTag.get_subset[<key>|...]>

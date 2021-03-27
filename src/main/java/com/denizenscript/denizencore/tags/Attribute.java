@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.tags;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
@@ -241,7 +241,7 @@ public class Attribute {
             originalProvider.addDefinition(definition, value);
         }
         @Override
-        public Map<String, ObjectTag> getAllDefinitions() {
+        public MapTag getAllDefinitions() {
             return originalProvider.getAllDefinitions();
         }
         @Override

@@ -1,10 +1,7 @@
 package com.denizenscript.denizencore.scripts.queues;
 
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
@@ -93,7 +90,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      */
     private long delay_time = 0;
 
-    private final HashMap<String, ObjectTag> definitions = new HashMap<>();
+    public MapTag definitions = new MapTag();
 
     public ListTag determinations = null;
 
@@ -141,7 +138,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (definition == null) {
             return null;
         }
-        return definitions.get(CoreUtilities.toLowerCase(definition));
+        return definitions.getDeepObject(CoreUtilities.toLowerCase(definition));
+    }
+
+    @Override
+    public void addDefinition(String definition, ObjectTag value) {
+        definitions.putDeepObject(definition, value);
     }
 
     @Override
@@ -149,31 +151,26 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (definition == null) {
             return null;
         }
-        return CoreUtilities.stringifyNullPass(definitions.get(CoreUtilities.toLowerCase(definition)));
+        return CoreUtilities.stringifyNullPass(getDefinitionObject(definition));
     }
 
     @Override
     public boolean hasDefinition(String definition) {
-        return definitions.containsKey(CoreUtilities.toLowerCase(definition));
-    }
-
-    @Override
-    public void addDefinition(String definition, ObjectTag value) {
-        definitions.put(CoreUtilities.toLowerCase(definition), value);
+        return getDefinitionObject(definition) != null;
     }
 
     @Override
     public void addDefinition(String definition, String value) {
-        definitions.put(CoreUtilities.toLowerCase(definition), new ElementTag(value));
+        addDefinition(definition, new ElementTag(value));
     }
 
     @Override
     public void removeDefinition(String definition) {
-        definitions.remove(CoreUtilities.toLowerCase(definition));
+        addDefinition(definition, (ObjectTag) null);
     }
 
     @Override
-    public Map<String, ObjectTag> getAllDefinitions() {
+    public MapTag getAllDefinitions() {
         return definitions;
     }
 
@@ -243,9 +240,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             entry.updateContext();
         }
         newQueue.addEntries(getEntries());
-        for (Map.Entry<String, ObjectTag> def : getAllDefinitions().entrySet()) {
-            newQueue.addDefinition(def.getKey(), def.getValue());
-        }
+        newQueue.definitions = definitions.duplicate();
         newQueue.setContextSource(contextSource);
         newQueue.determinationTarget = determinationTarget;
         for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {

@@ -1,8 +1,7 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
-
-import java.util.Map;
+import com.denizenscript.denizencore.objects.core.MapTag;
 
 public interface DefinitionProvider {
 
@@ -10,7 +9,7 @@ public interface DefinitionProvider {
 
     void addDefinition(String definition, ObjectTag value);
 
-    Map<String, ObjectTag> getAllDefinitions();
+    MapTag getAllDefinitions();
 
     ObjectTag getDefinitionObject(String definition);
 
