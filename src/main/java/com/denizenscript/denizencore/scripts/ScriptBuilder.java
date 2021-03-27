@@ -22,28 +22,22 @@ public class ScriptBuilder {
     }
 
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
-
         if (contents == null || contents.isEmpty()) {
             if (Debug.showScriptBuilder) {
                 Debug.echoError("Building script entries... no entries to build!");
             }
             return null;
         }
-
         if (Debug.showScriptBuilder) {
             Debug.echoDebug(parent, "Building script entries:");
         }
-
         List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
         for (Object ientry : contents) {
-
             if (ientry == null) {
                 ientry = "null";
             }
-
             String entry;
             List<Object> inside;
-
             if (ientry instanceof Map) {
                 Object key = ((Map) ientry).keySet().toArray()[0];
                 entry = key.toString();
@@ -58,7 +52,6 @@ public class ScriptBuilder {
                 entry = ientry.toString();
                 inside = null;
             }
-
             int lineNum = 1;
             if (entry.startsWith(String.valueOf(LINE_PREFIX_CHAR))) {
                 int infoEnd = entry.indexOf(LINE_PREFIX_CHAR, 1);
@@ -66,9 +59,7 @@ public class ScriptBuilder {
                 entry = entry.substring(infoEnd + 2); // Skip the symbol and the space after.
                 lineNum = Integer.valueOf(lineNumStr);
             }
-
             String[] scriptEntry = entry.split(" ", 2);
-
             try {
                 /* Build new script commands */
                 String[] args = scriptEntry.length > 1 ?  ArgumentHelper.buildArgs(scriptEntry[1]) : null;
@@ -85,7 +76,6 @@ public class ScriptBuilder {
                 Debug.echoError(e);
             }
         }
-
         return scriptCommands;
     }
 }

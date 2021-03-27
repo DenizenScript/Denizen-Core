@@ -104,6 +104,7 @@ public abstract class CommandRegistry {
         // queue
         registerCommand(ChooseCommand.class);
         registerCommand(DefineCommand.class);
+        registerCommand(DefineMapCommand.class);
         registerCommand(DetermineCommand.class);
         registerCommand(ElseCommand.class);
         registerCommand(ForeachCommand.class);
