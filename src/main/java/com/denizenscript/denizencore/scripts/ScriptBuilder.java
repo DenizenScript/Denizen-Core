@@ -81,7 +81,7 @@ public class ScriptBuilder {
                 scriptCommands.add(newEntry);
             }
             catch (Exception e) {
-                Debug.echoError("Exception while building script '" + parent.getName() + "'...");
+                Debug.echoError("Exception while building script '" + (parent == null ? "(null)" : parent.getName()) + "'...");
                 Debug.echoError(e);
             }
         }

@@ -1,5 +1,7 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -47,10 +49,13 @@ public class Attribute {
         return c >= '0' && c <= '9';
     }
 
-    private static AttributeComponent[] separate_attributes(String attributes) {
+    private static AttributeComponent[] separate_attributes(String attributes) throws TagProcessingException {
         AttributeComponent[] matchesRes = attribsLookup.get(attributes);
         if (matchesRes != null) {
             return matchesRes;
+        }
+        if (attributes.startsWith(".") || attributes.endsWith(".")) {
+            throw new TagProcessingException("The tag '" + attributes + "' is invalid due to a misplaced dot at the start or end of the tag.");
         }
         ArrayList<AttributeComponent> matches = new ArrayList<>(attributes.length() / 7);
         int x1 = 0, x2 = -1;
@@ -73,10 +78,16 @@ public class Attribute {
                 x2 = x;
             }
             if (x2 > -1) {
+                if (x2 <= x1) {
+                    throw new TagProcessingException("The tag '" + attributes + "' is invalid, likely due to double dots '..' somewhere. Did you forget a sub-tag, or accidentally double-tap the dot key?");
+                }
                 matches.add(new AttributeComponent(attributes.substring(x1, x2)));
                 x2 = -1;
                 x1 = x + 1;
             }
+        }
+        if (braced != 0) {
+            throw new TagProcessingException("The tag '" + attributes + "' is invalid due to misplaced [square brackets]. Did you forget to close some brackets?");
         }
         if (Debug.verbose) {
             Debug.log("attribute splitter: '" + attributes + "' becomes: " + matches);
@@ -128,7 +139,7 @@ public class Attribute {
         }
     }
 
-    public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) {
+    public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) throws TagProcessingException {
         origin = attributes;
         this.scriptEntry = scriptEntry;
         this.context = context;

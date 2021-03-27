@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.Fetchable;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
@@ -1632,6 +1633,14 @@ public class ListTag implements List<String>, ObjectTag {
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
             }
+            Attribute subAttribute;
+            try {
+                subAttribute = tag == null ? null : new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
 
             // <--[tag]
             // @attribute <ListTag.lowest[(<tag>)].count[<#>]>
@@ -1651,7 +1660,7 @@ public class ListTag implements List<String>, ObjectTag {
                 for (int i = 0; i < object.size(); i++) {
                     ObjectTag obj = object.getObject(i);
                     if (tag != null) {
-                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                     }
                     String str = obj.toString();
                     if (ArgumentHelper.matchesDouble(str)) {
@@ -1682,7 +1691,7 @@ public class ListTag implements List<String>, ObjectTag {
             for (ObjectTag obj : object.objectForms) {
                 ObjectTag actualObj = obj;
                 if (tag != null) {
-                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                 }
                 String str = obj.toString();
                 if (ArgumentHelper.matchesDouble(str)) {
@@ -1710,6 +1719,14 @@ public class ListTag implements List<String>, ObjectTag {
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
             }
+            Attribute subAttribute;
+            try {
+                subAttribute = tag == null ? null : new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
 
             // <--[tag]
             // @attribute <ListTag.highest[(<tag>)].count[<#>]>
@@ -1729,7 +1746,7 @@ public class ListTag implements List<String>, ObjectTag {
                 for (int i = 0; i < object.size(); i++) {
                     ObjectTag obj = object.getObject(i);
                     if (tag != null) {
-                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        obj = CoreUtilities.autoAttribTyped(obj, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                     }
                     String str = obj.toString();
                     if (ArgumentHelper.matchesDouble(str)) {
@@ -1760,7 +1777,7 @@ public class ListTag implements List<String>, ObjectTag {
             for (ObjectTag obj : object.objectForms) {
                 ObjectTag actualObj = obj;
                 if (tag != null) {
-                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    obj = CoreUtilities.autoAttribTyped(obj, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                 }
                 String str = obj.toString();
                 if (ArgumentHelper.matchesDouble(str)) {
@@ -1840,10 +1857,18 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag newlist = new ListTag(object);
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.getRawContext(1);
+            Attribute subAttribute;
+            try {
+                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
             try {
                 newlist.objectForms.sort((o1, o2) -> {
-                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                     return comparator.compare(or1, or2);
                 });
                 return new ListTag(newlist.objectForms);
@@ -1870,10 +1895,18 @@ public class ListTag implements List<String>, ObjectTag {
             }
             ListTag newlist = new ListTag(object);
             final String tag = attribute.getRawContext(1);
+            Attribute subAttribute;
+            try {
+                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
             try {
                 newlist.objectForms.sort((o1, o2) -> {
-                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or1 = CoreUtilities.autoAttribTyped(o1, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
+                    ObjectTag or2 = CoreUtilities.autoAttribTyped(o2, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                     try {
                         double r1 = Double.parseDouble(or1.toString());
                         double r2 = Double.parseDouble(or2.toString());
@@ -1990,10 +2023,18 @@ public class ListTag implements List<String>, ObjectTag {
             if (defaultValue) {
                 tag = tag.substring(0, tag.length() - "||true".length());
             }
+            Attribute subAttribute;
+            try {
+                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
             ListTag newlist = new ListTag();
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    Attribute tempAttrib = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+                    Attribute tempAttrib = new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context);
                     tempAttrib.setHadAlternative(true);
                     ObjectTag objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                     if ((objs == null) ? defaultValue : CoreUtilities.equalsIgnoreCase(objs.toString(), "true")) {
@@ -2039,9 +2080,17 @@ public class ListTag implements List<String>, ObjectTag {
                     }
                 }
             }
+            Attribute subAttribute;
+            try {
+                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    Attribute tempAttrib = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+                    Attribute tempAttrib = new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context);
                     tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
                     ObjectTag objs = CoreUtilities.autoAttribTyped(obj, tempAttrib);
                     if (objs == null) {

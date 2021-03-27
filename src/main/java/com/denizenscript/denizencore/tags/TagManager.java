@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -156,8 +157,14 @@ public class TagManager {
     }
 
     public static String readSingleTag(String str, TagContext context) {
-        ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
-        return readSingleTagObject(context, event).toString();
+        try {
+            ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
+            return readSingleTagObject(context, event).toString();
+        }
+        catch (TagProcessingException ex) {
+            Debug.echoError("Tag processing failed: " + ex.getMessage());
+            return null;
+        }
     }
 
     public static ObjectTag readSingleTagObject(ParseableTagPiece tag, TagContext context) {
@@ -342,10 +349,19 @@ public class TagManager {
             ParseableTagPiece midTag = new ParseableTagPiece();
             midTag.content = tagToProc;
             midTag.isTag = true;
-            midTag.tagData = new ReplaceableTagEvent(tagToProc, context).mainRef;
-            pieces.add(midTag);
-            if (Debug.verbose) {
-                Debug.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
+            try {
+                midTag.tagData = new ReplaceableTagEvent(tagToProc, context).mainRef;
+                pieces.add(midTag);
+                if (Debug.verbose) {
+                    Debug.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
+                }
+            }
+            catch (TagProcessingException ex) {
+                Debug.echoError("Tag processing failed: " + ex.getMessage());
+                ParseableTagPiece errorNote = new ParseableTagPiece();
+                errorNote.isError = true;
+                errorNote.content = "Tag processing failed: " + ex.getMessage();
+                pieces.add(errorNote);
             }
             arg = arg.substring(positions[1] + 1);
             locateTag(arg, positions, 0);

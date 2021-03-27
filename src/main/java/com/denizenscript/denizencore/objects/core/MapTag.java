@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
@@ -276,13 +277,21 @@ public class MapTag implements ObjectTag, Adjustable {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.hasContext(1) ? attribute.getRawContext(1) : null;
+            Attribute subAttribute;
+            try {
+                subAttribute = tag == null ? null : new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+            }
+            catch (TagProcessingException ex) {
+                attribute.echoError("Tag processing failed: " + ex.getMessage());
+                return null;
+            }
             try {
                 entryList.sort((e1, e2) -> {
                     ObjectTag o1 = e1.getValue();
                     ObjectTag o2 = e2.getValue();
                     if (tag != null) {
-                        o1 = CoreUtilities.autoAttribTyped(o1, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
-                        o2 = CoreUtilities.autoAttribTyped(o2, new Attribute(tag, attribute.getScriptEntry(), attribute.context));
+                        o1 = CoreUtilities.autoAttribTyped(o1, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
+                        o2 = CoreUtilities.autoAttribTyped(o2, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                     }
                     return comparator.compare(o1, o2);
                 });

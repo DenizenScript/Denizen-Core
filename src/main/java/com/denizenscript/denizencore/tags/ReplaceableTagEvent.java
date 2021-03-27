@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
@@ -70,7 +71,7 @@ public class ReplaceableTagEvent {
         }
     }
 
-    public ReplaceableTagEvent(String tag, TagContext context) {
+    public ReplaceableTagEvent(String tag, TagContext context) throws TagProcessingException {
         this(refs.get(tag), tag, context);
         if (mainRef != null) {
             return;
