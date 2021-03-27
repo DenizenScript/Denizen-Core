@@ -204,7 +204,9 @@ public class Attribute {
         resetErrorTrack();
         if (filled != null) {
             for (int i = 0; i < attributes; i++) {
-                filled[fulfilled + i] = Boolean.TRUE;
+                if (fulfilled + i < filled.length) {
+                    filled[fulfilled + i] = Boolean.TRUE;
+                }
             }
         }
         fulfilled += attributes;

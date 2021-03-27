@@ -234,20 +234,25 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, deprecate officially by 2022.
     public static Warning queueClear = new FutureWarning("Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
 
-    // In Bukkit impl, Added 2020/12/25, deprecate official by 2022.
+    // In Bukkit impl, Added 2020/12/25, deprecate officially by 2022.
     public static Warning itemEnchantmentTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
 
-    // In Bukkit impl, Added 2021/02/03, deprecate official by 2023.
+    // In Bukkit impl, Added 2021/02/03, deprecate officially by 2023.
     public static Warning hasScriptTags = new FutureWarning("The ItemTag.scriptname and EntityTag.scriptname and ItemTag.has_script and NPCTag.has_script tags are deprecated: use '.script.name' or a null check on .script.");
 
-    // Added 2021/02/04, deprecate official by 2024.
+    // Added 2021/02/04, deprecate officially by 2024.
     public static Warning splitNewDataAction = new FutureWarning("The 'split to new list' data action ('key:!|:value') is deprecated: this no longer has a purpose, as you can instead just set to the list.");
 
-    // Added 2021/02/05, deprecate official by 2023.
+    // Added 2021/02/05, deprecate officially by 2023.
     public static Warning itemProjectile = new FutureWarning("The item_projectile custom entity type is deprecated: modern minecraft lets you set the item of any projectile, like 'snowball[item=stick]'");
 
-    // Added 2021/03/02, deprecate official by 2023.
+    // Added 2021/03/02, deprecate officially by 2023.
     public static Warning itemScriptColor = new FutureWarning("The item script 'color' key is deprecated: use the 'color' mechanism under the 'mechanisms' key instead.");
+
+    // In Bukkit impl, Added 2021/03/27, deprecate officially by 2024.
+    public static Warning locationFindEntities = new FutureWarning("The tag 'LocationTag.find.entities.within' is replaced by the 'find_entities' version. It is mostly compatible, but now has advanced matcher options.");
+    public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item' that use advanced matcher logic.");
+    public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
