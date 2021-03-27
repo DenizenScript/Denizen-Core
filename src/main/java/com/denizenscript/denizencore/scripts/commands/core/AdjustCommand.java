@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -66,6 +67,13 @@ public class AdjustCommand extends AbstractCommand {
     // - adjust def:stick "display_name:Fancy stick"
     //
     // -->
+
+    @Override
+    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
+        for (String mech : PropertyParser.allMechanismsEver) {
+            addOne.accept(mech);
+        }
+    }
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {

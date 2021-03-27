@@ -43,6 +43,8 @@ public class PropertyParser {
         public Map<String, String> propertyNamesByTag = new HashMap<>();
     }
 
+    public static Set<String> allMechanismsEver = new HashSet<>();
+
     @FunctionalInterface
     public interface PropertyTag<T extends Property> {
         ObjectTag run(Attribute attribute, T prop);
@@ -110,6 +112,7 @@ public class PropertyParser {
         if (mechs != null) {
             for (String mech : mechs) {
                 propInfo.propertiesByMechanism.put(mech, getter);
+                allMechanismsEver.add(mech);
             }
             propInfo.propertiesWithMechs.add(getter);
         }

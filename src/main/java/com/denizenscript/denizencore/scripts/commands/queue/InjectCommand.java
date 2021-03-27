@@ -2,6 +2,9 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
@@ -9,6 +12,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class InjectCommand extends AbstractCommand {
 
@@ -41,6 +45,15 @@ public class InjectCommand extends AbstractCommand {
     // Injects the InjectedTask task into the current queue
     // - inject InjectedTask
     // -->
+
+    @Override
+    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
+        for (ScriptContainer script : ScriptRegistry.scriptContainers.values()) {
+            if (script instanceof TaskScriptContainer) {
+                addOne.accept(script.getName());
+            }
+        }
+    }
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {

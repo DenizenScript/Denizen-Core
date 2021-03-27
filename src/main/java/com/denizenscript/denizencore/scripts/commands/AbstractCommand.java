@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractCommand {
 
@@ -51,6 +52,9 @@ public abstract class AbstractCommand {
         if (Debug.verbose) {
             Debug.log("Command syntax '" + syntax + "' parsed to flat args: ( " + String.join(", ", flatArgs) + " ) and prefixes ( " + String.join(", ", prefixes) + " ).");
         }
+    }
+
+    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
     }
 
     private boolean preparseArgs = true;
