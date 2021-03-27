@@ -77,7 +77,7 @@ public class Argument implements Cloneable {
         object = new ElementTag(this.value);
     }
 
-    public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "_");
+    public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "_.");
 
     public void fillStr(String string) {
         raw_value = string;

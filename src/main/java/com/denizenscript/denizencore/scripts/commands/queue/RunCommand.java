@@ -13,23 +13,25 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class RunCommand extends AbstractCommand implements Holdable {
 
     public RunCommand() {
         setName("run");
-        setSyntax("run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
-        setRequiredArguments(1, 6);
+        setSyntax("run [<script>/locally] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
+        setRequiredArguments(1, -1);
         isProcedural = true;
     }
 
     // <--[command]
     // @Name Run
-    // @Syntax run [<script>/locally] (path:<name>) (def:<element>|...) (id:<name>) (speed:<value>/instantly) (delay:<value>)
+    // @Syntax run [<script>/locally] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)
     // @Required 1
-    // @Maximum 6
+    // @Maximum -1
     // @Short Runs a script in a new queue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
@@ -44,9 +46,10 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // Optionally, use the "def:" argument to specify definition values to pass to the script,
     // the definitions will be named via the "definitions:" script key on the script being ran,
     // or numerically in order if that isn't specified (starting with <[1]>).
-    // To pass a list value in here as a single definition, use a list-within-a-list as the input
-    // (the outer list is the list required by the 'def:' arg, the inner list is the single-def value).
-    // The 'list_single' tag is useful for creating lists-within-lists.
+    //
+    // Alternately, use "defmap:<map>" to specify definitions to pass as a MapTag, where the keys will be definition names and the values will of course be definition values.
+    //
+    // Alternately, use "def.<name>:<value>" to define one or more  named definitions individually.
     //
     // Optionally, use the "speed:" argument to specify the queue command-speed to run the target script at,
     // or use the "instantly" argument to use an instant speed (no command delay applied).
@@ -80,6 +83,10 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // - run MyTask def:A|Second_Def|Taco
     //
     // @Usage
+    // Use to run 'MyTask' and pass 3 named definitions to it.
+    // - run MyTask def.count:5 def.type:Taco def.smell:Tasty
+    //
+    // @Usage
     // Use to run 'MyTask' and pass a list as a single definition.
     // - run MyTask def:<list_single[<list[a|big|list|here]>]>
     // # MyTask can then get the list back by doing:
@@ -98,12 +105,17 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
+        MapTag defMap = new MapTag();
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (arg.matchesPrefix("i", "id")) {
                 scriptEntry.addObject("id", arg.asElement());
             }
             else if (arg.matchesPrefix("d", "def", "define", "c", "context")) {
                 scriptEntry.addObject("definitions", arg.asType(ListTag.class));
+            }
+            else if (arg.matchesPrefix("defmap")
+                    && arg.matchesArgumentType(MapTag.class)) {
+                defMap.map.putAll(arg.asType(MapTag.class).map);
             }
             else if (arg.matches("instant", "instantly")) {
                 scriptEntry.addObject("instant", new ElementTag(true));
@@ -116,14 +128,19 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("local", new ElementTag("true"));
                 scriptEntry.addObject("script", scriptEntry.getScript());
             }
+            else if (!scriptEntry.hasObject("speed")
+                    && arg.matchesPrefix("speed")
+                    && arg.matchesArgumentType(DurationTag.class)) {
+                scriptEntry.addObject("speed", arg.asType(DurationTag.class));
+            }
+            else if (arg.hasPrefix()
+                    && arg.getPrefix().getRawValue().startsWith("def.")) {
+                defMap.putObject(arg.getPrefix().getRawValue().substring("def.".length()), arg.object);
+            }
             else if (!scriptEntry.hasObject("script")
                     && arg.matchesArgumentType(ScriptTag.class)
                     && !arg.matchesPrefix("p", "path")) {
                 scriptEntry.addObject("script", arg.asType(ScriptTag.class));
-            }
-            else if (!scriptEntry.hasObject("speed") && arg.matchesPrefix("speed")
-                    && arg.matchesArgumentType(DurationTag.class)) {
-                scriptEntry.addObject("speed", arg.asType(DurationTag.class));
             }
             else if (!scriptEntry.hasObject("path")) {
                 String path = arg.asElement().asString();
@@ -146,9 +163,11 @@ public class RunCommand extends AbstractCommand implements Holdable {
         if (!scriptEntry.hasObject("script") && (!scriptEntry.hasObject("local") || scriptEntry.getScript() == null)) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be run.");
         }
-
         if (!scriptEntry.hasObject("path") && scriptEntry.hasObject("local")) {
             throw new InvalidArgumentsException("Must specify a PATH.");
+        }
+        if (!defMap.map.isEmpty()) {
+            scriptEntry.addObject("def_map", defMap);
         }
     }
 
@@ -161,6 +180,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         ElementTag id = scriptEntry.getElement("id");
         DurationTag speed = scriptEntry.getObjectTag("speed");
         DurationTag delay = scriptEntry.getObjectTag("delay");
+        MapTag defMap = scriptEntry.getObjectTag("def_map");
         if (local != null && local.asBoolean()) {
             script = scriptEntry.getScript();
         }
@@ -186,6 +206,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                             + (speed != null ? speed.debug() : "")
                             + (delay != null ? delay.debug() : "")
                             + (id != null ? id.debug() : "")
+                            + (defMap != null ? defMap.debug() : "")
                             + (definitions != null ? definitions.debug() : ""));
         }
         Consumer<ScriptQueue> configure = (queue) -> {
@@ -196,6 +217,11 @@ public class RunCommand extends AbstractCommand implements Holdable {
             // Setup a callback if the queue is being waited on
             if (scriptEntry.shouldWaitFor()) {
                 queue.callBack(() -> scriptEntry.setFinished(true));
+            }
+            if (defMap != null) {
+                for (Map.Entry<StringHolder, ObjectTag> val : defMap.map.entrySet()) {
+                    queue.addDefinition(val.getKey().str, val.getValue());
+                }
             }
             // Save the queue for script referencing
             scriptEntry.addObject("created_queue", new QueueTag(queue));
