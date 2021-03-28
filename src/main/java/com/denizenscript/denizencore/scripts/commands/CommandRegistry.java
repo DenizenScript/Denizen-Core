@@ -117,6 +117,7 @@ public abstract class CommandRegistry {
         registerCommand(RateLimitCommand.class);
         registerCommand(RepeatCommand.class);
         registerCommand(RunCommand.class);
+        registerCommand(RunLaterCommand.class);
         registerCommand(StopCommand.class);
         registerCommand(WaitCommand.class);
         registerCommand(WaitUntilCommand.class);

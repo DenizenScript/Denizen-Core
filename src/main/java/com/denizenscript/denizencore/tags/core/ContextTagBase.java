@@ -34,7 +34,7 @@ public class ContextTagBase {
         if (!event.matches("context", "c") || attribute.context.contextSource == null) {
             return;
         }
-        if (event.matches("c") && attribute.context.debug) {
+        if (event.matches("c")) {
             Deprecations.contextShorthand.warn(event.getScriptEntry());
         }
         String contextName = attribute.getAttributeWithoutContext(2);
@@ -54,7 +54,7 @@ public class ContextTagBase {
             return;
         }
         Attribute attribute = event.getAttributes();
-        if (attribute.hasContext(1)) {
+        if (!attribute.hasContext(1)) {
             return;
         }
         if (event.matches("e")) {

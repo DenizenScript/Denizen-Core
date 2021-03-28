@@ -545,6 +545,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // This can be combined with other match modes, like "on player breaks !*wood|*planks|*log:" will fire for any block break other than any wood variant.
     //
     // See also <@link language script event object matchables>.
+    //
+    // These advanced matchers are also used in some commands and tags.
     // -->
 
     public static abstract class MatchHelper {

@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
+import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -164,6 +165,7 @@ public class DenizenCore {
         if (TickScriptEvent.instance.enabled) {
             TickScriptEvent.instance.fire();
         }
+        RunLaterCommand.tickFutureRuns();
         tMS += ms_elapsed;
         while (tMS > 1000) {
             tMS -= 1000;

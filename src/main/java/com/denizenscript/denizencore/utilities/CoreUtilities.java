@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.utilities;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
+import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.properties.Property;
@@ -11,10 +12,9 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -767,5 +767,65 @@ public class CoreUtilities {
             output[(i << 1) + 1] = charForByte[valB];
         }
         return new String(output);
+    }
+
+    public static void journallingFileSave(String filePath, String contents) {
+        File saveToFile = new File(filePath + "~1");
+        try {
+            saveToFile.getParentFile().mkdirs();
+            Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+            FileOutputStream fiout = new FileOutputStream(saveToFile);
+            OutputStreamWriter writer;
+            if (charset == null) {
+                writer = new OutputStreamWriter(fiout);
+            }
+            else {
+                writer = new OutputStreamWriter(fiout, charset);
+            }
+            writer.write(contents);
+            writer.close();
+            File bakFile = new File(filePath + "~2");
+            File realFile = new File(filePath);
+            if (realFile.exists()) {
+                realFile.renameTo(bakFile);
+            }
+            saveToFile.renameTo(realFile);
+            if (bakFile.exists()) {
+                bakFile.delete();
+            }
+        }
+        catch (Throwable ex) {
+            Debug.echoError("Failed to save data to path '" + filePath + "'");
+            Debug.echoError(ex);
+        }
+    }
+
+    public static String journallingLoadFile(String filePath) {
+        try {
+            File realPath;
+            File flagFile = new File(filePath);
+            if (flagFile.exists()) {
+                realPath = flagFile;
+            }
+            else {
+                File bakFile = new File(filePath + "~2");
+                if (bakFile.exists()) {
+                    realPath = bakFile;
+                }
+                // Note: ~1 are likely corrupted, so ignore them.
+                else {
+                    return null;
+                }
+            }
+            FileInputStream fis = new FileInputStream(realPath);
+            String str = ScriptHelper.convertStreamToString(fis);
+            fis.close();
+            return str;
+        }
+        catch (Throwable ex) {
+            Debug.echoError("Failed to load data for path '" + filePath + "'");
+            Debug.echoError(ex);
+            return null;
+        }
     }
 }

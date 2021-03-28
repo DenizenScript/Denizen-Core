@@ -37,7 +37,6 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             arg.reportUnhandled();
         }
@@ -45,11 +44,9 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()).debug());
         }
-
         scriptEntry.getResidingQueue().clear();
         scriptEntry.getResidingQueue().stop();
     }
