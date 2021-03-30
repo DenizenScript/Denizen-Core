@@ -254,6 +254,9 @@ public class Deprecations {
     public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item' that use advanced matcher logic.");
     public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
 
+    // In Bukkit impl, Added 2021/03/29, deprecate officially by 2023.
+    public static Warning legacyAttributeProperties = new FutureWarning("The 'attribute' properties are deprecated in favor of the 'attribute_modifiers' properties which more fully implement the attribute system.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
