@@ -41,7 +41,7 @@ public class RateLimitCommand extends AbstractCommand {
     // Note that this uses game delta tick time, not system realtime.
     //
     // @Tags
-    // None.
+    // None
     //
     // @Usage
     // Use to show a message to a player no faster than once every ten seconds.

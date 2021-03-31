@@ -57,7 +57,7 @@ public class RunLaterCommand extends AbstractCommand {
     // specifically for the case of very large delays (hours or more) - in the short term, 'wait' or 'run' with a delay will be better.
     //
     // @Tags
-    // None.
+    // None
     //
     // @Usage
     // Use to run a task script named 'example' 3 days later.

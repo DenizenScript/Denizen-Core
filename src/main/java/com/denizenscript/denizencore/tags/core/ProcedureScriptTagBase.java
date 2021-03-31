@@ -36,7 +36,6 @@ public class ProcedureScriptTagBase {
         }
 
         Attribute attribute = event.getAttributes();
-        int attribs = 1;
         ScriptTag script;
         String path = null;
         if (attribute.hasContext(1)) {
@@ -81,7 +80,7 @@ public class ProcedureScriptTagBase {
             return;
         }
         if (queue.determinations != null && queue.determinations.size() > 0) {
-            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute.fulfill(attribs)));
+            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute.fulfill(1)));
         }
     }
 }
