@@ -56,10 +56,9 @@ public class DetermineCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
-            if (arg.matches("passive", "passively")) {
+            if (arg.matches("passive", "passively")
+                    && !scriptEntry.hasObject("passively")) {
                 scriptEntry.addObject("passively", new ElementTag(true));
             }
             else if (!scriptEntry.hasObject("outcome")) {
@@ -69,21 +68,17 @@ public class DetermineCommand extends AbstractCommand {
                 arg.reportUnhandled();
             }
         }
-
         scriptEntry.defaultObject("passively", new ElementTag(false));
         scriptEntry.defaultObject("outcome", new ElementTag(DETERMINE_NONE));
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ObjectTag outcomeObj = scriptEntry.getObjectTag("outcome");
         ElementTag passively = scriptEntry.getElement("passively");
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug() + new QueueTag(scriptEntry.getResidingQueue()).debug());
         }
-
         ScriptQueue queue = scriptEntry.getResidingQueue();
         ListTag determines = queue.determinations;
         if (determines == null) {

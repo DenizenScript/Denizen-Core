@@ -63,6 +63,10 @@ public class DefineMapCommand extends AbstractCommand {
             else if (arg.hasPrefix()) {
                 value.putObject(arg.getPrefix().getRawValue(), arg.object);
             }
+            else if (!arg.hasPrefix() && arg.getRawValue().contains(":")) {
+                int colon = arg.getRawValue().indexOf(':');
+                value.putObject(arg.getRawValue().substring(0, colon), new ElementTag(arg.getRawValue().substring(colon + 1)));
+            }
             else {
                 arg.reportUnhandled();
             }

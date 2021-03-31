@@ -142,6 +142,10 @@ public class RunCommand extends AbstractCommand implements Holdable {
                     && !arg.matchesPrefix("p", "path")) {
                 scriptEntry.addObject("script", arg.asType(ScriptTag.class));
             }
+            else if (!arg.hasPrefix() && arg.getRawValue().startsWith("def.") && arg.getRawValue().contains(":")) {
+                int colon = arg.getRawValue().indexOf(':');
+                defMap.putObject(arg.getRawValue().substring("def.".length(), colon), new ElementTag(arg.getRawValue().substring(colon + 1)));
+            }
             else if (!scriptEntry.hasObject("path")) {
                 String path = arg.asElement().asString();
                 if (!scriptEntry.hasObject("script")) {
