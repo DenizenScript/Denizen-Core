@@ -61,7 +61,6 @@ public class ProcedureScriptTagBase {
             attribute.echoError("Chosen script is not a procedure script!");
             return;
         }
-        attribute.fulfill(1);
         ListTag definitions = null;
 
         // <--[tag]
@@ -70,8 +69,8 @@ public class ProcedureScriptTagBase {
         // @description
         // Returns the 'determine' result of a procedure script with the given context.
         // -->
-        if (attribute.startsWith("context")) {
-            definitions = attribute.contextAsType(1, ListTag.class);
+        if (attribute.startsWith("context", 2)) {
+            definitions = attribute.contextAsType(2, ListTag.class);
             attribute.fulfill(1);
         }
         ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, event.getContext().getScriptEntryData(), null, (q) -> {
