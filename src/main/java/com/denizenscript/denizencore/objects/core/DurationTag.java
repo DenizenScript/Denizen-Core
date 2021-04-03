@@ -422,6 +422,66 @@ public class DurationTag implements ObjectTag {
             return new DurationTag(object.getTicks() + attribute.contextAsType(1, DurationTag.class).getTicks());
         });
 
+        // <--[tag]
+        // @attribute <DurationTag.is_more_than[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this duration is greater than the input duration.
+        // Equivalent to if comparison: >
+        // -->
+        registerTag("is_more_than", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.seconds > attribute.contextAsType(1, DurationTag.class).seconds);
+        });
+
+        // <--[tag]
+        // @attribute <DurationTag.is_less_than[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this duration is less than the input duration.
+        // Equivalent to if comparison: <
+        // -->
+        registerTag("is_less_than", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.seconds < attribute.contextAsType(1, DurationTag.class).seconds);
+        });
+
+        // <--[tag]
+        // @attribute <DurationTag.is_more_than_or_equal_to[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this duration is greater than or equal to the input duration.
+        // Equivalent to if comparison: >=
+        // -->
+        registerTag("is_more_than_or_equal_to", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.seconds >= attribute.contextAsType(1, DurationTag.class).seconds);
+        });
+
+        // <--[tag]
+        // @attribute <DurationTag.is_less_than_or_equal_to[<number>]>
+        // @returns ElementTag(Boolean)
+        // @group comparison
+        // @description
+        // Returns whether this duration is less than or equal to the input duration.
+        // Equivalent to if comparison: <=
+        // -->
+        registerTag("is_less_than_or_equal_to", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            return new ElementTag(object.seconds <= attribute.contextAsType(1, DurationTag.class).seconds);
+        });
+
         registerTag("time", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return new TimeTag(object.getMillis());
