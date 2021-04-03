@@ -21,7 +21,7 @@ public class FlagCommand extends AbstractCommand {
 
     public FlagCommand() {
         setName("flag");
-        setSyntax("flag [<object>|...] [<name>([<#>])](:<action>)[:<value>] (duration:<value>)");
+        setSyntax("flag [<object>|...] [<name>([<#>])](:<action>)[:<value>] (expire:<time>)");
         setRequiredArguments(1, 3);
         isProcedural = false;
     }
@@ -59,7 +59,7 @@ public class FlagCommand extends AbstractCommand {
     // and '__interact_step' which is used for interact script steps, related to <@link command zap>,
     // and '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
     //
-    // Flags have an expiration system, which is used by specifying a duration after which they should expire (which then internally calculates the date/time of expiration by adding the duration input to the current date/time).
+    // Flags have an expiration system, which is used by specifying a time at which they should expire (or via a duration which internally calculates the date/time of expiration by adding the duration input to the current date/time).
     // Expirations are then *checked for* in flag tags - meaning, the flag tags will internally compare a stored date/time against the real current date/time,
     // and if the flag's expiration time is in the past, the flag tag will return values equivalent to if the flag doesn't exist.
     // There is no system actively monitoring for flag expirations or applying them. There is no event for expirations occurring, as they don't "occur" per se.
@@ -70,7 +70,7 @@ public class FlagCommand extends AbstractCommand {
 
     // <--[command]
     // @Name Flag
-    // @Syntax flag [<object>|...] [<name>([<#>])](:<action>)[:<value>] (duration:<value>)
+    // @Syntax flag [<object>|...] [<name>([<#>])](:<action>)[:<value>] (expire:<time>)
     // @Required 2
     // @Maximum 3
     // @Short Sets or modifies a flag on any flaggable object.
@@ -82,6 +82,10 @@ public class FlagCommand extends AbstractCommand {
     // See also <@link language flag system>.
     //
     // This command supports data actions, see <@link language data actions>.
+    //
+    // Flags by default are added permanently (or for the lifetime of the object they're attached to).
+    // You can optionally specify a system time the flag will expire at, using either a DurationTag or a TimeTag.
+    // If a DurationTag is used, it will be equivalent to: <util.time_now.add[<your_duration_here>]>
     //
     // @Tags
     // <FlaggableObject.flag[<flag_name>]>
@@ -96,6 +100,10 @@ public class FlagCommand extends AbstractCommand {
     // @Usage
     // Use to create or set a flag on a player.
     // - flag <player> playstyle:aggressive
+    //
+    // @Usage
+    // Use to set a temporary flag for five minutes on a player.
+    // - flag <player> just_did_something expire:5m
     //
     // @Usage
     // Use to flag an npc with a given tag value.
@@ -137,10 +145,16 @@ public class FlagCommand extends AbstractCommand {
                 && !arg.hasPrefix()) {
                 scriptEntry.addObject("targets", arg.asType(ListTag.class));
             }
-            else if (!scriptEntry.hasObject("duration")
-                    && arg.matchesPrefix("duration")
+            else if (!scriptEntry.hasObject("expiration")
+                    && arg.matchesPrefix("expire", "expires", "expiration", "duration")
+                    && arg.matchesArgumentType(TimeTag.class)) {
+                scriptEntry.addObject("expiration", arg.asType(TimeTag.class));
+            }
+            else if (!scriptEntry.hasObject("expiration")
+                    && arg.matchesPrefix("expire", "expires", "expiration", "duration")
                     && arg.matchesArgumentType(DurationTag.class)) {
-                scriptEntry.addObject("duration", arg.asType(DurationTag.class));
+                TimeTag now = TimeTag.now();
+                scriptEntry.addObject("expiration", new TimeTag(now.millis() + arg.asType(DurationTag.class).getMillis(), now.instant.getZone()));
             }
             else if (!scriptEntry.hasObject("flag_action")) {
                 scriptEntry.addObject("flag_action", DataActionHelper.parse(new FlagActionProvider(), arg, scriptEntry.context));
@@ -180,16 +194,14 @@ public class FlagCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ListTag targets = scriptEntry.getObjectTag("targets");
-        DurationTag duration = scriptEntry.getObjectTag("duration");
+        TimeTag expiration = scriptEntry.getObjectTag("expiration");
         DataAction flagAction = (DataAction) scriptEntry.getObject("flag_action");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), targets.debug()
-                    + (duration == null ? "" : duration.debug())
+                    + (expiration == null ? "" : expiration.debug())
                     + flagAction.debug());
         }
-        if (duration != null) {
-            ((FlagActionProvider) flagAction.provider).expiration = new TimeTag(TimeTag.now().millis() + duration.getMillis());
-        }
+        ((FlagActionProvider) flagAction.provider).expiration = expiration;
         for (ObjectTag object : targets.objectForms) {
             AbstractFlagTracker tracker;
             if (CoreUtilities.equalsIgnoreCase(object.toString(), "server")) {
