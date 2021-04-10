@@ -26,7 +26,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     // Usage of these should generally be avoided, as they can be considered 'over-engineering'...
     // That is, using a very complicated solution to solve a problem that can be solved much more simply.
     //
-    // Custom objects exist for experimental reasons. Use at your own risk.
+    // Custom objects exist for experimental reasons. Do not use these in any real scripts.
     //
     // These use the object notation "custom@".
     // The identity format for custom objects is the script name, followed by property syntax listing all fields with their values.

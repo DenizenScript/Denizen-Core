@@ -272,9 +272,9 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // returns a copy of the map, sorted alphanumerically by the value under each key.
         // Optionally, specify a tag to apply to the value.
-        // To sort by key, use <@link tag MapTag.get_subset> with list sort tags, like 'map.get_subset[map.list_keys.sort_by_value[...]]'.
+        // To sort by key, use <@link tag MapTag.get_subset> with list sort tags, like 'map.get_subset[map.keys.sort_by_value[...]]'.
         // This also lets you apply list filters or similar to the keyset.
-        // To apply a '.parse' to the values, use <@link tag ListTag.map_with>, like 'map.list_keys.map_with[map.list_values.parse[...]]'
+        // To apply a '.parse' to the values, use <@link tag ListTag.map_with>, like 'map.keys.map_with[map.values.parse[...]]'
         // -->
         registerTag("sort_by_value", (attribute, object) -> {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());

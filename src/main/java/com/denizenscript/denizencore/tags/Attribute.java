@@ -375,6 +375,14 @@ public class Attribute {
     // If you carelessly apply fallbacks to all tags, you might end up not realizing there's a problem in your script until it's affecting real players.
     // You want to solve errors in testing, not ten months later when a player mentions to you "that shop NPC let me buy things even when I had $0"!
     //
+    // As of Denizen 1.2.0, there are also "fallback tags" like <@link tag ObjectTag.if_null> and <@link tag ObjectTag.exists>.
+    // These largely work the same as fallbacks, but using standard tag syntax rather than the unique dedicated syntax of pre-existing fallbacks.
+    // To check if an object exists with this system, if you can do for example:
+    // <code>
+    // - if <player.exists>:
+    // </code>
+    // For the other earlier example, you can instead do: "<player.flag[good_name].if_null[<player.flag[bad_name]>].if_null[<player.name>]>"
+    //
     // -->
     public static final HashMap<String, TagRunnable.BaseInterface> fallbackTags = new HashMap<>();
 

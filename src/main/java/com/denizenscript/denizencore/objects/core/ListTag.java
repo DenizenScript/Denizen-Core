@@ -1733,10 +1733,10 @@ public class ListTag implements List<String>, ObjectTag {
             // @returns ListTag
             // @description
             // returns a list of the highest values in a list of decimal numbers.
-            // For example: a list of "3|5|2|1|10" with .count[2] will return "10|5".
+            // For example: a list of "3|5|2|1|10" with .highest.count[2] will return "10|5".
             // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
             // For example, <server.players.highest[money].count[5]> returns the 5 players with the most money.
-            // Note: if you want to sort the entire list, rather than just getting a few values, use a sort tag link <@link tag listtag.sort_by_number>
+            // Note: if you want to sort the entire list, rather than just getting a few values, use a sort tag like <@link tag listtag.sort_by_number>
             // -->
             if (attribute.startsWith("count", 2) && attribute.hasContext(2)) {
                 int count = Math.min(attribute.getIntContext(2), object.size());
