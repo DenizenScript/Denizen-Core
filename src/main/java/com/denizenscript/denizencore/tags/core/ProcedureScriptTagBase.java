@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -74,13 +75,16 @@ public class ProcedureScriptTagBase {
         }
         ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, event.getContext().getScriptEntryData(), null, (q) -> {
             q.procedural = true;
-        }, null, null, definitions, script.getContainer());
+        }, new DurationTag(0), null, definitions, script.getContainer());
         if (queue == null) {
             attribute.echoError("Procedure queue start failed.");
             return;
         }
-        if (queue.determinations != null && queue.determinations.size() > 0) {
-            event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute.fulfill(1)));
+        attribute.fulfill(1);
+        if (queue.determinations == null || queue.determinations.size() == 0) {
+            attribute.echoError("Procedure call did not determine any value.");
+            return;
         }
+        event.setReplacedObject(CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute));
     }
 }
