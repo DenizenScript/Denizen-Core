@@ -114,7 +114,7 @@ public class ReplaceableTagEvent {
             mainRef.rootFormHandler = TagManager.rootFormHandlers.get(startValue);
             if (mainRef.rootFormHandler == null) {
                 if (!hasAlternative()) {
-                    Debug.echoError("(Initial detection) No tag-base handler for '" + startValue + "'.");
+                    Debug.echoError(context.entry, "(Initial detection) No tag-base handler for '" + startValue + "'.");
                 }
             }
         }
