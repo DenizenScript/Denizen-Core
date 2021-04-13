@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -67,6 +68,16 @@ public class ForeachCommand extends BracedCommand {
         public int index;
         public ListTag list;
         public List<String> keys;
+        public String valueName, keyName;
+        public ObjectTag originalValue, originalKeyValue, originalIndexValue;
+
+        public void reapplyAtEnd(ScriptQueue queue) {
+            queue.addDefinition(valueName, originalValue);
+            if (keys != null) {
+                queue.addDefinition(keyName, originalKeyValue);
+            }
+            queue.addDefinition("loop_index", originalIndexValue);
+        }
     }
 
     @Override
@@ -119,10 +130,8 @@ public class ForeachCommand extends BracedCommand {
         scriptEntry.defaultObject("as_name", new ElementTag("value"));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag stop = scriptEntry.getElement("stop");
         ElementTag next = scriptEntry.getElement("next");
         ElementTag callback = scriptEntry.getElement("callback");
@@ -130,33 +139,34 @@ public class ForeachCommand extends BracedCommand {
         MapTag map = scriptEntry.getObjectTag("map");
         ElementTag as_name = scriptEntry.getElement("as_name");
         ElementTag key_as = scriptEntry.getElement("key_as");
-
+        ScriptQueue queue = scriptEntry.getResidingQueue();
         if (stop != null && stop.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), stop.debug());
             }
             boolean hasnext = false;
-            for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
-                ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
+            for (int i = 0; i < queue.getQueueSize(); i++) {
+                ScriptEntry entry = queue.getEntry(i);
                 List<String> args = entry.getOriginalArguments();
-                if (entry.getCommandName().equals("FOREACH") && args.size() > 0 && args.get(0).equals("\0CALLBACK")) {
+                if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                     hasnext = true;
                     break;
                 }
             }
             if (hasnext) {
-                while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
-                    ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
+                while (queue.getQueueSize() > 0) {
+                    ScriptEntry entry = queue.getEntry(0);
                     List<String> args = entry.getOriginalArguments();
-                    if (entry.getCommandName().equals("FOREACH") && args.size() > 0 && args.get(0).equals("\0CALLBACK")) {
-                        scriptEntry.getResidingQueue().removeEntry(0);
+                    if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
+                        ((ForeachData) entry.getOwner().getData()).reapplyAtEnd(queue);
+                        queue.removeEntry(0);
                         break;
                     }
-                    scriptEntry.getResidingQueue().removeEntry(0);
+                    queue.removeEntry(0);
                 }
             }
             else {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
+                Debug.echoError(queue, "Cannot stop foreach: not in one!");
             }
             return;
         }
@@ -165,26 +175,26 @@ public class ForeachCommand extends BracedCommand {
                 Debug.report(scriptEntry, getName(), next.debug());
             }
             boolean hasnext = false;
-            for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
-                ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
+            for (int i = 0; i < queue.getQueueSize(); i++) {
+                ScriptEntry entry = queue.getEntry(i);
                 List<String> args = entry.getOriginalArguments();
-                if (entry.getCommandName().equals("FOREACH") && args.size() > 0 && args.get(0).equals("\0CALLBACK")) {
+                if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                     hasnext = true;
                     break;
                 }
             }
             if (hasnext) {
-                while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
-                    ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
+                while (queue.getQueueSize() > 0) {
+                    ScriptEntry entry = queue.getEntry(0);
                     List<String> args = entry.getOriginalArguments();
-                    if (entry.getCommandName().equals("FOREACH") && args.size() > 0 && args.get(0).equals("\0CALLBACK")) {
+                    if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         break;
                     }
-                    scriptEntry.getResidingQueue().removeEntry(0);
+                    queue.removeEntry(0);
                 }
             }
             else {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Cannot stop foreach: not in one!");
+                Debug.echoError(queue, "Cannot 'foreach next': not in one!");
             }
             return;
         }
@@ -198,11 +208,11 @@ public class ForeachCommand extends BracedCommand {
                     if (scriptEntry.dbCallShouldDebug()) {
                         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop " + data.index);
                     }
-                    scriptEntry.getResidingQueue().addDefinition("loop_index", new ElementTag(data.index));
+                    queue.addDefinition("loop_index", new ElementTag(data.index));
                     if (data.keys != null) {
-                        scriptEntry.getResidingQueue().addDefinition(key_as.asString(), new ElementTag(data.keys.get(data.index - 1)));
+                        queue.addDefinition(data.keyName, new ElementTag(data.keys.get(data.index - 1)));
                     }
-                    scriptEntry.getResidingQueue().addDefinition(as_name.asString(), data.list.getObject(data.index - 1));
+                    queue.addDefinition(data.valueName, data.list.getObject(data.index - 1));
                     List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
                     ScriptEntry callbackEntry = scriptEntry.clone();
                     callbackEntry.setOwner(scriptEntry.getOwner());
@@ -211,16 +221,17 @@ public class ForeachCommand extends BracedCommand {
                         cmd.setInstant(true);
                         cmd.copyFrom(scriptEntry);
                     }
-                    scriptEntry.getResidingQueue().injectEntries(bracedCommands, 0);
+                    queue.injectEntries(bracedCommands, 0);
                 }
                 else {
+                    data.reapplyAtEnd(queue);
                     if (scriptEntry.dbCallShouldDebug()) {
                         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Foreach loop complete");
                     }
                 }
             }
             else {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Foreach CALLBACK invalid: not a real callback!");
+                Debug.echoError(queue, "Foreach CALLBACK invalid: not a real callback!");
             }
         }
         else {
@@ -248,32 +259,37 @@ public class ForeachCommand extends BracedCommand {
                 datum.list = list;
             }
             datum.index = 1;
-            if (datum.keys != null) {
-                scriptEntry.getResidingQueue().addDefinition(key_as.asString(), datum.keys.get(0));
-            }
-            scriptEntry.getResidingQueue().addDefinition(as_name.asString(), datum.list.getObject(0));
-            scriptEntry.getResidingQueue().addDefinition("loop_index", new ElementTag("1"));
             scriptEntry.setData(datum);
-            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK", "as:" + as_name.asString(), "key:" + key_as.asString()},
+            ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
             List<BracedData> bdlist = getBracedCommands(scriptEntry);
             if (bdlist == null || bdlist.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget a ':'?");
+                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
                 return;
             }
             List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Empty subsection - did you forget to add the sub-commands inside the command?");
+                Debug.echoError(queue, "Empty subsection - did you forget to add the sub-commands inside the command?");
                 return;
             }
+            if (datum.keys != null) {
+                datum.keyName = key_as.asString();
+                datum.originalKeyValue = queue.getDefinitionObject(datum.keyName);
+                queue.addDefinition(datum.keyName, datum.keys.get(0));
+            }
+            datum.valueName = as_name.asString();
+            datum.originalValue = queue.getDefinitionObject(datum.valueName);
+            datum.originalIndexValue = queue.getDefinitionObject("loop_index");
+            queue.addDefinition(datum.valueName, datum.list.getObject(0));
+            queue.addDefinition("loop_index", new ElementTag("1"));
             bracedCommandsList.add(callbackEntry);
             for (ScriptEntry cmd : bracedCommandsList) {
                 cmd.setInstant(true);
             }
             scriptEntry.setInstant(true);
-            scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
+            queue.injectEntries(bracedCommandsList, 0);
         }
     }
 }
