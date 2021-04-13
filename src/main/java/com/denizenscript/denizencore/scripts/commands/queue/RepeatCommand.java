@@ -64,22 +64,22 @@ public class RepeatCommand extends BracedCommand {
         boolean handled = false;
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!handled
-                    && arg.matchesInteger()) {
+                    && arg.matchesInteger() && !arg.hasPrefix()) {
                 scriptEntry.addObject("quantity", arg.asElement());
                 handled = true;
             }
             else if (!handled
-                    && arg.matches("stop")) {
+                    && arg.matches("stop") && !arg.hasPrefix()) {
                 scriptEntry.addObject("stop", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
-                    && arg.matches("next")) {
+                    && arg.matches("next") && !arg.hasPrefix()) {
                 scriptEntry.addObject("next", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
-                    && arg.matches("\0callback")) {
+                    && arg.matches("\0callback") && !arg.hasPrefix()) {
                 scriptEntry.addObject("callback", new ElementTag(true));
                 handled = true;
             }

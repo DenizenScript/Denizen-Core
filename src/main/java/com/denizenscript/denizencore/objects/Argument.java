@@ -217,6 +217,13 @@ public class Argument implements Cloneable {
         return false;
     }
 
+    public boolean limitToOnlyPrefix(String value) {
+        if (!hasPrefix()) {
+            return true;
+        }
+        return value.equals(lower_prefix);
+    }
+
     public boolean matchesPrefix(String value) {
         if (!hasPrefix()) {
             return false;

@@ -66,10 +66,11 @@ public class InjectCommand extends AbstractCommand {
             }
             else if (!scriptEntry.hasObject("script")
                     && arg.matchesArgumentType(ScriptTag.class)
-                    && !arg.matchesPrefix("p", "path")) {
+                    && arg.limitToOnlyPrefix("script")) {
                 scriptEntry.addObject("script", arg.asType(ScriptTag.class));
             }
-            else if (!scriptEntry.hasObject("path")) {
+            else if (!scriptEntry.hasObject("path")
+                    && arg.matchesPrefix("path", "p")) {
                 String path = arg.asElement().asString();
                 if (!scriptEntry.hasObject("script")) {
                     int dotIndex = path.indexOf('.');

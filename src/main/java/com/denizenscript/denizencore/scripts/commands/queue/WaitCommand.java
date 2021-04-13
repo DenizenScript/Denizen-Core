@@ -51,11 +51,13 @@ public class WaitCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (arg.matchesArgumentType(DurationTag.class)
-                    && !scriptEntry.hasObject("delay")) {
+                    && !scriptEntry.hasObject("delay")
+                    && arg.limitToOnlyPrefix("delay")) {
                 scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
             else if (arg.matchesArgumentType(QueueTag.class)
-                    && !scriptEntry.hasObject("queue")) {
+                    && !scriptEntry.hasObject("queue")
+                    && arg.limitToOnlyPrefix("queue")) {
                 scriptEntry.addObject("delay", arg.asType(QueueTag.class));
             }
             else if (arg.matches("system")

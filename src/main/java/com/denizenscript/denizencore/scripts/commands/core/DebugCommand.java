@@ -86,6 +86,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("type")
+                    && arg.limitToOnlyPrefix("type")
                     && arg.matchesEnum(DBINFO)) {
                 scriptEntry.addObject("type", arg.asElement());
             }

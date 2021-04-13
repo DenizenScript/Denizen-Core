@@ -85,12 +85,12 @@ public class ForeachCommand extends BracedCommand {
         boolean handled = false;
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!handled
-                    && arg.matches("stop")) {
+                    && arg.matches("stop") && !arg.hasPrefix()) {
                 scriptEntry.addObject("stop", new ElementTag(true));
                 handled = true;
             }
             else if (!handled
-                    && arg.matches("next")) {
+                    && arg.matches("next") && !arg.hasPrefix()) {
                 scriptEntry.addObject("next", new ElementTag(true));
                 handled = true;
             }

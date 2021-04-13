@@ -54,10 +54,12 @@ public class RateLimitCommand extends AbstractCommand {
 
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (arg.matchesArgumentType(DurationTag.class)
-                && !scriptEntry.hasObject("duration")) {
+                    && !scriptEntry.hasObject("duration")
+                    && arg.limitToOnlyPrefix("duration")) {
                 scriptEntry.addObject("duration", arg.asType(DurationTag.class));
             }
-            else if (!scriptEntry.hasObject("object")) {
+            else if (!scriptEntry.hasObject("object")
+                    && arg.limitToOnlyPrefix("object")) {
                 scriptEntry.addObject("object", new ElementTag(arg.getRawValue()));
             }
             else {

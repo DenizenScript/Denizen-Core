@@ -78,7 +78,8 @@ public class AdjustCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-            if (!scriptEntry.hasObject("object")) {
+            if (!scriptEntry.hasObject("object")
+                    && arg.limitToOnlyPrefix("object")) {
                 if (arg.object instanceof ListTag) {
                     scriptEntry.addObject("object", arg.object);
                 }
