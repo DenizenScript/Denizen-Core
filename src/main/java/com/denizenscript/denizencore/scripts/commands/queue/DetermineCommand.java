@@ -77,7 +77,7 @@ public class DetermineCommand extends AbstractCommand {
         ObjectTag outcomeObj = scriptEntry.getObjectTag("outcome");
         ElementTag passively = scriptEntry.getElement("passively");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), outcomeObj.debug() + passively.debug() + new QueueTag(scriptEntry.getResidingQueue()).debug());
+            Debug.report(scriptEntry, getName(), outcomeObj, passively, new QueueTag(scriptEntry.getResidingQueue()));
         }
         ScriptQueue queue = scriptEntry.getResidingQueue();
         ListTag determines = queue.determinations;

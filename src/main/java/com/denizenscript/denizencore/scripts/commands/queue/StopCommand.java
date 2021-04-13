@@ -45,7 +45,7 @@ public class StopCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()).debug());
+            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()));
         }
         scriptEntry.getResidingQueue().clear();
         scriptEntry.getResidingQueue().stop();

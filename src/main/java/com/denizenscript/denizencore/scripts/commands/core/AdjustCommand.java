@@ -78,8 +78,7 @@ public class AdjustCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-            if (!scriptEntry.hasObject("object")
-                    && arg.limitToOnlyPrefix("object")) {
+            if (!scriptEntry.hasObject("object")) {
                 if (arg.object instanceof ListTag) {
                     scriptEntry.addObject("object", arg.object);
                 }
@@ -192,9 +191,7 @@ public class AdjustCommand extends AbstractCommand {
         ListTag objects = scriptEntry.getObjectTag("object");
         MapTag mechanismMap = scriptEntry.getObjectTag("mechanism_map");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(),
-                    objects.debug()
-                            + (mechanismMap == null ? mechanism.debug() + (value == null ? "" : value.debug()) : mechanismMap.debug()));
+            Debug.report(scriptEntry, getName(), objects, value, mechanism, mechanismMap);
         }
         ListTag result = new ListTag();
         for (ObjectTag object : objects.objectForms) {

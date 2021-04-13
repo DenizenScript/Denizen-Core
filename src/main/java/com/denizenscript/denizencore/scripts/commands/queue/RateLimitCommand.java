@@ -70,14 +70,11 @@ public class RateLimitCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         DurationTag duration = scriptEntry.getObjectTag("duration");
         ElementTag object = scriptEntry.getElement("object");
-
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), duration.debug() + object.debug());
+            Debug.report(scriptEntry, getName(), duration, object);
         }
-
         if (scriptEntry.internal.specialProcessedData == null) {
             scriptEntry.internal.specialProcessedData = new HashMap<>(2);
         }

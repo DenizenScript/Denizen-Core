@@ -2,9 +2,9 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -86,9 +86,7 @@ public class DefineMapCommand extends AbstractCommand {
         ElementTag definition = scriptEntry.getElement("definition");
         MapTag value = scriptEntry.getObjectTag("map");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("queue", scriptEntry.getResidingQueue().id)
-                    + definition.debug()
-                    + value.debug());
+            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()), definition, value);
         }
         scriptEntry.getResidingQueue().addDefinition(definition.asString(), value.duplicate());
     }

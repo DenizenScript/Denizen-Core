@@ -82,4 +82,8 @@ public class Debug {
     public static void report(Debuggable caller, String name, String message) {
         DenizenCore.getImplementation().debugReport(caller, name, message);
     }
+
+    public static void report(Debuggable caller, String name, Object... values) {
+        DenizenCore.getImplementation().debugReport(caller, name, values);
+    }
 }

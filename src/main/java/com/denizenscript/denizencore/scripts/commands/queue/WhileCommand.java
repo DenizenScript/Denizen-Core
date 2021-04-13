@@ -97,7 +97,7 @@ public class WhileCommand extends BracedCommand {
         ScriptQueue queue = scriptEntry.getResidingQueue();
         if (stop != null && stop.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), stop.debug());
+                Debug.report(scriptEntry, getName(), stop);
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -127,7 +127,7 @@ public class WhileCommand extends BracedCommand {
         }
         else if (next != null && next.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), next.debug());
+                Debug.report(scriptEntry, getName(), next);
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {

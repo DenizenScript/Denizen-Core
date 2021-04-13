@@ -78,7 +78,6 @@ public class LogCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
             if (!scriptEntry.hasObject("type")
                     && arg.matchesPrefix("type")
@@ -96,15 +95,12 @@ public class LogCommand extends AbstractCommand {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("message")) {
             throw new InvalidArgumentsException("Must specify a message.");
         }
-
         if (!scriptEntry.hasObject("file")) {
             throw new InvalidArgumentsException("Must specify a file.");
         }
-
         if (!scriptEntry.hasObject("type")) {
             scriptEntry.addObject("type", new ElementTag("INFO"));
         }
@@ -119,27 +115,18 @@ public class LogCommand extends AbstractCommand {
         ElementTag message = scriptEntry.getElement("message");
         ElementTag fileName = scriptEntry.getElement("file");
         ElementTag typeElement = scriptEntry.getElement("type");
-
         if (scriptEntry.dbCallShouldDebug()) {
-
-            Debug.report(scriptEntry, getName(),
-                    message.debug() + fileName.debug() + typeElement.debug());
-
+            Debug.report(scriptEntry, getName(), message, fileName, typeElement);
         }
-
         Type type = Type.valueOf(typeElement.asString().toUpperCase());
-
         String directory = URLDecoder.decode(System.getProperty("user.dir"));
         File file = new File(directory, fileName.asString());
-
         file.getParentFile().mkdirs();
         if (!DenizenCore.getImplementation().canWriteToFile(file)) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Cannot log into that file!");
             return;
         }
-
         String output = message.asString();
-
         file.getParentFile().mkdirs();
         if (type == Type.NONE) {
             try {
@@ -167,34 +154,26 @@ public class LogCommand extends AbstractCommand {
             }
             return;
         }
-
         DebugLog log = new DebugLog("Denizen-ScriptLog-" + fileName, file.getAbsolutePath());
-
         switch (type) {
             case SEVERE:
                 log.severe(output);
                 break;
-
             case INFO:
                 log.info(output);
                 break;
-
             case WARNING:
                 log.warning(output);
                 break;
-
             case FINE:
                 log.fine(output);
                 break;
-
             case FINER:
                 log.finer(output);
                 break;
-
             case FINEST:
                 log.finest(output);
         }
-
         log.close();
     }
 }

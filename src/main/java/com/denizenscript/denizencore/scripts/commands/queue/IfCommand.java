@@ -169,20 +169,16 @@ public class IfCommand extends BracedCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         List<String> subcommand = (List<String>) scriptEntry.getObject("subcommand");
         List<String> elsecommand = (List<String>) scriptEntry.getObject("elsecommand");
         List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
         List<BracedData> braces = (List<BracedData>) scriptEntry.getObject("braces");
-
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("use_braces", braces != null));
         }
-
         if (Debug.verbose) {
             Debug.log("comparisons=" + comparisons + ", sc:" + subcommand + ", ec:" + elsecommand);
         }
-
         boolean first_set = new ArgComparer().compare(comparisons, scriptEntry);
         if (first_set && subcommand != null && subcommand.size() > 0) {
             executeCommandList(subcommand, scriptEntry);

@@ -106,10 +106,7 @@ public class InjectCommand extends AbstractCommand {
         ElementTag path = scriptEntry.getElement("path");
         ElementTag local = scriptEntry.getElement("local");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), script.debug()
-                            + (instant != null ? instant.debug() : "")
-                            + (path != null ? path.debug() : "")
-                            + (local != null ? local.debug() : ""));
+            Debug.report(scriptEntry, getName(), script, instant, path, local);
         }
         List<ScriptEntry> entries;
         if (local != null && local.asBoolean()) {

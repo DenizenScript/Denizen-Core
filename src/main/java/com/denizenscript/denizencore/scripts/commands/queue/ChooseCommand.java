@@ -127,7 +127,7 @@ public class ChooseCommand extends BracedCommand {
         }
         ElementTag choice = scriptEntry.getElement("choice");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), choice.debug());
+            Debug.report(scriptEntry, getName(), choice);
         }
         String choice_low = CoreUtilities.toLowerCase(choice.asString());
         Integer resultIndex = lookupTable.get(choice_low);

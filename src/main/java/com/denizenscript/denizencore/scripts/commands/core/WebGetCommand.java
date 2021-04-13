@@ -164,13 +164,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         final ElementTag saveFile = scriptEntry.getElement("savefile");
         final ElementTag hideFailure = scriptEntry.getElement("hide_failure");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), url.debug()
-                            + (data != null ? data.debug() : "")
-                            + (method != null ? method.debug() : "")
-                            + (timeout != null ? timeout.debug() : "")
-                            + (saveFile != null ? saveFile.debug() : "")
-                            + (hideFailure != null ? hideFailure.debug() : "")
-                            + (headers != null ? headers.debug() : ""));
+            Debug.report(scriptEntry, getName(), url, data, method, timeout, saveFile, hideFailure, headers);
         }
         Thread thr = new Thread(() -> webGet(scriptEntry, data, method, url, timeout, headers, saveFile, hideFailure));
         thr.start();

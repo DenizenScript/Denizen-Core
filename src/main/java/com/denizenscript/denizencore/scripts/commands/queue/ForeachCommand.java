@@ -142,7 +142,7 @@ public class ForeachCommand extends BracedCommand {
         ScriptQueue queue = scriptEntry.getResidingQueue();
         if (stop != null && stop.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), stop.debug());
+                Debug.report(scriptEntry, getName(), stop);
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -172,7 +172,7 @@ public class ForeachCommand extends BracedCommand {
         }
         else if (next != null && next.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), next.debug());
+                Debug.report(scriptEntry, getName(), next);
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -236,7 +236,7 @@ public class ForeachCommand extends BracedCommand {
         }
         else {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), (list == null ? map.debug() + key_as.debug() : list.debug()) + as_name.debug());
+                Debug.report(scriptEntry, getName(), map, map == null ? null : key_as, list, as_name);
             }
             int target = list == null ? map.map.size() : list.size();
             if (target <= 0) {

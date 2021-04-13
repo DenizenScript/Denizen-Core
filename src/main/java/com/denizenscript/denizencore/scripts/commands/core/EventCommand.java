@@ -80,7 +80,7 @@ public class EventCommand extends AbstractCommand {
         ListTag events = scriptEntry.getObjectTag("events");
         ListTag context = scriptEntry.getObjectTag("context");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), events.debug() + context.debug());
+            Debug.report(scriptEntry, getName(), events, context);
         }
         if (context.size() % 2 == 1) { // Size is uneven!
             context.add("null");

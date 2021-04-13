@@ -39,31 +39,24 @@ public class MarkCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-
             if (!scriptEntry.hasObject("m_name")) {
                 scriptEntry.addObject("m_name", arg.asElement());
             }
-
             else {
                 arg.reportUnhandled();
             }
         }
-
         if (!scriptEntry.hasObject("m_name")) {
             throw new InvalidArgumentsException("Must have a mark name!");
         }
-
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-
         ElementTag mName = scriptEntry.getElement("m_name");
-
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), mName.debug());
+            Debug.report(scriptEntry, getName(), mName);
         }
     }
 }

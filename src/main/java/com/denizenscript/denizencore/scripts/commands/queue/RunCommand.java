@@ -203,16 +203,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         }
         ListTag definitions = scriptEntry.getObjectTag("definitions");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(),
-                    (script.debug())
-                            + (pathElement != null ? pathElement.debug() : "")
-                            + (local != null ? local.debug() : "")
-                            + (instant != null ? instant.debug() : "")
-                            + (speed != null ? speed.debug() : "")
-                            + (delay != null ? delay.debug() : "")
-                            + (id != null ? id.debug() : "")
-                            + (defMap != null ? defMap.debug() : "")
-                            + (definitions != null ? definitions.debug() : ""));
+            Debug.report(scriptEntry, getName(), script, pathElement, local, instant, speed, delay, id, defMap, definitions);
         }
         Consumer<ScriptQueue> configure = (queue) -> {
             // Set any delay

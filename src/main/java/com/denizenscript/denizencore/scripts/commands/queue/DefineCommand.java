@@ -2,13 +2,13 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.data.ActionableDataProvider;
 import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -126,11 +126,7 @@ public class DefineCommand extends AbstractCommand {
         ElementTag remove = scriptEntry.getElement("remove");
         DataAction action = (DataAction) scriptEntry.getObject("action");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("queue", scriptEntry.getResidingQueue().id)
-                    + (definition == null ? "" : definition.debug())
-                    + (value == null ? "" : value.debug())
-                    + (action == null ? "" : action.debug())
-                    + (remove != null ? remove.debug() : ""));
+            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()), definition, value, action == null ? null : action.debug(), remove);
         }
         if (action != null) {
             action.execute(scriptEntry.getContext());

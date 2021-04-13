@@ -147,13 +147,7 @@ public class RunLaterCommand extends AbstractCommand {
         }
         ListTag definitions = scriptEntry.getObjectTag("definitions");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(),
-                    (script.debug())
-                            + (pathElement != null ? pathElement.debug() : "")
-                            + (local != null ? local.debug() : "")
-                            + (delay != null ? delay.debug() : "")
-                            + (defMap != null ? defMap.debug() : "")
-                            + (definitions != null ? definitions.debug() : ""));
+            Debug.report(scriptEntry, getName(), script, pathElement, local, delay, defMap, definitions);
         }
         FutureRunData runData = new FutureRunData();
         runData.definitionList = definitions;

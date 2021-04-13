@@ -85,7 +85,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         ElementTag destination = scriptEntry.getElement("destination");
         ElementTag overwrite = scriptEntry.getElement("overwrite");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), origin.debug() + destination.debug() + overwrite.debug());
+            Debug.report(scriptEntry, getName(), origin, destination, overwrite);
         }
         if (!DenizenCore.getImplementation().allowFileCopy()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");

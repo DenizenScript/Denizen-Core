@@ -62,6 +62,11 @@ public interface DenizenImplementation {
     void debugReport(Debuggable caller, String name, String message);
 
     /**
+     * Output a command information report.
+     */
+    void debugReport(Debuggable caller, String name, Object... values);
+
+    /**
      * Output an 'Okay!' message.
      */
     void debugApproval(String message);

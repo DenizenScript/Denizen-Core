@@ -92,9 +92,7 @@ public class WaitCommand extends AbstractCommand {
         DurationTag delay = scriptEntry.getObjectTag("delay");
         ElementTag system = scriptEntry.getObjectTag("system");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), queue.debug()
-                    + delay.debug()
-                    + (system == null ? "" : system.debug()));
+            Debug.report(scriptEntry, getName(), queue, delay, system);
         }
         TimedQueue.DelayTracker tracker;
         if (system != null && system.asBoolean()) {
