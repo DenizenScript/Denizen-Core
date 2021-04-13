@@ -194,6 +194,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
     public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
+    // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
+    public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
+
     // In Bukkit impl, Added 2020/03/05, deprecate officially by 2022.
     public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
