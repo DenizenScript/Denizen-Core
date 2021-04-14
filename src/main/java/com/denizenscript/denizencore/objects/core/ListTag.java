@@ -971,6 +971,17 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.any>
+        // @returns ElementTag(Boolean)
+        // @description
+        // returns whether the list is not empty.
+        // For example: a list of "" returns false, while "one" returns true.
+        // -->
+        registerTag("any", (attribute, object) -> {
+            return new ElementTag(!object.isEmpty());
+        });
+
+        // <--[tag]
         // @attribute <ListTag.insert[...|...].at[<#>]>
         // @returns ListTag
         // @description
