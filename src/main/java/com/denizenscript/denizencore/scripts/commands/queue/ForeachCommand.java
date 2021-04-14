@@ -262,8 +262,6 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-            callbackEntry.copyFrom(scriptEntry);
-            callbackEntry.setOwner(scriptEntry);
             List<BracedData> bdlist = getBracedCommands(scriptEntry);
             if (bdlist == null || bdlist.isEmpty()) {
                 Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
@@ -284,9 +282,12 @@ public class ForeachCommand extends BracedCommand {
             datum.originalIndexValue = queue.getDefinitionObject("loop_index");
             queue.addDefinition(datum.valueName, datum.list.getObject(0));
             queue.addDefinition("loop_index", new ElementTag("1"));
+            callbackEntry.copyFrom(scriptEntry);
+            callbackEntry.setOwner(scriptEntry);
             bracedCommandsList.add(callbackEntry);
             for (ScriptEntry cmd : bracedCommandsList) {
                 cmd.setInstant(true);
+                cmd.copyFrom(scriptEntry);
             }
             scriptEntry.setInstant(true);
             queue.injectEntries(bracedCommandsList, 0);
