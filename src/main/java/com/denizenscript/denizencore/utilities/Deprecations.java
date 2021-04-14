@@ -196,6 +196,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
     public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
+    public static Warning materialPropertyTags = new FutureWarning("Old MaterialTag.is_x property tags are deprecated in favor of PropertyHolderObject.supports[property-name]");
 
     // In Bukkit impl, Added 2020/03/05, deprecate officially by 2022.
     public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
