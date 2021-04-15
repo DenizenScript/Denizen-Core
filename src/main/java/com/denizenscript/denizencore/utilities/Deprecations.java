@@ -253,13 +253,16 @@ public class Deprecations {
     // Added 2021/03/02, deprecate officially by 2023.
     public static Warning itemScriptColor = new FutureWarning("The item script 'color' key is deprecated: use the 'color' mechanism under the 'mechanisms' key instead.");
 
+    // In Bukkit impl, Added 2021/03/29, deprecate officially by 2023.
+    public static Warning legacyAttributeProperties = new FutureWarning("The 'attribute' properties are deprecated in favor of the 'attribute_modifiers' properties which more fully implement the attribute system.");
+
+    // Added 2021/04/14, deprecate officially by 2023.
+    public static Warning locallyArgument = new FutureWarning("The 'locally' argument in run/inject is deprecated: just specify the script name, or <script>.");
+
     // In Bukkit impl, Added 2021/03/27, deprecate officially by 2024.
     public static Warning locationFindEntities = new FutureWarning("The tag 'LocationTag.find.entities.within' is replaced by the 'find_entities' version. It is mostly compatible, but now has advanced matcher options.");
     public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item' that use advanced matcher logic.");
     public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
-
-    // In Bukkit impl, Added 2021/03/29, deprecate officially by 2023.
-    public static Warning legacyAttributeProperties = new FutureWarning("The 'attribute' properties are deprecated in favor of the 'attribute_modifiers' properties which more fully implement the attribute system.");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 

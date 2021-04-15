@@ -27,13 +27,13 @@ public class RunLaterCommand extends AbstractCommand {
 
     public RunLaterCommand() {
         setName("runlater");
-        setSyntax("runlater [<script>/locally] (path:<name>) [delay:<duration>] (def:<element>|.../defmap:<map>/def.<name>:<value>)");
+        setSyntax("runlater [<script>] (path:<name>) [delay:<duration>] (def:<element>|.../defmap:<map>/def.<name>:<value>)");
         setRequiredArguments(2, -1);
     }
 
     // <--[command]
     // @Name RunLater
-    // @Syntax runlater [<script>/locally] (path:<name>) [delay:<duration>] (def:<element>|.../defmap:<map>/def.<name>:<value>)
+    // @Syntax runlater [<script>] (path:<name>) [delay:<duration>] (def:<element>|.../defmap:<map>/def.<name>:<value>)
     // @Required 2
     // @Maximum -1
     // @Short Causes a task to run sometime in the future, even if the server restarts.
@@ -80,10 +80,6 @@ public class RunLaterCommand extends AbstractCommand {
                     && arg.matchesArgumentType(DurationTag.class)) {
                 scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
-            else if (arg.matches("locally")) {
-                scriptEntry.addObject("local", new ElementTag("true"));
-                scriptEntry.addObject("script", scriptEntry.getScript());
-            }
             else if (arg.hasPrefix()
                     && arg.getPrefix().getRawValue().startsWith("def.")) {
                 defMap.putObject(arg.getPrefix().getRawValue().substring("def.".length()), arg.object);
@@ -95,28 +91,27 @@ public class RunLaterCommand extends AbstractCommand {
             }
             else if (!scriptEntry.hasObject("path")
                     && arg.matchesPrefix("path", "p")) {
+                scriptEntry.addObject("path", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("path")
+                    && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
-                if (!scriptEntry.hasObject("script")) {
-                    int dotIndex = path.indexOf('.');
-                    if (dotIndex > 0) {
-                        ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                        if (script.isValid()) {
-                            scriptEntry.addObject("script", script);
-                            path = path.substring(dotIndex + 1);
-                        }
-                    }
+                int dotIndex = path.indexOf('.');
+                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
+                if (!script.isValid()) {
+                    arg.reportUnhandled();
                 }
-                scriptEntry.addObject("path", new ElementTag(path));
+                else {
+                    scriptEntry.addObject("script", script);
+                    scriptEntry.addObject("path", new ElementTag(path.substring(dotIndex + 1)));
+                }
             }
             else {
                 arg.reportUnhandled();
             }
         }
-        if (!scriptEntry.hasObject("script") && (!scriptEntry.hasObject("local") || scriptEntry.getScript() == null)) {
+        if (!scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be run.");
-        }
-        if (!scriptEntry.hasObject("path") && scriptEntry.hasObject("local")) {
-            throw new InvalidArgumentsException("Must specify a PATH.");
         }
         if (!scriptEntry.hasObject("delay")) {
             throw new InvalidArgumentsException("Must specify a DELAY.");
@@ -130,12 +125,8 @@ public class RunLaterCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) {
         ElementTag pathElement = scriptEntry.getElement("path");
         ScriptTag script = scriptEntry.getObjectTag("script");
-        ElementTag local = scriptEntry.getElement("local");
         DurationTag delay = scriptEntry.getObjectTag("delay");
         MapTag defMap = scriptEntry.getObjectTag("def_map");
-        if (local != null && local.asBoolean()) {
-            script = scriptEntry.getScript();
-        }
         String path = pathElement != null ? pathElement.asString() : null;
         if (script == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script RunLater failed (invalid script name)!");
@@ -147,7 +138,7 @@ public class RunLaterCommand extends AbstractCommand {
         }
         ListTag definitions = scriptEntry.getObjectTag("definitions");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), script, pathElement, local, delay, defMap, definitions);
+            Debug.report(scriptEntry, getName(), script, pathElement, delay, defMap, definitions);
         }
         FutureRunData runData = new FutureRunData();
         runData.definitionList = definitions;

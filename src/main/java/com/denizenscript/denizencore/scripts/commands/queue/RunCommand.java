@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -22,14 +23,14 @@ public class RunCommand extends AbstractCommand implements Holdable {
 
     public RunCommand() {
         setName("run");
-        setSyntax("run [<script>/locally] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
+        setSyntax("run [<script>] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
         setRequiredArguments(1, -1);
         isProcedural = true;
     }
 
     // <--[command]
     // @Name Run
-    // @Syntax run [<script>/locally] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)
+    // @Syntax run [<script>] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)
     // @Required 1
     // @Maximum -1
     // @Short Runs a script in a new queue.
@@ -39,9 +40,9 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // @Description
     // Runs a script in a new queue.
     //
-    // You can specify either a script object to run, or "locally" to use a path within the same script.
+    // You must specify a script object to run.
     //
-    // Optionally, use the "path:" argument to choose a specific sub-path within a script (works well with the "locally" argument).
+    // Optionally, use the "path:" argument to choose a specific sub-path within a script.
     //
     // Optionally, use the "def:" argument to specify definition values to pass to the script,
     // the definitions will be named via the "definitions:" script key on the script being ran,
@@ -76,7 +77,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to run a local subscript named 'alt_path'.
-    // - run locally path:alt_path
+    // - run <script> path:alt_path
     //
     // @Usage
     // Use to run 'MyTask' and pass 3 definitions to it.
@@ -125,7 +126,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
             else if (arg.matches("local", "locally")) {
-                scriptEntry.addObject("local", new ElementTag("true"));
+                Deprecations.locallyArgument.warn(scriptEntry);
                 scriptEntry.addObject("script", scriptEntry.getScript());
             }
             else if (!scriptEntry.hasObject("speed")
@@ -146,30 +147,32 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 int colon = arg.getRawValue().indexOf(':');
                 defMap.putObject(arg.getRawValue().substring("def.".length(), colon), new ElementTag(arg.getRawValue().substring(colon + 1)));
             }
-            else if (!scriptEntry.hasObject("path")
-                    && arg.matchesPrefix("path", "p")) {
+            else if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("path")
+                    && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
-                if (!scriptEntry.hasObject("script")) {
-                    int dotIndex = path.indexOf('.');
-                    if (dotIndex > 0) {
-                        ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                        if (script.isValid()) {
-                            scriptEntry.addObject("script", script);
-                            path = path.substring(dotIndex + 1);
-                        }
-                    }
+                int dotIndex = path.indexOf('.');
+                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
+                if (!script.isValid()) {
+                    arg.reportUnhandled();
                 }
-                scriptEntry.addObject("path", new ElementTag(path));
+                else {
+                    scriptEntry.addObject("script", script);
+                    scriptEntry.addObject("path", new ElementTag(path.substring(dotIndex + 1)));
+                }
+            }
+            else if (!scriptEntry.hasObject("path")
+                    && arg.limitToOnlyPrefix("path")) {
+                if (!arg.hasPrefix()) { // TODO: Temporarily allow missing prefix due to common mistake
+                    Debug.echoError("Run command path is missing required 'path:' prefix.");
+                }
+                scriptEntry.addObject("path", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
             }
         }
-        if (!scriptEntry.hasObject("script") && (!scriptEntry.hasObject("local") || scriptEntry.getScript() == null)) {
+        if (!scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be run.");
-        }
-        if (!scriptEntry.hasObject("path") && scriptEntry.hasObject("local")) {
-            throw new InvalidArgumentsException("Must specify a PATH.");
         }
         if (!defMap.map.isEmpty()) {
             scriptEntry.addObject("def_map", defMap);
@@ -180,15 +183,11 @@ public class RunCommand extends AbstractCommand implements Holdable {
     public void execute(ScriptEntry scriptEntry) {
         ElementTag pathElement = scriptEntry.getElement("path");
         ScriptTag script = scriptEntry.getObjectTag("script");
-        ElementTag local = scriptEntry.getElement("local");
         ElementTag instant = scriptEntry.getElement("instant");
         ElementTag id = scriptEntry.getElement("id");
         DurationTag speed = scriptEntry.getObjectTag("speed");
         DurationTag delay = scriptEntry.getObjectTag("delay");
         MapTag defMap = scriptEntry.getObjectTag("def_map");
-        if (local != null && local.asBoolean()) {
-            script = scriptEntry.getScript();
-        }
         String path = pathElement != null ? pathElement.asString() : null;
         if (script == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
@@ -203,7 +202,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         }
         ListTag definitions = scriptEntry.getObjectTag("definitions");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), script, pathElement, local, instant, speed, delay, id, defMap, definitions);
+            Debug.report(scriptEntry, getName(), script, pathElement, instant, speed, delay, id, defMap, definitions);
         }
         Consumer<ScriptQueue> configure = (queue) -> {
             // Set any delay

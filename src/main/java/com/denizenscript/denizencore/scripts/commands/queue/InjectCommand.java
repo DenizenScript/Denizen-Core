@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
@@ -18,16 +19,16 @@ public class InjectCommand extends AbstractCommand {
 
     public InjectCommand() {
         setName("inject");
-        setSyntax("inject (locally) [<script>] (path:<name>) (instantly)");
-        setRequiredArguments(1, 4);
+        setSyntax("inject [<script>] (path:<name>) (instantly)");
+        setRequiredArguments(1, 3);
         isProcedural = true;
     }
 
     // <--[command]
     // @Name Inject
-    // @Syntax inject (locally) [<script>] (path:<name>) (instantly)
+    // @Syntax inject [<script>] (path:<name>) (instantly)
     // @Required 1
-    // @Maximum 4
+    // @Maximum 3
     // @Short Runs a script in the current queue.
     // @Guide https://guide.denizenscript.com/guides/basics/run-options.html
     // @Group queue
@@ -35,8 +36,7 @@ public class InjectCommand extends AbstractCommand {
     // @Description
     // Injects a script into the current queue.
     // This means this task will run with all of the original queue's definitions and tags.
-    // It will also now be part of the queue, so any delays or definitions used in the injected script will be
-    // accessible in the original queue.
+    // It will also now be part of the queue, so any delays or definitions used in the injected script will be accessible in the original queue.
     //
     // @Tags
     // None
@@ -62,37 +62,40 @@ public class InjectCommand extends AbstractCommand {
                 scriptEntry.addObject("instant", new ElementTag(true));
             }
             else if (arg.matches("local", "locally")) {
-                scriptEntry.addObject("local", new ElementTag(true));
+                Deprecations.locallyArgument.warn(scriptEntry);
+                scriptEntry.addObject("script", scriptEntry.getScript());
             }
             else if (!scriptEntry.hasObject("script")
                     && arg.matchesArgumentType(ScriptTag.class)
                     && arg.limitToOnlyPrefix("script")) {
                 scriptEntry.addObject("script", arg.asType(ScriptTag.class));
             }
-            else if (!scriptEntry.hasObject("path")
-                    && arg.matchesPrefix("path", "p")) {
+            else if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("path")
+                    && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
-                if (!scriptEntry.hasObject("script")) {
-                    int dotIndex = path.indexOf('.');
-                    if (dotIndex > 0) {
-                        ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                        if (script.isValid()) {
-                            scriptEntry.addObject("script", script);
-                            path = path.substring(dotIndex + 1);
-                        }
-                    }
+            int dotIndex = path.indexOf('.');
+                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
+                if (!script.isValid()) {
+                    arg.reportUnhandled();
                 }
-                scriptEntry.addObject("path", new ElementTag(path));
+                else {
+                    scriptEntry.addObject("script", script);
+                    scriptEntry.addObject("path", new ElementTag(path.substring(dotIndex + 1)));
+                }
+            }
+            else if (!scriptEntry.hasObject("path")
+                    && arg.limitToOnlyPrefix("path")) {
+                if (!arg.hasPrefix()) { // TODO: Temporarily allow missing prefix due to common mistake
+                    Debug.echoError("Inject command path is missing required 'path:' prefix.");
+                }
+                scriptEntry.addObject("path", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
             }
         }
-        if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("local")) {
+        if (!scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be injected.");
-        }
-        if (scriptEntry.hasObject("local") && !scriptEntry.hasObject("path") && !scriptEntry.hasObject("script")) {
-            throw new InvalidArgumentsException("Must specify a PATH.");
         }
     }
 
@@ -104,22 +107,16 @@ public class InjectCommand extends AbstractCommand {
         }
         ElementTag instant = scriptEntry.getElement("instant");
         ElementTag path = scriptEntry.getElement("path");
-        ElementTag local = scriptEntry.getElement("local");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), script, instant, path, local);
+            Debug.report(scriptEntry, getName(), script, instant, path);
         }
         List<ScriptEntry> entries;
-        if (local != null && local.asBoolean()) {
-            String pathName = path != null ? path.asString() : script.getName();
-            entries = scriptEntry.getScript().getContainer().getEntries(scriptEntry.entryData.clone(), pathName);
-        }
-        else if (path != null) {
+        if (path != null) {
             entries = script.getContainer().getEntries(scriptEntry.entryData.clone(), path.asString());
         }
         else {
             entries = script.getContainer().getBaseEntries(scriptEntry.entryData.clone());
         }
-
         if (entries == null) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid script path '" + path + "')!");
             return;
