@@ -699,10 +699,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             result = new RegexMatchHelper(input.substring("regex:".length()));
         }
         else if (CoreUtilities.contains(input, '|')) {
-            String[] split = input.split("\\|");
-            MatchHelper[] matchers = new MatchHelper[split.length];
-            for (int i = 0; i < split.length; i++) {
-                matchers[i] = createMatcher(split[i]);
+            List<String> split = CoreUtilities.split(input, '|');
+            MatchHelper[] matchers = new MatchHelper[split.size()];
+            for (int i = 0; i < split.size(); i++) {
+                matchers[i] = createMatcher(split.get(i));
             }
             result = new MultipleMatchesHelper(matchers);
         }
@@ -717,7 +717,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 result = new PostfixAsteriskMatchHelper(input.substring(0, input.length() - 1));
             }
             else {
-                result = new MultipleAsteriskMatchHelper(input.split("\\*"));
+                result = new MultipleAsteriskMatchHelper(CoreUtilities.split(input, '*').toArray(new String[0]));
             }
         }
         else {
