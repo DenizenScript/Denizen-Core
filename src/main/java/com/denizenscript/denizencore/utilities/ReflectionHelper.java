@@ -157,8 +157,28 @@ public class ReflectionHelper {
         }
     }
 
+    public static void giveReflectiveAccess(Class<?> from, Class<?> to) {
+        try {
+            if (GET_MODULE == null) {
+                Class<?> module = Class.forName("java.lang.Module");
+                GET_MODULE = Class.class.getMethod("getModule");
+                ADD_OPENS = module.getMethod("addOpens", String.class, module);
+            }
+            ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
+        }
+        catch (Exception e) {
+        }
+    }
+
+    static {
+        giveReflectiveAccess(Field.class, ReflectionHelper.class);
+        MODIFIERS_FIELD = ((CheckingFieldMap) getFields(Field.class)).getNoCheck("modifiers");
+    }
+
+    private static Method ADD_OPENS;
+    private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static Field MODIFIERS_FIELD = ((CheckingFieldMap) getFields(Field.class)).getNoCheck("modifiers");
+    private static Field MODIFIERS_FIELD;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
