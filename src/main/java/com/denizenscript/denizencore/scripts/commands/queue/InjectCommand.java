@@ -85,7 +85,7 @@ public class InjectCommand extends AbstractCommand {
             }
             else if (!scriptEntry.hasObject("path")
                     && arg.limitToOnlyPrefix("path")) {
-                if (!arg.hasPrefix()) { // TODO: Temporarily allow missing prefix due to common mistake
+                if (!arg.hasPrefix() && scriptEntry.hasObject("script")) { // TODO: Temporarily allow missing prefix due to common mistake
                     Debug.echoError("Inject command path is missing required 'path:' prefix.");
                 }
                 scriptEntry.addObject("path", arg.asElement());
