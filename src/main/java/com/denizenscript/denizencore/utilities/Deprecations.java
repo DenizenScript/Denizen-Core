@@ -60,7 +60,7 @@ public class Deprecations {
     public static Warning locationBiomeFormattedTag = new StrongWarning("'location.biome.formatted' is deprecated: use 'location.biome.name' (uses BiomeTag.name)");
 
     // In Bukkit impl, Added on 2019/11/26
-    public static Warning nbtCommand = new StrongWarning("The NBT command is deprecated: adjust the 'nbt' mechanism instead.");
+    public static Warning nbtCommand = new StrongWarning("The NBT command is deprecated: use item flags instead.");
 
     // In Bukkit impl, Added on 2019/11/30
     public static Warning serverListMaterialNames = new StrongWarning("The tag 'server.list_materials' is deprecated: use '<server.list_material_types.parse[name]>' to get a matching result.");
@@ -94,63 +94,63 @@ public class Deprecations {
     public static Warning playerActionBarMech = new StrongWarning("The mechanism 'PlayerTag.action_bar' is deprecated. Use the 'actionbar' command instead.");
 
     // Added on 2019/10/08, made current on 2020/02/12
-    public static Warning ifCommandSingleLine = new SlowWarning("Single line if commands are deprecated. Please update them to modern format.");
-    public static Warning oldBraceSyntax = new SlowWarning("The { braced } command format is deprecated. Please use the ':' colon syntax (refer to documentation).");
+    public static Warning ifCommandSingleLine = new StrongWarning("Single line if commands are deprecated. Please update them to modern format.");
+    public static Warning oldBraceSyntax = new StrongWarning("The { braced } command format is deprecated. Please use the ':' colon syntax (refer to documentation).");
 
     // In Bukkit impl, Relevant as of 2019/09/25, made current on 2020/02/12
     private static String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
-    public static Warning npcNicknameTag = new SlowWarning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname. Note that this historically appeared in the config.yml file, so check there if you're unsure what's using this tag.");
-    public static Warning npcPreviousLocationTag = new SlowWarning(pointlessSubtagPrefix + "npc.location.previous_location is now just npc.previous_location.");
-    public static Warning npcAnchorListTag = new SlowWarning(pointlessSubtagPrefix + "npc.anchor.list is now just npc.list_anchors.");
-    public static Warning playerMoneyFormatTag = new SlowWarning(pointlessSubtagPrefix + "player.money.format is now just player.formatted_money.");
-    public static Warning playerFoodLevelFormatTag = new SlowWarning(pointlessSubtagPrefix + "player.food_level.format is now just player.formatted_food_level.");
-    public static Warning playerBanInfoTags = new SlowWarning(pointlessSubtagPrefix + "player.ban_info.* tags are now just player.ban_*.");
-    public static Warning playerNameTags = new SlowWarning(pointlessSubtagPrefix + "player.name.* tags are now just player.*_name.");
-    public static Warning playerSidebarTags = new SlowWarning(pointlessSubtagPrefix + "player.sidebar.* tags are now just player.sidebar_*.");
-    public static Warning playerAttackCooldownTags = new SlowWarning(pointlessSubtagPrefix + "player.attack_cooldown.* tags are now just player.attack_cooldown_*.");
-    public static Warning playerXpTags = new SlowWarning(pointlessSubtagPrefix + "player.xp.* tags are now just player.xp_*.");
-    public static Warning entityHealthTags = new SlowWarning(pointlessSubtagPrefix + "entity.health.* tags are now just entity.health_*.");
-    public static Warning entityMaxOxygenTag = new SlowWarning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
-    public static Warning itemBookTags = new SlowWarning(pointlessSubtagPrefix + "item.book.* tags are now just item.book_*.");
-    public static Warning playerItemInHandSlotTag = new SlowWarning(pointlessSubtagPrefix + "player.item_in_hand_slot is now just player.held_item_slot.");
+    public static Warning npcNicknameTag = new Warning(pointlessSubtagPrefix + "npc.name.nickname is now just npc.nickname. Note that this historically appeared in the config.yml file, so check there if you're unsure what's using this tag.");
+    public static Warning npcPreviousLocationTag = new Warning(pointlessSubtagPrefix + "npc.location.previous_location is now just npc.previous_location.");
+    public static Warning npcAnchorListTag = new Warning(pointlessSubtagPrefix + "npc.anchor.list is now just npc.list_anchors.");
+    public static Warning playerMoneyFormatTag = new Warning(pointlessSubtagPrefix + "player.money.format is now just player.formatted_money.");
+    public static Warning playerFoodLevelFormatTag = new Warning(pointlessSubtagPrefix + "player.food_level.format is now just player.formatted_food_level.");
+    public static Warning playerBanInfoTags = new Warning(pointlessSubtagPrefix + "player.ban_info.* tags are now just player.ban_*.");
+    public static Warning playerNameTags = new Warning(pointlessSubtagPrefix + "player.name.* tags are now just player.*_name.");
+    public static Warning playerSidebarTags = new Warning(pointlessSubtagPrefix + "player.sidebar.* tags are now just player.sidebar_*.");
+    public static Warning playerAttackCooldownTags = new Warning(pointlessSubtagPrefix + "player.attack_cooldown.* tags are now just player.attack_cooldown_*.");
+    public static Warning playerXpTags = new Warning(pointlessSubtagPrefix + "player.xp.* tags are now just player.xp_*.");
+    public static Warning entityHealthTags = new Warning(pointlessSubtagPrefix + "entity.health.* tags are now just entity.health_*.");
+    public static Warning entityMaxOxygenTag = new Warning(pointlessSubtagPrefix + "entity.oxygen.max is now just entity.max_oxygen.");
+    public static Warning itemBookTags = new Warning(pointlessSubtagPrefix + "item.book.* tags are now just item.book_*.");
+    public static Warning playerItemInHandSlotTag = new Warning(pointlessSubtagPrefix + "player.item_in_hand_slot is now just player.held_item_slot.");
 
     // In Bukkit impl, Added on 2020/02/17
     // Prime candidate for functionality removal - command hasn't been used or recommended by anyone in years, and has clear faults that would have prevented usage for most users.
-    public static Warning scribeCommand = new SlowWarning("The scribe command was created many years ago, in an earlier era of Denizen, and doesn't make sense to use anymore. Consider the 'equip', 'give', or 'drop' commands instead.");
+    public static Warning scribeCommand = new StrongWarning("The scribe command was created many years ago, in an earlier era of Denizen, and doesn't make sense to use anymore. Consider the 'equip', 'give', or 'drop' commands instead.");
 
     // In Bukkit impl, Added 2020/03/01
     // Prime candidate for functionality removal - was never recommended.
-    public static Warning notableItems = new SlowWarning("Using the note command with items is deprecated: this has never been recommended and is more likely to introduce bugs than ever do anything useful.");
+    public static Warning notableItems = new StrongWarning("Using the note command with items is deprecated: this has never been recommended and is more likely to introduce bugs than ever do anything useful.");
 
     // In Bukkit impl, Added 2020/03/08
     // Prime candidate for functionality removal - has not been recommended for many years.
-    public static Warning anchorWalk = new SlowWarning("Using the anchor 'walkto'/'walknear' options is deprecated: use the walk command with the npc.anchor tag instead, and 'assume' should be replaced by the teleport command.");
+    public static Warning anchorWalk = new StrongWarning("Using the anchor 'walkto'/'walknear' options is deprecated: use the walk command with the npc.anchor tag instead, and 'assume' should be replaced by the teleport command.");
 
     // Added 2020/03/14
-    public static Warning oldStyleRandomCommand = new SlowWarning("Using the 'random' command with an argument number is deprecated: use the modern colon syntax instead (refer to documentation).");
+    public static Warning oldStyleRandomCommand = new StrongWarning("Using the 'random' command with an argument number is deprecated: use the modern colon syntax instead (refer to documentation).");
 
     // In Bukkit impl, Added 2020/04/24 but deprecated long ago.
-    public static Warning takeCommandInventory = new SlowWarning("'take inventory' is deprecated: use 'inventory clear' instead.");
-    public static Warning oldInventoryCommands = new SlowWarning("The 'inventory' command sub-options 'add' and 'remove' are deprecated: use 'give' or 'take' command instead.");
+    public static Warning takeCommandInventory = new StrongWarning("'take inventory' is deprecated: use 'inventory clear' instead.");
+    public static Warning oldInventoryCommands = new StrongWarning("The 'inventory' command sub-options 'add' and 'remove' are deprecated: use 'give' or 'take' command instead.");
 
     // In Bukkit impl, Added 2020/04/24.
-    public static Warning itemInventoryTag = new SlowWarning("The tag 'item.inventory' is deprecated: use inventory_contents instead.");
+    public static Warning itemInventoryTag = new Warning("The tag 'item.inventory' is deprecated: use inventory_contents instead.");
 
     // In Bukkit impl, Added 2020/05/21.
-    public static Warning itemSkinFullTag = new SlowWarning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
+    public static Warning itemSkinFullTag = new Warning(pointlessSubtagPrefix + "item.skin.full is now item.skull_skin.");
 
     // In Bukkit impl, Added 2020/06/03 but deprecated long ago.
-    public static Warning oldBossBarMech = new SlowWarning("The show_boss_bar mechanism is deprecated: use the bossbar command instead.");
-    public static Warning oldTimeMech = new SlowWarning("The player.*time mechanisms are deprecated: use the time command instead.");
-    public static Warning oldWeatherMech = new SlowWarning("The player.*weather mechanisms are deprecated: use the weather command instead.");
-    public static Warning oldKickMech = new SlowWarning("The player.kick mechanism is deprecated: use the kick command instead.");
-    public static Warning oldMoneyMech = new SlowWarning("The player.money mechanism is deprecated: use the money command instead.");
+    public static Warning oldBossBarMech = new Warning("The show_boss_bar mechanism is deprecated: use the bossbar command instead.");
+    public static Warning oldTimeMech = new Warning("The player.*time mechanisms are deprecated: use the time command instead.");
+    public static Warning oldWeatherMech = new Warning("The player.*weather mechanisms are deprecated: use the weather command instead.");
+    public static Warning oldKickMech = new Warning("The player.kick mechanism is deprecated: use the kick command instead.");
+    public static Warning oldMoneyMech = new Warning("The player.money mechanism is deprecated: use the money command instead.");
 
     // Added 2020/06/13.
-    public static Warning scriptConstantTag = new SlowWarning("The script.constant system has been deprecated in favor of just using data_key.");
+    public static Warning scriptConstantTag = new Warning("The script.constant system has been deprecated in favor of just using data_key.");
 
     // In Bukkit impl, added 2020/07/04.
-    public static Warning cuboidFullTag = new SlowWarning("The tag cuboid.full is deprecated: this should just never be used.");
+    public static Warning cuboidFullTag = new Warning("The tag cuboid.full is deprecated: this should just never be used.");
     public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
     public static Warning playerTimePlayedTags = new SlowWarning("The tags player.first_played, last_played, ban_expiration, and ban_created have been replaced by tags of the same name with '_time' added to the end (using TimeTag now).");
 
@@ -186,6 +186,12 @@ public class Deprecations {
     // Added 2021/02/26 as a temporary warning.
     public static Warning handTypedMapTags = new SlowWarning("MapTag syntax is not final and will change in the coming future. Do not hand-type MapTag values - use <map.with[key].as[value]> if you must manually construct an inline map.");
 
+    // Added 2021/04/16.
+    public static Warning ymlFileExtension = new SlowWarning("Denizen scripts use the '.dsc' file extension, not '.yml'. Please follow the Denizen beginner's guide https://guide.denizenscript.com/");
+
+    // In Bukkit impl, Added 2020/03/05, made current on 2021/04/16.
+    public static Warning oldPlayEffectSpecials = new SlowWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.
@@ -197,9 +203,6 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
     public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
     public static Warning materialPropertyTags = new FutureWarning("Old MaterialTag.is_x property tags are deprecated in favor of PropertyHolderObject.supports[property-name]");
-
-    // In Bukkit impl, Added 2020/03/05, deprecate officially by 2022.
-    public static Warning oldPlayEffectSpecials = new FutureWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
     // Added 2020/03/14, deprecate officially by 2022.
     public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
@@ -278,4 +281,7 @@ public class Deprecations {
 
     // Added on 2019/08/27, removed 2020/10/24.
     public static Warning yamlFixFormatting = new StrongWarning("YAML command 'fix_formatting' argument is deprecated: this should never be used.");
+
+    // Added on 2021/04/16.
+    public static Warning dscriptFileExtension = new StrongWarning("'.dscript' extension has never been officially supported. Please use '.dsc'.");
 }

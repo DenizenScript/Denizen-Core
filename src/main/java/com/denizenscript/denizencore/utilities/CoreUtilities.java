@@ -455,10 +455,16 @@ public class CoreUtilities {
 
             String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
             if (ext.equalsIgnoreCase("DSCRIPT")) {
-                Debug.echoError("'.dscript' extension has never been officially supported. Please use '.dsc'. Regarding file " + fileName);
+                Debug.echoError("Script '" + fileName + "' has invalid '.dscript' file extension.");
+                Deprecations.dscriptFileExtension.warn();
+                return false;
+            }
+            if (ext.equalsIgnoreCase("YML")) {
+                Debug.echoError("Script '" + fileName + "' has legacy '.yml' file extension.");
+                Deprecations.ymlFileExtension.warn();
                 return true;
             }
-            return ext.equalsIgnoreCase("YML") || ext.equalsIgnoreCase("DSC");
+            return ext.equalsIgnoreCase("dsc");
         };
     }
 
