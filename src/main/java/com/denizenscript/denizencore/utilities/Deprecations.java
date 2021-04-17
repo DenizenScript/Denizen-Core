@@ -192,6 +192,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/03/05, made current on 2021/04/16.
     public static Warning oldPlayEffectSpecials = new SlowWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
+    // In Bukkit impl, Added 2020/04/16.
+    public static Warning entityStandingOn = new Warning(pointlessSubtagPrefix + "entity.location.standing_on is now just entity.standing_on.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.
