@@ -189,18 +189,17 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     public void writeToFile(InputStream in, ElementTag saveFile) throws Exception {
         File file = new File(saveFile.asString());
         if (!DenizenCore.getImplementation().canWriteToFile(file)) {
-            Debug.echoError("Cannot write to that file, as dangerous file paths have been disabled in the Denizen config.");
+            Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
+            return;
         }
-        else {
-            FileOutputStream fout = new FileOutputStream(file);
-            byte[] buffer = new byte[8 * 1024];
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                fout.write(buffer, 0, len);
-            }
-            fout.flush();
-            fout.close();
+        FileOutputStream fout = new FileOutputStream(file);
+        byte[] buffer = new byte[8 * 1024];
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+            fout.write(buffer, 0, len);
         }
+        fout.flush();
+        fout.close();
     }
 
     public static boolean patchAlreadyPatched = false;

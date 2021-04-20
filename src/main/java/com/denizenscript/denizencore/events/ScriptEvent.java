@@ -145,7 +145,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
-        public static HashSet<String> notSwitches = new HashSet<>(Arrays.asList("regex", "item_flagged", "world_flagged", "area_flagged", "inventory_flagged", "player_flagged", "npc_flagged", "entity_flagged", "vanilla_tagged"));
+        public static HashSet<String> notSwitches = new HashSet<>(Arrays.asList("regex", "item_flagged", "world_flagged", "area_flagged", "inventory_flagged", "player_flagged", "npc_flagged", "entity_flagged", "vanilla_tagged", "raw_exact"));
 
         public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
             this.event = event;

@@ -41,6 +41,8 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     //
     // Note that in most cases this command should be ~waited for (like "- ~filecopy ..."). Refer to <@link language ~waitable>.
     //
+    // This command can be disabled by setting Denizen config option "Commands.Filecopy.Allow copying files" to false.
+    //
     // @Tags
     // <entry[saveName].success> returns whether the copy succeeded (if not, either an error or occurred, or there is an existing file in the destination.)
     //
@@ -88,7 +90,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             Debug.report(scriptEntry, getName(), origin, destination, overwrite);
         }
         if (!DenizenCore.getImplementation().allowFileCopy()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator.");
+            Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
@@ -99,7 +101,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         boolean dexists = d.exists();
         boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
         if (!DenizenCore.getImplementation().canReadFile(o)) {
-            Debug.echoError("Server config denies reading files in that location.");
+            Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
@@ -111,7 +113,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             return;
         }
         if (!DenizenCore.getImplementation().canWriteToFile(d)) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Can't copy files to there!");
+            Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;

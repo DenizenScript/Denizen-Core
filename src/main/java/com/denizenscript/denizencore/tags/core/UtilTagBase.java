@@ -447,10 +447,11 @@ public class UtilTagBase {
         // Tells the server to redirect logging to a world event or not.
         // Note that this redirects *all console output* not just Denizen output.
         // Note: don't enable /denizen debug -e while this is active.
+        // Requires setting "Debug.Allow console redirection"!
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
             if (!DenizenCore.getImplementation().allowConsoleRedirection()) {
-                Debug.echoError("Console redirection disabled by administrator.");
+                Debug.echoError("Console redirection disabled by administrator (refer to mechanism documentation).");
                 return;
             }
             if (mechanism.getValue().asBoolean()) {

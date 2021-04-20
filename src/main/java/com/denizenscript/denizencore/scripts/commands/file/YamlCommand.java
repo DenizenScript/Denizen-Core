@@ -328,7 +328,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case LOAD:
                 File file = new File(DenizenCore.getImplementation().getDataFolder(), filename.asString());
                 if (!DenizenCore.getImplementation().canReadFile(file)) {
-                    Debug.echoError("Server config denies reading files in that location.");
+                    Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -401,7 +401,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         File fileObj = new File(DenizenCore.getImplementation().
                                 getDataFolder().getAbsolutePath() + "/" + filename.asString());
                         if (!DenizenCore.getImplementation().canWriteToFile(fileObj)) {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot edit that file!");
+                            Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
                             scriptEntry.setFinished(true);
                             return;
                         }

@@ -50,6 +50,8 @@ public class LogCommand extends AbstractCommand {
     // Warning: Remember that file operations are dangerous! A typo in the filename could ruin your server.
     // It's recommended you use this command minimally.
     //
+    // This command can be disabled by setting Denizen config option "Commands.Log.Allow logging" to false.
+    //
     // @Tags
     // None
     //
@@ -109,7 +111,7 @@ public class LogCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         if (!DenizenCore.getImplementation().allowLogging()) {
-            Debug.echoError("Logging disabled by administrator.");
+            Debug.echoError("Logging disabled by administrator (refer to command documentation).");
             return;
         }
         ElementTag message = scriptEntry.getElement("message");
@@ -123,7 +125,7 @@ public class LogCommand extends AbstractCommand {
         File file = new File(directory, fileName.asString());
         file.getParentFile().mkdirs();
         if (!DenizenCore.getImplementation().canWriteToFile(file)) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot log into that file!");
+            Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             return;
         }
         String output = message.asString();

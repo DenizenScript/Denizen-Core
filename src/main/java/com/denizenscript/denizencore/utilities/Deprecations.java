@@ -193,7 +193,7 @@ public class Deprecations {
     public static Warning oldPlayEffectSpecials = new SlowWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
 
     // In Bukkit impl, Added 2020/04/16.
-    public static Warning entityStandingOn = new Warning(pointlessSubtagPrefix + "entity.location.standing_on is now just entity.standing_on.");
+    public static Warning entityStandingOn = new SlowWarning(pointlessSubtagPrefix + "entity.location.standing_on is now just entity.standing_on.");
 
     // ==================== FUTURE deprecations ====================
 
@@ -268,7 +268,7 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/03/27, deprecate officially by 2024.
     public static Warning locationFindEntities = new FutureWarning("The tag 'LocationTag.find.entities.within' is replaced by the 'find_entities' version. It is mostly compatible, but now has advanced matcher options.");
     public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item' that use advanced matcher logic.");
-    public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
+    public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items without any command prefix, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
