@@ -15,15 +15,19 @@ public class Mechanism {
 
     public boolean isProperty = false;
 
-    public Mechanism(ElementTag mechanism, ObjectTag value) {
+    public Mechanism(String mechanism, ObjectTag value, TagContext context) {
         fulfilled = false;
-        raw_mechanism = CoreUtilities.toLowerCase(mechanism.asString());
+        raw_mechanism = CoreUtilities.toLowerCase(mechanism);
         this.value = value;
+        this.context = context;
     }
 
     public Mechanism(ElementTag mechanism, ObjectTag value, TagContext context) {
-        this(mechanism, value);
-        this.context = context;
+        this(mechanism.asString(), value, context);
+    }
+
+    public Mechanism(ElementTag mechanism, ObjectTag value) {
+        this(mechanism.asString(), value, null);
     }
 
     public void fulfill() {
