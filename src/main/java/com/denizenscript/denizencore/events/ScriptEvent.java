@@ -717,7 +717,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 result = new PostfixAsteriskMatchHelper(input.substring(0, input.length() - 1));
             }
             else {
-                result = new MultipleAsteriskMatchHelper(CoreUtilities.split(input, '*').toArray(new String[0]));
+                result = new MultipleAsteriskMatchHelper(CoreUtilities.split(CoreUtilities.toLowerCase(input), '*').toArray(new String[0]));
             }
         }
         else {
@@ -731,7 +731,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (matchableValue == null) {
             return false;
         }
-        matchableValue = CoreUtilities.toLowerCase(matchableValue);
         trueValue = CoreUtilities.toLowerCase(trueValue);
         MatchHelper matcher = createMatcher(matchableValue);
         return matcher.doesMatch(trueValue);
@@ -745,7 +744,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (value == null) {
             return false;
         }
-        with = CoreUtilities.toLowerCase(with);
         value = CoreUtilities.toLowerCase(value);
         MatchHelper matcher = createMatcher(with);
         return matcher.doesMatch(value);
