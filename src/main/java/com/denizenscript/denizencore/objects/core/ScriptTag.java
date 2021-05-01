@@ -376,6 +376,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the value from a data key on the script as an ElementTag, ListTag, or MapTag.
         // For example, "script.data_key[type]" on a task script will return "task".
+        // Custom keys should usually go in a 'data' script container, or under a key labeled 'data' for other script containers.
         // -->
         registerTag("data_key", (attribute, object) -> {
             if (!attribute.hasContext(1)) {

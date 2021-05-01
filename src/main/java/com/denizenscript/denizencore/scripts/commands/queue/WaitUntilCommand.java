@@ -19,7 +19,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     public WaitUntilCommand() {
         setName("waituntil");
-        setSyntax("waituntil (rate:<duration>) [<comparisons>]");
+        setSyntax("waituntil (rate:<duration>) (max:<duration>) [<comparisons>]");
         setRequiredArguments(1, -1);
         setParseArgs(false);
         forceHold = true;
@@ -28,7 +28,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name WaitUntil
-    // @Syntax waituntil (rate:<duration>) [<comparisons>]
+    // @Syntax waituntil (rate:<duration>) (max:<duration>) [<comparisons>]
     // @Required 1
     // @Maximum -1
     // @Short Delays a script until the If comparisons return true.
@@ -38,9 +38,10 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // Delays a script until the If comparisons return true.
     //
     // Optionally, specify an update rate (if unset, will update at queue speed).
-    // The update rate controls how often the tag will be checked. This generally doesn't need to be set,
-    // unless you're concerned about script efficiency.
+    // The update rate controls how often the tag will be checked. This generally doesn't need to be set, unless you're concerned about script efficiency.
     // Never set this to faster than queue update rate.
+    //
+    // Optionally specify a maximum duration to wait for.
     //
     // @Tags
     // <QueueTag.speed>
@@ -56,14 +57,21 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        List<String> arguments = scriptEntry.getArguments();
+        List<String> arguments = new ArrayList<>(scriptEntry.getArguments());
         for (Argument arg : scriptEntry.getProcessedArgs()) {
-            if (arg.matchesPrefix("rate")) {
+            if (arg.matchesPrefix("rate")
+                    && arg.matchesArgumentType(DurationTag.class)) {
                 scriptEntry.addObject("rate", arg.asType(DurationTag.class));
-                arguments = new ArrayList<>(arguments);
                 arguments.remove(0);
             }
-            break;
+            else if (arg.matchesPrefix("max")
+                    && arg.matchesArgumentType(DurationTag.class)) {
+                scriptEntry.addObject("max", arg.asType(DurationTag.class));
+                arguments.remove(0);
+            }
+            else {
+                break;
+            }
         }
         scriptEntry.addObject("comparisons", arguments);
     }
@@ -72,9 +80,10 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     public void execute(ScriptEntry scriptEntry) {
         List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
         DurationTag rate = scriptEntry.getObjectTag("rate");
+        DurationTag max = scriptEntry.getObjectTag("max");
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run), rate);
+            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run), rate, max);
         }
         if (run) {
             scriptEntry.setFinished(true);
@@ -88,6 +97,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 rate = new DurationTag((long) 1);
             }
         }
+        long endTime = max == null ? -1 : DenizenCore.serverTimeMillis + max.getMillis();
         final RepeatingSchedulable schedulable = new RepeatingSchedulable(null, (float) rate.getSeconds());
         schedulable.run = new Runnable() {
             public int counter = 0;
@@ -96,6 +106,11 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 counter++;
                 if (new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry)) {
                     Debug.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
+                    scriptEntry.setFinished(true);
+                    schedulable.cancel();
+                }
+                else if (endTime != -1 && endTime < DenizenCore.serverTimeMillis) {
+                    Debug.echoDebug(scriptEntry, "WaitUntil completed due to time out.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();
                 }
