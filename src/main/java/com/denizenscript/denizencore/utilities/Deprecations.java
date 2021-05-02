@@ -195,6 +195,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/04/16.
     public static Warning entityStandingOn = new SlowWarning(pointlessSubtagPrefix + "entity.location.standing_on is now just entity.standing_on.");
 
+    // In Bukkit impl, Added 2021/05/02.
+    public static Warning hurtSourceOne = new SlowWarning("The 'hurt' command's 'source_once' argument is deprecated due to being now irrelevant thanks to the new NMS backing for the hurt command.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.

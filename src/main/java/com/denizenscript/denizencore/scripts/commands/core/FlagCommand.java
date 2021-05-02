@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.DurationTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -218,7 +219,12 @@ public class FlagCommand extends AbstractCommand {
                     tracker = obj.getFlagTracker();
                 }
                 else {
-                    Debug.echoError("Cannot flag '" + object + "': that object type is not flaggable!");
+                    if (object instanceof ElementTag && !object.toString().contains("@")) {
+                        Debug.echoError("Cannot flag '" + object + "': that does not appear to be an object! Only objects (like an EntityTag) and special keyword 'server' are flaggable!");
+                    }
+                    else {
+                        Debug.echoError("Cannot flag '" + object + "': that object type is not flaggable!");
+                    }
                     continue;
                 }
             }
