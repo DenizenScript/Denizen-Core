@@ -82,9 +82,6 @@ public class Comparable {
         else if (ArgumentHelper.matchesDouble(arg)) {
             comparable = Double.parseDouble(arg);
         }
-        else if (DurationTag.matches(arg)) {
-            comparable = DurationTag.valueOf(arg, context).getSeconds();
-        }
         else if (ListTag.matches(arg)) {
             comparable = ListTag.valueOf(arg, context);
         }
@@ -103,9 +100,6 @@ public class Comparable {
         else if (comparable instanceof Double || comparable instanceof Long) {
             if (ArgumentHelper.matchesDouble(arg)) {
                 comparedto = Double.parseDouble(arg);
-            }
-            else if (DurationTag.matches(arg)) {
-                comparedto = DurationTag.valueOf(arg, context).getSeconds();
             }
             else {
                 comparable = String.valueOf(comparable);
