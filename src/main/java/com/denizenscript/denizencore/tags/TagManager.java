@@ -197,12 +197,11 @@ public class TagManager {
             DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplacedObj().debuggable());
         }
         if (!event.replaced()) {
-            ScriptQueue queue = context.entry != null ? context.entry.getResidingQueue() : null;
             String tagStr = "<LG><" + event.toString() + "<LG>><W>";
-            Debug.echoError(queue, "Tag " + tagStr + " is invalid!");
+            Debug.echoError(context, "Tag " + tagStr + " is invalid!");
             recentTagError = true;
             if (OBJECTTAG_CONFUSION_PATTERN.matcher(tagStr).matches()) {
-                Debug.echoError(queue, "'ObjectTag' notation is for documentation purposes, and not to be used literally."
+                Debug.echoError(context, "'ObjectTag' notation is for documentation purposes, and not to be used literally."
                     + " An actual object must be inserted instead. If confused, join our Discord at https://discord.gg/Q6pZGSR to ask for help!");
             }
             if (!event.hasAlternative()) {
@@ -272,7 +271,7 @@ public class TagManager {
             }
             ParseableTagPiece pzero = pieces.get(0);
             if (pzero.isError) {
-                Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, pzero.content);
+                Debug.echoError(context, pzero.content);
             }
             else if (pzero.isTag) {
                 return readSingleTagObject(pzero, context);
@@ -286,7 +285,7 @@ public class TagManager {
         for (int i = 0; i < pieces.size(); i++) {
             ParseableTagPiece p = pieces.get(i);
             if (p.isError) {
-                Debug.echoError(context.entry != null ? context.entry.getResidingQueue() : null, p.content);
+                Debug.echoError(context, p.content);
             }
             else if (p.isTag) {
                 helpy.append(readSingleTagObject(p, context).toString());

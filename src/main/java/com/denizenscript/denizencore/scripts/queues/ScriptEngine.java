@@ -39,7 +39,7 @@ public class ScriptEngine {
             commandExecutor.execute(scriptEntry);
         }
         catch (Throwable e) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "An exception has been called with this command (while revolving the queue forcefully)!");
+            Debug.echoError(scriptEntry, "An exception has been called with this command (while revolving the queue forcefully)!");
             Debug.echoError(scriptEntry.getResidingQueue(), e);
         }
     }

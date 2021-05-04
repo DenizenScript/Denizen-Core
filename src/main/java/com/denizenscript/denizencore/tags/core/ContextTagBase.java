@@ -44,7 +44,7 @@ public class ContextTagBase {
             return;
         }
         if (!event.hasAlternative()) {
-            Debug.echoError(event.getScriptEntry() != null ? event.getScriptEntry().getResidingQueue() : null, "Invalid context ID '" + contextName + "'!");
+            attribute.echoError("Invalid context ID '" + contextName + "'!");
         }
     }
 

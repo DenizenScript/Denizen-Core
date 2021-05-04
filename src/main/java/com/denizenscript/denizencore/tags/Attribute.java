@@ -472,7 +472,7 @@ public class Attribute {
 
     public void echoError(String message) {
         if (!hasAlternative()) {
-            Debug.echoError(message);
+            Debug.echoError(context, message);
         }
     }
 

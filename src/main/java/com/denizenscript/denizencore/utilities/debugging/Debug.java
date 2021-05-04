@@ -2,7 +2,9 @@ package com.denizenscript.denizencore.utilities.debugging;
 
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.tags.TagContext;
 
 public class Debug {
 
@@ -30,6 +32,27 @@ public class Debug {
 
     public static void echoError(String error) {
         DenizenCore.getImplementation().debugError(error);
+    }
+
+    public static void echoError(TagContext context, String error) {
+        if (context.entry != null && context.entry.getResidingQueue() != null) {
+            DenizenCore.getImplementation().debugError(context.entry.getResidingQueue(), error);
+        }
+        else if (context.script != null) {
+            echoError(context.script.getContainer(), error);
+        }
+        else {
+            DenizenCore.getImplementation().debugError(error);
+        }
+    }
+
+    public static void echoError(ScriptContainer script, String error) {
+        if (script == null) {
+            DenizenCore.getImplementation().debugError(error);
+        }
+        else {
+            DenizenCore.getImplementation().debugError("<R>In script '<A>" + script.getName() + "<R>' <W>: " + error);
+        }
     }
 
     public static void echoError(ScriptEntry entry, String error) {

@@ -175,8 +175,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {
                 if (FutureWarning.futureWarningsEnabled) {
-                    Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                            "Using deprecated form of tag '" + name + "': '" + variant + "'.");
+                    Debug.echoError(attribute.context,  "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 }
                 return properTag.run(attribute, object);
             };
@@ -187,8 +186,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     public void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... deprecatedVariants) {
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {
-                Debug.echoError(attribute.getScriptEntry() != null ? attribute.getScriptEntry().getResidingQueue() : null,
-                        "Using deprecated form of tag '" + name + "': '" + variant + "'.");
+                Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 return runnable.run(attribute, object);
             };
             registeredObjectTags.put(variant, newRunnable);
