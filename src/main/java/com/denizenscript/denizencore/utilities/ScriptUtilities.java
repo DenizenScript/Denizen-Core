@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -89,7 +90,7 @@ public class ScriptUtilities {
                 definition_names = CoreUtilities.split(str, '|');
             }
             int x = 1;
-            for (String definition : definitions) {
+            for (ObjectTag definition : definitions.objectForms) {
                 String name = definition_names != null && definition_names.size() >= x ? definition_names.get(x - 1).trim() : String.valueOf(x);
                 queue.addDefinition(name, definition);
                 if (debugDefinitions != null && debugDefinitions.shouldDebug()) {

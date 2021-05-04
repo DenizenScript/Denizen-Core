@@ -144,7 +144,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 return value;
             }
         }
-        return definitions.getDeepObject(CoreUtilities.toLowerCase(definition));
+        return definitions.getDeepObject(definition);
     }
 
     @Override
