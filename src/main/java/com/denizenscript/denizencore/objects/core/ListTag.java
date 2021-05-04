@@ -996,7 +996,7 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = attribute.getIntContext(2) - 1;
+                int index = object.parseIndex(attribute.getContext(2));
                 if (index < 0) {
                     index = 0;
                 }
@@ -1032,7 +1032,7 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = attribute.getIntContext(2) - 1;
+                int index = object.parseIndex(attribute.getContext(2));
                 if (index > result.size() - 1) {
                     index = result.size() - 1;
                 }
@@ -1069,7 +1069,7 @@ public class ListTag implements List<String>, ObjectTag {
             ObjectTag value = attribute.getContextObject(1);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = attribute.getIntContext(2) - 1;
+                int index = object.parseIndex(attribute.getContext(2));
                 if (index > result.size() - 1) {
                     index = result.size() - 1;
                 }
@@ -1109,7 +1109,7 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag items = getListFor(attribute.getContextObject(1), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = attribute.getIntContext(2) - 1;
+                int index = object.parseIndex(attribute.getContext(2));
                 if (index < 0) {
                     index = 0;
                 }
