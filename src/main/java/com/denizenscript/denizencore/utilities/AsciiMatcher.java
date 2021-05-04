@@ -48,7 +48,18 @@ public class AsciiMatcher {
         StringBuilder output = new StringBuilder(text.length());
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (c < 255 && accepted[c]) {
+            if (c < 256 && accepted[c]) {
+                output.append(c);
+            }
+        }
+        return output.toString();
+    }
+
+    public final String trimToNonMatches(String text) {
+        StringBuilder output = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c > 255 || !accepted[c]) {
                 output.append(c);
             }
         }

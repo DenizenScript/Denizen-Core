@@ -200,31 +200,32 @@ public class ElementTag implements ObjectTag {
         return bd;
     }
 
+    public static AsciiMatcher percentageMatcher = new AsciiMatcher("%");
+
     public BigDecimal asBigDecimal() {
-        return getBD(element.replaceAll("%", ""));
+        return getBD(percentageMatcher.trimToNonMatches(element));
     }
 
     public double asDouble() {
-        return Double.parseDouble(element.replaceAll("%", ""));
+        return Double.parseDouble(percentageMatcher.trimToNonMatches(element));
     }
 
     public float asFloat() {
-        return Float.parseFloat(element.replaceAll("%", ""));
+        return Float.parseFloat(percentageMatcher.trimToNonMatches(element));
     }
 
     public int asInt() {
-        try {
-            return Integer.parseInt(element.replaceAll("(%)|(\\.\\d+)", ""));
-        }
-        catch (NumberFormatException ex) {
-            Debug.echoError("'" + element + "' is not a valid integer!");
-            return 0;
-        }
+        return (int) asLong();
     }
 
     public long asLong() {
         try {
-            return Long.parseLong(element.replaceAll("(%)|(\\.\\d+)", ""));
+            String cleaned = percentageMatcher.trimToNonMatches(element);
+            int dot = cleaned.indexOf('.');
+            if (dot > 0) {
+                cleaned = cleaned.substring(0, dot);
+            }
+            return Long.parseLong(cleaned);
         }
         catch (NumberFormatException ex) {
             Debug.echoError("'" + element + "' is not a valid integer!");
@@ -268,10 +269,7 @@ public class ElementTag implements ObjectTag {
 
     public boolean isInt() {
         try {
-            Integer val = Integer.valueOf(element.replaceAll("(%)|(\\.\\d+)", ""));
-            if (val.hashCode() != 0.5) { // if intentionally always passes
-                return true;
-            }
+            return ArgumentHelper.matchesInteger(element);
         }
         catch (Exception e) {
         }
