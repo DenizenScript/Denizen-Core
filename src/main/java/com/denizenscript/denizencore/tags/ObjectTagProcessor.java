@@ -162,7 +162,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 return null;
             }
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
-            provider.altDefs.put("null_if_value", object);
+            provider.altDefs.putObject("null_if_value", object);
             if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
                 return null;
             }

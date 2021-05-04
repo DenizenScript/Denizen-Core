@@ -326,8 +326,8 @@ public class MapTag implements ObjectTag, Adjustable {
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                    provider.altDefs.put("filter_key", new ElementTag(entry.getKey().str));
-                    provider.altDefs.put("filter_value", entry.getValue());
+                    provider.altDefs.putObject("filter_key", new ElementTag(entry.getKey().str));
+                    provider.altDefs.putObject("filter_value", entry.getValue());
                     if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
                         newMap.map.put(entry.getKey(), entry.getValue());
                     }
@@ -356,8 +356,8 @@ public class MapTag implements ObjectTag, Adjustable {
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                    provider.altDefs.put("parse_key", new ElementTag(entry.getKey().str));
-                    provider.altDefs.put("parse_value", entry.getValue());
+                    provider.altDefs.putObject("parse_key", new ElementTag(entry.getKey().str));
+                    provider.altDefs.putObject("parse_value", entry.getValue());
                     newMap.map.put(entry.getKey(), attribute.parseDynamicContext(1, provider));
                 }
             }

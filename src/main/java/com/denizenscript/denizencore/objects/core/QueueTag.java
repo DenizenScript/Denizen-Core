@@ -12,6 +12,7 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.Collection;
@@ -166,12 +167,16 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         });
 
         // <--[tag]
-        // @attribute <QueueTag.start_time>
-        // @returns DurationTag
+        // @attribute <QueueTag.started_time>
+        // @returns TimeTag
         // @description
         // Returns the time this queue started as a duration.
         // -->
+        registerTag("started_time", (attribute, object) -> {
+            return new TimeTag(object.getQueue().startTimeMilli);
+        });
         registerTag("start_time", (attribute, object) -> {
+            Deprecations.timeTagRewrite.warn(attribute.context);
             return new DurationTag(object.getQueue().startTimeMilli / 50);
         });
 

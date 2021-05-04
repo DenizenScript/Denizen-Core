@@ -230,7 +230,7 @@ public class Attribute {
 
     public static class OverridingDefinitionProvider implements DefinitionProvider {
         public DefinitionProvider originalProvider;
-        public HashMap<String, ObjectTag> altDefs = new HashMap<>();
+        public MapTag altDefs = new MapTag();
         public OverridingDefinitionProvider(DefinitionProvider original) {
             originalProvider = original;
         }
@@ -248,7 +248,7 @@ public class Attribute {
         }
         @Override
         public ObjectTag getDefinitionObject(String definition) {
-            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            ObjectTag result = altDefs.getDeepObject(CoreUtilities.toLowerCase(definition));
             if (result != null) {
                 return result;
             }
@@ -257,7 +257,7 @@ public class Attribute {
 
         @Override
         public String getDefinition(String definition) {
-            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            ObjectTag result = altDefs.getDeepObject(CoreUtilities.toLowerCase(definition));
             if (result != null) {
                 return result.toString();
             }
@@ -266,7 +266,7 @@ public class Attribute {
 
         @Override
         public boolean hasDefinition(String definition) {
-            ObjectTag result = altDefs.get(CoreUtilities.toLowerCase(definition));
+            ObjectTag result = altDefs.getDeepObject(CoreUtilities.toLowerCase(definition));
             if (result != null) {
                 return true;
             }

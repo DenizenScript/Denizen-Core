@@ -2134,7 +2134,7 @@ public class ListTag implements List<String>, ObjectTag {
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefs.put("filter_value", obj);
+                    provider.altDefs.putObject("filter_value", obj);
                     if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
                         newlist.addObject(obj);
                     }
@@ -2164,7 +2164,7 @@ public class ListTag implements List<String>, ObjectTag {
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefs.put("parse_value", obj);
+                    provider.altDefs.putObject("parse_value", obj);
                     newlist.addObject(attribute.parseDynamicContext(1, provider));
                 }
             }
