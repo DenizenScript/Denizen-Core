@@ -64,7 +64,7 @@ public class ProcedureScriptTagBase {
         ListTag definitions = null;
 
         // <--[tag]
-        // @attribute <proc[<procedure_script_name>].context[<element>|...]>
+        // @attribute <proc[<procedure_script_name>].context[<object>|...]>
         // @returns ObjectTag
         // @description
         // Returns the 'determine' result of a procedure script with the given context.

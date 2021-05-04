@@ -72,6 +72,17 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             ListTag definitions = new ListTag();
             definitions.addObject(object);
+
+            // <--[tag]
+            // @attribute <ObjectTag.proc[<procedure_script_name>].context[<object>|...]>
+            // @returns ObjectTag
+            // @description
+            // Returns the 'determine' result of a procedure script, passing this object in as the first context value, with a list of additional context values.
+            // -->
+            if (attribute.startsWith("context", 2) && attribute.hasContext(2)) {
+                definitions.objectForms.addAll(attribute.contextAsType(2, ListTag.class).objectForms);
+                attribute.fulfill(1);
+            }
             ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, attribute.context.getScriptEntryData(), null, (q) -> {
                 q.procedural = true;
             }, null, null, definitions, script.getContainer());
