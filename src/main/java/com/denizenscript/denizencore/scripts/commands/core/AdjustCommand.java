@@ -34,6 +34,7 @@ public class AdjustCommand extends AbstractCommand {
     // @Required 2
     // @Maximum 2
     // @Short Adjusts an object's mechanism.
+    // @Synonyms Mechanism
     // @Group core
     // @Guide https://guide.denizenscript.com/guides/basics/mechanisms.html
     //

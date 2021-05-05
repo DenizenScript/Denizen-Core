@@ -38,6 +38,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // @Required 1
     // @Maximum 7
     // @Short Gets the contents of a web page or API response.
+    // @Synonyms wget
     // @Group core
     //
     // @Description

@@ -198,6 +198,11 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/05/02.
     public static Warning hurtSourceOne = new SlowWarning("The 'hurt' command's 'source_once' argument is deprecated due to being now irrelevant thanks to the new NMS backing for the hurt command.");
 
+    // In Bukkit impl, Added 2021/05/05.
+    public static Warning materialLit = new SlowWarning("The MaterialTag property 'lit' is deprecated in favor of 'switched'.");
+    public static Warning materialCampfire = new SlowWarning("The MaterialTag property 'campfire' are deprecated in favor of 'type'.");
+    public static Warning materialDrags = new SlowWarning("The MaterialTag property 'drags' are deprecated in favor of 'mode'.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.

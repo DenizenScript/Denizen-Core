@@ -29,6 +29,7 @@ public class LogCommand extends AbstractCommand {
     // @Required 2
     // @Maximum 3
     // @Short Logs some debugging info to a file.
+    // @Synonyms TextFile
     // @Group file
     //
     // @Description

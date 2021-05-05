@@ -26,6 +26,7 @@ public class DetermineCommand extends AbstractCommand {
     // @Maximum 2
     // @Short Sets the outcome of a script.
     // @Group queue
+    // @Synonyms Return
     // @Guide https://guide.denizenscript.com/guides/first-steps/world-script.html
     //
     // @Description

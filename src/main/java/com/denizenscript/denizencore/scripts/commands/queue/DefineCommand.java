@@ -32,6 +32,7 @@ public class DefineCommand extends AbstractCommand {
     // @Required 1
     // @Maximum 2
     // @Short Creates a temporary variable inside a script queue.
+    // @Synonyms Definition
     // @Group queue
     // @Guide https://guide.denizenscript.com/guides/basics/definitions.html
     //

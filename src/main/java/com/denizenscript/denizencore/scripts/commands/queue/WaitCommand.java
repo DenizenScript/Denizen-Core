@@ -25,6 +25,7 @@ public class WaitCommand extends AbstractCommand {
     // @Required 0
     // @Maximum 3
     // @Short Delays a script for a specified amount of time.
+    // @Synonyms Delay,Pause
     // @Group queue
     //
     // @Description
