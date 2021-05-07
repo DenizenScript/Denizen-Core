@@ -54,6 +54,27 @@ public class CommandExecutor {
     // Some commands have multiple save entry keys, some have just one, most don't have any.
     // -->
 
+    // <--[language]
+    // @name The Global If Argument
+    // @group Script Command System
+    // @description
+    // The "if:<boolean>" argument is a special meta-argument that is available for all commands, but is more useful for some than others.
+    // It is written like:
+    // <code>
+    // - stop if:<player.has_flag[forbidden]>
+    // # Equivalent to
+    // - if <player.has_flag[forbidden]>:
+    //   - stop
+    // </code>
+    //
+    // When the if argument is used, the command will only run if the value of the argument is 'true'.
+    //
+    // The most useful place to have this is a 'stop' command, to quickly stop a script if a condition is true (a player has a flag, lacks a permission, is outside a region, or whatever else).
+    //
+    // If you need more complex matching, especially using '&&', '||', '==', etc. you should probably just do an 'if' command rather than using the argument.
+    // Though if you really want to, you can use tags here like <@link tag elementtag.is.to> or <@link tag elementtag.and> or <@link tag elementtag.or>.
+    // -->
+
     public boolean execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
             debugSingleExecution(scriptEntry);
@@ -72,6 +93,16 @@ public class CommandExecutor {
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
+                }
+                else if (arg.matchesPrefix("if")) {
+                    boolean shouldRun = CoreUtilities.equalsIgnoreCase(TagManager.tag(arg.getValue(), context), "true");
+                    if (scriptEntry.dbCallShouldDebug()) {
+                        Debug.echoDebug(scriptEntry, shouldRun ? "'if:' arg passed, command will run." : "'if:' arg returned false, command won't run.");
+                    }
+                    if (!shouldRun) {
+                        currentQueue = null;
+                        return true;
+                    }
                 }
                 else if (arg.matchesPrefix("save")) {
                     saveName = TagManager.tag(arg.getValue(), context);
