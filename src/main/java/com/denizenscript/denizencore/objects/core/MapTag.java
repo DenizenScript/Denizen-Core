@@ -581,6 +581,24 @@ public class MapTag implements ObjectTag, Adjustable {
         });
 
         // <--[tag]
+        // @attribute <MapTag.deep_exclude[<key>|...]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map with the specified deep key(s) excluded.
+        // -->
+        registerTag("deep_exclude", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("The tag 'MapTag.deep_exclude' must have an input value.");
+                return null;
+            }
+            MapTag result = object.duplicate();
+            for (String key : ListTag.getListFor(attribute.getContextObject(1), attribute.context)) {
+                result.putDeepObject(key, null);
+            }
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.exclude[<key>|...]>
         // @returns MapTag
         // @description
