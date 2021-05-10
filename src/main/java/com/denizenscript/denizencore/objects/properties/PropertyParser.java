@@ -254,6 +254,8 @@ public class PropertyParser {
         // @group properties
         // @description
         // Returns a copy of the object with mechanism adjustments applied.
+        // Be careful with dynamic inputs, they may break from escaping flaws.
+        // Consider using <@link tag PropertyHolderObject.with_single> instead.
         // -->
         processor.registerTag("with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -269,6 +271,29 @@ public class PropertyParser {
                 else {
                     instance.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(data.get(1)), attribute.context));
                 }
+            }
+            return instance;
+        });
+
+        // <--[tag]
+        // @attribute <PropertyHolderObject.with_single[<mechanism>=<value>]>
+        // @returns ObjectTag
+        // @group properties
+        // @description
+        // Returns a copy of the object with a single mechanism adjustment applied.
+        // This avoids the risk of escaping issues.
+        // -->
+        processor.registerTag("with_single", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            Adjustable instance = (Adjustable) object.duplicate();
+            List<String> data = CoreUtilities.split(attribute.getContext(1), '=', 2);
+            if (data.size() != 2) {
+                Debug.echoError("Invalid property string '" + attribute.getContext(1) + "'!");
+            }
+            else {
+                instance.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(data.get(1)), attribute.context));
             }
             return instance;
         });
