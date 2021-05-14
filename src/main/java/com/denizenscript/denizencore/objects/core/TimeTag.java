@@ -559,7 +559,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @attribute <TimeTag.start_of_year>
         // @returns TimeTag
         // @description
-        // Returns this time tag, with the month/day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same month).
+        // Returns this time tag, with the month/day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same year).
         // -->
         registerTag("start_of_year", (attribute, object) -> {
             return new TimeTag(object.year(), 1, 1, 0, 0, 0, 0, object.instant.getOffset());

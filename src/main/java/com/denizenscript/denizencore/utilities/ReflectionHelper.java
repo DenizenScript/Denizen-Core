@@ -146,9 +146,9 @@ public class ReflectionHelper {
     private static void validateUnsafe() {
         if (UNSAFE == null) {
             try {
-                UNSAFE = getFields(Class.forName("sun.misc.Unsafe")).get("theUnsafe");
+                UNSAFE = getFields(Class.forName("sun.misc.Unsafe")).get("theUnsafe").get(null);
             }
-            catch (Exception ex) {
+            catch (Throwable ex) {
                 Debug.echoError(ex);
             }
             UNSAFE_STATIC_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", Field.class).bindTo(UNSAFE);
