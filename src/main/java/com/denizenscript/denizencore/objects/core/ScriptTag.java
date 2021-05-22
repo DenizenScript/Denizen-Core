@@ -341,7 +341,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         });
 
         // <--[tag]
-        // @attribute <ScriptTag.parsed_key[<constant_name>]>
+        // @attribute <ScriptTag.parsed_key[<key_name>]>
         // @returns ObjectTag
         // @description
         // Returns the value from a data key on the script as an ElementTag, ListTag, or MapTag.
@@ -371,7 +371,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         });
 
         // <--[tag]
-        // @attribute <ScriptTag.data_key[<constant_name>]>
+        // @attribute <ScriptTag.data_key[<key_name>]>
         // @returns ObjectTag
         // @description
         // Returns the value from a data key on the script as an ElementTag, ListTag, or MapTag.

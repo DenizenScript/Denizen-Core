@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Base64;
@@ -2282,7 +2283,7 @@ public class ElementTag implements ObjectTag {
         // Encodes the element using Base64 encoding.
         // -->
         registerTag("base64_encode", (attribute, object) -> {
-            String encoded = Base64.getEncoder().encodeToString(object.element.getBytes());
+            String encoded = Base64.getEncoder().encodeToString(object.element.getBytes(StandardCharsets.UTF_8));
             return new ElementTag(encoded);
         });
 

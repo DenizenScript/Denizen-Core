@@ -19,16 +19,16 @@ public class DataScriptContainer extends ScriptContainer {
     // Generally, data is read using the <@link tag ScriptTag.data_key> tag.
     //
     // <code>
-    // Data_Script_Name:
+    // data_script_name:
     //
     //   type: data
     //
     //   # Your data here
-    //   some key: some value
-    //   some list key:
+    //   some_key: some value
+    //   some_list_key:
     //   - some list value
-    //   some map key:
-    //     some subkey: some value
+    //   some_map_key:
+    //     some_subkey: some value
     //
     // </code>
     //
