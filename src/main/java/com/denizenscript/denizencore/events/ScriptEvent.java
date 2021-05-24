@@ -699,7 +699,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             result = new RegexMatchHelper(input.substring("regex:".length()));
         }
         else if (CoreUtilities.contains(input, '|')) {
-            List<String> split = CoreUtilities.split(input, '|');
+            String toSplit = input;
+            if (toSplit.startsWith("li@")) {
+                toSplit = toSplit.substring("li@".length());
+            }
+            List<String> split = CoreUtilities.split(toSplit, '|');
             MatchHelper[] matchers = new MatchHelper[split.size()];
             for (int i = 0; i < split.size(); i++) {
                 matchers[i] = createMatcher(split.get(i));
