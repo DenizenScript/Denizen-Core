@@ -35,10 +35,10 @@ public class Debug {
     }
 
     public static void echoError(TagContext context, String error) {
-        if (context.entry != null && context.entry.getResidingQueue() != null) {
-            DenizenCore.getImplementation().debugError(context.entry.getResidingQueue(), error);
+        if (context != null && context.entry != null) {
+            echoError(context.entry, error);
         }
-        else if (context.script != null) {
+        else if (context != null && context.script != null) {
             echoError(context.script.getContainer(), error);
         }
         else {

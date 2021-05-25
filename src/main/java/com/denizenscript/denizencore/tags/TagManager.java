@@ -356,7 +356,7 @@ public class TagManager {
                 }
             }
             catch (TagProcessingException ex) {
-                Debug.echoError("Tag processing failed: " + ex.getMessage());
+                Debug.echoError(context, "Tag processing failed: " + ex.getMessage());
                 ParseableTagPiece errorNote = new ParseableTagPiece();
                 errorNote.isError = true;
                 errorNote.content = "Tag processing failed: " + ex.getMessage();
