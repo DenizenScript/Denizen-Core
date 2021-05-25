@@ -146,7 +146,7 @@ public class CoreUtilities {
         return output.toString();
     }
 
-    public static void fixNewLinesToListSeparation(ListTag list) {
+    public static void fixNewLinesToListSeparation(List<String> list) {
         for (int i = 0; i < list.size(); i++) {
             String line = list.get(i);
             if (line.contains("\n")) {
