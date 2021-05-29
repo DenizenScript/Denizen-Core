@@ -95,7 +95,8 @@ public class CommandExecutor {
                     // Do nothing
                 }
                 else if (arg.matchesPrefix("if")) {
-                    boolean shouldRun = CoreUtilities.equalsIgnoreCase(TagManager.tag(arg.getValue(), context), "true");
+                    String tagged = CoreUtilities.toLowerCase(TagManager.tag(arg.getValue(), context));
+                    boolean shouldRun = tagged.equals("true") || tagged.equals("!false");
                     if (scriptEntry.dbCallShouldDebug()) {
                         Debug.echoDebug(scriptEntry, shouldRun ? "'if:' arg passed, command will run." : "'if:' arg returned false, command won't run.");
                     }
