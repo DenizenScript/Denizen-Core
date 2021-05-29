@@ -375,12 +375,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
         String low = CoreUtilities.toLowerCase(determination.toString());
         switch (low) {
-            case "cancelled":
-                Debug.echoDebug(path.container, "Event cancelled!");
-                cancelled = true;
-                cancellationChanged();
-                return true;
             case "cancelled:true":
+            case "cancelled":
                 Debug.echoDebug(path.container, "Event cancelled!");
                 cancelled = true;
                 cancellationChanged();
@@ -703,6 +699,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (toSplit.startsWith("li@")) {
                 toSplit = toSplit.substring("li@".length());
             }
+            toSplit = CoreUtilities.replace(toSplit, "el@", "");
             List<String> split = CoreUtilities.split(toSplit, '|');
             MatchHelper[] matchers = new MatchHelper[split.size()];
             for (int i = 0; i < split.size(); i++) {

@@ -86,7 +86,6 @@ public class IfCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-
         boolean has_brace = scriptEntry.getInsideList() != null;
         if (has_brace) {
             List<BracedData> allData = new ArrayList<>();
@@ -129,7 +128,6 @@ public class IfCommand extends BracedCommand {
                 scriptEntry.addObject("braces", getBracedCommands(scriptEntry));
             }
         }
-
         boolean in_subcommand = false;
         boolean in_elsecommand = false;
         List<String> subcommand = new ArrayList<>();

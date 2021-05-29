@@ -191,7 +191,7 @@ public class Attribute {
     }
 
     public boolean startsWith(String string, int attribute) {
-        return CoreUtilities.toLowerCase(getAttribute(attribute)).startsWith(string);
+        return CoreUtilities.toLowerCase(getAttributeWithoutContext(attribute)).equals(string);
     }
 
     int fulfilled = 0;
