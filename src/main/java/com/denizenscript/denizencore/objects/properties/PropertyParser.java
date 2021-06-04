@@ -269,7 +269,7 @@ public class PropertyParser {
                     Debug.echoError("Invalid property string '" + properties.get(i) + "'!");
                 }
                 else {
-                    instance.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(data.get(1)), attribute.context));
+                    instance.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(data.get(1)), attribute.context));
                 }
             }
             return instance;
@@ -293,7 +293,7 @@ public class PropertyParser {
                 Debug.echoError("Invalid property string '" + attribute.getContext(1) + "'!");
             }
             else {
-                instance.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(data.get(1)), attribute.context));
+                instance.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(data.get(1)), attribute.context));
             }
             return instance;
         });
@@ -312,7 +312,7 @@ public class PropertyParser {
             MapTag properties = attribute.contextAsType(1, MapTag.class);
             Adjustable instance = (Adjustable) object.duplicate();
             for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
-                instance.safeApplyProperty(new Mechanism(new ElementTag(pair.getKey().low), pair.getValue(), attribute.context));
+                instance.safeApplyProperty(new Mechanism(pair.getKey().low, pair.getValue(), attribute.context));
             }
             return instance;
         });

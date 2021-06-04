@@ -218,7 +218,7 @@ public class ObjectFetcher {
                 continue;
             }
             String description = unescapeProperty(data.get(1));
-            object.safeApplyProperty(new Mechanism(new ElementTag(data.get(0)), new ElementTag(description), context));
+            object.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(description), context));
         }
     }
 

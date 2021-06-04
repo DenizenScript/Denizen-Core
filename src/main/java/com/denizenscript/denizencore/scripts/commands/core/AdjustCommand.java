@@ -122,7 +122,7 @@ public class AdjustCommand extends AbstractCommand {
         specialAdjustables.put("system", UtilTagBase::adjustSystem);
     }
 
-    public ObjectTag adjust(ObjectTag object, ElementTag mechanismName, ObjectTag value, ScriptEntry entry) {
+    public ObjectTag adjust(ObjectTag object, String mechanismName, ObjectTag value, ScriptEntry entry) {
         Mechanism mechanism = new Mechanism(mechanismName, value, entry.entryData.getTagContext());
         return adjust(object, mechanism, entry);
     }
@@ -198,11 +198,11 @@ public class AdjustCommand extends AbstractCommand {
         for (ObjectTag object : objects.objectForms) {
             if (mechanismMap != null) {
                 for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
-                    object = adjust(object, new ElementTag(entry.getKey().str), entry.getValue(), scriptEntry);
+                    object = adjust(object, entry.getKey().str, entry.getValue(), scriptEntry);
                 }
             }
             else {
-                object = adjust(object, mechanism, value, scriptEntry);
+                object = adjust(object, mechanism.asString(), value, scriptEntry);
             }
             if (objects.size() == 1) {
                 scriptEntry.addObject("result", object);

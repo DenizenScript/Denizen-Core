@@ -22,14 +22,6 @@ public class Mechanism {
         this.context = context;
     }
 
-    public Mechanism(ElementTag mechanism, ObjectTag value, TagContext context) {
-        this(mechanism.asString(), value, context);
-    }
-
-    public Mechanism(ElementTag mechanism, ObjectTag value) {
-        this(mechanism.asString(), value, null);
-    }
-
     public void fulfill() {
         fulfilled = true;
     }
@@ -179,7 +171,7 @@ public class Mechanism {
 
     public void echoError(String error) {
         // TODO: Consider special cases of whether object properties with debug off should even show errors
-        Debug.echoError(error);
+        Debug.echoError(context, error);
     }
 
     public void reportInvalid() {
