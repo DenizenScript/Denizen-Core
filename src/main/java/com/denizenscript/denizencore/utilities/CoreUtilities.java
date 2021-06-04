@@ -202,6 +202,9 @@ public class CoreUtilities {
     }
 
     public static void autoPropertyMechanism(ObjectTag object, Mechanism mechanism) {
+        if (mechanism.fulfilled()) {
+            return;
+        }
         PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
         if (properties == null) {
             return;
