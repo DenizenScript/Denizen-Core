@@ -128,6 +128,11 @@ public class ElementTag implements ObjectTag {
      */
     public boolean isPlainText;
 
+    /**
+     * If true, the input was raw text exactly given by a user, or constructed by multiple tags. If not, it was constructed by a tag or the system.
+     */
+    public boolean isRawInput;
+
     public ElementTag(String string, boolean isPlain) {
         this(string);
         this.isPlainText = isPlain;

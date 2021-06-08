@@ -12,7 +12,7 @@ import java.util.List;
 public class DataActionHelper {
 
     public static DataAction parse(ActionableDataProvider provider, Argument arg, TagContext context) {
-        if (arg.object instanceof ElementTag || !arg.hasPrefix()) {
+        if ((arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput) || !arg.hasPrefix()) {
             return parse(provider, arg.getRawValue(), context);
         }
         DataAction action = new DataAction();

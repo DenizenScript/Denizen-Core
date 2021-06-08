@@ -75,6 +75,7 @@ public class Argument implements Cloneable {
         }
         lower_value = CoreUtilities.toLowerCase(this.value);
         object = new ElementTag(this.value);
+        ((ElementTag) object).isRawInput = true;
     }
 
     public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "_.");
@@ -87,6 +88,7 @@ public class Argument implements Cloneable {
             value = string;
             if (object == null) {
                 object = new ElementTag(value);
+                ((ElementTag) object).isRawInput = true;
             }
         }
         else {
@@ -99,6 +101,7 @@ public class Argument implements Cloneable {
             }
             value = string.substring(first_colon + 1);
             object = new ElementTag(value);
+            ((ElementTag) object).isRawInput = true;
         }
         lower_value = CoreUtilities.toLowerCase(value);
     }

@@ -230,8 +230,6 @@ public class TagManager {
 
         public String content;
 
-        public ObjectTag objResult = null;
-
         public boolean isTag = false;
 
         public boolean isError = false;
@@ -240,13 +238,12 @@ public class TagManager {
 
         @Override
         public String toString() {
-            return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.rawTag : "") + ", " + content + "," + objResult + ")";
+            return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.rawTag : "") + ", " + content + ")";
         }
 
         public ParseableTagPiece duplicate() {
             ParseableTagPiece newPiece = new ParseableTagPiece();
             newPiece.content = content;
-            newPiece.objResult = objResult;
             newPiece.isTag = isTag;
             newPiece.isError = isError;
             newPiece.tagData = tagData;
@@ -275,10 +272,9 @@ public class TagManager {
             else if (pzero.isTag) {
                 return readSingleTagObject(pzero, context);
             }
-            else if (pzero.objResult != null) {
-                return pzero.objResult;
-            }
-            return new ElementTag(pieces.get(0).content);
+            ElementTag result = new ElementTag(pieces.get(0).content);
+            result.isRawInput = true;
+            return result;
         }
         StringBuilder helpy = new StringBuilder();
         for (int i = 0; i < pieces.size(); i++) {
@@ -289,14 +285,13 @@ public class TagManager {
             else if (p.isTag) {
                 helpy.append(readSingleTagObject(p, context).toString());
             }
-            else if (p.objResult != null) {
-                helpy.append(p.objResult.toString());
-            }
             else {
                 helpy.append(p.content);
             }
         }
-        return new ElementTag(helpy.toString(), true);
+        ElementTag result = new ElementTag(helpy.toString(), true);
+        result.isRawInput = true;
+        return result;
     }
 
     public static String tag(String arg, TagContext context) {
