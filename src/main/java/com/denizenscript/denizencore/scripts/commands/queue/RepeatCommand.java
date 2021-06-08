@@ -15,16 +15,16 @@ public class RepeatCommand extends BracedCommand {
 
     public RepeatCommand() {
         setName("repeat");
-        setSyntax("repeat [stop/next/<amount>] (as:<name>) [<commands>]");
-        setRequiredArguments(1, 2);
+        setSyntax("repeat [stop/next/<amount>] (from:<#>) (as:<name>) [<commands>]");
+        setRequiredArguments(1, 3);
         isProcedural = true;
     }
 
     // <--[command]
     // @Name Repeat
-    // @Syntax repeat [stop/next/<amount>] (as:<name>) [<commands>]
+    // @Syntax repeat [stop/next/<amount>] (from:<#>) (as:<name>) [<commands>]
     // @Required 1
-    // @Maximum 2
+    // @Maximum 3
     // @Short Runs a series of braced commands several times.
     // @Synonyms For
     // @Group queue
@@ -36,6 +36,9 @@ public class RepeatCommand extends BracedCommand {
     //
     // Optionally, specify "as:<name>" to change the definition name to something other than "value".
     //
+    // Optionally, to specify a starting index, use "from:<#>". Note that the "amount" input is how many loops will happen, not an end index.
+    // The default "from" index is "1". Note that the value you give to "from" will be the value of the first loop.
+    //
     // To stop a repeat loop, do - repeat stop
     //
     // To jump immediately to the next number in the loop, do - repeat next
@@ -44,8 +47,18 @@ public class RepeatCommand extends BracedCommand {
     // <[value]> to get the number of loops so far
     //
     // @Usage
-    // Use to loop through a command several times
+    // Use to loop through a command five times.
     // - repeat 5:
+    //     - announce "Announce Number <[value]>"
+    //
+    // @Usage
+    // Use to announce the numbers: 1, 2, 3, 4, 5.
+    // - repeat 5 as:number:
+    //     - announce "I can count! <[number]>"
+    //
+    // @Usage
+    // Use to announce the numbers: 21, 22, 23, 24, 25.
+    // - repeat 5 from:21:
     //     - announce "Announce Number <[value]>"
     // -->
 
@@ -84,6 +97,11 @@ public class RepeatCommand extends BracedCommand {
                 scriptEntry.addObject("callback", new ElementTag(true));
                 handled = true;
             }
+            else if (!scriptEntry.hasObject("from")
+                    && arg.matchesPrefix("from")
+                    && arg.matchesInteger()) {
+                scriptEntry.addObject("from", arg.asElement());
+            }
             else if (!scriptEntry.hasObject("as_name")
                     && arg.matchesPrefix("as")) {
                 scriptEntry.addObject("as_name", arg.asElement());
@@ -99,6 +117,7 @@ public class RepeatCommand extends BracedCommand {
             throw new InvalidArgumentsException("Must specify a quantity or 'stop' or 'next'!");
         }
         scriptEntry.defaultObject("as_name", new ElementTag("value"));
+        scriptEntry.defaultObject("from", new ElementTag("1"));
     }
 
     @Override
@@ -108,6 +127,7 @@ public class RepeatCommand extends BracedCommand {
         ElementTag callback = scriptEntry.getElement("callback");
         ElementTag quantity = scriptEntry.getElement("quantity");
         ElementTag as_name = scriptEntry.getElement("as_name");
+        ElementTag from = scriptEntry.getElement("from");
         ScriptQueue queue = scriptEntry.getResidingQueue();
         if (stop != null && stop.asBoolean()) {
             if (scriptEntry.dbCallShouldDebug()) {
@@ -202,7 +222,7 @@ public class RepeatCommand extends BracedCommand {
         }
         else {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), quantity, as_name);
+                Debug.report(scriptEntry, getName(), from, quantity, as_name);
             }
             int target = quantity.asInt();
             if (target <= 0) {
@@ -212,8 +232,8 @@ public class RepeatCommand extends BracedCommand {
                 return;
             }
             RepeatData datum = new RepeatData();
-            datum.target = target;
-            datum.index = 1;
+            datum.index = from.asInt();
+            datum.target = datum.index + target - 1;
             datum.valueName = as_name.asString();
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK"},
@@ -229,7 +249,7 @@ public class RepeatCommand extends BracedCommand {
                 return;
             }
             datum.originalValue = queue.getDefinitionObject(datum.valueName);
-            queue.addDefinition(datum.valueName, "1");
+            queue.addDefinition(datum.valueName, String.valueOf(datum.index));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
             bracedCommandsList.add(callbackEntry);
