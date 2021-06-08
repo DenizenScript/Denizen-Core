@@ -471,7 +471,13 @@ public class ListTag implements List<String>, ObjectTag {
         objectForms = new ArrayList<>(input.objectForms);
     }
 
-    // A List<String> of items
+    public ListTag(List<String> items, boolean isPlainText) {
+        objectForms = new ArrayList<>(items.size());
+        for (String str : items) {
+            objectForms.add(new ElementTag(str, isPlainText));
+        }
+    }
+
     public ListTag(List<String> items) {
         objectForms = new ArrayList<>(items.size());
         for (String str : items) {

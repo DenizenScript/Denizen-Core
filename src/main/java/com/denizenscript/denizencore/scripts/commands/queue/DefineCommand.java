@@ -109,7 +109,7 @@ public class DefineCommand extends AbstractCommand {
                 }
             }
             else if (!scriptEntry.hasObject("value")) {
-                scriptEntry.addObject("value", arg.object instanceof ElementTag ? new ElementTag(arg.getRawValue()) : arg.object);
+                scriptEntry.addObject("value", arg.hasPrefix() && arg.object instanceof ElementTag ? new ElementTag(arg.getRawValue()) : arg.object);
             }
             else {
                 arg.reportUnhandled();

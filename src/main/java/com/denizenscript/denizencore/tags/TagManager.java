@@ -296,7 +296,7 @@ public class TagManager {
                 helpy.append(p.content);
             }
         }
-        return new ElementTag(helpy.toString());
+        return new ElementTag(helpy.toString(), true);
     }
 
     public static String tag(String arg, TagContext context) {

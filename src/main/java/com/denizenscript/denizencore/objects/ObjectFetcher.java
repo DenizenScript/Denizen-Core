@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.TagContext;
 
 import java.lang.invoke.CallSite;
@@ -249,17 +248,6 @@ public class ObjectFetcher {
         }
 
         return null;
-    }
-
-    /**
-     * This function will return the most-valid ObjectTag for the input string.
-     * If the input lacks @ notation or is not a valid object, an ElementTag will be returned.
-     *
-     * @param value the input string.
-     * @return the most-valid ObjectTag available.
-     */
-    public static ObjectTag pickObjectFor(String value) {
-        return pickObjectFor(value, DenizenCore.getImplementation().getEmptyScriptEntryData().getTagContext());
     }
 
     public static ObjectTag pickObjectFor(String value, TagContext context) {

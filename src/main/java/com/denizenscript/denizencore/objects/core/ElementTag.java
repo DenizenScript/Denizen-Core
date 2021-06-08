@@ -121,6 +121,18 @@ public class ElementTag implements ObjectTag {
 
     private final String element;
 
+    private String prefix;
+
+    /**
+     * If true, this element is plain text only, even if it might look like an object, and so should not be reinterpreted.
+     */
+    public boolean isPlainText;
+
+    public ElementTag(String string, boolean isPlain) {
+        this(string);
+        this.isPlainText = isPlain;
+    }
+
     public ElementTag(String string) {
         this.prefix = "element";
         if (string == null) {
@@ -143,41 +155,49 @@ public class ElementTag implements ObjectTag {
     public ElementTag(boolean bool) {
         this.prefix = "boolean";
         this.element = String.valueOf(bool);
+        this.isPlainText = true;
     }
 
     public ElementTag(int integer) {
         this.prefix = "number";
         this.element = String.valueOf(integer);
+        this.isPlainText = true;
     }
 
     public ElementTag(byte byt) {
         this.prefix = "number";
         this.element = String.valueOf(byt);
+        this.isPlainText = true;
     }
 
     public ElementTag(short shrt) {
         this.prefix = "number";
         this.element = String.valueOf(shrt);
+        this.isPlainText = true;
     }
 
     public ElementTag(long lng) {
         this.prefix = "number";
         this.element = String.valueOf(lng);
+        this.isPlainText = true;
     }
 
     public ElementTag(BigDecimal bdl) {
         this.prefix = "decimal";
         this.element = CoreUtilities.bigDecToString(bdl);
+        this.isPlainText = true;
     }
 
     public ElementTag(double dbl) {
         this.prefix = "decimal";
         this.element = CoreUtilities.doubleToString(dbl);
+        this.isPlainText = true;
     }
 
     public ElementTag(float flt) {
         this.prefix = "decimal";
         this.element = CoreUtilities.doubleToString(flt);
+        this.isPlainText = true;
     }
 
     public ElementTag(String prefix, String string) {
@@ -298,8 +318,6 @@ public class ElementTag implements ObjectTag {
 
         return false;
     }
-
-    private String prefix;
 
     @Override
     public String getObjectType() {
