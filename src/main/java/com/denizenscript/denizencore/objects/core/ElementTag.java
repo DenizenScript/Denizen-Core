@@ -1587,7 +1587,7 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.split[(regex:)<string>]>
+        // @attribute <ElementTag.split[((regex:)<string>)]>
         // @returns ListTag
         // @group element manipulation
         // @description
@@ -1608,7 +1608,7 @@ public class ElementTag implements ObjectTag {
             String[] split;
 
             // <--[tag]
-            // @attribute <ElementTag.split[(regex:)<string>].limit[<#>]>
+            // @attribute <ElementTag.split[((regex:)<string>)].limit[<#>]>
             // @returns ListTag
             // @group element manipulation
             // @description

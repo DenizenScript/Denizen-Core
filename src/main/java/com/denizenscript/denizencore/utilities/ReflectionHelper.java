@@ -7,12 +7,13 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReflectionHelper {
 
-    private static final Map<Class, Map<String, Field>> cachedFields = new HashMap<>();
+    private static final Map<Class, CheckingFieldMap> cachedFields = new HashMap<>();
 
     private static final Map<Class, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
 
@@ -49,6 +50,18 @@ public class ReflectionHelper {
             this.clazz = clazz;
         }
 
+        public Field getFirstOfType(Class fieldClazz) {
+            for (Field f : super.values()) {
+                if (f.getType().equals(fieldClazz)) {
+                    return f;
+                }
+            }
+            String err = "Reflection field missing - Tried to find field of type '" + fieldClazz.getCanonicalName() + "' of class '" + clazz.getCanonicalName() + "'.";
+            System.err.println("[Denizen] [ReflectionHelper]: " + err);
+            Debug.echoError(err);
+            return null;
+        }
+
         @Override
         public Field get(Object name) {
             Field f = super.get(name);
@@ -65,8 +78,8 @@ public class ReflectionHelper {
         }
     }
 
-    public static Map<String, Field> getFields(Class clazz) {
-        Map<String, Field> fields = cachedFields.get(clazz);
+    public static CheckingFieldMap getFields(Class clazz) {
+        CheckingFieldMap fields = cachedFields.get(clazz);
         if (fields != null) {
             return fields;
         }
@@ -82,8 +95,18 @@ public class ReflectionHelper {
     public static Method getMethod(Class<?> clazz, String method, Class<?>... params) {
         Method f = null;
         try {
-            f = clazz.getDeclaredMethod(method, params);
-            f.setAccessible(true);
+            if (method == null) {
+                for (Method possible : clazz.getDeclaredMethods()) {
+                    if (possible.getParameterCount() == params.length && Arrays.equals(possible.getParameterTypes(), params)) {
+                        f = possible;
+                        break;
+                    }
+                }
+            }
+            else {
+                f = clazz.getDeclaredMethod(method, params);
+                f.setAccessible(true);
+            }
         }
         catch (Exception ex) {
             Debug.echoError(ex);
@@ -104,6 +127,14 @@ public class ReflectionHelper {
             Debug.echoError(ex);
         }
         return null;
+    }
+
+    public static MethodHandle getFinalSetterForFirstOfType(Class<?> clazz, Class<?> fieldType) {
+        Field field = getFields(clazz).getFirstOfType(fieldType);
+        if (field == null) {
+            return null;
+        }
+        return getFinalSetter(clazz, field.getName());
     }
 
     public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
