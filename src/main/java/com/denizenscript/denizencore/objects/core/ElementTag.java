@@ -722,7 +722,7 @@ public class ElementTag implements ObjectTag {
 
         // <--[tag]
         // @attribute <ElementTag.as_custom>
-        // @returns CustomObject
+        // @returns CustomObjectTag
         // @group conversion
         // @description
         // Returns the element as a custom object.
