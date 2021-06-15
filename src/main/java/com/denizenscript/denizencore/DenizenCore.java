@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.VerySlowWarning;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
 import java.io.FileNotFoundException;
@@ -93,6 +94,9 @@ public class DenizenCore {
      */
     public static void preloadScripts() {
         try {
+            for (VerySlowWarning warning : VerySlowWarning.allSlowWarnings) {
+                warning.hasShown = false;
+            }
             PreScriptReloadScriptEvent.instance.fire();
             ScriptEvent.worldContainers.clear();
             implementation.preScriptReload();

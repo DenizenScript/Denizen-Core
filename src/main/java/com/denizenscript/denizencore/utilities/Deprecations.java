@@ -1,9 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.utilities.debugging.FutureWarning;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
-import com.denizenscript.denizencore.utilities.debugging.StrongWarning;
-import com.denizenscript.denizencore.utilities.debugging.Warning;
+import com.denizenscript.denizencore.utilities.debugging.*;
 
 /**
  * This is a special class to contain all deprecation warnings, ordered by date they were added.
@@ -203,13 +200,31 @@ public class Deprecations {
     public static Warning materialCampfire = new SlowWarning("The MaterialTag property 'campfire' are deprecated in favor of 'type'.");
     public static Warning materialDrags = new SlowWarning("The MaterialTag property 'drags' are deprecated in favor of 'mode'.");
 
+    // In Bukkit impl, Added 2021/06/15, but was irrelevant years earlier.
+    public static Warning itemMessage = new SlowWarning("The PlayerTag mechanism 'item_message' is deprecated in favor of using the actionbar.");
+
+    // ==================== VERY SLOW deprecations ====================
+    // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
+
+    // In Bukkit impl, Added 2019/11/11, bump to normal slow warning by 2022.
+    public static Warning entityLocationCursorOnTag = new VerySlowWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
+
+    // In Bukkit impl, Added 2019/10/03, bump to normal slow warning by 2023.
+    public static Warning inAreaSwitchFormat = new VerySlowWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
+
+    // Added 2020/05/23, bump to normal slow warning by 2023.
+    public static Warning timeTagRewrite = new VerySlowWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
+
+    // Added 2020/05/29, bump to normal slow warning by 2023.
+    public static Warning listOldMapTags = new VerySlowWarning("Old list.map_* tags are deprecated: use the modern MapTag options instead.");
+
+    // In Bukkit impl, Added 2020/04/19, Relevant for many years now, bump to normal slow warning by 2023.
+    public static Warning interactScriptPriority = new VerySlowWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
+
+    // Added 2020/06/13, bump to normal slow warning by 2023.
+    public static Warning yamlDataContainer = new VerySlowWarning("'yaml data' containers are now just called 'data' containers.");
+
     // ==================== FUTURE deprecations ====================
-
-    // In Bukkit impl, Added 2019/11/11, deprecate officially by 2021.
-    public static Warning entityLocationCursorOnTag = new FutureWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
-
-    // In Bukkit impl, Added 2019/10/03, deprecate officially by 2021.
-    public static Warning inAreaSwitchFormat = new FutureWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
     // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
     public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
@@ -218,21 +233,9 @@ public class Deprecations {
     // Added 2020/03/14, deprecate officially by 2022.
     public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
 
-    // Added 2020/05/23, deprecate officially by 2022.
-    public static Warning timeTagRewrite = new FutureWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
-
     // Added 2020/05/24, deprecate officially by 2022.
     public static Warning flagIsExpiredTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");
     public static Warning flagExpirationTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].expiration' is deprecated: use 'flag_expiration[...]' instead.");
-
-    // Added 2020/05/29, deprecate officially by 2022.
-    public static Warning listOldMapTags = new FutureWarning("Old list.map_* tags are deprecated: use the modern MapTag options instead.");
-
-    // In Bukkit impl, Added 2020/04/19, Relevant for many years now, deprecate officially by 2023.
-    public static Warning interactScriptPriority = new FutureWarning("Assignment script 'interact scripts' section should not have numbered priority values, these were removed years ago. Check https://guide.denizenscript.com/guides/troubleshooting/updates-since-videos.html#assignment-script-updates for more info.");
-
-    // Added 2020/06/13, deprecate officially by 2022.
-    public static Warning yamlDataContainer = new FutureWarning("'yaml data' containers are now just called 'data' containers.");
 
     // In Bukkit impl, Added 2020/06/13, deprecate officially by 2022.
     public static Warning listStyleTags = new FutureWarning("'list_' tags are deprecated: just remove the 'list_' prefix.");
