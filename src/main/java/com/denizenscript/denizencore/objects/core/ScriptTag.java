@@ -75,7 +75,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     //
     // -->
 
-    // <--[language]
+    // <--[ObjectType]
     // @name ScriptTag
     // @prefix s
     // @base ElementTag

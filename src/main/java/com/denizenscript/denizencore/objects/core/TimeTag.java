@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
-    // <--[language]
+    // <--[ObjectType]
     // @name TimeTag
     // @prefix time
     // @base ElementTag

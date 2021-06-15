@@ -15,7 +15,7 @@ import java.util.*;
 
 public class MapTag implements ObjectTag, Adjustable {
 
-    // <--[language]
+    // <--[ObjectType]
     // @name MapTag
     // @prefix map
     // @base ElementTag

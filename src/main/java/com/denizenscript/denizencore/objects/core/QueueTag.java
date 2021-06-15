@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
 
-    // <--[language]
+    // <--[ObjectType]
     // @name QueueTag
     // @prefix q
     // @base ElementTag

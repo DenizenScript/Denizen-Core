@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 public class ListTag implements List<String>, ObjectTag {
 
-    // <--[language]
+    // <--[ObjectType]
     // @name ListTag
     // @prefix li
     // @base ElementTag
