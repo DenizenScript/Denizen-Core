@@ -15,9 +15,13 @@ import com.denizenscript.denizencore.tags.TagContext;
  */
 public class DurationTag implements ObjectTag {
 
-    // <--[language]
-    // @name DurationTag Objects
-    // @group Object System
+    // <--[ObjectType]
+    // @name DurationTag
+    // @prefix d
+    // @base ElementTag
+    // @format
+    // The identity format for DurationTags is the number of seconds, followed by an 's'.
+    //
     // @description
     // Durations are a unified and convenient way to get a 'unit of time' throughout Denizen.
     // Many commands and features that require a duration can be satisfied by specifying a number and unit of time, especially command arguments that are prefixed 'duration:', etc.
@@ -30,9 +34,6 @@ public class DurationTag implements ObjectTag {
     // The smaller value should be first. Examples: '10s-25s', '1m-2m'.
     //
     // The input of 'instant' or 'infinite' will be interpreted as 0 (for use with commands where instant/infinite logic applies).
-    //
-    // These use the object notation "d@".
-    // The identity format for DurationTags is the number of seconds, followed by an 's'.
     //
     // -->
 

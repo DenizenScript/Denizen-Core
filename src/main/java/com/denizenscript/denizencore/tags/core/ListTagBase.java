@@ -13,6 +13,7 @@ public class ListTagBase {
         // @description
         // Returns a list object constructed from the input value.
         // Give no input to create an empty list.
+        // Refer to <@link ObjectType ListTag>.
         // -->
         TagManager.registerTagHandler("list", (attribute) -> {
             if (!attribute.hasContext(1)) {

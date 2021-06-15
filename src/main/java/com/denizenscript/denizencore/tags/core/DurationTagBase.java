@@ -12,7 +12,7 @@ public class DurationTagBase {
         // @returns DurationTag
         // @description
         // Returns a duration object constructed from the input value.
-        // Refer to <@link language DurationTag objects>.
+        // Refer to <@link ObjectType DurationTag>.
         // -->
         TagManager.registerTagHandler("duration", (attribute) -> {
             if (!attribute.hasContext(1)) {

@@ -20,15 +20,17 @@ import java.util.Collection;
 public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
 
     // <--[language]
-    // @name QueueTag Objects
-    // @group Object System
+    // @name QueueTag
+    // @prefix q
+    // @base ElementTag
+    // @implements FlaggableObject
+    // @format
+    // The identity format for queues is simply the queue ID.
+    //
     // @description
     // A QueueTag is a single currently running set of script commands.
     // This is not to be confused with a script path, which is a single set of script commands that can be run.
     // There can be one, multiple, or zero queues running at any time for any given path.
-    //
-    // These use the object notation "q@".
-    // The identity format for queues is simply the queue ID.
     //
     // This object type is flaggable.
     // Flags on this object type will be reinterpreted as definitions.

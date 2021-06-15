@@ -16,9 +16,13 @@ import java.util.Map;
 
 public class CustomObjectTag implements ObjectTag, Adjustable {
 
-    // <--[language]
-    // @name Custom Objects
-    // @group Object System
+    // <--[ObjectType]
+    // @name CustomObjectTag
+    // @prefix custom
+    // @base ElementTag
+    // @format
+    // The identity format for custom objects is the script name, followed by property syntax listing all fields with their values.
+    //
     // @description
     // Custom objects are custom object types.
     // They use a script basis to create an object similar to the base object types (ListTag, PlayerTags, etc).
@@ -27,9 +31,6 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     // That is, using a very complicated solution to solve a problem that can be solved much more simply.
     //
     // Custom objects exist for experimental reasons. Do not use these in any real scripts.
-    //
-    // These use the object notation "custom@".
-    // The identity format for custom objects is the script name, followed by property syntax listing all fields with their values.
     //
     // -->
 

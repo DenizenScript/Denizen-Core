@@ -25,9 +25,13 @@ import java.util.regex.Pattern;
 
 public class ElementTag implements ObjectTag {
 
-    // <--[language]
-    // @name ElementTag Objects
-    // @group Object System
+    // <--[ObjectType]
+    // @name ElementTag
+    // @prefix el
+    // @base None
+    // @format
+    // Just the plain text of the element value, no prefix or formatting.
+    //
     // @description
     // ElementTags are simple objects that contain a simple bit of text.
     // Their main usage is within the replaceable tag system,
@@ -55,7 +59,7 @@ public class ElementTag implements ObjectTag {
     // @group Object System
     // @description
     // When "ElementTag(Boolean)" appears in meta documentation, this means the input/output is an ElementTag
-    // (refer to <@link language ElementTag Objects>) that is a boolean.
+    // (refer to <@link objecttype ElementTag>) that is a boolean.
     // Boolean means either a "true" or a "false".
     // -->
 
@@ -64,7 +68,7 @@ public class ElementTag implements ObjectTag {
     // @group Object System
     // @description
     // When "ElementTag(Number)" appears in meta documentation, this means the input/output is an ElementTag
-    // (refer to <@link language ElementTag Objects>) that is an integer number.
+    // (refer to <@link objecttype ElementTag>) that is an integer number.
     // That is, for example: 0, 1, 5, -4, 10002325 or any other number.
     // This does NOT include decimal numbers (like 1.5). Those will be documented as <@link language ElementTag(Decimal)>.
     //
@@ -76,7 +80,7 @@ public class ElementTag implements ObjectTag {
     // @group Object System
     // @description
     // When "ElementTag(Decimal)" appears in meta documentation, this means the input/output is an ElementTag
-    // (refer to <@link language ElementTag Objects>) that is a decimal number.
+    // (refer to <@link objecttype ElementTag>) that is a decimal number.
     // That is, for example: 0, 1, 5, -4, 10002325, 4.2, -18.281241 or any other number.
     // While this is specifically for decimal numbers, the decimal itself is optional (will be assumed as ".0").
     //

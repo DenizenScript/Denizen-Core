@@ -12,7 +12,7 @@ public class ElementTagBase {
         // @returns ElementTag
         // @description
         // Returns an element constructed from the input value.
-        // Refer to <@link language ElementTag objects>.
+        // Refer to <@link objecttype ElementTag>.
         // -->
         TagManager.registerTagHandler("element", (attribute) -> {
             if (!attribute.hasContext(1)) {

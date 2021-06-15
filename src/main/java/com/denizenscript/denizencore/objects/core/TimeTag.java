@@ -24,14 +24,16 @@ import java.util.Locale;
 public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     // <--[language]
-    // @name TimeTag Objects
-    // @group Object System
-    // @description
-    // A TimeTag represents a real world date/time value.
-    //
-    // These use the object notation "time@".
+    // @name TimeTag
+    // @prefix time
+    // @base ElementTag
+    // @implements FlaggableObject
+    // @format
     // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill_offset"
     // So, for example, 'time@2020/05/23_02:20:31:123_-07:00'
+    //
+    // @description
+    // A TimeTag represents a real world date/time value.
     //
     // TimeTags can also be constructed from 'yyyy/mm/dd', 'yyyy/mm/dd_hh:mm:ss', or 'yyyy/mm/dd_hh:mm:ss:mill'.
     // (Meaning: the offset is optional, the milliseconds are optional, and the time-of-day is optional,

@@ -246,11 +246,23 @@ public class PropertyParser {
         return props;
     }
 
+    // <--[ObjectType]
+    // @name PropertyHolderObject
+    // @prefix None
+    // @base None
+    // @format
+    // N/A
+    //
+    // @description
+    // "PropertyHolderObject" is a pseudo-ObjectType that represents any object that holds properties.
+    //
+    // -->
+
     public static <T extends Adjustable> void registerPropertyTagHandlers(ObjectTagProcessor<T> processor) {
 
         // <--[tag]
         // @attribute <PropertyHolderObject.with[<mechanism>=<value>;...]>
-        // @returns ObjectTag
+        // @returns PropertyHolderObject
         // @group properties
         // @description
         // Returns a copy of the object with mechanism adjustments applied.
@@ -277,7 +289,7 @@ public class PropertyParser {
 
         // <--[tag]
         // @attribute <PropertyHolderObject.with_single[<mechanism>=<value>]>
-        // @returns ObjectTag
+        // @returns PropertyHolderObject
         // @group properties
         // @description
         // Returns a copy of the object with a single mechanism adjustment applied.
@@ -300,7 +312,7 @@ public class PropertyParser {
 
         // <--[tag]
         // @attribute <PropertyHolderObject.with_map[<property-map>]>
-        // @returns ObjectTag
+        // @returns PropertyHolderObject
         // @group properties
         // @description
         // Returns a copy of the object with the MapTag of mechanism adjustments applied.

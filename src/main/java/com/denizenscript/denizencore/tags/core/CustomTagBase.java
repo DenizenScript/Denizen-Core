@@ -12,7 +12,7 @@ public class CustomTagBase {
         // @returns CustomObjectTag
         // @description
         // Returns a custom object constructed from the input value.
-        // Refer to <@link language Custom Objects>.
+        // Refer to <@link ObjectType CustomObjectTag>.
         // -->
         TagManager.registerTagHandler("custom_object", (attribute) -> {
             if (!attribute.hasContext(1)) {

@@ -16,8 +16,19 @@ import java.util.*;
 public class MapTag implements ObjectTag, Adjustable {
 
     // <--[language]
-    // @name MapTag Objects
-    // @group Object System
+    // @name MapTag
+    // @prefix map
+    // @base ElementTag
+    // @format
+    // The identity format for MapTags is each key/value pair, one after the other, separated by a pipe '|' symbol.
+    // The key/value pair is separated by a slash.
+    // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@taco/food|chicken/animal|bob/person|"
+    // A map with zero items in it is simply 'map@'.
+    //
+    // If the pipe symbol "|" appears in a key or value, it will be replaced by "&pipe",
+    // a slash "/" will become "&fs", and an ampersand "&" will become "&amp".
+    // This is a subset of Denizen standard escaping, see <@link language Escaping System>.
+    //
     // @description
     // A MapTag represents a mapping of keys to values.
     // Keys are plain text, case-insensitive.
@@ -27,16 +38,6 @@ public class MapTag implements ObjectTag, Adjustable {
     // Values can be duplicated into multiple keys without issue.
     //
     // Order of keys is preserved. Casing in keys is preserved in the object but ignored for map lookups.
-    //
-    // These use the object notation "map@".
-    // The identity format for MapTags is each key/value pair, one after the other, separated by a pipe '|' symbol.
-    // The key/value pair is separated by a slash.
-    // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@taco/food|chicken/animal|bob/person|"
-    // A map with zero items in it is simply 'map@'.
-    //
-    // If the pipe symbol "|" appears in a key or value, it will be replaced by "&pipe",
-    // a slash "/" will become "&fs", and an ampersand "&" will become "&amp".
-    // This is a subset of Denizen standard escaping, see <@link language Escaping System>.
     //
     // -->
 

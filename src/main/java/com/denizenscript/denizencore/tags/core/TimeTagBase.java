@@ -12,7 +12,7 @@ public class TimeTagBase {
         // @returns TimeTag
         // @description
         // Returns a time object constructed from the input value.
-        // Refer to <@link language TimeTag objects>.
+        // Refer to <@link ObjectType TimeTag>.
         // -->
         TagManager.registerTagHandler("time", (attribute) -> {
             if (!attribute.hasContext(1)) {

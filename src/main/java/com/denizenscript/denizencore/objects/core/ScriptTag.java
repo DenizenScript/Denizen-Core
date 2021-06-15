@@ -76,17 +76,19 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // -->
 
     // <--[language]
-    // @name ScriptTag Objects
-    // @group Object System
+    // @name ScriptTag
+    // @prefix s
+    // @base ElementTag
+    // @implements FlaggableObject
+    // @format
+    // The identity format for scripts is simply the script name.
+    //
     // @description
     // A ObjectTag that represents a script container. ScriptTags contain all information inside the script,
     // and can be used in a variety of commands that require script arguments.
     // For example, run and inject will 'execute' script entries inside of a script container when given a matching ScriptTag object.
     //
     // ScriptTags also provide a way to access attributes accessed by the replaceable tag system by using the object fetcher or any other entry point to a ScriptTag object.
-    //
-    // These use the object notation "s@".
-    // The identity format for scripts is simply the script name.
     //
     // This object type is flaggable.
     // Flags on this object type will be stored in the server saves file, under special sub-key "__scripts"

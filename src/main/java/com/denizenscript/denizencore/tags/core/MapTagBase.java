@@ -13,7 +13,7 @@ public class MapTagBase {
         // @description
         // Returns a map object constructed from the input value.
         // Give no input to create an empty map.
-        // Refer to <@link language MapTag objects>.
+        // Refer to <@link ObjectType MapTag>.
         // -->
         TagManager.registerTagHandler("map", (attribute) -> {
             if (!attribute.hasContext(1)) {

@@ -7,6 +7,20 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 public interface ObjectTag {
 
+    // <--[ObjectType]
+    // @name ObjectTag
+    // @prefix None
+    // @base None
+    // @format
+    // N/A
+    //
+    // @description
+    // "ObjectTag" is a pseudo-ObjectType that represents the fundamental root of all object types.
+    // If a tag says it returns an "ObjectTag", that means it can return any type of tag
+    // (for example MapTag.get[...] returns an object of ... well, whatever type the value happens to be, so it's simply documented as "ObjectTag").
+    //
+    // -->
+
     /*
      * ObjectTags should contain these two static methods, of which valueOf contains a valid
      * annotation for ObjectFetcher
