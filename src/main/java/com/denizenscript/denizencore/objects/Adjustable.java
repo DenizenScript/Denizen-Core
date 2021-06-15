@@ -20,6 +20,10 @@ public interface Adjustable extends ObjectTag {
         mechanism.autoReport();
     }
 
+    default void safeAdjustDuplicate(Mechanism mechanism) {
+        safeAdjust(new Mechanism(mechanism.getName(), mechanism.value, mechanism.context));
+    }
+
     /**
      * Applies a property, passing it to 'adjust' or throwing an error, depending on whether
      * the mechanism may be used as a property.
