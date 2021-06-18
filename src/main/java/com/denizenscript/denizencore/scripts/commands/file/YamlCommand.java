@@ -761,7 +761,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
         // <--[tag]
         // @attribute <yaml[<id>].read[<path>]>
-        // @returns ElementTag
+        // @returns ObjectTag
         // @description
         // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
         // -->

@@ -438,6 +438,52 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         });
 
         // <--[tag]
+        // @attribute <TimeTag.last_hour_of_day[<hour>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag that represents the previous time the specified hour number was hit.
+        // For example, if the input hour is '14', and the original TimeTag is 5 AM, the return will be 2 PM yesterday.
+        // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM today.
+        // The minute/second/millisecond will be zeroed.
+        // -->
+        registerTag("last_hour_of_day", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.last_hour_of_day[...] must have input.");
+                return null;
+            }
+            int hour = attribute.getIntContext(1);
+            int todayHour = object.hour();
+            TimeTag result = new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
+            if (hour > todayHour) {
+                result = new TimeTag(result.instant.minusDays(1));
+            }
+            return new TimeTag(result.instant.plusHours(hour));
+        });
+
+        // <--[tag]
+        // @attribute <TimeTag.next_hour_of_day[<hour>]>
+        // @returns TimeTag
+        // @description
+        // Returns the timetag that represents the next time the specified hour number will be hit.
+        // For example, if the input hour is '14', and the original TimeTag is 5 AM, the return will be 2 PM today.
+        // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM tomorrow.
+        // The minute/second/millisecond will be zeroed.
+        // -->
+        registerTag("next_hour_of_day", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                attribute.echoError("time.next_hour_of_day[...] must have input.");
+                return null;
+            }
+            int hour = attribute.getIntContext(1);
+            int todayHour = object.hour();
+            TimeTag result = new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
+            if (hour <= todayHour) {
+                result = new TimeTag(result.instant.plusDays(1));
+            }
+            return new TimeTag(result.instant.plusHours(hour));
+        });
+
+        // <--[tag]
         // @attribute <TimeTag.last_day_of_week[<day>]>
         // @returns TimeTag
         // @description
