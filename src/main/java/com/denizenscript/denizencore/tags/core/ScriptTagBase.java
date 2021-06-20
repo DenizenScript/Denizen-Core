@@ -13,10 +13,11 @@ public class ScriptTagBase {
     public ScriptTagBase() {
 
         // <--[tag]
-        // @attribute <script[<script>]>
+        // @attribute <script[(<script>)]>
         // @returns ScriptTag
         // @description
         // Returns a script object constructed from the input value.
+        // If no input is given, will return the current script that the tag is within.
         // Refer to <@link ObjectType ScriptTag>.
         // -->
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
