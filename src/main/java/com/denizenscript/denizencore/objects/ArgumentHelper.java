@@ -110,11 +110,12 @@ public class ArgumentHelper {
         }
     }
 
-    private static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = "eE";
-    private static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher(DIGITS);
-    private static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
-    private static AsciiMatcher DOUBLE_SPECIAL_MATCHER = new AsciiMatcher(DOUBLE_CHARS);
-    private static AsciiMatcher PREFIX_MATCHER = new AsciiMatcher(PREFIXES);
+    public static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = "eE";
+    public static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher(DIGITS);
+    public static AsciiMatcher INTEGER_MATCHER = new AsciiMatcher(DIGITS + PREFIXES);
+    public static AsciiMatcher DOUBLE_SPECIAL_MATCHER = new AsciiMatcher(DOUBLE_CHARS);
+    public static AsciiMatcher PREFIX_MATCHER = new AsciiMatcher(PREFIXES);
+    public static AsciiMatcher HEX_MATCHER = new AsciiMatcher("abcdefABCDEF0123456789");
 
     public static boolean matchesDouble(String arg) {
         if (arg.length() == 0) {

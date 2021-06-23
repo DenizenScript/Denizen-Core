@@ -18,6 +18,8 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     //
     // @Regex ^on system time( (\d\d\:\d\d|hourly|minutely|secondly))?$
     //
+    // @Synonyms cron
+    //
     // @Group Core
     //
     // @Triggers when the system time changes to the specified value.

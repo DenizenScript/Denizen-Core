@@ -2303,6 +2303,40 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.number_to_hex>
+        // @returns ElementTag
+        // @group conversion
+        // @description
+        // Encodes base-10 integer number to hexadecimal (base-16) format.
+        // For example input of "15" will return "F".
+        // See also <@link tag ElementTag.hex_to_number>
+        // -->
+        registerTag("number_to_hex", (attribute, object) -> {
+            if (!object.isInt()) {
+                attribute.echoError("Element '" + object + "' is not a valid number!");
+                return null;
+            }
+            return new ElementTag(Long.toHexString(object.asLong()));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.hex_to_number>
+        // @returns ElementTag(Number)
+        // @group conversion
+        // @description
+        // Encodes base-16 hexadecimal value to an integer number.
+        // For example input of "F" will return "15".
+        // See also <@link tag ElementTag.number_to_hex>
+        // -->
+        registerTag("hex_to_number", (attribute, object) -> {
+            if (!ArgumentHelper.HEX_MATCHER.isOnlyMatches(object.element)) {
+                attribute.echoError("Element '" + object + "' is not a valid hexadecimal number!");
+                return null;
+            }
+            return new ElementTag(Long.parseLong(object.element, 16));
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.base64_encode>
         // @returns ElementTag
         // @group conversion
