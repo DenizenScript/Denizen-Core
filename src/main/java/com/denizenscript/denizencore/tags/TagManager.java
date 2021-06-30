@@ -82,7 +82,7 @@ public class TagManager {
             catch (Throwable ex) {
                 Debug.echoError(ex);
             }
-            attribute.echoError("Tag-base '" + attribute.getAttributeWithoutContext(1) + "' returned null.");
+            attribute.echoError("Tag-base '" + attribute.attributes[0].key + "' returned null.");
             return;
         }
         TagRunnable.RootForm handler = event.mainRef.rootFormHandler;

@@ -1363,6 +1363,7 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.format_number[(<format>)]>
         // @returns ElementTag
         // @group element manipulation
+        // @synonyms ElementTag.number_with_commas, ElementTag.thousands_separated
         // @description
         // Returns a number reformatted for easier reading.
         // For example: 1234567 will become 1,234,567.

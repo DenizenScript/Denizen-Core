@@ -44,7 +44,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // @Description
     // Connects to a webpage or API and downloads its contents, to be used via the save argument and corresponding entry tags.
     //
-    // This should almost always be ~waited for.
+    // This should almost always be ~waited for. Refer to <@link language ~waitable>.
     //
     // Note that while this will replace URL spaces to %20, you are responsible for any other necessary URL encoding.
     // You may want to use the <@link tag ElementTag.url_encode> tag for this.
