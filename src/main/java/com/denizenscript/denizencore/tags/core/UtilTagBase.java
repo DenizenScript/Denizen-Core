@@ -437,6 +437,18 @@ public class UtilTagBase {
         }
     }
 
+    // <--[ObjectType]
+    // @name system
+    // @prefix None
+    // @base None
+    // @format
+    // N/A
+    //
+    // @description
+    // "system" is an internal pseudo-ObjectType that is used as a mechanism adjust target for some core mechanisms.
+    //
+    // -->
+
     public static void adjustSystem(Mechanism mechanism) {
 
         // <--[mechanism]
