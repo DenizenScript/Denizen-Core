@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -20,13 +21,12 @@ public class MapTag implements ObjectTag, Adjustable {
     // @prefix map
     // @base ElementTag
     // @format
-    // The identity format for MapTags is each key/value pair, one after the other, separated by a pipe '|' symbol.
-    // The key/value pair is separated by a slash.
-    // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@taco/food|chicken/animal|bob/person|"
-    // A map with zero items in it is simply 'map@'.
+    // The identity format for MapTags is a replica of property syntax - square brackets surrounded a semi-colon separated list of key=value pairs.
+    // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@[taco=food;chicken=animal;bob=person]"
+    // A map with zero items in it is simply 'map@[]'.
     //
-    // If the pipe symbol "|" appears in a key or value, it will be replaced by "&pipe",
-    // a slash "/" will become "&fs", and an ampersand "&" will become "&amp".
+    // If the semicolon symbol ";" appears in a key or value, it will be replaced by "&sc", an equal sign "=" will become "&eq",
+    // a left bracket "[" will become "&lb", a right bracket "]" will become "&rb", and an ampersand "&" will become "&amp".
     // This is a subset of Denizen standard escaping, see <@link language Escaping System>.
     //
     // @description
@@ -41,19 +41,7 @@ public class MapTag implements ObjectTag, Adjustable {
     //
     // -->
 
-    public static AsciiMatcher needsEscpingMatcher = new AsciiMatcher("&|/");
-
-    public static String escapeEntry(String value) {
-        if (!needsEscpingMatcher.containsAnyMatch(value)) {
-            return value;
-        }
-        value = CoreUtilities.replace(value, "&", "&amp");
-        value = CoreUtilities.replace(value, "|", "&pipe");
-        value = CoreUtilities.replace(value, "/", "&fs");
-        return value;
-    }
-
-    public static String unescapeEntry(String value) {
+    public static String unescapeLegacyEntry(String value) {
         if (value.indexOf('&') == -1) {
             return value;
         }
@@ -68,7 +56,6 @@ public class MapTag implements ObjectTag, Adjustable {
         if (string == null) {
             return null;
         }
-        String original = string;
         if (string.startsWith("map@")) {
             string = string.substring("map@".length());
         }
@@ -76,28 +63,42 @@ public class MapTag implements ObjectTag, Adjustable {
         if (string.length() == 0) {
             return result;
         }
-        if (!string.endsWith("|")) {
-            string += "|";
-        }
-        int pipe = string.indexOf('|');
-        int lastPipe = 0;
-        while (pipe != -1) {
-            int slash = string.indexOf('/', lastPipe);
-            if (slash == -1 || slash > pipe) {
-                return null;
+        if (string.endsWith("|")) {
+            int pipe = string.indexOf('|');
+            int lastPipe = 0;
+            while (pipe != -1) {
+                int slash = string.indexOf('/', lastPipe);
+                if (slash == -1 || slash > pipe) {
+                    return null;
+                }
+                String key = string.substring(lastPipe, slash);
+                String value = string.substring(slash + 1, pipe);
+                result.putObject(unescapeLegacyEntry(key), ObjectFetcher.pickObjectFor(unescapeLegacyEntry(value), context));
+                lastPipe = pipe + 1;
+                pipe = string.indexOf('|', lastPipe);
             }
-            String key = string.substring(lastPipe, slash);
-            String value = string.substring(slash + 1, pipe);
-            result.putObject(unescapeEntry(key), ObjectFetcher.pickObjectFor(unescapeEntry(value), context));
-            lastPipe = pipe + 1;
-            pipe = string.indexOf('|', lastPipe);
+            return result;
         }
-        if (!original.startsWith("map@") || (original.length() > 4 && !original.endsWith("|"))) {
-            if (context != CoreUtilities.noDebugContext) {
-                Deprecations.handTypedMapTags.warn(context);
+        boolean hasBrackets = string.startsWith("[") && string.endsWith("]");
+        if (!hasBrackets && string.contains("=")) {
+            string = "[" + string + "]";
+            hasBrackets = true;
+        }
+        if (hasBrackets) {
+            List<String> properties = ObjectFetcher.separateProperties(string);
+            for (int i = 1; i < properties.size(); i++) {
+                List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
+                if (data.size() != 2) {
+                    if (context == null || context.showErrors()) {
+                        Debug.echoError("Invalid map key=value pair string '" + properties.get(i) + "'!");
+                    }
+                    return null;
+                }
+                result.putObject(ObjectFetcher.unescapeProperty(data.get(0)), ObjectFetcher.pickObjectFor(ObjectFetcher.unescapeProperty(data.get(1)), context));
             }
+            return result;
         }
-        return result;
+        return null;
     }
 
     public static MapTag getMapFor(ObjectTag inp, TagContext context) {
@@ -169,11 +170,16 @@ public class MapTag implements ObjectTag, Adjustable {
 
     @Override
     public String identify() {
-        StringBuilder output = new StringBuilder();
-        output.append("map@");
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
-            output.append(escapeEntry(entry.getKey().str)).append("/").append(escapeEntry(entry.getValue().savable())).append("|");
+        if (map.isEmpty()) {
+            return "map@[]";
         }
+        StringBuilder output = new StringBuilder();
+        output.append("map@[");
+        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
+            output.append(PropertyParser.escapePropertyValue(entry.getKey().str)).append("=").append(PropertyParser.escapePropertyValue(entry.getValue().savable())).append(";");
+        }
+        output.setLength(output.length() - 1);
+        output.append(']');
         return output.toString();
     }
 
@@ -316,7 +322,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // returns a copy of the map with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_key' and 'filter_value' definition.
-        // For example: a map of 'a/1|b/2|c/3|d/4|e/5' .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of 'c/3|d/4|e/5'.
+        // For example: a map of [a=1;b=2;c=3;d=4;e=5] .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of [c=3;d=4;e=5].
         // -->
         registerTag("filter_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -346,7 +352,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // returns a copy of the map with all its values updated through the given tag.
         // This requires a fully formed tag as input, making use of the 'parse_key' and 'parse_value' definition.
-        // For example: a map of 'alpha/one|bravo/two' .parse_value_tag[<[parse_value].to_uppercase>] returns a map of 'alpha/ONE|bravo/TWO'.
+        // For example: a map of [alpha=one;bravo=two] .parse_value_tag[<[parse_value].to_uppercase>] returns a map of [alpha=ONE;bravo=TWO].
         // -->
         registerTag("parse_value_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -400,8 +406,8 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns the object value at the specified key.
         // If a list is given as input, returns a list of values.
-        // For example, on a map of "a/1|b/2|c/3|", using ".get[b]" will return "2".
-        // For example, on a map of "a/1|b/2|c/3|", using ".get[b|c]" will return a list of "2|3".
+        // For example, on a map of [a=1;b=2;c=3], using ".get[b]" will return "2".
+        // For example, on a map of [a=1;b=2;c=3], using ".get[b|c]" will return a list of "2|3".
         // -->
         registerTag("get", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -451,7 +457,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns the subset of the map represented by the given keys, ordered based on the input list.
-        // For example, on a map of "a/1|b/2|c/3|", using ".get_subset[b|a]" will return "b/2|a/1|".
+        // For example, on a map of [a=1;b=2;c=3], using ".get_subset[b|a]" will return [b=2;a=1].
         // Keys that aren't present in the original map will be ignored.
         // -->
         registerTag("get_subset", (attribute, object) -> {
@@ -478,8 +484,8 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a copy of the map, with the specified key defaulted to the specified value.
         // If the map does not already have the specified key, this is equivalent to the 'with[key].as[value]' tag.
         // If the map already has the specified key, this will return the original map, unmodified.
-        // For example, on a map of "a/1|b/2|c/3|", using ".default[d].as[4]" will return "a/1|b/2|c/3|d/4|".
-        // For example, on a map of "a/1|b/2|c/3|", using ".default[c].as[4]" will return "a/1|b/2|c/3|".
+        // For example, on a map of [a=1;b=2;c=3], using ".default[d].as[4]" will return [a=1;b=2;c=3;d=4].
+        // For example, on a map of [a=1;b=2;c=3], using ".default[c].as[4]" will return [a=1;b=2;c=3].
         // -->
         registerTag("default", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -538,8 +544,8 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns a copy of the map, with the specified key set to the specified value.
-        // For example, on a map of "a/1|b/2|c/3|", using ".with[d].as[4]" will return "a/1|b/2|c/3|d/4|".
-        // Matching keys will be overridden. For example, on a map of "a/1|b/2|c/3|", using ".with[c].as[4]" will return "a/1|b/2|c/4|".
+        // For example, on a map of [a=1;b=2;c=3], using ".with[d].as[4]" will return [a=1;b=2;c=3;d=4].
+        // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".with[c].as[4]" will return [a=1;b=2;c=4].
         // -->
         registerTag("with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -567,11 +573,11 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns an inverted copy of the map. That is, keys become values and values become keys.
-        // For example, on a map of "a/1|b/2|c/3|", using "invert" will return "1/a|2/b|3/c|".
+        // For example, on a map of [a=1;b=2;c=3], using "invert" will return [1=a;2=b;3=c].
         // All values in the result will be ElementTags.
         // Note that the size of the result is not guaranteed to be the same as the input (as duplicate keys are not allowed, but duplicate values are).
         // In the case of duplicate new-keys, the last instance of the new-key will be preserved.
-        // For example, on a map of "a/1|b/2|c/2|", using "invert" will return "1/a|2/c|".
+        // For example, on a map of [a=1;b=2;c=2], using "invert" will return [1=a;2=c].
         // -->
         registerTag("invert", (attribute, object) -> {
             MapTag result = new MapTag();
@@ -604,7 +610,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns a copy of the map with the specified key(s) excluded.
-        // For example, on a map of "a/1|b/2|c/3|", using ".exclude[b]" will return "a/1|c/3|".
+        // For example, on a map of [a=1;b=2;c=3], using ".exclude[b]" will return [a=1;c=3].
         // -->
         registerTag("exclude", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -623,8 +629,8 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns MapTag
         // @description
         // Returns a copy of the map with the specified map's contents copied in.
-        // For example, on a map of "a/1|b/2|c/3|", using ".include[d/4|e/5|]" will return "a/1|b/2|c/3|d/4|e/5|".
-        // Matching keys will be overridden. For example, on a map of "a/1|b/2|c/3|", using ".include[b/4|c/5|]" will return "a/1|b/4|c/5|".
+        // For example, on a map of [a=1;b=2;c=3], using ".include[d=4;e=5]" will return [a=1;b=2;c=3;d=4;e=5].
+        // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".include[b=4;c=5]" will return [a=1;b=4;c=5].
         // -->
         registerTag("include", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
@@ -661,7 +667,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns ListTag
         // @description
         // Returns a list of all keys in this map.
-        // For example, on a map of "a/1|b/2|c/3|", using "keys" will return "a|b|c|".
+        // For example, on a map of [a=1;b=2;c=3], using "keys" will return "a|b|c|".
         // -->
         registerTag("keys", (attribute, object) -> {
             return object.keys();
@@ -672,7 +678,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @returns ListTag
         // @description
         // Returns a list of all values in this map.
-        // For example, on a map of "a/1|b/2|c/3|", using "values" will return "1|2|3|".
+        // For example, on a map of [a=1;b=2;c=3], using "values" will return "1|2|3|".
         // -->
         registerTag("values", (attribute, object) -> {
             ListTag result = new ListTag();

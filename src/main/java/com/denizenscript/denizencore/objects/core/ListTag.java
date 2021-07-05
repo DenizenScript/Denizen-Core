@@ -1711,6 +1711,9 @@ public class ListTag implements List<String>, ObjectTag {
                 if (tag != null) {
                     obj = CoreUtilities.autoAttribTyped(obj, new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context));
                 }
+                if (obj == null) {
+                    continue;
+                }
                 String str = obj.toString();
                 if (ArgumentHelper.matchesDouble(str)) {
                     BigDecimal val = new ElementTag(str).asBigDecimal();
