@@ -159,12 +159,37 @@ public class PropertyParser {
 
     public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&;[]");
 
+    public static boolean isConsistentBrackets(String str, int start) {
+        int brackets = 0;
+        for (int i = start; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '[') {
+                brackets++;
+            }
+            else if (c == ']') {
+                brackets--;
+                if (brackets < 0) {
+                    return false;
+                }
+            }
+        }
+        return brackets == 0;
+    }
+
     public static String escapePropertyValue(String input) {
         if (needsEscapingMatcher.containsAnyMatch(input)) {
+            int openBracket = input.indexOf('[');
+            if (openBracket != -1) {
+                int closeBracket = input.lastIndexOf(']');
+                if (closeBracket > openBracket && isConsistentBrackets(input, openBracket)) {
+                    return escapePropertyValue(input.substring(0, openBracket)) + input.substring(openBracket, closeBracket + 1) + escapePropertyValue(input.substring(closeBracket + 1));
+                }
+            }
             input = CoreUtilities.replace(input, "&", "&amp");
             input = CoreUtilities.replace(input, ";", "&sc");
             input = CoreUtilities.replace(input, "[", "&lb");
             input = CoreUtilities.replace(input, "]", "&rb");
+            input = CoreUtilities.replace(input, "=", "&eq");
         }
         return input;
     }

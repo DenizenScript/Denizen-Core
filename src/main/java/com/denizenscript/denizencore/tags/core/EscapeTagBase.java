@@ -57,6 +57,9 @@ public class EscapeTagBase {
     // / = &fs
     // § = &ss
     // # = &ns
+    // = = &eq
+    // { = &lc
+    // } = &rc
     //
     // Also, you can input a non-breaking space via &sp
     //
@@ -64,7 +67,7 @@ public class EscapeTagBase {
     //
     // -->
 
-    public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&|<>\n;[]:@.\\'\"!/§#");
+    public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&|<>\n;[]:@.\\'\"!/§#={}");
 
     /**
      * A quick function to escape book Strings.
@@ -98,6 +101,9 @@ public class EscapeTagBase {
         input = CoreUtilities.replace(input, "/", "&fs");
         input = CoreUtilities.replace(input, "§", "&ss");
         input = CoreUtilities.replace(input, "#", "&ns");
+        input = CoreUtilities.replace(input, "=", "&eq");
+        input = CoreUtilities.replace(input, "{", "&lc");
+        input = CoreUtilities.replace(input, "}", "&rc");
         return input;
     }
 
@@ -132,6 +138,9 @@ public class EscapeTagBase {
         input = CoreUtilities.replace(input, "&fs", "/");
         input = CoreUtilities.replace(input, "&ss", "§");
         input = CoreUtilities.replace(input, "&ns", "#");
+        input = CoreUtilities.replace(input, "&eq", "=");
+        input = CoreUtilities.replace(input, "&lc", "{");
+        input = CoreUtilities.replace(input, "&rc", "}");
         input = CoreUtilities.replace(input, "&sp", CoreUtilities.NBSP);
         input = CoreUtilities.replace(input, "&amp", "&");
         return input;

@@ -201,10 +201,18 @@ public class ObjectFetcher {
 
     public static String unescapeProperty(String description) {
         if (description.indexOf('&') != -1) {
-            description = CoreUtilities.replace(description, "&amp", "&");
+            int openBracket = description.indexOf('[');
+            if (openBracket != -1) {
+                int closeBracket = description.indexOf(']');
+                if (closeBracket > openBracket) {
+                    return unescapeProperty(description.substring(0, openBracket)) + description.substring(openBracket, closeBracket + 1) + unescapeProperty(description.substring(closeBracket + 1));
+                }
+            }
             description = CoreUtilities.replace(description, "&sc", ";");
             description = CoreUtilities.replace(description, "&lb", "[");
             description = CoreUtilities.replace(description, "&rb", "]");
+            description = CoreUtilities.replace(description, "&eq", "=");
+            description = CoreUtilities.replace(description, "&amp", "&");
         }
         return description;
     }
