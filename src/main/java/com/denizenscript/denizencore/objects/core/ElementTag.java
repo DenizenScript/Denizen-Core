@@ -351,6 +351,9 @@ public class ElementTag implements ObjectTag {
 
     @Override
     public String savable() {
+        if (element.indexOf('@') == -1) {
+            return element;
+        }
         return "el@" + element;
     }
 
