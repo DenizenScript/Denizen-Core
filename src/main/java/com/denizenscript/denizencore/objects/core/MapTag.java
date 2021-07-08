@@ -90,7 +90,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
                 if (data.size() != 2) {
                     if (context == null || context.showErrors()) {
-                        Debug.echoError("Invalid map key=value pair string '" + properties.get(i) + "'!");
+                        Debug.echoError("Invalid map key=value pair string '" + properties.get(i) + "' for map input '" + string + "'!");
                     }
                     return null;
                 }

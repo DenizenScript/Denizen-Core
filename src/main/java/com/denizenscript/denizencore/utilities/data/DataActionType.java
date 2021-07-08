@@ -33,9 +33,10 @@ public enum DataActionType {
     // In some commands, specifying no action or input value will automatically set the key's value to 'true'.
     // Setting a '<key>:<value>' without an action will set the key to the exact value. Be careful to not input a list like this, use 'split to new' instead.
     //
-    // Note that the <key> input may take an index input as well.
+    // Note that the <key> input may take an index input as well, for example "mykey[3]:value".
+    // This also works with most actions.
     // That is, for example: "mykey[3]:--" will decrement the third item in the list at 'mykey'.
-    // This syntax may also be used to remove the entry at a specified index.
+    // This syntax may also be used to remove the entry at a specified index, for example "mykey[3]:<-"
     //
     // -->
 
