@@ -85,6 +85,9 @@ public class MapTag implements ObjectTag, Adjustable {
             hasBrackets = true;
         }
         if (hasBrackets) {
+            if (string.equals("[]")) {
+                return result;
+            }
             List<String> properties = ObjectFetcher.separateProperties(string);
             for (int i = 1; i < properties.size(); i++) {
                 List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
