@@ -109,7 +109,11 @@ public class ForeachCommand extends BracedCommand {
             }
             else if (!handled) {
                 if (arg.object instanceof MapTag || arg.object.toString().startsWith("map@")) {
-                    scriptEntry.addObject("map", MapTag.getMapFor(arg.object, scriptEntry.context));
+                    MapTag map = MapTag.getMapFor(arg.object, scriptEntry.context);
+                    if (map == null) {
+                        throw new InvalidArgumentsException("Invalid MapTag specified!");
+                    }
+                    scriptEntry.addObject("map", map);
                 }
                 else {
                     scriptEntry.addObject("list", arg.object instanceof ListTag ? (ListTag) arg.object : ListTag.valueOf(arg.getRawValue(), scriptEntry.getContext()));
