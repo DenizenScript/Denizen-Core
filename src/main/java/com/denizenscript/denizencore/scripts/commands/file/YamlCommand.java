@@ -550,11 +550,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             Set(yaml, index, keyStr, value);
                             break;
                         case INSERT: {
-                            List<String> list = yaml.getStringList(keyStr);
+                            List<Object> list = yaml.getList(keyStr);
                             if (list == null) {
                                 list = new ArrayList<>();
                             }
-                            list.add(valueStr);
+                            list.add(autoConvertObject(value));
                             yaml.set(keyStr, list);
                             break;
                         }
@@ -589,15 +589,17 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             break;
                         }
                         case SPLIT_NEW: {
-                            yaml.set(keyStr, new ArrayList<>(ListTag.valueOf(valueStr, scriptEntry.getContext())));
+                            Set(yaml, index, keyStr, value.asType(ListTag.class, scriptEntry.getContext()));
                             break;
                         }
                         case SPLIT: {
-                            List<String> list = yaml.getStringList(keyStr);
+                            List<Object> list = yaml.getList(keyStr);
                             if (list == null) {
                                 list = new ArrayList<>();
                             }
-                            list.addAll(ListTag.valueOf(valueStr, scriptEntry.getContext()));
+                            for (ObjectTag obj : value.asType(ListTag.class, scriptEntry.getContext()).objectForms) {
+                                list.add(autoConvertObject(obj));
+                            }
                             yaml.set(keyStr, list);
                             break;
                         }
@@ -667,19 +669,32 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public void Set(YamlConfiguration yaml, int index, String key, Object value) {
-        if (index == -1) {
-            if (value instanceof MapTag || ((value instanceof ElementTag || value instanceof String) &&  value.toString().startsWith("map@"))) {
-                MapTag map = value instanceof MapTag ? (MapTag) value : MapTag.valueOf(value.toString(), CoreUtilities.noDebugContext);
+    public Object autoConvertObject(Object value) {
+        if (value instanceof ElementTag || value instanceof String) {
+            String val = value.toString();
+            if (val.startsWith("map@")) {
+                MapTag map = MapTag.valueOf(val, CoreUtilities.noDebugContext);
                 if (map != null) {
-                    yaml.set(key, CoreUtilities.objectTagToJavaForm(map, true));
-                    return;
+                    value = map;
                 }
             }
-            yaml.set(key, value.toString());
+            else if (val.startsWith("li@")) {
+                value = ListTag.valueOf(val, CoreUtilities.noDebugContext);
+            }
+        }
+        if (value instanceof ListTag || value instanceof MapTag) {
+            return CoreUtilities.objectTagToJavaForm((ObjectTag) value, true);
+        }
+        return value.toString();
+    }
+
+    public void Set(YamlConfiguration yaml, int index, String key, Object value) {
+        value = autoConvertObject(value);
+        if (index == -1) {
+            yaml.set(key, value);
         }
         else {
-            List<String> list = yaml.getStringList(key);
+            List<Object> list = yaml.getList(key);
             if (list == null) {
                 list = new ArrayList<>();
             }
@@ -687,10 +702,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                 index = 0;
             }
             if (index >= list.size()) {
-                list.add(value.toString());
+                list.add(value);
             }
             else {
-                list.set(index, value.toString());
+                list.set(index, value);
             }
             yaml.set(key, list);
         }
