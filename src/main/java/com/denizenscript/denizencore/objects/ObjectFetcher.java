@@ -199,15 +199,8 @@ public class ObjectFetcher {
         return getObjectFromWithProperties((ObjectType<T>) objectsByClass.get(dClass), value, context);
     }
 
-    public static String unescapeProperty(String description) {
+    public static String partialUnescape(String description) {
         if (description.indexOf('&') != -1) {
-            int openBracket = description.indexOf('[');
-            if (openBracket != -1) {
-                int closeBracket = description.indexOf(']');
-                if (closeBracket > openBracket) {
-                    return unescapeProperty(description.substring(0, openBracket)) + description.substring(openBracket, closeBracket + 1) + unescapeProperty(description.substring(closeBracket + 1));
-                }
-            }
             description = CoreUtilities.replace(description, "&sc", ";");
             description = CoreUtilities.replace(description, "&lb", "[");
             description = CoreUtilities.replace(description, "&rb", "]");
@@ -215,6 +208,31 @@ public class ObjectFetcher {
             description = CoreUtilities.replace(description, "&amp", "&");
         }
         return description;
+    }
+
+    public static String unescapeProperty(String description) {
+        if (description.indexOf('&') == -1) {
+            return description;
+        }
+        int openBracket = description.indexOf('[');
+        if (openBracket == -1) {
+            return partialUnescape(description);
+        }
+        StringBuilder result = new StringBuilder(description.length());
+        int start = 0;
+        while (openBracket != -1) {
+            result.append(partialUnescape(description.substring(start, openBracket)));
+            int closeBracket = description.indexOf(']', openBracket);
+            if (closeBracket == -1) {
+                result.append(partialUnescape(description.substring(openBracket)));
+                return result.toString();
+            }
+            result.append(description, openBracket, closeBracket + 1);
+            start = closeBracket + 1;
+            openBracket = description.indexOf('[', start);
+        }
+        result.append(partialUnescape(description.substring(start)));
+        return result.toString();
     }
 
     public static void applyPropertySet(Adjustable object, TagContext context, List<String> properties) {

@@ -275,7 +275,7 @@ public class Deprecations {
 
     // In Bukkit impl, Added 2021/03/27, deprecate officially by 2024.
     public static Warning locationFindEntities = new FutureWarning("The tag 'LocationTag.find.entities.within' and 'blocks' tags are replaced by the 'find_entities' and 'find_blocks' versions. They are mostly compatible, but now have advanced matcher options.");
-    public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item' that use advanced matcher logic.");
+    public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find', 'exclude' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item', 'exclude_item' that use advanced matcher logic.");
     public static Warning takeRawItems = new FutureWarning("The 'take' command's ability to remove raw items without any command prefix, and the 'material' and 'scriptname' options are deprecated: use the 'item:<matcher>' option.");
 
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
