@@ -157,7 +157,7 @@ public class PropertyParser {
         }
     }
 
-    public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&;[]");
+    public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&;[]=");
 
     public static boolean isConsistentBrackets(String str, int start) {
         int brackets = 0;

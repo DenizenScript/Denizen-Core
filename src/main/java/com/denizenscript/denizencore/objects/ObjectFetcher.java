@@ -218,18 +218,30 @@ public class ObjectFetcher {
         if (openBracket == -1) {
             return partialUnescape(description);
         }
-        StringBuilder result = new StringBuilder(description.length());
+        int length = description.length();
+        StringBuilder result = new StringBuilder(length);
         int start = 0;
-        while (openBracket != -1) {
-            result.append(partialUnescape(description.substring(start, openBracket)));
-            int closeBracket = description.indexOf(']', openBracket);
-            if (closeBracket == -1) {
-                result.append(partialUnescape(description.substring(openBracket)));
-                return result.toString();
+        int brackets = 0;
+        for (int i = openBracket; i < length; i++) {
+            char c = description.charAt(i);
+            if (c == '[') {
+                brackets++;
+                if (brackets == 1) {
+                    result.append(partialUnescape(description.substring(start, i)));
+                    start = i;
+                }
             }
-            result.append(description, openBracket, closeBracket + 1);
-            start = closeBracket + 1;
-            openBracket = description.indexOf('[', start);
+            else if (c == ']') {
+                brackets--;
+                if (brackets == 0) {
+                    result.append(description, start, i);
+                    start = i;
+                    i = description.indexOf('[', start) - 1;
+                    if (i < 0) {
+                        break;
+                    }
+                }
+            }
         }
         result.append(partialUnescape(description.substring(start)));
         return result.toString();
