@@ -340,34 +340,46 @@ public class Attribute {
     // @description
     // Tag fallbacks (AKA "tag alternatives") are a system designed to allow scripters to automatically handle tag errors.
     //
+    // Fallbacks are implemented as special "magic tags" that look like any other tag-part, but override the error handler. These are "if_null" and "exists".
+    //
     // A tag without a fallback might look like "<player.name>".
     // This tag works fine as long as there's a linked player, but what if a player isn't always available?
     // Normally, this situation would display an error in the console debug logs, and return plaintext "player.name" in the script.
     // A fallback can help us handle the problem more gracefully.
-    // That same tag with a fallback would look like "<player.name||Steve>".
+    // That same tag with a fallback would look like "<player.name.if_null[Steve]>".
     // Now, when there isn't a player available, there will not be an error, and the tag will simply return "Steve".
     //
-    // This format is the same for basically all tags. "<main.tag.here||Fallback here>".
-    // For another example, "<player.flag[myflag]||0>" returns either the value of the flag, or "0" if the flag is not present (or if there's no player).
+    // This format is the same for basically all tags. "<main.tag.here.if_null[Fallback here]>".
+    // For another example, "<player.flag[myflag].if_null[0]>" returns either the value of the flag, or "0" if the flag is not present (or if there's no player).
     //
-    // This is particularly useful for things like checking whether an object exists / is valid.
+    // The "exists" fallback-tag is available for checking whether an object exists and is valid.
     // What if we want to check if there even is a linked player? We don't have a "<has_player>" tag to do that, so what can we do?
     // <code>
-    // - if <player||null> == null:
+    // - if <player.exists>:
     // </code>
     // The above example demonstrates using a fallback to check if a player is valid.
     // The if block will run only if there is not a player valid (you might, for example, place the "stop" command inside).
     //
-    // We use the word "null" in the above example. This is a common programming term that means "no object is present".
-    // In this case, that term isn't actually a functionality of Denizen, it's just a word we choose for clarity.
-    // You could just as easily do "- if <player||nothing> == nothing:", or for that matter "- if <player||cheese> == cheese:".
+    // "Exists" is useful when you *only* need a check, however you often need to grab a value and verify it after.
+    // Consider the following example, often found in command scripts:
+    // <code>
+    // - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    // - if <[target]> == null:
+    //     - narrate "<&[error]>Invalid player!"
+    //     - stop
+    // - narrate "<&[base]>You chose <&[emphasis]><[target].name><&[base]>!"
+    // </code>
+    //
+    // We use the word "null" in the above example, as well as in the tag name itself. This is a common programming term that means "no object is present".
+    // "if_null" is the actual tag name, however the input value of "null" isn't actually a functionality of Denizen, it's just a word we choose for clarity.
+    // You could just as easily do "- if <player.if_null[nothing]> == nothing:", or for that matter "- if <player.if_null[cheese]> == cheese:".
     // A player object takes the form "p@uuid", so it will therefore never exactly match any simple word, so there's no coincidental match edge-case to worry about.
     // Note that this won't work so perfect for things like a user input or fully dynamic value,
-    // so in those cases you may want to use a more specialized check. For example, with flags, the "has_flag" tag is available for this purpose.
+    // so in those cases you may want to use the "exists" tag explicitly to guarantee no potential conflict.
     //
     // Fallbacks can be tags themselves. So, for example, if we want either a custom flag-based display name, or if not available, the player's base name,
-    // we can do: "<player.flag[display_name]||<player.name>>".
-    // You can as well chain these, though that starts to get ugly pretty fast: "<player.flag[good_name]||<player.flag[bad_name]||<player.name>>>".
+    // we can do: "<player.flag[display_name].if_null[<player.name>]>".
+    // You can as well chain these: "<player.flag[good_name].if_null[<player.flag[bad_name].if_null[<player.name>]>]>".
     //
     // Note that fallbacks will *hide errors*. Generally, the only errors you should ever hide are ones you're expecting that are fine.
     // Don't use a fallback on a "<player.name>" tag, for example, if there should always be a player present when the script runs.
@@ -375,13 +387,8 @@ public class Attribute {
     // If you carelessly apply fallbacks to all tags, you might end up not realizing there's a problem in your script until it's affecting real players.
     // You want to solve errors in testing, not ten months later when a player mentions to you "that shop NPC let me buy things even when I had $0"!
     //
-    // As of Denizen 1.2.0, there are also "fallback tags" like <@link tag ObjectTag.if_null> and <@link tag ObjectTag.exists>.
-    // These largely work the same as fallbacks, but using standard tag syntax rather than the unique dedicated syntax of pre-existing fallbacks.
-    // To check if an object exists with this system, if you can do for example:
-    // <code>
-    // - if <player.exists>:
-    // </code>
-    // For the other earlier example, you can instead do: "<player.flag[good_name].if_null[<player.flag[bad_name]>].if_null[<player.name>]>"
+    // Prior to Denizen 1.2.0, fallbacks exclusively worked with a special "||" syntax, like "- if <player||null> == null:"
+    // This syntax is still fully supported at time of writing, however the newer tag-based format is considered clearer and easier to learn.
     //
     // -->
     public static final HashMap<String, TagRunnable.BaseInterface> fallbackTags = new HashMap<>();
