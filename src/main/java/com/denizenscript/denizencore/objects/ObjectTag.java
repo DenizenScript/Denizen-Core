@@ -97,7 +97,7 @@ public interface ObjectTag {
     // it could be any of them, there's often hundreds of creepers spawned somewhere in the world at any time.
     // Objects like items and materials are always generic. There is no unique identifier for any item, there is only the description.
     // An item usually looks something like 'i@stick'.
-    // ItemTag objects can include more detail, like 'i@stick[lore=hi;display_name=My Stick;enchantments=sharpness,5]'...
+    // ItemTag objects can include more detail, like 'i@stick[lore=hi;display_name=My Stick;enchantments=[sharpness=5]]'...
     // but this is still just a description, and there could still be many items out there that match this description.
     //
     // The consequences of this mostly relate to:

@@ -273,6 +273,10 @@ public class Deprecations {
     // Added 2021/04/14, deprecate officially by 2023.
     public static Warning locallyArgument = new FutureWarning("The 'locally' argument in run/inject is deprecated: just specify the script name, or <script>.");
 
+    // In Bukkit impl, Added 2021/07/26, deprecate officially by 2023.
+    public static Warning itemEnchantmentsLegacy = new FutureWarning("The tag 'ItemTag.enchantments' is deprecated: use enchantments_map, or enchantment_types.");
+    public static Warning echantmentTagUpdate = new FutureWarning("Several legacy enchantment-related tags are deprecated in favor of using EnchantmentTag.");
+
     // In Bukkit impl, Added 2021/03/27, deprecate officially by 2024.
     public static Warning locationFindEntities = new FutureWarning("The tag 'LocationTag.find.entities.within' and 'blocks' tags are replaced by the 'find_entities' and 'find_blocks' versions. They are mostly compatible, but now have advanced matcher options.");
     public static Warning inventoryNonMatcherTags = new FutureWarning("The 'InventoryTag' tags 'contains', 'quantity', 'find', 'exclude' with raw items are deprecated and replaced by 'contains_item', 'quantity_item', 'find_item', 'exclude_item' that use advanced matcher logic.");
