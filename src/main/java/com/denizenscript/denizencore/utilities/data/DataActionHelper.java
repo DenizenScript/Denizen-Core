@@ -66,7 +66,7 @@ public class DataActionHelper {
             }
             return toReturn;
         }
-        toReturn.inputValue = ObjectFetcher.pickObjectFor(split.get(2), context);
+        toReturn.inputValue = new ElementTag(split.get(2));
         switch (action) {
             case "->":
                 toReturn.type = DataActionType.INSERT;
