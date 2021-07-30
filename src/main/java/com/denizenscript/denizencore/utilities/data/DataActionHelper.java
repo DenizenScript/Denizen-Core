@@ -69,6 +69,7 @@ public class DataActionHelper {
         toReturn.inputValue = new ElementTag(split.get(2));
         switch (action) {
             case "->":
+                toReturn.inputValue = ObjectFetcher.pickObjectFor(split.get(2), context);
                 toReturn.type = DataActionType.INSERT;
                 break;
             case "<-":
