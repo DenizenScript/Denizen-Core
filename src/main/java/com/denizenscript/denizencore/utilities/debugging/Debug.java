@@ -86,6 +86,10 @@ public class Debug {
         DenizenCore.getImplementation().debugMessage(message);
     }
 
+    public static void log(String caller, String message) {
+        DenizenCore.getImplementation().debugMessage(caller, message);
+    }
+
     public static void echoApproval(String message) {
         DenizenCore.getImplementation().debugApproval(message);
     }

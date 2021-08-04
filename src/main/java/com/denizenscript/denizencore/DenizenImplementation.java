@@ -37,6 +37,11 @@ public interface DenizenImplementation {
     void debugMessage(String message);
 
     /**
+     * Output a debug message to console.
+     */
+    void debugMessage(String caller, String message);
+
+    /**
      * Output an exception to console.
      */
     void debugException(Throwable ex);
