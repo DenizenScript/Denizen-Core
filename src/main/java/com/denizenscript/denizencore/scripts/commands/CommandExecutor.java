@@ -136,7 +136,7 @@ public class CommandExecutor {
             currentQueue = null;
             return false;
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             Debug.echoError(scriptEntry.getResidingQueue(), e);
             Debug.log("(Attempted: " + scriptEntry.toString() + ")");
