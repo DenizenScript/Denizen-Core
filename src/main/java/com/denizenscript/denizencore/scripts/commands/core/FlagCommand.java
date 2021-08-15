@@ -18,6 +18,8 @@ import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import java.util.function.Consumer;
+
 public class FlagCommand extends AbstractCommand {
 
     public FlagCommand() {
@@ -138,6 +140,18 @@ public class FlagCommand extends AbstractCommand {
     // Use to modify a specific index in a list flag.
     // - flag server myflag[3]:HelloWorld
     // -->
+
+    @Override
+    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
+        if (arg.contains(":")) {
+            return;
+        }
+        for (String flagName : DenizenCore.getImplementation().getServerFlags().listAllFlags()) {
+            if (!flagName.startsWith("__")) {
+                addOne.accept(flagName);
+            }
+        }
+    }
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
