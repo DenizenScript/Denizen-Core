@@ -145,6 +145,7 @@ public class ReflectionHelper {
         }
         Field f = getFields(clazz).get(field);
         if (f == null) {
+            Debug.echoError("Create get final setter for unknown field '" + field + "' (for class '" + clazz.getName() + "')");
             return null;
         }
         int mod = f.getModifiers();
@@ -153,8 +154,27 @@ public class ReflectionHelper {
                 validateUnsafe();
                 boolean isStatic = Modifier.isStatic(mod);
                 long offset = (long) (isStatic ? UNSAFE_STATIC_FIELD_OFFSET.invoke(f) : UNSAFE_FIELD_OFFSET.invoke(f));
-                result = isStatic ? MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 0, clazz, offset)
-                        : MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 1, offset);
+                MethodHandle method = UNSAFE_PUT_OBJECT;
+                if (f.getType().isPrimitive()) {
+                    if (f.getType() == float.class) {
+                        method = UNSAFE_PUT_FLOAT;
+                    }
+                    else if (f.getType() == double.class) {
+                        method = UNSAFE_PUT_DOUBLE;
+                    }
+                    else if (f.getType() == int.class) {
+                        method = UNSAFE_PUT_INT;
+                    }
+                    else if (f.getType() == long.class) {
+                        method = UNSAFE_PUT_LONG;
+                    }
+                    else {
+                        Debug.echoError("Cannot create a setter for primitive type '" + f.getType().getName() + "'");
+                        return null;
+                    }
+                }
+                result = isStatic ? MethodHandles.insertArguments(method, 0, clazz, offset)
+                        : MethodHandles.insertArguments(method, 1, offset);
             }
             else {
                 if (Modifier.isFinal(mod)) {
@@ -185,6 +205,10 @@ public class ReflectionHelper {
             UNSAFE_STATIC_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", Field.class).bindTo(UNSAFE);
             UNSAFE_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", Field.class).bindTo(UNSAFE);
             UNSAFE_PUT_OBJECT = getMethodHandle(UNSAFE.getClass(), "putObject", Object.class, long.class, Object.class).bindTo(UNSAFE);
+            UNSAFE_PUT_FLOAT = getMethodHandle(UNSAFE.getClass(), "putFloat", Object.class, long.class, float.class).bindTo(UNSAFE);
+            UNSAFE_PUT_DOUBLE = getMethodHandle(UNSAFE.getClass(), "putDouble", Object.class, long.class, double.class).bindTo(UNSAFE);
+            UNSAFE_PUT_INT = getMethodHandle(UNSAFE.getClass(), "putInt", Object.class, long.class, int.class).bindTo(UNSAFE);
+            UNSAFE_PUT_LONG = getMethodHandle(UNSAFE.getClass(), "putLong", Object.class, long.class, long.class).bindTo(UNSAFE);
         }
     }
 
@@ -203,7 +227,7 @@ public class ReflectionHelper {
 
     static {
         giveReflectiveAccess(Field.class, ReflectionHelper.class);
-        MODIFIERS_FIELD = ((CheckingFieldMap) getFields(Field.class)).getNoCheck("modifiers");
+        MODIFIERS_FIELD = getFields(Field.class).getNoCheck("modifiers");
     }
 
     private static Method ADD_OPENS;
@@ -211,7 +235,5 @@ public class ReflectionHelper {
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
     private static Object UNSAFE;
-    private static MethodHandle UNSAFE_FIELD_OFFSET;
-    private static MethodHandle UNSAFE_PUT_OBJECT;
-    private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
+    private static MethodHandle UNSAFE_FIELD_OFFSET, UNSAFE_PUT_OBJECT, UNSAFE_PUT_FLOAT, UNSAFE_PUT_DOUBLE, UNSAFE_PUT_INT, UNSAFE_PUT_LONG, UNSAFE_STATIC_FIELD_OFFSET;
 }
