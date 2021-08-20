@@ -168,6 +168,9 @@ public class ReflectionHelper {
                     else if (f.getType() == long.class) {
                         method = UNSAFE_PUT_LONG;
                     }
+                    else if (f.getType() == boolean.class) {
+                        method = UNSAFE_PUT_BOOL;
+                    }
                     else {
                         Debug.echoError("Cannot create a setter for primitive type '" + f.getType().getName() + "'");
                         return null;
@@ -209,6 +212,7 @@ public class ReflectionHelper {
             UNSAFE_PUT_DOUBLE = getMethodHandle(UNSAFE.getClass(), "putDouble", Object.class, long.class, double.class).bindTo(UNSAFE);
             UNSAFE_PUT_INT = getMethodHandle(UNSAFE.getClass(), "putInt", Object.class, long.class, int.class).bindTo(UNSAFE);
             UNSAFE_PUT_LONG = getMethodHandle(UNSAFE.getClass(), "putLong", Object.class, long.class, long.class).bindTo(UNSAFE);
+            UNSAFE_PUT_BOOL = getMethodHandle(UNSAFE.getClass(), "putBoolean", Object.class, long.class, boolean.class).bindTo(UNSAFE);
         }
     }
 
@@ -235,5 +239,5 @@ public class ReflectionHelper {
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
     private static Object UNSAFE;
-    private static MethodHandle UNSAFE_FIELD_OFFSET, UNSAFE_PUT_OBJECT, UNSAFE_PUT_FLOAT, UNSAFE_PUT_DOUBLE, UNSAFE_PUT_INT, UNSAFE_PUT_LONG, UNSAFE_STATIC_FIELD_OFFSET;
+    private static MethodHandle UNSAFE_FIELD_OFFSET, UNSAFE_PUT_OBJECT, UNSAFE_PUT_FLOAT, UNSAFE_PUT_DOUBLE, UNSAFE_PUT_INT, UNSAFE_PUT_LONG, UNSAFE_PUT_BOOL, UNSAFE_STATIC_FIELD_OFFSET;
 }
