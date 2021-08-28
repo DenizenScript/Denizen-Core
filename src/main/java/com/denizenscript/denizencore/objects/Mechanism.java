@@ -10,6 +10,7 @@ public class Mechanism {
     private boolean fulfilled;
     private String raw_mechanism;
     public ObjectTag value;
+    public ObjectTag adjusting;
 
     public TagContext context;
 
@@ -64,17 +65,19 @@ public class Mechanism {
     }
 
     public String forMechanismText() {
-        return "For input to mechanism '" + raw_mechanism + "'"
-                + (value == null ? "" : " with value '" + value.toString() + "'")
-                + ": ";
+        String text = " <LR>For mechanism '<A>" + raw_mechanism + "<LR>'" + (value == null ? "" : " with value '<A>" + value.toString() + "<LR>'");
+        if (adjusting == null) {
+            return text;
+        }
+        return text + ", while " + (isProperty ? "applying properties to" : "adjusting") + " object '<A>" + adjusting.debuggable() + "<LR>'";
     }
 
     public boolean requireBoolean() {
-        return requireBoolean(forMechanismText() + "Invalid boolean. Must specify TRUE or FALSE.");
+        return requireBoolean("Invalid boolean. Must specify TRUE or FALSE.");
     }
 
     public boolean requireDouble() {
-        return requireDouble(forMechanismText() + "Invalid decimal number specified.");
+        return requireDouble("Invalid decimal number specified.");
     }
 
     public boolean requireEnum(boolean allowInt, Enum<?>... values) {
@@ -82,11 +85,11 @@ public class Mechanism {
     }
 
     public boolean requireFloat() {
-        return requireFloat(forMechanismText() + "Invalid decimal number specified.");
+        return requireFloat("Invalid decimal number specified.");
     }
 
     public boolean requireInteger() {
-        return requireInteger(forMechanismText() + "Invalid integer number specified.");
+        return requireInteger("Invalid integer number specified.");
     }
 
     public <T extends ObjectTag> boolean requireObject(Class<T> type) {
@@ -126,7 +129,7 @@ public class Mechanism {
             }
         }
         if (error == null) {
-            echoError(forMechanismText() + "Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
+            echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
                     + " Must specify a valid name" + (allowInt ? " or number" : "") + ".");
         }
         else {
@@ -171,7 +174,7 @@ public class Mechanism {
 
     public void echoError(String error) {
         // TODO: Consider special cases of whether object properties with debug off should even show errors
-        Debug.echoError(context, error);
+        Debug.echoError(context, forMechanismText(), error);
     }
 
     public void reportInvalid() {

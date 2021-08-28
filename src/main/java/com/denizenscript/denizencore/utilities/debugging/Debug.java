@@ -31,47 +31,62 @@ public class Debug {
     }
 
     public static void echoError(String error) {
-        DenizenCore.getImplementation().debugError(error);
+        DenizenCore.getImplementation().debugError((String) null, error);
     }
 
     public static void echoError(TagContext context, String error) {
+        echoError(context, null, error);
+    }
+
+    public static void echoError(TagContext context, String addedContext, String error) {
         if (context != null && context.entry != null) {
-            echoError(context.entry, error);
+            echoError(context.entry, addedContext, error);
         }
         else if (context != null && context.script != null) {
-            echoError(context.script.getContainer(), error);
+            echoError(context.script.getContainer(), addedContext, error);
         }
         else {
-            DenizenCore.getImplementation().debugError(error);
+            DenizenCore.getImplementation().debugError(addedContext, error);
         }
     }
 
     public static void echoError(ScriptContainer script, String error) {
+        echoError(script, null, error);
+    }
+
+    public static void echoError(ScriptContainer script, String addedContext, String error) {
+        if (script != null) {
+            addedContext = " <LR>In script '<A>" + script.getName() + "<LR>'" + (addedContext == null ? "" : addedContext);
+        }
         if (script == null) {
-            DenizenCore.getImplementation().debugError(error);
+            DenizenCore.getImplementation().debugError(addedContext, error);
         }
         else {
-            DenizenCore.getImplementation().debugError("<R>In script '<A>" + script.getName() + "<R>' <W>: " + error);
+            DenizenCore.getImplementation().debugError(addedContext, error);
         }
     }
 
     public static void echoError(ScriptEntry entry, String error) {
+        echoError(entry, null, error);
+    }
+
+    public static void echoError(ScriptEntry entry, String addedContext, String error) {
         if (entry == null) {
-            DenizenCore.getImplementation().debugError(error);
+            DenizenCore.getImplementation().debugError(addedContext, error);
         }
         else if (entry.getResidingQueue() == null) {
             if (entry.getScript() != null) {
-                error = "<R>In script '<A>" + entry.getScript().getName() + "<R>' on line <A>" + entry.internal.lineNumber + "<W>: " + error;
+                addedContext = " <LR>In script '<A>" + entry.getScript().getName() + "<LR>' on line <A>" + entry.internal.lineNumber + "<LR>" + (addedContext == null ? "" : addedContext);
             }
-            DenizenCore.getImplementation().debugError(error);
+            DenizenCore.getImplementation().debugError(addedContext, error);
         }
         else {
-            DenizenCore.getImplementation().debugError(entry.getResidingQueue(), error);
+            DenizenCore.getImplementation().debugError(entry.getResidingQueue(), addedContext, error);
         }
     }
 
     public static void echoError(ScriptQueue queue, String error) {
-        DenizenCore.getImplementation().debugError(queue, error);
+        DenizenCore.getImplementation().debugError(queue, null, error);
     }
 
     public static void echoError(ScriptQueue queue, Throwable error) {

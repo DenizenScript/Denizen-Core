@@ -101,6 +101,7 @@ public class CommandExecutor {
                         Debug.echoDebug(scriptEntry, shouldRun ? "'if:' arg passed, command will run." : "'if:' arg returned false, command won't run.");
                     }
                     if (!shouldRun) {
+                        scriptEntry.setFinished(true);
                         currentQueue = null;
                         return true;
                     }
