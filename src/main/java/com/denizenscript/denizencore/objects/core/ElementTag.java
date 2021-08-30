@@ -1894,7 +1894,14 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(object.asDouble() % attribute.getDoubleContext(1));
+            try {
+                // Note: "remainder" method has doc "Note that this is not the modulo operation (the result can be negative)."
+                // however this doc is misleading - standard modulo with "%" allows negatives in the exact same situation (first parameter is negative).
+                return new ElementTag(object.asBigDecimal().remainder(object.getBD(attribute.getContext(1))));
+            }
+            catch (Throwable e) {
+                return new ElementTag(object.asDouble() % attribute.getDoubleContext(1));
+            }
         };
         registerTag("mod", modRunnable);
         registerTag("%", modRunnable);
