@@ -1714,6 +1714,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.abs>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.absolute_value
         // @group math
         // @description
         // Returns the absolute value of the element.
@@ -1729,6 +1730,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.max[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.larger,ElementTag.greater,ElementTag.higher,ElementTag.bigger,ElementTag.maximum
         // @group math
         // @description
         // Returns the higher number: this element or the specified one.
@@ -1744,6 +1746,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.min[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.smaller,ElementTag.lesser,ElementTag.lower,ElementTag.minimum
         // @group math
         // @description
         // Returns the lower number: this element or the specified one.
@@ -1823,6 +1826,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.add[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.plus,ElementTag.addition,ElementTag.+
         // @group math
         // @description
         // Returns the element plus a number.
@@ -1849,6 +1853,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.div[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.divide,ElementTag./
         // @group math
         // @description
         // Returns the element divided by a number.
@@ -1875,6 +1880,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.mod[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.modulo,ElementTag.modulus,ElementTag.remainder/ElementTag.%
         // @group math
         // @description
         // Returns the remainder of the element divided by a number.
@@ -1896,6 +1902,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.mul[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.multiply,ElementTag.times,ElementTag.*
         // @group math
         // @description
         // Returns the element multiplied by a number.
@@ -1922,6 +1929,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.sub[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.subtract,ElementTag.-
         // @group math
         // @description
         // Returns the element minus a number.
@@ -1948,6 +1956,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.sqrt>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.square_root
         // @group math
         // @description
         // Returns the square root of the element.
@@ -1967,6 +1976,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.log[<#.#>]>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.logarithm
         // @group math
         // @description
         // Returns the logarithm of the element, with the base of the specified number.
@@ -1986,6 +1996,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.ln>
         // @returns ElementTag(Decimal)
+        // @synonyms ElementTag.natural_logarithm
         // @group math
         // @description
         // Returns the natural logarithm of the element.
