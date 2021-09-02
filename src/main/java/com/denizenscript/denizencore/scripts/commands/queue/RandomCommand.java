@@ -96,13 +96,11 @@ public class RandomCommand extends BracedCommand {
     private int previous2 = 0;
     private int previous3 = 0;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute(ScriptEntry scriptEntry) {
         int possibilities;
         ScriptQueue queue = scriptEntry.getResidingQueue();
         List<ScriptEntry> bracedCommands = null;
-
         if (!scriptEntry.hasObject("braces")) {
             possibilities = scriptEntry.getElement("possibilities").asInt();
         }
