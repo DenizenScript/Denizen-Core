@@ -204,11 +204,15 @@ public class TagManager {
                     + " An actual object must be inserted instead. If confused, join our Discord at https://discord.gg/Q6pZGSR to ask for help!");
             }
             if (!event.hasAlternative()) {
-                if (event.getAttributes().fulfilled < event.getAttributes().attributes.length) {
-                    Debug.echoDebug(event.getScriptEntry(), "   Unfilled or unrecognized sub-tag(s) '<R>" + event.getAttributes().unfilledString() + "<W>' for tag <LG><" + event.getAttributes().origin + "<LG>><W>!");
-                    if (event.getAttributes().seemingSuccesses.size() > 0) {
-                        String almost = event.getAttributes().seemingSuccesses.get(event.getAttributes().seemingSuccesses.size() - 1);
-                        if (event.getAttributes().hasContextFailed) {
+                Attribute attribute = event.getAttributes();
+                if (attribute.fulfilled < attribute.attributes.length) {
+                    Debug.echoDebug(event.getScriptEntry(), "   Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
+                    if (attribute.lastValid != null) {
+                        Debug.echoDebug(event.getScriptEntry(), "   The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
+                    }
+                    if (attribute.seemingSuccesses.size() > 0) {
+                        String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
+                        if (attribute.hasContextFailed) {
                             Debug.echoDebug(event.getScriptEntry(), "   Almost matched but failed (missing [context] parameter?): " + almost);
                         }
                         else {

@@ -109,6 +109,11 @@ public class Attribute {
 
     public List<String> seemingSuccesses = new ArrayList<>(2);
 
+    /**
+     * Last valid object while parsing this attribute chain, for debugging purposes.
+     */
+    public ObjectTag lastValid;
+
     public boolean hasContextFailed = false;
 
     public void resetErrorTrack() {
@@ -497,6 +502,22 @@ public class Attribute {
             return "";
         }
         return attributes[num].key;
+    }
+
+    public String filledString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < fulfilled; i++) {
+            if (contexts[i] != null) {
+                sb.append(attributes[i].key).append("[").append(contexts[i]).append("].");
+            }
+            else {
+                sb.append(attributes[i].toString()).append(".");
+            }
+        }
+        if (sb.length() > 0) {
+            return sb.substring(0, sb.length() - 1);
+        }
+        return "";
     }
 
     public String unfilledString() {

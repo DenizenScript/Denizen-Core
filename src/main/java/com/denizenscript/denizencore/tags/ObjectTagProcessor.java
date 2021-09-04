@@ -212,6 +212,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return null;
         }
+        attribute.lastValid = object;
         if (attribute.isComplete()) {
             if (Debug.verbose) {
                 Debug.log("TagProcessor - Attribute complete! Self return!");
