@@ -4,16 +4,17 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
+import java.io.File;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +24,14 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     public SQLCommand() {
         setName("sql");
-        setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]");
+        setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (passwordfile:<file>) (ssl:true/{false})/query:<query>/update:<update>]");
         setRequiredArguments(2, 5);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name SQL
-    // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<password>) (ssl:true/{false})/query:<query>/update:<update>]
+    // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (passwordfile:<file>) (ssl:true/{false})/query:<query>/update:<update>]
     // @Required 2
     // @Maximum 5
     // @Short Interacts with a MySQL server.
@@ -60,15 +61,15 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to connect to an SQL server.
-    // - ~sql id:name connect:localhost:3306/test username:space password:space
+    // - ~sql id:name connect:localhost:3306/test username:space passwordfile:pw.txt
     //
     // @Usage
     // Use to connect to an SQL server over an SSL connection.
-    // - ~sql id:name connect:localhost:3306/test username:space password:space ssl:true
+    // - ~sql id:name connect:localhost:3306/test username:space passwordfile:pw.txt ssl:true
     //
     // @Usage
     // Use to connect to an SQL server with a UTF8 text encoding.
-    // - ~sql id:name connect:localhost:3306/test?characterEncoding=utf8 username:space password:space
+    // - ~sql id:name connect:localhost:3306/test?characterEncoding=utf8 username:space passwordfile:pw.txt
     //
     // @Usage
     // Use to update an SQL server.
@@ -142,6 +143,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("password")) {
                 scriptEntry.addObject("password", arg.asElement());
             }
+            else if (!scriptEntry.hasObject("passwordfile")
+                    && arg.matchesPrefix("passwordfile")) {
+                scriptEntry.addObject("passwordfile", arg.asElement());
+            }
             else if (!scriptEntry.hasObject("ssl")
                     && arg.matchesPrefix("ssl")
                     && arg.asElement().isBoolean()) {
@@ -168,11 +173,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         final ElementTag server = scriptEntry.getElement("server");
         final ElementTag username = scriptEntry.getElement("username");
         final ElementTag password = scriptEntry.getElement("password");
+        final ElementTag passwordFile = scriptEntry.getElement("passwordfile");
         final ElementTag ssl = scriptEntry.getElement("ssl");
         final ElementTag sqlID = scriptEntry.getElement("sqlid");
         final ElementTag query = scriptEntry.getElement("query");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), sqlID, action, server, username, (password != null ? ArgumentHelper.debugObj("password", "NotLogged") : null), query);
+            Debug.report(scriptEntry, getName(), sqlID, action, server, username, passwordFile, query);
         }
         if (!action.asString().equalsIgnoreCase("connect") &&
                 (!action.asString().equalsIgnoreCase("query") || !scriptEntry.shouldWaitFor())) {
@@ -181,28 +187,57 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         try {
             if (action.asString().equalsIgnoreCase("connect")) {
                 if (server == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a server!");
+                    Debug.echoError(scriptEntry, "Must specify a server!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 if (username == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a username!");
+                    Debug.echoError(scriptEntry, "Must specify a username!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
-                if (password == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a password!");
-                    return;
+                String passwordRaw;
+                if (password != null) {
+                    passwordRaw = password.asString();
+                }
+                else {
+                    if (passwordFile == null) {
+                        Debug.echoError(scriptEntry, "Must specify a password!");
+                        scriptEntry.setFinished(true);
+                        return;
+                    }
+                    File f = new File(DenizenCore.getImplementation().getDataFolder(), passwordFile.asString());
+                    if (!DenizenCore.getImplementation().canReadFile(f)) {
+                        Debug.echoError(scriptEntry, "Cannot read from that file path due to security settings in Denizen/config.yml.");
+                        scriptEntry.setFinished(true);
+                        return;
+                    }
+                    if (!f.exists()) {
+                        Debug.echoError(scriptEntry, "Invalid passwordfile specified. File does not exist.");
+                        scriptEntry.setFinished(true);
+                        return;
+                    }
+                    passwordRaw = CoreUtilities.journallingLoadFile(f.getAbsolutePath());
+                    if (passwordRaw == null || passwordRaw.length() < 2 || passwordRaw.length() > 200) {
+                        Debug.echoError(scriptEntry, "Invalid passwordfile specified. File content doesn't look like a password.");
+                        scriptEntry.setFinished(true);
+                        return;
+                    }
+                    passwordRaw = passwordRaw.trim();
                 }
                 if (connections.containsKey(sqlID.asString().toUpperCase())) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + sqlID.asString() + "'!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
+                final String passwordToUse = passwordRaw;
                 DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
                     Connection con = null;
                     if (Debug.verbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
                     }
                     try {
-                        con = getConnection(username.asString(), password.asString(), server.asString(), ssl.asString());
+                        con = getConnection(username.asString(), passwordToUse, server.asString(), ssl.asString());
                     }
                     catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
@@ -238,6 +273,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 con.close();
@@ -247,11 +283,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("query")) {
                 if (query == null) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a query!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 final Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 Debug.echoDebug(scriptEntry, "Running query " + query.asString());
@@ -298,11 +336,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("update")) {
                 if (query == null) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Must specify an update query!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 final Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
                     Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    scriptEntry.setFinished(true);
                     return;
                 }
                 Debug.echoDebug(scriptEntry, "Running update " + query.asString());
