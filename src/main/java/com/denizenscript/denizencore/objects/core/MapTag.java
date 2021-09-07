@@ -159,6 +159,11 @@ public class MapTag implements ObjectTag, Adjustable {
     }
 
     @Override
+    public boolean isTruthy() {
+        return !map.isEmpty();
+    }
+
+    @Override
     public String debuggable() {
         if (map.isEmpty()) {
             return "map@";

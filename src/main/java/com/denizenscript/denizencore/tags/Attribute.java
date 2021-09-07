@@ -345,7 +345,7 @@ public class Attribute {
     // @description
     // Tag fallbacks (AKA "tag alternatives") are a system designed to allow scripters to automatically handle tag errors.
     //
-    // Fallbacks are implemented as special "magic tags" that look like any other tag-part, but override the error handler. These are "if_null" and "exists".
+    // Fallbacks are implemented as special "magic tags" that look like any other tag-part, but override the error handler. These are "if_null", "exists", and "is_truthy".
     //
     // A tag without a fallback might look like "<player.name>".
     // This tag works fine as long as there's a linked player, but what if a player isn't always available?
@@ -406,6 +406,9 @@ public class Attribute {
             return attribute.getContextObject(1);
         });
         fallbackTags.put("exists", (attribute) -> {
+            return new ElementTag(false);
+        });
+        fallbackTags.put("is_truthy", (attribute) -> {
             return new ElementTag(false);
         });
     }

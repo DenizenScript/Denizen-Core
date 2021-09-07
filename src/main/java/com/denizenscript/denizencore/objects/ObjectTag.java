@@ -224,4 +224,11 @@ public interface ObjectTag {
     default ObjectTag specialTagProcessing(Attribute attribute) {
         return null;
     }
+
+    /**
+     * Optional "truthiness" boolean - most values are "true" except for nulls, zeros, errors, empty lists, etc.
+     */
+    default boolean isTruthy() {
+        return true;
+    }
 }

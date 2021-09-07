@@ -313,6 +313,11 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     @Override
+    public boolean isTruthy() {
+        return !isEmpty();
+    }
+
+    @Override
     public String get(int index) {
         return String.valueOf(objectForms.get(index));
     }

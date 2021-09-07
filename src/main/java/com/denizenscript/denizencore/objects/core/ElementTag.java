@@ -372,6 +372,24 @@ public class ElementTag implements ObjectTag {
         return false;
     }
 
+    @Override
+    public boolean isTruthy() {
+        if (element.equals("") || CoreUtilities.equalsIgnoreCase(element, "null") || CoreUtilities.equalsIgnoreCase(element, "false")) {
+            return false;
+        }
+        if (ArgumentHelper.matchesDouble(element)) {
+            try {
+                if (asDouble() == 0) {
+                    return false;
+                }
+            }
+            catch (Throwable ex) {
+                Debug.echoError(ex);
+            }
+        }
+        return true;
+    }
+
     public static void registerTags() {
 
         /////////////////////

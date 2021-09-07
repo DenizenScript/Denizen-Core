@@ -116,6 +116,11 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         return "q@" + queue.debugId;
     }
 
+    @Override
+    public boolean isTruthy() {
+        return !queue.isStopped;
+    }
+
     public class QueueFakeFlagTracker extends MapTagBasedFlagTracker {
 
         @Override

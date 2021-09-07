@@ -124,6 +124,20 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         });
 
         // <--[tag]
+        // @attribute <ObjectTag.is_truthy>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if the object is 'truthy'. An object is 'truthy' if it exists and is valid, and does not represent a concept like emptiness.
+        // An empty list or an air item will return 'false'. Plaintext "null" or "false", an empty element, or a numeric zero will return 'false' as well.
+        // Some object types may have their own logical implementations, for examples an EntityTag value is 'truthy' only if the entity it represents is spawned.
+        // Errored/broken/invalid tags are also considered 'false' by this logic.
+        // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
+        // -->
+        registerTag("is_truthy", (attribute, object) -> {
+            return new ElementTag(object.isTruthy());
+        });
+
+        // <--[tag]
         // @attribute <ObjectTag.null_if[<tag>]>
         // @returns ObjectTag
         // @description
