@@ -2218,7 +2218,7 @@ public class ListTag implements List<String>, ObjectTag {
 
             ListTag newList = new ListTag(object);
             while (newList.size() < length) {
-                newList.addObject(with);
+                newList.addObject(0, with);
             }
 
             return newList;
