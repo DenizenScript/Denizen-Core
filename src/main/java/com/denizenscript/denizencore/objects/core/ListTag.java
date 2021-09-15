@@ -1192,17 +1192,35 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag exclusions = getListFor(attribute.getContextObject(1), attribute.context);
+            int max = exclusions.size();
+            // <--[tag]
+            // @attribute <ListTag.exclude[...|...].max[<#>]>
+            // @returns ListTag
+            // @description
+            // returns a new ListTag excluding the items specified. Specify a maximum number of items to remove from the list.
+            // Max must be an integer >= 1.
+            // For example: .exclude[potato].max[2] on a list of "taco|potato|taco|potato|taco|potato" will return "taco|taco|taco|potato".
+            // -->
+            if (attribute.startsWith("max", 2) && attribute.hasContext(2)) {
+                max = attribute.getIntContext(2);
+                attribute = attribute.fulfill(1);
+            }
+            int removed = 0;
+
             // Create a new ListTag that will contain the exclusions
             ListTag copy = new ListTag(object);
-            // Iterate through
+            baseLoop:
             for (String exclusion : exclusions) {
                 for (int i = 0; i < copy.size(); i++) {
                     if (CoreUtilities.equalsIgnoreCase(copy.get(i), exclusion)) {
                         copy.removeObject(i--);
+                        removed++;
+                        if (removed >= max) {
+                            break baseLoop;
+                        }
                     }
                 }
             }
-            // Return the modified list
             return copy;
         });
 
