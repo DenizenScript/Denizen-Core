@@ -35,7 +35,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // @Group queue
     //
     // @Description
-    // Delays a script until the If comparisons return true.
+    // Delays a script until the If comparisons return true. Refer to <@link command if> for if command syntax information.
     //
     // Optionally, specify an update rate (if unset, will update at queue speed).
     // The update rate controls how often the tag will be checked. This generally doesn't need to be set, unless you're concerned about script efficiency.

@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -395,75 +394,6 @@ public class ElementTag implements ObjectTag {
         /////////////////////
         //   CONVERSION ATTRIBUTES
         /////////////////
-
-        registerTag("is", (attribute, object) -> {
-            // <--[tag]
-            // @attribute <ElementTag.is[<operator>].to[<element>]>
-            // @returns ElementTag(Boolean)
-            // @group comparison
-            // @description
-            // Takes an operator, and compares the value of the element to the supplied
-            // element. Returns the outcome of the comparable, either true or false. For
-            // information on operators, see <@link language operator>.
-            // Equivalent to <@link tag ElementTag.is[<operator>].than[<element>]>
-            // -->
-
-            // <--[tag]
-            // @attribute <ElementTag.is[<operator>].than[<element>]>
-            // @returns ElementTag(Boolean)
-            // @group comparison
-            // @description
-            // Takes an operator, and compares the value of the element to the supplied
-            // element. Returns the outcome of the comparable, either true or false. For
-            // information on operators, see <@link language operator>.
-            // Equivalent to <@link tag ElementTag.is[<operator>].to[<element>]>
-            // -->
-            if (attribute.hasContext(1) && (attribute.startsWith("to", 2) || attribute.startsWith("than", 2)) && attribute.hasContext(2)) {
-
-                // Use the Comparable object as implemented for the IF command. First, a new Comparable!
-                Comparable com = new Comparable();
-                com.context = attribute.context;
-
-                // Check for negative logic
-                String operator;
-                if (attribute.getContext(1).startsWith("!")) {
-                    operator = attribute.getContext(1).substring(1);
-                    com.setNegativeLogic();
-                }
-                else {
-                    operator = attribute.getContext(1);
-                }
-
-                // Operator is the value of the .is[] context. Valid are Comparable.Operators, same
-                // as used by the IF command.
-                Comparable.Operator comparableOperator = null;
-                try {
-                    comparableOperator = Comparable.Operator.valueOf(operator.replace("==", "EQUALS")
-                            .replace(">=", "OR_MORE").replace("<=", "OR_LESS").replace("<", "LESS")
-                            .replace(">", "MORE").replace("=", "EQUALS").toUpperCase());
-                }
-                catch (IllegalArgumentException e) {
-                }
-
-                if (comparableOperator != null) {
-                    com.setOperator(comparableOperator);
-
-                    // Comparable is the value of this element
-                    com.setComparable(object.toString());
-                    // Compared_to is the value of the .to[] context.
-                    com.setComparedto(attribute.getContext(2));
-
-                    attribute.fulfill(1);
-
-                    return new ElementTag(com.determineOutcome());
-                }
-                else {
-                    attribute.echoError("Unknown operator '" + operator + "'.");
-                }
-            }
-
-            return null;
-        });
 
         // <--[tag]
         // @attribute <ElementTag.equals[<element>]>

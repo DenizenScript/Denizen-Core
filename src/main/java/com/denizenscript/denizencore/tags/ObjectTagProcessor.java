@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
+import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -193,6 +194,49 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return object;
         });
+
+        registerTag("is", (attribute, object) -> {
+
+            // <--[tag]
+            // @attribute <ObjectTag.is[<operator>].to[<object>]>
+            // @returns ElementTag(Boolean)
+            // @group comparison
+            // @description
+            // Takes an operator, and compares the first object to the given second object.
+            // Returns the outcome of the comparable, either true or false. For information on operators, see <@link language operator>.
+            // Equivalent to <@link tag ObjectTag.is[<operator>].than[<element>]>
+            // -->
+
+            // <--[tag]
+            // @attribute <ObjectTag.is[<operator>].than[<object>]>
+            // @returns ElementTag(Boolean)
+            // @group comparison
+            // @description
+            // Takes an operator, and compares the first object to the given second object.
+            // Returns the outcome of the comparable, either true or false. For information on operators, see <@link language operator>.
+            // Equivalent to <@link tag ObjectTag.is[<operator>].to[<element>]>
+            // -->
+            if (attribute.hasContext(1) && (attribute.startsWith("to", 2) || attribute.startsWith("than", 2)) && attribute.hasContext(2)) {
+                boolean negative = false;
+                String operator;
+                if (attribute.getContext(1).startsWith("!")) {
+                    operator = attribute.getContext(1).substring(1);
+                    negative = true;
+                }
+                else {
+                    operator = attribute.getContext(1);
+                }
+                attribute = attribute.fulfill(1);
+                Comparable.Operator comparableOperator = Comparable.getOperatorFor(operator);
+                if (comparableOperator == null) {
+                    attribute.echoError("Unknown operator '" + operator + "'.");
+                    return null;
+                }
+                return new ElementTag(Comparable.compare(object, attribute.getContextObject(1), comparableOperator, negative, attribute.context));
+            }
+            return null;
+        });
+
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

@@ -34,7 +34,7 @@ public class WhileCommand extends BracedCommand {
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html
     //
     // @Description
-    // Runs a series of braced commands until the tag returns false.
+    // Runs a series of braced commands until the if comparisons returns false. Refer to <@link command if> for if command syntax information.
     // To end a while loop, use the 'stop' argument.
     // To jump to the next entry in the loop, use the 'next' argument.
     //

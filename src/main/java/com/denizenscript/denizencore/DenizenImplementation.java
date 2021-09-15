@@ -133,8 +133,6 @@ public interface DenizenImplementation {
 
     String cleanseLogString(String str);
 
-    boolean matchesType(String comparable, String comparedTo);
-
     boolean allowedToWebget();
 
     void preTagExecute();

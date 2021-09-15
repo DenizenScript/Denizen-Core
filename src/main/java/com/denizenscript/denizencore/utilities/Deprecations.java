@@ -75,9 +75,6 @@ public class Deprecations {
     // In Bukkit impl, Added on 2019/09/09
     public static Warning oldNPCNavigator = new StrongWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
-    // Added on 2019/09/13.
-    public static Warning oldMatchesOperator = new StrongWarning("'matches', 'is_empty', and 'contains' operators are deprecated. Use the logically equivalent tags instead.");
-
     // In Bukkit impl, Added on 2019/09/24
     public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 

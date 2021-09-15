@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
@@ -38,11 +39,12 @@ public class IfCommand extends BracedCommand {
     // Works with the else command, which handles alternatives for when the comparison fails.
     // The if command is equivalent to the English phrasing "if something is true, then do the following".
     //
-    // Values are compared using the comparable system. See <@link language comparable> for information.
+    // Values are compared using the comparable system. See <@link language operator> for information.
     //
-    // Comparisons may be chained together using '&&' and '||'.
+    // Comparisons may be chained together using the symbols '&&' and '||' or their text equivalents 'and' and 'or'.
     // '&&' means "and", '||' means "or".
     // So, for example "if <[a]> && <[b]>:" requires both a AND b to be true.
+    // "if <[a]> and <[b]>:" also requires both a AND b to be true.
     //
     // The "or" is inclusive, meaning "if <[a]> || <[b]>:" will pass for any of the following:
     // a = true, b = true
@@ -51,7 +53,7 @@ public class IfCommand extends BracedCommand {
     // but will fail when a = false and b = false.
     //
     // Sets of comparisons may be grouped using ( parens ) as separate arguments.
-    // So, for example "if ( <[a]> && <[b]> ) || <[c]>".
+    // So, for example "if ( <[a]> && <[b]> ) || <[c]>", or "if ( <[x]> or <[y]> or <[z]> ) and ( <[a]> or <[b]> or <[c]> )"
     // Grouping is REQUIRED when using both '&&' and '||' in one line. Otherwise, groupings should not be used at all.
     //
     // Boolean inputs and groups both support negating with the '!' symbol as a prefix.
@@ -59,9 +61,12 @@ public class IfCommand extends BracedCommand {
     // Similarly, you can do "if !( <[a]> || <[b]> )", though be aware that per rules of boolean logic,
     // that example is the exactly same as "if !<[a]> && !<[b]>".
     //
+    // You can also use keyword "not" as its own argument to negate a boolean or an operator.
+    // For example, "if not <[a]>:" will require a to be false, and "if <[a]> not equals <[b]>:" will require that 'a' does not equal 'b'.
+    //
     // @Tags
-    // <ElementTag.is[<operator>].to[<element>]>
-    // <ElementTag.is[<operator>].than[<element>]>
+    // <ObjectTag.is[<operator>].to[<element>]>
+    // <ObjectTag.is[<operator>].than[<element>]>
     //
     // @Usage
     // Use to narrate a message only if a player has a flag.
@@ -81,6 +86,11 @@ public class IfCommand extends BracedCommand {
     //   - narrate "You're not ready!"
     //   - stop
     // - narrate "Okay so your quest is to find the needle item in the haystack build next to town."
+    //
+    // @Usage
+    // Use to perform a complicated requirements test before before changing some event.
+    // - if ( poison|magic|melting contains <context.cause> and <context.damage> > 5 ) or <player.has_flag[weak]>:
+    //   - determine <context.damage.mul[2]>
     //
     // -->
 
@@ -278,15 +288,15 @@ public class IfCommand extends BracedCommand {
 
             boolean negative;
 
-            String value;
+            ObjectTag value;
 
             boolean boolify() {
-                return negative != value.equals("true");
+                return negative != value.toString().equals("true");
             }
 
             @Override
             public String toString() {
-                return negative ? "!" + value : value;
+                return negative ? "!" + value : value.toString();
             }
         }
 
@@ -348,7 +358,7 @@ public class IfCommand extends BracedCommand {
                 toRet.negative = true;
                 arg = arg.substring(1);
             }
-            toRet.value = TagManager.tag(arg, DenizenCore.getImplementation().getTagContext(scriptEntry));
+            toRet.value = TagManager.tagObject(arg, DenizenCore.getImplementation().getTagContext(scriptEntry));
             return toRet;
         }
 
@@ -466,7 +476,8 @@ public class IfCommand extends BracedCommand {
             }
             for (int i = 0; i < args.size(); i++) {
                 String arg = procStringNoTag(args.get(i));
-                if (arg.equals("||")) {
+                String argLow = CoreUtilities.toLowerCase(arg);
+                if (argLow.equals("||") || argLow.equals("or")) {
                     List beforeargs = new ArrayList(i);
                     for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
@@ -488,7 +499,7 @@ public class IfCommand extends BracedCommand {
                     }
                     return comp;
                 }
-                else if (arg.equals("&&")) {
+                else if (argLow.equals("&&") || argLow.equals("and")) {
                     List beforeargs = new ArrayList(i);
                     for (int x = 0; x < i; x++) {
                         beforeargs.add(args.get(x));
@@ -518,58 +529,52 @@ public class IfCommand extends BracedCommand {
                 return tagbool(0);
             }
             if (args.size() == 2) {
+                if (CoreUtilities.toLowerCase(procStringNoTag(args.get(0))).equals("not")) {
+                    if (Debug.verbose) {
+                        Debug.log("Returning negative comparison for " + args.get(0));
+                    }
+                    return !tagbool(1);
+                }
                 if (Debug.verbose) {
                     Debug.log("Returning false because two args only (non-processable)");
                 }
                 return false;
             }
-            String arg = procStringNoTag(args.get(1));
+            String operatorArg;
             boolean negative = false;
-            if (arg.startsWith("!")) {
-                arg = arg.substring(1);
+            if (args.size() == 4 && CoreUtilities.toLowerCase(procStringNoTag(args.get(1))).equals("not")) {
+                operatorArg = procStringNoTag(args.get(2));
                 negative = true;
             }
-            switch (arg) {
-                case "==":
-                case "=":
-                    arg = "EQUALS";
-                    break;
-                case ">=":
-                    arg = "OR_MORE";
-                    break;
-                case "<=":
-                    arg = "OR_LESS";
-                    break;
-                case "<":
-                    arg = "LESS";
-                    break;
-                case ">":
-                    arg = "MORE";
-                    break;
-                case "||":
-                    arg = "OR";
-                    break;
-                case "&&":
-                    arg = "AND";
-                    break;
+            else if (args.size() == 3) {
+                operatorArg = procStringNoTag(args.get(1));
+                if (operatorArg.startsWith("!")) {
+                    operatorArg = operatorArg.substring(1);
+                    negative = true;
+                }
             }
-            Comparable comparable = new Comparable();
-            comparable.context = scriptEntry.context;
-            if (negative) {
-                comparable.logic = Comparable.Logic.NEGATIVE;
+            else {
+                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - too many arguments?");
+                return false;
             }
             try {
-                comparable.operator = Comparable.Operator.valueOf(arg.toUpperCase());
-                comparable.setComparable(tagme(0).toString());
-                comparable.setComparedto(tagme(2).toString());
-                boolean outcome = comparable.determineOutcome();
-                Debug.echoDebug(scriptEntry, comparable.toString());
+                Comparable.Operator operator = Comparable.getOperatorFor(operatorArg);
+                if (operator == null) {
+                    Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - invalid operator '" + operatorArg + "'");
+                    return false;
+                }
+                ObjectTag first = tagme(0).value;
+                ObjectTag second = tagme(args.size() - 1).value;
+                boolean outcome = Comparable.compare(first, second, operator, negative, scriptEntry.context);
+                if (scriptEntry.dbCallShouldDebug()) {
+                    Debug.echoDebug(scriptEntry, "Comparing " + first + (negative ? " not " : " ") + operator.name() + " " + second + (outcome ? " ... true" : " ... false"));
+                }
                 return outcome;
             }
-            catch (IllegalArgumentException ex) {
-                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? IllegalArgumentException: " + ex.getMessage());
+            catch (Throwable ex) {
+                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? exception: " + ex.getClass().getName() + ": " + ex.getMessage());
                 if (Debug.verbose) {
-                    Debug.echoError("Was comparing " + arg + " with " + args.get(0) + " and " + args.get(2));
+                    Debug.echoError("Was comparing " + operatorArg + " with " + args.get(0) + " and " + args.get(2));
                     Debug.echoError(ex);
                 }
                 return false;

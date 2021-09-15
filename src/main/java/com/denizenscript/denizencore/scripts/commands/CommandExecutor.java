@@ -72,7 +72,7 @@ public class CommandExecutor {
     // The most useful place to have this is a 'stop' command, to quickly stop a script if a condition is true (a player has a flag, lacks a permission, is outside a region, or whatever else).
     //
     // If you need more complex matching, especially using '&&', '||', '==', etc. you should probably just do an 'if' command rather than using the argument.
-    // Though if you really want to, you can use tags here like <@link tag elementtag.is.to> or <@link tag elementtag.and> or <@link tag elementtag.or>.
+    // Though if you really want to, you can use tags here like <@link tag objecttag.is.to> or <@link tag elementtag.and> or <@link tag elementtag.or>.
     // -->
 
     public boolean execute(ScriptEntry scriptEntry) {

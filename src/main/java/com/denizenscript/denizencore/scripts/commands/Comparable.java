@@ -1,49 +1,36 @@
 package com.denizenscript.denizencore.scripts.commands;
 
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
+
+import java.math.BigDecimal;
 
 public class Comparable {
-
-    // <--[language]
-    // @name Comparable
-    // @group Comparables
-    // @description
-    // A Comparable is a method that the If command, While command, and 'element.is[...].to[...]' tag uses to compare objects.
-    //
-    // These are usually written in the format "VALUE OPERATOR VALUE".
-    //
-    // For example, if you use ">=" as the operator, and "3" and "5" as the values, you'd write "3 >= 5",
-    // which would return false (as 3 is NOT greater-than-or-equal-to 5).
-    //
-    // For a list of valid operators and their usages, see <@link language operator>.
-    // -->
 
     // <--[language]
     // @name Operator
     // @group Comparables
     // @description
-    // An operator is the type of comparison that a comparable will check. Not all types of
-    // comparables are compatible with all operators. See <@link language comparable> for more information.
+    // An operator is a tool for comparing values, used by commands like <@link command if>, <@link command while>, <@link command waituntil>, ... and tags like <@link tag ObjectTag.is[...].than[...]>
     //
     // Available Operators include:
-    // "Equals" is written as "=="
-    // "Does not equal" is written as "!="
-    // "Is more than" is written as ">" or "MORE".
-    // "Is less than" is written as "<" or "LESS".
-    // "Is more than or equal to" is written as ">=" or "OR_MORE".
-    // "Is less than or equal to" is written as "<=" or "OR_LESS".
+    // "Equals" is written as "==" or "equals".
+    // "Does not equal" is written as "!=".
+    // "Is more than" is written as ">" or "more".
+    // "Is less than" is written as "<" or "less".
+    // "Is more than or equal to" is written as ">=" or "or_more".
+    // "Is less than or equal to" is written as "<=" or "or_less".
+    // "does this list or map contain" is written as "contains". For example, "- if a|b|c contains b:" or "- if [a=1;b=2] contains b:"
+    // "is this in the list or map" is written as "in". For example, "- if b in a|b|c:", or "- if [a=1;b=2] contains b:"
     //
-    // Note: When using an operator in a replaceable tag (such as <ElementTag.is[...].than[...]>),
+    // Note: When using an operator in a tag,
     // keep in mind that < and >, and even >= and <= must be either escaped, or referred to by name.
-    // Example: "<player.health.is[<&lt>].than[10]>" or "<player.health.is[LESS].than[10]>",
+    // Example: "<player.health.is[<&lt>].than[10]>" or "<player.health.is[less].than[10]>",
     // but <player.health.is[<].than[10]> will produce undesired results. <>'s must be escaped or replaced since
     // they are normally notation for a replaceable tag. Escaping is not necessary when the argument
     // contains no replaceable tags.
@@ -53,284 +40,118 @@ public class Comparable {
     // -->
 
     public enum Operator {
-        EQUALS, MATCHES, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IS_EMPTY
+        EQUALS, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IN
     }
 
-    public enum Logic {
-        REGULAR, NEGATIVE
-    }
-
-    public Logic logic = Logic.REGULAR;
-    public Object comparable = null;
-    public Operator operator = Operator.EQUALS;
-    public Object comparedto = "true";
-    public Boolean outcome = null;
-    public TagContext context = null;
-
-    public void setNegativeLogic() {
-        logic = Logic.NEGATIVE;
-    }
-
-    public void setOperator(Operator operator) {
-        this.operator = operator;
-    }
-
-    public void setComparable(String arg) {
-        if (arg.length() == 0) {
-            comparable = arg;
+    public static Operator getOperatorFor(String text) {
+        switch (CoreUtilities.toLowerCase(text)) {
+            case "equals":
+            case "==":
+            case "=":
+                return Operator.EQUALS;
+            case "or_more":
+            case ">=":
+                return Operator.OR_MORE;
+            case "or_less":
+            case "<=":
+                return Operator.OR_LESS;
+            case "more":
+            case ">":
+                return Operator.MORE;
+            case "less":
+            case "<":
+                return Operator.LESS;
+            case "contains":
+                return Operator.CONTAINS;
+            case "in":
+                return Operator.IN;
+            default:
+                return null;
         }
-        else if (ArgumentHelper.matchesDouble(arg)) {
-            comparable = Double.parseDouble(arg);
+    }
+
+    private static boolean compareDecimal(ObjectTag objA, ObjectTag objB, Operator operator, TagContext context) {
+        try {
+            ElementTag elementA = new ElementTag(objA.toString());
+            ElementTag elementB = new ElementTag(objB.toString());
+            BigDecimal bigDecA = elementA.asBigDecimal();
+            BigDecimal bigDecB = elementB.asBigDecimal();
+            int compared = bigDecA.compareTo(bigDecB);
+            switch (operator) {
+                case LESS:
+                    return compared < 0;
+                case MORE:
+                    return compared > 0;
+                case OR_LESS:
+                    return compared <= 0;
+                case OR_MORE:
+                    return compared >= 0;
+            }
         }
-        else if (ListTag.matches(arg)) {
-            comparable = ListTag.valueOf(arg, context);
+        catch (NumberFormatException ex) {
+            if (context.showErrors()) {
+                Debug.echoError("Cannot compare as numbers '" + objA + "' vs '" + objB + "' - one or both values are not numerical. Returning false.");
+            }
+        }
+        return false;
+    }
+
+    private static boolean listContains(ObjectTag listObj, ObjectTag entry, TagContext context) {
+        ListTag list = null;
+        MapTag map = null;
+        if (listObj instanceof ListTag) {
+            list = (ListTag) listObj;
+        }
+        else if (listObj instanceof MapTag) {
+            map = (MapTag) listObj;
         }
         else {
-            comparable = arg;
-        }
-    }
-
-    public void setComparedto(String arg) {
-        if (operator == Comparable.Operator.MATCHES) {
-            comparable = String.valueOf(comparable);
-        }
-        if (comparable instanceof String) {
-            comparedto = arg;
-        }
-        else if (comparable instanceof Double || comparable instanceof Long) {
-            if (ArgumentHelper.matchesDouble(arg)) {
-                comparedto = Double.parseDouble(arg);
+            String text = listObj.toString();
+            if (text.startsWith("li@")) {
+                list = ListTag.valueOf(text, context);
+            }
+            else if (text.startsWith("map@") || text.startsWith("[")) {
+                map = MapTag.valueOf(text, context);
             }
             else {
-                comparable = String.valueOf(comparable);
-                comparedto = arg;
+                list = ListTag.valueOf(text, context);
             }
         }
-        else if (comparable instanceof Boolean) {
-            comparedto = CoreUtilities.equalsIgnoreCase(arg, "true");
-        }
-        else if (comparable instanceof ListTag) {
-            if (ListTag.matches(arg)) {
-                comparedto = ListTag.valueOf(arg, context);
-            }
-            else {
-                comparedto = arg;
-            }
-        }
-        else {
-            comparedto = arg;
-        }
-    }
-
-    public boolean determineOutcome() {
-        outcome = false;
-        if (comparable instanceof String) {
-            compare_as_strings();
-        }
-        else if (comparable instanceof ListTag) {
-            compare_as_list();
-        }
-        else if (comparable instanceof Double || comparable instanceof Long) {
-            if (comparedto instanceof Double || comparedto instanceof Long) {
-                compare_as_numbers();
-            }
-        }
-        else if (comparable instanceof Boolean) {
-            // Check to make sure comparedto is Boolean
-            if (comparedto instanceof Boolean) {
-                // Comparing booleans.. let's do the logic
-                outcome = comparable.equals(comparedto);
-            }
-            // Not comparing booleans, outcome = false
-        }
-        if (logic == Comparable.Logic.NEGATIVE) {
-            outcome = !outcome;
-        }
-        return outcome;
-    }
-
-    private void compare_as_numbers() {
-        outcome = false;
-        Double comparable;
-        if (this.comparable instanceof Double) {
-            comparable = (Double) this.comparable;
-        }
-        else {
-            comparable = ((Long) this.comparable).doubleValue();
-        }
-        Double comparedto;
-        if (this.comparedto instanceof Double) {
-            comparedto = (Double) this.comparedto;
-        }
-        else {
-            comparedto = ((Long) this.comparedto).doubleValue();
-        }
-        switch (operator) {
-            case EQUALS:
-                if (comparable.doubleValue() == comparedto.doubleValue()) {
-                    outcome = true;
+        String search = entry.toString();
+        if (list != null) {
+            for (String string : list) {
+                if (CoreUtilities.equalsIgnoreCase(string, search)) {
+                    return true;
                 }
+            }
+        }
+        else if (map != null) {
+            return map.getDeepObject(search) != null;
+        }
+        return false;
+    }
+
+    public static boolean compare(ObjectTag objA, ObjectTag objB, Operator operator, boolean negative, TagContext context) {
+        boolean outcome;
+        switch (operator) {
+            case EQUALS: // MATCHES, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IN
+                outcome = CoreUtilities.equalsIgnoreCase(objA.toString(), objB.toString());
                 break;
             case OR_MORE:
-                if (comparable.compareTo(comparedto) >= 0) {
-                    outcome = true;
-                }
-                break;
             case OR_LESS:
-                if (comparable.compareTo(comparedto) <= 0) {
-                    outcome = true;
-                }
-                break;
             case MORE:
-                if (comparable.compareTo(comparedto) > 0) {
-                    outcome = true;
-                }
-                break;
             case LESS:
-                if (comparable.compareTo(comparedto) < 0) {
-                    outcome = true;
-                }
-                break;
-        }
-    }
-
-    private void compare_as_list() {
-        outcome = false;
-        ListTag comparable = (ListTag) this.comparable;
-        switch (operator) {
+                return compareDecimal(objA, objB, operator, context);
             case CONTAINS:
-                for (String string : comparable) {
-                    if (comparedto instanceof Long) {
-                        if (ArgumentHelper.matchesInteger(string)
-                                && Long.parseLong(string) == (Long) comparedto) {
-                            outcome = true;
-                            break;
-                        }
-                    }
-                    else if (comparedto instanceof Double) {
-                        if (ArgumentHelper.matchesDouble(string) &&
-                                Double.parseDouble(string) == (Double) comparedto) {
-                            outcome = true;
-                            break;
-                        }
-                    }
-                    else if (comparedto instanceof String) {
-                        if (CoreUtilities.equalsIgnoreCase(string, (String) comparedto)) {
-                            outcome = true;
-                            break;
-                        }
-                    }
-                }
+                outcome = listContains(objA, objB, context);
                 break;
-            case OR_MORE:
-                if (!(comparedto instanceof Double)) {
-                    break;
-                }
-                outcome = (comparable.size() >= ((Double) comparedto).intValue());
+            case IN:
+                outcome = listContains(objB, objA, context);
                 break;
-            case OR_LESS:
-                if (!(comparedto instanceof Double)) {
-                    break;
-                }
-                outcome = (comparable.size() <= ((Double) comparedto).intValue());
-                break;
-            case MORE:
-                if (!(comparedto instanceof Double)) {
-                    break;
-                }
-                outcome = (comparable.size() > ((Double) comparedto).intValue());
-                break;
-            case LESS:
-                if (!(comparedto instanceof Double)) {
-                    break;
-                }
-                outcome = (comparable.size() < ((Double) comparedto).intValue());
-                break;
-            case EQUALS:
-                if (comparedto instanceof ListTag) {
-                    ListTag list2 = (ListTag) comparedto;
-                    outcome = CoreUtilities.equalsIgnoreCase(list2.identify(), comparable.identify());
-                }
-                break;
+            default:
+                // Impossible to reach
+                return false;
         }
-    }
-
-    private void compare_as_strings() {
-        outcome = false;
-        String comparable = String.valueOf(this.comparable);
-        String comparedto = String.valueOf(this.comparedto);
-        if (comparable == null || comparedto == null) {
-            return;
-        }
-        switch (operator) {
-            case IS_EMPTY:
-                Deprecations.oldMatchesOperator.warn();
-                outcome = comparable.length() == 0;
-                break;
-            case EQUALS:
-                outcome = CoreUtilities.equalsIgnoreCase(comparable, comparedto);
-                break;
-            case CONTAINS:
-                Deprecations.oldMatchesOperator.warn();
-                outcome = CoreUtilities.toLowerCase(comparable).contains(CoreUtilities.toLowerCase(comparedto));
-                break;
-            case OR_MORE:
-            case OR_LESS:
-            case MORE:
-            case LESS:
-                Debug.echoError("Comparing text as if it were a number - comparison automatically false");
-                outcome = false;
-                break;
-            case MATCHES:
-                Deprecations.oldMatchesOperator.warn();
-                comparedto = comparedto.replace("_", "");
-                if (comparedto.equalsIgnoreCase("script")) {
-                    outcome = ScriptTag.matches(comparable);
-                }
-                else if (comparedto.equalsIgnoreCase("duration")) {
-                    outcome = DurationTag.matches(comparable);
-                }
-                else if (comparedto.equalsIgnoreCase("double")
-                        || comparedto.equalsIgnoreCase("decimal")) {
-                    outcome = ArgumentHelper.matchesDouble(comparable);
-                }
-                else if (comparedto.equalsIgnoreCase("integer")
-                        || comparedto.equalsIgnoreCase("number")) {
-                    outcome = ArgumentHelper.matchesInteger(comparable);
-                }
-                else if (comparedto.equalsIgnoreCase("even integer")
-                        || comparedto.equalsIgnoreCase("even number")) {
-                    outcome = ArgumentHelper.matchesInteger(comparable) && (Long.parseLong(comparable) % 2) == 0;
-                }
-                else if (comparedto.equalsIgnoreCase("odd integer")
-                        || comparedto.equalsIgnoreCase("odd number")) {
-                    outcome = ArgumentHelper.matchesInteger(comparable) && (Long.parseLong(comparable) % 2) == 1;
-                }
-                else if (comparedto.equalsIgnoreCase("boolean")) {
-                    outcome = (comparable.equalsIgnoreCase("true") || comparable.equalsIgnoreCase("false"));
-                }
-                else {
-                    outcome = DenizenCore.getImplementation().matchesType(comparable, comparedto);
-                }
-                break;
-        }
-    }
-
-    public String log(String str) {
-        Debug.echoError("Warning: Unknown comparable type: " + str);
-        return str;
-    }
-
-    @Override
-    public String toString() {
-        return (logic != Logic.REGULAR ? "<G>Logic='<A>" + logic.toString() + "<G>', " : "")
-                + "<G>Comparable='" + (comparable == null ? "null'" : (comparable instanceof Double ? "Decimal" :
-                comparable instanceof String ? "Element" : (comparable instanceof Long ? "Number" : (comparable instanceof ListTag ? "ListTag" : log(comparable.getClass().getSimpleName()))))
-                + "<G>(<A>" + comparable + "<G>)'")
-                + "<G>, Operator='<A>" + operator.toString()
-                + "<G>', ComparedTo='" + (comparedto == null ? "null'" : (comparedto instanceof Double ? "Decimal" :
-                comparedto instanceof String ? "Element" : (comparedto instanceof Long ? "Number" : (comparedto instanceof ListTag ? "ListTag" : log(comparedto.getClass().getSimpleName()))))
-                + "<G>(<A>" + comparedto + "<G>)' ")
-                + "<Y>--> OUTCOME='" + outcome + "'";
+        return negative ? !outcome : outcome;
     }
 }
