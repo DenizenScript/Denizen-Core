@@ -1071,6 +1071,27 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.is_in[<list>]>
+        // @returns ElementTag(Boolean)
+        // @group element checking
+        // @description
+        // Returns whether the element is contained by a list.
+        // Essentially equivalent to <@link tag ListTag.contains>, but with input order reversed.
+        // -->
+        registerTag("is_in", (attribute, object) -> {
+            if (!attribute.hasContext(1)) {
+                return null;
+            }
+            ListTag list = attribute.contextAsType(1, ListTag.class);
+            for (String element : list) {
+                if (CoreUtilities.equalsIgnoreCase(element, object.asString())) {
+                    return new ElementTag(true);
+                }
+            }
+            return new ElementTag(false);
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.length>
         // @returns ElementTag(Number)
         // @group element checking

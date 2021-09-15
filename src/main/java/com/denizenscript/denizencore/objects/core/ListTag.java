@@ -1895,7 +1895,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("sort_by_value", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag list.sort_by_value[...] must have input!");
                 return null;
             }
             ListTag newlist = new ListTag(object);
@@ -1934,7 +1933,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("sort_by_number", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("Sort_By_Number[...] must have an input value.");
                 return null;
             }
             ListTag newlist = new ListTag(object);
@@ -2160,7 +2158,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("filter_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("Must have input to filter_tag[...]");
                 return null;
             }
             ListTag newlist = new ListTag();
@@ -2190,7 +2187,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("parse_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("Must have input to parse_tag[...]");
                 return null;
             }
             ListTag newlist = new ListTag();
@@ -2216,7 +2212,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("pad_left", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.pad_left[...] must have a value.");
                 return null;
             }
             ObjectTag with = new ElementTag("");
@@ -2233,12 +2228,10 @@ public class ListTag implements List<String>, ObjectTag {
                 with = attribute.getContextObject(2);
                 attribute.fulfill(1);
             }
-
             ListTag newList = new ListTag(object);
             while (newList.size() < length) {
                 newList.addObject(0, with);
             }
-
             return newList;
         });
 
@@ -2251,7 +2244,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("pad_right", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.pad_right[...] must have a value.");
                 return null;
             }
             ObjectTag with = new ElementTag("");
@@ -2268,12 +2260,10 @@ public class ListTag implements List<String>, ObjectTag {
                 with = attribute.getContextObject(2);
                 attribute.fulfill(1);
             }
-
             ListTag newList = new ListTag(object);
             while (newList.size() < length) {
                 newList.addObject(with);
             }
-
             return newList;
         });
 
@@ -2303,12 +2293,10 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("contains_any_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.contains_any_case_sensitive[...] must have a value.");
                 return null;
             }
             ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
             boolean state = false;
-
             full_set:
             for (String element : object) {
                 for (String sub_element : list) {
@@ -2318,7 +2306,6 @@ public class ListTag implements List<String>, ObjectTag {
                     }
                 }
             }
-
             return new ElementTag(state);
         });
 
@@ -2330,12 +2317,10 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("contains_any", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.contains_any[...] must have a value.");
                 return null;
             }
             ListTag list = getListFor(attribute.getContextObject(1), attribute.context);
             boolean state = false;
-
             full_set:
             for (String element : object) {
                 for (String sub_element : list) {
@@ -2345,7 +2330,6 @@ public class ListTag implements List<String>, ObjectTag {
                     }
                 }
             }
-
             return new ElementTag(state);
         });
 
@@ -2357,18 +2341,15 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("contains_case_sensitive", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.contains_case_sensitive[...] must have a value.");
                 return null;
             }
             boolean state = false;
-
             for (String element : object) {
                 if (element.equals(attribute.getContext(1))) {
                     state = true;
                     break;
                 }
             }
-
             return new ElementTag(state);
         });
 
@@ -2380,12 +2361,10 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         registerTag("contains", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
-                attribute.echoError("The tag ListTag.contains[...] must have a value.");
                 return null;
             }
             ListTag needed = getListFor(attribute.getContextObject(1), attribute.context);
             int gotten = 0;
-
             for (String check : needed) {
                 for (String element : object) {
                     if (CoreUtilities.equalsIgnoreCase(element, check)) {
@@ -2394,7 +2373,6 @@ public class ListTag implements List<String>, ObjectTag {
                     }
                 }
             }
-
             return new ElementTag(gotten == needed.size() && gotten > 0);
         });
 
