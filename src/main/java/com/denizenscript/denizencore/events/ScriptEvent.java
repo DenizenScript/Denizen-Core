@@ -362,34 +362,38 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void cancellationChanged() {
     }
 
-    public static HashSet<String> defaultDeterminations = new HashSet<>(Arrays.asList("cancelled", "cancelled:true", "cancelled:false"));
-
+    @Deprecated
     public static boolean isDefaultDetermination(ObjectTag determination) {
-        if (!(determination instanceof ElementTag)) {
-            return false;
-        }
-        String low = CoreUtilities.toLowerCase(determination.toString());
-        return defaultDeterminations.contains(low);
+        Debug.echoError("VERSION MISMATCH, UPDATE ALL DENIZEN-RELATED SUBPROJECTS.");
+        return false;
     }
 
     public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
-        String low = CoreUtilities.toLowerCase(determination.toString());
-        switch (low) {
-            case "cancelled:true":
-            case "cancelled":
-                Debug.echoDebug(path.container, "Event cancelled!");
-                cancelled = true;
-                cancellationChanged();
-                return true;
-            case "cancelled:false":
-                Debug.echoDebug(path.container, "Event uncancelled!");
-                cancelled = false;
-                cancellationChanged();
-                return true;
-            default:
-                Debug.echoError("Unknown determination '" + determination + "'");
-                return false;
+        Debug.echoError("Unknown determination '" + determination + "'");
+        return false;
+    }
+
+    public boolean handleBaseDetermination(ScriptPath path, ObjectTag determination) {
+        if (determination instanceof ElementTag) {
+            String text = determination.toString();
+            if (text.length() <= "cancelled:false".length()) {
+                String low = CoreUtilities.toLowerCase(text);
+                switch (low) {
+                    case "cancelled:true":
+                    case "cancelled":
+                        Debug.echoDebug(path.container, "Event cancelled!");
+                        cancelled = true;
+                        cancellationChanged();
+                        return true;
+                    case "cancelled:false":
+                        Debug.echoDebug(path.container, "Event uncancelled!");
+                        cancelled = false;
+                        cancellationChanged();
+                        return true;
+                }
+            }
         }
+        return applyDetermination(path, determination);
     }
 
     public ScriptEntryData getScriptEntryData() {
@@ -454,7 +458,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             currentEvent = path.event;
             queue.setContextSource(this);
             if (!path.fireAfter) {
-                queue.determinationTarget = (o) -> applyDetermination(path, o);
+                queue.determinationTarget = (o) -> handleBaseDetermination(path, o);
             }
             queue.start();
             stats.nanoTimes += System.nanoTime() - queue.startTime;
