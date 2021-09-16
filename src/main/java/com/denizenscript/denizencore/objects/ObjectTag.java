@@ -195,6 +195,10 @@ public interface ObjectTag {
         return CoreUtilities.asType(this, type, context);
     }
 
+    default boolean canBeType(Class<? extends ObjectTag> type) {
+        return CoreUtilities.canPossiblyBeType(this, type);
+    }
+
     /**
      * Gets a specific attribute using this object to fetch the necessary data.
      *
