@@ -281,6 +281,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/08/30, deprecate officially by 2023.
     public static Warning giveTakeMoney = new FutureWarning("The 'take' and 'give' commands option for 'money' are deprecated in favor of using the 'money' command.");
 
+    // In Bukkit impl, Added 2021/08/30, deprecate officially by 2024.
+    public static Warning playerResourcePackMech = new FutureWarning("The 'resource_pack' mechanism is deprecated in favor of using the 'resourcepack' command.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

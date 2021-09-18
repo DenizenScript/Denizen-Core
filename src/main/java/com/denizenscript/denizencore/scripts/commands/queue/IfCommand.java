@@ -111,7 +111,7 @@ public class IfCommand extends BracedCommand {
                     break;
                 }
                 if (nextEntry.getInsideList() == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Upcoming else command is mis-formatted!");
+                    Debug.echoError(scriptEntry, "Upcoming else command is mis-formatted!");
                     break;
                 }
                 scriptEntry.getResidingQueue().script_entries.remove(0);
@@ -554,13 +554,13 @@ public class IfCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - too many arguments? Found " + args.size() + " args: " + args);
+                Debug.echoError(scriptEntry, "If command syntax invalid - too many arguments? Found " + args.size() + " args: " + args);
                 return false;
             }
             try {
                 Comparable.Operator operator = Comparable.getOperatorFor(operatorArg);
                 if (operator == null) {
-                    Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - invalid operator '" + operatorArg + "'");
+                    Debug.echoError(scriptEntry, "If command syntax invalid - invalid operator '" + operatorArg + "'");
                     return false;
                 }
                 ObjectTag first = tagme(0).value;
@@ -572,7 +572,7 @@ public class IfCommand extends BracedCommand {
                 return outcome;
             }
             catch (Throwable ex) {
-                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? exception: " + ex.getClass().getName() + ": " + ex.getMessage());
+                Debug.echoError(scriptEntry, "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? exception: " + ex.getClass().getName() + ": " + ex.getMessage());
                 if (Debug.verbose) {
                     Debug.echoError("Was comparing " + operatorArg + " with " + args.get(0) + " and " + args.get(2));
                     Debug.echoError(ex);
