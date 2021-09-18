@@ -16,7 +16,7 @@ public class Comparable {
     // @name Operator
     // @group Comparables
     // @description
-    // An operator is a tool for comparing values, used by commands like <@link command if>, <@link command while>, <@link command waituntil>, ... and tags like <@link tag ObjectTag.is[...].than[...]>
+    // An operator is a tool for comparing values, used by commands like <@link command if>, <@link command while>, <@link command waituntil>, ... and tags like <@link tag ObjectTag.is.than>
     //
     // Available Operators include:
     // "Equals" is written as "==" or "equals".

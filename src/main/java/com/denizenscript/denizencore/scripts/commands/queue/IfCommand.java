@@ -554,7 +554,7 @@ public class IfCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - too many arguments?");
+                Debug.echoError(scriptEntry == null ? null : scriptEntry.getResidingQueue(), "If command syntax invalid - too many arguments? Found " + args.size() + " args: " + args);
                 return false;
             }
             try {

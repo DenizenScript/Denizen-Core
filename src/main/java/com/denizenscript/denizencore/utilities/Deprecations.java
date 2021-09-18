@@ -116,10 +116,6 @@ public class Deprecations {
     // Prime candidate for functionality removal - was never recommended.
     public static Warning notableItems = new StrongWarning("Using the note command with items is deprecated: this has never been recommended and is more likely to introduce bugs than ever do anything useful.");
 
-    // In Bukkit impl, Added 2020/03/08
-    // Prime candidate for functionality removal - has not been recommended for many years.
-    public static Warning anchorWalk = new StrongWarning("Using the anchor 'walkto'/'walknear' options is deprecated: use the walk command with the npc.anchor tag instead, and 'assume' should be replaced by the teleport command.");
-
     // Added 2020/03/14
     public static Warning oldStyleRandomCommand = new StrongWarning("Using the 'random' command with an argument number is deprecated: use the modern colon syntax instead (refer to documentation).");
 
