@@ -207,16 +207,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
             YamlConfiguration config = container.getConfigurationSection("events");
             if (config == null) {
-                Debug.echoError("Missing or invalid events block for " + container.getName());
+                Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
                 continue;
             }
             for (StringHolder evt : config.getKeys(false)) {
                 if (evt == null || evt.str == null) {
-                    Debug.echoError("Missing or invalid events block for " + container.getName());
+                    Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
                 }
                 else if (CoreUtilities.contains(evt.str, '@')) {
-                    Debug.echoError("Script '" + container.getName() + "' has event '" + evt.str.replace("@", "<R>@<W>")
-                            + "' which contains object notation, which is deprecated for use in world events. Please remove it.");
+                    Debug.echoError("Script '<Y>" + container.getName() + "<W>' has event '<Y>" + evt.str.replace("@", "<R>@<Y>")
+                            + "<W>' which contains object notation, which is deprecated for use in world events. Please remove it.");
                 }
             }
         }
@@ -237,14 +237,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     after = true;
                 }
                 else {
-                    Debug.echoError("Script path '" + evt1.str + "' is invalid (missing 'on' or 'after').");
+                    Debug.echoError("Script path '<Y>" + evt1.str + "<W>' is invalid (missing 'on' or 'after').");
                     continue;
                 }
                 evt = evt.replace("&dot", ".").replace("&amp", "&");
                 ScriptPath path = new ScriptPath(container, evt, evt1.str);
                 path.fireAfter = after;
                 if (path.set == null) {
-                    Debug.echoError("Script path '" + path + "' is invalid (empty or misconfigured).");
+                    Debug.echoError("Script path '<Y>" + path + "<W>' is invalid (empty or misconfigured).");
                     continue;
                 }
                 paths.add(path);
@@ -262,7 +262,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                         event.eventPaths.add(path);
                         path.matches.add(event);
                         if (Debug.showLoading) {
-                            Debug.log("Event match, " + event.getName() + " matched for '" + path + "'!");
+                            Debug.log("Event match, <Y>" + event.getName() + "<W> matched for '<Y>" + path + "<W>'!");
                         }
                         matched = true;
                     }
@@ -273,7 +273,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 }
             }
             catch (Throwable ex) {
-                Debug.echoError("Failed to reload event '" + event.getName() + "':");
+                Debug.echoError("Failed to reload event '<Y>" + event.getName() + "<W>':");
                 Debug.echoError(ex);
             }
         }
@@ -281,10 +281,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         tryingToBuildPath = null;
         for (ScriptPath path : paths) {
             if (path.matches.size() > 1) {
-                Debug.log("Event " + path + " is matched to multiple ScriptEvents: " + CoreUtilities.join(", ", path.matches));
+                Debug.log("Event <Y>" + path + "<W> is matched to multiple ScriptEvents: <Y>" + CoreUtilities.join("<W>,<Y> ", path.matches));
             }
             else if (path.matches.isEmpty()) {
-                Debug.echoError("Event " + path + " is not matched to any ScriptEvents.");
+                Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.");
                 if (path.matchFailReasons != null) {
                     for (String reason : path.matchFailReasons) {
                         Debug.log(reason);
@@ -293,20 +293,20 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
             path.matchFailReasons = null;
         }
-        Debug.log("Processed " + paths.size() + " script event paths.");
+        Debug.log("Processed <A>" + paths.size() + "<W> script event paths.");
     }
 
     public static ScriptPath tryingToBuildPath = null;
     public static ScriptEvent tryingToBuildEvent = null;
 
-    public static void addPossibleCouldMatchFailReason(String reason) {
+    public static void addPossibleCouldMatchFailReason(String reason, String example) {
         if (tryingToBuildPath == null || tryingToBuildEvent == null) {
             return;
         }
         if (tryingToBuildPath.matchFailReasons == null) {
             tryingToBuildPath.matchFailReasons = new ArrayList<>();
         }
-        tryingToBuildPath.matchFailReasons.add("Almost matched: " + tryingToBuildEvent.getName() + ", but failed because: " + reason);
+        tryingToBuildPath.matchFailReasons.add("Almost matched: <Y>" + tryingToBuildEvent.getName() + "<W>, but failed because: <Y>" + reason + "<W>: '<LR>" + example + "<W>'");
     }
 
     // <--[language]
