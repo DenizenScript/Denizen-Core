@@ -82,6 +82,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public List<ScriptEvent> matches = new ArrayList<>();
         public TagContext context;
         public boolean fireAfter = false;
+        public List<String> matchFailReasons = null;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -254,7 +255,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 event.destroy();
                 event.eventPaths.clear();
                 boolean matched = false;
+                tryingToBuildEvent = event;
                 for (ScriptPath path : paths) {
+                    tryingToBuildPath = path;
                     if (event.couldMatch(path)) {
                         event.eventPaths.add(path);
                         path.matches.add(event);
@@ -274,15 +277,36 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 Debug.echoError(ex);
             }
         }
+        tryingToBuildEvent = null;
+        tryingToBuildPath = null;
         for (ScriptPath path : paths) {
             if (path.matches.size() > 1) {
                 Debug.log("Event " + path + " is matched to multiple ScriptEvents: " + CoreUtilities.join(", ", path.matches));
             }
             else if (path.matches.isEmpty()) {
                 Debug.echoError("Event " + path + " is not matched to any ScriptEvents.");
+                if (path.matchFailReasons != null) {
+                    for (String reason : path.matchFailReasons) {
+                        Debug.log(reason);
+                    }
+                }
             }
+            path.matchFailReasons = null;
         }
         Debug.log("Processed " + paths.size() + " script event paths.");
+    }
+
+    public static ScriptPath tryingToBuildPath = null;
+    public static ScriptEvent tryingToBuildEvent = null;
+
+    public static void addPossibleCouldMatchFailReason(String reason) {
+        if (tryingToBuildPath == null || tryingToBuildEvent == null) {
+            return;
+        }
+        if (tryingToBuildPath.matchFailReasons == null) {
+            tryingToBuildPath.matchFailReasons = new ArrayList<>();
+        }
+        tryingToBuildPath.matchFailReasons.add("Almost matched: " + tryingToBuildEvent.getName() + ", but failed because: " + reason);
     }
 
     // <--[language]
