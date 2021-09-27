@@ -553,8 +553,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // 'on player breaks block with:iron_pickaxe|gold_pickaxe|diamond_axe|wood_shovel:'
     //
     // You can also combine wildcards and lists... note that lists are the 'wider' option.
-    // That is, if you have wildcards and lists together, you will have a list of possible matches, where each entry
-    // may contain wildcards. You do not have a a wildcard match with a list.
+    // That is, if you have wildcards and lists together, you will have a list of possible matches, where each entry may contain wildcards, you will not have a wildcard match with a list.
     // As a specific example,
     // '*_pickaxe|*_axe' will match any pickaxe or any axe.
     // '*_pickaxe|stone' will match any pickaxe or specifically stone. It will NOT match other types of stone, as it interprets

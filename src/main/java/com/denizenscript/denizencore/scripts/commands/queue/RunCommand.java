@@ -226,7 +226,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         String idString = id != null ? "FORCE:" + id.asString() : null;
         ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, idString, definitions, scriptEntry);
         if (result == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed!");
+            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (are you sure it's a task script, and the path exists?)!");
             return;
         }
     }

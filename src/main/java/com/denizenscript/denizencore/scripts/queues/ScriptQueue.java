@@ -117,14 +117,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return this;
     }
 
-    public ObjectTag getContext(String id) {
-        id = CoreUtilities.toLowerCase(id);
-        if (contextSource == null) {
-            return null;
-        }
-        return contextSource.getContext(id);
-    }
-
     public ContextSource contextSource = null;
 
     public DeterminationTarget determinationTarget = null;

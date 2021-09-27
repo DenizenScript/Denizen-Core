@@ -23,6 +23,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.function.Function;
 
 public class CoreUtilities {
 
@@ -48,19 +49,21 @@ public class CoreUtilities {
         return objectToTagForm(obj, context, scriptStrip, false);
     }
 
+    public static List<Function<Object, ObjectTag>> objectConversions = new ArrayList<>();
+
     public static ObjectTag objectToTagForm(Object obj, TagContext context, boolean scriptStrip, boolean doParse) {
+        return objectToTagForm(obj, context, scriptStrip, doParse, true);
+    }
+
+    public static ObjectTag objectToTagForm(Object obj, TagContext context, boolean scriptStrip, boolean doParse, boolean canPick) {
         if (obj == null) {
             return new ElementTag("null");
         }
         if (obj instanceof YamlConfiguration) {
             obj = ((YamlConfiguration) obj).contents;
         }
-        if (obj instanceof List) {
-            ListTag listResult = new ListTag();
-            for (Object subObj : (List) obj) {
-                listResult.addObject(objectToTagForm(subObj, context, scriptStrip, doParse));
-            }
-            return listResult;
+        if (obj instanceof ObjectTag) {
+            return (ObjectTag) obj;
         }
         else if (obj instanceof Map) {
             MapTag result = new MapTag();
@@ -69,11 +72,24 @@ public class CoreUtilities {
                 if (scriptStrip) {
                     key = ScriptBuilder.stripLinePrefix(key);
                 }
-                result.putObject(key, CoreUtilities.objectToTagForm(entry.getValue(), context, scriptStrip, doParse));
+                result.putObject(key, objectToTagForm(entry.getValue(), context, scriptStrip, doParse, canPick));
             }
             return result;
         }
+        if (obj instanceof Iterable) {
+            ListTag listResult = new ListTag();
+            for (Object subObj : (Iterable) obj) {
+                listResult.addObject(objectToTagForm(subObj, context, scriptStrip, doParse, canPick));
+            }
+            return listResult;
+        }
         else {
+            for (Function<Object, ObjectTag> func : objectConversions) {
+                ObjectTag result = func.apply(obj);
+                if (result != null) {
+                    return result.duplicate();
+                }
+            }
             String result = obj.toString();
             if (scriptStrip) {
                 result = ScriptBuilder.stripLinePrefix(result);
@@ -81,7 +97,12 @@ public class CoreUtilities {
             if (doParse) {
                 return TagManager.tagObject(result, context);
             }
-            return ObjectFetcher.pickObjectFor(result, context);
+            if (canPick) {
+                return ObjectFetcher.pickObjectFor(result, context);
+            }
+            else {
+                return new ElementTag(result, true);
+            }
         }
     }
 

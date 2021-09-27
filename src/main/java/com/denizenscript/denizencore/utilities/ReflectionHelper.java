@@ -33,7 +33,6 @@ public class ReflectionHelper {
             if (field == null) {
                 return null;
             }
-            cache.put(fieldName, field);
             return (T) field.get(object);
         }
         catch (Exception ex) {
