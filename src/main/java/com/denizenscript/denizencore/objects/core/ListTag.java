@@ -897,7 +897,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns MapTag
         // @description
         // If this list is a list of MapTags, returns a single MapTag of all the maps combined together.
-        // So a list that contains map of 'a/1|b/2' and a map of 'x/3|y/4' will return a single map of 'a/1|b/2|x/3|y/4'
+        // So a list that contains map of [a=1;b=2] and a map of [x=3;y=4] will return a single map of [a=1;b;=2;x=3;y=4]
         // Duplicate keys will have the the last value that appears in the list.
         // -->
         registerTag("merge_maps", (attribute, object) -> {
@@ -945,7 +945,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Interprets this list as a list of keys, and the input as a list of values,
         // and forms a mapping from keys to values based on list index.
         // Both lists must have the same size.
-        // For example, on a list of "a|b|c|", using ".map_with[1|2|3|]" will return a MapTag of "a/1|b/2|c/3|"
+        // For example, on a list of "a|b|c|", using ".map_with[1|2|3|]" will return a MapTag of [a=1;b=2;c=3]
         // -->
         registerTag("map_with", (attribute, object) -> {
             ListTag inputList = getListFor(attribute.getContextObject(1), attribute.context);

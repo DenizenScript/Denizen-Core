@@ -733,7 +733,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the time, formatted to the date format specification given.
         // If no format input is given, uses "yyyy/MM/dd HH:mm:ss".
-        // For the full format specification, refer to "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
+        // The optional input to this tag uses semi-standard date format symbols, such as 'yyyy' to mean a 4-digit year or 'MM' to mean a 2-digit month.
+        // There are a variety of additional symbols accepted, as listed under "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
         // -->
         registerTag("format", (attribute, object) -> {
             return new ElementTag(object.format(attribute.hasContext(1) ? attribute.getContext(1) : null));
