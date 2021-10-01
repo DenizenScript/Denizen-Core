@@ -20,6 +20,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
+import java.lang.reflect.Field;
 
 public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
@@ -755,10 +756,18 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     }
 
     public String format(String formatText) {
+        DateTimeFormatter format;
+
         if (formatText == null) {
-            formatText = "yyyy/MM/dd HH:mm:ss";
+            format = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        } else {
+            try {
+                format = DateTimeFormatter.getClass().getField(formatText.toUpperCase()).get(DateTimeFormatter);
+            } catch (NoSuchFieldException e) {
+                format = DateTimeFormatter.ofPattern(formatText);
+            }
         }
-        DateTimeFormatter format = DateTimeFormatter.ofPattern(formatText);
+
         return instant.format(format);
     }
 
