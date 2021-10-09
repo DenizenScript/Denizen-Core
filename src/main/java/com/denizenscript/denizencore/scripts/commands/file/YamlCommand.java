@@ -31,17 +31,17 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     public YamlCommand() {
         setName("yaml");
-        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]");
-        setRequiredArguments(2, 4);
+        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean)] [id:<name>]");
+        setRequiredArguments(2, 5);
         TagManager.registerTagHandler("yaml", this::yamlTagProcess);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name Yaml
-    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text>]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value>] [id:<name>]
+    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean)] [id:<name>]
     // @Required 2
-    // @Maximum 4
+    // @Maximum 5
     // @Short Edits YAML data, especially for YAML files.
     // @Group file
     //
@@ -64,6 +64,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // That means, if you use "set" to make changes, those changes will not be saved to any file, until you use "savefile".
     // Similarly, "create" does not create any file, instead it only creates a YAML object in RAM.
     //
+    // When loading, optionally specify 'raw_format' to indicate that this YAML file needs to maintain compatibility with some external system using raw YAML data
+    // (for example, when altering YAML data files used by external plugins). Note that this can have side effects of custom data disappearing (for example, the value "yes" gets magically converted to "true").
+    //
     // In-memory changes to a loaded YAML object will mark that object as having changes. Before saving,
     // you can check whether the YAML object needs to be written to disk with the has_changes tag.
     //
@@ -75,6 +78,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // If, for example, you have a unique YAML data container per-player, you might use something like "id:myscript_<player>".
     //
     // For ways to use the "set" argument, refer to <@link language data actions>.
+    //
+    // When setting a value directly, you can optionally specify "data_type" as "string", "integer", "double", or "boolean",
+    // to force the input to a specific data type, which may be needed for compatibility with some external YAML files.
+    // Only applicable when setting a single value, not lists/maps/etc.
     //
     // @Tags
     // <yaml[<idname>].contains[<path>]>
@@ -135,6 +142,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         SET_VALUE, INCREASE, DECREASE, MULTIPLY,
         DIVIDE, INSERT, REMOVE, SPLIT, DELETE, SPLIT_NEW
     }
+
+    public enum DataType { STRING, INTEGER, DOUBLE, BOOLEAN }
 
     @Override
     public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
@@ -199,6 +208,15 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             else if (!scriptEntry.hasObject("fix_formatting") &&
                     arg.matches("fix_formatting")) {
                 Deprecations.yamlFixFormatting.warn(scriptEntry);
+            }
+            else if (!scriptEntry.hasObject("raw_format") &&
+                    arg.matches("raw_format")) {
+                scriptEntry.addObject("raw_format", new ElementTag("true"));
+            }
+            else if (!scriptEntry.hasObject("data_type") &&
+                    arg.matchesPrefix("data_type") &&
+                    arg.matchesEnum(DataType.values())) {
+                scriptEntry.addObject("data_type", arg.asElement());
             }
             // Check for key:value/action
             else if (isSet &&
@@ -313,9 +331,11 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         ElementTag actionElement = scriptEntry.getElement("action");
         ElementTag idElement = scriptEntry.getElement("id");
         ElementTag toId = scriptEntry.getElement("to_id");
+        ElementTag dataType = scriptEntry.getElement("data_type");
+        ElementTag rawFormat = scriptEntry.getElement("raw_format");
         YamlConfiguration yamlConfiguration;
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId,
+            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat,
                     (yaml_action != null ? ArgumentHelper.debugObj("yaml_action", yaml_action.name()) : null));
         }
         // Do action
@@ -348,7 +368,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         FileInputStream fis = new FileInputStream(file);
                         String str = ScriptHelper.convertStreamToString(fis);
                         fis.close();
-                        runnableConfigs[0] = YamlConfiguration.load(str);
+                        runnableConfigs[0] = YamlConfiguration.load(str, rawFormat == null || !rawFormat.asBoolean());
                         if (runnableConfigs[0] == null) {
                             runnableConfigs[0] = new YamlConfiguration();
                         }
@@ -504,7 +524,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                 Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
                                 return;
                             }
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) + Double.parseDouble(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) + Double.parseDouble(valueStr)), dataType);
                             break;
                         }
                         case DECREASE: {
@@ -516,7 +536,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                 Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
                                 return;
                             }
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) - Double.parseDouble(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) - Double.parseDouble(valueStr)), dataType);
                             break;
                         }
                         case MULTIPLY: {
@@ -528,7 +548,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                 Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
                                 return;
                             }
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) * Double.parseDouble(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) * Double.parseDouble(valueStr)), dataType);
                             break;
                         }
                         case DIVIDE: {
@@ -540,14 +560,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                 Debug.echoError("YAML action required a decimal number, was given not-a-decimal-number: " + valueStr);
                                 return;
                             }
-                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) / Double.parseDouble(valueStr)));
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) / Double.parseDouble(valueStr)), dataType);
                             break;
                         }
                         case DELETE:
                             yaml.set(keyStr, null);
                             break;
                         case SET_VALUE:
-                            Set(yaml, index, keyStr, value);
+                            Set(yaml, index, keyStr, value, dataType);
                             break;
                         case INSERT: {
                             List<Object> list = yaml.getList(keyStr);
@@ -589,7 +609,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             break;
                         }
                         case SPLIT_NEW: {
-                            Set(yaml, index, keyStr, value.asType(ListTag.class, scriptEntry.getContext()));
+                            Set(yaml, index, keyStr, value.asType(ListTag.class, scriptEntry.getContext()), dataType);
                             break;
                         }
                         case SPLIT: {
@@ -688,8 +708,21 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         return value.toString();
     }
 
-    public void Set(YamlConfiguration yaml, int index, String key, Object value) {
+    public void Set(YamlConfiguration yaml, int index, String key, Object value, ElementTag dataType) {
         value = autoConvertObject(value);
+        if (dataType != null && value instanceof String) {
+            switch (DataType.valueOf(dataType.asString().toUpperCase())) {
+                case DOUBLE:
+                    value = Double.parseDouble(value.toString());
+                    break;
+                case INTEGER:
+                    value = Long.parseLong(value.toString());
+                    break;
+                case BOOLEAN:
+                    value = CoreUtilities.equalsIgnoreCase(value.toString(), "true");
+                    break;
+            }
+        }
         if (index == -1) {
             yaml.set(key, value);
         }

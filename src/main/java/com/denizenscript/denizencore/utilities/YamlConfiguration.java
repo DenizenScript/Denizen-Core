@@ -28,17 +28,21 @@ public class YamlConfiguration {
     }
 
     public static YamlConfiguration load(String data) {
+        return load(data, true);
+    }
+
+    public static YamlConfiguration load(String data, boolean useCustomResolver) {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
-        Yaml yaml = new Yaml(new Constructor(), new Representer(), options, new CustomResolver());
+        Yaml yaml = new Yaml(new Constructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
         Object obj = yaml.load(data);
         YamlConfiguration config = new YamlConfiguration();
         if (obj == null) {
             return null;
         }
         else if (obj instanceof String) {
-            config.contents = new HashMap<>();
+            config.contents = new LinkedHashMap<>();
             config.contents.put(null, obj);
         }
         else if (obj instanceof Map) {
@@ -59,23 +63,24 @@ public class YamlConfiguration {
      * Use StringHolders instead of strings.
      */
     public static void switchKeys(Map<StringHolder, Object> objs) {
-        for (Object o : new HashSet<Object>(objs.keySet())) {
-            Object got = objs.get(o);
-            objs.remove(o);
-            objs.put(o == null ? null : new StringHolder(o.toString()), got);
+        for (Map.Entry entry : new ArrayList<>(objs.entrySet())) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            objs.remove(key);
+            objs.put(key == null ? null : new StringHolder(key.toString()), value);
         }
-        for (Map.Entry<StringHolder, Object> str : objs.entrySet()) {
-            if (str.getValue() instanceof Map) {
-                Map map = (Map<StringHolder, Object>) str.getValue();
+        for (Map.Entry<StringHolder, Object> entry : objs.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                Map map = (Map<StringHolder, Object>) entry.getValue();
                 switchKeys(map);
-                objs.put(str.getKey(), map);
+                objs.put(entry.getKey(), map);
             }
-            else if (str.getValue() instanceof List) {
-                List list = (List) str.getValue();
+            else if (entry.getValue() instanceof List) {
+                List list = (List) entry.getValue();
                 List outList = new ArrayList();
                 for (Object obj : list) {
                     if (obj instanceof Map) {
-                        Map map = new HashMap((Map) obj);
+                        Map map = new LinkedHashMap((Map) obj);
                         switchKeys(map);
                         outList.add(map);
                     }
@@ -83,13 +88,13 @@ public class YamlConfiguration {
                         outList.add(obj);
                     }
                 }
-                objs.put(str.getKey(), outList);
+                objs.put(entry.getKey(), outList);
             }
         }
     }
 
     public static Map<String, Object> reverse(Map<StringHolder, Object> objs, boolean patchLines) {
-        HashMap<String, Object> map = new HashMap<>();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             if (obj.getValue() instanceof Map) {
                 map.put(obj.getKey().str, reverse((Map<StringHolder, Object>) obj.getValue(), patchLines));
@@ -108,7 +113,7 @@ public class YamlConfiguration {
                         output.add(ScriptBuilder.stripLinePrefix(val.toString()));
                     }
                     else {
-                        output.add(val.toString());
+                        output.add(val);
                     }
                 }
                 map.put(obj.getKey().str, output);
@@ -143,13 +148,13 @@ public class YamlConfiguration {
     }
 
     public YamlConfiguration() {
-        contents = new HashMap<>();
+        contents = new LinkedHashMap<>();
         dirty = false;
     }
 
     public Set<StringHolder> getKeys(boolean deep) {
         if (!deep) {
-            return new HashSet<>(contents.keySet());
+            return new LinkedHashSet<>(contents.keySet());
         }
         else {
             return getKeysDeep(contents, "");
@@ -157,7 +162,7 @@ public class YamlConfiguration {
     }
 
     public Map<StringHolder, Object> getMap() {
-        return new HashMap<>(contents);
+        return new LinkedHashMap<>(contents);
     }
 
     public void addAll(Map<StringHolder, Object> newContents) {
@@ -165,7 +170,7 @@ public class YamlConfiguration {
     }
 
     private Set<StringHolder> getKeysDeep(Map<StringHolder, Object> objs, String base) {
-        Set<StringHolder> strings = new HashSet<>();
+        Set<StringHolder> strings = new LinkedHashSet<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
             strings.add(new StringHolder(base + obj.getKey()));
             if (obj.getValue() instanceof Map) {
@@ -213,7 +218,7 @@ public class YamlConfiguration {
 
     public void set(String path, Object o) {
         if (o instanceof YamlConfiguration) {
-            o = new HashMap<>(((YamlConfiguration) o).contents);
+            o = new LinkedHashMap<>(((YamlConfiguration) o).contents);
         }
         List<String> parts = CoreUtilities.split(path, '.');
         Map<StringHolder, Object> portion = contents;
@@ -231,7 +236,7 @@ public class YamlConfiguration {
                 return;
             }
             else if (oPortion == null) {
-                Map<StringHolder, Object> map = new HashMap<>();
+                Map<StringHolder, Object> map = new LinkedHashMap<>();
                 portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }
@@ -239,7 +244,7 @@ public class YamlConfiguration {
                 portion = (Map<StringHolder, Object>) oPortion;
             }
             else {
-                Map<StringHolder, Object> map = new HashMap<>();
+                Map<StringHolder, Object> map = new LinkedHashMap<>();
                 portion.put(new StringHolder(parts.get(i)), map);
                 portion = map;
             }
