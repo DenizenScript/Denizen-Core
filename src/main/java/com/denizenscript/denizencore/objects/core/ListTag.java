@@ -575,22 +575,21 @@ public class ListTag implements List<String>, ObjectTag {
         return results;
     }
 
+    private static HashSet<String> deduplicateHelper = new HashSet<>();
+
     public ListTag deduplicate() {
-        ListTag list = new ListTag();
+        deduplicateHelper.clear();
         int size = size();
+        ListTag list = new ListTag(size);
         for (int i = 0; i < size; i++) {
-            String entry = get(i);
-            boolean duplicate = false;
-            for (int x = 0; x < i; x++) {
-                if (CoreUtilities.equalsIgnoreCase(get(x), entry)) {
-                    duplicate = true;
-                    break;
-                }
-            }
-            if (!duplicate) {
-                list.addObject(objectForms.get(i));
+            ObjectTag obj = objectForms.get(i);
+            String entry = CoreUtilities.toLowerCase(String.valueOf(obj));
+            if (!deduplicateHelper.contains(entry)) {
+                list.addObject(obj);
+                deduplicateHelper.add(entry);
             }
         }
+        deduplicateHelper.clear();
         return list;
     }
 
