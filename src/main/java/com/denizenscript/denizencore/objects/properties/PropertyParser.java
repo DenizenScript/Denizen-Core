@@ -107,6 +107,7 @@ public class PropertyParser {
             }
         }
         else if (!didRegisterTags) {
+            Debug.log("Warning: property class '" + property.getName() + "' has unknown tag registration.");
             propInfo.propertiesAnyTags.add(getter);
         }
         if (mechs != null) {
@@ -117,6 +118,7 @@ public class PropertyParser {
             propInfo.propertiesWithMechs.add(getter);
         }
         else {
+            Debug.log("Warning: property class '" + property.getName() + "' has unknown mechanism registration.");
             propInfo.propertiesAnyMechs.add(getter);
             propInfo.propertiesWithMechs.add(getter);
         }

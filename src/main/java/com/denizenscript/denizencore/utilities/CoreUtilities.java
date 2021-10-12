@@ -281,44 +281,6 @@ public class CoreUtilities {
         return null;
     }
 
-    public static String autoPropertyTag(ObjectTag object, Attribute attribute) {
-        if (attribute.isComplete()) {
-            return null;
-        }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
-        if (properties == null) {
-            return null;
-        }
-        String tagName = attribute.getAttributeWithoutContext(1);
-        PropertyParser.PropertyGetter specificGetter = properties.propertiesByTag.get(tagName);
-        if (specificGetter != null) {
-            Property prop = specificGetter.get(object);
-            if (prop == null) {
-                String propName = properties.propertyNamesByTag.get(tagName);
-                attribute.seemingSuccesses.add(attribute.getAttributeWithoutContext(1) + " - property " + propName + " matched, but is not valid for the object.");
-                return null;
-            }
-            return prop.getAttribute(attribute);
-        }
-        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyTags) {
-            Property prop = listGetter.get(object);
-            if (prop != null) {
-                String returned = prop.getAttribute(attribute);
-                if (returned != null) {
-                    return returned;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static ObjectTag autoAttrib(Property inp, Attribute attribute) {
-        if (attribute.isComplete()) {
-            return null;
-        }
-        return inp.getObjectAttribute(attribute);
-    }
-
     public static ObjectTag autoAttribTyped(ObjectTag inp, Attribute attribute) {
         return autoAttrib(fixType(inp, attribute.context), attribute);
     }
