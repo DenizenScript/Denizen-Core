@@ -238,11 +238,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.debugId = debugId;
         newQueue.debugOutput = this.debugOutput;
         for (ScriptEntry entry : getEntries()) {
+            entry = entry.clone();
+            entry.entryData.scriptEntry = entry;
             entry.setInstant(true);
             entry.setSendingQueue(newQueue);
             entry.updateContext();
+            newQueue.script_entries.add(entry);
         }
-        newQueue.addEntries(getEntries());
         newQueue.definitions = definitions.duplicate();
         newQueue.setContextSource(contextSource);
         newQueue.determinationTarget = determinationTarget;

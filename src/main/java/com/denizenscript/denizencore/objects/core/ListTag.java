@@ -538,7 +538,7 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, ScriptEntry entry) {
-        return filter(dClass, entry == null ? CoreUtilities.basicContext : entry.entryData.getTagContext(), true);
+        return filter(dClass, entry == null ? CoreUtilities.basicContext : entry.getContext(), true);
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger, boolean showFailure) {

@@ -72,7 +72,7 @@ public class DefineMapCommand extends AbstractCommand {
             }
         }
         if (scriptEntry.internal.yamlSubcontent instanceof Map) {
-            MapTag map = (MapTag) CoreUtilities.objectToTagForm(scriptEntry.internal.yamlSubcontent, scriptEntry.entryData.getTagContext(), true, true);
+            MapTag map = (MapTag) CoreUtilities.objectToTagForm(scriptEntry.internal.yamlSubcontent, scriptEntry.getContext(), true, true);
             value.map.putAll(map.map);
         }
         scriptEntry.addObject("map", value);
