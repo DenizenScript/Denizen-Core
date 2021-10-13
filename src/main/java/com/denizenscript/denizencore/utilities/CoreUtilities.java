@@ -820,4 +820,22 @@ public class CoreUtilities {
             return null;
         }
     }
+
+    public static Collection<ObjectTag> objectToList(ObjectTag list, TagContext context) {
+        if (list instanceof MapTag) {
+            return ((MapTag) list).map.values();
+        }
+        else if (list instanceof ListTag) {
+            return ((ListTag) list).objectForms;
+        }
+        else {
+            String raw = list.toString();
+            if (raw.startsWith("map@") || raw.startsWith("[")) {
+                return MapTag.valueOf(raw, context).map.values();
+            }
+            else {
+                return ListTag.valueOf(raw, context).objectForms;
+            }
+        }
+    }
 }
