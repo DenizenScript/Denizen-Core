@@ -284,14 +284,24 @@ public class IfCommand extends BracedCommand {
             return "[ArgComp: " + argstemp + " res " + result + "]";
         }
 
-        public static class ArgInternal {
+        public class ArgInternal {
 
             boolean negative;
 
             ObjectTag value;
 
             boolean boolify() {
-                return negative != value.toString().equals("true");
+                String rawValue = value.toString();
+                if (CoreUtilities.equalsIgnoreCase(rawValue, "true")) {
+                    return !negative;
+                }
+                else if (CoreUtilities.equalsIgnoreCase(rawValue, "false")) {
+                    return negative;
+                }
+                else {
+                    Debug.echoError(scriptEntry, "Invalid if comparison boolean '" + rawValue + "' - defaulting to false.");
+                    return false;
+                }
             }
 
             @Override
@@ -567,7 +577,7 @@ public class IfCommand extends BracedCommand {
                 ObjectTag second = tagme(args.size() - 1).value;
                 boolean outcome = Comparable.compare(first, second, operator, negative, scriptEntry.context);
                 if (scriptEntry.dbCallShouldDebug()) {
-                    Debug.echoDebug(scriptEntry, "Comparing " + first + (negative ? " not " : " ") + operator.name() + " " + second + (outcome ? " ... true" : " ... false"));
+                    Debug.echoDebug(scriptEntry, "Comparing if " + first + (negative ? " not " : " ") + operator.name() + " " + second + " ... " + outcome);
                 }
                 return outcome;
             }
