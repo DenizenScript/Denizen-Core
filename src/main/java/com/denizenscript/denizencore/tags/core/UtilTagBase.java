@@ -1,10 +1,8 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.TimeTag;
+import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
@@ -434,6 +432,40 @@ public class UtilTagBase {
         else if (attribute.matches("parse_yaml") && attribute.hasContext(1)) {
             ObjectTag tagForm = CoreUtilities.objectToTagForm(YamlConfiguration.load(attribute.getContext(1)).contents, attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(tagForm, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.queues>
+        // @returns ListTag(QueueTag)
+        // @description
+        // Returns a list of all currently running queues on the server.
+        // -->
+        else if (attribute.startsWith("queues")) {
+            ListTag list = new ListTag();
+            for (ScriptQueue queue : ScriptQueue.getQueues()) {
+                list.addObject(new QueueTag(queue));
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <queue.event_stats>
+        // @returns ElementTag
+        // @description
+        // Returns a simple debuggable stats report for all ScriptEvents during this server session.
+        // -->
+        else if (attribute.startsWith("event_stats")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <queue.event_stats_data>
+        // @returns ListTag(MapTag)
+        // @description
+        // Returns the raw data for <@link tag queue.event_stats>, as a ListTag of MapTags.
+        // -->
+        else if (attribute.startsWith("event_stats_data")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue.getStatsRawData(), attribute.fulfill(1)));
         }
     }
 

@@ -180,4 +180,8 @@ public interface DenizenImplementation {
     ObjectTag getSpecialDef(String def, ScriptQueue queue);
 
     boolean setSpecialDef(String def, ScriptQueue queue, ObjectTag value);
+
+    String getTextColor();
+
+    String getEmphasisColor();
 }

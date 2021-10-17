@@ -9,6 +9,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.Deprecations;
 
 public class QueueTagBase {
 
@@ -57,38 +58,23 @@ public class QueueTagBase {
 
         // Otherwise, try to use queue in a static manner.
 
-        // <--[tag]
-        // @attribute <queue.exists[<queue_id>]>
-        // @returns ElementTag(Boolean)
-        // @description
-        // Returns whether the specified queue exists.
-        // -->
         if (attribute.startsWith("exists")
                 && attribute.hasContext(1)) {
+            Deprecations.queueExists.warn(attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.queueExists(attribute.getContext(1))),
                     attribute.fulfill(1)));
             return;
         }
 
-        // <--[tag]
-        // @attribute <queue.stats>
-        // @returns ElementTag
-        // @description
-        // Returns stats for all queues during this server session
-        // -->
         if (attribute.startsWith("stats")) {
+            Deprecations.queueStats.warn(attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()),
                     attribute.fulfill(1)));
             return;
         }
 
-        // <--[tag]
-        // @attribute <queue.list>
-        // @returns ListTag(QueueTag)
-        // @description
-        // Returns a list of all currently running queues on the server.
-        // -->
         if (attribute.startsWith("list")) {
+            Deprecations.queueStats.warn(attribute.context);
             ListTag list = new ListTag();
             for (ScriptQueue queue : ScriptQueue.getQueues()) {
                 list.addObject(new QueueTag(queue));

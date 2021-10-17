@@ -16,26 +16,46 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     protected static long total_queues = 0;
 
     public static String getStats() {
+        String c1 = DenizenCore.getImplementation().getTextColor(), c2 = DenizenCore.getImplementation().getEmphasisColor();
         StringBuilder stats = new StringBuilder();
+        TreeSet<Map.Entry<Long, String>> statsSet = new TreeSet<>(Comparator.comparingLong(Map.Entry::getKey));
         for (ScriptEvent event : ScriptEvent.events) {
             if (event.stats.fires > 0) {
-                stats.append("Event '").append(event.getName()).append("' ran ").append(event.stats.fires)
-                        .append(" times (").append(event.stats.scriptFires).append(" script fires)")
-                        .append(", totalling ").append((float) event.stats.nanoTimes / 1000000f)
-                        .append("ms, averaging ").append((float) event.stats.nanoTimes / 1000000f / (float) event.stats.fires)
-                        .append("ms per event or ").append(+((float) event.stats.nanoTimes / 1000000f / (float) event.stats.scriptFires)).append("ms per script.\n");
+                stats.setLength(0);
+                stats.append(c1).append("Event '").append(event.getName()).append(c1).append("' ran ").append(c2).append(event.stats.fires)
+                        .append(c1).append(" times (").append(c2).append(event.stats.scriptFires).append(c1).append(" script fires)")
+                        .append(c1).append(", totalling ").append(c2).append((float) event.stats.nanoTimes / 1000000f)
+                        .append(c1).append("ms, averaging ").append(c2).append((float) event.stats.nanoTimes / 1000000f / (float) event.stats.fires)
+                        .append(c1).append("ms per event or ").append(c2).append(+((float) event.stats.nanoTimes / 1000000f / (float) event.stats.scriptFires)).append(c1).append("ms per script.\n");
+                statsSet.add(new HashMap.SimpleEntry<>(event.stats.nanoTimes, stats.toString()));
             }
         }
         return "Total number of queues created: "
                 + total_queues
                 + ", currently active queues: "
-                + allQueues.size() + ",\n" + stats.toString();
+                + allQueues.size() + ",\n" + String.join("", statsSet.stream().map(Map.Entry::getValue).collect(Collectors.joining()));
+    }
+
+    public static ListTag getStatsRawData() {
+        ListTag result = new ListTag();
+        for (ScriptEvent event : ScriptEvent.events) {
+            if (event.stats.fires > 0) {
+                MapTag map = new MapTag();
+                map.putObject("name", new ElementTag(event.getName()));
+                map.putObject("total_fires", new ElementTag(event.stats.fires));
+                map.putObject("script_fires", new ElementTag(event.stats.scriptFires));
+                map.putObject("total_time", new DurationTag(event.stats.nanoTimes / 1000.0));
+                result.addObject(map);
+            }
+        }
+        return result;
     }
 
     public static ScriptQueue getExistingQueue(String id) {
