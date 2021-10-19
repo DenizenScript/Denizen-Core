@@ -276,6 +276,9 @@ public class ElementTag implements ObjectTag {
 
     public boolean isDouble() {
         try {
+            if (!ArgumentHelper.matchesDouble(element)) {
+                return false;
+            }
             if (!Double.valueOf(element).isNaN()) {
                 return true;
             }
@@ -287,6 +290,9 @@ public class ElementTag implements ObjectTag {
 
     public boolean isFloat() {
         try {
+            if (!ArgumentHelper.matchesDouble(element)) {
+                return false;
+            }
             if (!Float.valueOf(element).isNaN()) {
                 return true;
             }

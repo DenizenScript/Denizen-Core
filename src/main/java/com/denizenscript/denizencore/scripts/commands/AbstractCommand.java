@@ -91,7 +91,6 @@ public abstract class AbstractCommand {
     public AbstractCommand as(String commandName) {
         setName(commandName);
         DenizenCore.getCommandRegistry().register(this.name, this);
-        onEnable();
         return this;
     }
 
@@ -108,14 +107,9 @@ public abstract class AbstractCommand {
     /**
      * Part of the Plugin disable sequence.
      * <p/>
-     * Can be '@Override'n by a Command which requires a method when bukkit sends a
-     * onDisable() to Denizen. (ie. Server shuts down or restarts)
+     * Can be '@Override'n by a Command which requires a method when bukkit sends a onDisable() to Denizen. (ie. Server shuts down or restarts)
      */
     public void onDisable() {
-    }
-
-    @Deprecated
-    public void onEnable() {
     }
 
     @Deprecated

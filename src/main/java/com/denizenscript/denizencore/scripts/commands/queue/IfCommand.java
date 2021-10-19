@@ -208,8 +208,8 @@ public class IfCommand extends BracedCommand {
                 Debug.echoDebug(scriptEntry, "<Y>If command passed, running block.");
                 scriptEntry.setInstant(true);
                 List<ScriptEntry> bracedCommandsList = braces.get(0).value;
-                for (int i = 0; i < bracedCommandsList.size(); i++) {
-                    bracedCommandsList.get(i).setInstant(true);
+                for (ScriptEntry entry : bracedCommandsList) {
+                    entry.setInstant(true);
                 }
                 scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
                 return;
@@ -240,8 +240,8 @@ public class IfCommand extends BracedCommand {
                     }
                     scriptEntry.setInstant(true);
                     List<ScriptEntry> bracedCommandsList = braceSet.value;
-                    for (int i = 0; i < bracedCommandsList.size(); i++) {
-                        bracedCommandsList.get(i).setInstant(true);
+                    for (ScriptEntry entry : bracedCommandsList) {
+                        entry.setInstant(true);
                     }
                     scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
                     return;

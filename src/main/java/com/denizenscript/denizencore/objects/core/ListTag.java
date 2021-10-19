@@ -394,8 +394,7 @@ public class ListTag implements List<String>, ObjectTag {
         for (ObjectTag obj : objectForms) {
             objs.add(obj == null ? null : obj.duplicate());
         }
-        ListTag result = new ListTag(objs);
-        return result;
+        return new ListTag(objs);
     }
 
     /////////////
@@ -1575,8 +1574,8 @@ public class ListTag implements List<String>, ObjectTag {
             }
             String element = attribute.getContext(1);
             int count = 0;
-            for (int i = 0; i < object.size(); i++) {
-                if (CoreUtilities.equalsIgnoreCase(object.get(i), element)) {
+            for (String s : object) {
+                if (CoreUtilities.equalsIgnoreCase(s, element)) {
                     count++;
                 }
             }

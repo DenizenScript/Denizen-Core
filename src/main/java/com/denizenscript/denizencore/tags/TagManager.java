@@ -281,8 +281,7 @@ public class TagManager {
             return result;
         }
         StringBuilder helpy = new StringBuilder();
-        for (int i = 0; i < pieces.size(); i++) {
-            ParseableTagPiece p = pieces.get(i);
+        for (ParseableTagPiece p : pieces) {
             if (p.isError) {
                 Debug.echoError(context, p.content);
             }
@@ -429,8 +428,7 @@ public class TagManager {
                 }
             }
             else {
-                ObjectTag created = parseChainObject(piece.value, context);
-                aharg.object = created;
+                aharg.object = parseChainObject(piece.value, context);
                 aharg.prefix = null;
                 aharg.lower_prefix = null;
             }

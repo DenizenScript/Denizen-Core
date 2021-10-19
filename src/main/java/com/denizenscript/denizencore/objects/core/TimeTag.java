@@ -162,36 +162,32 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public String debuggable() {
-        StringBuilder output = new StringBuilder();
-        output.append("<G>time@ <Y>");
-        // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
-        output.append(pad0(instant.get(ChronoField.YEAR), 4)).append("<G> / <Y>")
-                .append(pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2))
-                .append(" <G>(<GR>").append(Month.of(instant.get(ChronoField.MONTH_OF_YEAR)).name()).append("<G>)").append("<G> / <Y>")
-                .append(pad0(instant.get(ChronoField.DAY_OF_MONTH), 2))
-                .append(" <G>(<GR>").append(DayOfWeek.of(instant.get(ChronoField.DAY_OF_WEEK)).name()).append("<G>)").append("<G> _ <Y>")
-                .append(pad0(instant.get(ChronoField.HOUR_OF_DAY), 2)).append("<G> : <Y>")
-                .append(pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2)).append("<G> : <Y>")
-                .append(pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2)).append("<G> : <Y>")
-                .append(pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4)).append("<G> _ <Y>")
-                .append(instant.getOffset().getId());
-        return output.toString();
+        return "<G>time@ <Y>" +
+                // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
+                pad0(instant.get(ChronoField.YEAR), 4) + "<G> / <Y>" +
+                pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2) +
+                " <G>(<GR>" + Month.of(instant.get(ChronoField.MONTH_OF_YEAR)).name() + "<G>)" + "<G> / <Y>" +
+                pad0(instant.get(ChronoField.DAY_OF_MONTH), 2) +
+                " <G>(<GR>" + DayOfWeek.of(instant.get(ChronoField.DAY_OF_WEEK)).name() + "<G>)" + "<G> _ <Y>" +
+                pad0(instant.get(ChronoField.HOUR_OF_DAY), 2) + "<G> : <Y>" +
+                pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2) + "<G> : <Y>" +
+                pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2) + "<G> : <Y>" +
+                pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4) + "<G> _ <Y>" +
+                instant.getOffset().getId();
     }
 
     @Override
     public String identify() {
-        StringBuilder output = new StringBuilder();
-        output.append("time@");
-        // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
-        output.append(pad0(instant.get(ChronoField.YEAR), 4)).append("/")
-                .append(pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2)).append("/")
-                .append(pad0(instant.get(ChronoField.DAY_OF_MONTH), 2)).append("_")
-                .append(pad0(instant.get(ChronoField.HOUR_OF_DAY), 2)).append(":")
-                .append(pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2)).append(":")
-                .append(pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2)).append(":")
-                .append(pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4)).append("_")
-                .append(instant.getOffset().getId());
-        return output.toString();
+        return "time@" +
+                // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
+                pad0(instant.get(ChronoField.YEAR), 4) + "/" +
+                pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2) + "/" +
+                pad0(instant.get(ChronoField.DAY_OF_MONTH), 2) + "_" +
+                pad0(instant.get(ChronoField.HOUR_OF_DAY), 2) + ":" +
+                pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2) + ":" +
+                pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2) + ":" +
+                pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4) + "_" +
+                instant.getOffset().getId();
     }
 
     @Override

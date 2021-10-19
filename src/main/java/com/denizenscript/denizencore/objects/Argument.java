@@ -178,8 +178,8 @@ public class Argument implements Cloneable {
 
     public static HashSet<String> precalcEnum(Enum<?>[] values) {
         HashSet<String> toRet = new HashSet<>(values.length);
-        for (int i = 0; i < values.length; i++) {
-            toRet.add(values[i].name().toUpperCase().replace("_", ""));
+        for (Enum<?> value : values) {
+            toRet.add(value.name().toUpperCase().replace("_", ""));
         }
         return toRet;
     }
@@ -272,7 +272,8 @@ public class Argument implements Cloneable {
     }
 
     // Check if this argument matches any of multiple ObjectTag types
-    public boolean matchesArgumentTypes(Class<? extends ObjectTag>... dClasses) {
+    @SafeVarargs
+    public final boolean matchesArgumentTypes(Class<? extends ObjectTag>... dClasses) {
         for (Class<? extends ObjectTag> c : dClasses) {
             if (matchesArgumentType(c)) {
                 return true;
