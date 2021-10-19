@@ -43,6 +43,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         registerScriptEvent(new ReloadScriptsScriptEvent());
         registerScriptEvent(new ScriptGeneratesErrorScriptEvent());
         registerScriptEvent(new ServerGeneratesExceptionScriptEvent());
+        registerScriptEvent(new ShutdownScriptEvent());
         registerScriptEvent(new SystemTimeScriptEvent());
         registerScriptEvent(new TickScriptEvent());
     }
@@ -432,7 +433,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         String flagSwitch = path.switches.get("server_flagged");
         if (flagSwitch != null) {
             for (String flag : CoreUtilities.split(flagSwitch, '|')) {
-                if (!DenizenCore.getImplementation().getServerFlags().hasFlag(flag)) {
+                if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
                     return false;
                 }
             }

@@ -234,7 +234,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public AbstractFlagTracker getFlagTracker() {
-        return new RedirectionFlagTracker(DenizenCore.getImplementation().getServerFlags(), "__time." + millis());
+        return new RedirectionFlagTracker(DenizenCore.serverFlagMap, "__time." + millis());
     }
 
     @Override

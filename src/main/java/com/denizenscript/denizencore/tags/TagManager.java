@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class TagManager {
 
-    public void registerCoreTags() {
+    public static void registerCoreTags() {
         // Objects
         new CustomTagBase();
         new DurationTagBase();

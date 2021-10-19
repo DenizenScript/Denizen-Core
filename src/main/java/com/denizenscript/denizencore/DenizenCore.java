@@ -3,6 +3,8 @@ package com.denizenscript.denizencore;
 import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.*;
+import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
+import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
@@ -13,6 +15,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.VerySlowWarning;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,8 +29,14 @@ public class DenizenCore {
 
     public final static String VERSION;
 
-    static CommandRegistry commandRegistry;
-    static ScriptEngine scriptEngine;
+    public static CommandRegistry commandRegistry;
+    public static ScriptEngine scriptEngine;
+
+    public final static long startTime = System.currentTimeMillis();
+
+    public static SavableMapFlagTracker serverFlagMap;
+
+    public static long lastReloadTime;
 
     public static CommandRegistry getCommandRegistry() {
         return commandRegistry;
@@ -90,6 +99,31 @@ public class DenizenCore {
     }
 
     /**
+     * Call to reload anything that was saved, especially after init.
+     */
+    public static void reloadSaves() {
+        serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(getImplementation().getDataFolder(), "server_flags").getPath());
+    }
+
+    /**
+     * Call to save anything that needs to be saved, especially before shutdown.
+     */
+    public static void saveAll() {
+        NoteManager.save();
+        serverFlagMap.saveToFile(new File(getImplementation().getDataFolder(), "server_flags").getPath());
+    }
+
+    /**
+     * Must be called last: performs final shutdowns / saves / etc.
+     */
+    public static void shutdown() {
+        ShutdownScriptEvent.instance.fire();
+        saveAll();
+        logInterceptor.standardOutput();
+        commandRegistry.disableCoreMembers();
+    }
+
+    /**
      * Call postLoadScripts after.
      */
     public static void preloadScripts() {
@@ -115,10 +149,12 @@ public class DenizenCore {
      */
     public static void postLoadScripts() {
         try {
+            NoteManager.reload();
             ScriptRegistry.postLoadScripts();
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
+            lastReloadTime = System.currentTimeMillis();
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");

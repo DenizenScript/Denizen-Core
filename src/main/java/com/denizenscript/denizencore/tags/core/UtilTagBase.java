@@ -449,7 +449,7 @@ public class UtilTagBase {
         }
 
         // <--[tag]
-        // @attribute <queue.event_stats>
+        // @attribute <util.event_stats>
         // @returns ElementTag
         // @description
         // Returns a simple debuggable stats report for all ScriptEvents during this server session.
@@ -459,10 +459,10 @@ public class UtilTagBase {
         }
 
         // <--[tag]
-        // @attribute <queue.event_stats_data>
+        // @attribute <util.event_stats_data>
         // @returns ListTag(MapTag)
         // @description
-        // Returns the raw data for <@link tag queue.event_stats>, as a ListTag of MapTags.
+        // Returns the raw data for <@link tag util.event_stats>, as a ListTag of MapTags.
         // -->
         else if (attribute.startsWith("event_stats_data")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue.getStatsRawData(), attribute.fulfill(1)));

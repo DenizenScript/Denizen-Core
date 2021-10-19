@@ -146,7 +146,7 @@ public class FlagCommand extends AbstractCommand {
         if (arg.contains(":")) {
             return;
         }
-        for (String flagName : DenizenCore.getImplementation().getServerFlags().listAllFlags()) {
+        for (String flagName : DenizenCore.serverFlagMap.listAllFlags()) {
             if (!flagName.startsWith("__")) {
                 addOne.accept(flagName);
             }
@@ -218,7 +218,7 @@ public class FlagCommand extends AbstractCommand {
         for (ObjectTag object : targets.objectForms) {
             AbstractFlagTracker tracker;
             if (CoreUtilities.equalsIgnoreCase(object.toString(), "server")) {
-                tracker = DenizenCore.getImplementation().getServerFlags();
+                tracker = DenizenCore.serverFlagMap;
             }
             else if (object instanceof FlaggableObject) {
                 tracker = ((FlaggableObject) object).getFlagTracker();

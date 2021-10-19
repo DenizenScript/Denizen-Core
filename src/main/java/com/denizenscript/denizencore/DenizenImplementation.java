@@ -121,8 +121,6 @@ public interface DenizenImplementation {
 
     String scriptQueueSpeed();
 
-    AbstractFlagTracker getServerFlags();
-
     TagContext getTagContext(ScriptContainer container);
 
     TagContext getTagContext(ScriptEntry entry);
