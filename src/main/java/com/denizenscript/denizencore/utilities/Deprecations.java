@@ -254,6 +254,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/02/03, deprecate officially by 2023.
     public static Warning hasScriptTags = new FutureWarning("The ItemTag.scriptname and EntityTag.scriptname and ItemTag.has_script and NPCTag.has_script tags are deprecated: use '.script.name' or a null check on .script.");
 
+    // In Bukkit impl, Added 2021/10/18, deprecate officially by 2023.
+    public static Warning entityMechanismsFormat = new FutureWarning("Entity script containers previously allowed mechanisms in the script's root, however they should now be under a 'mechanisms' key.");
+
     // Added 2021/02/04, deprecate officially by 2024.
     public static Warning splitNewDataAction = new FutureWarning("The 'split to new list' data action ('key:!|:value') is deprecated: this no longer has a purpose, as you can instead just set to the list.");
 
