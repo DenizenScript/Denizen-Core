@@ -154,6 +154,9 @@ public class NoteManager {
         }
         String rawFileData = CoreUtilities.journallingLoadFile(saveFilePath);
         saveConfig = rawFileData == null ? new YamlConfiguration() : YamlConfiguration.load(rawFileData);
+        if (saveConfig == null) {
+            saveConfig = new YamlConfiguration();
+        }
         loadFromConfig();
     }
 
