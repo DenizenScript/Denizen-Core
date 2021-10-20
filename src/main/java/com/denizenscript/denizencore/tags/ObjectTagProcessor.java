@@ -19,6 +19,8 @@ public class ObjectTagProcessor<T extends ObjectTag> {
 
     public HashMap<String, TagRunnable.ObjectInterface<T, ?>> registeredObjectTags = new HashMap<>();
 
+    public HashMap<String, Class<? extends ObjectTag>> tagReturnTypes = new HashMap<>();
+
     public ObjectTagProcessor() {
 
         // <--[tag]
@@ -259,8 +261,10 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 return runnable.run(attribute, object);
             };
             registeredObjectTags.put(variant, newRunnable);
+            tagReturnTypes.put(variant, returnType);
         }
         registeredObjectTags.put(name, runnable);
+        tagReturnTypes.put(name, returnType);
     }
 
     public ObjectTag getObjectAttribute(T object, Attribute attribute) {

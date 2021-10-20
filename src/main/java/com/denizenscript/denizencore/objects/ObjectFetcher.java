@@ -43,6 +43,21 @@ public class ObjectFetcher {
 
     public static Map<String, ObjectType<? extends ObjectTag>> objectsByPrefix = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
+    public static Map<Class<? extends ObjectTag>, List<Class<? extends ObjectTag>>> customSubtypeList = new HashMap<>();
+
+    public static Collection<Class<? extends ObjectTag>> getAllApplicableSubTypesFor(Class<? extends ObjectTag> type) {
+        if (type == ObjectTag.class) {
+            return objectsByClass.keySet();
+        }
+        List<Class<? extends ObjectTag>> customSet = customSubtypeList.get(type);
+        if (customSet != null) {
+            return customSet;
+        }
+        if (type == ElementTag.class) {
+            return Collections.singleton(ElementTag.class);
+        }
+        return Arrays.asList(type, ElementTag.class);
+    }
 
     public static void registerCoreObjects() {
         // Initialize the ObjectFetcher

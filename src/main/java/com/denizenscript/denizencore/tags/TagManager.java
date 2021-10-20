@@ -43,9 +43,12 @@ public class TagManager {
 
     public static HashMap<String, TagRunnable.BaseInterface<?>> baseHandlers = new HashMap<>();
 
+    public static HashMap<String, Class<? extends ObjectTag>> baseReturnTypes = new HashMap<>();
+
     public static HashSet<String> properTagBases = new HashSet<>();
 
     public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
+        baseReturnTypes.put(name, returnType);
         properTagBases.add(name);
         baseHandlers.put(name, run);
     }
