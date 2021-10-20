@@ -396,7 +396,7 @@ public class Attribute {
     // This syntax is still fully supported at time of writing, however the newer tag-based format is considered clearer and easier to learn.
     //
     // -->
-    public static final HashMap<String, TagRunnable.BaseInterface> fallbackTags = new HashMap<>();
+    public static final HashMap<String, TagRunnable.BaseInterface<?>> fallbackTags = new HashMap<>();
 
     static {
         fallbackTags.put("if_null", (attribute) -> {

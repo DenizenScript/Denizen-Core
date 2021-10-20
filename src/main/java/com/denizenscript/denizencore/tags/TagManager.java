@@ -41,16 +41,11 @@ public class TagManager {
 
     public static HashMap<String, TagRunnable.RootForm> rootFormHandlers = new HashMap<>();
 
-    public static HashMap<String, TagRunnable.BaseInterface> baseHandlers = new HashMap<>();
+    public static HashMap<String, TagRunnable.BaseInterface<?>> baseHandlers = new HashMap<>();
 
     public static HashSet<String> properTagBases = new HashSet<>();
 
-    public static void registerTagHandler(String name, TagRunnable.BaseInterface run) {
-        properTagBases.add(name);
-        baseHandlers.put(name, run);
-    }
-
-    public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterfaceWithReturn<R> run) {
+    public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
         properTagBases.add(name);
         baseHandlers.put(name, run);
     }
@@ -75,7 +70,7 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
-        TagRunnable.BaseInterface baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBaseHandler;
+        TagRunnable.BaseInterface<?> baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBaseHandler;
         if (baseHandler != null) {
             Attribute attribute = event.getAttributes();
             try {

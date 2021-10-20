@@ -777,7 +777,7 @@ public class ElementTag implements ObjectTag {
         // WARNING: THIS TAG IS DANGEROUS TO USE, DO NOT USE IT UNLESS
         // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
         // -->
-        tagProcessor.registerTag("parsed", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "parsed", (attribute, object) -> {
             return TagManager.tagObject(object.element, attribute.context);
         });
 
@@ -1806,7 +1806,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element plus a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> addRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> addRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.add[...] must have a value.");
                 return null;
@@ -1833,7 +1833,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element divided by a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> divRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> divRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.div[...] must have a value.");
                 return null;
@@ -1860,7 +1860,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the remainder of the element divided by a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> modRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> modRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.mod[...] must have a value.");
                 return null;
@@ -1889,7 +1889,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element multiplied by a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> mulRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> mulRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.mul[...] must have a value.");
                 return null;
@@ -1916,7 +1916,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element minus a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> subRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> subRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.sub[...] must have a value.");
                 return null;
@@ -1998,7 +1998,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element to the power of a number.
         // -->
-        TagRunnable.ObjectInterfaceWithReturn<ElementTag, ElementTag> powerRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ElementTag, ElementTag> powerRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ElementTag.power[...] must have a value.");
                 return null;
@@ -2469,7 +2469,7 @@ public class ElementTag implements ObjectTag {
         // For example: "<player.exists.if_true[<player.name>].if_false[server]>"
         // will return the player's name if there's a player present, or if not will return 'server', and won't show any errors from the '<player.name>' tag even without a player linked.
         // -->
-        tagProcessor.registerTag("if_true", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "if_true", (attribute, object) -> {
             if (!attribute.hasContext(1) || !attribute.startsWith("if_false", 2) || !attribute.hasContext(2)) {
                 attribute.echoError("ElementTag.if_true[...].if_false[...] malformed and missing at least one required part.");
                 return null;

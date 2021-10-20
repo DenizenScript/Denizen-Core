@@ -312,7 +312,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             return new ElementTag(object.container.getOriginalName());
         });
 
-        tagProcessor.registerTag("constant", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "constant", (attribute, object) -> {
             Deprecations.scriptConstantTag.warn(attribute.context);
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ScriptTag.constant[...] must have a value.");
@@ -350,7 +350,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Will automatically parse any tags contained within the value of the key, preserving key data structure
         // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
         // -->
-        tagProcessor.registerTag("parsed_key", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "parsed_key", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag ScriptTag.parsed_key[...] must have a value.");
                 return null;
@@ -380,7 +380,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // For example, "script.data_key[type]" on a task script will return "task".
         // Custom keys should usually go in a 'data' script container, or under a key labeled 'data' for other script containers.
         // -->
-        tagProcessor.registerTag("data_key", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "data_key", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag ScriptTag.data_key[...] must have a value.");
                 return null;

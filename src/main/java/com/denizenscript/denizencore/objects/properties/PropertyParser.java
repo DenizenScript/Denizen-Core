@@ -46,26 +46,17 @@ public class PropertyParser {
     public static Set<String> allMechanismsEver = new HashSet<>();
 
     @FunctionalInterface
-    public interface PropertyTag<T extends Property> {
-        ObjectTag run(Attribute attribute, T prop);
-    }
-
-    @FunctionalInterface
-    public interface PropertyTagWithReturn<T extends Property, R extends ObjectTag> extends PropertyTag<T> {
+    public interface PropertyTagWithReturn<T extends Property, R extends ObjectTag> {
         R run(Attribute attribute, T prop);
     }
 
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
-    public static <P extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTag<P> runnable, String... variants) {
-        registerTag(name, runnable, variants);
-    }
-
-    public static <P extends Property> void registerTag(String name, PropertyTag<P> runnable, String... variants) {
+    public static <P extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String... variants) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
         final Class propertyClass = PropertyParser.currentlyRegisteringPropertyClass;
         ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
-        tagProcessor.registerTag(name, (attribute, object) -> {
+        tagProcessor.registerTag(returnType, name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
@@ -294,7 +285,7 @@ public class PropertyParser {
     //
     // -->
 
-    public static <T extends Adjustable> void registerPropertyTagHandlers(ObjectTagProcessor<T> processor) {
+    public static <T extends Adjustable> void registerPropertyTagHandlers(Class<T> type, ObjectTagProcessor<T> processor) {
 
         // <--[tag]
         // @attribute <PropertyHolderObject.with[<mechanism>=<value>;...]>
@@ -305,11 +296,11 @@ public class PropertyParser {
         // Be careful with dynamic inputs, they may break from escaping flaws.
         // Consider using <@link tag PropertyHolderObject.with_single> instead.
         // -->
-        processor.registerTag("with", (attribute, object) -> {
+        processor.registerTag(type, "with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
-            Adjustable instance = (Adjustable) object.duplicate();
+            T instance = (T) object.duplicate();
             List<String> properties = ObjectFetcher.separateProperties("[" + attribute.getContext(1) + "]");
             for (int i = 1; i < properties.size(); i++) {
                 List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
@@ -331,11 +322,11 @@ public class PropertyParser {
         // Returns a copy of the object with a single mechanism adjustment applied.
         // This avoids the risk of escaping issues.
         // -->
-        processor.registerTag("with_single", (attribute, object) -> {
+        processor.registerTag(type, "with_single", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
-            Adjustable instance = (Adjustable) object.duplicate();
+            T instance = (T) object.duplicate();
             List<String> data = CoreUtilities.split(attribute.getContext(1), '=', 2);
             if (data.size() != 2) {
                 Debug.echoError("Invalid property string '" + attribute.getContext(1) + "'!");
@@ -353,12 +344,12 @@ public class PropertyParser {
         // @description
         // Returns a copy of the object with the MapTag of mechanism adjustments applied.
         // -->
-        processor.registerTag("with_map", (attribute, object) -> {
+        processor.registerTag(type, "with_map", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
             MapTag properties = attribute.contextAsType(1, MapTag.class);
-            Adjustable instance = (Adjustable) object.duplicate();
+            T instance = (T) object.duplicate();
             for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
                 instance.safeApplyProperty(new Mechanism(pair.getKey().low, pair.getValue(), attribute.context));
             }
@@ -373,7 +364,7 @@ public class PropertyParser {
         // Returns true if the property named is supported by the object.
         // This does not necessarily mean it has a valid current value, just that it's supported at all.
         // -->
-        processor.registerTag("supports", (attribute, object) -> {
+        processor.registerTag(ElementTag.class, "supports", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -396,7 +387,7 @@ public class PropertyParser {
         // @description
         // Returns the object's property map.
         // -->
-        processor.registerTag("property_map", (attribute, object) -> {
+        processor.registerTag(MapTag.class, "property_map", (attribute, object) -> {
             return getPropertiesMap(object);
         });
     }

@@ -48,7 +48,7 @@ public class ReplaceableTagEvent {
 
         public TagRunnable.RootForm rootFormHandler = null;
 
-        public TagRunnable.BaseInterface tagBaseHandler = null;
+        public TagRunnable.BaseInterface<?> tagBaseHandler = null;
     }
 
     public ReferenceData mainRef = null;
@@ -209,7 +209,7 @@ public class ReplaceableTagEvent {
         return mainRef.value != null;
     }
 
-    public TagRunnable.BaseInterface alternateBase;
+    public TagRunnable.BaseInterface<?> alternateBase;
 
     public ObjectTag getAlternative() {
         int index = core_attributes.getFallbackTagIndex();

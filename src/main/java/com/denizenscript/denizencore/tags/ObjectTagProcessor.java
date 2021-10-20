@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class ObjectTagProcessor<T extends ObjectTag> {
 
-    public HashMap<String, TagRunnable.ObjectInterface<T>> registeredObjectTags = new HashMap<>();
+    public HashMap<String, TagRunnable.ObjectInterface<T, ?>> registeredObjectTags = new HashMap<>();
 
     public ObjectTagProcessor() {
 
@@ -49,7 +49,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // @description
         // Returns the 'determine' result of a procedure script, passing this object in as the context value.
         // -->
-        registerTag("proc", (attribute, object) -> {
+        registerTag(ObjectTag.class, "proc", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -106,7 +106,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // For example, "<player.if_null[<npc>]>" will return the player if there is a player, and otherwise will return the NPC.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag("if_null", (attribute, object) -> {
+        registerTag(ObjectTag.class, "if_null", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -147,7 +147,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // If the return is 'false', the 'null_if' tag returns the original object.
         // Consider also <@link tag ObjectTag.null_if_tag>.
         // -->
-        registerTag("null_if", (attribute, object) -> {
+        registerTag(ObjectTag.class, "null_if", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -183,7 +183,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // If the return is 'false', the 'null_if' tag returns the original object.
         // Consider also <@link tag ObjectTag.null_if_tag>.
         // -->
-        registerTag("null_if_tag", (attribute, object) -> {
+        registerTag(ObjectTag.class, "null_if_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -240,9 +240,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {
-        TagRunnable.ObjectInterface<T> properTag = registeredObjectTags.get(name);
+        TagRunnable.ObjectInterface<T, ?> properTag = registeredObjectTags.get(name);
         for (String variant : deprecatedVariants) {
-            TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {
+            TagRunnable.ObjectInterface<T, ?> newRunnable = (attribute, object) -> {
                 if (FutureWarning.futureWarningsEnabled) {
                     Debug.echoError(attribute.context,  "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 }
@@ -252,13 +252,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
     }
 
-    public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterfaceWithReturn<T, R> runnable, String... deprecatedVariants) {
-        registerTag(name, runnable, deprecatedVariants);
-    }
-
-    public void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... deprecatedVariants) {
+    public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
         for (String variant : deprecatedVariants) {
-            TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {
+            TagRunnable.ObjectInterface<T, R> newRunnable = (attribute, object) -> {
                 Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 return runnable.run(attribute, object);
             };
@@ -283,7 +279,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
         String attrLow = attribute.getAttributeWithoutContext(1);
         ObjectTag returned;
-        TagRunnable.ObjectInterface<T> otr = registeredObjectTags.get(attrLow);
+        TagRunnable.ObjectInterface<T, ?> otr = registeredObjectTags.get(attrLow);
         if (otr != null) {
             if (Debug.verbose) {
                 Debug.log("TagProcessor - Sub-tag found for " + attrLow);

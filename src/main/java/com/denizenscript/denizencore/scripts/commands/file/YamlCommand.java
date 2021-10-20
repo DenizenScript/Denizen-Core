@@ -33,7 +33,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         setName("yaml");
         setSyntax("yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean)] [id:<name>]");
         setRequiredArguments(2, 5);
-        TagManager.registerTagHandler("yaml", this::yamlTagProcess);
+        TagManager.registerTagHandler(ObjectTag.class, "yaml", this::yamlTagProcess);
         isProcedural = false;
     }
 

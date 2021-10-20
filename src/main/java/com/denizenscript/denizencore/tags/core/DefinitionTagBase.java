@@ -19,7 +19,7 @@ public class DefinitionTagBase {
         // The object will be returned as the most-valid type based on the input.
         // In most usages, the tag name is left blank, like "<[defhere]>".
         // -->
-        TagRunnable.BaseInterface defTag = (attribute) -> {
+        TagRunnable.BaseInterface<ObjectTag> defTag = (attribute) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("Invalid definition tag, no context specified!");
                 return null;
@@ -40,9 +40,9 @@ public class DefinitionTagBase {
             }
             return CoreUtilities.fixType(def, attribute.context);
         };
-        TagManager.registerTagHandler("def", defTag);
-        TagManager.registerTagHandler("definition", defTag);
-        TagManager.registerTagHandler("", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, "def", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, "definition", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, "", defTag);
     }
 }
 

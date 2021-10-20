@@ -417,7 +417,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".get[b]" will return "2".
         // For example, on a map of [a=1;b=2;c=3], using ".get[b|c]" will return a list of "2|3".
         // -->
-        tagProcessor.registerTag("get", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "get", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
                 return null;
@@ -442,7 +442,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // then ".deep_get[root.leaf]" will return "myvalue".
         // If a list is given as input, returns a list of values.
         // -->
-        TagRunnable.ObjectInterface<MapTag> deepGetRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<MapTag, ObjectTag> deepGetRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.deep_get' must have an input value.");
                 return null;
@@ -457,8 +457,8 @@ public class MapTag implements ObjectTag, Adjustable {
             }
             return object.getDeepObject(attribute.getContext(1));
         };
-        tagProcessor.registerTag("deep_get", deepGetRunnable);
-        tagProcessor.registerTag("", deepGetRunnable);
+        tagProcessor.registerTag(ObjectTag.class, "deep_get", deepGetRunnable);
+        tagProcessor.registerTag(ObjectTag.class, "", deepGetRunnable);
 
         // <--[tag]
         // @attribute <MapTag.get_subset[<key>|...]>

@@ -833,7 +833,7 @@ public class ListTag implements List<String>, ObjectTag {
             return sub_list;
         });
 
-        tagProcessor.registerTag("map_get", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "map_get", (attribute, object) -> {
             Deprecations.listOldMapTags.warn(attribute.context);
             if (object.isEmpty()) {
                 return new ElementTag("");
@@ -1391,7 +1391,7 @@ public class ListTag implements List<String>, ObjectTag {
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
         // -->
-        TagRunnable.ObjectInterface<ListTag> getRunnable = (attribute, object) -> {
+        TagRunnable.ObjectInterface<ListTag, ObjectTag> getRunnable = (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag ListTag.get[...] must have a value.");
                 return null;
@@ -1458,8 +1458,8 @@ public class ListTag implements List<String>, ObjectTag {
             }
             return null;
         };
-        tagProcessor.registerTag("get", getRunnable);
-        tagProcessor.registerTag("", getRunnable);
+        tagProcessor.registerTag(ObjectTag.class, "get", getRunnable);
+        tagProcessor.registerTag(ObjectTag.class, "", getRunnable);
 
         // <--[tag]
         // @attribute <ListTag.find_all_partial[<element>]>
@@ -1631,7 +1631,7 @@ public class ListTag implements List<String>, ObjectTag {
         // For example: a list of "one|two|three" will return "one".
         // Effectively equivalent to .get[1]
         // -->
-        tagProcessor.registerTag("first", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "first", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }
@@ -1649,7 +1649,7 @@ public class ListTag implements List<String>, ObjectTag {
         // For example: a list of "one|two|three" will return "three".
         // Effectively equivalent to .get[<list.size>]
         // -->
-        tagProcessor.registerTag("last", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "last", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }
@@ -1667,7 +1667,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
         // For example, <server.online_players.lowest[money]> returns the player with the least money currently online.
         // -->
-        tagProcessor.registerTag("lowest", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "lowest", (attribute, object) -> {
             String tag = null;
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
@@ -1756,7 +1756,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
         // For example, <server.players.highest[money]> returns the player with the most money.
         // -->
-        tagProcessor.registerTag("highest", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "highest", (attribute, object) -> {
             String tag = null;
             if (attribute.hasContext(1)) {
                 tag = attribute.getRawContext(1);
@@ -2385,7 +2385,7 @@ public class ListTag implements List<String>, ObjectTag {
         // For example: .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
-        tagProcessor.registerTag("random", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "random", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }

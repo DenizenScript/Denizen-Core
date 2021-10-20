@@ -6,25 +6,13 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 public abstract class TagRunnable implements Cloneable {
 
     @FunctionalInterface
-    public interface ObjectInterface<T extends ObjectTag> {
-
-        ObjectTag run(Attribute attribute, T object);
-    }
-
-    @FunctionalInterface
-    public interface ObjectInterfaceWithReturn<T extends ObjectTag, R extends ObjectTag> extends ObjectInterface<T> {
+    public interface ObjectInterface<T extends ObjectTag, R extends ObjectTag> {
 
         R run(Attribute attribute, T object);
     }
 
     @FunctionalInterface
-    public interface BaseInterface {
-
-        ObjectTag run(Attribute attribute);
-    }
-
-    @FunctionalInterface
-    public interface BaseInterfaceWithReturn<R extends ObjectTag> extends BaseInterface {
+    public interface BaseInterface<R extends ObjectTag> {
 
         R run(Attribute attribute);
     }
