@@ -248,7 +248,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the year of this TimeTag, like '2020'.
         // -->
-        registerTag("year", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "year", (attribute, object) -> {
             return new ElementTag(object.year());
         });
 
@@ -258,7 +258,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the month of this TimeTag, where January is 1 and December is 12.
         // -->
-        registerTag("month", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "month", (attribute, object) -> {
             return new ElementTag(object.month());
         });
 
@@ -268,7 +268,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the name of the month of this TimeTag, like 'JANUARY'.
         // -->
-        registerTag("month_name", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "month_name", (attribute, object) -> {
             return new ElementTag(Month.of(object.month()).name());
         });
 
@@ -278,7 +278,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the number of days in the month that this TimeTag is within.
         // -->
-        registerTag("days_in_month", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "days_in_month", (attribute, object) -> {
             return new ElementTag(YearMonth.of(object.year(), object.month()).lengthOfMonth());
         });
 
@@ -288,7 +288,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the day-of-month of this TimeTag, starting at 1.
         // -->
-        registerTag("day", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "day", (attribute, object) -> {
             return new ElementTag(object.day());
         });
 
@@ -298,7 +298,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the day-of-year of this TimeTag, from 1 to 365 (or 366 in leap years).
         // -->
-        registerTag("day_of_year", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "day_of_year", (attribute, object) -> {
             return new ElementTag(object.instant.get(ChronoField.DAY_OF_YEAR));
         });
 
@@ -308,7 +308,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the day-of-week of this TimeTag, with Monday as 1 and Sunday as 7 (per ISO standard).
         // -->
-        registerTag("day_of_week", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "day_of_week", (attribute, object) -> {
             return new ElementTag(object.instant.get(ChronoField.DAY_OF_WEEK));
         });
 
@@ -318,7 +318,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the name of the day-of-week of this TimeTag, like 'MONDAY'.
         // -->
-        registerTag("day_of_week_name", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "day_of_week_name", (attribute, object) -> {
             return new ElementTag(DayOfWeek.of(object.instant.get(ChronoField.DAY_OF_WEEK)).name());
         });
 
@@ -328,7 +328,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the hour-of-day of this TimeTag, from 1 to 24.
         // -->
-        registerTag("hour", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "hour", (attribute, object) -> {
             return new ElementTag(object.hour());
         });
 
@@ -338,7 +338,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the minute-of-hour of this TimeTag, from 0 to 59.
         // -->
-        registerTag("minute", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "minute", (attribute, object) -> {
             return new ElementTag(object.minute());
         });
 
@@ -348,7 +348,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the second-of-minute of this TimeTag, from 0 to 59.
         // -->
-        registerTag("second", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "second", (attribute, object) -> {
             return new ElementTag(object.second());
         });
 
@@ -358,7 +358,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the millisecond of this TimeTag, from 0 to 999.
         // -->
-        registerTag("millisecond", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "millisecond", (attribute, object) -> {
             return new ElementTag(object.millisecondComponent());
         });
 
@@ -368,7 +368,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the number of milliseconds between this TimeTag and the Unix Epoch (Jan. 1st 1970).
         // -->
-        registerTag("epoch_millis", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "epoch_millis", (attribute, object) -> {
             return new ElementTag(object.millis());
         });
 
@@ -378,7 +378,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the time zone offset (from UTC) of this TimeTag.
         // -->
-        registerTag("time_zone_offset", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "time_zone_offset", (attribute, object) -> {
             return new ElementTag(object.instant.getOffset().getId());
         });
 
@@ -388,7 +388,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the ID of the time zone of this TimeTag.
         // -->
-        registerTag("time_zone_id", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "time_zone_id", (attribute, object) -> {
             return new ElementTag(object.instant.getZone().getId());
         });
 
@@ -398,7 +398,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the display name of the time zone of this TimeTag.
         // -->
-        registerTag("time_zone_name", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "time_zone_name", (attribute, object) -> {
             return new ElementTag(object.instant.getZone().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         });
 
@@ -409,7 +409,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns a copy of the time zone, converted to the specified time zone.
         // Zone input can be like 'UTC-5' or like 'America/New_York'
         // -->
-        registerTag("to_zone", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "to_zone", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneId.of(attribute.getContext(1))));
         });
 
@@ -419,7 +419,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a copy of the time zone, converted to the local time zone.
         // -->
-        registerTag("to_local", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "to_local", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneId.systemDefault()));
         });
 
@@ -429,7 +429,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a copy of the time zone, converted to Universal Coordinated Time.
         // -->
-        registerTag("to_utc", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "to_utc", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneOffset.UTC));
         });
 
@@ -442,7 +442,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM today.
         // The minute/second/millisecond will be zeroed.
         // -->
-        registerTag("last_hour_of_day", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "last_hour_of_day", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.last_hour_of_day[...] must have input.");
                 return null;
@@ -465,7 +465,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM tomorrow.
         // The minute/second/millisecond will be zeroed.
         // -->
-        registerTag("next_hour_of_day", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "next_hour_of_day", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.next_hour_of_day[...] must have input.");
                 return null;
@@ -486,7 +486,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the timetag of the previous day of the specified input day-of-week (like 'sunday').
         // The hour/minute/second/millisecond will be zeroed.
         // -->
-        registerTag("last_day_of_week", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "last_day_of_week", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.last_day_of_week[...] must have input.");
                 return null;
@@ -514,7 +514,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the timetag of the next day of the specified input day-of-week (like 'thursday').
         // The hour/minute/second/millisecond will be zeroed.
         // -->
-        registerTag("next_day_of_week", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "next_day_of_week", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.next_day_of_week[...] must have input.");
                 return null;
@@ -545,7 +545,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
-        registerTag("last_day_of_month", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "last_day_of_month", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.last_day_of_month[...] must have input.");
                 return null;
@@ -577,7 +577,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
-        registerTag("next_day_of_month", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "next_day_of_month", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("time.next_day_of_month[...] must have input.");
                 return null;
@@ -605,7 +605,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns this time tag, with the month/day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same year).
         // -->
-        registerTag("start_of_year", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "start_of_year", (attribute, object) -> {
             return new TimeTag(object.year(), 1, 1, 0, 0, 0, 0, object.instant.getOffset());
         });
 
@@ -615,7 +615,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns this time tag, with the day/hour/minute/second/millisecond zeroed (that is, midnight the morning of the first day of the same month).
         // -->
-        registerTag("start_of_month", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "start_of_month", (attribute, object) -> {
             return new TimeTag(object.year(), object.month(), 1, 0, 0, 0, 0, object.instant.getOffset());
         });
 
@@ -625,7 +625,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns this time tag, with the hour/minute/second/millisecond zeroed (that is, midnight the morning of the same day).
         // -->
-        registerTag("start_of_day", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "start_of_day", (attribute, object) -> {
             return new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
         });
 
@@ -636,7 +636,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the time that is this TimeTag plus a duration.
         // For example, a TimeTag on Monday, '.add[1d]', will return a time on Tuesday.
         // -->
-        registerTag("add", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "add", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag TimeTag.add[...] must have an input.");
                 return null;
@@ -652,7 +652,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the time that is this TimeTag minus a duration.
         // For example, a TimeTag on Monday, '.sub[1d]', will return a time on Sunday.
         // -->
-        registerTag("sub", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "sub", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag TimeTag.sub[...] must have an input.");
                 return null;
@@ -672,7 +672,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // A TimeTag for Sunday will also return a DurationTag of '1d' when used on a Monday.
         // If positive/negative differences are required, consider instead using <@link tag TimeTag.duration_since>.
         // -->
-        registerTag("from_now", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "from_now", (attribute, object) -> {
             return new DurationTag(Math.abs(object.millis() - now().millis()) / 1000.0);
         });
 
@@ -684,7 +684,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // That is, a.duration_since[b] returns (a - b).
         // For example, a time on Monday, .duration_since[a time on Sunday], will return '1d'.
         // -->
-        registerTag("duration_since", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "duration_since", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag TimeTag.duration_since[...] must have an input.");
                 return null;
@@ -699,7 +699,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns true if this time object comes after the input time value, or false if it's before (or equal).
         // -->
-        registerTag("is_after", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_after", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag TimeTag.is_after[...] must have an input.");
                 return null;
@@ -714,7 +714,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns true if this time object comes before the input time value, or false if it's after (or equal).
         // -->
-        registerTag("is_before", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_before", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag TimeTag.is_before[...] must have an input.");
                 return null;
@@ -732,16 +732,16 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The optional input to this tag uses semi-standard date format symbols, such as 'yyyy' to mean a 4-digit year or 'MM' to mean a 2-digit month.
         // There are a variety of additional symbols accepted, as listed under "Patterns for Formatting and Parsing" on <@link url https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>.
         // -->
-        registerTag("format", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "format", (attribute, object) -> {
             return new ElementTag(object.format(attribute.hasContext(1) ? attribute.getContext(1) : null));
         });
 
-        registerTag("duration_compat", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "duration_compat", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return new DurationTag(object.millis() / 1000.0);
         }, "in_years", "in_weeks", "in_days", "in_hours", "in_minutes", "in_seconds", "in_milliseconds", "in_ticks");
 
-        registerTag("time", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "time", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return object;
         });
@@ -764,10 +764,6 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     }
 
     public static ObjectTagProcessor<TimeTag> tagProcessor = new ObjectTagProcessor<>();
-
-    public static void registerTag(String name, TagRunnable.ObjectInterface<TimeTag> runnable, String... variants) {
-        tagProcessor.registerTag(name, runnable, variants);
-    }
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {

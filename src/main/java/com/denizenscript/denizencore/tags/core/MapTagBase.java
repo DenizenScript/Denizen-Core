@@ -16,7 +16,7 @@ public class MapTagBase {
         // Refer to <@link ObjectType MapTag>.
         // For example: <map[a=1;b=2;c=3]>
         // -->
-        TagManager.registerTagHandler("map", (attribute) -> {
+        TagManager.registerTagHandler(MapTag.class, "map", (attribute) -> {
             if (!attribute.hasContext(1)) {
                 return new MapTag();
             }

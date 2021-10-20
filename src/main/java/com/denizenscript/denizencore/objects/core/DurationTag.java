@@ -321,7 +321,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of years in the duration.
         // -->
-        registerTag("in_years", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_years", (attribute, object) -> {
             return new ElementTag(object.seconds / (86400 * 365));
         }, "years");
 
@@ -331,7 +331,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of weeks in the duration.
         // -->
-        registerTag("in_weeks", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_weeks", (attribute, object) -> {
             return new ElementTag(object.seconds / 604800);
         }, "weeks");
 
@@ -341,7 +341,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of days in the duration.
         // -->
-        registerTag("in_days", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_days", (attribute, object) -> {
             return new ElementTag(object.seconds / 86400);
         }, "days");
 
@@ -351,7 +351,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of hours in the duration.
         // -->
-        registerTag("in_hours", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_hours", (attribute, object) -> {
             return new ElementTag(object.seconds / 3600);
         }, "hours");
 
@@ -361,7 +361,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of minutes in the duration.
         // -->
-        registerTag("in_minutes", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_minutes", (attribute, object) -> {
             return new ElementTag(object.seconds / 60);
         }, "minutes");
 
@@ -371,7 +371,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of seconds in the duration.
         // -->
-        registerTag("in_seconds", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_seconds", (attribute, object) -> {
             return new ElementTag(object.seconds);
         }, "seconds");
 
@@ -381,7 +381,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of milliseconds in the duration.
         // -->
-        registerTag("in_milliseconds", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_milliseconds", (attribute, object) -> {
             return new ElementTag(object.seconds * 1000);
         }, "milliseconds");
 
@@ -391,7 +391,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns the number of ticks in the duration. (20t/second)
         // -->
-        registerTag("in_ticks", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "in_ticks", (attribute, object) -> {
             return new ElementTag((long) (object.seconds * 20L));
         }, "ticks");
 
@@ -401,7 +401,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns this duration minus another.
         // -->
-        registerTag("sub", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "sub", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                 return null;
@@ -415,7 +415,7 @@ public class DurationTag implements ObjectTag {
         // @description
         // returns this duration plus another.
         // -->
-        registerTag("add", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "add", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag DurationTag.add[...] must have a value.");
                 return null;
@@ -431,7 +431,7 @@ public class DurationTag implements ObjectTag {
         // Returns whether this duration is greater than the input duration.
         // Equivalent to if comparison: >
         // -->
-        registerTag("is_more_than", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_more_than", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -446,7 +446,7 @@ public class DurationTag implements ObjectTag {
         // Returns whether this duration is less than the input duration.
         // Equivalent to if comparison: <
         // -->
-        registerTag("is_less_than", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_less_than", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -461,7 +461,7 @@ public class DurationTag implements ObjectTag {
         // Returns whether this duration is greater than or equal to the input duration.
         // Equivalent to if comparison: >=
         // -->
-        registerTag("is_more_than_or_equal_to", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_more_than_or_equal_to", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
@@ -476,14 +476,14 @@ public class DurationTag implements ObjectTag {
         // Returns whether this duration is less than or equal to the input duration.
         // Equivalent to if comparison: <=
         // -->
-        registerTag("is_less_than_or_equal_to", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_less_than_or_equal_to", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
             return new ElementTag(object.seconds <= attribute.contextAsType(1, DurationTag.class).seconds);
         });
 
-        registerTag("time", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "time", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return new TimeTag(object.getMillis());
         });
@@ -500,7 +500,7 @@ public class DurationTag implements ObjectTag {
         // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
         // Will show seconds, minutes, hours, days, and/or years.
         // -->
-        registerTag("formatted", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "formatted", (attribute, object) -> {
             return new ElementTag(object.formatted(false));
         }, "value");
 
@@ -512,16 +512,12 @@ public class DurationTag implements ObjectTag {
         // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
         // Will show seconds, minutes, hours, days, and/or years.
         // -->
-        registerTag("formatted_words", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "formatted_words", (attribute, object) -> {
             return new ElementTag(object.formatted(true));
         });
     }
 
     public static ObjectTagProcessor<DurationTag> tagProcessor = new ObjectTagProcessor<>();
-
-    public static void registerTag(String name, TagRunnable.ObjectInterface<DurationTag> runnable, String... variants) {
-        tagProcessor.registerTag(name, runnable, variants);
-    }
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {

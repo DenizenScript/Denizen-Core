@@ -14,7 +14,7 @@ public class CustomTagBase {
         // Returns a custom object constructed from the input value.
         // Refer to <@link ObjectType CustomObjectTag>.
         // -->
-        TagManager.registerTagHandler("custom_object", (attribute) -> {
+        TagManager.registerTagHandler(CustomObjectTag.class, "custom_object", (attribute) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Custom_Object tag base must have input.");
                 return null;

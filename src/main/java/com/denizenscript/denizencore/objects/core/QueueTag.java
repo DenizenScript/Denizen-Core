@@ -159,7 +159,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the id of the queue.
         // -->
-        registerTag("id", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "id", (attribute, object) -> {
             return new ElementTag(object.getQueue().id);
         });
 
@@ -169,7 +169,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the number of script entries in the queue.
         // -->
-        registerTag("size", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "size", (attribute, object) -> {
             return new ElementTag(object.getQueue().script_entries.size());
         });
 
@@ -179,10 +179,10 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the time this queue started as a duration.
         // -->
-        registerTag("started_time", (attribute, object) -> {
+        tagProcessor.registerTag(TimeTag.class, "started_time", (attribute, object) -> {
             return new TimeTag(object.getQueue().startTimeMilli);
         });
-        registerTag("start_time", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "start_time", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
             return new DurationTag(object.getQueue().startTimeMilli / 50);
         });
@@ -193,7 +193,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the time this queue has ran for (the length of time between now and when the queue started) as a duration.
         // -->
-        registerTag("time_ran", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "time_ran", (attribute, object) -> {
             long timeNano = System.nanoTime() - object.getQueue().startTime;
             return new DurationTag(timeNano / (1000000 * 1000.0));
         });
@@ -204,7 +204,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns 'stopping', 'running', 'paused', or 'unknown'.
         // -->
-        registerTag("state", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "state", (attribute, object) -> {
             String state;
             if ((object.getQueue() instanceof TimedQueue) && ((TimedQueue) object.getQueue()).isPaused()) {
                 state = "paused";
@@ -227,7 +227,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the script that started this queue.
         // -->
-        registerTag("script", (attribute, object) -> {
+        tagProcessor.registerTag(ScriptTag.class, "script", (attribute, object) -> {
             if (object.getQueue().script == null) {
                 return null;
             }
@@ -240,7 +240,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a list of commands waiting in the queue.
         // -->
-        registerTag("commands", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "commands", (attribute, object) -> {
             ListTag commands = new ListTag();
             for (ScriptEntry entry : object.getQueue().script_entries) {
                 StringBuilder sb = new StringBuilder();
@@ -259,7 +259,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the names of all definitions that were added to the current queue.
         // -->
-        registerTag("definitions", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "definitions", (attribute, object) -> {
             return object.getQueue().getAllDefinitions().keys();
         });
 
@@ -269,7 +269,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a map of all definitions on the queue.
         // -->
-        registerTag("definition_map", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "definition_map", (attribute, object) -> {
             return object.getQueue().getAllDefinitions().duplicate();
         });
 
@@ -280,7 +280,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the value of the specified definition.
         // Returns null if the queue lacks the definition.
         // -->
-        registerTag("definition", (attribute, object) -> {
+        tagProcessor.registerTag("definition", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag QueueTag.definition[...] must have a value.");
                 return null;
@@ -295,7 +295,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the values that have been determined via <@link command Determine>
         // for this queue, or null if there is none.
         // -->
-        registerTag("determination", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "determination", (attribute, object) -> {
             if (object.getQueue().determinations == null) {
                 return null;
             }
@@ -309,8 +309,9 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @returns DurationTag
         // @description
         // Returns the speed of the queue as a Duration. A return of '0' implies it is 'instant'.
+        // This is largely considered historical - most queues now default to instant.
         // -->
-        registerTag("speed", (attribute, object) -> {
+        tagProcessor.registerTag(DurationTag.class, "speed", (attribute, object) -> {
             if (!(object.getQueue() instanceof TimedQueue)) {
                 if (!attribute.hasAlternative()) {
                     Debug.echoError("The tag QueueTag.speed is only valid for Timed queues.");
@@ -322,10 +323,6 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     }
 
     public static ObjectTagProcessor<QueueTag> tagProcessor = new ObjectTagProcessor<>();
-
-    public static void registerTag(String name, TagRunnable.ObjectInterface<QueueTag> runnable, String... variants) {
-        tagProcessor.registerTag(name, runnable, variants);
-    }
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {

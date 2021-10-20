@@ -14,7 +14,7 @@ public class ElementTagBase {
         // Returns an element constructed from the input value.
         // Refer to <@link objecttype ElementTag>.
         // -->
-        TagManager.registerTagHandler("element", (attribute) -> {
+        TagManager.registerTagHandler(ElementTag.class, "element", (attribute) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Element tag base must have input.");
                 return null;

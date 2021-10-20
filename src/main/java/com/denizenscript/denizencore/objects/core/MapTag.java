@@ -267,7 +267,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns the size of the map - that is, how many key/value pairs are within it.
         // -->
-        registerTag("size", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "size", (attribute, object) -> {
             return new ElementTag(object.map.size());
         });
 
@@ -277,7 +277,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns "true" if the map is empty (contains no keys), otherwise "false".
         // -->
-        registerTag("is_empty", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "is_empty", (attribute, object) -> {
             return new ElementTag(object.map.isEmpty());
         });
 
@@ -291,7 +291,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // This also lets you apply list filters or similar to the keyset.
         // To apply a '.parse' to the values, use <@link tag ListTag.map_with>, like 'map.keys.map_with[map.values.parse[...]]'
         // -->
-        registerTag("sort_by_value", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "sort_by_value", (attribute, object) -> {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.hasContext(1) ? attribute.getRawContext(1) : null;
@@ -332,7 +332,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // This requires a fully formed tag as input, making use of the 'filter_key' and 'filter_value' definition.
         // For example: a map of [a=1;b=2;c=3;d=4;e=5] .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of [c=3;d=4;e=5].
         // -->
-        registerTag("filter_tag", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "filter_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Must have input to filter_tag[...]");
                 return null;
@@ -362,7 +362,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // This requires a fully formed tag as input, making use of the 'parse_key' and 'parse_value' definition.
         // For example: a map of [alpha=one;bravo=two] .parse_value_tag[<[parse_value].to_uppercase>] returns a map of [alpha=ONE;bravo=TWO].
         // -->
-        registerTag("parse_value_tag", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "parse_value_tag", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Must have input to parse_value_tag[...]");
                 return null;
@@ -389,7 +389,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns whether the map contains the specified key.
         // If a list is given as input, returns whether the map contains all of the specified keys.
         // -->
-        registerTag("contains", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "contains", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.contains' must have an input value.");
                 return null;
@@ -417,7 +417,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".get[b]" will return "2".
         // For example, on a map of [a=1;b=2;c=3], using ".get[b|c]" will return a list of "2|3".
         // -->
-        registerTag("get", (attribute, object) -> {
+        tagProcessor.registerTag("get", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
                 return null;
@@ -457,8 +457,8 @@ public class MapTag implements ObjectTag, Adjustable {
             }
             return object.getDeepObject(attribute.getContext(1));
         };
-        registerTag("deep_get", deepGetRunnable);
-        registerTag("", deepGetRunnable);
+        tagProcessor.registerTag("deep_get", deepGetRunnable);
+        tagProcessor.registerTag("", deepGetRunnable);
 
         // <--[tag]
         // @attribute <MapTag.get_subset[<key>|...]>
@@ -468,7 +468,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".get_subset[b|a]" will return [b=2;a=1].
         // Keys that aren't present in the original map will be ignored.
         // -->
-        registerTag("get_subset", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "get_subset", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.get_subset' must have an input value.");
                 return null;
@@ -495,7 +495,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".default[d].as[4]" will return [a=1;b=2;c=3;d=4].
         // For example, on a map of [a=1;b=2;c=3], using ".default[c].as[4]" will return [a=1;b=2;c=3].
         // -->
-        registerTag("default", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "default", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.default' must have an input value.");
                 return null;
@@ -526,7 +526,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a copy of the map, with the specified key set to the specified value, using deep key paths separated by the '.' symbol.
         // This means for example if you use "deep_with[root.leaf].as[myvalue]", you will have the key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue").
         // -->
-        registerTag("deep_with", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "deep_with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.deep_with' must have an input value.");
                 return null;
@@ -555,7 +555,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".with[d].as[4]" will return [a=1;b=2;c=3;d=4].
         // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".with[c].as[4]" will return [a=1;b=2;c=4].
         // -->
-        registerTag("with", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "with", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.with' must have an input value.");
                 return null;
@@ -587,7 +587,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // In the case of duplicate new-keys, the last instance of the new-key will be preserved.
         // For example, on a map of [a=1;b=2;c=2], using "invert" will return [1=a;2=c].
         // -->
-        registerTag("invert", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "invert", (attribute, object) -> {
             MapTag result = new MapTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                 result.map.put(new StringHolder(entry.getValue().identify()), new ElementTag(entry.getKey().str));
@@ -601,7 +601,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns a copy of the map with the specified deep key(s) excluded.
         // -->
-        registerTag("deep_exclude", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "deep_exclude", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.deep_exclude' must have an input value.");
                 return null;
@@ -620,7 +620,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a copy of the map with the specified key(s) excluded.
         // For example, on a map of [a=1;b=2;c=3], using ".exclude[b]" will return [a=1;c=3].
         // -->
-        registerTag("exclude", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "exclude", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.exclude' must have an input value.");
                 return null;
@@ -640,7 +640,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".include[d=4;e=5]" will return [a=1;b=2;c=3;d=4;e=5].
         // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".include[b=4;c=5]" will return [a=1;b=4;c=5].
         // -->
-        registerTag("include", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "include", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.include' must have an input value.");
                 return null;
@@ -657,7 +657,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a list of all keys in this map, including keys in any sub-maps (map values that are in turn MapTags), using deep key paths separated by the '.' symbol.
         // No returned key value will refer to a MapTag instance.
         // -->
-        registerTag("deep_keys", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "deep_keys", (attribute, object) -> {
             ListTag result = new ListTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                 if (entry.getValue() instanceof MapTag) {
@@ -677,7 +677,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a list of all keys in this map.
         // For example, on a map of [a=1;b=2;c=3], using "keys" will return "a|b|c|".
         // -->
-        registerTag("keys", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "keys", (attribute, object) -> {
             return object.keys();
         }, "list_keys");
 
@@ -688,7 +688,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a list of all values in this map.
         // For example, on a map of [a=1;b=2;c=3], using "values" will return "1|2|3|".
         // -->
-        registerTag("values", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "values", (attribute, object) -> {
             ListTag result = new ListTag();
             for (ObjectTag entry : object.map.values()) {
                 result.addObject(entry);
@@ -702,7 +702,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns a list of all key/value pairs in this map, where each entry in the list is itself a list with 2 entries: the key, then the value.
         // -->
-        registerTag("to_pair_lists", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "to_pair_lists", (attribute, object) -> {
             ListTag result = new ListTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                 ListTag pair = new ListTag();
@@ -717,10 +717,10 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.to_list>
         // @returns ListTag
         // @description
-        // Returns a list of all key/value pairs in this map.
-        // Note that slash ('/') escaping will be lost, so maps that have slashes in their keys will not be possible to convert back to a map.
+        // Returns a list of all key/value pairs in this map, separated by the slash '/' symbol.
+        // Note that there is no slash ('/') escaping, so maps that have slashes in their keys will not be possible to convert back to a map.
         // -->
-        registerTag("to_list", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, "to_list", (attribute, object) -> {
             ListTag result = new ListTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                 result.add(entry.getKey().str + "/" + entry.getValue().identify());
@@ -734,7 +734,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns a JSON encoding of this map.
         // -->
-        registerTag("to_json", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "to_json", (attribute, object) -> {
             return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false)).toString());
         });
 
@@ -744,7 +744,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @description
         // Returns a YAML encoding of this map.
         // -->
-        registerTag("to_yaml", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "to_yaml", (attribute, object) -> {
             YamlConfiguration output = new YamlConfiguration();
             output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true);
             return new ElementTag(output.saveToString(false));
@@ -763,10 +763,6 @@ public class MapTag implements ObjectTag, Adjustable {
     }
 
     public static ObjectTagProcessor<MapTag> tagProcessor = new ObjectTagProcessor<>();
-
-    public static void registerTag(String name, TagRunnable.ObjectInterface<MapTag> runnable, String... variants) {
-        tagProcessor.registerTag(name, runnable, variants);
-    }
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {

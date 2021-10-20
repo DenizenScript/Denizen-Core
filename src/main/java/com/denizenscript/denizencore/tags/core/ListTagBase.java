@@ -15,7 +15,7 @@ public class ListTagBase {
         // Give no input to create an empty list.
         // Refer to <@link ObjectType ListTag>.
         // -->
-        TagManager.registerTagHandler("list", (attribute) -> {
+        TagManager.registerTagHandler(ListTag.class, "list", (attribute) -> {
             if (!attribute.hasContext(1)) {
                 return new ListTag();
             }

@@ -28,7 +28,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns the prefix of the tag type that is processing this tag, like 'List'.
         // Prefixes are generally only used for debugging (for example, command execution reports show them).
         // -->
-        registerTag("prefix", (attribute, object) -> {
+        registerTag(ElementTag.class, "prefix", (attribute, object) -> {
             return new ElementTag(object.getPrefix());
         });
 
@@ -39,7 +39,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns the name of the tag type that is processing this tag, like 'List'.
         // This tag is made available to help you debug script issues, for example if you think an object isn't processing its own type correctly.
         // -->
-        registerTag("object_type", (attribute, object) -> {
+        registerTag(ElementTag.class, "object_type", (attribute, object) -> {
             return new ElementTag(object.getObjectType());
         }, "type");
 
@@ -120,7 +120,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns true if the object exists (is non-null). Returns false if the object doesn't exist, is null, or the tag errored.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag("exists", (attribute, object) -> {
+        registerTag(ElementTag.class, "exists", (attribute, object) -> {
             return new ElementTag(true);
         });
 
@@ -134,7 +134,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Errored/broken/invalid tags are also considered 'false' by this logic.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag("is_truthy", (attribute, object) -> {
+        registerTag(ElementTag.class, "is_truthy", (attribute, object) -> {
             return new ElementTag(object.isTruthy());
         });
 
@@ -195,7 +195,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return object;
         });
 
-        registerTag("is", (attribute, object) -> {
+        registerTag(ElementTag.class, "is", (attribute, object) -> {
 
             // <--[tag]
             // @attribute <ObjectTag.is[<operator>].to[<object>]>
