@@ -29,6 +29,7 @@ public abstract class TagRunnable implements Cloneable {
         R run(Attribute attribute);
     }
 
+    @Deprecated
     public static abstract class RootForm implements Cloneable {
 
         @Override

@@ -50,7 +50,16 @@ public class PropertyParser {
         ObjectTag run(Attribute attribute, T prop);
     }
 
+    @FunctionalInterface
+    public interface PropertyTagWithReturn<T extends Property, R extends ObjectTag> extends PropertyTag<T> {
+        R run(Attribute attribute, T prop);
+    }
+
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
+
+    public static <P extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTag<P> runnable, String... variants) {
+        registerTag(name, runnable, variants);
+    }
 
     public static <P extends Property> void registerTag(String name, PropertyTag<P> runnable, String... variants) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;

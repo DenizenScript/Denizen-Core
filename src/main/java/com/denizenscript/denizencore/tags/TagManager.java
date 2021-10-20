@@ -55,6 +55,7 @@ public class TagManager {
         baseHandlers.put(name, run);
     }
 
+    @Deprecated
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
         properTagBases.add(names[0]);
         if (names.length == 1) {
