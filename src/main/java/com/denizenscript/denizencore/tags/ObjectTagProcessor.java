@@ -252,6 +252,10 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
     }
 
+    public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterfaceWithReturn<T, R> runnable, String... deprecatedVariants) {
+        registerTag(name, runnable, deprecatedVariants);
+    }
+
     public void registerTag(String name, TagRunnable.ObjectInterface<T> runnable, String... deprecatedVariants) {
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T> newRunnable = (attribute, object) -> {

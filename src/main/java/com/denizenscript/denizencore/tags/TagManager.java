@@ -50,6 +50,11 @@ public class TagManager {
         baseHandlers.put(name, run);
     }
 
+    public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterfaceWithReturn<R> run) {
+        properTagBases.add(name);
+        baseHandlers.put(name, run);
+    }
+
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
         properTagBases.add(names[0]);
         if (names.length == 1) {
