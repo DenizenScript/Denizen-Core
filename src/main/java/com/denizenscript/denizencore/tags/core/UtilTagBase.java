@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -491,7 +492,8 @@ public class UtilTagBase {
         // Tells the server to redirect logging to a world event or not.
         // Note that this redirects *all console output* not just Denizen output.
         // Note: don't enable /denizen debug -e while this is active.
-        // Requires setting "Debug.Allow console redirection"!
+        // Requires config file setting "Debug.Allow console redirection"!
+        // For example: - adjust system redirect_logging:true
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
             if (!DenizenCore.getImplementation().allowConsoleRedirection()) {

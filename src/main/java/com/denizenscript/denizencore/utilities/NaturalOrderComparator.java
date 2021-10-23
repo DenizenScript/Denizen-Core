@@ -27,7 +27,7 @@ import com.denizenscript.denizencore.objects.ArgumentHelper;
 import java.util.Comparator;
 
 public class NaturalOrderComparator implements Comparator {
-    public static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher("0123456789"); // mcmonkey - micro-optimization
+    public static AsciiMatcher DIGIT_MATCHER = new AsciiMatcher(AsciiMatcher.DIGITS); // mcmonkey - micro-optimization
 
     int compareRight(String a, String b) {
         int bias = 0;

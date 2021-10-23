@@ -120,9 +120,7 @@ public class TagManager {
     public static boolean isInTag = false;
 
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
-
         ExecutorService executor = Executors.newFixedThreadPool(4);
-
         Future<?> future = executor.submit(() -> {
             try {
                 DenizenCore.getImplementation().preTagExecute();
@@ -139,9 +137,7 @@ public class TagManager {
                 DenizenCore.getImplementation().postTagExecute();
             }
         });
-
         executor.shutdown();
-
         try {
             future.get(seconds, TimeUnit.SECONDS);
         }
@@ -155,7 +151,6 @@ public class TagManager {
             future.cancel(true);
             Debug.echoError("Tag filling timed out!");
         }
-
         executor.shutdownNow();
     }
 

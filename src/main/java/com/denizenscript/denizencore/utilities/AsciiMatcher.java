@@ -2,6 +2,10 @@ package com.denizenscript.denizencore.utilities;
 
 public class AsciiMatcher {
 
+    public static final String LETTERS_LOWER = "abcdefghijklmnopqrstuvwxyz";
+    public static final String LETTERS_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String DIGITS = "0123456789";
+
     public boolean[] accepted = new boolean[256];
 
     public AsciiMatcher(String allowThese) {

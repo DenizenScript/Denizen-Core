@@ -35,32 +35,46 @@ public class ForeachCommand extends BracedCommand {
     // @Guide https://guide.denizenscript.com/guides/basics/loops.html
     //
     // @Description
-    // Loops through a ListTag of any type. For each item in the ListTag, the specified commands will be ran for
-    // that list entry. To call the value of the entry while in the loop, you can use <[value]>.
+    // Loops through a ListTag of any type. For each item in the ListTag, the specified commands will be ran for that list entry.
+    // To call the value of the entry while in the loop, you can use <[value]>.
     //
     // Alternately, specify a map tag to loop over the set of key/value pairs in the map, where the key will be <[key]> and the value will be <[value]>.
     // Optionally, specify "key:<name>" to change the key definition name to something other than "key".
     //
     // Optionally, specify "as:<name>" to change the value definition name to something other than "value".
+    // Use "as:__player" to change the queue's player link, or "as:__npc" to change the queue's NPC link.
+    // Note that a changed player/NPC link persists after the end of the loop.
     //
     // To end a foreach loop, do - foreach stop
     //
     // To jump immediately to the next entry in the loop, do - foreach next
+    //
+    // Note that many commands and tags in Denizen support inputting a list directly, making foreach redundant for many simpler cases.
+    //
+    // Note that if you delay the queue (such as with <@link command wait> or <@link language ~waitable>) inside a foreach loop,
+    // the loop can't process the next entry until the delay is over.
+    // This can lead to very long waits if you have a long list and a wait directly in the loop, as the total delay is effectively multiplied by the number of iterations.
+    // Use <@link command run> if you want to run logic simultaneously for many entries in a list in a way that allows them to separately wait without delaying each other.
     //
     // @Tags
     // <[value]> to get the current item in the loop
     // <[loop_index]> to get the current loop iteration number
     //
     // @Usage
-    // Use to run commands 'for each entry' in a list of objects/elements.
+    // Use to run commands 'for each entry' in a manually created list of objects/elements.
     // - foreach <[some_entity]>|<[some_npc]>|<[player]>:
     //     - announce "There's something at <[value].location>!"
     //
     // @Usage
-    // Use to iterate through entries in any tag that returns a list
-    // - foreach <server.online_players> as:player:
-    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!" targets:<[player]>
-    //     - give money qty:50 player:<[player]>
+    // Use to iterate through entries in any tag that returns a list.
+    // - foreach <player.location.find_entities[zombie].within[50]> as:zombie:
+    //     - narrate "There's a zombie <[zombie].location.distance[<player.location>].round> blocks away"
+    //
+    // @Usage
+    // Use to iterate through a list of players and run commands automatically linked to each player in that list.
+    // - foreach <server.online_players> as:__player:
+    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
+    //     - money give quantity:50
     //
     // -->
 
