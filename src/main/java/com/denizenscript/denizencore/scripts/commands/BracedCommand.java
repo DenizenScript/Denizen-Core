@@ -45,23 +45,16 @@ public abstract class BracedCommand extends AbstractCommand {
         if (scriptEntry == null) {
             return null;
         }
-
-        boolean hyperdebug = Debug.verbose;
-
-        // And a place to store all the final braces...
         List<BracedData> bracedSections;
-
         List<BracedData> entryBracedSet = scriptEntry.getBracedSet();
         if (entryBracedSet != null) {
             if (!duplicate) {
                 return entryBracedSet;
             }
-            List<BracedData> res = new ArrayList<>(entryBracedSet);
+            List<BracedData> res = new ArrayList<>(entryBracedSet.size());
             try {
-                for (int i = 0; i < res.size(); i++) {
+                for (BracedData bd : entryBracedSet) {
                     BracedData newbd = new BracedData();
-                    BracedData bd = res.get(i);
-                    res.set(i, newbd);
                     newbd.key = bd.key;
                     newbd.value = new ArrayList<>(bd.value.size());
                     for (ScriptEntry sEntry : bd.value) {
@@ -74,6 +67,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         Debug.echoDebug(scriptEntry, "Wrangling braced command args: " + bd.key);
                     }
                     newbd.args = bd.args;
+                    res.add(newbd);
                 }
             }
             catch (Exception e) {
@@ -81,7 +75,6 @@ public abstract class BracedCommand extends AbstractCommand {
             }
             return res;
         }
-
         if (scriptEntry.getInsideList() != null) {
             List<Object> contents = scriptEntry.getInsideList();
             List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents,
@@ -96,42 +89,26 @@ public abstract class BracedCommand extends AbstractCommand {
             return getBracedCommands(scriptEntry);
         }
         bracedSections = new ArrayList<>();
-
         // We need a place to store the commands being built at...
         TreeMap<Integer, ArrayList<String>> commandList = new TreeMap<>();
-
         int bracesEntered = 0;
         boolean newCommand = true;
         boolean waitingForDash = false;
-
         // Inject the scriptEntry into the front of the queue, otherwise it doesn't exist
         //scriptEntry.getResidingQueue().injectEntry(scriptEntry, 0);
         // Send info to debug
-        if (hyperdebug) {
+        if (Debug.verbose) {
             Debug.echoDebug(scriptEntry, "Starting getBracedCommands...");
-        }
-
-        // If the specified amount of possible entries is less than the queue size, print that instead
-        //if (hyperdebug) dB.echoDebug(scriptEntry, "...with queue size: " + scriptEntry.getResidingQueue().getQueueSize());
-        if (hyperdebug) {
             Debug.echoDebug(scriptEntry, "...with first command name: " + scriptEntry.getCommandName());
-        }
-        if (hyperdebug) {
             Debug.echoDebug(scriptEntry, "...with first command arguments: " + scriptEntry.getOriginalArguments());
-        }
-
-        if (hyperdebug) {
             Debug.echoDebug(scriptEntry, "Entry found: " + scriptEntry.getCommandName());
         }
-
         // Loop through the arguments of each entry
         List<String> argList = scriptEntry.getOriginalArguments();
-
         // Set the variable to use for naming braced command lists; the first should be the command name
         String bracesName = scriptEntry.getCommandName().toUpperCase();
         ArrayList<String> bracesArgs = new ArrayList<>();
         bracesArgs.add(bracesName);
-
         int startArg = -1;
         for (int i = 0; i < argList.size(); i++) {
             String arg = argList.get(i);
@@ -140,24 +117,19 @@ public abstract class BracedCommand extends AbstractCommand {
                 break;
             }
         }
-
         if (startArg == -1) {
             return null;
         }
-
         if (scriptEntry.getScript() != null) { // Ex command is temporarily allowed to bypass, to avoid annoying user testing
             Deprecations.oldBraceSyntax.warn(scriptEntry);
         }
-
         int tStart = -1;
         int tEnd = -1;
-
         for (int i = startArg; i < argList.size(); i++) {
             String arg = argList.get(i);
-            if (hyperdebug) {
+            if (Debug.verbose) {
                 Debug.echoDebug(scriptEntry, "Arg found: " + arg);
             }
-
             // Listen for opened braces
             if (arg.equals("{")) {
                 bracesEntered++;
@@ -169,7 +141,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 }
                 newCommand = false;
                 waitingForDash = bracesEntered == 1;
-                if (hyperdebug) {
+                if (Debug.verbose) {
                     Debug.echoDebug(scriptEntry, "Opened brace; " + bracesEntered + " now");
                 }
                 if (bracesEntered > 1) {
@@ -181,7 +153,7 @@ public abstract class BracedCommand extends AbstractCommand {
             else if (arg.equals("}")) {
                 bracesEntered--;
                 newCommand = false;
-                if (hyperdebug) {
+                if (Debug.verbose) {
                     Debug.echoDebug(scriptEntry, "Closed brace; " + bracesEntered + " now");
                 }
                 if (bracesEntered > 0) {
@@ -197,13 +169,13 @@ public abstract class BracedCommand extends AbstractCommand {
                     ArrayList<ScriptEntry> bracesSection = new ArrayList<>();
                     for (ArrayList<String> command : commandList.values()) {
                         if (command.isEmpty()) {
-                            if (hyperdebug) {
+                            if (Debug.verbose) {
                                 Debug.echoError(scriptEntry.getResidingQueue(), "Empty command?");
                             }
                             continue;
                         }
                         String cmd = command.get(0);
-                        if (hyperdebug) {
+                        if (Debug.verbose) {
                             Debug.echoDebug(scriptEntry, "Calculating " + cmd);
                         }
                         command.remove(0);
@@ -220,11 +192,11 @@ public abstract class BracedCommand extends AbstractCommand {
                         newEntry.internal.originalLine = newEntry.toString();
                         bracesSection.add(newEntry);
                         bracesSection.get(bracesSection.size() - 1).entryData.transferDataFrom(scriptEntry.entryData);
-                        if (hyperdebug) {
+                        if (Debug.verbose) {
                             Debug.echoDebug(scriptEntry, "Command added: " + cmd + ", with " + args.length + " arguments");
                         }
                     }
-                    if (hyperdebug) {
+                    if (Debug.verbose) {
                         Debug.echoDebug(scriptEntry, "Adding section " + bracesName + " with " + tStart + " to " + tEnd);
                     }
                     bd.args = bracesArgs;
@@ -245,7 +217,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 commandList.put(commandList.size(), new ArrayList<>());
                 commandList.get(commandList.lastKey()).add(arg);
                 newCommand = false;
-                if (hyperdebug) {
+                if (Debug.verbose) {
                     Debug.echoDebug(scriptEntry, "Treating as new command");
                 }
             }
@@ -254,7 +226,7 @@ public abstract class BracedCommand extends AbstractCommand {
             else if (arg.equals("-") && bracesEntered == 1) {
                 newCommand = true;
                 waitingForDash = false;
-                if (hyperdebug) {
+                if (Debug.verbose) {
                     Debug.echoDebug(scriptEntry, "Assuming following is a new command");
                 }
             }
@@ -273,7 +245,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 }
                 newCommand = false;
                 commandList.get(commandList.lastKey()).add(arg);
-                if (hyperdebug) {
+                if (Debug.verbose) {
                     Debug.echoDebug(scriptEntry, "Adding to the command");
                 }
             }

@@ -24,7 +24,7 @@ import java.util.*;
  * ScriptEntry contain information about a single entry from a dScript. It is used
  * by the CommandExecutor, among other parts of Denizen.
  */
-public class ScriptEntry implements Cloneable, Debuggable {
+public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     public static class ScriptEntryInternal {
 
@@ -48,8 +48,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public boolean hasTags = false;
 
-        public int[] processArgs = null;
-
         public List<Argument> preprocArgs = null;
 
         public Object specialProcessedData = null;
@@ -61,6 +59,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
         public boolean brokenArgs = false;
 
         public HashMap<String, Integer> argPrefixMap = null;
+
+        public ArgumentIterator argumentIterator = null;
     }
 
     public static class InternalArgument {
@@ -71,6 +71,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public Argument aHArg = null;
 
+        public boolean shouldProcess = false;
+
         public InternalArgument duplicate() {
             InternalArgument newArg = new InternalArgument();
             newArg.prefix = prefix == null ? null : prefix.duplicate();
@@ -80,21 +82,44 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public List<Argument> getProcessedArgs() {
-        for (Argument arg : aHArgs) {
-            arg.scriptEntry = this;
-            if (arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput && arg.prefix == null) {
-                arg.fillStr(arg.object.toString());
-            }
-            else {
-                arg.unsetValue();
-            }
-            arg.canBeElement = arg.object instanceof ElementTag;
+    public static class ArgumentIterator implements Iterator<Argument> {
+
+        public ArgumentIterator(ScriptEntry entry) {
+            this.entry = entry;
         }
-        return aHArgs;
+
+        public ScriptEntry entry;
+
+        public int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return index < entry.internal.args_ref.size();
+        }
+
+        @Override
+        public Argument next() {
+            InternalArgument internalArg = entry.internal.args_ref.get(index++);
+            Argument arg = internalArg.aHArg;
+            arg.scriptEntry = entry;
+            if (internalArg.shouldProcess) {
+                TagManager.fillArgumentObjects(internalArg, arg, entry.context);
+                if (arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput && arg.prefix == null) {
+                    arg.fillStr(arg.object.toString());
+                }
+                arg.canBeElement = arg.object instanceof ElementTag;
+            }
+            return arg;
+        }
     }
 
-    public List<Argument> aHArgs;
+    @Override
+    public ArgumentIterator iterator() {
+        // NOTE: This relies strongly on the assumption of non-async execution for performance benefit.
+        internal.argumentIterator.index = 0;
+        internal.argumentIterator.entry = this;
+        return internal.argumentIterator;
+    }
 
     public ScriptEntryData entryData;
 
@@ -133,14 +158,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         NULL_INTERNAL_ARGUMENT.value = TagManager.DEFAULT_PARSEABLE_EMPTY;
     }
 
-    public void generateAHArgs() {
-        for (int i : internal.processArgs) {
-            Argument aHArg = internal.args_ref.get(i).aHArg.clone();
-            aHArg.scriptEntry = this;
-            aHArgs.set(i, aHArg);
-        }
-    }
-
     @Override
     public ScriptEntry clone() {
         try {
@@ -148,7 +165,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
             se.objects = new HashMap<>(8);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
-            se.aHArgs = new ArrayList<>(aHArgs);
             se.updateContext();
             return se;
         }
@@ -281,8 +297,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
             nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
             internal.args_ref = new ArrayList<>(internal.pre_tagged_args.size());
-            List<Integer> tempProcessArgs = new ArrayList<>(internal.pre_tagged_args.size());
-            aHArgs = new ArrayList<>(internal.pre_tagged_args.size());
             for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
                 String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
@@ -316,23 +330,16 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     }
                 }
                 crunchInto(argVal, arg, refContext);
-                if (argVal.value.hasTag || argVal.prefix != null) {
-                    tempProcessArgs.add(aHArgs.size());
+                if ((argVal.value.hasTag || argVal.prefix != null) && (internal.actualCommand == null || internal.actualCommand.shouldPreParse())) {
+                    argVal.shouldProcess = true;
                 }
-                aHArgs.add(argVal.aHArg);
-            }
-            internal.processArgs = new int[tempProcessArgs.size()];
-            for (int i = 0; i < tempProcessArgs.size(); i++) {
-                internal.processArgs[i] = tempProcessArgs.get(i);
             }
         }
         else {
             internal.pre_tagged_args = new ArrayList<>();
             internal.preprocArgs = new ArrayList<>();
             internal.pre_tagged_args = new ArrayList<>();
-            internal.processArgs = new int[0];
             internal.args_ref = new ArrayList<>();
-            aHArgs = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
             int argCount = getOriginalArguments().size();
@@ -347,6 +354,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         else {
             internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
+        internal.argumentIterator = new ArgumentIterator(this);
     }
 
     /**

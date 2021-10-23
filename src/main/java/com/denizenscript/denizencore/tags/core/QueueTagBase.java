@@ -31,20 +31,33 @@ public class QueueTagBase {
         }, "queue");
     }
 
-    //////////
-    //  ReplaceableTagEvent handler
-    ////////
-
     public void queueTag(ReplaceableTagEvent event) {
-
         if (!event.matches("queue")) {
             return;
         }
-
-        // Handle <queue[id]. ...> tags
-
         Attribute attribute = event.getAttributes();
-
+        // Historical queue.xxx tags:
+        if (attribute.startsWith("exists", 2)
+                && attribute.hasContext(1)) {
+            Deprecations.queueExists.warn(attribute.context);
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.queueExists(attribute.getContext(2))), attribute.fulfill(2)));
+            return;
+        }
+        if (attribute.startsWith("stats", 2)) {
+            Deprecations.queueStats.warn(attribute.context);
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()), attribute.fulfill(2)));
+            return;
+        }
+        if (attribute.startsWith("list", 2)) {
+            Deprecations.queueStats.warn(attribute.context);
+            ListTag list = new ListTag();
+            for (ScriptQueue queue : ScriptQueue.getQueues()) {
+                list.addObject(new QueueTag(queue));
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(2)));
+            return;
+        }
+        // Modern tag:
         if (attribute.hasContext(1)) {
             QueueTag queue = attribute.contextAsType(1, QueueTag.class);
             if (queue == null) {
@@ -53,42 +66,11 @@ public class QueueTagBase {
             event.setReplacedObject(CoreUtilities.autoAttrib(queue, event.getAttributes().fulfill(1)));
             return;
         }
-
-        attribute = attribute.fulfill(1);
-
-        // Otherwise, try to use queue in a static manner.
-
-        if (attribute.startsWith("exists")
-                && attribute.hasContext(1)) {
-            Deprecations.queueExists.warn(attribute.context);
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.queueExists(attribute.getContext(1))),
-                    attribute.fulfill(1)));
+        ScriptQueue queue = event.getScriptEntry().getResidingQueue();
+        if (queue == null) {
             return;
         }
-
-        if (attribute.startsWith("stats")) {
-            Deprecations.queueStats.warn(attribute.context);
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()),
-                    attribute.fulfill(1)));
-            return;
-        }
-
-        if (attribute.startsWith("list")) {
-            Deprecations.queueStats.warn(attribute.context);
-            ListTag list = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                list.addObject(new QueueTag(queue));
-            }
-            event.setReplacedObject(CoreUtilities.autoAttrib(list,
-                    attribute.fulfill(1)));
-            return;
-        }
-
-        // Else,
-        // Use current queue
-
-        event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(event.getScriptEntry().getResidingQueue()),
-                attribute));
+        event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(event.getScriptEntry().getResidingQueue()), attribute.fulfill(1)));
     }
 }
 

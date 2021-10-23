@@ -237,11 +237,16 @@ public class TagManager {
 
         public List<ParseableTagPiece> pieces;
 
+        public ParseableTagPiece singleTag;
+
         public boolean hasTag;
 
         public final ObjectTag parse(TagContext context) {
             if (rawElement != null) {
                 return rawElement;
+            }
+            else if (singleTag != null) {
+                return readSingleTagObject(singleTag, context);
             }
             return parseChainObject(pieces, context);
         }
@@ -391,6 +396,9 @@ public class TagManager {
         ParseableTag result = new ParseableTag();
         result.pieces = pieces;
         result.hasTag = true;
+        if (pieces.size() == 1 && pieces.get(0).isTag) {
+            result.singleTag = pieces.get(0);
+        }
         return result;
     }
 
@@ -426,27 +434,22 @@ public class TagManager {
         holder[0] = -1;
     }
 
-    public static void fillArgumentsObjects(List<ScriptEntry.InternalArgument> pieceHelp, List<Argument> aHArgs, TagContext context, int[] targets) {
-        if (Debug.verbose) {
-            Debug.log("Fill argument objects: " + aHArgs + ", " + targets.length + "...");
+    public static void fillArgumentObjects(ScriptEntry.InternalArgument arg, Argument ahArg, TagContext context) {
+        ahArg.lower_value = null;
+        ahArg.unsetValue();
+        if (arg.prefix != null) {
+            if (arg.prefix.value.hasTag) {
+                ahArg.prefix = arg.prefix.value.parse(context).toString();
+                ahArg.lower_prefix = CoreUtilities.toLowerCase(ahArg.prefix);
+            }
+            if (arg.value.hasTag) {
+                ahArg.object = arg.value.parse(context);
+            }
         }
-        for (int argId : targets) {
-            Argument aharg = aHArgs.get(argId);
-            ScriptEntry.InternalArgument piece = pieceHelp.get(argId);
-            if (piece.prefix != null) {
-                if (piece.prefix.value.hasTag) {
-                    aharg.prefix = piece.prefix.value.parse(context).toString();
-                    aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
-                }
-                if (piece.value.hasTag) {
-                    aharg.object = piece.value.parse(context);
-                }
-            }
-            else {
-                aharg.object = piece.value.parse(context);
-                aharg.prefix = null;
-                aharg.lower_prefix = null;
-            }
+        else {
+            ahArg.object = arg.value.parse(context);
+            ahArg.prefix = null;
+            ahArg.lower_prefix = null;
         }
     }
 }

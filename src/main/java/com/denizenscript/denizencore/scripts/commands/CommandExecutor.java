@@ -88,7 +88,6 @@ public class CommandExecutor {
         }
         String saveName = null;
         try {
-            scriptEntry.generateAHArgs();
             TagContext context = scriptEntry.getContext();
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
@@ -112,9 +111,6 @@ public class CommandExecutor {
                         Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
                     }
                 }
-            }
-            if (scriptEntry.internal.actualCommand.shouldPreParse()) {
-                TagManager.fillArgumentsObjects(scriptEntry.internal.args_ref, scriptEntry.aHArgs, context, scriptEntry.internal.processArgs);
             }
             command.parseArgs(scriptEntry);
             command.execute(scriptEntry);
