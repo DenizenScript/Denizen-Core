@@ -149,7 +149,6 @@ public class DenizenCore {
      */
     public static void postLoadScripts() {
         try {
-            NoteManager.reload();
             ScriptRegistry.postLoadScripts();
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
