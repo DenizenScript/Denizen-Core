@@ -14,14 +14,9 @@ import java.lang.reflect.Method;
 public class TagNamer {
 
     public static final String TAG_GEN_PACKAGE = "com/denizenscript/tag_gen/";
-    public static final String OBJECT_INTERFACE_PATH = Type.getInternalName(TagRunnable.ObjectInterface.class);
-    public static final String OBJECT_TAG_PATH = Type.getInternalName(ObjectTag.class);
-    public static final String[] OBJECT_INTERFACE_TYPE = new String[] { OBJECT_INTERFACE_PATH };
-    public static String OBJECT_INTERFACE_DESCRIPTOR = "L" + OBJECT_INTERFACE_PATH + ";";
     public static final String ATTRIBUTE_LOCAL_TYPE = "L" + Type.getInternalName(Attribute.class) + ";";
+    public static final String OBJECT_TAG_PATH = Type.getInternalName(ObjectTag.class);
     public static final String OBJECT_LOCAL_TYPE = "L" + OBJECT_TAG_PATH + ";";
-    public static final Method OBJECTINTERFACE_RUN_METHOD = ReflectionHelper.getMethod(TagRunnable.ObjectInterface.class, "run", Attribute.class, ObjectTag.class);
-    public static final String OBJECTINTERFACE_RUN_DESCRIPTOR = Type.getMethodDescriptor(OBJECTINTERFACE_RUN_METHOD);
 
     public static DynamicClassLoader loader = new DynamicClassLoader();
 
@@ -29,14 +24,33 @@ public class TagNamer {
 
     public static long tagsGenerated = 0;
 
+    public static final String OBJECT_INTERFACE_PATH = Type.getInternalName(TagRunnable.ObjectInterface.class);
+    public static String OBJECT_INTERFACE_DESCRIPTOR = "L" + OBJECT_INTERFACE_PATH + ";";
+    public static final Method OBJECT_INTERFACE_RUN_METHOD = ReflectionHelper.getMethod(TagRunnable.ObjectInterface.class, "run", Attribute.class, ObjectTag.class);
+    public static final String OBJECT_INTERFACE_RUN_DESCRIPTOR = Type.getMethodDescriptor(OBJECT_INTERFACE_RUN_METHOD);
+
     public static <T extends ObjectTag, R extends ObjectTag> TagRunnable.ObjectInterface<T, R> nameTagInterface(Class<T> mainType, String tagName, TagRunnable.ObjectInterface<T, R> tag) {
+        String fullTagName = mainType.getSimpleName() + "_" + tagName;
+        return (TagRunnable.ObjectInterface<T, R>) nameInternal(fullTagName, tag, OBJECT_INTERFACE_PATH, OBJECT_INTERFACE_DESCRIPTOR, true, OBJECT_INTERFACE_RUN_DESCRIPTOR);
+    }
+
+    public static final String BASE_INTERFACE_PATH = Type.getInternalName(TagRunnable.BaseInterface.class);
+    public static String BASE_INTERFACE_DESCRIPTOR = "L" + BASE_INTERFACE_PATH + ";";
+    public static final Method BASE_NTERFACE_RUN_METHOD = ReflectionHelper.getMethod(TagRunnable.BaseInterface.class, "run", Attribute.class);
+    public static final String BASE_INTERFACE_RUN_DESCRIPTOR = Type.getMethodDescriptor(BASE_NTERFACE_RUN_METHOD);
+
+    public static <R extends ObjectTag> TagRunnable.BaseInterface<R> nameBaseInterface(String tagName, TagRunnable.BaseInterface<R> tag) {
+        return (TagRunnable.BaseInterface<R>) nameInternal("base_" + tagName, tag, BASE_INTERFACE_PATH, BASE_INTERFACE_DESCRIPTOR, false, BASE_INTERFACE_RUN_DESCRIPTOR);
+    }
+
+    public static Object nameInternal(String fullTagName, Object tag, String typePath, String typeDescription, boolean hasObject, String runDescriptor) {
         try {
             // ====== Gen class ======
-            String className = TAG_GEN_PACKAGE + "Tag" + (tagsGenerated++) + "_" + mainType.getSimpleName() + "_" + TAG_NAME_PERMITTED.trimToMatches(tagName);
+            String className = TAG_GEN_PACKAGE + "Tag" + (tagsGenerated++) + "_" + TAG_NAME_PERMITTED.trimToMatches(fullTagName);
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, className, null, "java/lang/Object", OBJECT_INTERFACE_TYPE);
+            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, className, null, "java/lang/Object", new String[] { typePath });
             cw.visitSource("GENERATED_TAG", null);
-            cw.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "runnable", OBJECT_INTERFACE_DESCRIPTOR, null, null);
+            cw.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "runnable", typeDescription, null, null);
             // ====== Gen constructor ======
             {
                 MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
@@ -53,17 +67,21 @@ public class TagNamer {
             }
             // ====== Gen 'run' method ======
             {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", OBJECTINTERFACE_RUN_DESCRIPTOR, null, null);
+                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", runDescriptor, null, null);
                 mv.visitCode();
                 Label startLabel = new Label();
                 mv.visitLabel(startLabel);
                 mv.visitLineNumber(1, startLabel);
-                mv.visitFieldInsn(Opcodes.GETSTATIC, className, "runnable", OBJECT_INTERFACE_DESCRIPTOR);
+                mv.visitFieldInsn(Opcodes.GETSTATIC, className, "runnable", typeDescription);
                 mv.visitVarInsn(Opcodes.ALOAD, 1);
-                mv.visitVarInsn(Opcodes.ALOAD, 2);
-                mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, OBJECT_INTERFACE_PATH, "run", OBJECTINTERFACE_RUN_DESCRIPTOR, true);
+                if (hasObject) {
+                    mv.visitVarInsn(Opcodes.ALOAD, 2);
+                }
+                mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, typePath, "run", runDescriptor, true);
                 mv.visitLocalVariable("attribute", ATTRIBUTE_LOCAL_TYPE, null, startLabel, startLabel, 0);
-                mv.visitLocalVariable("object", OBJECT_LOCAL_TYPE, null, startLabel, startLabel, 1);
+                if (hasObject) {
+                    mv.visitLocalVariable("object", OBJECT_LOCAL_TYPE, null, startLabel, startLabel, 1);
+                }
                 mv.visitInsn(Opcodes.ARETURN);
                 mv.visitMaxs(0, 0);
                 mv.visitEnd();
@@ -72,7 +90,7 @@ public class TagNamer {
             cw.visitEnd();
             byte[] compiled = cw.toByteArray();
             Class<?> generatedClass = loader.define(className.replace('/', '.'), compiled);
-            TagRunnable.ObjectInterface<T, R> result = (TagRunnable.ObjectInterface<T, R>) generatedClass.getConstructors()[0].newInstance();
+            Object result = generatedClass.getConstructors()[0].newInstance();
             ReflectionHelper.setFieldValue(generatedClass, "runnable", result, tag);
             return result;
         }

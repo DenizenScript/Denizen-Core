@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 
@@ -65,7 +66,7 @@ public class TagManager {
     public static HashMap<String, TagBaseData> baseTags = new HashMap<>();
 
     public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
-        baseTags.put(name, new TagBaseData(name, returnType, run));
+        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run)));
     }
 
     @Deprecated
