@@ -304,7 +304,7 @@ public class UtilTagBase {
         // Returns a list of all currently loaded Denizen tag bases (including "player", "context", "util", "server", etc).
         // -->
         else if (attribute.startsWith("list_tag_bases")) {
-            ListTag result = new ListTag(TagManager.rootFormHandlers.keySet());
+            ListTag result = new ListTag(TagManager.baseTags.keySet());
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
         }
 

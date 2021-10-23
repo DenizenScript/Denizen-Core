@@ -132,8 +132,7 @@ public class RandomCommand extends BracedCommand {
                     queue.removeEntry(0);
                 }
                 else {
-                    Debug.echoDebug(scriptEntry, "...selected '" + queue.getEntry(0).getCommandName() + ": "
-                            + queue.getEntry(0).getArguments() + "'.");
+                    Debug.echoDebug(scriptEntry, "...selected '" + queue.getEntry(0).getCommandName() + ": " + queue.getEntry(0).getOriginalArguments() + "'.");
                     keeping = queue.getEntry(0);
                     queue.removeEntry(0);
                 }

@@ -21,6 +21,8 @@ public class Attribute {
 
         public final String context;
 
+        public ObjectTagProcessor.TagData<?, ?> data;
+
         public AttributeComponent(String inp) {
             if (inp.endsWith("]") && CoreUtilities.contains(inp, '[')) {
                 int ind = inp.indexOf('[');
@@ -57,6 +59,7 @@ public class Attribute {
         if (attributes.startsWith(".") || attributes.endsWith(".")) {
             throw new TagProcessingException("The tag '" + attributes + "' is invalid due to a misplaced dot at the start or end of the tag.");
         }
+        ObjectTagProcessor<?> proc = null;
         ArrayList<AttributeComponent> matches = new ArrayList<>(attributes.length() / 7);
         int x1 = 0, x2 = -1;
         int braced = 0;
@@ -81,7 +84,18 @@ public class Attribute {
                 if (x2 <= x1) {
                     throw new TagProcessingException("The tag '" + attributes + "' is invalid, likely due to double dots '..' somewhere. Did you forget a sub-tag, or accidentally double-tap the dot key?");
                 }
-                matches.add(new AttributeComponent(attributes.substring(x1, x2)));
+                AttributeComponent component = new AttributeComponent(attributes.substring(x1, x2));
+                if (matches.size() == 0) {
+                    TagManager.TagBaseData baseTag = TagManager.baseTags.get(component.key);
+                    if (baseTag != null && baseTag.processor != null) {
+                        proc = baseTag.processor;
+                    }
+                }
+                else if (proc != null) {
+                    component.data = proc.registeredObjectTags.get(component.key);
+                    proc = component.data == null ? null : component.data.processor;
+                }
+                matches.add(component);
                 x2 = -1;
                 x1 = x + 1;
             }
@@ -396,21 +410,21 @@ public class Attribute {
     // This syntax is still fully supported at time of writing, however the newer tag-based format is considered clearer and easier to learn.
     //
     // -->
-    public static final HashMap<String, TagRunnable.BaseInterface<?>> fallbackTags = new HashMap<>();
+    public static final HashMap<String, TagManager.TagBaseData> fallbackTags = new HashMap<>();
 
     static {
-        fallbackTags.put("if_null", (attribute) -> {
+        fallbackTags.put("if_null", new TagManager.TagBaseData("if_null", ObjectTag.class, (attribute) -> {
             if (!attribute.hasContext(1)) {
                 return null;
             }
             return attribute.getContextObject(1);
-        });
-        fallbackTags.put("exists", (attribute) -> {
+        }));
+        fallbackTags.put("exists", new TagManager.TagBaseData("if_null", ElementTag.class, (attribute) -> {
             return new ElementTag(false);
-        });
-        fallbackTags.put("is_truthy", (attribute) -> {
+        }));
+        fallbackTags.put("is_truthy", new TagManager.TagBaseData("if_null", ElementTag.class, (attribute) -> {
             return new ElementTag(false);
-        });
+        }));
     }
 
     public boolean hasAlternative() {

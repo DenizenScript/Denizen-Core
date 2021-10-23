@@ -37,6 +37,21 @@ public abstract class TagContext implements Debuggable, Cloneable {
         return debug;
     }
 
+    public TagContext(ScriptEntry entry) {
+        if (entry != null) {
+            this.entry = entry;
+            this.script = entry.getScript();
+            this.debug = entry.shouldDebug();
+            if (entry.getResidingQueue() != null) {
+                definitionProvider = entry.getResidingQueue();
+                contextSource = entry.getResidingQueue().contextSource;
+            }
+        }
+        else {
+            debug = true;
+        }
+    }
+
     public TagContext(boolean debug, ScriptEntry entry, ScriptTag script) {
         this(debug, entry, script, null);
     }

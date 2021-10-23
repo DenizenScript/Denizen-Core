@@ -596,6 +596,19 @@ public class CoreUtilities {
     }
 
     public static String toLowerCase(String input) {
+        int len = input.length();
+        boolean any = false;
+        char c;
+        for (int i = 0; i < len; i++) {
+            c = input.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                any = true;
+                break;
+            }
+        }
+        if (!any) {
+            return input;
+        }
         char[] data = input.toCharArray();
         for (int i = 0; i < data.length; i++) {
             if (data[i] >= 'A' && data[i] <= 'Z') {

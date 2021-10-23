@@ -110,8 +110,8 @@ public class ChooseCommand extends BracedCommand {
                     lookupTable.put("\0DEFAULT", i);
                 }
                 else if (cmdName.equals("case")) {
-                    if (se.getArguments().size() > 0) {
-                        for (String arg : se.getArguments()) {
+                    if (se.getOriginalArguments().size() > 0) {
+                        for (String arg : se.getOriginalArguments()) {
                             lookupTable.put(CoreUtilities.toLowerCase(arg), i);
                         }
                     }

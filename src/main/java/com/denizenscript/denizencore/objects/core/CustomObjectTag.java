@@ -121,6 +121,12 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
+        return tagProcessor.getObjectAttribute(this, attribute);
+    }
+
+
+    @Override
+    public ObjectTag specialTagProcessing(Attribute attribute) {
         if (attribute == null) {
             return null;
         }

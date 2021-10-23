@@ -64,8 +64,8 @@ public class WhileCommand extends BracedCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         List<String> comparisons = new ArrayList<>();
-        if (scriptEntry.getArguments().size() == 1) {
-            String arg = scriptEntry.getArguments().get(0);
+        if (scriptEntry.getOriginalArguments().size() == 1) {
+            String arg = scriptEntry.getOriginalArguments().get(0);
             if (CoreUtilities.equalsIgnoreCase(arg, "stop")) {
                 scriptEntry.addObject("stop", new ElementTag(true));
             }
@@ -76,7 +76,7 @@ public class WhileCommand extends BracedCommand {
                 scriptEntry.addObject("callback", new ElementTag(true));
             }
         }
-        for (String arg : scriptEntry.getArguments()) {
+        for (String arg : scriptEntry.getOriginalArguments()) {
             if (arg.equals("{")) {
                 break;
             }

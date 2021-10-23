@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.tags;
 
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
+import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -18,9 +19,29 @@ import java.util.HashMap;
 
 public class ObjectTagProcessor<T extends ObjectTag> {
 
-    public HashMap<String, TagRunnable.ObjectInterface<T, ?>> registeredObjectTags = new HashMap<>();
+    public static class TagData<T extends ObjectTag, R extends ObjectTag> {
 
-    public HashMap<String, Class<? extends ObjectTag>> tagReturnTypes = new HashMap<>();
+        public String name;
+
+        public TagRunnable.ObjectInterface<T, R> runner;
+
+        public Class<R> returnType;
+
+        public ObjectTagProcessor<R> processor;
+
+        public ObjectTagProcessor<T> source;
+
+        public TagData(ObjectTagProcessor<T> source, String name, TagRunnable.ObjectInterface<T, R> runner, Class<R> returnType) {
+            this.source = source;
+            this.name = name;
+            this.runner = runner;
+            this.returnType = returnType;
+            ObjectFetcher.ObjectType<R> type = (ObjectFetcher.ObjectType<R>) ObjectFetcher.objectsByClass.get(returnType);
+            this.processor = type == null ? null : type.tagProcessor;
+        }
+    }
+
+    public HashMap<String, TagData<?, ?>> registeredObjectTags = new HashMap<>();
 
     public Class<T> type;
 
@@ -245,15 +266,15 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {
-        TagRunnable.ObjectInterface<T, ?> properTag = registeredObjectTags.get(name);
+        TagData properTag = registeredObjectTags.get(name);
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T, ?> newRunnable = (attribute, object) -> {
                 if (FutureWarning.futureWarningsEnabled) {
                     Debug.echoError(attribute.context,  "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 }
-                return properTag.run(attribute, object);
+                return properTag.runner.run(attribute, object);
             };
-            registeredObjectTags.put(variant, newRunnable);
+            registeredObjectTags.put(variant, new TagData(this, variant, newRunnable, properTag.returnType));
         }
     }
 
@@ -264,11 +285,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 return convertedRunnable.run(attribute, object);
             };
-            registeredObjectTags.put(variant, newRunnable);
-            tagReturnTypes.put(variant, returnType);
+            registeredObjectTags.put(variant, new TagData<>(this, variant, newRunnable, returnType));
         }
-        registeredObjectTags.put(name, convertedRunnable);
-        tagReturnTypes.put(name, returnType);
+        registeredObjectTags.put(name, new TagData<>(this, name, convertedRunnable, returnType));
     }
 
     public ObjectTag getObjectAttribute(T object, Attribute attribute) {
@@ -285,20 +304,26 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return object;
         }
-        String attrLow = attribute.getAttributeWithoutContext(1);
+        Attribute.AttributeComponent nextComponent = attribute.attributes[attribute.fulfilled];
         ObjectTag returned;
-        TagRunnable.ObjectInterface<T, ?> otr = registeredObjectTags.get(attrLow);
-        if (otr != null) {
+        TagData data = nextComponent.data;
+        if (data == null) {
+            data = registeredObjectTags.get(nextComponent.key);
+        }
+        if (data != null) {
             if (Debug.verbose) {
-                Debug.log("TagProcessor - Sub-tag found for " + attrLow);
+                Debug.log("TagProcessor - Sub-tag found for " + nextComponent.key);
             }
-            attribute.seemingSuccesses.add(attrLow);
-            returned = otr.run(attribute, object);
+            attribute.seemingSuccesses.add(nextComponent.key);
+            returned = data.runner.run(attribute, object);
             if (returned == null) {
                 if (Debug.verbose) {
                     Debug.log("TagProcessor - result was null");
                 }
                 return null;
+            }
+            if (data.processor != null) {
+                return data.processor.getObjectAttribute(returned, attribute.fulfill(1));
             }
             return returned.getObjectAttribute(attribute.fulfill(1));
         }

@@ -119,13 +119,13 @@ public class IfCommand extends BracedCommand {
                 elseRef.key = nextEntry.toString();
                 elseRef.args = new ArrayList<>();
                 elseRef.args.add("else");
-                elseRef.args.addAll(nextEntry.getArguments());
+                elseRef.args.addAll(nextEntry.getOriginalArguments());
                 allData.add(elseRef);
             }
             scriptEntry.addObject("braces", allData);
         }
         else {
-            for (String arg : scriptEntry.getArguments()) {
+            for (String arg : scriptEntry.getOriginalArguments()) {
                 if (arg.equals("{")) {
                     if (Debug.verbose) {
                         Debug.log("Has_brace = true");
@@ -143,7 +143,7 @@ public class IfCommand extends BracedCommand {
         List<String> subcommand = new ArrayList<>();
         List<String> elsecommand = new ArrayList<>();
         List<String> comparisons = new ArrayList<>();
-        for (String arg : scriptEntry.getArguments()) {
+        for (String arg : scriptEntry.getOriginalArguments()) {
             if (arg.equals("{")) {
                 break;
             }

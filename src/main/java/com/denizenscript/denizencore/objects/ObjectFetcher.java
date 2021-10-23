@@ -138,9 +138,9 @@ public class ObjectFetcher {
                 }
             }
         }
-        catch (Throwable e) {
+        catch (Throwable ex) {
             Debug.echoError("Failed to initialize an object type(" + objectTag.getSimpleName() + "): ");
-            Debug.echoError(e);
+            Debug.echoError(ex);
         }
     }
 

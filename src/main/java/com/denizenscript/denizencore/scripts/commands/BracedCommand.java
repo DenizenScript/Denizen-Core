@@ -117,7 +117,7 @@ public abstract class BracedCommand extends AbstractCommand {
             Debug.echoDebug(scriptEntry, "...with first command name: " + scriptEntry.getCommandName());
         }
         if (hyperdebug) {
-            Debug.echoDebug(scriptEntry, "...with first command arguments: " + scriptEntry.getArguments());
+            Debug.echoDebug(scriptEntry, "...with first command arguments: " + scriptEntry.getOriginalArguments());
         }
 
         if (hyperdebug) {
@@ -125,7 +125,7 @@ public abstract class BracedCommand extends AbstractCommand {
         }
 
         // Loop through the arguments of each entry
-        List<String> argList = scriptEntry.getArguments();
+        List<String> argList = scriptEntry.getOriginalArguments();
 
         // Set the variable to use for naming braced command lists; the first should be the command name
         String bracesName = scriptEntry.getCommandName().toUpperCase();

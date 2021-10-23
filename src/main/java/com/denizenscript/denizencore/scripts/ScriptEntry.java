@@ -96,8 +96,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public List<Argument> aHArgs;
 
-    public List<String> args;
-
     public ScriptEntryData entryData;
 
     private ScriptQueue queue = null;
@@ -105,6 +103,10 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public ScriptEntryInternal internal;
 
     public TagContext context;
+
+    public Boolean shouldDebugBool = null;
+
+    private Map<String, Object> objects = new HashMap<>(8);
 
     public List<BracedCommand.BracedData> getBracedSet() {
         return internal.bracedSet;
@@ -121,8 +123,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     public void setBracedSet(List<BracedCommand.BracedData> set) {
         internal.bracedSet = set;
     }
-
-    private Map<String, Object> objects = new HashMap<>(8);
 
     public final static Argument NULL_ARGUMENT = new Argument("null_trick", "null_trick");
 
@@ -146,7 +146,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         try {
             ScriptEntry se = (ScriptEntry) super.clone();
             se.objects = new HashMap<>(8);
-            se.args = new ArrayList<>(args);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
             se.aHArgs = new ArrayList<>(aHArgs);
@@ -229,7 +228,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
         boolean hasBraces = false;
         if (arguments != null) {
-            args = new ArrayList<>(arguments.length);
+            internal.pre_tagged_args = new ArrayList<>(arguments.length);
             internal.preprocArgs = new ArrayList<>(arguments.length);
             int nested_depth = 0;
             for (String arg : arguments) {
@@ -247,16 +246,16 @@ public class ScriptEntry implements Cloneable, Debuggable {
                         hasBraces = true;
                     }
                     nested_depth++;
-                    args.add(arg);
+                    internal.pre_tagged_args.add(arg);
                     continue;
                 }
                 if (arg.equals("}")) {
                     nested_depth--;
-                    args.add(arg);
+                    internal.pre_tagged_args.add(arg);
                     continue;
                 }
                 if (nested_depth > 0) {
-                    args.add(arg);
+                    internal.pre_tagged_args.add(arg);
                     continue;
                 }
                 String parg = arg;
@@ -272,29 +271,28 @@ public class ScriptEntry implements Cloneable, Debuggable {
                         internal.preprocArgs.add(argObj);
                     }
                     else {
-                        args.add(arg);
+                        internal.pre_tagged_args.add(arg);
                     }
                 }
                 else {
-                    args.add(parg);
+                    internal.pre_tagged_args.add(parg);
                 }
                 if (after != null) {
-                    args.add(after);
+                    internal.pre_tagged_args.add(after);
                     if (after.equals("{")) {
                         nested_depth++;
-                        args.add(arg);
+                        internal.pre_tagged_args.add(arg);
                         continue;
                     }
                 }
             }
-            internal.pre_tagged_args = new ArrayList<>(args);
             nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
-            internal.args_ref = new ArrayList<>(args.size());
-            List<Integer> tempProcessArgs = new ArrayList<>(args.size());
-            aHArgs = new ArrayList<>(args.size());
-            for (int i = 0; i < args.size(); i++) {
-                String arg = args.get(i);
+            internal.args_ref = new ArrayList<>(internal.pre_tagged_args.size());
+            List<Integer> tempProcessArgs = new ArrayList<>(internal.pre_tagged_args.size());
+            aHArgs = new ArrayList<>(internal.pre_tagged_args.size());
+            for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
+                String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
                     InternalArgument brace = new InternalArgument();
                     brace.aHArg = new Argument("", "{");
@@ -337,7 +335,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             }
         }
         else {
-            args = new ArrayList<>();
+            internal.pre_tagged_args = new ArrayList<>();
             internal.preprocArgs = new ArrayList<>();
             internal.pre_tagged_args = new ArrayList<>();
             internal.processArgs = new int[0];
@@ -345,7 +343,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
             aHArgs = new ArrayList<>();
         }
         if (internal.actualCommand != null) {
-            int argCount = getArguments().size();
+            int argCount = getOriginalArguments().size();
             if (argCount < internal.actualCommand.minimumArguments || (!hasBraces && argCount > internal.actualCommand.maximumArguments)) {
                 internal.brokenArgs = true;
                 internal.actualCommand = CommandRegistry.debugInvalidCommand;
@@ -405,10 +403,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
         }
     }
 
-    public List<String> getArguments() {
-        return args;
-    }
-
     ////////////
     // INSTANCE METHODS
     //////////
@@ -430,11 +424,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     public AbstractCommand getCommand() {
         return internal.actualCommand;
-    }
-
-    public ScriptEntry setArguments(List<String> arguments) {
-        args = arguments;
-        return this;
     }
 
     private ScriptEntry owner = null;
@@ -574,10 +563,6 @@ public class ScriptEntry implements Cloneable, Debuggable {
     // DEBUGGABLE
     /////////
 
-    public boolean fallbackDebug = true;
-
-    public Boolean shouldDebugBool = null;
-
     public boolean dbCallShouldDebug() {
         return DenizenCore.getImplementation().shouldDebug(this);
     }
@@ -588,8 +573,8 @@ public class ScriptEntry implements Cloneable, Debuggable {
             return shouldDebugBool;
         }
         if (internal.script == null || internal.script.getContainer() == null) {
-            shouldDebugBool = fallbackDebug;
-            return shouldDebugBool;
+            shouldDebugBool = true;
+            return true;
         }
         shouldDebugBool = internal.script.getContainer().shouldDebug();
         return shouldDebugBool;

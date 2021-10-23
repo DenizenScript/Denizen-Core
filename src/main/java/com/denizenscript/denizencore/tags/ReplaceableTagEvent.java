@@ -46,9 +46,7 @@ public class ReplaceableTagEvent {
 
         public String value = null;
 
-        public TagRunnable.RootForm rootFormHandler = null;
-
-        public TagRunnable.BaseInterface<?> tagBaseHandler = null;
+        public TagManager.TagBaseData tagBase = null;
     }
 
     public ReferenceData mainRef = null;
@@ -109,13 +107,10 @@ public class ReplaceableTagEvent {
         mainRef.rawTag = raw_tag;
 
         String startValue = getName();
-        mainRef.tagBaseHandler = TagManager.baseHandlers.get(startValue);
-        if (mainRef.tagBaseHandler == null) {
-            mainRef.rootFormHandler = TagManager.rootFormHandlers.get(startValue);
-            if (mainRef.rootFormHandler == null) {
-                if (!hasAlternative()) {
-                    Debug.echoError(context.entry, "(Initial detection) No tag-base handler for '" + startValue + "'.");
-                }
+        mainRef.tagBase = TagManager.baseTags.get(startValue);
+        if (mainRef.tagBase == null) {
+            if (!hasAlternative()) {
+                Debug.echoError(context.entry, "(Initial detection) No tag-base handler for '" + startValue + "'.");
             }
         }
         refs.put(otag, mainRef);
@@ -209,7 +204,7 @@ public class ReplaceableTagEvent {
         return mainRef.value != null;
     }
 
-    public TagRunnable.BaseInterface<?> alternateBase;
+    public TagManager.TagBaseData alternateBase;
 
     public ObjectTag getAlternative() {
         int index = core_attributes.getFallbackTagIndex();

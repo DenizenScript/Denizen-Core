@@ -11,7 +11,6 @@ import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
@@ -39,33 +38,43 @@ public class TagManager {
         new UtilTagBase();
     }
 
-    public static HashMap<String, TagRunnable.RootForm> rootFormHandlers = new HashMap<>();
+    public static class TagBaseData {
 
-    public static HashMap<String, TagRunnable.BaseInterface<?>> baseHandlers = new HashMap<>();
+        public String name;
 
-    public static HashMap<String, Class<? extends ObjectTag>> baseReturnTypes = new HashMap<>();
+        public TagRunnable.RootForm rootForm;
 
-    public static HashSet<String> properTagBases = new HashSet<>();
+        public TagRunnable.BaseInterface<?> baseForm;
+
+        public Class<? extends ObjectTag> returnType;
+
+        public ObjectTagProcessor<? extends ObjectTag> processor;
+
+        public TagBaseData() {
+        }
+
+        public <R extends ObjectTag> TagBaseData(String name, Class<R> returnType, TagRunnable.BaseInterface<R> baseForm) {
+            this.name = name;
+            this.returnType = returnType;
+            this.baseForm = baseForm;
+            ObjectFetcher.ObjectType type = ObjectFetcher.objectsByClass.get(returnType);
+            processor = type == null ? null : type.tagProcessor;
+        }
+    }
+
+    public static HashMap<String, TagBaseData> baseTags = new HashMap<>();
 
     public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
-        baseReturnTypes.put(name, returnType);
-        properTagBases.add(name);
-        baseHandlers.put(name, run);
+        baseTags.put(name, new TagBaseData(name, returnType, run));
     }
 
     @Deprecated
     public static void registerTagHandler(TagRunnable.RootForm run, String... names) {
-        properTagBases.add(names[0]);
-        if (names.length == 1) {
-            run.name = names[0];
-            rootFormHandlers.put(run.name, run);
-        }
-        else {
-            for (String name : names) {
-                TagRunnable.RootForm rtemp = run.clone();
-                rtemp.name = name;
-                rootFormHandlers.put(rtemp.name, rtemp);
-            }
+        for (String name : names) {
+            TagBaseData root = new TagBaseData();
+            root.name = name;
+            root.rootForm = run;
+            baseTags.put(name, root);
         }
     }
 
@@ -73,14 +82,22 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
-        TagRunnable.BaseInterface<?> baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBaseHandler;
+        TagBaseData baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBase;
         if (baseHandler != null) {
             Attribute attribute = event.getAttributes();
             try {
-                ObjectTag result = baseHandler.run(attribute);
-                if (result != null) {
-                    event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
-                    return;
+                if (baseHandler.baseForm != null) {
+                    ObjectTag result = baseHandler.baseForm.run(attribute);
+                    if (result != null) {
+                        event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
+                        return;
+                    }
+                }
+                else if (baseHandler.rootForm != null) {
+                    baseHandler.rootForm.run(event);
+                    if (event.replaced()) {
+                        return;
+                    }
                 }
             }
             catch (Throwable ex) {
@@ -88,24 +105,6 @@ public class TagManager {
             }
             attribute.echoError("Tag-base '" + attribute.attributes[0].key + "' returned null.");
             return;
-        }
-        TagRunnable.RootForm handler = event.mainRef.rootFormHandler;
-        if (handler != null) {
-            try {
-                if (Debug.verbose) {
-                    Debug.log("Tag handle: " + event.raw_tag + " " + handler.name + "...");
-                }
-                handler.run(event);
-                if (event.replaced()) {
-                    if (Debug.verbose) {
-                        Debug.log("Tag handle success: " + event.getReplaced());
-                    }
-                    return;
-                }
-            }
-            catch (Throwable ex) {
-                Debug.echoError(ex);
-            }
         }
         else {
             if (!event.hasAlternative()) {
