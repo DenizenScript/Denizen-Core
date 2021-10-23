@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptCont
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
+import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.FutureWarning;
 
@@ -21,7 +22,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
 
     public HashMap<String, Class<? extends ObjectTag>> tagReturnTypes = new HashMap<>();
 
-    public ObjectTagProcessor() {
+    public Class<T> type;
+
+    public void generateCoreTags() {
 
         // <--[tag]
         // @attribute <ObjectTag.prefix>
@@ -255,15 +258,16 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     }
 
     public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
+        final TagRunnable.ObjectInterface<T, R> convertedRunnable = TagNamer.nameTagInterface(type, name, runnable);
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T, R> newRunnable = (attribute, object) -> {
                 Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
-                return runnable.run(attribute, object);
+                return convertedRunnable.run(attribute, object);
             };
             registeredObjectTags.put(variant, newRunnable);
             tagReturnTypes.put(variant, returnType);
         }
-        registeredObjectTags.put(name, runnable);
+        registeredObjectTags.put(name, convertedRunnable);
         tagReturnTypes.put(name, returnType);
     }
 

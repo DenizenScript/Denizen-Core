@@ -181,4 +181,6 @@ public interface DenizenImplementation {
     String getTextColor();
 
     String getEmphasisColor();
+
+    void saveClassToLoader(Class<?> clazz);
 }

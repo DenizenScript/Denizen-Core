@@ -115,6 +115,8 @@ public class ObjectFetcher {
     public static <T extends ObjectTag> void registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
         ObjectType newType = new ObjectType();
         newType.clazz = objectTag;
+        processor.type = objectTag;
+        processor.generateCoreTags();
         newType.tagProcessor = processor;
         newType.isAdjustable = Adjustable.class.isAssignableFrom(objectTag);
         objectsByClass.put(objectTag, newType);
