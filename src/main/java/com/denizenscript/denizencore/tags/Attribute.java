@@ -21,7 +21,7 @@ public class Attribute {
 
         public final String context;
 
-        public TagManager.ParseableTag contextParsed;
+        public ParseableTag contextParsed;
 
         public ObjectTagProcessor.TagData<?, ?> data;
 

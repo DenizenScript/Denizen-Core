@@ -231,35 +231,6 @@ public class TagManager {
 
     public static ParseableTag DEFAULT_PARSEABLE_EMPTY = new ParseableTag("");
 
-    public static class ParseableTag {
-
-        public ElementTag rawElement;
-
-        public List<ParseableTagPiece> pieces;
-
-        public ParseableTagPiece singleTag;
-
-        public boolean hasTag;
-
-        public final ObjectTag parse(TagContext context) {
-            if (rawElement != null) {
-                return rawElement;
-            }
-            else if (singleTag != null) {
-                return readSingleTagObject(singleTag, context);
-            }
-            return parseChainObject(pieces, context);
-        }
-
-        public ParseableTag() {
-        }
-
-        public ParseableTag(String text) {
-            rawElement = new ElementTag(text, true);
-            rawElement.isRawInput = true;
-        }
-    }
-
     public static class ParseableTagPiece {
 
         public String content;

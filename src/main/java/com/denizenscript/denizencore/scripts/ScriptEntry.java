@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -67,7 +68,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         public InternalArgument prefix = null;
 
-        public TagManager.ParseableTag value = null;
+        public ParseableTag value = null;
 
         public Argument aHArg = null;
 
