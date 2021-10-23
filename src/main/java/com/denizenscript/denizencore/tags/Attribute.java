@@ -119,6 +119,7 @@ public class Attribute {
     public Boolean[] filled;
 
     ScriptEntry scriptEntry;
+
     public TagContext context;
 
     String origin;
@@ -236,19 +237,23 @@ public class Attribute {
         return this;
     }
 
-    public final void fulfillOne() {
+    /* Referenced by TagCodeGenerator */
+    public final void fulfillOne(ObjectTag obj) {
+        lastValid = obj;
         resetErrorTrack();
-        if (filled != null) {
-            if (fulfilled + 1 < filled.length) {
-                filled[fulfilled + 1] = Boolean.TRUE;
-            }
+        if (filled != null && fulfilled < filled.length) {
+            filled[fulfilled] = Boolean.TRUE;
         }
         fulfilled++;
     }
 
-    public final void trackLastTag() {
+    /* Referenced by TagCodeGenerator */
+    public final void trackLastTagFailure() {
         if (fulfilled < attributes.length) {
             seemingSuccesses.add(attributes[fulfilled].key);
+            if (filled != null) {
+                filled[fulfilled] = Boolean.FALSE;
+            }
         }
     }
 

@@ -88,14 +88,15 @@ public class TagManager {
         if (baseHandler != null) {
             Attribute attribute = event.getAttributes();
             try {
-                if (baseHandler.baseForm != null) {
-                    ObjectTag result;
-                    if (event.alternateBase == null && event.mainRef.compiledStart != null) {
-                        result = event.mainRef.compiledStart.run(attribute);
+                if (event.mainRef.compiledStart != null && event.alternateBase == null) {
+                    ObjectTag result = event.mainRef.compiledStart.run(attribute);
+                    if (result != null) {
+                        event.setReplacedObject(result.getObjectAttribute(attribute));
+                        return;
                     }
-                    else {
-                        result = baseHandler.baseForm.run(attribute);
-                    }
+                }
+                else if (baseHandler.baseForm != null) {
+                    ObjectTag result = baseHandler.baseForm.run(attribute);
                     if (result != null) {
                         event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
                         return;

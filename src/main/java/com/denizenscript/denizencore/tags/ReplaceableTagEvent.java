@@ -214,7 +214,7 @@ public class ReplaceableTagEvent {
         int index = core_attributes.getFallbackTagIndex();
         if (index != -1) {
             if (core_attributes.filled != null) {
-                core_attributes.filled[core_attributes.fulfilled] = Boolean.FALSE;
+                core_attributes.filled[core_attributes.fulfilled] = false;
             }
             core_attributes.fulfilled = index;
             alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutContext(1));

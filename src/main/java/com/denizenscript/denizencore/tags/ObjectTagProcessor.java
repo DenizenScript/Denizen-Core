@@ -319,7 +319,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 if (Debug.verbose) {
                     Debug.log("TagProcessor - result was null");
                 }
-                attribute.trackLastTag();
+                attribute.trackLastTagFailure();
                 return null;
             }
             if (data.processor != null) {
