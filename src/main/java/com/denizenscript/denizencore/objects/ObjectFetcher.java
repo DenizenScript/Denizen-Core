@@ -115,9 +115,11 @@ public class ObjectFetcher {
     public static <T extends ObjectTag> void registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
         ObjectType newType = new ObjectType();
         newType.clazz = objectTag;
-        processor.type = objectTag;
-        processor.generateCoreTags();
-        newType.tagProcessor = processor;
+        if (processor != null) {
+            processor.type = objectTag;
+            processor.generateCoreTags();
+            newType.tagProcessor = processor;
+        }
         newType.isAdjustable = Adjustable.class.isAssignableFrom(objectTag);
         objectsByClass.put(objectTag, newType);
         try {
@@ -146,15 +148,6 @@ public class ObjectFetcher {
 
     public static boolean canFetch(String id) {
         return objectsByPrefix.containsKey(CoreUtilities.toLowerCase(id));
-    }
-
-    public static Class getObjectClass(String id) {
-        if (canFetch(id)) {
-            return objectsByPrefix.get(CoreUtilities.toLowerCase(id)).clazz;
-        }
-        else {
-            return null;
-        }
     }
 
     public static boolean isObjectWithProperties(String input) {
