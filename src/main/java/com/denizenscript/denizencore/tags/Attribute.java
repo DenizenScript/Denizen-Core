@@ -123,7 +123,7 @@ public class Attribute {
 
     String origin;
 
-    public List<String> seemingSuccesses = new ArrayList<>(2);
+    public ArrayList<String> seemingSuccesses = new ArrayList<>(2);
 
     /**
      * Last valid object while parsing this attribute chain, for debugging purposes.
@@ -136,7 +136,9 @@ public class Attribute {
         if (Debug.verbose) {
             Debug.echoError("(Verbose) Attribute - error track reset");
         }
-        seemingSuccesses.clear();
+        if (!seemingSuccesses.isEmpty()) {
+            seemingSuccesses.clear();
+        }
         hasContextFailed = false;
     }
 
@@ -232,6 +234,22 @@ public class Attribute {
         }
         fulfilled += attributes;
         return this;
+    }
+
+    public final void fulfillOne() {
+        resetErrorTrack();
+        if (filled != null) {
+            if (fulfilled + 1 < filled.length) {
+                filled[fulfilled + 1] = Boolean.TRUE;
+            }
+        }
+        fulfilled++;
+    }
+
+    public final void trackLastTag() {
+        if (fulfilled < attributes.length) {
+            seemingSuccesses.add(attributes[fulfilled].key);
+        }
     }
 
     public boolean hasContext(int attribute) {

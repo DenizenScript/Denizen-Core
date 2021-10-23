@@ -47,6 +47,10 @@ public class ReplaceableTagEvent {
         public String value = null;
 
         public TagManager.TagBaseData tagBase = null;
+
+        public TagRunnable.BaseInterface<? extends ObjectTag> compiledStart;
+
+        public boolean noGenerate = false;
     }
 
     public ReferenceData mainRef = null;

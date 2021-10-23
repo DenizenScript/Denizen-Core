@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.codegen.TagCodeGenerator;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -88,7 +89,13 @@ public class TagManager {
             Attribute attribute = event.getAttributes();
             try {
                 if (baseHandler.baseForm != null) {
-                    ObjectTag result = baseHandler.baseForm.run(attribute);
+                    ObjectTag result;
+                    if (event.alternateBase == null && event.mainRef.compiledStart != null) {
+                        result = event.mainRef.compiledStart.run(attribute);
+                    }
+                    else {
+                        result = baseHandler.baseForm.run(attribute);
+                    }
                     if (result != null) {
                         event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
                         return;
@@ -250,12 +257,6 @@ public class TagManager {
     public static ObjectTag parseChainObject(List<ParseableTagPiece> pieces, TagContext context) {
         if (Debug.verbose) {
             Debug.log("Tag parse chain: " + pieces + "...");
-            try {
-                throw new RuntimeException("Stack");
-            }
-            catch (Exception ex) {
-                Debug.echoError(ex);
-            }
         }
         if (pieces.size() < 2) {
             if (pieces.isEmpty()) {
@@ -335,6 +336,10 @@ public class TagManager {
             midTag.isTag = true;
             try {
                 midTag.tagData = new ReplaceableTagEvent(tagToProc, context).mainRef;
+                if (!midTag.tagData.noGenerate && midTag.tagData.tagBase != null && midTag.tagData.tagBase.baseForm != null) {
+                    midTag.tagData.noGenerate = true;
+                    midTag.tagData.compiledStart = TagCodeGenerator.generatePartialTag(midTag.tagData);
+                }
                 pieces.add(midTag);
                 if (Debug.verbose) {
                     Debug.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
