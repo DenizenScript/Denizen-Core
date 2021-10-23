@@ -227,7 +227,33 @@ public class TagManager {
 
     public static Pattern OBJECTTAG_CONFUSION_PATTERN = Pattern.compile("<\\w+tag[\\[.>].*", Pattern.CASE_INSENSITIVE);
 
-    static HashMap<String, List<ParseableTagPiece>> preCalced = new HashMap<>();
+    public static HashMap<String, ParseableTag> preCalced = new HashMap<>();
+
+    public static ParseableTag DEFAULT_PARSEABLE_EMPTY = new ParseableTag("");
+
+    public static class ParseableTag {
+
+        public ElementTag rawElement;
+
+        public List<ParseableTagPiece> pieces;
+
+        public boolean hasTag;
+
+        public final ObjectTag parse(TagContext context) {
+            if (rawElement != null) {
+                return rawElement;
+            }
+            return parseChainObject(pieces, context);
+        }
+
+        public ParseableTag() {
+        }
+
+        public ParseableTag(String text) {
+            rawElement = new ElementTag(text, true);
+            rawElement.isRawInput = true;
+        }
+    }
 
     public static class ParseableTagPiece {
 
@@ -243,15 +269,6 @@ public class TagManager {
         public String toString() {
             return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.rawTag : "") + ", " + content + ")";
         }
-
-        public ParseableTagPiece duplicate() {
-            ParseableTagPiece newPiece = new ParseableTagPiece();
-            newPiece.content = content;
-            newPiece.isTag = isTag;
-            newPiece.isError = isError;
-            newPiece.tagData = tagData;
-            return newPiece;
-        }
     }
 
     public static ObjectTag parseChainObject(List<ParseableTagPiece> pieces, TagContext context) {
@@ -266,7 +283,7 @@ public class TagManager {
         }
         if (pieces.size() < 2) {
             if (pieces.isEmpty()) {
-                return new ElementTag("");
+                return new ElementTag("", true);
             }
             ParseableTagPiece pzero = pieces.get(0);
             if (pzero.isError) {
@@ -300,28 +317,22 @@ public class TagManager {
         return tagObject(arg, context).toString();
     }
 
-    public static List<ParseableTagPiece> dupChain(List<ParseableTagPiece> chain) {
-        List<ParseableTagPiece> newPieces = new ArrayList<>(chain.size());
-        for (TagManager.ParseableTagPiece piece : chain) {
-            newPieces.add(piece.duplicate());
-        }
-        return newPieces;
-    }
-
-    public static List<ParseableTagPiece> genChain(String arg, TagContext context) {
+    public static ParseableTag parseTextToTag(String arg, TagContext context) {
         if (arg == null) {
             return null;
         }
-        List<ParseableTagPiece> pieces = preCalced.get(arg);
-        if (pieces != null) {
-            return pieces;
+        ParseableTag preParsed = preCalced.get(arg);
+        if (preParsed != null) {
+            return preParsed;
         }
-        pieces = new ArrayList<>(1);
+        List<ParseableTagPiece> pieces = new ArrayList<>(1);
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;
             pieces.add(txt);
-            return pieces;
+            ParseableTag result = new ParseableTag(arg);
+            result.pieces = pieces;
+            return result;
         }
         int[] positions = new int[2];
         positions[0] = -1;
@@ -330,7 +341,9 @@ public class TagManager {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;
             pieces.add(txt);
-            return pieces;
+            ParseableTag result = new ParseableTag(arg);
+            result.pieces = pieces;
+            return result;
         }
         String orig = arg;
         while (positions[0] != -1) {
@@ -352,7 +365,7 @@ public class TagManager {
                 }
             }
             catch (TagProcessingException ex) {
-                Debug.echoError(context, "Tag processing failed: " + ex.getMessage());
+                Debug.echoError(context, "(Initial detection) Tag processing failed: " + ex.getMessage());
                 ParseableTagPiece errorNote = new ParseableTagPiece();
                 errorNote.isError = true;
                 errorNote.content = "Tag processing failed: " + ex.getMessage();
@@ -375,11 +388,14 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag chainify complete: " + arg);
         }
-        return pieces;
+        ParseableTag result = new ParseableTag();
+        result.pieces = pieces;
+        result.hasTag = true;
+        return result;
     }
 
     public static ObjectTag tagObject(String arg, TagContext context) {
-        return parseChainObject(genChain(arg, context), context);
+        return parseTextToTag(arg, context).parse(context);
     }
 
     private static void locateTag(String arg, int[] holder, int start) {
@@ -418,16 +434,16 @@ public class TagManager {
             Argument aharg = aHArgs.get(argId);
             ScriptEntry.InternalArgument piece = pieceHelp.get(argId);
             if (piece.prefix != null) {
-                if (piece.prefix.aHArg.needsFill) {
-                    aharg.prefix = parseChainObject(piece.prefix.value, context).toString();
+                if (piece.prefix.value.hasTag) {
+                    aharg.prefix = piece.prefix.value.parse(context).toString();
                     aharg.lower_prefix = CoreUtilities.toLowerCase(aharg.prefix);
                 }
-                if (aharg.needsFill) {
-                    aharg.object = parseChainObject(piece.value, context);
+                if (piece.value.hasTag) {
+                    aharg.object = piece.value.parse(context);
                 }
             }
             else {
-                aharg.object = parseChainObject(piece.value, context);
+                aharg.object = piece.value.parse(context);
                 aharg.prefix = null;
                 aharg.lower_prefix = null;
             }

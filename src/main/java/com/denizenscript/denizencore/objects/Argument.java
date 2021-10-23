@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.objects;
 
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -32,9 +31,6 @@ public class Argument implements Cloneable {
     public String lower_value;
 
     public ObjectTag object = null;
-
-    public boolean needsFill = false;
-    public boolean hasSpecialPrefix = false;
 
     public ScriptEntry scriptEntry = null;
 
@@ -80,30 +76,35 @@ public class Argument implements Cloneable {
 
     public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher(AsciiMatcher.LETTERS_UPPER + AsciiMatcher.LETTERS_LOWER + "_.");
 
-    public void fillStr(String string) {
-        raw_value = string;
-        int first_colon = string.indexOf(':');
-        int first_not_prefix = prefixCharsAllowed.indexOfFirstNonMatch(string);
-        if ((first_not_prefix > -1 && first_not_prefix < first_colon) || first_colon == -1) {
-            value = string;
-            if (object == null) {
-                object = new ElementTag(value);
-                ((ElementTag) object).isRawInput = true;
-            }
-        }
-        else {
-            prefix = string.substring(0, first_colon);
-            if (prefix.equals("no_prefix")) {
-                prefix = null;
-            }
-            else {
-                lower_prefix = CoreUtilities.toLowerCase(prefix);
-            }
-            value = string.substring(first_colon + 1);
+    private final void fillStrNoColon(String string) {
+        value = string;
+        if (object == null) {
             object = new ElementTag(value);
             ((ElementTag) object).isRawInput = true;
         }
         lower_value = CoreUtilities.toLowerCase(value);
+    }
+
+    public void fillStr(String string) {
+        raw_value = string;
+        int first_colon = string.indexOf(':');
+        if (first_colon == -1) {
+            fillStrNoColon(string);
+            return;
+        }
+        int first_not_prefix = prefixCharsAllowed.indexOfFirstNonMatch(string);
+        if (first_not_prefix > -1 && first_not_prefix < first_colon) {
+            fillStrNoColon(string);
+            return;
+        }
+        prefix = string.substring(0, first_colon);
+        if (prefix.equals("no_prefix")) {
+            prefix = null;
+        }
+        else {
+            lower_prefix = CoreUtilities.toLowerCase(prefix);
+        }
+        fillStrNoColon(string.substring(first_colon + 1));
     }
 
     // Construction
@@ -297,7 +298,7 @@ public class Argument implements Cloneable {
     }
 
     public <T extends ObjectTag> T asType(Class<T> clazz) {
-        T arg = CoreUtilities.asType(object, clazz, DenizenCore.getImplementation().getTagContext(scriptEntry));
+        T arg = CoreUtilities.asType(object, clazz, scriptEntry.context);
         if (arg == null) {
             Debug.echoError("Cannot process argument '" + object + "' as type '" + clazz.getSimpleName() + "' (conversion returned null).");
             return null;

@@ -21,6 +21,8 @@ public class Attribute {
 
         public final String context;
 
+        public TagManager.ParseableTag contextParsed;
+
         public ObjectTagProcessor.TagData<?, ?> data;
 
         public AttributeComponent(String inp) {
@@ -338,11 +340,18 @@ public class Attribute {
         if (tagged != null) {
             return tagged;
         }
-        String inp = attributes[attribute].context;
-        if (inp == null) {
+        AttributeComponent component = attributes[attribute];
+        if (component.contextParsed == null) {
+            String inp = attributes[attribute].context;
+            if (inp == null) {
+                return null;
+            }
+            component.contextParsed = TagManager.parseTextToTag(component.context, context);
+        }
+        if (component.contextParsed == null) {
             return null;
         }
-        tagged = TagManager.tagObject(inp, context);
+        tagged = component.contextParsed.parse(context);
         contexts[attribute] = tagged;
         return tagged;
     }

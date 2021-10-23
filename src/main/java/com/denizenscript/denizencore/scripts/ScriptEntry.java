@@ -67,14 +67,14 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
         public InternalArgument prefix = null;
 
-        public List<TagManager.ParseableTagPiece> value = null;
+        public TagManager.ParseableTag value = null;
 
         public Argument aHArg = null;
 
         public InternalArgument duplicate() {
             InternalArgument newArg = new InternalArgument();
             newArg.prefix = prefix == null ? null : prefix.duplicate();
-            newArg.value = new ArrayList<>(value);
+            newArg.value = value;
             newArg.aHArg = aHArg == null ? null : aHArg.clone();
             return newArg;
         }
@@ -130,7 +130,7 @@ public class ScriptEntry implements Cloneable, Debuggable {
 
     static {
         NULL_INTERNAL_ARGUMENT.aHArg = NULL_ARGUMENT;
-        NULL_INTERNAL_ARGUMENT.value = new ArrayList<>();
+        NULL_INTERNAL_ARGUMENT.value = TagManager.DEFAULT_PARSEABLE_EMPTY;
     }
 
     public void generateAHArgs() {
@@ -169,19 +169,11 @@ public class ScriptEntry implements Cloneable, Debuggable {
     }
 
     public void crunchInto(InternalArgument argVal, String arg, TagContext refContext) {
-        argVal.value = TagManager.dupChain(TagManager.genChain(arg, refContext));
-        boolean isTag = false;
-        int indStart = arg.indexOf('<');
-        if (indStart >= 0) {
-            int indEnd = arg.lastIndexOf('>');
-            if (indEnd > indStart) {
-                isTag = true;
-                internal.hasTags = true;
-            }
+        argVal.value = TagManager.parseTextToTag(arg, refContext);
+        if (argVal.value.hasTag) {
+            internal.hasTags = true;
         }
         argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.getRawValue(), arg);
-        argVal.aHArg.needsFill = isTag;
-        argVal.aHArg.hasSpecialPrefix = argVal.prefix != null;
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, Object insides, int lineNum) {
@@ -319,12 +311,12 @@ public class ScriptEntry implements Cloneable, Debuggable {
                     argVal.prefix = new InternalArgument();
                     crunchInto(argVal.prefix, arg.substring(0, first_colon), refContext);
                     arg = arg.substring(first_colon + 1);
-                    if (!argVal.prefix.aHArg.needsFill) {
+                    if (!argVal.prefix.value.hasTag) {
                         internal.argPrefixMap.put(argVal.prefix.aHArg.lower_value, i);
                     }
                 }
                 crunchInto(argVal, arg, refContext);
-                if (argVal.aHArg.needsFill || argVal.aHArg.hasSpecialPrefix) {
+                if (argVal.value.hasTag || argVal.prefix != null) {
                     tempProcessArgs.add(aHArgs.size());
                 }
                 aHArgs.add(argVal.aHArg);
