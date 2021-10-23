@@ -66,7 +66,7 @@ public class RandomCommand extends BracedCommand {
         if (bdat != null && bdat.size() > 0) {
             scriptEntry.addObject("braces", bdat);
         }
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matches("{")) {
                 break;
             }

@@ -55,7 +55,7 @@ public class DefineMapCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         MapTag value = new MapTag();
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("definition")
                     && !arg.hasPrefix()) {
                 scriptEntry.addObject("definition", new ElementTag(CoreUtilities.toLowerCase(arg.getValue())));

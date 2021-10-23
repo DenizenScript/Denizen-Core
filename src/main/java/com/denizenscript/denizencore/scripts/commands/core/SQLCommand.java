@@ -111,7 +111,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("sqlid")
                     && arg.matchesPrefix("id")) {
                 scriptEntry.addObject("sqlid", arg.asElement());

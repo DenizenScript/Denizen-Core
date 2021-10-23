@@ -158,7 +158,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         boolean isSet = false;
         boolean isCopyKey = false;
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("action") &&
                     arg.matchesPrefix("load")) {
                 scriptEntry.addObject("action", new ElementTag("LOAD"));

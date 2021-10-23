@@ -52,7 +52,7 @@ public class RateLimitCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
 
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesArgumentType(DurationTag.class)
                     && !scriptEntry.hasObject("duration")
                     && arg.limitToOnlyPrefix("duration")) {

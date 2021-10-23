@@ -107,7 +107,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         MapTag defMap = new MapTag();
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesPrefix("i", "id")) {
                 scriptEntry.addObject("id", arg.asElement());
             }

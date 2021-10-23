@@ -68,7 +68,7 @@ public class RunLaterCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         MapTag defMap = new MapTag();
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesPrefix("def")) {
                 scriptEntry.addObject("definitions", arg.asType(ListTag.class));
             }

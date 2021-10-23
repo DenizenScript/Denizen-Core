@@ -58,7 +58,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         List<String> arguments = new ArrayList<>(scriptEntry.getOriginalArguments());
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesPrefix("rate")
                     && arg.matchesArgumentType(DurationTag.class)) {
                 scriptEntry.addObject("rate", arg.asType(DurationTag.class));

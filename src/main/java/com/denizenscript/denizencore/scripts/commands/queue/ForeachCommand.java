@@ -97,7 +97,7 @@ public class ForeachCommand extends BracedCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         boolean handled = false;
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (!handled
                     && arg.matches("stop") && !arg.hasPrefix()) {
                 scriptEntry.addObject("stop", new ElementTag(true));

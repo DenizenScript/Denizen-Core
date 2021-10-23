@@ -50,7 +50,7 @@ public class WaitCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesArgumentType(DurationTag.class)
                     && !scriptEntry.hasObject("delay")
                     && arg.limitToOnlyPrefix("delay")) {

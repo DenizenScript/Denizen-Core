@@ -60,7 +60,7 @@ public class NoteCommand extends AbstractCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry.getProcessedArgs()) {
+        for (Argument arg : scriptEntry) {
             if (arg.matchesPrefix("as", "i", "id")
                     && !scriptEntry.hasObject("id")) {
                 scriptEntry.addObject("id", arg.asElement());
