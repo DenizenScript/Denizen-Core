@@ -234,6 +234,7 @@ public class CoreUtilities {
         if (specificGetter != null) {
             Property prop = specificGetter.get(object);
             if (prop == null) {
+                mechanism.echoError("Cannot apply property mechanism - object does not fit property requirements?");
                 return;
             }
             prop.adjust(mechanism);

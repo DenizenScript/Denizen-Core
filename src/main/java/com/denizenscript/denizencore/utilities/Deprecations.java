@@ -213,9 +213,12 @@ public class Deprecations {
     // Added 2020/06/13, bump to normal slow warning by 2023.
     public static Warning yamlDataContainer = new VerySlowWarning("'yaml data' containers are now just called 'data' containers.");
 
-    // Added 2020/10/17, bump to normal slow warning by 2023.
+    // Added 2021/10/17, bump to normal slow warning by 2023.
     public static Warning queueExists = new VerySlowWarning("'queue.exists[...]' tag is deprecated in favor of queue[...].exists");
     public static Warning queueStats = new VerySlowWarning("'queue.stats' tag is deprecated in favor of 'util.event_stats', and 'queue.list' is deprecated in favor of 'util.queues'");
+
+    // In Bukkit impl, Added 2021/10/24, bump to normal slow warning by 2023.
+    public static Warning entityArmorPose = new VerySlowWarning("The old EntityTag.armor_pose and armor_pose_list tags are dperecated in favor of armor_pose_map.");
 
     // ==================== FUTURE deprecations ====================
 
