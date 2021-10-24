@@ -126,6 +126,9 @@ public class Attribute {
 
     public ArrayList<String> seemingSuccesses = new ArrayList<>(2);
 
+    /* Referenced by TagCodeGenerator */
+    public boolean hadManualFulfill = false;
+
     /**
      * Last valid object while parsing this attribute chain, for debugging purposes.
      */
@@ -225,6 +228,7 @@ public class Attribute {
     }
 
     public Attribute fulfill(int attributes) {
+        hadManualFulfill = true;
         resetErrorTrack();
         if (filled != null) {
             for (int i = 0; i < attributes; i++) {

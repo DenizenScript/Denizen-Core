@@ -63,17 +63,20 @@ public class TagCodeGenerator {
             {
                 MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR, null, null);
                 mv.visitCode();
-                Label startLabel = new Label();
                 Label returnLabel = new Label();
                 Label failLabel = new Label();
+                // Run the initial tag base
+                Label startLabel = new Label();
                 mv.visitLabel(startLabel);
                 int line = 1;
                 mv.visitLineNumber(line++, startLabel);
                 mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, Type.getInternalName(data.tagBase.baseForm.getClass()), "staticRun", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR, false);
                 mv.visitVarInsn(Opcodes.ASTORE, LOCAL_CURRENTOBJECT);
+                // If tag base returned null, fail
                 mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                 mv.visitJumpInsn(Opcodes.IFNULL, failLabel);
+                // otherwise, fulfill one
                 mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
                 mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "fulfillOne", FULFILL_ONE_RUN_DESCRIPTOR, false);
@@ -82,6 +85,7 @@ public class TagCodeGenerator {
                     if (piece == null || piece.runner == null) {
                         break;
                     }
+                    // Run sub-tag
                     Label methodLabel = new Label();
                     mv.visitLabel(methodLabel);
                     mv.visitLineNumber(line++, methodLabel);
@@ -89,11 +93,26 @@ public class TagCodeGenerator {
                     mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                     mv.visitMethodInsn(Opcodes.INVOKESTATIC, Type.getInternalName(piece.runner.getClass()), "staticRun", TagNamer.OBJECT_INTERFACE_RUN_DESCRIPTOR, false);
                     mv.visitVarInsn(Opcodes.ASTORE, LOCAL_CURRENTOBJECT);
+                    // If null return, fail
+                    Label checkLabel1 = new Label();
+                    mv.visitLabel(checkLabel1);
+                    mv.visitLineNumber(line++, checkLabel1);
                     mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                     mv.visitJumpInsn(Opcodes.IFNULL, failLabel);
+                    // otherwise, fulfill one
+                    Label fulfillLabel = new Label();
+                    mv.visitLabel(fulfillLabel);
+                    mv.visitLineNumber(line++, fulfillLabel);
                     mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
                     mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                     mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "fulfillOne", FULFILL_ONE_RUN_DESCRIPTOR, false);
+                    // If manual fulfill happened, a legacy multi-part tag handler was used, so code gen is no longer trustworthy - exit and let legacy handler run
+                    Label checkLabel2 = new Label();
+                    mv.visitLabel(checkLabel2);
+                    mv.visitLineNumber(line++, checkLabel2);
+                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
+                    mv.visitFieldInsn(Opcodes.GETFIELD, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "hadManualFulfill", "Z");
+                    mv.visitJumpInsn(Opcodes.IFNE, returnLabel);
                 }
                 mv.visitJumpInsn(Opcodes.GOTO, returnLabel);
                 mv.visitLabel(failLabel);

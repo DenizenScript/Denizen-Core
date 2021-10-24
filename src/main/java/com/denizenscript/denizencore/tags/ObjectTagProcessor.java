@@ -281,10 +281,10 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
         final TagRunnable.ObjectInterface<T, R> namedRunnable = TagNamer.nameTagInterface(type, name, runnable);
         for (String variant : deprecatedVariants) {
-            TagRunnable.ObjectInterface<T, R> newRunnable = (attribute, object) -> {
+            TagRunnable.ObjectInterface<T, R> newRunnable = TagNamer.nameTagInterface(type, variant, (attribute, object) -> {
                 Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 return namedRunnable.run(attribute, object);
-            };
+            });
             registeredObjectTags.put(variant, new TagData<>(this, variant, newRunnable, returnType));
         }
         registeredObjectTags.put(name, new TagData<>(this, name, namedRunnable, returnType));
