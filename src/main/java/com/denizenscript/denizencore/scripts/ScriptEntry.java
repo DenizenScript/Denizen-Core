@@ -74,13 +74,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         public boolean shouldProcess = false;
 
-        public InternalArgument duplicate() {
-            InternalArgument newArg = new InternalArgument();
-            newArg.prefix = prefix == null ? null : prefix.duplicate();
-            newArg.value = value;
-            newArg.aHArg = aHArg == null ? null : aHArg.clone();
-            return newArg;
-        }
+        public boolean hadColon = false;
     }
 
     public static class ArgumentIterator implements Iterator<Argument> {
@@ -105,7 +99,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             arg.scriptEntry = entry;
             if (internalArg.shouldProcess) {
                 TagManager.fillArgumentObjects(internalArg, arg, entry.context);
-                if (arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput && arg.prefix == null) {
+                if (internalArg.hadColon && arg.prefix == null && ((ElementTag) arg.object).isRawInput) {
                     arg.fillStr(arg.object.toString());
                 }
                 arg.canBeElement = arg.object instanceof ElementTag;
@@ -321,6 +315,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 InternalArgument argVal = new InternalArgument();
                 internal.args_ref.set(i, argVal);
                 int first_colon = arg.indexOf(':');
+                argVal.hadColon = first_colon > 0;
                 int first_not_prefix = Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
                 if (first_colon > 0 && first_not_prefix >= first_colon) {
                     argVal.prefix = new InternalArgument();
