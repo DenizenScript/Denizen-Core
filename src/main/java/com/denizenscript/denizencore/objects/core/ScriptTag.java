@@ -268,7 +268,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the type of script container that is associated with this ScriptTag object. For example: 'task', or
         // 'world'.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "container_type", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "container_type", (attribute, object) -> {
             return new ElementTag(object.container.getContainerType());
         });
 
@@ -278,7 +278,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the name of the script container.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "name", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "name", (attribute, object) -> {
             return new ElementTag(object.name);
         });
 
@@ -288,7 +288,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the filename that contains the script, relative to the denizen/ folder.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "relative_filename", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "relative_filename", (attribute, object) -> {
             return new ElementTag(object.container.getRelativeFileName());
         });
 
@@ -298,7 +298,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the absolute filename that contains the script.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "filename", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "filename", (attribute, object) -> {
             return new ElementTag(object.container.getFileName().replace("\\", "/"));
         });
 
@@ -308,7 +308,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the originally cased script name.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "original_name", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "original_name", (attribute, object) -> {
             return new ElementTag(object.container.getOriginalName());
         });
 
@@ -380,7 +380,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // For example, "script.data_key[type]" on a task script will return "task".
         // Custom keys should usually go in a 'data' script container, or under a key labeled 'data' for other script containers.
         // -->
-        tagProcessor.registerTag(ObjectTag.class, "data_key", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ObjectTag.class, "data_key", (attribute, object) -> {
             if (!attribute.hasContext(1)) {
                 Debug.echoError("The tag ScriptTag.data_key[...] must have a value.");
                 return null;
@@ -409,7 +409,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a list of all data keys within a script, with an optional starting-key.
         // -->
-        tagProcessor.registerTag(ListTag.class, "list_keys", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ListTag.class, "list_keys", (attribute, object) -> {
             YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1) : "");
             if (conf == null) {
                 return null;
@@ -423,7 +423,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns a list of all keys within a script, searching recursively, with an optional starting-key.
         // -->
-        tagProcessor.registerTag(ListTag.class, "list_deep_keys", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ListTag.class, "list_deep_keys", (attribute, object) -> {
             YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1) : "");
             if (conf == null) {
                 return null;
@@ -438,7 +438,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Converts the Script Container to a JSON array.
         // Best used with 'data' type scripts.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "to_json", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "to_json", (attribute, object) -> {
             JSONObject jsobj = new JSONObject(YamlConfiguration.reverse(object.container.getContents().getMap(), true));
             jsobj.remove("type");
             return new ElementTag(jsobj.toString());
@@ -451,7 +451,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Converts the Script Container to raw YAML text.
         // Best used with 'data' type scripts.
         // -->
-        tagProcessor.registerTag(ElementTag.class, "to_yaml", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "to_yaml", (attribute, object) -> {
             YamlConfiguration config = new YamlConfiguration();
             config.addAll(object.getContainer().getContents().getMap());
             config.set("type", null);

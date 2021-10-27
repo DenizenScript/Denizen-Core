@@ -31,11 +31,14 @@ public class ObjectTagProcessor<T extends ObjectTag> {
 
         public ObjectTagProcessor<T> source;
 
-        public TagData(ObjectTagProcessor<T> source, String name, TagRunnable.ObjectInterface<T, R> runner, Class<R> returnType) {
+        public boolean isStatic;
+
+        public TagData(ObjectTagProcessor<T> source, String name, TagRunnable.ObjectInterface<T, R> runner, Class<R> returnType, boolean isStatic) {
             this.source = source;
             this.name = name;
             this.runner = runner;
             this.returnType = returnType;
+            this.isStatic = isStatic;
             ObjectFetcher.ObjectType<R> type = (ObjectFetcher.ObjectType<R>) ObjectFetcher.objectsByClass.get(returnType);
             this.processor = type == null ? null : type.tagProcessor;
         }
@@ -274,20 +277,29 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 }
                 return properTag.runner.run(attribute, object);
             };
-            registeredObjectTags.put(variant, new TagData(this, variant, newRunnable, properTag.returnType));
+            registeredObjectTags.put(variant, new TagData(this, variant, newRunnable, properTag.returnType, false));
         }
     }
 
+    public <R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
+        registerTagInternal(returnType, name, runnable, true, deprecatedVariants);
+    }
+
+
     public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
+        registerTagInternal(returnType, name, runnable, false, deprecatedVariants);
+    }
+
+    public <R extends ObjectTag> void registerTagInternal(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, boolean isStatic, String[] deprecatedVariants) {
         final TagRunnable.ObjectInterface<T, R> namedRunnable = TagNamer.nameTagInterface(type, name, runnable);
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T, R> newRunnable = TagNamer.nameTagInterface(type, variant, (attribute, object) -> {
                 Debug.echoError(attribute.context, "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 return namedRunnable.run(attribute, object);
             });
-            registeredObjectTags.put(variant, new TagData<>(this, variant, newRunnable, returnType));
+            registeredObjectTags.put(variant, new TagData<>(this, variant, newRunnable, returnType, false));
         }
-        registeredObjectTags.put(name, new TagData<>(this, name, namedRunnable, returnType));
+        registeredObjectTags.put(name, new TagData<>(this, name, namedRunnable, returnType, isStatic));
     }
 
     public final ObjectTag getObjectAttribute(T object, Attribute attribute) {

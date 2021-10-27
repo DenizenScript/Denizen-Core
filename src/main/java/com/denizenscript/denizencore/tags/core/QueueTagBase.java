@@ -37,8 +37,7 @@ public class QueueTagBase {
         }
         Attribute attribute = event.getAttributes();
         // Historical queue.xxx tags:
-        if (attribute.startsWith("exists", 2)
-                && attribute.hasContext(1)) {
+        if (attribute.startsWith("exists", 2) && attribute.hasContext(2)) {
             Deprecations.queueExists.warn(attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.queueExists(attribute.getContext(2))), attribute.fulfill(2)));
             return;
