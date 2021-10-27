@@ -185,6 +185,10 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.hasTags = true;
         }
         argVal.aHArg = new Argument(argVal.prefix == null ? null : argVal.prefix.aHArg.getRawValue(), arg);
+        if (argVal.value.rawObject != null) {
+            argVal.aHArg.object = argVal.value.rawObject;
+            argVal.aHArg.unsetValue();
+        }
     }
 
     public ScriptEntry(String command, String[] arguments, ScriptContainer script, Object insides, int lineNum) {
