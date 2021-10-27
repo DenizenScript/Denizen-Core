@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class ListTag implements List<String>, ObjectTag {
 
@@ -501,6 +502,11 @@ public class ListTag implements List<String>, ObjectTag {
                 objectForms.add(new ElementTag(o.toString()));
             }
         }
+    }
+
+    public ListTag(Stream<String> items) {
+        objectForms = new ArrayList<>();
+        items.forEach(s -> objectForms.add(new ElementTag(s)));
     }
 
     /////////////
