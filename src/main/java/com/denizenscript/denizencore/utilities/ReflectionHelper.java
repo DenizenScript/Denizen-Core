@@ -118,6 +118,16 @@ public class ReflectionHelper {
         return f;
     }
 
+    public static MethodHandle getConstructor(Class<?> clazz, Class<?>... params) {
+        try {
+            return LOOKUP.unreflectConstructor(clazz.getConstructor(params));
+        }
+        catch (Exception ex) {
+            Debug.echoError(ex);
+        }
+        return null;
+    }
+
     public static MethodHandle getMethodHandle(Class<?> clazz, String method, Class<?>... params) {
         try {
             return LOOKUP.unreflect(getMethod(clazz, method, params));
