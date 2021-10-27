@@ -90,7 +90,7 @@ public abstract class AbstractCommand {
     @Deprecated
     public AbstractCommand as(String commandName) {
         setName(commandName);
-        DenizenCore.getCommandRegistry().register(this.name, this);
+        DenizenCore.commandRegistry.register(this.name, this);
         return this;
     }
 

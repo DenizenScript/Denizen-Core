@@ -208,7 +208,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             }
             else if (command.charAt(0) == '~') {
                 internal.command = command.substring(1);
-                internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
+                internal.actualCommand = DenizenCore.commandRegistry.get(internal.command);
                 if (internal.actualCommand instanceof Holdable) {
                     internal.waitfor = true;
                 }
@@ -216,7 +216,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                     Debug.echoError(this, "The command '" + internal.command + "' cannot be waited for!");
                 }
             }
-            internal.actualCommand = DenizenCore.getCommandRegistry().get(internal.command);
+            internal.actualCommand = DenizenCore.commandRegistry.get(internal.command);
             if (internal.actualCommand != null && internal.actualCommand.forceHold) {
                 internal.waitfor = true;
             }

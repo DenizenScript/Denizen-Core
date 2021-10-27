@@ -26,7 +26,7 @@ public class InstantQueue extends ScriptQueue {
             stop();
             return;
         }
-        DenizenCore.getScriptEngine().revolve(this);
+        DenizenCore.scriptEngine.revolve(this);
     }
 
     @Override

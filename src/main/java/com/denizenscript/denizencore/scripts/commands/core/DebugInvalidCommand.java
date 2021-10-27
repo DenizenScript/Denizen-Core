@@ -25,7 +25,7 @@ public class DebugInvalidCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
-        AbstractCommand command = DenizenCore.getCommandRegistry().get(scriptEntry.internal.command);
+        AbstractCommand command = DenizenCore.commandRegistry.get(scriptEntry.internal.command);
         if (scriptEntry.internal.brokenArgs) {
             if (scriptEntry.getOriginalArguments().size() > command.maximumArguments) {
                 Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.toString() + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());

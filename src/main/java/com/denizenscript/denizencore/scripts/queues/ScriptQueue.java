@@ -353,7 +353,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
             getEntry(0).setInstant(true);
             getEntry(0).setFinished(true);
-            DenizenCore.getScriptEngine().revolveOnceForce(this);
+            DenizenCore.scriptEngine.revolveOnceForce(this);
         }
         return;
     }
@@ -418,7 +418,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (!shouldRevolve()) {
             return;
         }
-        DenizenCore.getScriptEngine().revolve(this);
+        DenizenCore.scriptEngine.revolve(this);
         if (script_entries.isEmpty() && !waitWhenEmpty) {
             stop();
         }

@@ -293,7 +293,7 @@ public class UtilTagBase {
         // Returns a list of all currently loaded Denizen commands.
         // -->
         else if (attribute.startsWith("list_denizen_commands")) {
-            ListTag result = new ListTag(DenizenCore.getCommandRegistry().instances.keySet());
+            ListTag result = new ListTag(DenizenCore.commandRegistry.instances.keySet());
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
         }
 

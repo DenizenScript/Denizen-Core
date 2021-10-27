@@ -38,16 +38,9 @@ public class DenizenCore {
 
     public static long lastReloadTime;
 
+    @Deprecated
     public static CommandRegistry getCommandRegistry() {
         return commandRegistry;
-    }
-
-    public static void setCommandRegistry(CommandRegistry registry) {
-        commandRegistry = registry;
-    }
-
-    public static ScriptEngine getScriptEngine() {
-        return scriptEngine;
     }
 
     public static LogInterceptor logInterceptor = new LogInterceptor();
@@ -55,6 +48,8 @@ public class DenizenCore {
     public static Thread MAIN_THREAD;
 
     public static long currentTimeMillis = System.currentTimeMillis();
+
+    public static DenizenImplementation implementation;
 
     static {
         String version = "UNKNOWN";
@@ -75,8 +70,6 @@ public class DenizenCore {
         }
         VERSION = version;
     }
-
-    static DenizenImplementation implementation;
 
     public static DenizenImplementation getImplementation() {
         return implementation;
