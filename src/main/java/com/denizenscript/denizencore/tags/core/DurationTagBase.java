@@ -14,7 +14,7 @@ public class DurationTagBase {
         // Returns a duration object constructed from the input value.
         // Refer to <@link ObjectType DurationTag>.
         // -->
-        TagManager.registerStaticTagBaseHandler(DurationTag.class, "duration", (attribute) -> {
+        TagManager.registerTagHandler(DurationTag.class, "duration", (attribute) -> { // non-static because there is a randomized constructor option
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Duration tag base must have input.");
                 return null;

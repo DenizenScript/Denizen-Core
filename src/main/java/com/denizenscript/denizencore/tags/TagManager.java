@@ -172,17 +172,6 @@ public class TagManager {
         executor.shutdownNow();
     }
 
-    public static String readSingleTag(String str, TagContext context) {
-        try {
-            ReplaceableTagEvent event = new ReplaceableTagEvent(str, context);
-            return readSingleTagObject(context, event).toString();
-        }
-        catch (TagProcessingException ex) {
-            Debug.echoError("Tag processing failed: " + ex.getMessage());
-            return null;
-        }
-    }
-
     public static ObjectTag readSingleTagObject(ParseableTagPiece tag, TagContext context) {
         ReplaceableTagEvent event = new ReplaceableTagEvent(tag.tagData, tag.content, context);
         return readSingleTagObject(context, event);
@@ -210,7 +199,7 @@ public class TagManager {
     public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         readSingleTagObjectNoDebug(context, event);
         if (context.debug && event.replaced()) {
-            DenizenCore.getImplementation().debugTagFill(context, event.toString(), event.getReplacedObj().debuggable());
+            Debug.echoDebug(context, "<G>Filled tag <<W>" + event.toString() + "<G>> with '<W>" + event.getReplacedObj().debuggable() + "<G>'.");
         }
         if (!event.replaced()) {
             String tagStr = "<LG><" + event.toString() + "<LG>><W>";
@@ -259,9 +248,11 @@ public class TagManager {
 
         public ReplaceableTagEvent.ReferenceData tagData = null;
 
+        public ObjectTag rawObject;
+
         @Override
         public String toString() {
-            return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.rawTag : "") + ", " + content + ")";
+            return "(" + isError + ", " + isTag + ", " + (isTag ? tagData.rawTag : "") + ", " + content + ", " + rawObject + ")";
         }
     }
 
@@ -313,6 +304,12 @@ public class TagManager {
         if (preParsed != null) {
             return preParsed;
         }
+        ParseableTag result = parseTextToTagInternal(arg, context);
+        preCalced.put(arg, result);
+        return result;
+    }
+
+    public static ParseableTag parseTextToTagInternal(String arg, TagContext context) {
         List<ParseableTagPiece> pieces = new ArrayList<>(1);
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
@@ -347,9 +344,14 @@ public class TagManager {
             midTag.isTag = true;
             try {
                 midTag.tagData = new ReplaceableTagEvent(tagToProc, context).mainRef;
-                if (!midTag.tagData.noGenerate && midTag.tagData.tagBase != null && midTag.tagData.tagBase.baseForm != null) {
+                if (midTag.tagData.rawObject != null) {
+                    midTag.rawObject = midTag.tagData.rawObject;
+                    midTag.content = midTag.tagData.rawObject.toString();
+                    midTag.isTag = false;
+                }
+                else if (!midTag.tagData.noGenerate && midTag.tagData.tagBase != null && midTag.tagData.tagBase.baseForm != null) {
                     midTag.tagData.noGenerate = true;
-                    midTag.tagData.compiledStart = TagCodeGenerator.generatePartialTag(midTag.tagData);
+                    midTag.tagData.compiledStart = TagCodeGenerator.generatePartialTag(midTag, context);
                 }
                 pieces.add(midTag);
                 if (Debug.verbose) {
@@ -380,11 +382,38 @@ public class TagManager {
         if (Debug.verbose) {
             Debug.log("Tag chainify complete: " + arg);
         }
+        ParseableTagPiece priorPiece = pieces.get(0);
+        for (int i = 1; i < pieces.size(); i++) {
+            ParseableTagPiece currentPiece = pieces.get(i);
+            if (!priorPiece.isTag && !priorPiece.isError && !currentPiece.isTag && !currentPiece.isError) {
+                ParseableTagPiece newPiece = new ParseableTagPiece();
+                newPiece.content = priorPiece.content + currentPiece.content;
+                newPiece.rawObject = new ElementTag(newPiece.content, true);
+                if (Debug.verbose) {
+                    Debug.log("Tag chain can simplify: " + priorPiece + " with " + currentPiece + " yields " + newPiece);
+                }
+                pieces.set(i - 1, newPiece);
+                pieces.remove(i--);
+                priorPiece = newPiece;
+            }
+            else {
+                priorPiece = currentPiece;
+            }
+        }
         ParseableTag result = new ParseableTag();
         result.pieces = pieces;
-        result.hasTag = true;
-        if (pieces.size() == 1 && pieces.get(0).isTag) {
-            result.singleTag = pieces.get(0);
+        if (pieces.size() == 1) {
+            ParseableTagPiece piece = pieces.get(0);
+            result.hasTag = piece.isTag;
+            if (piece.isTag) {
+                result.singleTag = piece;
+            }
+            else {
+                result.rawObject = piece.rawObject;
+            }
+        }
+        else {
+            result.hasTag = true;
         }
         return result;
     }

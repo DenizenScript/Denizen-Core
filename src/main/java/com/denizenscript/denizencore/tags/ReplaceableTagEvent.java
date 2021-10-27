@@ -51,6 +51,10 @@ public class ReplaceableTagEvent {
         public TagRunnable.BaseInterface<? extends ObjectTag> compiledStart;
 
         public boolean noGenerate = false;
+
+        public int skippable = 0;
+
+        public ObjectTag rawObject = null;
     }
 
     public ReferenceData mainRef = null;
@@ -68,7 +72,7 @@ public class ReplaceableTagEvent {
 
         if (ref != null) {
             mainRef = ref;
-            core_attributes = new Attribute(ref.attribs, context.entry, context);
+            core_attributes = new Attribute(ref.attribs, context.entry, context, ref.skippable);
             raw_tag = ref.rawTag;
         }
     }
@@ -107,7 +111,7 @@ public class ReplaceableTagEvent {
         core_attributes = new Attribute(raw_tag, context.entry, context);
         core_attributes.setHadAlternative(hasAlternative());
 
-        mainRef.attribs = new Attribute(core_attributes, null, null);
+        mainRef.attribs = new Attribute(core_attributes, null, null, 0);
         mainRef.rawTag = raw_tag;
 
         String startValue = getName();
@@ -214,7 +218,7 @@ public class ReplaceableTagEvent {
         int index = core_attributes.getFallbackTagIndex();
         if (index != -1) {
             if (core_attributes.filled != null) {
-                core_attributes.filled[core_attributes.fulfilled] = false;
+                core_attributes.filled[core_attributes.fulfilled] = 2;
             }
             core_attributes.fulfilled = index;
             alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutContext(1));

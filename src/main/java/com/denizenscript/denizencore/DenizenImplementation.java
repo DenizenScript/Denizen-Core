@@ -142,8 +142,6 @@ public interface DenizenImplementation {
 
     void debugQueueExecute(ScriptEntry entry, String queue, String execute);
 
-    void debugTagFill(Debuggable entry, String tag, String result);
-
     boolean tagTimeoutWhenSilent();
 
     boolean getDefaultDebugMode();

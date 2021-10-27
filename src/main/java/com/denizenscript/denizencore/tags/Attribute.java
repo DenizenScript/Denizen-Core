@@ -23,7 +23,7 @@ public class Attribute {
 
         public ParseableTag contextParsed;
 
-        public ObjectTagProcessor.TagData<?, ?> data;
+        public ObjectTagProcessor.TagData<? extends ObjectTag, ? extends ObjectTag> data;
 
         public AttributeComponent(String inp) {
             if (inp.endsWith("]") && CoreUtilities.contains(inp, '[')) {
@@ -47,7 +47,7 @@ public class Attribute {
         }
     }
 
-    private static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<>();
+    public static HashMap<String, AttributeComponent[]> attribsLookup = new HashMap<>();
 
     private static boolean isNumber(char c) {
         return c >= '0' && c <= '9';
@@ -116,7 +116,12 @@ public class Attribute {
 
     public AttributeComponent[] attributes;
     public ObjectTag[] contexts;
-    public Boolean[] filled;
+
+    /**
+     * Only present when debug is on.
+     * 0 = untouched, 1 = filled, 2 = failed, 3 = preparsed
+     */
+    public int[] filled;
 
     ScriptEntry scriptEntry;
 
@@ -136,6 +141,8 @@ public class Attribute {
 
     public boolean hasContextFailed = false;
 
+    int fulfilled = 0;
+
     public void resetErrorTrack() {
         if (Debug.verbose) {
             Debug.echoError("(Verbose) Attribute - error track reset");
@@ -154,7 +161,12 @@ public class Attribute {
         return origin;
     }
 
+
     public Attribute(Attribute ref, ScriptEntry scriptEntry, TagContext context) {
+        this(ref, scriptEntry, context, 0);
+    }
+
+    public Attribute(Attribute ref, ScriptEntry scriptEntry, TagContext context, int skippable) {
         origin = ref.origin;
         this.scriptEntry = scriptEntry;
         this.context = context;
@@ -162,8 +174,12 @@ public class Attribute {
         contexts = new ObjectTag[attributes.length];
         setHadAlternative(ref.hadAlternative);
         if (context == null || context.debug) {
-            filled = new Boolean[attributes.length];
+            filled = new int[attributes.length];
+            for (int i = 0; i < skippable; i++) {
+                filled[i] = 3;
+            }
         }
+        fulfilled = skippable;
     }
 
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) throws TagProcessingException {
@@ -173,7 +189,7 @@ public class Attribute {
         this.attributes = separate_attributes(attributes);
         contexts = new ObjectTag[this.attributes.length];
         if (context == null || context.debug) {
-            filled = new Boolean[this.attributes.length];
+            filled = new int[this.attributes.length];
         }
     }
 
@@ -221,8 +237,6 @@ public class Attribute {
         return CoreUtilities.toLowerCase(getAttributeWithoutContext(attribute)).equals(string);
     }
 
-    int fulfilled = 0;
-
     public boolean isComplete() {
         return fulfilled >= attributes.length;
     }
@@ -233,7 +247,7 @@ public class Attribute {
         if (filled != null) {
             for (int i = 0; i < attributes; i++) {
                 if (fulfilled + i < filled.length) {
-                    filled[fulfilled + i] = Boolean.TRUE;
+                    filled[fulfilled + i] = 1;
                 }
             }
         }
@@ -246,7 +260,7 @@ public class Attribute {
         lastValid = obj;
         resetErrorTrack();
         if (filled != null && fulfilled < filled.length) {
-            filled[fulfilled] = Boolean.TRUE;
+            filled[fulfilled] = 1;
         }
         fulfilled++;
     }
@@ -256,7 +270,7 @@ public class Attribute {
         if (fulfilled < attributes.length) {
             seemingSuccesses.add(attributes[fulfilled].key);
             if (filled != null) {
-                filled[fulfilled] = Boolean.FALSE;
+                filled[fulfilled] = 2;
             }
         }
     }
@@ -594,7 +608,20 @@ public class Attribute {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < attributes.length; i++) {
             if (filled != null) {
-                sb.append(filled[i] == null ? "<Y>" : (filled[i] ? "<GR>" : "<R>"));
+                switch (filled[i]) {
+                    case 0:
+                        sb.append("<Y>");
+                        break;
+                    case 1:
+                        sb.append("<GR>");
+                        break;
+                    case 2:
+                        sb.append("<R>");
+                        break;
+                    case 3:
+                        sb.append("<LG>");
+                        break;
+                }
             }
             else {
                 sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<R>" : "<Y>"));
@@ -604,7 +631,7 @@ public class Attribute {
                 sb.append("<LG>[<A>").append(contexts[i]).append("<LG>].");
             }
             else if (attributes[i].context != null) {
-                sb.append("<LG>[<Y>").append(attributes[i].context).append("<LG>].");
+                sb.append("<LG>[").append(filled == null || filled[i] != 3 ? "<Y>" : "").append(attributes[i].context).append("<LG>].");
             }
             else {
                 sb.append("<LG>.");

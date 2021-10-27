@@ -10,6 +10,9 @@ import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
+import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.VerySlowWarning;
@@ -137,6 +140,9 @@ public class DenizenCore {
      */
     public static void postLoadScripts() {
         try {
+            TagManager.preCalced.clear();
+            Attribute.attribsLookup.clear();
+            ReplaceableTagEvent.refs.clear();
             ScriptRegistry.postLoadScripts();
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();

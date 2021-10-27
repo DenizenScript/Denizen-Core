@@ -44,7 +44,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
     }
 
-    public HashMap<String, TagData<?, ?>> registeredObjectTags = new HashMap<>();
+    public HashMap<String, TagData<? extends ObjectTag, ? extends ObjectTag>> registeredObjectTags = new HashMap<>();
 
     public Class<T> type;
 

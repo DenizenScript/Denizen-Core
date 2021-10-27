@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ParseableTag {
 
-    public ElementTag rawElement;
+    public ObjectTag rawObject;
 
     public List<TagManager.ParseableTagPiece> pieces;
 
@@ -17,8 +17,8 @@ public class ParseableTag {
     public boolean hasTag;
 
     public final ObjectTag parse(TagContext context) {
-        if (rawElement != null) {
-            return rawElement;
+        if (rawObject != null) {
+            return rawObject;
         }
         else if (singleTag != null) {
             return TagManager.readSingleTagObject(singleTag, context);
@@ -30,7 +30,8 @@ public class ParseableTag {
     }
 
     public ParseableTag(String text) {
-        rawElement = new ElementTag(text, true);
+        ElementTag rawElement = new ElementTag(text, true);
         rawElement.isRawInput = true;
+        rawObject = rawElement;
     }
 }
