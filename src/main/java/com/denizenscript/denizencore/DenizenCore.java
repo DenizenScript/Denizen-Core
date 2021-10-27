@@ -38,11 +38,6 @@ public class DenizenCore {
 
     public static long lastReloadTime;
 
-    @Deprecated
-    public static CommandRegistry getCommandRegistry() {
-        return commandRegistry;
-    }
-
     public static LogInterceptor logInterceptor = new LogInterceptor();
 
     public static Thread MAIN_THREAD;

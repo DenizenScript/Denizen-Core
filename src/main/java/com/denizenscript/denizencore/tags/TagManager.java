@@ -52,13 +52,19 @@ public class TagManager {
 
         public ObjectTagProcessor<? extends ObjectTag> processor;
 
+        /**
+         * Indicates that static input to this tag base yields static output (for tag optimization usage).
+         */
+        public boolean isStatic;
+
         public TagBaseData() {
         }
 
-        public <R extends ObjectTag> TagBaseData(String name, Class<R> returnType, TagRunnable.BaseInterface<R> baseForm) {
+        public <R extends ObjectTag> TagBaseData(String name, Class<R> returnType, TagRunnable.BaseInterface<R> baseForm, boolean isStatic) {
             this.name = name;
             this.returnType = returnType;
             this.baseForm = baseForm;
+            this.isStatic = isStatic;
             ObjectFetcher.ObjectType type = ObjectFetcher.objectsByClass.get(returnType);
             processor = type == null ? null : type.tagProcessor;
         }
@@ -66,8 +72,12 @@ public class TagManager {
 
     public static HashMap<String, TagBaseData> baseTags = new HashMap<>();
 
+    public static <R extends ObjectTag> void registerStaticTagBaseHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
+        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run), true));
+    }
+
     public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
-        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run)));
+        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run), false));
     }
 
     @Deprecated

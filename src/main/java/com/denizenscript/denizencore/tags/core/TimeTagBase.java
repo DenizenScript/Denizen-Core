@@ -14,7 +14,7 @@ public class TimeTagBase {
         // Returns a time object constructed from the input value.
         // Refer to <@link ObjectType TimeTag>.
         // -->
-        TagManager.registerTagHandler(TimeTag.class, "time", (attribute) -> {
+        TagManager.registerStaticTagBaseHandler(TimeTag.class, "time", (attribute) -> {
             if (!attribute.hasContext(1)) {
                 attribute.echoError("Time tag base must have input.");
                 return null;

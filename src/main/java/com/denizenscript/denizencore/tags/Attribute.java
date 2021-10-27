@@ -454,13 +454,13 @@ public class Attribute {
                 return null;
             }
             return attribute.getContextObject(1);
-        }));
-        fallbackTags.put("exists", new TagManager.TagBaseData("if_null", ElementTag.class, (attribute) -> {
+        }, false));
+        fallbackTags.put("exists", new TagManager.TagBaseData("exists", ElementTag.class, (attribute) -> {
             return new ElementTag(false);
-        }));
-        fallbackTags.put("is_truthy", new TagManager.TagBaseData("if_null", ElementTag.class, (attribute) -> {
+        }, false));
+        fallbackTags.put("is_truthy", new TagManager.TagBaseData("is_truthy", ElementTag.class, (attribute) -> {
             return new ElementTag(false);
-        }));
+        }, false));
     }
 
     public boolean hasAlternative() {

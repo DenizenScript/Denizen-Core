@@ -1,11 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 
 public class ScriptTagBase {
@@ -20,46 +15,33 @@ public class ScriptTagBase {
         // If no input is given, will return the current script that the tag is within.
         // Refer to <@link ObjectType ScriptTag>.
         // -->
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                scriptTags(event);
+        TagManager.registerStaticTagBaseHandler(ScriptTag.class, "script", (attribute) -> {
+            ScriptTag script = null;
+            if (attribute.hasContext(1)) {
+                script = attribute.contextAsType(1, ScriptTag.class);
+                if (script == null) {
+                    attribute.echoError("Script '" + attribute.getContext(1) + "' does not exist.");
+                    return null;
+                }
             }
-        }, "script");
-    }
-
-    public void scriptTags(ReplaceableTagEvent event) {
-        if (!event.matches("script") || event.replaced()) {
-            return;
-        }
-        Attribute attribute = event.getAttributes();
-        ScriptTag script = null;
-        if (attribute.hasContext(1)) {
-            script = attribute.contextAsType(1, ScriptTag.class);
+            else if (attribute.context.script != null) {
+                script = attribute.context.script;
+            }
+            else if (attribute.context.entry == null) {
+                attribute.echoError("No applicable script for <script> tag.");
+                return null;
+            }
+            else if (attribute.context.entry.getScript() != null) {
+                script = attribute.context.entry.getScript();
+            }
+            else if (attribute.context.entry.hasObject("script")) {
+                script = (ScriptTag) attribute.context.entry.getObject("script");
+            }
             if (script == null) {
-                event.getAttributes().echoError("Script '" + attribute.getContext(1) + "' does not exist.");
-                return;
+                attribute.echoError("No applicable script for <script> tag.");
+                return null;
             }
-        }
-        else if (event.getScript() != null) {
-            script = event.getScript();
-        }
-        else if (event.getScriptEntry() == null) {
-            attribute.echoError("No applicable script for <script> tag.");
-            return;
-        }
-        else if (event.getScriptEntry().getScript() != null) {
-            script = event.getScriptEntry().getScript();
-        }
-        else if (event.getScriptEntry().hasObject("script")) {
-            script = (ScriptTag) event.getScriptEntry().getObject("script");
-        }
-        if (script == null) {
-            if (!event.hasAlternative()) {
-                Debug.echoError("No applicable script for <script> tag.");
-            }
-            return;
-        }
-        event.setReplacedObject(CoreUtilities.autoAttrib(script, attribute.fulfill(1)));
+            return script;
+        });
     }
 }
