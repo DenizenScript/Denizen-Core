@@ -103,7 +103,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         @Override
         public Argument next() {
-            return entry.argAtIndex(index++);
+            return entry.argAtIndex(entry.internal.arguments_to_use, index++);
         }
     }
 
@@ -115,8 +115,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return internal.argumentIterator;
     }
 
-    public final Argument argAtIndex(int index) {
-        InternalArgument internalArg = internal.arguments_to_use[index];
+    public final Argument argAtIndex(ScriptEntry.InternalArgument[] argSet, int index) {
+        InternalArgument internalArg = argSet[index];
         Argument arg = internalArg.aHArg;
         arg.scriptEntry = this;
         if (internalArg.shouldProcess) {
@@ -140,7 +140,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         if (index == null) {
             return false;
         }
-        Argument arg = argAtIndex(index);
+        Argument arg = argAtIndex(internal.all_arguments, index);
         return arg.asElement().asBoolean();
     }
 
@@ -163,7 +163,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         if (index == null) {
             return null;
         }
-        return argAtIndex(index);
+        return argAtIndex(internal.all_arguments, index);
     }
 
     public final ElementTag argForPrefixAsElement(String prefix, String defaultValue) {
