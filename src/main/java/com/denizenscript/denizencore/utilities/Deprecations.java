@@ -220,6 +220,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/10/24, bump to normal slow warning by 2023.
     public static Warning entityArmorPose = new VerySlowWarning("The old EntityTag.armor_pose and armor_pose_list tags are dperecated in favor of armor_pose_map.");
 
+    // Added 2021/10/28, bump to normal slow warning by 2023.
+    public static Warning dynamicPrefix = new VerySlowWarning("Dynamically prefixed arguments (for 'prefix:value' arguments, like '<[sometag]>:<[somevalue]>') were never officially permitted and are now deprecated. You must specify a prefix explicitly if one is needed.");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
