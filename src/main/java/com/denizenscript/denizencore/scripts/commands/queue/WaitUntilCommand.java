@@ -83,7 +83,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         DurationTag max = scriptEntry.getObjectTag("max");
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_check", run), rate, max);
+            Debug.report(scriptEntry, getName(), db("run_first_check", run), rate, max);
         }
         if (run) {
             scriptEntry.setFinished(true);

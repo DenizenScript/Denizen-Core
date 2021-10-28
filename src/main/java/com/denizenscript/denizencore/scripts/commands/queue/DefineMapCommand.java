@@ -19,6 +19,7 @@ public class DefineMapCommand extends AbstractCommand {
         setSyntax("definemap [<name>] [<key>:<value> ...]");
         setRequiredArguments(1, -1);
         isProcedural = true;
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]

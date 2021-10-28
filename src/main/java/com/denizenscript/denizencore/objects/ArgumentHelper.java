@@ -90,27 +90,24 @@ public class ArgumentHelper {
         return matchList.toArray(new String[0]);
     }
 
-    public static String debugObj(String prefix, Object value) {
+    public static String debuggable(Object value) {
         if (value instanceof Collection) {
-            return debugList(prefix, (Collection) value);
+            StringBuilder sb = new StringBuilder();
+            for (Object obj : (Collection) value) {
+                sb.append(obj == null ? "null" : debuggable(obj)).append("<G>,<Y> ");
+            }
+            if (sb.length() == 0) {
+                return debuggable(sb);
+            }
+            else {
+                return debuggable("[" + sb.substring(0, sb.length() - "<G>, ".length()) + "<Y>]");
+            }
         }
-        return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null") + "<G>'  ";
+        return (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null");
     }
 
-    public static <T extends ObjectTag> String debugList(String prefix, Collection<T> objects) {
-        if (objects == null) {
-            return debugObj(prefix, null);
-        }
-        StringBuilder sb = new StringBuilder();
-        for (ObjectTag obj : objects) {
-            sb.append(obj == null ? "null" : obj.debuggable()).append("<G>,<Y> ");
-        }
-        if (sb.length() == 0) {
-            return debugObj(prefix, sb);
-        }
-        else {
-            return debugObj(prefix, "[" + sb.substring(0, sb.length() - "<G>, ".length()) + "<Y>]");
-        }
+    public static String debugObj(String prefix, Object value) {
+        return "<G>" + prefix + "='<Y>" + debuggable(value) + "<G>'  ";
     }
 
     public static String DIGITS = "0123456789", PREFIXES = "+-", DOUBLE_CHARS = "eE";

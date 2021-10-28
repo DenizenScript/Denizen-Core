@@ -26,6 +26,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         setSyntax("run [<script>] (path:<name>) (def:<element>|.../defmap:<map>/def.<name>:<value>) (id:<name>) (speed:<value>/instantly) (delay:<value>)");
         setRequiredArguments(1, -1);
         isProcedural = true;
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]

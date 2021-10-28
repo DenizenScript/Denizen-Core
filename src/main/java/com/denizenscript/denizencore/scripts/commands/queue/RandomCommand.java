@@ -122,7 +122,7 @@ public class RandomCommand extends BracedCommand {
         scriptEntry.addObject("possibilities", new ElementTag(possibilities));
         scriptEntry.addObject("selected", new ElementTag(selected));
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("possibilities", possibilities), ArgumentHelper.debugObj("choice", selected + 1));
+            Debug.report(scriptEntry, getName(), db("possibilities", possibilities), db("choice", selected + 1));
         }
         scriptEntry.setInstant(true);
         if (bracedCommands == null) {

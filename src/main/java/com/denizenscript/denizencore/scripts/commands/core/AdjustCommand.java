@@ -26,6 +26,7 @@ public class AdjustCommand extends AbstractCommand {
         setSyntax("adjust [<ObjectTag>/def:<name>|...] [<mechanism>](:<value>)");
         setRequiredArguments(2, 2);
         isProcedural = true;
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]

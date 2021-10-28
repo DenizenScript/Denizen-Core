@@ -24,6 +24,7 @@ public class DefineCommand extends AbstractCommand {
         setSyntax("define [<id>](:<action>)[:<value>]");
         setRequiredArguments(1, 2);
         isProcedural = true;
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]

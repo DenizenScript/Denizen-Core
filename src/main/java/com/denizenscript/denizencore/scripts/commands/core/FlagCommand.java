@@ -27,6 +27,7 @@ public class FlagCommand extends AbstractCommand {
         setSyntax("flag [<object>|...] [<name>([<#>])](:<action>)[:<value>] (expire:<time>)");
         setRequiredArguments(1, 3);
         isProcedural = false;
+        allowedDynamicPrefixes = true;
     }
     // <--[language]
     // @name Flag System

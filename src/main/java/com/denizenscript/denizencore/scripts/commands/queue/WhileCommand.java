@@ -201,7 +201,7 @@ public class WhileCommand extends BracedCommand {
             List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
             boolean run = new IfCommand.ArgComparer().compare(comparisons, scriptEntry);
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), ArgumentHelper.debugObj("run_first_loop", run));
+                Debug.report(scriptEntry, getName(), db("run_first_loop", run));
             }
             if (!run) {
                 return;

@@ -388,7 +388,9 @@ public class TagManager {
             if (!priorPiece.isTag && !priorPiece.isError && !currentPiece.isTag && !currentPiece.isError) {
                 ParseableTagPiece newPiece = new ParseableTagPiece();
                 newPiece.content = priorPiece.content + currentPiece.content;
-                newPiece.rawObject = new ElementTag(newPiece.content, true);
+                ElementTag element = new ElementTag(newPiece.content, true);
+                element.isRawInput = true;
+                newPiece.rawObject = element;
                 if (Debug.verbose) {
                     Debug.log("Tag chain can simplify: " + priorPiece + " with " + currentPiece + " yields " + newPiece);
                 }

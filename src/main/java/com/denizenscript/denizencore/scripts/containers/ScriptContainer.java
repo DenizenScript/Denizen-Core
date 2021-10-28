@@ -126,7 +126,11 @@ public class ScriptContainer implements Debuggable {
 
     public String getRelativeFileName() {
         try {
-            String fn = getFileName().replace(DenizenCore.getImplementation().getScriptFolder().getParentFile().getCanonicalPath(), "");
+            String fn = getFileName();
+            if (fn == null) {
+                return "(Error: script source is missing?)";
+            }
+            fn = fn.replace(DenizenCore.getImplementation().getScriptFolder().getParentFile().getCanonicalPath(), "");
             while (fn.startsWith("/")) {
                 fn = fn.substring(1);
             }

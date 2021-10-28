@@ -35,6 +35,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         setRequiredArguments(2, 5);
         TagManager.registerTagHandler(ObjectTag.class, "yaml", this::yamlTagProcess);
         isProcedural = false;
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]
@@ -336,7 +337,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         YamlConfiguration yamlConfiguration;
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat,
-                    (yaml_action != null ? ArgumentHelper.debugObj("yaml_action", yaml_action.name()) : null));
+                    (yaml_action != null ? db("yaml_action", yaml_action.name()) : null));
         }
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());

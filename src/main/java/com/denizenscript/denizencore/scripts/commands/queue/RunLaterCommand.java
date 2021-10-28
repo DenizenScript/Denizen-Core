@@ -29,6 +29,7 @@ public class RunLaterCommand extends AbstractCommand {
         setName("runlater");
         setSyntax("runlater [<script>] (path:<name>) [delay:<duration>] (def:<element>|.../defmap:<map>/def.<name>:<value>)");
         setRequiredArguments(2, -1);
+        allowedDynamicPrefixes = true;
     }
 
     // <--[command]

@@ -19,9 +19,9 @@ public abstract class AbstractCommand {
 
     public String syntax = "No usage defined! See documentation for more information!";
 
-    public List<String> flatArgs = new ArrayList<>();
+    public List<String> docFlagArgs = new ArrayList<>();
 
-    public List<String> prefixes = new ArrayList<>();
+    public List<String> docPrefixes = new ArrayList<>();
 
     public void setSyntax(String syntax) {
         this.syntax = syntax;
@@ -40,15 +40,15 @@ public abstract class AbstractCommand {
             if (colonIndex > 0) {
                 String prefix = arg.substring(0, colonIndex);
                 if (!prefix.contains("<")) {
-                    prefixes.add(prefix);
+                    docPrefixes.add(prefix);
                 }
             }
             else if (!arg.contains("<") && !arg.contains("|")) {
-                flatArgs.add(arg);
+                docFlagArgs.add(arg);
             }
         }
         if (Debug.verbose) {
-            Debug.log("Command syntax '" + syntax + "' parsed to flat args: ( " + String.join(", ", flatArgs) + " ) and prefixes ( " + String.join(", ", prefixes) + " ).");
+            Debug.log("Command syntax '" + syntax + "' parsed to flat args: ( " + String.join(", ", docFlagArgs) + " ) and prefixes ( " + String.join(", ", docPrefixes) + " ).");
         }
     }
 
@@ -68,6 +68,8 @@ public abstract class AbstractCommand {
     public HashSet<String> rawValuesHandled = new HashSet<>();
 
     public HashMap<String, String> prefixRemapper = new HashMap<>();
+
+    public boolean allowedDynamicPrefixes = false;
 
     public void addRemappedPrefixes(String realName, String... alts) {
         prefixesHandled.add(realName);
@@ -95,7 +97,7 @@ public abstract class AbstractCommand {
     }
 
     public static String db(String prefix, Object value) {
-        return ArgumentHelper.debugObj(prefix, value);
+        return db(prefix, value);
     }
 
     /**
