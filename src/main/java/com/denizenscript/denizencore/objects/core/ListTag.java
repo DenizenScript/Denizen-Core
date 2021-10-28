@@ -2391,7 +2391,7 @@ public class ListTag implements List<String>, ObjectTag {
         // For example: .random[9999] on a list of "one|two|three" could return "one|two|three", "one|three|two", "two|one|three",
         // "two|three|one", "three|two|one", OR "three|one|two" - different each time!
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "random", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "random", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }
