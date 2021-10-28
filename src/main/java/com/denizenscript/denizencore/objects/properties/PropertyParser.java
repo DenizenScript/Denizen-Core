@@ -52,11 +52,19 @@ public class PropertyParser {
 
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
+    public static <P extends Property, R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String... variants) {
+        registerTagInternal(returnType, name, runnable, variants, true);
+    }
+
     public static <P extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String... variants) {
+        registerTagInternal(returnType, name, runnable, variants, false);
+    }
+
+    public static <P extends Property, R extends ObjectTag> void registerTagInternal(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String[] variants, boolean isStatic) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
         final Class propertyClass = PropertyParser.currentlyRegisteringPropertyClass;
         ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
-        tagProcessor.registerTag(returnType, name, (attribute, object) -> {
+        tagProcessor.registerTagInternal(returnType, name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
@@ -65,7 +73,7 @@ public class PropertyParser {
                 return null;
             }
             return runnable.run(attribute, (P) prop);
-        }, variants);
+        }, isStatic, variants);
     }
 
     public static Class currentlyRegisteringPropertyClass;
