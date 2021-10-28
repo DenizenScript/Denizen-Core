@@ -495,7 +495,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".default[d].as[4]" will return [a=1;b=2;c=3;d=4].
         // For example, on a map of [a=1;b=2;c=3], using ".default[c].as[4]" will return [a=1;b=2;c=3].
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "default", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "default", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.default' must have an input value.");
                 return null;
@@ -526,7 +526,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a copy of the map, with the specified key set to the specified value, using deep key paths separated by the '.' symbol.
         // This means for example if you use "deep_with[root.leaf].as[myvalue]", you will have the key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue").
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "deep_with", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "deep_with", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.deep_with' must have an input value.");
                 return null;
@@ -555,7 +555,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".with[d].as[4]" will return [a=1;b=2;c=3;d=4].
         // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".with[c].as[4]" will return [a=1;b=2;c=4].
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "with", (attribute, object) -> {
+        tagProcessor.registerTag(MapTag.class, "with", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasContext(1)) {
                 attribute.echoError("The tag 'MapTag.with' must have an input value.");
                 return null;
