@@ -17,7 +17,7 @@ public class DetermineCommand extends AbstractCommand {
         setSyntax("determine (passively) [<value>]");
         setRequiredArguments(1, 2);
         isProcedural = true;
-        setRawValuesHandled("passively", "passive");
+        setBooleansHandled("passively", "passive");
     }
 
     // <--[command]

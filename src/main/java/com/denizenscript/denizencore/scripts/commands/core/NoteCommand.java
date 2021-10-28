@@ -19,6 +19,7 @@ public class NoteCommand extends AbstractCommand {
         setRequiredArguments(2, 2);
         isProcedural = false;
         addRemappedPrefixes("id", "as", "i");
+        setBooleansHandled("remove");
     }
 
     // <--[command]

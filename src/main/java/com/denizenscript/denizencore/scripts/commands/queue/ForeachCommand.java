@@ -25,7 +25,7 @@ public class ForeachCommand extends BracedCommand {
         setRequiredArguments(1, 3);
         isProcedural = true;
         setPrefixesHandled("as", "key");
-        setRawValuesHandled("stop", "next", "\0callback");
+        setBooleansHandled("stop", "next", "\0callback");
     }
 
     // <--[command]

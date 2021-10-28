@@ -20,7 +20,7 @@ public class RepeatCommand extends BracedCommand {
         setRequiredArguments(1, 3);
         isProcedural = true;
         setPrefixesHandled("from", "as");
-        setRawValuesHandled("stop", "next", "\0callback");
+        setBooleansHandled("stop", "next", "\0callback");
     }
 
     // <--[command]
