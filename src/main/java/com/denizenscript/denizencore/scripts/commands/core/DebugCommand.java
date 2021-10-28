@@ -19,6 +19,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         setSyntax("debug [<type>] [<message>] (name:<name>)");
         setRequiredArguments(2, 3);
         isProcedural = true;
+        setPrefixesHandled("name");
     }
 
     // <--[command]
@@ -90,10 +91,6 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                     && arg.matchesEnum(DBINFO)) {
                 scriptEntry.addObject("type", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("name")
-                    && arg.matchesPrefix("name")) {
-                scriptEntry.addObject("name", arg.asElement());
-            }
             else if (!scriptEntry.hasObject("debug")) {
                 scriptEntry.addObject("debug", new ElementTag(arg.getRawValue()));
             }
@@ -104,14 +101,13 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {
             throw new InvalidArgumentsException("Must specify a debug type and message!");
         }
-        scriptEntry.defaultObject("name", new ElementTag("name"));
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ElementTag debug = scriptEntry.getElement("debug");
         ElementTag type = scriptEntry.getElement("type");
-        ElementTag name = scriptEntry.getElement("name");
+        ElementTag name = scriptEntry.argForPrefixAsElement("name", "name");
 
         // Intentionally do not DB REPORT - we're making our own debug output!
 

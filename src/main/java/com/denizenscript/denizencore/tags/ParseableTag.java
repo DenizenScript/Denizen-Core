@@ -34,4 +34,14 @@ public class ParseableTag {
         rawElement.isRawInput = true;
         rawObject = rawElement;
     }
+
+    @Override
+    public String toString() {
+        if (rawObject != null) {
+            return rawObject.toString();
+        }
+        else {
+            return "(ParseableTag: non-static value)";
+        }
+    }
 }

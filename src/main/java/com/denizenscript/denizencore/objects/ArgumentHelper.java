@@ -91,6 +91,9 @@ public class ArgumentHelper {
     }
 
     public static String debugObj(String prefix, Object value) {
+        if (value instanceof Collection) {
+            return debugList(prefix, (Collection) value);
+        }
         return "<G>" + prefix + "='<Y>" + (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null") + "<G>'  ";
     }
 

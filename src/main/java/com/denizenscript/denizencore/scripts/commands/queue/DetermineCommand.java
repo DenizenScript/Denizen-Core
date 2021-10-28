@@ -17,6 +17,7 @@ public class DetermineCommand extends AbstractCommand {
         setSyntax("determine (passively) [<value>]");
         setRequiredArguments(1, 2);
         isProcedural = true;
+        setRawValuesHandled("passively", "passive");
     }
 
     // <--[command]
@@ -58,11 +59,7 @@ public class DetermineCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
-            if (arg.matches("passive", "passively")
-                    && !scriptEntry.hasObject("passively")) {
-                scriptEntry.addObject("passively", new ElementTag(true));
-            }
-            else if (!scriptEntry.hasObject("outcome")) {
+            if (!scriptEntry.hasObject("outcome")) {
                 scriptEntry.addObject("outcome", arg.hasPrefix() ? new ElementTag(arg.getRawValue()) : arg.object);
             }
             else {
@@ -76,9 +73,9 @@ public class DetermineCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ObjectTag outcomeObj = scriptEntry.getObjectTag("outcome");
-        ElementTag passively = scriptEntry.getElement("passively");
+        boolean passively = scriptEntry.argAsBoolean("passively");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), outcomeObj, passively, new QueueTag(scriptEntry.getResidingQueue()));
+            Debug.report(scriptEntry, getName(), outcomeObj, db("passively", passively), new QueueTag(scriptEntry.getResidingQueue()));
         }
         ScriptQueue queue = scriptEntry.getResidingQueue();
         ListTag determines = queue.determinations;
@@ -91,7 +88,7 @@ public class DetermineCommand extends AbstractCommand {
             queue.determinationTarget.applyDetermination(outcomeObj);
         }
 
-        if (!passively.asBoolean()) {
+        if (!passively) {
             scriptEntry.getResidingQueue().clear();
             scriptEntry.getResidingQueue().stop();
         }

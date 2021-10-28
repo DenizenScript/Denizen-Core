@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -17,6 +16,8 @@ public class WaitCommand extends AbstractCommand {
         setSyntax("wait (<duration>) (queue:<name>) (system)");
         setRequiredArguments(0, 3);
         isProcedural = false; // A procedure can't wait
+        setRawValuesHandled("system");
+        setPrefixesHandled("queue");
     }
 
     // <--[command]
@@ -56,20 +57,10 @@ public class WaitCommand extends AbstractCommand {
                     && arg.limitToOnlyPrefix("delay")) {
                 scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
-            else if (arg.matchesArgumentType(QueueTag.class)
-                    && !scriptEntry.hasObject("queue")
-                    && arg.limitToOnlyPrefix("queue")) {
-                scriptEntry.addObject("delay", arg.asType(QueueTag.class));
-            }
-            else if (arg.matches("system")
-                    && !scriptEntry.hasObject("system")) {
-                scriptEntry.addObject("system", new ElementTag(true));
-            }
             else {
                 arg.reportUnhandled();
             }
         }
-        scriptEntry.defaultObject("queue", new QueueTag(scriptEntry.getResidingQueue()));
         scriptEntry.defaultObject("delay", new DurationTag(3));
     }
 
@@ -89,14 +80,17 @@ public class WaitCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        QueueTag queue = scriptEntry.getObjectTag("queue");
+        QueueTag queue = scriptEntry.argForPrefix("queue", QueueTag.class, true);
+        if (queue == null) {
+            queue = new QueueTag(scriptEntry.getResidingQueue());
+        }
         DurationTag delay = scriptEntry.getObjectTag("delay");
-        ElementTag system = scriptEntry.getObjectTag("system");
+        boolean system = scriptEntry.argAsBoolean("system");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), queue, delay, system);
+            Debug.report(scriptEntry, getName(), queue, delay, db("mode", system ? "system" : "delta"));
         }
         TimedQueue.DelayTracker tracker;
-        if (system != null && system.asBoolean()) {
+        if (system) {
             tracker = new SystemTimeDelayTracker(delay.getMillis());
         }
         else {

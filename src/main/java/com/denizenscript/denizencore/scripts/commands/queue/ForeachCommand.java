@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
@@ -23,6 +24,8 @@ public class ForeachCommand extends BracedCommand {
         setSyntax("foreach [stop/next/<object>|...] (as:<name>) (key:<name>) [<commands>]");
         setRequiredArguments(1, 3);
         isProcedural = true;
+        setPrefixesHandled("as", "key");
+        setRawValuesHandled("stop", "next", "\0callback");
     }
 
     // <--[command]
@@ -98,30 +101,7 @@ public class ForeachCommand extends BracedCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         boolean handled = false;
         for (Argument arg : scriptEntry) {
-            if (!handled
-                    && arg.matches("stop") && !arg.hasPrefix()) {
-                scriptEntry.addObject("stop", new ElementTag(true));
-                handled = true;
-            }
-            else if (!handled
-                    && arg.matches("next") && !arg.hasPrefix()) {
-                scriptEntry.addObject("next", new ElementTag(true));
-                handled = true;
-            }
-            else if (!handled
-                    && arg.matches("\0callback")) {
-                scriptEntry.addObject("callback", new ElementTag(true));
-                handled = true;
-            }
-            else if (!scriptEntry.hasObject("as_name")
-                    && arg.matchesPrefix("as")) {
-                scriptEntry.addObject("as_name", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("key_as")
-                    && arg.matchesPrefix("key")) {
-                scriptEntry.addObject("key_as", arg.asElement());
-            }
-            else if (!handled) {
+            if (!handled) {
                 if (arg.object instanceof MapTag || arg.object.toString().startsWith("map@")) {
                     MapTag map = MapTag.getMapFor(arg.object, scriptEntry.context);
                     if (map == null) {
@@ -141,26 +121,17 @@ public class ForeachCommand extends BracedCommand {
                 arg.reportUnhandled();
             }
         }
-        if (!handled) {
-            throw new InvalidArgumentsException("Must specify a valid list or 'stop' or 'next'!");
-        }
-        scriptEntry.defaultObject("key_as", new ElementTag("key"));
-        scriptEntry.defaultObject("as_name", new ElementTag("value"));
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        ElementTag stop = scriptEntry.getElement("stop");
-        ElementTag next = scriptEntry.getElement("next");
-        ElementTag callback = scriptEntry.getElement("callback");
-        ListTag list = scriptEntry.getObjectTag("list");
-        MapTag map = scriptEntry.getObjectTag("map");
-        ElementTag as_name = scriptEntry.getElement("as_name");
-        ElementTag key_as = scriptEntry.getElement("key_as");
+        boolean stop = scriptEntry.argAsBoolean("stop");
+        boolean next = scriptEntry.argAsBoolean("next");
+        boolean callback = scriptEntry.argAsBoolean("\0callback");
         ScriptQueue queue = scriptEntry.getResidingQueue();
-        if (stop != null && stop.asBoolean()) {
+        if (stop) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), stop);
+                Debug.report(scriptEntry, getName(), db("instruction", "stop"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -188,9 +159,9 @@ public class ForeachCommand extends BracedCommand {
             }
             return;
         }
-        else if (next != null && next.asBoolean()) {
+        else if (next) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), next);
+                Debug.report(scriptEntry, getName(), db("instruction", "next"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -216,7 +187,7 @@ public class ForeachCommand extends BracedCommand {
             }
             return;
         }
-        else if (callback != null && callback.asBoolean()) {
+        else if (callback) {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equals("FOREACH") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().isEmpty() ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
@@ -253,6 +224,13 @@ public class ForeachCommand extends BracedCommand {
             }
         }
         else {
+            ListTag list = scriptEntry.getObjectTag("list");
+            MapTag map = scriptEntry.getObjectTag("map");
+            ElementTag as_name = scriptEntry.argForPrefixAsElement("as", "value");
+            ElementTag key_as = scriptEntry.argForPrefixAsElement("key", "key");
+            if (list == null && map == null) {
+                throw new InvalidArgumentsRuntimeException("Must specify a quantity or 'stop' or 'next'!");
+            }
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), map, map == null ? null : key_as, list, as_name);
             }

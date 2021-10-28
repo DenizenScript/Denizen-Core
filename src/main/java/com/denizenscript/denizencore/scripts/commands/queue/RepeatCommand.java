@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -18,6 +19,8 @@ public class RepeatCommand extends BracedCommand {
         setSyntax("repeat [stop/next/<amount>] (from:<#>) (as:<name>) [<commands>]");
         setRequiredArguments(1, 3);
         isProcedural = true;
+        setPrefixesHandled("from", "as");
+        setRawValuesHandled("stop", "next", "\0callback");
     }
 
     // <--[command]
@@ -75,36 +78,9 @@ public class RepeatCommand extends BracedCommand {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        boolean handled = false;
         for (Argument arg : scriptEntry) {
-            if (!handled
-                    && arg.matchesInteger() && !arg.hasPrefix()) {
+            if (arg.matchesInteger() && !arg.hasPrefix()) {
                 scriptEntry.addObject("quantity", arg.asElement());
-                handled = true;
-            }
-            else if (!handled
-                    && arg.matches("stop") && !arg.hasPrefix()) {
-                scriptEntry.addObject("stop", new ElementTag(true));
-                handled = true;
-            }
-            else if (!handled
-                    && arg.matches("next") && !arg.hasPrefix()) {
-                scriptEntry.addObject("next", new ElementTag(true));
-                handled = true;
-            }
-            else if (!handled
-                    && arg.matches("\0callback") && !arg.hasPrefix()) {
-                scriptEntry.addObject("callback", new ElementTag(true));
-                handled = true;
-            }
-            else if (!scriptEntry.hasObject("from")
-                    && arg.matchesPrefix("from")
-                    && arg.matchesInteger()) {
-                scriptEntry.addObject("from", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("as_name")
-                    && arg.matchesPrefix("as")) {
-                scriptEntry.addObject("as_name", arg.asElement());
             }
             else if (arg.matches("{")) {
                 break;
@@ -113,25 +89,17 @@ public class RepeatCommand extends BracedCommand {
                 arg.reportUnhandled();
             }
         }
-        if (!handled) {
-            throw new InvalidArgumentsException("Must specify a quantity or 'stop' or 'next'!");
-        }
-        scriptEntry.defaultObject("as_name", new ElementTag("value"));
-        scriptEntry.defaultObject("from", new ElementTag("1"));
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        ElementTag stop = scriptEntry.getElement("stop");
-        ElementTag next = scriptEntry.getElement("next");
-        ElementTag callback = scriptEntry.getElement("callback");
-        ElementTag quantity = scriptEntry.getElement("quantity");
-        ElementTag as_name = scriptEntry.getElement("as_name");
-        ElementTag from = scriptEntry.getElement("from");
+        boolean stop = scriptEntry.argAsBoolean("stop");
+        boolean next = scriptEntry.argAsBoolean("next");
+        boolean callback = scriptEntry.argAsBoolean("\0callback");
         ScriptQueue queue = scriptEntry.getResidingQueue();
-        if (stop != null && stop.asBoolean()) {
+        if (stop) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), stop);
+                Debug.report(scriptEntry, getName(), db("instruction", "stop"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -159,9 +127,9 @@ public class RepeatCommand extends BracedCommand {
             }
             return;
         }
-        else if (next != null && next.asBoolean()) {
+        else if (next) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), next);
+                Debug.report(scriptEntry, getName(), db("instruction", "next"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -187,7 +155,7 @@ public class RepeatCommand extends BracedCommand {
             }
             return;
         }
-        else if (callback != null && callback.asBoolean()) {
+        else if (callback) {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equals("REPEAT") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().isEmpty() ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
@@ -221,6 +189,12 @@ public class RepeatCommand extends BracedCommand {
             }
         }
         else {
+            ElementTag as_name = scriptEntry.argForPrefixAsElement("as", "value");
+            ElementTag from = scriptEntry.argForPrefixAsElement("from", "1");
+            ElementTag quantity = scriptEntry.getElement("quantity");
+            if (quantity == null) {
+                throw new InvalidArgumentsRuntimeException("Must specify a quantity or 'stop' or 'next'!");
+            }
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), from, quantity, as_name);
             }

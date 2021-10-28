@@ -2,14 +2,12 @@ package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class AbstractCommand {
@@ -64,6 +62,41 @@ public abstract class AbstractCommand {
     public int minimumArguments = 0;
 
     public int maximumArguments = Integer.MAX_VALUE;
+
+    public HashSet<String> prefixesHandled = new HashSet<>();
+
+    public HashSet<String> rawValuesHandled = new HashSet<>();
+
+    public HashMap<String, String> prefixRemapper = new HashMap<>();
+
+    public void addRemappedPrefixes(String realName, String... alts) {
+        prefixesHandled.add(realName);
+        prefixesHandled.addAll(Arrays.asList(alts));
+        for (String alt : alts) {
+            prefixRemapper.put(alt, realName);
+        }
+    }
+
+    public void setPrefixesHandled(String... prefixes) {
+        prefixesHandled.addAll(Arrays.asList(prefixes));
+    }
+
+    public void setRawValuesHandled(String... values) {
+        rawValuesHandled.addAll(Arrays.asList(values));
+    }
+
+    public void setBooleansHandled(String... boolNames) {
+        setPrefixesHandled(boolNames);
+        setRawValuesHandled(boolNames);
+    }
+
+    public static String db(String prefix, boolean value) {
+        return "<G>" + prefix + "='<Y>" + value + "<G>'  ";
+    }
+
+    public static String db(String prefix, Object value) {
+        return ArgumentHelper.debugObj(prefix, value);
+    }
 
     /**
      * Whether this command is valid for usage in procedural logic.

@@ -246,6 +246,7 @@ public class Deprecations {
     public static Warning itemDisplayNameMechanism = new FutureWarning("The item 'display_name' mechanism is now just the 'display' mechanism.");
 
     // In Bukkit impl, Added 2020/12/05, deprecate officially by 2022.
+    // Bad candidate for functionality removal due to frequency of use and likelihood of pre-existing data remaining in world data.
     public static Warning itemNbt = new FutureWarning("The item 'nbt' property is deprecated: use ItemTag flags instead!");
 
     // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, deprecate officially by 2022.

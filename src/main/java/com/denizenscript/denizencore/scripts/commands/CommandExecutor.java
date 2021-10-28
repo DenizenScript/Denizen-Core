@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -120,7 +121,7 @@ public class CommandExecutor {
             currentQueue = null;
             return true;
         }
-        catch (InvalidArgumentsException e) {
+        catch (InvalidArgumentsException | InvalidArgumentsRuntimeException e) {
             // Give usage hint if InvalidArgumentsException was called.
             Debug.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0) {

@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
@@ -33,11 +34,19 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         public AbstractCommand actualCommand = null;
 
+        /** Raw text of arguments list. */
         public List<String> pre_tagged_args = null;
 
         public List<BracedCommand.BracedData> bracedSet = null;
 
-        public List<InternalArgument> args_ref = null;
+        /** Full unaltered arguments list. */
+        public InternalArgument[] all_arguments = null;
+
+        /** Arguments list, excluding the ones that have pre-handled prefixes. */
+        public InternalArgument[] arguments_to_use = null;
+
+        /** Set of arguments given as exact raw input. */
+        public HashSet<String> raw_input_args = null;
 
         public ScriptTag script = null;
 
@@ -89,22 +98,12 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         @Override
         public boolean hasNext() {
-            return index < entry.internal.args_ref.size();
+            return index < entry.internal.arguments_to_use.length;
         }
 
         @Override
         public Argument next() {
-            InternalArgument internalArg = entry.internal.args_ref.get(index++);
-            Argument arg = internalArg.aHArg;
-            arg.scriptEntry = entry;
-            if (internalArg.shouldProcess) {
-                TagManager.fillArgumentObjects(internalArg, arg, entry.context);
-                if (internalArg.hadColon && arg.prefix == null && ((ElementTag) arg.object).isRawInput) {
-                    arg.fillStr(arg.object.toString());
-                }
-                arg.canBeElement = arg.object instanceof ElementTag;
-            }
-            return arg;
+            return entry.argAtIndex(index++);
         }
     }
 
@@ -114,6 +113,70 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         internal.argumentIterator.index = 0;
         internal.argumentIterator.entry = this;
         return internal.argumentIterator;
+    }
+
+    public final Argument argAtIndex(int index) {
+        InternalArgument internalArg = internal.arguments_to_use[index];
+        Argument arg = internalArg.aHArg;
+        arg.scriptEntry = this;
+        if (internalArg.shouldProcess) {
+            TagManager.fillArgumentObjects(internalArg, arg, context);
+            if (internalArg.hadColon && arg.prefix == null && ((ElementTag) arg.object).isRawInput) {
+                arg.fillStr(arg.object.toString());
+            }
+            arg.canBeElement = arg.object instanceof ElementTag;
+        }
+        return arg;
+    }
+
+    public final boolean argAsBoolean(String argName) {
+        if (internal.raw_input_args.contains(argName)) {
+            return true;
+        }
+        Integer index = internal.argPrefixMap.get(argName);
+        if (index == null) {
+            return false;
+        }
+        Argument arg = argAtIndex(index);
+        return arg.asElement().asBoolean();
+    }
+
+    public final <T extends ObjectTag> T argForPrefix(String prefix, Class<T> clazz, boolean throwError) {
+        Argument arg = argForPrefix(prefix);
+        if (arg == null) {
+            return null;
+        }
+        if (arg.matchesArgumentType(clazz)) {
+            return arg.asType(clazz);
+        }
+        else if (throwError) {
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + clazz.getName());
+        }
+        return null;
+    }
+
+    public final Argument argForPrefix(String prefix) {
+        Integer index = internal.argPrefixMap.get(prefix);
+        if (index == null) {
+            return null;
+        }
+        return argAtIndex(index);
+    }
+
+    public final ElementTag argForPrefixAsElement(String prefix, String defaultValue) {
+        Argument arg = argForPrefix(prefix);
+        ElementTag result;
+        if (arg == null) {
+            if (defaultValue == null) {
+                return null;
+            }
+            result = new ElementTag(defaultValue);
+        }
+        else {
+            result = arg.asElement();
+        }
+        result.setPrefix(prefix);
+        return result;
     }
 
     public ScriptEntryData entryData;
@@ -295,29 +358,30 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             }
             nested_depth = 0;
             TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
-            internal.args_ref = new ArrayList<>(internal.pre_tagged_args.size());
+            ArrayList<InternalArgument> allArgs = new ArrayList<>(internal.pre_tagged_args.size());
+            internal.raw_input_args = new HashSet<>();
             for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
                 String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
                     InternalArgument brace = new InternalArgument();
                     brace.aHArg = new Argument("", "{");
-                    internal.args_ref.add(brace);
+                    allArgs.add(brace);
                     nested_depth++;
                     continue;
                 }
                 if (arg.equals("}")) {
                     InternalArgument brace = new InternalArgument();
                     brace.aHArg = new Argument("", "}");
-                    internal.args_ref.add(brace);
+                    allArgs.add(brace);
                     nested_depth--;
                     continue;
                 }
-                internal.args_ref.add(NULL_INTERNAL_ARGUMENT);
+                allArgs.add(NULL_INTERNAL_ARGUMENT);
                 if (nested_depth > 0) {
                     continue;
                 }
                 InternalArgument argVal = new InternalArgument();
-                internal.args_ref.set(i, argVal);
+                allArgs.set(i, argVal);
                 int first_colon = arg.indexOf(':');
                 argVal.hadColon = first_colon > 0;
                 int first_not_prefix = Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
@@ -325,21 +389,41 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                     argVal.prefix = new InternalArgument();
                     crunchInto(argVal.prefix, arg.substring(0, first_colon), refContext);
                     arg = arg.substring(first_colon + 1);
-                    if (!argVal.prefix.value.hasTag) {
-                        internal.argPrefixMap.put(argVal.prefix.aHArg.lower_value, i);
-                    }
                 }
                 crunchInto(argVal, arg, refContext);
                 if ((argVal.value.hasTag || argVal.prefix != null) && (internal.actualCommand == null || internal.actualCommand.shouldPreParse())) {
                     argVal.shouldProcess = true;
                 }
+                if (argVal.value.rawObject != null) {
+                    internal.raw_input_args.add(CoreUtilities.toLowerCase(argVal.value.rawObject.toString()));
+                }
+                if (argVal.prefix != null && argVal.prefix.value.rawObject != null) {
+                    String prefix = CoreUtilities.toLowerCase(argVal.prefix.value.rawObject.toString());
+                    if (internal.actualCommand != null) {
+                        String altPrefix = internal.actualCommand.prefixRemapper.get(prefix);
+                        if (altPrefix != null) {
+                            prefix = altPrefix;
+                        }
+                    }
+                    internal.argPrefixMap.put(prefix, i);
+                }
             }
+            internal.all_arguments = allArgs.toArray(new InternalArgument[0]);
+            ArrayList<InternalArgument> argsToUse = new ArrayList<>(internal.all_arguments.length);
+            for (InternalArgument arg : internal.all_arguments) {
+                if (shouldUseArg(arg)) {
+                    argsToUse.add(arg);
+                }
+            }
+            internal.arguments_to_use = argsToUse.toArray(new InternalArgument[0]);
         }
         else {
             internal.pre_tagged_args = new ArrayList<>();
             internal.preprocArgs = new ArrayList<>();
             internal.pre_tagged_args = new ArrayList<>();
-            internal.args_ref = new ArrayList<>();
+            internal.all_arguments = new InternalArgument[0];
+            internal.arguments_to_use = new InternalArgument[0];
+            internal.raw_input_args = new HashSet<>();
         }
         if (internal.actualCommand != null) {
             int argCount = getOriginalArguments().size();
@@ -355,6 +439,22 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
         internal.argumentIterator = new ArgumentIterator(this);
+    }
+
+    public boolean shouldUseArg(InternalArgument arg) {
+        if (internal.actualCommand == null) {
+            return true;
+        }
+        if (arg.value == null) {
+            return true;
+        }
+        if (arg.prefix != null) {
+            return arg.prefix.value.rawObject == null || !internal.actualCommand.prefixesHandled.contains(CoreUtilities.toLowerCase(arg.prefix.value.rawObject.toString()));
+        }
+        if (arg.value.rawObject == null) {
+            return true;
+        }
+        return !internal.actualCommand.rawValuesHandled.contains(CoreUtilities.toLowerCase(arg.value.rawObject.toString()));
     }
 
     /**

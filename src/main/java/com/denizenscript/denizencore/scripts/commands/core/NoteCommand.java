@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
@@ -17,6 +18,7 @@ public class NoteCommand extends AbstractCommand {
         setSyntax("note [<object>/remove] [as:<name>]");
         setRequiredArguments(2, 2);
         isProcedural = false;
+        addRemappedPrefixes("id", "as", "i");
     }
 
     // <--[command]
@@ -61,16 +63,7 @@ public class NoteCommand extends AbstractCommand {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
-            if (arg.matchesPrefix("as", "i", "id")
-                    && !scriptEntry.hasObject("id")) {
-                scriptEntry.addObject("id", arg.asElement());
-            }
-            else if (arg.matches("remove")
-                    && !scriptEntry.hasObject("object")
-                    && !scriptEntry.hasObject("remove")) {
-                scriptEntry.addObject("remove", new ElementTag(true));
-            }
-            else if (ObjectFetcher.canFetch(arg.getValue().split("@")[0])
+            if (ObjectFetcher.canFetch(arg.getValue().split("@")[0])
                     && !scriptEntry.hasObject("object")
                     && !scriptEntry.hasObject("remove")) {
                 scriptEntry.addObject("object", arg.object);
@@ -79,26 +72,23 @@ public class NoteCommand extends AbstractCommand {
                 arg.reportUnhandled();
             }
         }
-        if (!scriptEntry.hasObject("id")) {
-            throw new InvalidArgumentsException("Must specify an id");
-        }
-        if (!scriptEntry.hasObject("object") && !scriptEntry.hasObject("remove")) {
-            throw new InvalidArgumentsException("Must specify an object to note.");
-        }
-        if (!scriptEntry.hasObject("remove")) {
-            scriptEntry.addObject("remove", new ElementTag(false));
-        }
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ObjectTag object = scriptEntry.getObjectTag("object");
-        ElementTag id = scriptEntry.getElement("id");
-        ElementTag remove = scriptEntry.getElement("remove");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), object, id, remove);
+        ElementTag id = scriptEntry.argForPrefixAsElement("id", null);
+        boolean remove = scriptEntry.argAsBoolean("remove");
+        if (id == null) {
+            throw new InvalidArgumentsRuntimeException("Must specify an id");
         }
-        if (remove.asBoolean()) {
+        if (object == null && !remove) {
+            throw new InvalidArgumentsRuntimeException("Must specify an object to note.");
+        }
+        if (scriptEntry.dbCallShouldDebug()) {
+            Debug.report(scriptEntry, getName(), object, id, db("remove", remove));
+        }
+        if (remove) {
             Notable note = NoteManager.getSavedObject(id.asString());
             if (note != null) {
                 note.forget();
