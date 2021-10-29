@@ -15,12 +15,12 @@ public class ListSingleTagBase {
         // This is primarily useful for creating lists-within-lists.
         // -->
         TagManager.registerStaticTagBaseHandler(ListTag.class, "list_single", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("List_Single tag base must have input.");
                 return null;
             }
             ListTag list = new ListTag();
-            list.addObject(attribute.getContextObject(1));
+            list.addObject(attribute.getParamObject());
             return list;
         });
     }

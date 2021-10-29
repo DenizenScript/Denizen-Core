@@ -15,11 +15,11 @@ public class CustomTagBase {
         // Refer to <@link ObjectType CustomObjectTag>.
         // -->
         TagManager.registerTagHandler(CustomObjectTag.class, "custom_object", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Custom_Object tag base must have input.");
                 return null;
             }
-            return CustomObjectTag.valueOf(attribute.getContext(1), attribute.context);
+            return CustomObjectTag.valueOf(attribute.getParam(), attribute.context);
         });
     }
 }

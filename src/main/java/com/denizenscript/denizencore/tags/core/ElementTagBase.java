@@ -15,11 +15,11 @@ public class ElementTagBase {
         // Refer to <@link objecttype ElementTag>.
         // -->
         TagManager.registerStaticTagBaseHandler(ElementTag.class, "element", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Element tag base must have input.");
                 return null;
             }
-            return new ElementTag(attribute.getContext(1));
+            return new ElementTag(attribute.getParam());
         });
     }
 }

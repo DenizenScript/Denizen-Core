@@ -20,11 +20,11 @@ public class DefinitionTagBase {
         // In most usages, the tag name is left blank, like "<[defhere]>".
         // -->
         TagRunnable.BaseInterface<ObjectTag> defTag = (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("Invalid definition tag, no context specified!");
                 return null;
             }
-            String defName = attribute.getContext(1);
+            String defName = attribute.getParam();
             DefinitionProvider definitionProvider = attribute.context.definitionProvider;
             if (definitionProvider == null) {
                 Debug.echoError("No definitions are provided in this tag's context!");

@@ -16,16 +16,16 @@ public class TagCodeGenerator {
     public static String FULFILL_ONE_RUN_DESCRIPTOR = "(L" + CodeGenUtil.OBJECT_TAG_PATH + ";)V";
 
     public static boolean hasStaticContext(Attribute.AttributeComponent component, TagContext genContext) {
-        if (component.context == null) {
+        if (component.rawParam == null) {
             return true;
         }
-        if (component.contextParsed == null) {
-            component.contextParsed = TagManager.parseTextToTag(component.context, genContext);
-            if (component.contextParsed == null) {
+        if (component.paramParsed == null) {
+            component.paramParsed = TagManager.parseTextToTag(component.rawParam, genContext);
+            if (component.paramParsed == null) {
                 return false;
             }
         }
-        return !component.contextParsed.hasTag;
+        return !component.paramParsed.hasTag;
     }
 
     public static TagRunnable.BaseInterface<? extends ObjectTag> generatePartialTag(TagManager.ParseableTagPiece toParse, TagContext genContext) {

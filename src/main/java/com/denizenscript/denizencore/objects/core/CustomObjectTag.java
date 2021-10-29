@@ -137,9 +137,9 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         if (res != null) {
             return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
         }
-        String taggo = attribute.getAttributeWithoutContext(1);
+        String taggo = attribute.getAttributeWithoutParam(1);
         if (container.hasPath("tags." + taggo)) {
-            ListTag outcomes = container.runTagScript(taggo, attribute.getContextObject(1), this,
+            ListTag outcomes = container.runTagScript(taggo, attribute.getParamObject(), this,
                     attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
                             DenizenCore.getImplementation().getEmptyScriptEntryData());
             if (outcomes == null) {

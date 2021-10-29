@@ -17,10 +17,10 @@ public class MapTagBase {
         // For example: <map[a=1;b=2;c=3]>
         // -->
         TagManager.registerStaticTagBaseHandler(MapTag.class, "map", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return new MapTag();
             }
-            return MapTag.getMapFor(attribute.getContextObject(1), attribute.context);
+            return MapTag.getMapFor(attribute.getParamObject(), attribute.context);
         });
     }
 }

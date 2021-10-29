@@ -15,11 +15,11 @@ public class TimeTagBase {
         // Refer to <@link ObjectType TimeTag>.
         // -->
         TagManager.registerStaticTagBaseHandler(TimeTag.class, "time", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Time tag base must have input.");
                 return null;
             }
-            return TimeTag.valueOf(attribute.getContext(1), attribute.context);
+            return TimeTag.valueOf(attribute.getParam(), attribute.context);
         });
     }
 }

@@ -17,10 +17,10 @@ public class ScriptTagBase {
         // -->
         TagManager.registerStaticTagBaseHandler(ScriptTag.class, "script", (attribute) -> {
             ScriptTag script = null;
-            if (attribute.hasContext(1)) {
-                script = attribute.contextAsType(1, ScriptTag.class);
+            if (attribute.hasParam()) {
+                script = attribute.paramAsType(ScriptTag.class);
                 if (script == null) {
-                    attribute.echoError("Script '" + attribute.getContext(1) + "' does not exist.");
+                    attribute.echoError("Script '" + attribute.getParam() + "' does not exist.");
                     return null;
                 }
             }

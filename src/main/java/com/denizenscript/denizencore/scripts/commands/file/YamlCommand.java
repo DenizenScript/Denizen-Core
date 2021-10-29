@@ -746,7 +746,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     }
 
     public ObjectTag yamlTagProcess(Attribute attribute) {
-        String id = attribute.hasContext(1) ? CoreUtilities.toLowerCase(attribute.getContext(1)) : null;
+        String id = attribute.hasParam() ? CoreUtilities.toLowerCase(attribute.getParam()) : null;
         attribute.fulfill(1);
 
         // <--[tag]
@@ -777,8 +777,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns true if the file has the specified path.
         // Otherwise, returns false.
         // -->
-        if (attribute.startsWith("contains") && attribute.hasContext(1)) {
-            return new ElementTag(yaml.contains(attribute.getContext(1)));
+        if (attribute.startsWith("contains") && attribute.hasParam()) {
+            return new ElementTag(yaml.contains(attribute.getParam()));
         }
 
         // <--[tag]
@@ -787,8 +787,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns true if the specified path results in a list.
         // -->
-        if (attribute.startsWith("is_list") && attribute.hasContext(1)) {
-            return new ElementTag(yaml.isList(attribute.getContext(1)));
+        if (attribute.startsWith("is_list") && attribute.hasParam()) {
+            return new ElementTag(yaml.isList(attribute.getParam()));
         }
 
         // <--[tag]
@@ -800,8 +800,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
         // Generally, prefer to use <@link tag yaml.read>.
         // -->
-        if (attribute.startsWith("parsed_key") && attribute.hasContext(1)) {
-            Object obj = yaml.get(attribute.getContext(1));
+        if (attribute.startsWith("parsed_key") && attribute.hasParam()) {
+            Object obj = yaml.get(attribute.getParam());
             if (obj == null) {
                 return null;
             }
@@ -814,8 +814,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // @description
         // Returns the value from a data key on the YAML document as an ElementTag, ListTag, or MapTag.
         // -->
-        if (attribute.startsWith("read") && attribute.hasContext(1)) {
-            Object obj = yaml.get(attribute.getContext(1));
+        if (attribute.startsWith("read") && attribute.hasParam()) {
+            Object obj = yaml.get(attribute.getParam());
             if (obj == null) {
                 return null;
             }
@@ -829,9 +829,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns a ListTag of all the keys at the path and all subpaths.
         // Use empty path input to represent the root of the yaml document tree.
         // -->
-        if (attribute.startsWith("list_deep_keys") && attribute.hasContext(1)) {
+        if (attribute.startsWith("list_deep_keys") && attribute.hasParam()) {
             Set<StringHolder> keys;
-            String path = attribute.getContext(1);
+            String path = attribute.getParam();
             if (path != null && path.length() > 0) {
                 YamlConfiguration section = yaml.getConfigurationSection(path);
                 if (section == null) {
@@ -858,9 +858,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns a ListTag of all the keys at the path (and not sub-keys).
         // Use empty path input to represent the root of the yaml document tree.
         // -->
-        if (attribute.startsWith("list_keys") && attribute.hasContext(1)) {
+        if (attribute.startsWith("list_keys") && attribute.hasParam()) {
             Set<StringHolder> keys;
-            String path = attribute.getContext(1);
+            String path = attribute.getParam();
             if (path != null && path.length() > 0) {
                 YamlConfiguration section = yaml.getConfigurationSection(path);
                 if (section == null) {

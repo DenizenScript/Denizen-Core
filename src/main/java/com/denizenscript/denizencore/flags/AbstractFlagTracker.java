@@ -112,42 +112,42 @@ public abstract class AbstractFlagTracker {
     }
 
     public ElementTag doHasFlagTag(Attribute attribute) {
-        if (!attribute.hasContext(1)) {
+        if (!attribute.hasParam()) {
             attribute.echoError("The has_flag[...] tag must have an input!");
             return null;
         }
-        return new ElementTag(hasFlag(attribute.getContext(1)));
+        return new ElementTag(hasFlag(attribute.getParam()));
     }
 
     public ObjectTag doFlagTag(Attribute attribute) {
-        if (!attribute.hasContext(1)) {
+        if (!attribute.hasParam()) {
             attribute.echoError("The flag[...] tag must have an input!");
             return null;
         }
-        if (attribute.getAttributeWithoutContext(2).equals("is_expired")) {
+        if (attribute.getAttributeWithoutParam(2).equals("is_expired")) {
             Deprecations.flagIsExpiredTag.warn(attribute.context);
-            boolean result = !hasFlag(attribute.getContext(1));
+            boolean result = !hasFlag(attribute.getParam());
             attribute.fulfill(1);
             return new ElementTag(result);
         }
-        else if (attribute.getAttributeWithoutContext(2).equals("expiration")) {
+        else if (attribute.getAttributeWithoutParam(2).equals("expiration")) {
             Deprecations.flagExpirationTag.warn(attribute.context);
-            TimeTag time = getFlagExpirationTime(attribute.getContext(1));
+            TimeTag time = getFlagExpirationTime(attribute.getParam());
             if (time == null) {
                 return null;
             }
             attribute.fulfill(1);
             return new DurationTag((time.millis() - TimeTag.now().millis()) / 1000.0);
         }
-        return getFlagValue(attribute.getContext(1));
+        return getFlagValue(attribute.getParam());
     }
 
     public TimeTag doFlagExpirationTag(Attribute attribute) {
-        if (!attribute.hasContext(1)) {
+        if (!attribute.hasParam()) {
             attribute.echoError("The flag_expiration[...] tag must have an input!");
             return null;
         }
-        return getFlagExpirationTime(attribute.getContext(1));
+        return getFlagExpirationTime(attribute.getParam());
     }
 
     public static Warning listFlagsTagWarning = new SlowWarning("The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");

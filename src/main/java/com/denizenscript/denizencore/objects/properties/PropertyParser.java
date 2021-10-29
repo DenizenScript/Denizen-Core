@@ -305,11 +305,11 @@ public class PropertyParser {
         // Consider using <@link tag PropertyHolderObject.with_single> instead.
         // -->
         processor.registerTag(type, "with", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
             T instance = (T) object.duplicate();
-            List<String> properties = ObjectFetcher.separateProperties("[" + attribute.getContext(1) + "]");
+            List<String> properties = ObjectFetcher.separateProperties("[" + attribute.getParam() + "]");
             for (int i = 1; i < properties.size(); i++) {
                 List<String> data = CoreUtilities.split(properties.get(i), '=', 2);
                 if (data.size() != 2) {
@@ -331,13 +331,13 @@ public class PropertyParser {
         // This avoids the risk of escaping issues.
         // -->
         processor.registerTag(type, "with_single", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
             T instance = (T) object.duplicate();
-            List<String> data = CoreUtilities.split(attribute.getContext(1), '=', 2);
+            List<String> data = CoreUtilities.split(attribute.getParam(), '=', 2);
             if (data.size() != 2) {
-                Debug.echoError("Invalid property string '" + attribute.getContext(1) + "'!");
+                Debug.echoError("Invalid property string '" + attribute.getParam() + "'!");
             }
             else {
                 instance.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(data.get(1)), attribute.context));
@@ -353,10 +353,10 @@ public class PropertyParser {
         // Returns a copy of the object with the MapTag of mechanism adjustments applied.
         // -->
         processor.registerTag(type, "with_map", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            MapTag properties = attribute.contextAsType(1, MapTag.class);
+            MapTag properties = attribute.paramAsType(MapTag.class);
             T instance = (T) object.duplicate();
             for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
                 instance.safeApplyProperty(new Mechanism(pair.getKey().low, pair.getValue(), attribute.context));
@@ -373,10 +373,10 @@ public class PropertyParser {
         // This does not necessarily mean it has a valid current value, just that it's supported at all.
         // -->
         processor.registerTag(ElementTag.class, "supports", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            String propertyName = attribute.getContext(1);
+            String propertyName = attribute.getParam();
             ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
             if (properties == null) {
                 return new ElementTag(false);

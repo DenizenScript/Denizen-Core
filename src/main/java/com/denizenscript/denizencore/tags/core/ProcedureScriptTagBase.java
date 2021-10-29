@@ -39,14 +39,14 @@ public class ProcedureScriptTagBase {
         Attribute attribute = event.getAttributes();
         ScriptTag script;
         String path = null;
-        if (attribute.hasContext(1)) {
-            if (attribute.getContext(1).indexOf('.') > 0) {
-                String[] split = attribute.getContext(1).split("\\.", 2);
+        if (attribute.hasParam()) {
+            if (attribute.getParam().indexOf('.') > 0) {
+                String[] split = attribute.getParam().split("\\.", 2);
                 path = split[1];
                 script = ScriptTag.valueOf(split[0], attribute.context);
             }
             else {
-                script = attribute.contextAsType(1, ScriptTag.class);
+                script = attribute.paramAsType(ScriptTag.class);
             }
         }
         else {
@@ -54,7 +54,7 @@ public class ProcedureScriptTagBase {
             return;
         }
         if (script == null) {
-            attribute.echoError("Missing script for procedure script tag '" + attribute.getContext(1) + "'!");
+            attribute.echoError("Missing script for procedure script tag '" + attribute.getParam() + "'!");
             return;
         }
         if (!(script.getContainer() instanceof ProcedureScriptContainer)) {

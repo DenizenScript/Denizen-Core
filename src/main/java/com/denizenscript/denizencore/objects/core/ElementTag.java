@@ -410,10 +410,10 @@ public class ElementTag implements ObjectTag {
         // Equivalent to if comparison: ==
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "equals", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(CoreUtilities.equalsIgnoreCase(object.asString(), attribute.getContext(1)));
+            return new ElementTag(CoreUtilities.equalsIgnoreCase(object.asString(), attribute.getParam()));
         });
 
         // <--[tag]
@@ -425,10 +425,10 @@ public class ElementTag implements ObjectTag {
         // Equivalent to if comparison: >
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) > 0);
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getParam()).asBigDecimal()) > 0);
         });
 
         // <--[tag]
@@ -440,10 +440,10 @@ public class ElementTag implements ObjectTag {
         // Equivalent to if comparison: <
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_less_than", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) < 0);
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getParam()).asBigDecimal()) < 0);
         });
 
         // <--[tag]
@@ -455,10 +455,10 @@ public class ElementTag implements ObjectTag {
         // Equivalent to if comparison: >=
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) >= 0);
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getParam()).asBigDecimal()) >= 0);
         });
 
         // <--[tag]
@@ -470,10 +470,10 @@ public class ElementTag implements ObjectTag {
         // Equivalent to if comparison: <=
         // -->
         tagProcessor.registerTag(ElementTag.class, "is_less_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getContext(1)).asBigDecimal()) <= 0);
+            return new ElementTag(object.asBigDecimal().compareTo(new ElementTag(attribute.getParam()).asBigDecimal()) <= 0);
         });
 
         // <--[tag]
@@ -794,7 +794,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "difference", (attribute, object) -> {
             String element = object.element;
-            String two = attribute.getContext(1);
+            String two = attribute.getParam();
             return new ElementTag(CoreUtilities.getLevenshteinDistance(element, two));
         });
 
@@ -807,7 +807,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_any_case_sensitive_text", (attribute, object) -> {
             String element = object.element;
-            ListTag list = attribute.contextAsType(1, ListTag.class);
+            ListTag list = attribute.paramAsType(ListTag.class);
             for (String list_element : list) {
                 if (element.contains(list_element)) {
                     return new ElementTag(true);
@@ -826,7 +826,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_any_text", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)), attribute.context);
+            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getParam()), attribute.context);
             String ellow = CoreUtilities.toLowerCase(element);
             for (String list_element : list) {
                 if (ellow.contains(list_element)) {
@@ -846,7 +846,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_case_sensitive_text", (attribute, object) -> {
             String element = object.element;
-            String contains = attribute.getContext(1);
+            String contains = attribute.getParam();
             if (element.contains(contains)) {
                 return new ElementTag("true");
             }
@@ -866,7 +866,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_text", (attribute, object) -> {
             String element = object.element;
-            String contains = attribute.getContext(1);
+            String contains = attribute.getParam();
             if (CoreUtilities.toLowerCase(contains).startsWith("regex:")) {
                 if (Pattern.compile(contains.substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(element).find()) {
                     return new ElementTag("true");
@@ -893,7 +893,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_all_text", (attribute, object) -> {
             String element = object.element;
-            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getContext(1)), attribute.context);
+            ListTag list = ListTag.valueOf(CoreUtilities.toLowerCase(attribute.getParam()), attribute.context);
             String ellow = CoreUtilities.toLowerCase(element);
             for (String list_element : list) {
                 if (!ellow.contains(list_element)) {
@@ -913,7 +913,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_all_case_sensitive_text", (attribute, object) -> {
             String element = object.element;
-            ListTag list = attribute.contextAsType(1, ListTag.class);
+            ListTag list = attribute.paramAsType(ListTag.class);
             for (String list_element : list) {
                 if (!element.contains(list_element)) {
                     return new ElementTag("false");
@@ -932,7 +932,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "ends_with", (attribute, object) -> {
             return new ElementTag(CoreUtilities.toLowerCase(object.element).
-                    endsWith(CoreUtilities.toLowerCase(attribute.getContext(1))));
+                    endsWith(CoreUtilities.toLowerCase(attribute.getParam())));
         }, "endswith");
 
         // <--[tag]
@@ -943,10 +943,10 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element matches another element, case-sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "equals_case_sensitive", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.element.equals(attribute.getContext(1)));
+            return new ElementTag(object.element.equals(attribute.getParam()));
         }, "equals_with_case");
 
         // <--[tag]
@@ -957,10 +957,10 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element matches some matcher text, using the system behind <@link language Advanced Script Event Matching>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "advanced_matches_text", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(ScriptEvent.createMatcher(attribute.getContext(1)).doesMatch(object.element));
+            return new ElementTag(ScriptEvent.createMatcher(attribute.getParam()).doesMatch(object.element));
         }, "advanced_matches");
 
         // <--[tag]
@@ -971,10 +971,10 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element matches a regex input.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "regex_matches", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.element.matches(attribute.getContext(1)));
+            return new ElementTag(object.element.matches(attribute.getParam()));
         }, "matches");
 
         // <--[tag]
@@ -987,10 +987,10 @@ public class ElementTag implements ObjectTag {
         // For example, <element[hello5world].regex[.*(\d).*].group[1]> returns '5'.
         // -->
         tagProcessor.registerTag(ElementTag.class, "regex", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasContext(1) || !attribute.hasContext(2)) {
+            if (!attribute.hasParam() || !attribute.hasContext(2)) {
                 return null;
             }
-            String regex = attribute.getContext(1);
+            String regex = attribute.getParam();
             Matcher m = Pattern.compile(regex).matcher(object.element);
             if (!m.matches()) {
                 return null;
@@ -1015,10 +1015,10 @@ public class ElementTag implements ObjectTag {
         // Essentially equivalent to <@link tag ListTag.contains>, but with input order reversed.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_in", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            ListTag list = attribute.contextAsType(1, ListTag.class);
+            ListTag list = attribute.paramAsType(ListTag.class);
             for (String element : list) {
                 if (CoreUtilities.equalsIgnoreCase(element, object.asString())) {
                     return new ElementTag(true);
@@ -1058,7 +1058,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether both the element and the second element are true.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "and", (attribute, object) -> {
-            return new ElementTag(object.element.equalsIgnoreCase("true") && attribute.getContext(1).equalsIgnoreCase("true"));
+            return new ElementTag(object.element.equalsIgnoreCase("true") && attribute.getParam().equalsIgnoreCase("true"));
         });
 
         // <--[tag]
@@ -1069,7 +1069,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether either the element or the second element are true.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "or", (attribute, object) -> {
-            return new ElementTag(object.element.equalsIgnoreCase("true") || attribute.getContext(1).equalsIgnoreCase("true"));
+            return new ElementTag(object.element.equalsIgnoreCase("true") || attribute.getParam().equalsIgnoreCase("true"));
         });
 
         // <--[tag]
@@ -1080,7 +1080,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element and the second element are true and false (exclusive or).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "xor", (attribute, object) -> {
-            return new ElementTag(object.element.equalsIgnoreCase("true") != attribute.getContext(1).equalsIgnoreCase("true"));
+            return new ElementTag(object.element.equalsIgnoreCase("true") != attribute.getParam().equalsIgnoreCase("true"));
         });
 
         // <--[tag]
@@ -1091,7 +1091,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element starts with a specified element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "starts_with", (attribute, object) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element).startsWith(CoreUtilities.toLowerCase(attribute.getContext(1))));
+            return new ElementTag(CoreUtilities.toLowerCase(object.element).startsWith(CoreUtilities.toLowerCase(attribute.getParam())));
         }, "startswith");
 
         // <--[tag]
@@ -1103,12 +1103,12 @@ public class ElementTag implements ObjectTag {
         // Returns 0 if the element never occurs within the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "index_of", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.index_of[...] must have a value.");
                 return null;
             }
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .indexOf(CoreUtilities.toLowerCase(attribute.getContext(1))) + 1);
+                    .indexOf(CoreUtilities.toLowerCase(attribute.getParam())) + 1);
         });
 
         // <--[tag]
@@ -1120,12 +1120,12 @@ public class ElementTag implements ObjectTag {
         // Returns 0 if the element never occurs within the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "last_index_of", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.last_index_of[...] must have a value.");
                 return null;
             }
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .lastIndexOf(CoreUtilities.toLowerCase(attribute.getContext(1))) + 1);
+                    .lastIndexOf(CoreUtilities.toLowerCase(attribute.getParam())) + 1);
         });
 
         // <--[tag]
@@ -1137,11 +1137,11 @@ public class ElementTag implements ObjectTag {
         // Returns null if the index is outside the range of the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "char_at", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.char_at[...] must have a value.");
                 return null;
             }
-            int index = attribute.getIntContext(1) - 1;
+            int index = attribute.getIntParam() - 1;
             if (index < 0 || index >= object.element.length()) {
                 return null;
             }
@@ -1164,11 +1164,11 @@ public class ElementTag implements ObjectTag {
         // An input value or zero or a negative number will result in an empty element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "repeat", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.repeat[...] must have a value.");
                 return null;
             }
-            int repeatTimes = attribute.getIntContext(1);
+            int repeatTimes = attribute.getIntParam();
             StringBuilder result = new StringBuilder(object.element.length() * repeatTimes);
             for (int i = 0; i < repeatTimes; i++) {
                 result.append(object.element);
@@ -1186,11 +1186,11 @@ public class ElementTag implements ObjectTag {
         // An input value or zero or a negative number will result in an empty list.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "repeat_as_list", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.repeat_as_list[...] must have a value.");
                 return null;
             }
-            int repeatTimes = attribute.getIntContext(1);
+            int repeatTimes = attribute.getIntParam();
             ListTag result = new ListTag();
             for (int i = 0; i < repeatTimes; i++) {
                 result.addObject(object);
@@ -1207,11 +1207,11 @@ public class ElementTag implements ObjectTag {
         // For example: abcabc .after_last[b] returns c.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "after_last", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.after_last[...] must have a value.");
                 return null;
             }
-            String delimiter = attribute.getContext(1);
+            String delimiter = attribute.getParam();
             if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter))) {
                 return new ElementTag(object.element.substring
                         (CoreUtilities.toLowerCase(object.element).lastIndexOf(CoreUtilities.toLowerCase(delimiter)) + delimiter.length()));
@@ -1230,11 +1230,11 @@ public class ElementTag implements ObjectTag {
         // For example: HelloWorld .after[Hello] returns World.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "after", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.after[...] must have a value.");
                 return null;
             }
-            String delimiter = attribute.getContext(1);
+            String delimiter = attribute.getParam();
             if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter))) {
                 return new ElementTag(object.element.substring
                         (CoreUtilities.toLowerCase(object.element).indexOf(CoreUtilities.toLowerCase(delimiter)) + delimiter.length()));
@@ -1253,11 +1253,11 @@ public class ElementTag implements ObjectTag {
         // For example: abcabc .before_last[b] returns abca.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "before_last", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.before_last[...] must have a value.");
                 return null;
             }
-            String delimiter = attribute.getContext(1);
+            String delimiter = attribute.getParam();
             if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter))) {
                 return new ElementTag(object.element.substring
                         (0, CoreUtilities.toLowerCase(object.element).lastIndexOf(CoreUtilities.toLowerCase(delimiter))));
@@ -1276,11 +1276,11 @@ public class ElementTag implements ObjectTag {
         // For example: abcd .before[c] returns ab.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "before", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.before[...] must have a value.");
                 return null;
             }
-            String delimiter = attribute.getContext(1);
+            String delimiter = attribute.getParam();
             if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter))) {
                 return new ElementTag(object.element.substring
                         (0, CoreUtilities.toLowerCase(object.element).indexOf(CoreUtilities.toLowerCase(delimiter))));
@@ -1308,11 +1308,11 @@ public class ElementTag implements ObjectTag {
         // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
         // -->
         tagProcessor.registerTag(ElementTag.class, "replace_text", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.replace[...] must have a value.");
                 return null;
             }
-            String replace = attribute.getContext(1);
+            String replace = attribute.getParam();
             String replacement = "";
             if (attribute.startsWith("with", 2)) {
                 if (attribute.hasContext(2)) {
@@ -1350,8 +1350,8 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "format_number", (attribute, object) -> {
             try {
-                if (attribute.hasContext(1)) {
-                    DecimalFormat format = new DecimalFormat(attribute.getContext(1), CoreUtilities.decimalFormatSymbols);
+                if (attribute.hasParam()) {
+                    DecimalFormat format = new DecimalFormat(attribute.getParam(), CoreUtilities.decimalFormatSymbols);
                     return new ElementTag(format.format(object.asBigDecimal()));
                 }
                 int decimal = object.element.indexOf('.');
@@ -1418,7 +1418,7 @@ public class ElementTag implements ObjectTag {
         // Spaces will be preferred to become newlines, unless a line does not contain any spaces.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "split_lines", (attribute, object) -> {
-            int characterCount = attribute.getIntContext(1);
+            int characterCount = attribute.getIntParam();
             return new ElementTag(CoreUtilities.splitLinesByCharacterCount(object.element, characterCount));
         });
 
@@ -1530,14 +1530,14 @@ public class ElementTag implements ObjectTag {
         // element after the specified index.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "substring", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.substring[...] must have a value.");
                 return null;
             }
-            int beginning_index = new ElementTag(attribute.getContext(1).split(",")[0]).asInt() - 1;
+            int beginning_index = new ElementTag(attribute.getParam().split(",")[0]).asInt() - 1;
             int ending_index;
-            if (attribute.getContext(1).split(",").length > 1) {
-                ending_index = new ElementTag(attribute.getContext(1).split(",")[1]).asInt();
+            if (attribute.getParam().split(",").length > 1) {
+                ending_index = new ElementTag(attribute.getParam().split(",")[1]).asInt();
             }
             else {
                 ending_index = object.element.length();
@@ -1578,7 +1578,7 @@ public class ElementTag implements ObjectTag {
         // If a split string is unspecified, splits by space.
         // -->
         tagProcessor.registerTag(ListTag.class, "split", (attribute, object) -> { // non-static due to hacked sub-tag
-            String split_string = (attribute.hasContext(1) ? attribute.getContext(1) : " ");
+            String split_string = (attribute.hasParam() ? attribute.getParam() : " ");
             if (CoreUtilities.toLowerCase(split_string).startsWith("regex:")) {
                 split_string = split_string.split(":", 2)[1];
             }
@@ -1619,12 +1619,12 @@ public class ElementTag implements ObjectTag {
         // by adding spaces to the left side.
         // -->
         tagProcessor.registerTag(ElementTag.class, "pad_left", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.pad_left[...] must have a value.");
                 return null;
             }
             String with = CoreUtilities.NBSP;
-            int length = attribute.getIntContext(1);
+            int length = attribute.getIntParam();
 
             // <--[tag]
             // @attribute <ElementTag.pad_left[<#>].with[<element>]>
@@ -1656,12 +1656,12 @@ public class ElementTag implements ObjectTag {
         // by adding spaces to the right side.
         // -->
         tagProcessor.registerTag(ElementTag.class, "pad_right", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.pad_right[...] must have a value.");
                 return null;
             }
             String with = CoreUtilities.NBSP;
-            int length = attribute.getIntContext(1);
+            int length = attribute.getIntParam();
 
             // <--[tag]
             // @attribute <ElementTag.pad_right[<#>].with[<element>]>
@@ -1715,7 +1715,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.max(ele.asDouble(), new ElementTag(attribute.getContext(1)).asDouble()));
+            return new ElementTag(Math.max(ele.asDouble(), new ElementTag(attribute.getParam()).asDouble()));
         });
 
         // <--[tag]
@@ -1731,7 +1731,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.min(ele.asDouble(), new ElementTag(attribute.getContext(1)).asDouble()));
+            return new ElementTag(Math.min(ele.asDouble(), new ElementTag(attribute.getParam()).asDouble()));
         });
 
         // <--[tag]
@@ -1747,7 +1747,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asLong() + attribute.getLongContext(1));
+            return new ElementTag(ele.asLong() + attribute.getLongParam());
         });
 
         // <--[tag]
@@ -1763,7 +1763,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asLong() / attribute.getLongContext(1));
+            return new ElementTag(ele.asLong() / attribute.getLongParam());
         });
 
         // <--[tag]
@@ -1779,7 +1779,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asLong() * attribute.getLongContext(1));
+            return new ElementTag(ele.asLong() * attribute.getLongParam());
         });
 
         // <--[tag]
@@ -1795,7 +1795,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asLong() - attribute.getLongContext(1));
+            return new ElementTag(ele.asLong() - attribute.getLongParam());
         });
 
         // <--[tag]
@@ -1807,7 +1807,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element plus a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> addRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.add[...] must have a value.");
                 return null;
             }
@@ -1816,10 +1816,10 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             try {
-                return new ElementTag(object.asBigDecimal().add(object.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().add(object.getBD(attribute.getParam())));
             }
             catch (Throwable e) {
-                return new ElementTag(object.asDouble() + attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() + attribute.getDoubleParam());
             }
         };
         tagProcessor.registerStaticTag(ElementTag.class, "add", addRunnable);
@@ -1834,7 +1834,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element divided by a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> divRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.div[...] must have a value.");
                 return null;
             }
@@ -1843,10 +1843,10 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             try {
-                return new ElementTag(object.asBigDecimal().divide(object.getBD(attribute.getContext(1)), 64, RoundingMode.HALF_UP));
+                return new ElementTag(object.asBigDecimal().divide(object.getBD(attribute.getParam()), 64, RoundingMode.HALF_UP));
             }
             catch (Throwable e) {
-                return new ElementTag(object.asDouble() / attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() / attribute.getDoubleParam());
             }
         };
         tagProcessor.registerStaticTag(ElementTag.class, "div", divRunnable);
@@ -1861,7 +1861,7 @@ public class ElementTag implements ObjectTag {
         // Returns the remainder of the element divided by a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> modRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.mod[...] must have a value.");
                 return null;
             }
@@ -1872,10 +1872,10 @@ public class ElementTag implements ObjectTag {
             try {
                 // Note: "remainder" method has doc "Note that this is not the modulo operation (the result can be negative)."
                 // however this doc is misleading - standard modulo with "%" allows negatives in the exact same situation (first parameter is negative).
-                return new ElementTag(object.asBigDecimal().remainder(object.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().remainder(object.getBD(attribute.getParam())));
             }
             catch (Throwable e) {
-                return new ElementTag(object.asDouble() % attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() % attribute.getDoubleParam());
             }
         };
         tagProcessor.registerStaticTag(ElementTag.class, "mod", modRunnable);
@@ -1890,7 +1890,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element multiplied by a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> mulRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.mul[...] must have a value.");
                 return null;
             }
@@ -1899,10 +1899,10 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             try {
-                return new ElementTag(object.asBigDecimal().multiply(object.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().multiply(object.getBD(attribute.getParam())));
             }
             catch (Throwable e) {
-                return new ElementTag(object.asDouble() * attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() * attribute.getDoubleParam());
             }
         };
         tagProcessor.registerStaticTag(ElementTag.class, "mul", mulRunnable);
@@ -1917,7 +1917,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element minus a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> subRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.sub[...] must have a value.");
                 return null;
             }
@@ -1926,10 +1926,10 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             try {
-                return new ElementTag(object.asBigDecimal().subtract(object.getBD(attribute.getContext(1))));
+                return new ElementTag(object.asBigDecimal().subtract(object.getBD(attribute.getParam())));
             }
             catch (Throwable e) {
-                return new ElementTag(object.asDouble() - attribute.getDoubleContext(1));
+                return new ElementTag(object.asDouble() - attribute.getDoubleParam());
             }
         };
         tagProcessor.registerStaticTag(ElementTag.class, "sub", subRunnable);
@@ -1964,7 +1964,7 @@ public class ElementTag implements ObjectTag {
         // Returns the logarithm of the element, with the base of the specified number.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "log", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.log[...] must have a value.");
                 return null;
             }
@@ -1972,7 +1972,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.log(object.asDouble()) / Math.log(attribute.getDoubleContext(1)));
+            return new ElementTag(Math.log(object.asDouble()) / Math.log(attribute.getDoubleParam()));
         });
 
         // <--[tag]
@@ -1999,7 +1999,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element to the power of a number.
         // -->
         TagRunnable.ObjectInterface<ElementTag, ElementTag> powerRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.power[...] must have a value.");
                 return null;
             }
@@ -2007,7 +2007,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.pow(object.asDouble(), attribute.getDoubleContext(1)));
+            return new ElementTag(Math.pow(object.asDouble(), attribute.getDoubleParam()));
         };
         tagProcessor.registerStaticTag(ElementTag.class, "power", powerRunnable);
         tagProcessor.registerStaticTag(ElementTag.class, "^", powerRunnable);
@@ -2066,7 +2066,7 @@ public class ElementTag implements ObjectTag {
         // and returns an angle in radians representing the vector of (X,Y).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "atan2", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.atan2[...] must have a value.");
                 return null;
             }
@@ -2074,7 +2074,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.atan2(object.asDouble(), attribute.getDoubleContext(1)));
+            return new ElementTag(Math.atan2(object.asDouble(), attribute.getDoubleParam()));
         });
 
         // <--[tag]
@@ -2211,7 +2211,7 @@ public class ElementTag implements ObjectTag {
         // For example, 0.12345 .round_to[3] returns "0.123".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_to", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.round_to[...] must have a value.");
                 return null;
             }
@@ -2219,7 +2219,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            int ten = (int) Math.pow(10, attribute.getIntContext(1));
+            int ten = (int) Math.pow(10, attribute.getIntParam());
             return new ElementTag(((double) Math.round(object.asDouble() * ten)) / ten);
         });
 
@@ -2232,7 +2232,7 @@ public class ElementTag implements ObjectTag {
         // For example, 0.12345 .round_to_precision[0.005] returns "0.125".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_to_precision", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.round_to_precision[...] must have a value.");
                 return null;
             }
@@ -2240,7 +2240,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleContext(1);
+            double precision = attribute.getDoubleParam();
             return new ElementTag(((double) Math.round(object.asDouble() / precision)) * precision);
         });
 
@@ -2252,7 +2252,7 @@ public class ElementTag implements ObjectTag {
         // Rounds a decimal downward to the specified precision.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_down_to_precision", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.round_down_to_precision[...] must have a value.");
                 return null;
             }
@@ -2260,7 +2260,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleContext(1);
+            double precision = attribute.getDoubleParam();
             return new ElementTag(Math.floor(object.asDouble() / precision) * precision);
         });
 
@@ -2272,7 +2272,7 @@ public class ElementTag implements ObjectTag {
         // Rounds a decimal upward to the specified precision.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_up_to_precision", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.round_up_to_precision[...] must have a value.");
                 return null;
             }
@@ -2280,7 +2280,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleContext(1);
+            double precision = attribute.getDoubleParam();
             return new ElementTag(Math.ceil(object.asDouble() / precision) * precision);
         });
 
@@ -2431,11 +2431,11 @@ public class ElementTag implements ObjectTag {
         // and "alphabet1" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "false" because it has a "1".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "matches_character_set", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.matches_character_set[...] must have a value.");
                 return null;
             }
-            return new ElementTag(new AsciiMatcher(attribute.getContext(1)).isOnlyMatches(object.element));
+            return new ElementTag(new AsciiMatcher(attribute.getParam()).isOnlyMatches(object.element));
         });
 
         // <--[tag]
@@ -2452,11 +2452,11 @@ public class ElementTag implements ObjectTag {
         // and "alphabet1" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "alphabet" without the "1".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "trim_to_character_set", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ElementTag.trim_to_character_set[...] must have a value.");
                 return null;
             }
-            return new ElementTag(new AsciiMatcher(attribute.getContext(1)).trimToMatches(object.element));
+            return new ElementTag(new AsciiMatcher(attribute.getParam()).trimToMatches(object.element));
         });
 
         // <--[tag]
@@ -2470,7 +2470,7 @@ public class ElementTag implements ObjectTag {
         // will return the player's name if there's a player present, or if not will return 'server', and won't show any errors from the '<player.name>' tag even without a player linked.
         // -->
         tagProcessor.registerTag(ObjectTag.class, "if_true", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasContext(1) || !attribute.startsWith("if_false", 2) || !attribute.hasContext(2)) {
+            if (!attribute.hasParam() || !attribute.startsWith("if_false", 2) || !attribute.hasContext(2)) {
                 attribute.echoError("ElementTag.if_true[...].if_false[...] malformed and missing at least one required part.");
                 return null;
             }

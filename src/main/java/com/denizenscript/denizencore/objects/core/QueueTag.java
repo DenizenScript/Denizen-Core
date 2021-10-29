@@ -281,11 +281,11 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns null if the queue lacks the definition.
         // -->
         tagProcessor.registerTag(ObjectTag.class, "definition", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("The tag QueueTag.definition[...] must have a value.");
                 return null;
             }
-            return object.getQueue().getDefinitionObject(attribute.getContext(1));
+            return object.getQueue().getDefinitionObject(attribute.getParam());
         });
 
         // <--[tag]

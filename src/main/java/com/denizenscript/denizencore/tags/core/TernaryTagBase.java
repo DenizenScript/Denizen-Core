@@ -37,11 +37,11 @@ public class TernaryTagBase {
         Attribute attribute = event.getAttributes();
 
         // Fallback if nothing to evaluate
-        if (!attribute.hasContext(1)) {
+        if (!attribute.hasParam()) {
             return;
         }
 
-        String result = attribute.getContext(1);
+        String result = attribute.getParam();
 
         if (result.equalsIgnoreCase("true")) {
             ObjectTag passValue;

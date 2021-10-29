@@ -314,7 +314,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
         tagProcessor.registerTag(ObjectTag.class, "constant", (attribute, object) -> {
             Deprecations.scriptConstantTag.warn(attribute.context);
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag ScriptTag.constant[...] must have a value.");
                 return null;
             }
@@ -322,7 +322,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (section == null) {
                 return null;
             }
-            Object obj = section.get(attribute.getContext(1).toUpperCase());
+            Object obj = section.get(attribute.getParam().toUpperCase());
             if (obj == null) {
                 return null;
             }
@@ -351,7 +351,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
         // -->
         tagProcessor.registerTag(ObjectTag.class, "parsed_key", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("The tag ScriptTag.parsed_key[...] must have a value.");
                 return null;
             }
@@ -365,7 +365,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(attribute.getContext(1).toUpperCase());
+            Object obj = section.get(attribute.getParam().toUpperCase());
             if (obj == null) {
                 return null;
             }
@@ -381,7 +381,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Custom keys should usually go in a 'data' script container, or under a key labeled 'data' for other script containers.
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, "data_key", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("The tag ScriptTag.data_key[...] must have a value.");
                 return null;
             }
@@ -395,7 +395,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(attribute.getContext(1).toUpperCase());
+            Object obj = section.get(attribute.getParam().toUpperCase());
             if (obj == null) {
                 return null;
             }
@@ -410,7 +410,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns a list of all data keys within a script, with an optional starting-key.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "list_keys", (attribute, object) -> {
-            YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1) : "");
+            YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasParam() ? attribute.getParam() : "");
             if (conf == null) {
                 return null;
             }
@@ -424,7 +424,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns a list of all keys within a script, searching recursively, with an optional starting-key.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "list_deep_keys", (attribute, object) -> {
-            YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasContext(1) ? attribute.getContext(1) : "");
+            YamlConfiguration conf = object.getContainer().getConfigurationSection(attribute.hasParam() ? attribute.getParam() : "");
             if (conf == null) {
                 return null;
             }

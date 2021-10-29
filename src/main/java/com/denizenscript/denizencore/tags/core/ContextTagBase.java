@@ -37,7 +37,7 @@ public class ContextTagBase {
         if (event.matches("c")) {
             Deprecations.contextShorthand.warn(event.getScriptEntry());
         }
-        String contextName = attribute.getAttributeWithoutContext(2);
+        String contextName = attribute.getAttributeWithoutParam(2);
         ObjectTag obj = event.getAttributes().context.contextSource.getContext(contextName);
         if (obj != null) {
             event.setReplacedObject(CoreUtilities.autoAttrib(obj, attribute.fulfill(2)));
@@ -54,14 +54,14 @@ public class ContextTagBase {
             return;
         }
         Attribute attribute = event.getAttributes();
-        if (!attribute.hasContext(1)) {
+        if (!attribute.hasParam()) {
             return;
         }
         if (event.matches("e")) {
             Deprecations.entryShorthand.warn(event.getScriptEntry());
         }
         if (event.getScriptEntry().getResidingQueue() != null) {
-            String id = attribute.getContext(1);
+            String id = attribute.getParam();
             ScriptEntry held = event.getScriptEntry().getResidingQueue().getHeldScriptEntry(id);
             if (held == null) {
                 if (!event.hasAlternative()) {
@@ -69,7 +69,7 @@ public class ContextTagBase {
                 }
             }
             else {
-                String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutContext(2));
+                String attrib = CoreUtilities.toLowerCase(attribute.getAttributeWithoutParam(2));
                 ObjectTag got = held.getObjectTag(attrib);
                 if (got == null) {
                     if (!event.hasAlternative()) {

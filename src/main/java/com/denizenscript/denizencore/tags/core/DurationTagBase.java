@@ -15,11 +15,11 @@ public class DurationTagBase {
         // Refer to <@link ObjectType DurationTag>.
         // -->
         TagManager.registerTagHandler(DurationTag.class, "duration", (attribute) -> { // non-static because there is a randomized constructor option
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Duration tag base must have input.");
                 return null;
             }
-            return DurationTag.valueOf(attribute.getContext(1), attribute.context);
+            return DurationTag.valueOf(attribute.getParam(), attribute.context);
         });
     }
 }

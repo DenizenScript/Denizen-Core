@@ -16,10 +16,10 @@ public class ListTagBase {
         // Refer to <@link ObjectType ListTag>.
         // -->
         TagManager.registerStaticTagBaseHandler(ListTag.class, "list", (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return new ListTag();
             }
-            return ListTag.getListFor(attribute.getContextObject(1), attribute.context);
+            return ListTag.getListFor(attribute.getParamObject(), attribute.context);
         });
     }
 }

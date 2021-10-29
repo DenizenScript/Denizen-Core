@@ -51,12 +51,12 @@ public class UtilTagBase {
             // For example: random.int[1].to[3] could return 1, 2, or 3.
             // -->
             if (attribute.startsWith("int")) {
-                String stc = attribute.getContext(1);
+                String stc = attribute.getParam();
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
-                    if (ArgumentHelper.matchesInteger(stc) && ArgumentHelper.matchesInteger(attribute.getContext(1))) {
+                    if (ArgumentHelper.matchesInteger(stc) && ArgumentHelper.matchesInteger(attribute.getParam())) {
                         int min = Integer.parseInt(stc);
-                        int max = attribute.getIntContext(1);
+                        int max = attribute.getIntParam();
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -80,13 +80,13 @@ public class UtilTagBase {
             // For example: random.decimal[1].to[2] could return 1.5, 1.75, or a massive number of other options.
             // -->
             if (attribute.startsWith("decimal")
-                    && attribute.hasContext(1)) {
-                String stc = attribute.getContext(1);
+                    && attribute.hasParam()) {
+                String stc = attribute.getParam();
                 attribute = attribute.fulfill(1);
                 if (attribute.startsWith("to")) {
-                    if (ArgumentHelper.matchesDouble(stc) && ArgumentHelper.matchesDouble(attribute.getContext(1))) {
+                    if (ArgumentHelper.matchesDouble(stc) && ArgumentHelper.matchesDouble(attribute.getParam())) {
                         double min = Double.parseDouble(stc);
-                        double max = Double.parseDouble(attribute.getContext(1));
+                        double max = Double.parseDouble(attribute.getParam());
 
                         // in case the first number is larger than the second, reverse them
                         if (min > max) {
@@ -156,7 +156,7 @@ public class UtilTagBase {
             // -->
             else if (attribute.startsWith("duuid")) {
                 int size = QueueWordList.FinalWordList.size();
-                String id = (attribute.hasContext(1) ? attribute.getContext(1) : "DUUID") + "_"
+                String id = (attribute.hasParam() ? attribute.getParam() : "DUUID") + "_"
                         + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
                         + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size))
                         + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
@@ -172,8 +172,8 @@ public class UtilTagBase {
         // Note that you should NEVER use this as the input to a "foreach" command. Instead, use "repeat".
         // In most cases, there's a better way to do what you're trying to accomplish than using this tag.
         // -->
-        if (attribute.startsWith("list_numbers_to") && attribute.hasContext(1)) {
-            int to = attribute.getIntContext(1);
+        if (attribute.startsWith("list_numbers_to") && attribute.hasParam()) {
+            int to = attribute.getIntParam();
             ListTag result = new ListTag();
             for (int i = 1; i <= to; i++) {
                 result.add(String.valueOf(i));
@@ -187,8 +187,8 @@ public class UtilTagBase {
         // @description
         // Returns a list of the specified size where each entry is blank (zero characters long).
         // -->
-        if (attribute.startsWith("empty_list_entries") && attribute.hasContext(1)) {
-            int to = attribute.getIntContext(1);
+        if (attribute.startsWith("empty_list_entries") && attribute.hasParam()) {
+            int to = attribute.getIntParam();
             ListTag result = new ListTag();
             for (int i = 1; i <= to; i++) {
                 result.add("");
@@ -308,9 +308,9 @@ public class UtilTagBase {
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
         }
 
-        else if (attribute.matches("time_at") && attribute.hasContext(1)) {
+        else if (attribute.matches("time_at") && attribute.hasParam()) {
             Deprecations.timeTagRewrite.warn(attribute.context);
-            String[] dateComponents = attribute.getContext(1).split(" ");
+            String[] dateComponents = attribute.getParam().split(" ");
             String[] ymd = dateComponents[0].split("/");
             int year = Integer.parseInt(ymd[0]);
             int month = Integer.parseInt(ymd[1]) - 1;
@@ -407,13 +407,13 @@ public class UtilTagBase {
                 }
             }
             else if (attribute.startsWith("format")
-                    && attribute.hasContext(1)) {
+                    && attribute.hasParam()) {
                 try {
-                    format.applyPattern(attribute.getContext(1));
+                    format.applyPattern(attribute.getParam());
                     event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(format.format(currentDate)), attribute.fulfill(1)));
                 }
                 catch (Exception ex) {
-                    Debug.echoError("Error: invalid pattern '" + attribute.getContext(1) + "'");
+                    Debug.echoError("Error: invalid pattern '" + attribute.getParam() + "'");
                     Debug.echoError(ex);
                 }
             }
@@ -430,8 +430,8 @@ public class UtilTagBase {
         // @description
         // Parses the input YAML or JSON text into a MapTag.
         // -->
-        else if (attribute.matches("parse_yaml") && attribute.hasContext(1)) {
-            ObjectTag tagForm = CoreUtilities.objectToTagForm(YamlConfiguration.load(attribute.getContext(1)).contents, attribute.context);
+        else if (attribute.matches("parse_yaml") && attribute.hasParam()) {
+            ObjectTag tagForm = CoreUtilities.objectToTagForm(YamlConfiguration.load(attribute.getParam()).contents, attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(tagForm, attribute.fulfill(1)));
         }
 

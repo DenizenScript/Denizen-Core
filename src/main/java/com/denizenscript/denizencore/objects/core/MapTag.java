@@ -294,7 +294,7 @@ public class MapTag implements ObjectTag, Adjustable {
         tagProcessor.registerTag(MapTag.class, "sort_by_value", (attribute, object) -> {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
-            final String tag = attribute.hasContext(1) ? attribute.getRawContext(1) : null;
+            final String tag = attribute.hasParam() ? attribute.getRawParam() : null;
             Attribute subAttribute;
             try {
                 subAttribute = tag == null ? null : new Attribute(tag, attribute.getScriptEntry(), attribute.context);
@@ -333,7 +333,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example: a map of [a=1;b=2;c=3;d=4;e=5] .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of [c=3;d=4;e=5].
         // -->
         tagProcessor.registerTag(MapTag.class, "filter_tag", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Must have input to filter_tag[...]");
                 return null;
             }
@@ -343,7 +343,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                     provider.altDefs.putObject("filter_key", new ElementTag(entry.getKey().str));
                     provider.altDefs.putObject("filter_value", entry.getValue());
-                    if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
+                    if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicParam(provider).toString(), "true")) {
                         newMap.map.put(entry.getKey(), entry.getValue());
                     }
                 }
@@ -363,7 +363,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example: a map of [alpha=one;bravo=two] .parse_value_tag[<[parse_value].to_uppercase>] returns a map of [alpha=ONE;bravo=TWO].
         // -->
         tagProcessor.registerTag(MapTag.class, "parse_value_tag", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("Must have input to parse_value_tag[...]");
                 return null;
             }
@@ -373,7 +373,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
                     provider.altDefs.putObject("parse_key", new ElementTag(entry.getKey().str));
                     provider.altDefs.putObject("parse_value", entry.getValue());
-                    newMap.map.put(entry.getKey(), attribute.parseDynamicContext(1, provider));
+                    newMap.map.put(entry.getKey(), attribute.parseDynamicParam(provider));
                 }
             }
             catch (Exception ex) {
@@ -390,12 +390,12 @@ public class MapTag implements ObjectTag, Adjustable {
         // If a list is given as input, returns whether the map contains all of the specified keys.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.contains' must have an input value.");
                 return null;
             }
-            if (attribute.getContext(1).contains("|")) {
-                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+            if (attribute.getParam().contains("|")) {
+                ListTag keyList = attribute.getParamObject().asType(ListTag.class, attribute.context);
                 boolean contains = true;
                 for (String key : keyList) {
                     if (object.getObject(key) == null) {
@@ -405,7 +405,7 @@ public class MapTag implements ObjectTag, Adjustable {
                 }
                 return new ElementTag(contains);
             }
-            return new ElementTag(object.getObject(attribute.getContext(1)) != null);
+            return new ElementTag(object.getObject(attribute.getParam()) != null);
         });
 
         // <--[tag]
@@ -418,19 +418,19 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".get[b|c]" will return a list of "2|3".
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, "get", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.get' must have an input value.");
                 return null;
             }
-            if (attribute.getContext(1).contains("|")) {
-                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+            if (attribute.getParam().contains("|")) {
+                ListTag keyList = attribute.getParamObject().asType(ListTag.class, attribute.context);
                 ListTag valList = new ListTag();
                 for (String key : keyList) {
                     valList.addObject(object.getObject(key));
                 }
                 return valList;
             }
-            return object.getObject(attribute.getContext(1));
+            return object.getObject(attribute.getParam());
         });
 
         // <--[tag]
@@ -443,19 +443,19 @@ public class MapTag implements ObjectTag, Adjustable {
         // If a list is given as input, returns a list of values.
         // -->
         TagRunnable.ObjectInterface<MapTag, ObjectTag> deepGetRunnable = (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.deep_get' must have an input value.");
                 return null;
             }
-            if (attribute.getContext(1).contains("|")) {
-                ListTag keyList = attribute.getContextObject(1).asType(ListTag.class, attribute.context);
+            if (attribute.getParam().contains("|")) {
+                ListTag keyList = attribute.getParamObject().asType(ListTag.class, attribute.context);
                 ListTag valList = new ListTag();
                 for (String key : keyList) {
                     valList.addObject(object.getDeepObject(key));
                 }
                 return valList;
             }
-            return object.getDeepObject(attribute.getContext(1));
+            return object.getDeepObject(attribute.getParam());
         };
         tagProcessor.registerStaticTag(ObjectTag.class, "deep_get", deepGetRunnable);
         tagProcessor.registerStaticTag(ObjectTag.class, "", deepGetRunnable);
@@ -469,11 +469,11 @@ public class MapTag implements ObjectTag, Adjustable {
         // Keys that aren't present in the original map will be ignored.
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "get_subset", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.get_subset' must have an input value.");
                 return null;
             }
-            ListTag keys = ListTag.getListFor(attribute.getContextObject(1), attribute.context);
+            ListTag keys = ListTag.getListFor(attribute.getParamObject(), attribute.context);
             MapTag output = new MapTag();
             for (String key : keys) {
                 StringHolder keyHolder = new StringHolder(key);
@@ -496,24 +496,24 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".default[c].as[4]" will return [a=1;b=2;c=3].
         // -->
         tagProcessor.registerTag(MapTag.class, "default", (attribute, object) -> { // Non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.default' must have an input value.");
                 return null;
             }
-            String key = attribute.getContext(1);
+            String key = attribute.getParam();
             attribute.fulfill(1);
             if (!attribute.matches("as")) {
                 attribute.echoError("The tag 'MapTag.default' must be followed by '.as'.");
                 return null;
             }
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.default.as' must have an input value for 'as'.");
                 return null;
             }
             if (object.map.containsKey(new StringHolder(key))) {
                 return object;
             }
-            ObjectTag value = attribute.getContextObject(1);
+            ObjectTag value = attribute.getParamObject();
             MapTag result = object.duplicate();
             result.putObject(key, value);
             return result;
@@ -527,21 +527,21 @@ public class MapTag implements ObjectTag, Adjustable {
         // This means for example if you use "deep_with[root.leaf].as[myvalue]", you will have the key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue").
         // -->
         tagProcessor.registerTag(MapTag.class, "deep_with", (attribute, object) -> { // Non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.deep_with' must have an input value.");
                 return null;
             }
-            String key = attribute.getContext(1);
+            String key = attribute.getParam();
             attribute.fulfill(1);
             if (!attribute.matches("as")) {
                 attribute.echoError("The tag 'MapTag.deep_with' must be followed by '.as'.");
                 return null;
             }
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.deep_with.as' must have an input value for 'as'.");
                 return null;
             }
-            ObjectTag value = attribute.getContextObject(1);
+            ObjectTag value = attribute.getParamObject();
             MapTag result = object.duplicate();
             result.putDeepObject(key, value);
             return result;
@@ -556,21 +556,21 @@ public class MapTag implements ObjectTag, Adjustable {
         // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".with[c].as[4]" will return [a=1;b=2;c=4].
         // -->
         tagProcessor.registerTag(MapTag.class, "with", (attribute, object) -> { // Non-static due to hacked sub-tag
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.with' must have an input value.");
                 return null;
             }
-            String key = attribute.getContext(1);
+            String key = attribute.getParam();
             attribute.fulfill(1);
             if (!attribute.matches("as")) {
                 attribute.echoError("The tag 'MapTag.with' must be followed by '.as'.");
                 return null;
             }
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.with.as' must have an input value for 'as'.");
                 return null;
             }
-            ObjectTag value = attribute.getContextObject(1);
+            ObjectTag value = attribute.getParamObject();
             MapTag result = object.duplicate();
             result.putObject(key, value);
             return result;
@@ -602,12 +602,12 @@ public class MapTag implements ObjectTag, Adjustable {
         // Returns a copy of the map with the specified deep key(s) excluded.
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "deep_exclude", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.deep_exclude' must have an input value.");
                 return null;
             }
             MapTag result = object.duplicate();
-            for (String key : ListTag.getListFor(attribute.getContextObject(1), attribute.context)) {
+            for (String key : ListTag.getListFor(attribute.getParamObject(), attribute.context)) {
                 result.putDeepObject(key, null);
             }
             return result;
@@ -621,12 +621,12 @@ public class MapTag implements ObjectTag, Adjustable {
         // For example, on a map of [a=1;b=2;c=3], using ".exclude[b]" will return [a=1;c=3].
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "exclude", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.exclude' must have an input value.");
                 return null;
             }
             MapTag result = object.duplicate();
-            for (String key : ListTag.getListFor(attribute.getContextObject(1), attribute.context)) {
+            for (String key : ListTag.getListFor(attribute.getParamObject(), attribute.context)) {
                 result.map.remove(new StringHolder(key));
             }
             return result;
@@ -641,12 +641,12 @@ public class MapTag implements ObjectTag, Adjustable {
         // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".include[b=4;c=5]" will return [a=1;b=4;c=5].
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "include", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 attribute.echoError("The tag 'MapTag.include' must have an input value.");
                 return null;
             }
             MapTag result = object.duplicate();
-            result.map.putAll(getMapFor(attribute.getContextObject(1), attribute.context).map);
+            result.map.putAll(getMapFor(attribute.getParamObject(), attribute.context).map);
             return result;
         });
 

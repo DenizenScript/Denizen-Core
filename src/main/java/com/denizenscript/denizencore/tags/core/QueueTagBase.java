@@ -57,8 +57,8 @@ public class QueueTagBase {
             return;
         }
         // Modern tag:
-        if (attribute.hasContext(1)) {
-            QueueTag queue = attribute.contextAsType(1, QueueTag.class);
+        if (attribute.hasParam()) {
+            QueueTag queue = attribute.paramAsType(QueueTag.class);
             if (queue == null) {
                 return;
             }

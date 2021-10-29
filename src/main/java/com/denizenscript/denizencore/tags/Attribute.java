@@ -19,9 +19,9 @@ public class Attribute {
 
         public final String key;
 
-        public final String context;
+        public final String rawParam;
 
-        public ParseableTag contextParsed;
+        public ParseableTag paramParsed;
 
         public ObjectTagProcessor.TagData<? extends ObjectTag, ? extends ObjectTag> data;
 
@@ -29,19 +29,19 @@ public class Attribute {
             if (inp.endsWith("]") && CoreUtilities.contains(inp, '[')) {
                 int ind = inp.indexOf('[');
                 rawKey = inp.substring(0, ind);
-                context = inp.substring(ind + 1, inp.length() - 1);
+                rawParam = inp.substring(ind + 1, inp.length() - 1);
             }
             else {
                 rawKey = inp;
-                context = null;
+                rawParam = null;
             }
             key = CoreUtilities.toLowerCase(rawKey);
         }
 
         @Override
         public String toString() {
-            if (context != null) {
-                return key + "[" + context + "]";
+            if (rawParam != null) {
+                return key + "[" + rawParam + "]";
             }
             return key;
         }
@@ -193,14 +193,14 @@ public class Attribute {
         }
     }
 
-    public boolean matches(String string) {
+    public final boolean matches(String string) {
         if (fulfilled >= attributes.length) {
             return false;
         }
         return attributes[fulfilled].key.equals(string);
     }
 
-    public boolean startsWith(String string) {
+    public final boolean startsWith(String string) {
         if (fulfilled >= attributes.length) {
             return false;
         }
@@ -233,15 +233,15 @@ public class Attribute {
         return false;
     }
 
-    public boolean startsWith(String string, int attribute) {
-        return CoreUtilities.toLowerCase(getAttributeWithoutContext(attribute)).equals(string);
+    public final boolean startsWith(String string, int attribute) {
+        return CoreUtilities.toLowerCase(getAttributeWithoutParam(attribute)).equals(string);
     }
 
-    public boolean isComplete() {
+    public final boolean isComplete() {
         return fulfilled >= attributes.length;
     }
 
-    public Attribute fulfill(int attributes) {
+    public final Attribute fulfill(int attributes) {
         hadManualFulfill = true;
         resetErrorTrack();
         if (filled != null) {
@@ -275,12 +275,27 @@ public class Attribute {
         }
     }
 
-    public boolean hasContext(int attribute) {
+    public final boolean hasParam() {
+        if (fulfilled >= attributes.length) {
+            return false;
+        }
+        if (attributes[fulfilled].rawParam != null) {
+            return true;
+        }
+        if (Debug.verbose) {
+            Debug.log("Attribute " + fulfilled + " is missing param, hasParamFailed");
+        }
+        hasContextFailed = true;
+        return false;
+    }
+
+    @Deprecated
+    public final boolean hasContext(int attribute) {
         attribute += fulfilled - 1;
         if (attribute < 0 || attribute >= attributes.length) {
             return false;
         }
-        if (attributes[attribute].context != null) {
+        if (attributes[attribute].rawParam != null) {
             return true;
         }
         if (Debug.verbose) {
@@ -341,16 +356,15 @@ public class Attribute {
         }
     }
 
-    public String getRawContext(int attribute) {
-        attribute += fulfilled - 1;
-        if (attribute < 0 || attribute >= attributes.length) {
+    public final String getRawParam() {
+        if (fulfilled >= attributes.length) {
             return null;
         }
-        return attributes[attribute].context;
+        return attributes[fulfilled].rawParam;
     }
 
-    public ObjectTag parseDynamicContext(int attribute, OverridingDefinitionProvider customProvider) {
-        String inp = getRawContext(attribute);
+    public final ObjectTag parseDynamicParam(OverridingDefinitionProvider customProvider) {
+        String inp = getRawParam();
         if (inp == null) {
             return null;
         }
@@ -364,7 +378,16 @@ public class Attribute {
         }
     }
 
-    public <T extends ObjectTag> T contextAsType(int attribute, Class<T> dClass) {
+    public final <T extends ObjectTag> T paramAsType(Class<T> dClass) {
+        ObjectTag contextObj = getParamObject();
+        if (contextObj == null) {
+            return null;
+        }
+        return CoreUtilities.asType(contextObj, dClass, context);
+    }
+
+    @Deprecated
+    public final <T extends ObjectTag> T contextAsType(int attribute, Class<T> dClass) {
         ObjectTag contextObj = getContextObject(attribute);
         if (contextObj == null) {
             return null;
@@ -372,7 +395,11 @@ public class Attribute {
         return CoreUtilities.asType(contextObj, dClass, context);
     }
 
-    public ObjectTag getContextObject(int attribute) {
+    public final ObjectTag getParamObject() {
+        return getContextObject(1); // TODO
+    }
+
+    public final ObjectTag getContextObject(int attribute) {
         attribute += fulfilled - 1;
         if (attribute < 0 || attribute >= attributes.length) {
             return null;
@@ -382,23 +409,36 @@ public class Attribute {
             return tagged;
         }
         AttributeComponent component = attributes[attribute];
-        if (component.contextParsed == null) {
-            String inp = attributes[attribute].context;
+        if (component.paramParsed == null) {
+            String inp = attributes[attribute].rawParam;
             if (inp == null) {
                 return null;
             }
-            component.contextParsed = TagManager.parseTextToTag(component.context, context);
+            component.paramParsed = TagManager.parseTextToTag(component.rawParam, context);
         }
-        if (component.contextParsed == null) {
+        if (component.paramParsed == null) {
             return null;
         }
-        tagged = component.contextParsed.parse(context);
+        tagged = component.paramParsed.parse(context);
         contexts[attribute] = tagged;
         return tagged;
     }
 
-    public String getContext(int attribute) {
+    public final String getParam() {
+        return CoreUtilities.stringifyNullPass(getParamObject());
+    }
+
+    @Deprecated
+    public final String getContext(int attribute) {
         return CoreUtilities.stringifyNullPass(getContextObject(attribute));
+    }
+
+    public final ElementTag getParamElement() {
+        ObjectTag obj = getParamObject();
+        if (obj == null) {
+            return null;
+        }
+        return obj.asType(ElementTag.class, context);
     }
 
     private boolean hadAlternative = false;
@@ -464,10 +504,10 @@ public class Attribute {
 
     static {
         fallbackTags.put("if_null", new TagManager.TagBaseData("if_null", ObjectTag.class, (attribute) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return attribute.getContextObject(1);
+            return attribute.getParamObject();
         }, false));
         fallbackTags.put("exists", new TagManager.TagBaseData("exists", ElementTag.class, (attribute) -> {
             return new ElementTag(false);
@@ -501,21 +541,26 @@ public class Attribute {
         }
     }
 
-    public long getLongContext(int attribute) {
+    public final long getLongParam() {
         try {
-            if (hasContext(attribute)) {
-                return Long.parseLong(getContext(attribute));
+            if (hasParam()) {
+                return Long.parseLong(getParam());
             }
         }
         catch (Exception ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getParam() + "'...: " + ex.getMessage());
             }
         }
         return 0;
     }
 
-    public int getIntContext(int attribute) {
+    public final int getIntParam() {
+        return getIntContext(1); // TODO
+    }
+
+    @Deprecated
+    public final int getIntContext(int attribute) {
         try {
             if (hasContext(attribute)) {
                 return Integer.parseInt(getContext(attribute));
@@ -529,6 +574,11 @@ public class Attribute {
         return 0;
     }
 
+    public final double getDoubleParam() {
+        return getDoubleContext(1); // TODO
+    }
+
+    @Deprecated
     public double getDoubleContext(int attribute) {
         try {
             if (hasContext(attribute)) {
@@ -563,7 +613,7 @@ public class Attribute {
         return attributes[num].toString();
     }
 
-    public String getAttributeWithoutContext(int num) {
+    public String getAttributeWithoutParam(int num) {
         num += fulfilled - 1;
         if (num < 0 || num >= attributes.length) {
             return "";
@@ -630,8 +680,8 @@ public class Attribute {
             if (contexts[i] != null) {
                 sb.append("<LG>[<A>").append(contexts[i]).append("<LG>].");
             }
-            else if (attributes[i].context != null) {
-                sb.append("<LG>[").append(filled == null || filled[i] != 3 ? "<Y>" : "").append(attributes[i].context).append("<LG>].");
+            else if (attributes[i].rawParam != null) {
+                sb.append("<LG>[").append(filled == null || filled[i] != 3 ? "<Y>" : "").append(attributes[i].rawParam).append("<LG>].");
             }
             else {
                 sb.append("<LG>.");

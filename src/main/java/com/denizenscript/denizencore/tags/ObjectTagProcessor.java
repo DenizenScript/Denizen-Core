@@ -79,21 +79,21 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns the 'determine' result of a procedure script, passing this object in as the context value.
         // -->
         registerTag(ObjectTag.class, "proc", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
             ScriptTag script;
             String path = null;
-            if (attribute.getContext(1).indexOf('.') > 0) {
-                String[] split = attribute.getContext(1).split("\\.", 2);
+            if (attribute.getParam().indexOf('.') > 0) {
+                String[] split = attribute.getParam().split("\\.", 2);
                 path = split[1];
                 script = ScriptTag.valueOf(split[0], attribute.context);
             }
             else {
-                script = attribute.contextAsType(1, ScriptTag.class);
+                script = attribute.paramAsType(ScriptTag.class);
             }
             if (script == null) {
-                attribute.echoError("Missing script for procedure script tag '" + attribute.getContext(1) + "'!");
+                attribute.echoError("Missing script for procedure script tag '" + attribute.getParam() + "'!");
                 return null;
             }
             if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
@@ -136,7 +136,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
         registerTag(ObjectTag.class, "if_null", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
             return object;
@@ -177,10 +177,10 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Consider also <@link tag ObjectTag.null_if_tag>.
         // -->
         registerTag(ObjectTag.class, "null_if", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            String tag = attribute.getContext(1);
+            String tag = attribute.getParam();
             boolean defaultValue = tag.endsWith("||true");
             if (defaultValue) {
                 tag = tag.substring(0, tag.length() - "||true".length());
@@ -213,12 +213,12 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Consider also <@link tag ObjectTag.null_if_tag>.
         // -->
         registerTag(ObjectTag.class, "null_if_tag", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             provider.altDefs.putObject("null_if_value", object);
-            if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicContext(1, provider).toString(), "true")) {
+            if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicParam(provider).toString(), "true")) {
                 return null;
             }
             return object;
@@ -245,15 +245,15 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             // Returns the outcome of the comparable, either true or false. For information on operators, see <@link language operator>.
             // Equivalent to <@link tag ObjectTag.is[<operator>].to[<element>]>
             // -->
-            if (attribute.hasContext(1) && (attribute.startsWith("to", 2) || attribute.startsWith("than", 2)) && attribute.hasContext(2)) {
+            if (attribute.hasParam() && (attribute.startsWith("to", 2) || attribute.startsWith("than", 2)) && attribute.hasContext(2)) {
                 boolean negative = false;
                 String operator;
-                if (attribute.getContext(1).startsWith("!")) {
-                    operator = attribute.getContext(1).substring(1);
+                if (attribute.getParam().startsWith("!")) {
+                    operator = attribute.getParam().substring(1);
                     negative = true;
                 }
                 else {
-                    operator = attribute.getContext(1);
+                    operator = attribute.getParam();
                 }
                 attribute = attribute.fulfill(1);
                 Comparable.Operator comparableOperator = Comparable.getOperatorFor(operator);
@@ -261,7 +261,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                     attribute.echoError("Unknown operator '" + operator + "'.");
                     return null;
                 }
-                return new ElementTag(Comparable.compare(object, attribute.getContextObject(1), comparableOperator, negative, attribute.context));
+                return new ElementTag(Comparable.compare(object, attribute.getParamObject(), comparableOperator, negative, attribute.context));
             }
             return null;
         });

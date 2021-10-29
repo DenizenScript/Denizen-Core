@@ -402,11 +402,11 @@ public class DurationTag implements ObjectTag {
         // returns this duration minus another.
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, "sub", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("The tag DurationTag.sub[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() - attribute.contextAsType(1, DurationTag.class).getTicks());
+            return new DurationTag(object.getTicks() - attribute.paramAsType(DurationTag.class).getTicks());
         });
 
         // <--[tag]
@@ -416,11 +416,11 @@ public class DurationTag implements ObjectTag {
         // returns this duration plus another.
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, "add", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 Debug.echoError("The tag DurationTag.add[...] must have a value.");
                 return null;
             }
-            return new DurationTag(object.getTicks() + attribute.contextAsType(1, DurationTag.class).getTicks());
+            return new DurationTag(object.getTicks() + attribute.paramAsType(DurationTag.class).getTicks());
         });
 
         // <--[tag]
@@ -432,10 +432,10 @@ public class DurationTag implements ObjectTag {
         // Equivalent to if comparison: >
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.seconds > attribute.contextAsType(1, DurationTag.class).seconds);
+            return new ElementTag(object.seconds > attribute.paramAsType(DurationTag.class).seconds);
         });
 
         // <--[tag]
@@ -447,10 +447,10 @@ public class DurationTag implements ObjectTag {
         // Equivalent to if comparison: <
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_less_than", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.seconds < attribute.contextAsType(1, DurationTag.class).seconds);
+            return new ElementTag(object.seconds < attribute.paramAsType(DurationTag.class).seconds);
         });
 
         // <--[tag]
@@ -462,10 +462,10 @@ public class DurationTag implements ObjectTag {
         // Equivalent to if comparison: >=
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.seconds >= attribute.contextAsType(1, DurationTag.class).seconds);
+            return new ElementTag(object.seconds >= attribute.paramAsType(DurationTag.class).seconds);
         });
 
         // <--[tag]
@@ -477,10 +477,10 @@ public class DurationTag implements ObjectTag {
         // Equivalent to if comparison: <=
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_less_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasContext(1)) {
+            if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.seconds <= attribute.contextAsType(1, DurationTag.class).seconds);
+            return new ElementTag(object.seconds <= attribute.paramAsType(DurationTag.class).seconds);
         });
 
         tagProcessor.registerTag(TimeTag.class, "time", (attribute, object) -> {

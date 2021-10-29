@@ -196,7 +196,7 @@ public class ReplaceableTagEvent {
     }
 
     public String getName() {
-        return core_attributes.getAttributeWithoutContext(1);
+        return core_attributes.getAttributeWithoutParam(1);
     }
 
     @Deprecated
@@ -221,7 +221,7 @@ public class ReplaceableTagEvent {
                 core_attributes.filled[core_attributes.fulfilled] = 2;
             }
             core_attributes.fulfilled = index;
-            alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutContext(1));
+            alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutParam(1));
             return TagManager.readSingleTagObjectNoDebug(context, this);
         }
         if (mainRef.alternative != null) {
