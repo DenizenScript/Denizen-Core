@@ -91,7 +91,7 @@ public class TagCodeGenerator {
                 }
             }
         }
-        if (applicableParts == 0) {
+        if (applicableParts == 0 && staticParts == 0) {
             return null;
         }
         try {
