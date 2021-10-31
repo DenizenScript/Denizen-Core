@@ -202,13 +202,12 @@ public class ForeachCommand extends BracedCommand {
                         queue.addDefinition(data.keyName, new ElementTag(data.keys.get(data.index - 1)));
                     }
                     queue.addDefinition(data.valueName, data.list.getObject(data.index - 1));
-                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
+                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommandsDirect(scriptEntry.getOwner(), scriptEntry);
                     ScriptEntry callbackEntry = scriptEntry.clone();
                     callbackEntry.setOwner(scriptEntry.getOwner());
                     bracedCommands.add(callbackEntry);
                     for (ScriptEntry cmd : bracedCommands) {
                         cmd.setInstant(true);
-                        cmd.copyFrom(scriptEntry);
                     }
                     queue.injectEntriesAtStart(bracedCommands);
                 }
@@ -258,14 +257,9 @@ public class ForeachCommand extends BracedCommand {
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("FOREACH", new String[]{"\0CALLBACK"},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-            List<BracedData> bdlist = getBracedCommands(scriptEntry);
-            if (bdlist == null || bdlist.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
+            List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget to add the sub-commands inside the command?");
+                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
                 return;
             }
             if (datum.keys != null) {

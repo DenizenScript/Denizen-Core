@@ -166,14 +166,13 @@ public class RepeatCommand extends BracedCommand {
                         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Repeat loop " + data.index);
                     }
                     queue.addDefinition(data.valueName, String.valueOf(data.index));
-                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
+                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommandsDirect(scriptEntry.getOwner(), scriptEntry);
                     ScriptEntry callbackEntry = scriptEntry.clone();
                     callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
                     bracedCommands.add(callbackEntry);
                     for (ScriptEntry cmd : bracedCommands) {
                         cmd.setInstant(true);
-                        cmd.copyFrom(scriptEntry);
                     }
                     queue.injectEntriesAtStart(bracedCommands);
                 }
@@ -212,14 +211,9 @@ public class RepeatCommand extends BracedCommand {
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK"},
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
-            List<BracedCommand.BracedData> data = getBracedCommands(scriptEntry);
-            if (data == null || data.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = data.get(0).value;
+            List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget to add the sub-commands inside the command?");
+                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
                 return;
             }
             datum.originalValue = queue.getDefinitionObject(datum.valueName);
@@ -229,7 +223,6 @@ public class RepeatCommand extends BracedCommand {
             bracedCommandsList.add(callbackEntry);
             for (ScriptEntry cmd : bracedCommandsList) {
                 cmd.setInstant(true);
-                cmd.copyFrom(scriptEntry);
             }
             scriptEntry.setInstant(true);
             queue.injectEntriesAtStart(bracedCommandsList);

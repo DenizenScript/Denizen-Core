@@ -397,18 +397,16 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
     }
 
-    public final ScriptQueue addEntries(List<ScriptEntry> entries) {
+    public final void addEntries(List<ScriptEntry> entries) {
         script_entries.addAll(entries);
-        return this;
     }
 
     public final ListQueue getEntries() {
         return script_entries;
     }
 
-    public final ScriptQueue injectEntriesAtStart(List<ScriptEntry> entries) {
+    public final void injectEntriesAtStart(List<ScriptEntry> entries) {
         script_entries.addAllToStart(entries);
-        return this;
     }
 
     public final boolean removeFirst() {

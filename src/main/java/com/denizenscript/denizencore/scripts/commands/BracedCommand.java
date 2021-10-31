@@ -41,6 +41,39 @@ public abstract class BracedCommand extends AbstractCommand {
         return getBracedCommands(scriptEntry, true);
     }
 
+    public static List<ScriptEntry> getBracedCommandsDirect(ScriptEntry scriptEntry, ScriptEntry copyFrom) {
+        if (scriptEntry == null) {
+            return null;
+        }
+        List<BracedData> bracedSet = scriptEntry.getBracedSet();
+        if (bracedSet == null) {
+            List<Object> contents = scriptEntry.getInsideList();
+            if (contents == null) {
+                return null;
+            }
+            List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents, scriptEntry.getScript() == null ? null : scriptEntry.getScript().getContainer(), scriptEntry.entryData);
+            BracedData bd = new BracedData();
+            bd.key = "base";
+            bd.args = new ArrayList<>();
+            bd.value = entries;
+            bracedSet = new ArrayList<>(1);
+            bracedSet.add(bd);
+            scriptEntry.setBracedSet(bracedSet);
+        }
+        if (bracedSet.isEmpty()) {
+            return null;
+        }
+        BracedData bd = bracedSet.get(0);
+        ArrayList<ScriptEntry> toReturn = new ArrayList<>(bd.value.size());
+        for (ScriptEntry sEntry : bd.value) {
+            ScriptEntry newEntry = sEntry.clone();
+            newEntry.copyFrom(copyFrom);
+            newEntry.entryData.scriptEntry = newEntry;
+            toReturn.add(newEntry);
+        }
+        return toReturn;
+    }
+
     public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry, boolean duplicate) {
         if (scriptEntry == null) {
             return null;
@@ -75,10 +108,9 @@ public abstract class BracedCommand extends AbstractCommand {
             }
             return res;
         }
-        if (scriptEntry.getInsideList() != null) {
-            List<Object> contents = scriptEntry.getInsideList();
-            List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents,
-                    scriptEntry.getScript() == null ? null : scriptEntry.getScript().getContainer(), scriptEntry.entryData);
+        List<Object> contents = scriptEntry.getInsideList();
+        if (contents != null) {
+            List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents, scriptEntry.getScript() == null ? null : scriptEntry.getScript().getContainer(), scriptEntry.entryData);
             BracedData bd = new BracedData();
             bd.key = "base";
             bd.args = new ArrayList<>();

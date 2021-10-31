@@ -175,7 +175,7 @@ public class WhileCommand extends BracedCommand {
                         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "While loop " + data.index);
                     }
                     queue.addDefinition("loop_index", String.valueOf(data.index));
-                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommands(scriptEntry.getOwner()).get(0).value;
+                    List<ScriptEntry> bracedCommands = BracedCommand.getBracedCommandsDirect(scriptEntry.getOwner(), scriptEntry);
                     ScriptEntry callbackEntry = scriptEntry.clone();
                     callbackEntry.copyFrom(scriptEntry);
                     callbackEntry.setOwner(scriptEntry.getOwner());
@@ -215,14 +215,9 @@ public class WhileCommand extends BracedCommand {
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             callbackEntry.copyFrom(scriptEntry);
             callbackEntry.setOwner(scriptEntry);
-            List<BracedData> data = getBracedCommands(scriptEntry);
-            if (data == null || data.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
-                return;
-            }
-            List<ScriptEntry> bracedCommandsList = data.get(0).value;
+            List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget to add the sub-commands inside the command?");
+                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
                 return;
             }
             datum.originalIndexValue = queue.getDefinitionObject("loop_index");

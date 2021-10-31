@@ -188,7 +188,8 @@ public class OldEventManager {
                                 + "' for " + script.getName());
 
                         // Add entries and context to the queue
-                        ScriptQueue queue = new InstantQueue(script.getName()).addEntries(entries);
+                        ScriptQueue queue = new InstantQueue(script.getName());
+                        queue.addEntries(entries);
 
                         if (context != null) {
                             OldEventContextSource oecs = new OldEventContextSource();
