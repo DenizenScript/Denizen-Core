@@ -82,7 +82,7 @@ public class GotoCommand extends AbstractCommand {
                 if (CoreUtilities.equalsIgnoreCase(entry.getCommandName(), "mark") && args.size() > 0 && CoreUtilities.equalsIgnoreCase(args.get(0), markName)) {
                     break;
                 }
-                scriptEntry.getResidingQueue().removeEntry(0);
+                scriptEntry.getResidingQueue().removeFirst();
             }
         }
         else {

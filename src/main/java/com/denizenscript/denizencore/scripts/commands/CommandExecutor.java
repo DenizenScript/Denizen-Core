@@ -76,7 +76,7 @@ public class CommandExecutor {
     // Though if you really want to, you can use tags here like <@link tag objecttag.is.to> or <@link tag elementtag.and> or <@link tag elementtag.or>.
     // -->
 
-    public boolean execute(ScriptEntry scriptEntry) {
+    public static boolean execute(ScriptEntry scriptEntry) {
         if (scriptEntry.dbCallShouldDebug()) {
             debugSingleExecution(scriptEntry);
         }

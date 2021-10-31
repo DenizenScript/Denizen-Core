@@ -113,10 +113,10 @@ public class WhileCommand extends BracedCommand {
                     List<String> args = entry.getOriginalArguments();
                     if (entry.getCommandName().equals("WHILE") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         ((WhileData) entry.getOwner().getData()).reapplyAtEnd(queue);
-                        queue.removeEntry(0);
+                        queue.removeFirst();
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -144,7 +144,7 @@ public class WhileCommand extends BracedCommand {
                     if (entry.getCommandName().equals("WHILE") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -183,7 +183,7 @@ public class WhileCommand extends BracedCommand {
                     for (int i = 0; i < bracedCommands.size(); i++) {
                         bracedCommands.get(i).setInstant(true);
                     }
-                    queue.injectEntries(bracedCommands, 0);
+                    queue.injectEntriesAtStart(bracedCommands);
                 }
                 else {
                     data.reapplyAtEnd(queue);
@@ -232,7 +232,7 @@ public class WhileCommand extends BracedCommand {
                 bracedCommandsList.get(i).setInstant(true);
             }
             scriptEntry.setInstant(true);
-            queue.injectEntries(bracedCommandsList, 0);
+            queue.injectEntriesAtStart(bracedCommandsList);
         }
     }
 }

@@ -113,7 +113,7 @@ public class IfCommand extends BracedCommand {
                     Debug.echoError(scriptEntry, "Upcoming else command is mis-formatted!");
                     break;
                 }
-                scriptEntry.getResidingQueue().script_entries.remove(0);
+                scriptEntry.getResidingQueue().script_entries.removeFirst();
                 BracedData elseRef = getBracedCommands(nextEntry).get(0);
                 elseRef.key = nextEntry.toString();
                 elseRef.args = new ArrayList<>();
@@ -210,7 +210,7 @@ public class IfCommand extends BracedCommand {
                 for (ScriptEntry entry : bracedCommandsList) {
                     entry.setInstant(true);
                 }
-                scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
+                scriptEntry.getResidingQueue().injectEntriesAtStart(bracedCommandsList);
                 return;
             }
             else {
@@ -242,7 +242,7 @@ public class IfCommand extends BracedCommand {
                     for (ScriptEntry entry : bracedCommandsList) {
                         entry.setInstant(true);
                     }
-                    scriptEntry.getResidingQueue().injectEntries(bracedCommandsList, 0);
+                    scriptEntry.getResidingQueue().injectEntriesAtStart(bracedCommandsList);
                     return;
                 }
             }
@@ -259,7 +259,7 @@ public class IfCommand extends BracedCommand {
             entry.entryData = scriptEntry.entryData.clone();
             entry.updateContext();
             entry.setInstant(true);
-            scriptEntry.getResidingQueue().injectEntry(entry, 0);
+            scriptEntry.getResidingQueue().injectEntryAtStart(entry);
         }
         catch (Exception e) {
             Debug.echoError(e);

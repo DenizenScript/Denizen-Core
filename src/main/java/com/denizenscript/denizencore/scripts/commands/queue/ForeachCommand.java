@@ -148,10 +148,10 @@ public class ForeachCommand extends BracedCommand {
                     List<String> args = entry.getOriginalArguments();
                     if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         ((ForeachData) entry.getOwner().getData()).reapplyAtEnd(queue);
-                        queue.removeEntry(0);
+                        queue.removeFirst();
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -179,7 +179,7 @@ public class ForeachCommand extends BracedCommand {
                     if (entry.getCommandName().equals("FOREACH") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -210,7 +210,7 @@ public class ForeachCommand extends BracedCommand {
                         cmd.setInstant(true);
                         cmd.copyFrom(scriptEntry);
                     }
-                    queue.injectEntries(bracedCommands, 0);
+                    queue.injectEntriesAtStart(bracedCommands);
                 }
                 else {
                     data.reapplyAtEnd(queue);
@@ -286,7 +286,7 @@ public class ForeachCommand extends BracedCommand {
                 cmd.copyFrom(scriptEntry);
             }
             scriptEntry.setInstant(true);
-            queue.injectEntries(bracedCommandsList, 0);
+            queue.injectEntriesAtStart(bracedCommandsList);
         }
     }
 }

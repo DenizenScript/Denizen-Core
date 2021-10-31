@@ -125,7 +125,7 @@ public class InjectCommand extends AbstractCommand {
             scriptEntry.getResidingQueue().runNow(entries);
         }
         else {
-            scriptEntry.getResidingQueue().injectEntries(entries, 0);
+            scriptEntry.getResidingQueue().injectEntriesAtStart(entries);
         }
     }
 }

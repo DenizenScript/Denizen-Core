@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
+import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
@@ -28,10 +29,6 @@ public class TimedQueue extends ScriptQueue {
             return serverTimeEnd > DenizenCore.serverTimeMillis;
         }
     }
-
-    /////////////////////
-    // Private instance fields and constructors
-    /////////////////////
 
     private Schedulable schedulable;
 
@@ -62,10 +59,6 @@ public class TimedQueue extends ScriptQueue {
         super(id);
         ticks = timing.getTicks();
     }
-
-    /////////////////////
-    // Public instance setters and getters
-    /////////////////////
 
     public boolean isInstantSpeed() {
         return ticks <= 0;
@@ -127,6 +120,22 @@ public class TimedQueue extends ScriptQueue {
         }
     }
 
+    public void revolve() {
+        if (script_entries.isEmpty()) {
+            if (!waitWhenEmpty) {
+                stop();
+            }
+            return;
+        }
+        if (paused || isDelayed()) {
+            return;
+        }
+        ScriptEngine.revolve(this);
+        if (script_entries.isEmpty() && !waitWhenEmpty) {
+            stop();
+        }
+    }
+
     @Override
     public String getName() {
         return "TimedQueue";
@@ -138,16 +147,5 @@ public class TimedQueue extends ScriptQueue {
             schedulable.cancel();
             schedulable = null;
         }
-    }
-
-    @Override
-    public boolean shouldRevolve() {
-        // Check if this Queue isn't paused
-        if (paused) {
-            return false;
-        }
-
-        // If it's delayed, schedule it for later
-        return !isDelayed();
     }
 }

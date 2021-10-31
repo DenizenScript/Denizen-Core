@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
+import com.denizenscript.denizencore.utilities.ListQueue;
 import com.denizenscript.denizencore.utilities.QueueWordList;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -77,15 +78,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return allQueues.containsKey(id);
     }
 
-    /////////////////////
-    // Public instance fields
-    /////////////////////
-
     public String id;
 
     public String debugId;
-
-    public boolean was_cleared = false;
 
     /**
      * Whether this queue is locked to procedural commands only.
@@ -97,11 +92,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      */
     public Consumer<String> debugOutput = null;
 
-    /////////////////////
-    // Private instance fields and constructors
-    /////////////////////
-
-    public final List<ScriptEntry> script_entries = new ArrayList<>(4);
+    public final ListQueue script_entries = new ListQueue(4);
 
     private ScriptEntry lastEntryExecuted = null;
 
@@ -114,9 +105,33 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public ListTag determinations = null;
 
-    private final HashMap<String, ScriptEntry> held_entries = new HashMap<>();
+    private HashMap<String, ScriptEntry> held_entries;
 
     public ScriptTag script;
+
+    public ContextSource contextSource = null;
+
+    public DeterminationTarget determinationTarget = null;
+
+    public ScriptQueue replacementQueue = null;
+
+    public boolean is_stopping = false;
+
+    public boolean isStopped = false;
+
+    /**
+     * If set true, the queue will simply freeze and wait when it's empty.
+     * Otherwise (set false), it will fully stop and remove itself when empty.
+     */
+    public boolean waitWhenEmpty = false;
+
+    public boolean is_started;
+
+    public long startTime = 0;
+
+    public long startTimeMilli = 0;
+
+    private Runnable callback = null;
 
     protected ScriptQueue(String id) {
         this.id = id;
@@ -124,24 +139,22 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         total_queues++;
     }
 
-    /////////////////////
-    // Public instance setters and getters
-    /////////////////////
-
-    public ScriptEntry getHeldScriptEntry(String id) {
+    public final ScriptEntry getHeldScriptEntry(String id) {
+        if (held_entries == null) {
+            return null;
+        }
         return held_entries.get(CoreUtilities.toLowerCase(id));
     }
 
-    public ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
+    public final ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
+        if (held_entries == null) {
+            held_entries = new HashMap<>();
+        }
         held_entries.put(CoreUtilities.toLowerCase(id), entry);
         return this;
     }
 
-    public ContextSource contextSource = null;
-
-    public DeterminationTarget determinationTarget = null;
-
-    public void setContextSource(ContextSource source) {
+    public final void setContextSource(ContextSource source) {
         contextSource = source;
     }
 
@@ -197,12 +210,11 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         return definitions;
     }
 
-    public ScriptEntry getLastEntryExecuted() {
+    public final ScriptEntry getLastEntryExecuted() {
         return lastEntryExecuted;
     }
 
-    public void clear() {
-        was_cleared = true;
+    public final void clear() {
         script_entries.clear();
     }
 
@@ -210,11 +222,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         this.delay_time = delayTime;
     }
 
-    ///////////////////
-    // Public 'functional' methods
-    //////////////////
-
-    public void generateId(String prefix, int depth) {
+    public final void generateId(String prefix, int depth) {
         if (prefix.startsWith("FORCE:")) {
             id = prefix.substring("FORCE:".length());
             debugId = id;
@@ -240,15 +248,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         }
     }
 
-    public ScriptQueue replacementQueue = null;
-
     /**
      * Converts any queue type to a timed queue.
      *
      * @param delay how long to delay initially.
      * @return the newly created queue.
      */
-    public TimedQueue forceToTimed(TimedQueue.DelayTracker delay) {
+    public final TimedQueue forceToTimed(TimedQueue.DelayTracker delay) {
         Runnable r = callback;
         callback = null;
         TimedQueue newQueue = new TimedQueue("FORCE:" + id, 0);
@@ -268,8 +274,10 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.definitions = definitions.duplicate();
         newQueue.setContextSource(contextSource);
         newQueue.determinationTarget = determinationTarget;
-        for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
-            newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
+        if (held_entries != null) {
+            for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
+                newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
+            }
         }
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
         clear();
@@ -284,29 +292,19 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public abstract void onStart();
 
-    public boolean is_started;
-
-    public long startTime = 0;
-
-    public long startTimeMilli = 0;
-
     public String getName() {
         return "UnidentifiedQueueType";
     }
 
-    public void runMeNow() {
-        onStart();
-    }
-
-    public void queueDebug(String message) {
+    public final void queueDebug(String message) {
         Debug.echoDebug(this, "<O>" + message.replace("<QUEUE>", debugId + "<O>"));
     }
 
-    public void start() {
+    public final void start() {
         start(true);
     }
 
-    public void start(boolean doBasicConfig) {
+    public final void start(boolean doBasicConfig) {
         if (is_started) {
             return;
         }
@@ -332,12 +330,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             }
         }
         if (is_delayed) {
-            Schedulable schedulable = new OneTimeSchedulable(this::runMeNow, ((float) delay) / 1000);
+            Schedulable schedulable = new OneTimeSchedulable(this::onStart, ((float) delay) / 1000);
             DenizenCore.schedule(schedulable);
 
         }
         else {
-            runMeNow();
+            onStart();
         }
     }
 
@@ -347,41 +345,29 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      *
      * @param entries the entries to be run.
      */
-    public void runNow(List<ScriptEntry> entries) {
+    public final void runNow(List<ScriptEntry> entries) {
         ScriptEntry nextup = getQueueSize() > 0 ? getEntry(0) : null;
-        injectEntries(entries, 0);
-        while (getQueueSize() > 0 && getEntry(0) != nextup && !was_cleared) {
+        injectEntriesAtStart(entries);
+        while (getQueueSize() > 0 && getEntry(0) != nextup) {
             getEntry(0).setInstant(true);
             getEntry(0).setFinished(true);
-            DenizenCore.scriptEngine.revolveOnceForce(this);
+            ScriptEngine.revolveOnceForce(this);
         }
         return;
     }
-
-    private Runnable callback = null;
 
     /**
      * Adds a runnable to call back when the queue is completed.
      *
      * @param r the Runnable to call back
      */
-    public void callBack(Runnable r) {
+    public final void callBack(Runnable r) {
         callback = r;
     }
 
     protected abstract void onStop();
 
-    public boolean is_stopping = false;
-
-    public boolean isStopped = false;
-
-    /**
-     * If set true, the queue will simply freeze and wait when it's empty.
-     * Otherwise (set false), it will fully stop and remove itself when empty.
-     */
-    public boolean waitWhenEmpty = false;
-
-    public void stop() {
+    public final void stop() {
         if (is_stopping) {
             return;
         }
@@ -398,92 +384,57 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         isStopped = true;
     }
 
-    ////////////////////
-    // Internal methods and fields
-    ////////////////////
-
-    public void setLastEntryExecuted(ScriptEntry entry) {
+    public final void setLastEntryExecuted(ScriptEntry entry) {
         lastEntryExecuted = entry;
     }
 
-    public abstract boolean shouldRevolve();
-
-    public void revolve() {
-        if (script_entries.isEmpty()) {
-            if (!waitWhenEmpty) {
-                stop();
-            }
-            return;
-        }
-        if (!shouldRevolve()) {
-            return;
-        }
-        DenizenCore.scriptEngine.revolve(this);
-        if (script_entries.isEmpty() && !waitWhenEmpty) {
-            stop();
-        }
-    }
-
-    public ScriptEntry getNext() {
+    public final ScriptEntry getNext() {
         if (!script_entries.isEmpty()) {
-            return script_entries.remove(0);
+            return script_entries.removeFirst();
         }
         else {
             return null;
         }
     }
 
-    public ScriptQueue addEntries(List<ScriptEntry> entries) {
+    public final ScriptQueue addEntries(List<ScriptEntry> entries) {
         script_entries.addAll(entries);
         return this;
     }
 
-    public List<ScriptEntry> getEntries() {
+    public final ListQueue getEntries() {
         return script_entries;
     }
 
-    public ScriptQueue injectEntries(List<ScriptEntry> entries, int position) {
-        if (position > script_entries.size() || position < 0) {
-            position = 1;
-        }
-        if (script_entries.isEmpty()) {
-            position = 0;
-        }
-        script_entries.addAll(position, entries);
+    public final ScriptQueue injectEntriesAtStart(List<ScriptEntry> entries) {
+        script_entries.addAllToStart(entries);
         return this;
     }
 
-    public boolean removeEntry(int position) {
-        if (script_entries.size() < position) {
+    public final boolean removeFirst() {
+        if (script_entries.isEmpty()) {
             return false;
         }
-        script_entries.remove(position);
+        script_entries.removeFirst();
         return true;
     }
 
-    public ScriptEntry getEntry(int position) {
+    public final ScriptEntry getEntry(int position) {
         if (script_entries.size() < position) {
             return null;
         }
         return script_entries.get(position);
     }
 
-    public ScriptQueue injectEntry(ScriptEntry entry, int position) {
-        if (position > script_entries.size() || position < 0) {
-            position = 1;
-        }
-        if (script_entries.isEmpty()) {
-            position = 0;
-        }
-        script_entries.add(position, entry);
-        return this;
+    public final void injectEntryAtStart(ScriptEntry entry) {
+        script_entries.injectAtStart(entry);
     }
 
-    public int getQueueSize() {
+    public final int getQueueSize() {
         return script_entries.size();
     }
 
-    public boolean queueNeedsToDebug() {
+    public final boolean queueNeedsToDebug() {
         return DenizenCore.getImplementation().shouldDebug(this);
     }
 

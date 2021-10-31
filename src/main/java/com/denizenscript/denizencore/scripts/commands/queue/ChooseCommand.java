@@ -151,6 +151,6 @@ public class ChooseCommand extends BracedCommand {
             newEntry.entryData.scriptEntry = newEntry;
         }
         scriptEntry.setInstant(true);
-        scriptEntry.getResidingQueue().injectEntries(new_command_list, 0);
+        scriptEntry.getResidingQueue().injectEntriesAtStart(new_command_list);
     }
 }

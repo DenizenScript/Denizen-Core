@@ -44,7 +44,7 @@ public class DebugInvalidCommand extends AbstractCommand {
                 else {
                     scriptEntry.internal.actualCommand = command;
                 }
-                scriptEntry.getResidingQueue().injectEntry(scriptEntry, 0);
+                scriptEntry.getResidingQueue().injectEntryAtStart(scriptEntry);
                 return;
             }
             Debug.echoError(scriptEntry.getResidingQueue(), scriptEntry.getCommandName() + " is an invalid command! Are you sure it loaded?");

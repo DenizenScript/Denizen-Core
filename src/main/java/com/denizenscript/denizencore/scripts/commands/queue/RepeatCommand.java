@@ -116,10 +116,10 @@ public class RepeatCommand extends BracedCommand {
                     List<String> args = entry.getOriginalArguments();
                     if (entry.getCommandName().equals("REPEAT") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         ((RepeatData) entry.getOwner().getData()).reapplyAtEnd(queue);
-                        queue.removeEntry(0);
+                        queue.removeFirst();
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -147,7 +147,7 @@ public class RepeatCommand extends BracedCommand {
                     if (entry.getCommandName().equals("REPEAT") && args.size() == 1 && args.get(0).equals("\0CALLBACK")) {
                         break;
                     }
-                    queue.removeEntry(0);
+                    queue.removeFirst();
                 }
             }
             else {
@@ -175,7 +175,7 @@ public class RepeatCommand extends BracedCommand {
                         cmd.setInstant(true);
                         cmd.copyFrom(scriptEntry);
                     }
-                    queue.injectEntries(bracedCommands, 0);
+                    queue.injectEntriesAtStart(bracedCommands);
                 }
                 else {
                     data.reapplyAtEnd(queue);
@@ -232,7 +232,7 @@ public class RepeatCommand extends BracedCommand {
                 cmd.copyFrom(scriptEntry);
             }
             scriptEntry.setInstant(true);
-            queue.injectEntries(bracedCommandsList, 0);
+            queue.injectEntriesAtStart(bracedCommandsList);
         }
     }
 }
