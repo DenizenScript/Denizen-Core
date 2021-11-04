@@ -295,9 +295,6 @@ public class YamlConfiguration {
 
     public boolean isList(String path) {
         Object o = get(path);
-        if (o == null) {
-            return false;
-        }
         if (!(o instanceof List)) {
             return false;
         }
@@ -306,9 +303,6 @@ public class YamlConfiguration {
 
     public List<Object> getList(String path) {
         Object o = get(path);
-        if (o == null) {
-            return null;
-        }
         if (!(o instanceof List)) {
             return null;
         }
@@ -317,9 +311,6 @@ public class YamlConfiguration {
 
     public List<String> getStringList(String path) {
         Object o = get(path);
-        if (o == null) {
-            return null;
-        }
         if (!(o instanceof List)) {
             return null;
         }
@@ -327,34 +318,13 @@ public class YamlConfiguration {
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
-        try {
-            List<String> parts = CoreUtilities.split(path, '.');
-            Map<StringHolder, Object> portion = contents;
-            for (int i = 0; i < parts.size(); i++) {
-                Object oPortion = portion.get(new StringHolder(parts.get(i)));
-                if (oPortion == null) {
-                    return null;
-                }
-                else if (parts.size() == i + 1) {
-                    YamlConfiguration configuration = new YamlConfiguration();
-                    if (!(oPortion instanceof Map)) {
-                        return null;
-                    }
-                    configuration.contents = (Map<StringHolder, Object>) oPortion;
-                    return configuration;
-                }
-                else if (oPortion instanceof Map) {
-                    portion = (Map<StringHolder, Object>) oPortion;
-                }
-                else {
-                    return null;
-                }
-            }
+        Object o = get(path);
+        if (!(o instanceof Map)) {
+            return null;
         }
-        catch (Exception e) {
-            Debug.echoError(e);
-        }
-        return null;
+        YamlConfiguration configuration = new YamlConfiguration();
+        configuration.contents = (Map<StringHolder, Object>) o;
+        return configuration;
     }
 
     public boolean isDirty() {

@@ -192,6 +192,29 @@ public class ScriptContainer implements Debuggable {
         return contents.contains(path);
     }
 
+    public boolean containsScriptSection(String path) {
+        return contains(path, List.class, "script section");
+    }
+
+    public boolean contains(String path, Class type) {
+        return contains(path, type, type.getSimpleName());
+    }
+
+    public boolean contains(String path, Class type, String typeName) {
+        Object o = contents.get(path);
+        if (o == null) {
+            return false;
+        }
+        if (type.isAssignableFrom(o.getClass())) {
+            return true;
+        }
+        if (type == YamlConfiguration.class) {
+            return o instanceof Map;
+        }
+        Debug.echoError("Script '<Y>" + getName() + "<W>' contains path '<Y>" + path + "<W>' but it is not required type '<Y>" + typeName + "<W>'");
+        return false;
+    }
+
     public String getString(String path) {
         return contents.getString(path);
     }

@@ -68,7 +68,7 @@ public class ScriptUtilities {
         }
         ScriptQueue queue;
         if (speed == null) {
-            if (container.contains("SPEED")) {
+            if (container.contains("SPEED", String.class)) {
                 speed = DurationTag.valueOf(container.getString("SPEED", "0"), DenizenCore.getImplementation().getTagContext(container));
             }
             if (speed == null) {
@@ -85,7 +85,7 @@ public class ScriptUtilities {
         queue.contextSource = context;
         if (definitions != null) {
             List<String> definition_names = null;
-            if (container.contains("definitions")) {
+            if (container.contains("definitions", String.class)) {
                 String str = container.getString("definitions");
                 definition_names = CoreUtilities.split(str, '|');
             }

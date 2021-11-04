@@ -133,7 +133,7 @@ public class RunLaterCommand extends AbstractCommand {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script RunLater failed (invalid script name)!");
             return;
         }
-        if (path != null && (!script.getContainer().contains(path) || !script.getContainer().getContents().isList(path))) {
+        if (path != null && !script.getContainer().containsScriptSection(path)) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script RunLater failed (invalid path)!");
             return;
         }
@@ -207,7 +207,7 @@ public class RunLaterCommand extends AbstractCommand {
                     Debug.echoError("Script RunLater failed (invalid script name)!");
                     return;
                 }
-                if (path != null && (!script.getContainer().contains(path) || !script.getContainer().getContents().isList(path))) {
+                if (path != null && !script.getContainer().containsScriptSection(path)) {
                     Debug.echoError("Script RunLater failed (invalid path)!");
                     return;
                 }

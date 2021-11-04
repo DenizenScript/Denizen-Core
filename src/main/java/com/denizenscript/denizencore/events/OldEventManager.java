@@ -45,7 +45,7 @@ public class OldEventManager {
                 }
 
                 // ...and through each event inside the script.
-                if (script.contains("EVENTS")) {
+                if (script.contains("EVENTS", Map.class)) {
                     YamlConfiguration configSection = script.getConfigurationSection("EVENTS");
                     if (configSection == null) {
                         Debug.echoError("Script '" + script.getName() + "' has an invalid events block!");

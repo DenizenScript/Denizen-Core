@@ -194,7 +194,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
             return;
         }
-        if (path != null && (!script.getContainer().contains(path) || !script.getContainer().getContents().isList(path))) {
+        if (path != null && !script.getContainer().containsScriptSection(path)) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path)!");
             return;
         }

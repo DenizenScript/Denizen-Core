@@ -120,21 +120,10 @@ public class CustomScriptContainer extends ScriptContainer {
         }
     }
 
-    public boolean hasPath(String path) {
-        CustomScriptContainer csc = this;
-        while (csc != null) {
-            if (csc.contains(path)) {
-                return true;
-            }
-            csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
-        }
-        return false;
-    }
-
     public ListTag runTagScript(String path, ObjectTag val, CustomObjectTag obj, ScriptEntryData data) {
         CustomScriptContainer csc = this;
         while (csc != null) {
-            if (csc.contains("tags." + path)) {
+            if (csc.containsScriptSection("tags." + path)) {
                 Debug.echoDebug(this, "[CustomObject] Calculating tag: " + path + " for " + csc.getName());
                 ScriptQueue queue = new InstantQueue("TAG_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(data, "tags." + path);
@@ -156,7 +145,7 @@ public class CustomScriptContainer extends ScriptContainer {
     public ListTag runMechScript(String path, CustomObjectTag obj, ObjectTag value) {
         CustomScriptContainer csc = this;
         while (csc != null) {
-            if (csc.contains("mechanisms." + path)) {
+            if (csc.containsScriptSection("mechanisms." + path)) {
                 ScriptQueue queue = new InstantQueue("MECH_" + csc.getName() + "_" + path + "__");
                 List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();

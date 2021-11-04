@@ -138,7 +138,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
             return CoreUtilities.autoAttribTyped(res, attribute.fulfill(1));
         }
         String taggo = attribute.getAttributeWithoutParam(1);
-        if (container.hasPath("tags." + taggo)) {
+        if (container.containsScriptSection("tags." + taggo)) {
             ListTag outcomes = container.runTagScript(taggo, attribute.getParamObject(), this,
                     attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
                             DenizenCore.getImplementation().getEmptyScriptEntryData());
@@ -163,7 +163,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
             return;
         }
         ObjectTag value = mechanism.getValue();
-        if (container.hasPath("mechanisms." + name)) {
+        if (container.containsScriptSection("mechanisms." + name)) {
             ListTag outcomes = container.runMechScript(name, this, value);
             if (outcomes == null) {
                 return;
