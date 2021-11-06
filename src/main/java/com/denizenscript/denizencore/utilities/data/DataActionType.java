@@ -37,6 +37,7 @@ public enum DataActionType {
     // This also works with most actions.
     // That is, for example: "mykey[3]:--" will decrement the third item in the list at 'mykey'.
     // This syntax may also be used to remove the entry at a specified index, for example "mykey[3]:<-"
+    // The index can also be "last" to automatically use the last entry in the list as the target.
     //
     // -->
 

@@ -28,7 +28,10 @@ public class DataAction {
     public ObjectTag inputValue = null;
 
     public String debug() {
-        String keyDebug = index == 0 ? key : (key + "[" + index + "]");
+        String keyDebug = key;
+        if (index != 0) {
+            keyDebug += index == Integer.MAX_VALUE ? "[last]" : "[" + index + "]";
+        }
         return ArgumentHelper.debugObj("action", "(" + keyDebug + ":" + type + ":" + inputValue + ")");
     }
 
@@ -61,9 +64,16 @@ public class DataAction {
         if (index != 0) {
             ListTag subList = ListTag.getListFor(obj, context);
             if (index < 0 || index > subList.size()) {
-                return BigDecimal.ZERO;
+                if (index == Integer.MAX_VALUE && !subList.isEmpty()) {
+                    obj = subList.getObject(subList.size() - 1);
+                }
+                else {
+                    return BigDecimal.ZERO;
+                }
             }
-            obj = subList.getObject(index - 1);
+            else {
+                obj = subList.getObject(index - 1);
+            }
         }
         try {
             return autoNumber(obj);
@@ -88,7 +98,12 @@ public class DataAction {
         if (index != 0) {
             ObjectTag obj = provider.getValueAt(key);
             ListTag subList = ListTag.getListFor(obj, context);
-            subList.setObject(index - 1, value);
+            if (index == Integer.MAX_VALUE) {
+                subList.setObject(subList.isEmpty() ? 0 : (subList.size() - 1), value);
+            }
+            else {
+                subList.setObject(index - 1, value);
+            }
             value = subList;
         }
         provider.setValueAt(key, value);
@@ -153,7 +168,12 @@ public class DataAction {
             case REMOVE: {
                 ListTag list = autoList(key, context);
                 if (index != 0) {
-                    list.remove(index - 1);
+                    if (index == Integer.MAX_VALUE && !list.isEmpty()) {
+                        list.remove(list.size() - 1);
+                    }
+                    else {
+                        list.remove(index - 1);
+                    }
                 }
                 else {
                     requiresInputValue();

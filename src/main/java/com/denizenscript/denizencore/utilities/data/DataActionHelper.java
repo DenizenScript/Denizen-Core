@@ -28,10 +28,16 @@ public class DataActionHelper {
         int bracketIndex = action.key.indexOf('[');
         if (bracketIndex >= 0) {
             String index = action.key.substring(bracketIndex + 1, action.key.lastIndexOf(']'));
-            if (ArgumentHelper.matchesInteger(index)) {
-                action.key = action.key.substring(0, bracketIndex);
+            if (CoreUtilities.equalsIgnoreCase(index, "last")) {
+                action.index = Integer.MAX_VALUE;
+            }
+            else if (ArgumentHelper.matchesInteger(index)) {
                 action.index = Integer.parseInt(index);
             }
+            else {
+                return;
+            }
+            action.key = action.key.substring(0, bracketIndex);
         }
     }
 
