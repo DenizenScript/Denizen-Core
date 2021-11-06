@@ -27,14 +27,14 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     public WebGetCommand() {
         setName("webget");
-        setSyntax("webget [<url>] (post:<data>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)");
+        setSyntax("webget [<url>] (post:<data>) (headers:<map>) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)");
         setRequiredArguments(1, 7);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name Webget
-    // @Syntax webget [<url>] (data:<data>) (method:<method>) (headers:<header>/<value>|...) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)
+    // @Syntax webget [<url>] (data:<data>) (method:<method>) (headers:<map>) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)
     // @Required 1
     // @Maximum 7
     // @Short Gets the contents of a web page or API response.

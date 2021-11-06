@@ -97,6 +97,9 @@ public abstract class AbstractCommand {
     }
 
     public static String db(String prefix, Object value) {
+        if (value == null) {
+            return "";
+        }
         return ArgumentHelper.debugObj(prefix, value);
     }
 

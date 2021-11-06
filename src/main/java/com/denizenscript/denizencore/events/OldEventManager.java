@@ -153,53 +153,33 @@ public class OldEventManager {
     }
 
     public static List<String> doEvents(List<String> eventNames, ScriptEntryData data, Map<String, ObjectTag> context) {
-
         try {
             List<String> determinations = new ArrayList<>();
-
             // Trim again to catch events that don't trim internally.
             eventNames = trimEvents(eventNames);
-
             for (String eventName : eventNames) {
-
-                if (events.containsKey("ON " + eventName.toUpperCase()))
-
-                {
+                if (events.containsKey("ON " + eventName.toUpperCase())) {
                     for (WorldScriptContainer script : events.get("ON " + eventName.toUpperCase())) {
-
                         if (script == null) {
                             continue;
                         }
-
                         // Fetch script from Event
                         List<ScriptEntry> entries = script.getEntries(data, "events.on " + eventName);
-
                         if (entries.isEmpty()) {
                             continue;
                         }
-
-                        Debug.report(script, "Event",
-                                ArgumentHelper.debugObj("Type", "on " + eventName)
-                                        + script.getAsScriptArg().debug()
-                                        + data.toString()
-                                        + (context != null ? ArgumentHelper.debugObj("Context", context.toString()) : ""));
-
-                        Debug.echoDebug(script, Debug.DebugElement.Header, "Building event 'ON " + eventName.toUpperCase()
-                                + "' for " + script.getName());
-
+                        Debug.report(script, "Event", ArgumentHelper.debugObj("Type", "on " + eventName), script.getAsScriptArg(), data.toString(), (context != null ? ArgumentHelper.debugObj("Context", context.toString()) : ""));
+                        Debug.echoDebug(script, Debug.DebugElement.Header, "Building event 'ON " + eventName.toUpperCase() + "' for " + script.getName());
                         // Add entries and context to the queue
                         ScriptQueue queue = new InstantQueue(script.getName());
                         queue.addEntries(entries);
-
                         if (context != null) {
                             OldEventContextSource oecs = new OldEventContextSource();
                             oecs.contexts = context;
                             queue.setContextSource(oecs);
                         }
-
                         // Start the queue!
                         queue.start();
-
                         // Check the determination
                         if (queue.determinations != null) {
                             determinations = queue.determinations;
@@ -207,7 +187,6 @@ public class OldEventManager {
                     }
                 }
             }
-
             return determinations;
         }
         catch (Exception e) {

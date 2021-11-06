@@ -76,7 +76,7 @@ public class ForeachCommand extends BracedCommand {
     // @Usage
     // Use to iterate through a list of players and run commands automatically linked to each player in that list.
     // - foreach <server.online_players> as:__player:
-    //     - narrate "Thanks for coming to our server! Here's a bonus $50.00!"
+    //     - narrate "Thanks for coming to our server, <player.name>! Here's a bonus $50.00!"
     //     - money give quantity:50
     //
     // -->
