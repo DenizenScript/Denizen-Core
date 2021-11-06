@@ -404,12 +404,19 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         connectionProps.put("useSSL", ssl);
         connectionProps.put("LoginTimeout", "7");
         if (!server.contains("://")) {
+            // This is a weird hack that the internet recommends to guarantee the MySQL driver will be registered
+            // and has been updated for MySQL class renames
+            // Java and SQL are awful, this is a mess, how is this considered acceptable normal code practices that are literally officially recommended now???
             try {
-                // This is a weird hack that the internet recommends to guarantee the MySQL driver will be registered
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
             }
             catch (Throwable ex) {
-                Debug.echoError(ex);
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                }
+                catch (Throwable ex2) {
+                    Debug.echoError(ex2);
+                }
             }
             server = "mysql://" + server;
         }
