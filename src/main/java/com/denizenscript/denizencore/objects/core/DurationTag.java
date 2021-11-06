@@ -273,7 +273,7 @@ public class DurationTag implements ObjectTag {
 
     @Override
     public String debuggable() {
-        return "d@" + seconds + "s <GR>(" + formatted(false) + ")";
+        return identify() + " <GR>(" + formatted(false) + ")";
     }
 
     @Override
@@ -289,6 +289,21 @@ public class DurationTag implements ObjectTag {
 
     @Override
     public String identify() {
+        if (seconds == (int)seconds) {
+            double minutes = seconds / 60;
+            double hours = minutes / 60;
+            double days = hours / 24;
+            if (days == (int)days) {
+                return "d@" + (int)days + "d";
+            }
+            if (hours == (int)hours) {
+                return "d@" + (int)hours + "h";
+            }
+            if (minutes == (int)minutes) {
+                return "d@" + (int)minutes + "m";
+            }
+            return "d@" + (int)seconds + "s";
+        }
         return "d@" + seconds + "s";
     }
 
