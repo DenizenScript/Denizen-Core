@@ -25,11 +25,11 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         public MapTag getMap() {
             if (map == null) {
                 if (string.startsWith("map@")) {
-                    map = MapTag.valueOf(string, CoreUtilities.errorButNoDebugContext);
+                    map = MapTag.valueOf(string, CoreUtilities.noDebugContext);
                 }
                 else {
                     map = new MapTag();
-                    map.map.put(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.errorButNoDebugContext));
+                    map.map.put(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.noDebugContext));
                 }
             }
             return map;
