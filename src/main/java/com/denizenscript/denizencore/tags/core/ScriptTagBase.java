@@ -15,7 +15,7 @@ public class ScriptTagBase {
         // If no input is given, will return the current script that the tag is within.
         // Refer to <@link ObjectType ScriptTag>.
         // -->
-        TagManager.registerStaticTagBaseHandler(ScriptTag.class, "script", (attribute) -> {
+        TagManager.registerTagHandler(ScriptTag.class, "script", (attribute) -> {
             ScriptTag script = null;
             if (attribute.hasParam()) {
                 script = attribute.paramAsType(ScriptTag.class);
