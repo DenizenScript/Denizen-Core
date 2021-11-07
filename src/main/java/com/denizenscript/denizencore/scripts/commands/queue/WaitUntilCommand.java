@@ -1,7 +1,6 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
@@ -21,6 +20,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         setSyntax("waituntil (rate:<duration>) (max:<duration>) [<comparisons>]");
         setRequiredArguments(1, -1);
         setParseArgs(false);
+        setPrefixesHandled("rate", "max");
         forceHold = true;
         isProcedural = false; // A procedure can't wait
     }
@@ -56,30 +56,13 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        List<String> arguments = new ArrayList<>(scriptEntry.getOriginalArguments());
-        for (Argument arg : scriptEntry) {
-            if (arg.matchesPrefix("rate")
-                    && arg.matchesArgumentType(DurationTag.class)) {
-                scriptEntry.addObject("rate", arg.asType(DurationTag.class));
-                arguments.remove(0);
-            }
-            else if (arg.matchesPrefix("max")
-                    && arg.matchesArgumentType(DurationTag.class)) {
-                scriptEntry.addObject("max", arg.asType(DurationTag.class));
-                arguments.remove(0);
-            }
-            else {
-                break;
-            }
-        }
-        scriptEntry.addObject("comparisons", arguments);
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        List<String> comparisons = (List<String>) scriptEntry.getObject("comparisons");
-        DurationTag rate = scriptEntry.getObjectTag("rate");
-        DurationTag max = scriptEntry.getObjectTag("max");
+        List<String> comparisons = new ArrayList<>(scriptEntry.getOriginalArguments());
+        DurationTag rate = scriptEntry.argForPrefix("rate", DurationTag.class, true);
+        DurationTag max = scriptEntry.argForPrefix("max", DurationTag.class, true);
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), db("run_first_check", run), rate, max);
@@ -103,6 +86,9 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
             @Override
             public void run() {
                 counter++;
+                if (Debug.verbose) {
+                    Debug.log("WaitUntil looping: " + counter);
+                }
                 if (new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry)) {
                     Debug.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
                     scriptEntry.setFinished(true);
