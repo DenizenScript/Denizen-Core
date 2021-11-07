@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
@@ -144,6 +145,28 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return arg.asElement().asBoolean();
     }
 
+    /**
+     * Gets the List(ObjectTag) value of an argument by prefix name and type class.
+     * @param throwError true if objects of the wrong type should error. False if wrong type should be ignored. Missing prefix never errors.
+     */
+    public final <T extends ObjectTag> List<T> argForPrefixList(String prefix, Class<T> clazz, boolean throwError) {
+        Argument arg = argForPrefix(prefix);
+        if (arg == null) {
+            return null;
+        }
+        if (arg.matchesArgumentList(clazz)) {
+            return arg.asType(ListTag.class).filter(clazz, this);
+        }
+        else if (throwError) {
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + clazz.getName());
+        }
+        return null;
+    }
+
+    /**
+     * Gets the ObjectTag value of an argument by prefix name and type class.
+     * @param throwError true if objects of the wrong type should error. False if wrong type should be ignored. Missing prefix never errors.
+     */
     public final <T extends ObjectTag> T argForPrefix(String prefix, Class<T> clazz, boolean throwError) {
         Argument arg = argForPrefix(prefix);
         if (arg == null) {

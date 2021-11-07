@@ -114,7 +114,7 @@ public class QueueCommand extends AbstractCommand {
             Deprecations.queueClear.warn(scriptEntry);
         }
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), queue, db("Action", action.toString()), delay);
+            Debug.report(scriptEntry, getName(), queue, db("Action", action), delay);
         }
         switch (action) {
             case CLEAR:

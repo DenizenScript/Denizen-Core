@@ -336,8 +336,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         ElementTag rawFormat = scriptEntry.getElement("raw_format");
         YamlConfiguration yamlConfiguration;
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat,
-                    (yaml_action != null ? db("yaml_action", yaml_action.name()) : null));
+            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat, (yaml_action != null ? db("yaml_action", yaml_action.name()) : null));
         }
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());
