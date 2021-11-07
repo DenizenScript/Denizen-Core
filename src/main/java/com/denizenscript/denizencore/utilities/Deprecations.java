@@ -294,6 +294,10 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/08/30, deprecate officially by 2024.
     public static Warning playerResourcePackMech = new FutureWarning("The 'resource_pack' mechanism is deprecated in favor of using the 'resourcepack' command.");
 
+    // In Bukkit impl, Added 2021/11/07, deprecate officially by 2024.
+    public static Warning assignmentRemove = new FutureWarning("'assignment remove' without a script is deprecated: use 'clear' to clear all scripts, or 'remove' to remove one at a time.");
+    public static Warning npcScriptSingle = new FutureWarning("'npc.script' is deprecated in favor of 'npc.scripts' (plural).");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
