@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.events;
 
 import com.denizenscript.denizencore.events.core.*;
+import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
@@ -148,7 +149,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
 
         public static HashSet<String> notSwitches = new HashSet<>(Arrays.asList("regex", "item_flagged", "world_flagged", "area_flagged", "inventory_flagged",
-                "player_flagged", "npc_flagged", "entity_flagged", "vanilla_tagged", "raw_exact", "item_enchanted", "material_flagged"));
+                "player_flagged", "npc_flagged", "entity_flagged", "vanilla_tagged", "raw_exact", "item_enchanted", "material_flagged", "location_in", "block_flagged"));
 
         public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
             this.event = event;
@@ -778,5 +779,20 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         value = CoreUtilities.toLowerCase(value);
         MatchHelper matcher = createMatcher(with);
         return matcher.doesMatch(value);
+    }
+
+    public static boolean coreFlaggedCheck(String flagged, AbstractFlagTracker tracker) {
+        if (flagged == null) {
+            return true;
+        }
+        if (tracker == null) {
+            return false;
+        }
+        for (String flag : CoreUtilities.split(flagged, '|')) {
+            if (!tracker.hasFlag(flag)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
