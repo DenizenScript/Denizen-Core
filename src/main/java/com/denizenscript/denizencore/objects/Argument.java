@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashSet;
@@ -35,6 +36,8 @@ public class Argument implements Cloneable {
     public ScriptEntry scriptEntry = null;
 
     public boolean canBeElement = true;
+
+    public boolean prefixWasDynamic = false;
 
     public void unsetValue() {
         raw_value = null;
@@ -232,7 +235,13 @@ public class Argument implements Cloneable {
         if (!hasPrefix()) {
             return false;
         }
-        return value.equals(lower_prefix);
+        if (value.equals(lower_prefix)) {
+            if (prefixWasDynamic) {
+                Deprecations.dynamicPrefix.warn(scriptEntry);
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean matchesPrefix(String... values) {
@@ -241,6 +250,9 @@ public class Argument implements Cloneable {
         }
         for (String value : values) {
             if (value.equals(lower_prefix)) {
+                if (prefixWasDynamic) {
+                    Deprecations.dynamicPrefix.warn(scriptEntry);
+                }
                 return true;
             }
         }

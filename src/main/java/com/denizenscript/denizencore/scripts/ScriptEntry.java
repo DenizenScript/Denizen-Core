@@ -125,7 +125,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             if (internalArg.hadColon && arg.prefix == null && arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput) {
                 arg.fillStr(arg.object.toString());
                 if (arg.prefix != null && !internal.actualCommand.allowedDynamicPrefixes) {
-                    Deprecations.dynamicPrefix.warn(this);
+                    arg.prefixWasDynamic = true;
                 }
             }
             arg.canBeElement = arg.object instanceof ElementTag;
