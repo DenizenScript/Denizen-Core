@@ -313,6 +313,9 @@ public class IfCommand extends BracedCommand {
             if (arg instanceof String) {
                 return (String) arg;
             }
+            else if (arg instanceof ScriptEntry.InternalArgument) {
+                return ((ScriptEntry.InternalArgument) arg).fullOriginalRawValue;
+            }
             else if (arg instanceof ArgInternal) {
                 return arg.toString();
             }
@@ -328,6 +331,9 @@ public class IfCommand extends BracedCommand {
         public static String procStringNoTag(Object arg) {
             if (arg instanceof String) {
                 return (String) arg;
+            }
+            else if (arg instanceof ScriptEntry.InternalArgument) {
+                return ((ScriptEntry.InternalArgument) arg).fullOriginalRawValue;
             }
             else if (arg instanceof ArgInternal) {
                 return arg.toString();
@@ -348,6 +354,10 @@ public class IfCommand extends BracedCommand {
             Object argObj = argstemp.get(arg);
             if (argObj instanceof String) {
                 return tagify((String) argObj).boolify();
+            }
+            else if (argObj instanceof ScriptEntry.InternalArgument) {
+                // TODO: Special case tag parsing
+                return tagify(((ScriptEntry.InternalArgument) argObj).fullOriginalRawValue).boolify();
             }
             else if (argObj instanceof ArgInternal) {
                 return ((ArgInternal) argObj).boolify();

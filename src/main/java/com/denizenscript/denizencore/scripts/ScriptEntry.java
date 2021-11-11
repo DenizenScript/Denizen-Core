@@ -85,6 +85,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         public boolean shouldProcess = false;
 
         public boolean hadColon = false;
+
+        public String fullOriginalRawValue = null;
     }
 
     public static class ArgumentIterator implements Iterator<Argument> {
@@ -240,6 +242,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     static {
         NULL_INTERNAL_ARGUMENT.aHArg = NULL_ARGUMENT;
         NULL_INTERNAL_ARGUMENT.value = TagManager.DEFAULT_PARSEABLE_EMPTY;
+        NULL_INTERNAL_ARGUMENT.fullOriginalRawValue = "";
     }
 
     @Override
@@ -390,6 +393,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
                     InternalArgument brace = new InternalArgument();
+                    brace.fullOriginalRawValue = "{";
                     brace.aHArg = new Argument("", "{");
                     allArgs.add(brace);
                     nested_depth++;
@@ -397,6 +401,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 }
                 if (arg.equals("}")) {
                     InternalArgument brace = new InternalArgument();
+                    brace.fullOriginalRawValue = "}";
                     brace.aHArg = new Argument("", "}");
                     allArgs.add(brace);
                     nested_depth--;
@@ -407,13 +412,15 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                     continue;
                 }
                 InternalArgument argVal = new InternalArgument();
+                argVal.fullOriginalRawValue = arg;
                 allArgs.set(i, argVal);
                 int first_colon = arg.indexOf(':');
                 argVal.hadColon = first_colon > 0;
                 int first_not_prefix = Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
                 if (first_colon > 0 && first_not_prefix >= first_colon) {
                     argVal.prefix = new InternalArgument();
-                    crunchInto(argVal.prefix, arg.substring(0, first_colon), refContext);
+                    argVal.prefix.fullOriginalRawValue = arg.substring(0, first_colon);
+                    crunchInto(argVal.prefix, argVal.prefix.fullOriginalRawValue, refContext);
                     arg = arg.substring(first_colon + 1);
                 }
                 crunchInto(argVal, arg, refContext);

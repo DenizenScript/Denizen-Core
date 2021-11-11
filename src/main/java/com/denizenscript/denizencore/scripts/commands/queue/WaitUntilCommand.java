@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WaitUntilCommand extends AbstractCommand implements Holdable {
@@ -60,7 +61,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        List<String> comparisons = new ArrayList<>(scriptEntry.getOriginalArguments());
+        List<ScriptEntry.InternalArgument> comparisons = Arrays.asList(scriptEntry.internal.arguments_to_use);
         DurationTag rate = scriptEntry.argForPrefix("rate", DurationTag.class, true);
         DurationTag max = scriptEntry.argForPrefix("max", DurationTag.class, true);
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
