@@ -98,6 +98,23 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return index < eventArgsLower.length ? eventArgsLower[index] : "";
         }
 
+        public final boolean eventArgsLowEqualStartingAt(int index, String a, String b) {
+            return eventArgLowerAt(index).equals(a) && eventArgLowerAt(index + 1).equals(b);
+        }
+
+        public final boolean eventArgsLowEqualStartingAt(int index, String first, String second, String third, String... rest) {
+            if (!eventArgsLowEqualStartingAt(index, first, second) || !eventArgLowerAt(index + 2).equals(third)) {
+                return false;
+            }
+            index += 3;
+            for (int i = 0; i < rest.length; i++, index++) {
+                if (!eventArgLowerAt(i + index).equals(rest[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         // <--[language]
         // @name Script Event Switches
         // @group Script Events
