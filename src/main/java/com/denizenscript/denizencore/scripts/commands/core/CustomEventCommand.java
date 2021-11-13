@@ -46,11 +46,18 @@ public class CustomEventCommand extends AbstractCommand {
     //
     // @Usage
     // Use to call a custom event with path "on custom event id:things_happened:"
-    // - customevent id:thingshappened
+    // - customevent id:things_happened
     //
     // @Usage
     // Use to call a custom event with path "on custom event id:things_happened:" and supply a context map of basic data.
-    // - customevent id:thingshappened context:[a=1;b=2;c=3]
+    // - customevent id:things_happened context:[a=1;b=2;c=3]
+    //
+    // @Usage
+    // Use to call a custom event with a path such as "on custom event id:things_happened data:item:stone:" and supply a context map of more interesting data.
+    // - definemap context:
+    //     waffle: hello world
+    //     item: <player.item_in_hand>
+    // - customevent id:things_happened context:<[context]>
     //
     // -->
 

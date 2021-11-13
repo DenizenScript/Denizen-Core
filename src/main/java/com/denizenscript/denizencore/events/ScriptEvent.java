@@ -109,6 +109,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public Boolean switch_cancelled;
         public Boolean switch_ignoreCancelled;
         public HashMap<String, String> switches = new HashMap<>();
+        public List<String> rawSwitches = new ArrayList<>();
         public String[] eventArgs;
         public String[] eventArgsLower;
         public String[] rawEventArgs;
@@ -207,8 +208,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
-                if (split.size() > 1 && !ArgumentHelper.matchesInteger(split.get(0)) && !notSwitches.contains(CoreUtilities.toLowerCase(split.get(0)))) {
-                    switches.put(CoreUtilities.toLowerCase(split.get(0)), split.get(1));
+                String low = CoreUtilities.toLowerCase(split.get(0));
+                if (split.size() > 1 && !ArgumentHelper.matchesInteger(split.get(0)) && !notSwitches.contains(low)) {
+                    switches.put(low, split.get(1));
+                    rawSwitches.add(low + ":" + split.get(1));
                 }
                 else {
                     eventLabel.add(possible);

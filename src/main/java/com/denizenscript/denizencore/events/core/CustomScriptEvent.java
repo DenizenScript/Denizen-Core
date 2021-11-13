@@ -7,6 +7,9 @@ import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
+
+import java.util.List;
 
 public class CustomScriptEvent extends ScriptEvent {
 
@@ -15,6 +18,7 @@ public class CustomScriptEvent extends ScriptEvent {
     // custom event
     //
     // @Switch id:<id> to only run the event if the given ID is used. This should almost always be specified.
+    // @Switch data:<key>:<value> to only run the event if the given data key matches the given value, using advanced matchers for the given object type (note: the 'customevent' command call has to be careful about object type for this).
     //
     // @Regex ^on custom event$
     //
@@ -25,6 +29,7 @@ public class CustomScriptEvent extends ScriptEvent {
     // @Context
     // <context.id> returns the ID that was used.
     // <context.data> returns the MapTag of input data (if any! some events don't have context data).
+    // <context.(key)> returns the value of the input data key, if available.
     //
     // @Determine
     // "OUTPUT:" + Anything, to add that value to the output list (note this is an ADD, not a SET).
@@ -55,6 +60,26 @@ public class CustomScriptEvent extends ScriptEvent {
         if (!runGenericSwitchCheck(path, "id", id)) {
             return false;
         }
+        for (String switchText : path.rawSwitches) {
+            if (switchText.startsWith("data:")) {
+                String compare = switchText.substring("data:".length());
+                List<String> parts = CoreUtilities.split(compare, ':', 2);
+                if (parts.size() != 2) {
+                    Debug.echoError("Invalid custom event switch (missing data key or value): " + switchText);
+                    return false;
+                }
+                if (contextData == null) {
+                    return false;
+                }
+                ObjectTag val = contextData.getDeepObject(parts.get(0));
+                if (val == null) {
+                    return false;
+                }
+                if (!val.advancedMatches(parts.get(1))) {
+                    return false;
+                }
+            }
+        }
         anyMatched = true;
         return true;
     }
@@ -74,6 +99,12 @@ public class CustomScriptEvent extends ScriptEvent {
         switch (name) {
             case "id": return new ElementTag(id, true);
             case "data": return contextData;
+        }
+        if (contextData != null) {
+            ObjectTag val = contextData.getObject(name);
+            if (val != null) {
+                return val;
+            }
         }
         return super.getContext(name);
     }

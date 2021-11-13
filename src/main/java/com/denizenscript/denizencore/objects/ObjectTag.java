@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects;
 
+import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -234,5 +235,12 @@ public interface ObjectTag {
      */
     default boolean isTruthy() {
         return true;
+    }
+
+    /**
+     * Returns whether this object matches the specified input using 'advanced matcher' logic.
+     */
+    default boolean advancedMatches(String matcher) {
+        return ScriptEvent.runGenericCheck(matcher, identify());
     }
 }
