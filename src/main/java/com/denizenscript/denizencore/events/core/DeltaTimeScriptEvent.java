@@ -40,6 +40,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         return path.eventLower.startsWith("delta time");
     }
 
+    @Override
     public boolean matches(ScriptPath path) {
         String time = path.rawEventArgAt(2);
         long seconds = DenizenCore.serverTimeMillis / 1000;
@@ -77,10 +78,12 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     public ScriptEntryData data = null;
 
+    @Override
     public ScriptEntryData getScriptEntryData() {
         return data;
     }
 
+    @Override
     public String getName() {
         return "DeltaTime";
     }
@@ -89,18 +92,20 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        if (name.equals("second")) {
-            return second;
+        switch (name) {
+            case "second": return second;
         }
         return super.getContext(name);
     }
 
     boolean enabled = false;
 
+    @Override
     public void init() {
         enabled = true;
     }
 
+    @Override
     public void destroy() {
         enabled = false;
     }
@@ -113,5 +118,4 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         data = DenizenCore.implementation.getEmptyScriptEntryData();
         fire();
     }
-
 }

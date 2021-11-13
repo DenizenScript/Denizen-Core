@@ -135,6 +135,10 @@ public class Deprecations {
     // Added 2020/06/13.
     public static Warning scriptConstantTag = new Warning("The script.constant system has been deprecated in favor of just using data_key.");
 
+    // Added 2020/03/14, moved from future to current 2021/11/12.
+    // Should be rapidly advanced through deprecation levels: removing this allows for a significant amount of legacy code removal.
+    public static Warning eventCommand = new Warning("The event command is deprecated: use 'customevent' instead. The 'event' command represents an outdated idea of how events should function inside.");
+
     // In Bukkit impl, added 2020/07/04.
     public static Warning cuboidFullTag = new Warning("The tag cuboid.full is deprecated: this should just never be used.");
     public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
@@ -228,9 +232,6 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
     public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
     public static Warning materialPropertyTags = new FutureWarning("Old MaterialTag.is_x property tags are deprecated in favor of PropertyHolderObject.supports[property-name]");
-
-    // Added 2020/03/14, deprecate officially by 2022.
-    public static Warning eventCommand = new FutureWarning("The event command is deprecated: represents an outdated understanding of how world script events work that is not compatible with modern script events, and so is due for replacement.");
 
     // Added 2020/05/24, deprecate officially by 2022.
     public static Warning flagIsExpiredTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");

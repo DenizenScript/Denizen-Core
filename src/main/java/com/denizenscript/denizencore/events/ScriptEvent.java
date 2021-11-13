@@ -22,8 +22,14 @@ import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
+/**
+ * Core handler for script events (in world script containers).
+ * Instances of this class are often duplicated as part of the core engine system.
+ */
 public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     @Override
@@ -37,8 +43,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
+    /**
+     * (Called by DenizenCore.init) registers primary core events.
+     */
     public static void registerCoreEvents() {
         registerScriptEvent(new ConsoleOutputScriptEvent());
+        registerScriptEvent(new CustomScriptEvent());
         registerScriptEvent(new DeltaTimeScriptEvent());
         registerScriptEvent(new PreScriptReloadScriptEvent());
         registerScriptEvent(new ReloadScriptsScriptEvent());
@@ -49,25 +59,46 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         registerScriptEvent(new TickScriptEvent());
     }
 
+    /**
+     * Register a new script event to the system. All events must be registered to function in scripts, even if not currently used.
+     */
     public static void registerScriptEvent(ScriptEvent event) {
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
     }
 
+    /**
+     * A list of all world script containers, automatically populated during script reload.
+     */
     public static ArrayList<WorldScriptContainer> worldContainers = new ArrayList<>();
 
+    /**
+     * A list of all registered script events.
+     */
     public static ArrayList<ScriptEvent> events = new ArrayList<>();
 
+    /**
+     * Lookup table from script event names to their instances.
+     */
     public static HashMap<String, ScriptEvent> eventLookup = new HashMap<>();
 
+    /**
+     * Statistics about an event firing.
+     */
     public static class StatData {
         public long fires = 0;
         public long scriptFires = 0;
         public long nanoTimes = 0;
     }
 
+    /**
+     * This event's statistics. Stored in a separate instance to avoid duplication issues.
+     */
     public StatData stats = new StatData();
 
+    /**
+     * Represents a single path for an event within a world container, based on raw text of a script.
+     */
     public static class ScriptPath {
 
         public ScriptContainer container;
@@ -319,6 +350,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static ScriptPath tryingToBuildPath = null;
     public static ScriptEvent tryingToBuildEvent = null;
 
+    /**
+     * Adds a reason a 'couldMatch' call failed, to try to help end users figure out why their event isn't recognized.
+     */
     public static void addPossibleCouldMatchFailReason(String reason, String example) {
         if (tryingToBuildPath == null || tryingToBuildEvent == null) {
             return;
@@ -362,8 +396,26 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 return false;
             }
         }
+        String flagSwitch = path.switches.get("server_flagged");
+        if (flagSwitch != null) {
+            for (String flag : CoreUtilities.split(flagSwitch, '|')) {
+                if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
+                    return false;
+                }
+            }
+        }
+        for (BiFunction<ScriptEvent, ScriptPath, Boolean> matcher : extraMatchers) {
+            if (!matcher.apply(sEvent, path)) {
+                return false;
+            }
+        }
         return sEvent.matches(path);
     }
+
+    /**
+     * Additional basic matchers added for all events to use.
+     */
+    public static List<BiFunction<ScriptEvent, ScriptPath, Boolean>> extraMatchers = new ArrayList<>();
 
     public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
 
@@ -449,19 +501,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public boolean matches(ScriptPath path) {
-        String flagSwitch = path.switches.get("server_flagged");
-        if (flagSwitch != null) {
-            for (String flag : CoreUtilities.split(flagSwitch, '|')) {
-                if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
-                    return false;
-                }
-            }
-        }
         return true;
     }
 
     public abstract String getName();
 
+    /**
+     * Makes a copy of this event object, fires it, and returns the copy.
+     */
     public ScriptEvent fire() {
         ScriptEvent copy = clone();
         stats.fires++;
@@ -593,6 +640,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // These advanced matchers are also used in some commands and tags.
     // -->
 
+    /**
+     * Entry point of advanced matching tools, refer to 'Advanced Script Event Matching' meta docs.
+     */
     public static abstract class MatchHelper {
 
         public abstract boolean doesMatch(String input);

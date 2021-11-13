@@ -110,11 +110,6 @@ public class DenizenCore {
         VERSION = version;
     }
 
-    @Deprecated
-    public static DenizenImplementation getImplementation() {
-        return implementation;
-    }
-
     /**
      * Must be called first: prepares the engine!
      *

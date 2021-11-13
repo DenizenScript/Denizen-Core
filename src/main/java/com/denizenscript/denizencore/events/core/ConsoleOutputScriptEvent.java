@@ -39,8 +39,7 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
     @Override
     public ObjectTag getContext(String name) {
         switch (name) {
-            case "message":
-                return new ElementTag(message);
+            case "message": return new ElementTag(message);
         }
         return super.getContext(name);
     }

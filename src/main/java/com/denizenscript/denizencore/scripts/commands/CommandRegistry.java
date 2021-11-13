@@ -90,6 +90,7 @@ public abstract class CommandRegistry {
     public void registerCoreCommands() {
         // core
         registerCommand(AdjustCommand.class);
+        registerCommand(CustomEventCommand.class);
         registerCommand(DebugCommand.class);
         // Intentionally do not register the DebugInvalidCommand
         registerCommand(EventCommand.class);

@@ -56,10 +56,8 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
     @Override
     public ObjectTag getContext(String name) {
         switch (name) {
-            case "message":
-                return new ElementTag(message);
-            case "script":
-                return script;
+            case "message": return new ElementTag(message);
+            case "script": return script;
             case "line":
                 if (line != -1) {
                     return new ElementTag(line);
