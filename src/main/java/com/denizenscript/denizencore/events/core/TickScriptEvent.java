@@ -31,7 +31,7 @@ public class TickScriptEvent extends ScriptEvent {
 
     public long ticks = 0;
 
-    public ScriptEntryData data = DenizenCore.getImplementation().getEmptyScriptEntryData();
+    public ScriptEntryData data = DenizenCore.implementation.getEmptyScriptEntryData();
 
     @Override
     public ScriptEntryData getScriptEntryData() {

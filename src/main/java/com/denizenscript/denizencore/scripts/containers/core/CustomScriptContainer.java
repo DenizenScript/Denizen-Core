@@ -147,7 +147,7 @@ public class CustomScriptContainer extends ScriptContainer {
         while (csc != null) {
             if (csc.containsScriptSection("mechanisms." + path)) {
                 ScriptQueue queue = new InstantQueue("MECH_" + csc.getName() + "_" + path + "__");
-                List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.getImplementation().getEmptyScriptEntryData(), "mechanisms." + path);
+                List<ScriptEntry> listOfEntries = csc.getEntries(DenizenCore.implementation.getEmptyScriptEntryData(), "mechanisms." + path);
                 CustomScriptContextSource cscs = new CustomScriptContextSource();
                 cscs.obj = obj;
                 cscs.value = value;

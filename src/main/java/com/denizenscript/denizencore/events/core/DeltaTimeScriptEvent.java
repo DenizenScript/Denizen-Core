@@ -110,7 +110,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
             return;
         }
         second = new ElementTag(DenizenCore.serverTimeMillis / 1000);
-        data = DenizenCore.getImplementation().getEmptyScriptEntryData();
+        data = DenizenCore.implementation.getEmptyScriptEntryData();
         fire();
     }
 

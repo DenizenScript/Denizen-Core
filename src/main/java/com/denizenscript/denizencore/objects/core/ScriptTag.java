@@ -332,13 +332,13 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                     if (each == null) {
                         each = "null";
                     }
-                    list.add(TagManager.tag(each.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
+                    list.add(TagManager.tag(each.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
                 }
                 return list;
 
             }
             else {
-                return new ElementTag(TagManager.tag(obj.toString(), DenizenCore.getImplementation().getTagContext(attribute.getScriptEntry())));
+                return new ElementTag(TagManager.tag(obj.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
             }
         });
 

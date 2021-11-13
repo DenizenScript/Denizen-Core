@@ -153,7 +153,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        if (!DenizenCore.getImplementation().allowedToWebget()) {
+        if (!DenizenCore.implementation.allowedToWebget()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "WebGet disabled by config!");
             return;
         }
@@ -189,7 +189,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     public void writeToFile(InputStream in, ElementTag saveFile) throws Exception {
         File file = new File(saveFile.asString());
-        if (!DenizenCore.getImplementation().canWriteToFile(file)) {
+        if (!DenizenCore.implementation.canWriteToFile(file)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             return;
         }

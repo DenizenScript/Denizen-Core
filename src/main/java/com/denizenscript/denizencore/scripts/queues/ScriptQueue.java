@@ -24,7 +24,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     protected static long total_queues = 0;
 
     public static String getStats() {
-        String c1 = DenizenCore.getImplementation().getTextColor(), c2 = DenizenCore.getImplementation().getEmphasisColor();
+        String c1 = DenizenCore.implementation.getTextColor(), c2 = DenizenCore.implementation.getEmphasisColor();
         StringBuilder stats = new StringBuilder();
         TreeSet<Map.Entry<Long, String>> statsSet = new TreeSet<>(Comparator.comparingLong(Map.Entry::getKey));
         for (ScriptEvent event : ScriptEvent.events) {
@@ -164,7 +164,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             return null;
         }
         if (definition.startsWith("__")) {
-            ObjectTag value = DenizenCore.getImplementation().getSpecialDef(definition, this);
+            ObjectTag value = DenizenCore.implementation.getSpecialDef(definition, this);
             if (value != null) {
                 return value;
             }
@@ -175,7 +175,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     @Override
     public void addDefinition(String definition, ObjectTag value) {
         if (definition.startsWith("__")) {
-            if (DenizenCore.getImplementation().setSpecialDef(definition, this, value)) {
+            if (DenizenCore.implementation.setSpecialDef(definition, this, value)) {
                 return;
             }
         }
@@ -233,13 +233,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         Random random = CoreUtilities.getRandom();
         String wordOne = QueueWordList.FinalWordList.get(random.nextInt(size));
         String wordTwo = QueueWordList.FinalWordList.get(random.nextInt(size));
-        String colorOne = DenizenCore.getImplementation().getRandomColor();
-        String colorTwo = DenizenCore.getImplementation().getRandomColor();
+        String colorOne = DenizenCore.implementation.getRandomColor();
+        String colorTwo = DenizenCore.implementation.getRandomColor();
         id = prefix + "_" + wordOne + wordTwo;
         debugId = "<LG>" + prefix + "_" + colorOne + wordOne + colorTwo + wordTwo;
         for (int i = 0; i < depth; i++) {
             String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
-            String colorThree = DenizenCore.getImplementation().getRandomColor();
+            String colorThree = DenizenCore.implementation.getRandomColor();
             id += wordThree;
             debugId += colorThree + wordThree;
         }
@@ -326,7 +326,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 queueDebug("Delaying " + name + " '<QUEUE>'" + " for '" + new DurationTag(((double) delay) / 1000f).identify() + "'...");
             }
             else {
-                queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.getImplementation().queueHeaderInfo(script_entries.get(0)) + "...");
+                queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.implementation.queueHeaderInfo(script_entries.get(0)) + "...");
             }
         }
         if (is_delayed) {
@@ -433,7 +433,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public final boolean queueNeedsToDebug() {
-        return DenizenCore.getImplementation().shouldDebug(this);
+        return DenizenCore.implementation.shouldDebug(this);
     }
 
     @Override

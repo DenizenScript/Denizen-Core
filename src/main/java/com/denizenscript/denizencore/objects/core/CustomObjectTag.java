@@ -141,7 +141,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
         if (container.containsScriptSection("tags." + taggo)) {
             ListTag outcomes = container.runTagScript(taggo, attribute.getParamObject(), this,
                     attribute.getScriptEntry() != null ? attribute.getScriptEntry().entryData :
-                            DenizenCore.getImplementation().getEmptyScriptEntryData());
+                            DenizenCore.implementation.getEmptyScriptEntryData());
             if (outcomes == null) {
                 return null;
             }

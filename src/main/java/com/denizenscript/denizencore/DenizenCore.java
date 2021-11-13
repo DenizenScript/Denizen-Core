@@ -15,7 +15,6 @@ import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.debugging.VerySlowWarning;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
 import java.io.File;
@@ -30,23 +29,65 @@ import java.util.Properties;
  */
 public class DenizenCore {
 
+    /**
+     * (Automatically populated) current core version.
+     */
     public final static String VERSION;
 
+    /**
+     * All commands known to the system are registered here.
+     */
     public static CommandRegistry commandRegistry;
+
+    /**
+     * Core script processing engine.
+     */
     public static ScriptEngine scriptEngine;
 
+    /**
+     * Time (System.currentTimeMillis) that the engine first loaded.
+     */
     public final static long startTime = System.currentTimeMillis();
 
+    /**
+     * Server flags, for the 'flag' command and 'server.flag[...]' tags.
+     */
     public static SavableMapFlagTracker serverFlagMap;
 
+    /**
+     * Last time (System.currentTimeMillis) that scripts wre reloaded.
+     */
     public static long lastReloadTime;
 
+    /**
+     * How many times scripts have been reloaded.
+     */
+    public static int reloads = 0;
+
+    /**
+     * Helper to intercept System.out for the redirect_logging mechanism.
+     */
     public static LogInterceptor logInterceptor = new LogInterceptor();
 
+    /**
+     * Known main thread reference, for async scheduler usage.
+     */
     public static Thread MAIN_THREAD;
 
+    /**
+     * Current system time (System.currentTimeMillis), updated per-tick.
+     * Used to avoid multiple checks in the same tick having different time values.
+     */
     public static long currentTimeMillis = System.currentTimeMillis();
 
+    /**
+     * Duration of time, in milliseconds, since the server started.
+     */
+    public static long serverTimeMillis = 1;
+
+    /**
+     * Implementation helper class, must be implemented for Denizen to function.
+     */
     public static DenizenImplementation implementation;
 
     static {
@@ -69,6 +110,7 @@ public class DenizenCore {
         VERSION = version;
     }
 
+    @Deprecated
     public static DenizenImplementation getImplementation() {
         return implementation;
     }
@@ -93,7 +135,7 @@ public class DenizenCore {
      * Call to reload anything that was saved, especially after init.
      */
     public static void reloadSaves() {
-        serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(getImplementation().getDataFolder(), "server_flags").getPath());
+        serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(implementation.getDataFolder(), "server_flags").getPath());
     }
 
     /**
@@ -101,7 +143,7 @@ public class DenizenCore {
      */
     public static void saveAll() {
         NoteManager.save();
-        serverFlagMap.saveToFile(new File(getImplementation().getDataFolder(), "server_flags").getPath());
+        serverFlagMap.saveToFile(new File(implementation.getDataFolder(), "server_flags").getPath());
     }
 
     /**
@@ -119,9 +161,7 @@ public class DenizenCore {
      */
     public static void preloadScripts() {
         try {
-            for (VerySlowWarning warning : VerySlowWarning.allSlowWarnings) {
-                warning.hasShown = false;
-            }
+            reloads++;
             PreScriptReloadScriptEvent.instance.fire();
             ScriptEvent.worldContainers.clear();
             implementation.preScriptReload();
@@ -177,14 +217,18 @@ public class DenizenCore {
         }
     }
 
+    /**
+     * Ran by 'tick' once per second.
+     */
     static void oncePerSecond() {
         SystemTimeScriptEvent.instance.checkTime();
         DeltaTimeScriptEvent.instance.checkTime();
     }
 
+    /**
+     * Counter for 'oncePerSecond'.
+     */
     static int tMS = 0;
-
-    public static long serverTimeMillis = 1;
 
     /**
      * Call every 'tick' in the engine. (1/20th of a second on a standard engine.)

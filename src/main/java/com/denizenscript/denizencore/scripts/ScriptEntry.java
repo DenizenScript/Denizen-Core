@@ -228,7 +228,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     }
 
     public void updateContext() {
-        context = DenizenCore.getImplementation().getTagContext(this);
+        context = DenizenCore.implementation.getTagContext(this);
     }
 
     public void setBracedSet(List<BracedCommand.BracedData> set) {
@@ -289,7 +289,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         }
         internal = new ScriptEntryInternal();
         internal.lineNumber = lineNum;
-        entryData = DenizenCore.getImplementation().getEmptyScriptEntryData();
+        entryData = DenizenCore.implementation.getEmptyScriptEntryData();
         internal.command = command.toUpperCase();
         internal.yamlSubcontent = insides;
         internal.argPrefixMap = new HashMap<>();
@@ -366,7 +366,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 }
                 Argument argObj = new Argument(arg);
                 if (argObj.hasPrefix()) {
-                    if (argObj.matchesPrefix("save") || argObj.matchesPrefix("if") || DenizenCore.getImplementation().needsHandleArgPrefix(argObj.prefix)) {
+                    if (argObj.matchesPrefix("save") || argObj.matchesPrefix("if") || DenizenCore.implementation.needsHandleArgPrefix(argObj.prefix)) {
                         internal.preprocArgs.add(argObj);
                     }
                     else {
@@ -386,7 +386,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 }
             }
             nested_depth = 0;
-            TagContext refContext = DenizenCore.getImplementation().getTagContext(this);
+            TagContext refContext = DenizenCore.implementation.getTagContext(this);
             ArrayList<InternalArgument> allArgs = new ArrayList<>(internal.pre_tagged_args.size());
             internal.raw_input_args = new HashSet<>();
             for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
@@ -697,7 +697,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     /////////
 
     public boolean dbCallShouldDebug() {
-        return DenizenCore.getImplementation().shouldDebug(this);
+        return DenizenCore.implementation.shouldDebug(this);
     }
 
     @Override

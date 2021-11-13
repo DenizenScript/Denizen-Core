@@ -47,7 +47,7 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
         if (queue != null && queue.getLastEntryExecuted() != null) {
             return queue.getLastEntryExecuted().entryData;
         }
-        return DenizenCore.getImplementation().getEmptyScriptEntryData();
+        return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
     @Override

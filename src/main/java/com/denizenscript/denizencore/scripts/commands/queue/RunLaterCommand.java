@@ -172,7 +172,7 @@ public class RunLaterCommand extends AbstractCommand {
             path = config.getString("path", null);
             definitionList = config.contains("definition_list") ? ListTag.valueOf(config.getString("definition_list"), CoreUtilities.errorButNoDebugContext) : null;
             defMap = config.contains("definitions") ? MapTag.valueOf(config.getString("definitions"), CoreUtilities.errorButNoDebugContext) : null;
-            entryData = DenizenCore.getImplementation().getEmptyScriptEntryData().clone();
+            entryData = DenizenCore.implementation.getEmptyScriptEntryData().clone();
             entryData.load(config.getConfigurationSection("entry_data"));
         }
 

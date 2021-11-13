@@ -206,8 +206,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         scriptEntry.setFinished(true);
                         return;
                     }
-                    File f = new File(DenizenCore.getImplementation().getDataFolder(), passwordFile.asString());
-                    if (!DenizenCore.getImplementation().canReadFile(f)) {
+                    File f = new File(DenizenCore.implementation.getDataFolder(), passwordFile.asString());
+                    if (!DenizenCore.implementation.canReadFile(f)) {
                         Debug.echoError(scriptEntry, "Cannot read from that file path due to security settings in Denizen/config.yml.");
                         scriptEntry.setFinished(true);
                         return;

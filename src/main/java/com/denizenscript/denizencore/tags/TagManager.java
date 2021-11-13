@@ -141,7 +141,7 @@ public class TagManager {
         ExecutorService executor = Executors.newFixedThreadPool(4);
         Future<?> future = executor.submit(() -> {
             try {
-                DenizenCore.getImplementation().preTagExecute();
+                DenizenCore.implementation.preTagExecute();
                 if (isInTag) {
                     fireEvent(event);
                 }
@@ -152,7 +152,7 @@ public class TagManager {
                 }
             }
             finally {
-                DenizenCore.getImplementation().postTagExecute();
+                DenizenCore.implementation.postTagExecute();
             }
         });
         executor.shutdown();
@@ -180,11 +180,11 @@ public class TagManager {
     public static boolean recentTagError = true;
 
     public static ObjectTag readSingleTagObjectNoDebug(TagContext context, ReplaceableTagEvent event) {
-        int tT = DenizenCore.getImplementation().getTagTimeout();
+        int tT = DenizenCore.implementation.getTagTimeout();
         if (Debug.verbose) {
             Debug.log("Tag read: " + event.raw_tag + ", " + tT + "...");
         }
-        if (tT <= 0 || isInTag || (!DenizenCore.getImplementation().shouldDebug(context) && !DenizenCore.getImplementation().tagTimeoutWhenSilent())) {
+        if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !DenizenCore.implementation.tagTimeoutWhenSilent())) {
             fireEvent(event);
         }
         else {

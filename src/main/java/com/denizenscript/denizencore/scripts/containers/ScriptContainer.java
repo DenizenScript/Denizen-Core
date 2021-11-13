@@ -130,7 +130,7 @@ public class ScriptContainer implements Debuggable {
             if (fn == null) {
                 return "(Error: script source is missing?)";
             }
-            fn = fn.replace(DenizenCore.getImplementation().getScriptFolder().getParentFile().getCanonicalPath(), "");
+            fn = fn.replace(DenizenCore.implementation.getScriptFolder().getParentFile().getCanonicalPath(), "");
             while (fn.startsWith("/")) {
                 fn = fn.substring(1);
             }
@@ -306,7 +306,7 @@ public class ScriptContainer implements Debuggable {
     public boolean shouldDebug() {
         if (shouldDebug == null) {
             if (!contents.contains("debug")) {
-                shouldDebug = DenizenCore.getImplementation().getDefaultDebugMode();
+                shouldDebug = DenizenCore.implementation.getDefaultDebugMode();
             }
             else {
                 shouldDebug = !CoreUtilities.equalsIgnoreCase(contents.getString("debug"), "false");

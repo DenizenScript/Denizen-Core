@@ -29,7 +29,7 @@ public class ScriptHelper {
         catch (Exception e) {
             hadError = true;
             Debug.echoError("Could not load scripts!");
-            DenizenCore.getImplementation().debugException(e);
+            DenizenCore.implementation.debugException(e);
             _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: data\n");
         }
 
@@ -171,7 +171,7 @@ public class ScriptHelper {
 
         scriptSources.clear();
         try {
-            File file = DenizenCore.getImplementation().getScriptFolder();
+            File file = DenizenCore.implementation.getScriptFolder();
             // Check if the directory exists
             if (!file.exists()) {
                 Debug.echoError("No script folder found, please create one.");
@@ -218,7 +218,7 @@ public class ScriptHelper {
             }
         }
         catch (Exception e) {
-            Debug.echoError("No script folder found in " + DenizenCore.getImplementation().getScriptFolder());
+            Debug.echoError("No script folder found in " + DenizenCore.implementation.getScriptFolder());
             hadError = true;
             Debug.echoError(e);
         }

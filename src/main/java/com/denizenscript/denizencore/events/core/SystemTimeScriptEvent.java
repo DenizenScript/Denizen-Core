@@ -151,7 +151,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         else {
             minute = new ElementTag(m);
         }
-        data = DenizenCore.getImplementation().getEmptyScriptEntryData();
+        data = DenizenCore.implementation.getEmptyScriptEntryData();
         fire();
     }
 }

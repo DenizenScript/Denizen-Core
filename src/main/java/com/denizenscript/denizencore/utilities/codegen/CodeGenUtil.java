@@ -23,7 +23,7 @@ public class CodeGenUtil {
         public Class<?> define(String className, byte[] bytecode) {
             Class<?> clazz = super.defineClass(className, bytecode, 0, bytecode.length);
             resolveClass(clazz);
-            DenizenCore.getImplementation().saveClassToLoader(clazz);
+            DenizenCore.implementation.saveClassToLoader(clazz);
             return clazz;
         }
         @Override

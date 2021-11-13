@@ -89,18 +89,18 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), origin, destination, overwrite);
         }
-        if (!DenizenCore.getImplementation().allowFileCopy()) {
+        if (!DenizenCore.implementation.allowFileCopy()) {
             Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
-        File o = new File(DenizenCore.getImplementation().getDataFolder(), origin.asString());
-        File d = new File(DenizenCore.getImplementation().getDataFolder(), destination.asString());
+        File o = new File(DenizenCore.implementation.getDataFolder(), origin.asString());
+        File d = new File(DenizenCore.implementation.getDataFolder(), destination.asString());
         boolean ow = overwrite.asBoolean();
         boolean dexists = d.exists();
         boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
-        if (!DenizenCore.getImplementation().canReadFile(o)) {
+        if (!DenizenCore.implementation.canReadFile(o)) {
             Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
@@ -112,7 +112,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
             return;
         }
-        if (!DenizenCore.getImplementation().canWriteToFile(d)) {
+        if (!DenizenCore.implementation.canWriteToFile(d)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);

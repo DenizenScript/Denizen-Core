@@ -229,7 +229,7 @@ public class FlagCommand extends AbstractCommand {
                 }
             }
             else {
-                FlaggableObject obj = DenizenCore.getImplementation().simpleWordToFlaggable(object.toString(), scriptEntry);
+                FlaggableObject obj = DenizenCore.implementation.simpleWordToFlaggable(object.toString(), scriptEntry);
                 if (obj != null) {
                     tracker = obj.getFlagTracker();
                 }

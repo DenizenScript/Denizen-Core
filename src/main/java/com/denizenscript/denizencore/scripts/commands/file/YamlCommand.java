@@ -346,8 +346,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
         switch (action) {
             case LOAD:
-                File file = new File(DenizenCore.getImplementation().getDataFolder(), filename.asString());
-                if (!DenizenCore.getImplementation().canReadFile(file)) {
+                File file = new File(DenizenCore.implementation.getDataFolder(), filename.asString());
+                if (!DenizenCore.implementation.canReadFile(file)) {
                     Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
                     scriptEntry.setFinished(true);
                     return;
@@ -408,8 +408,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case SAVE:
                 if (yamlDocuments.containsKey(id)) {
                     try {
-                        if (!DenizenCore.getImplementation().allowStrangeYAMLSaves()) {
-                            File fileObj = new File(DenizenCore.getImplementation().
+                        if (!DenizenCore.implementation.allowStrangeYAMLSaves()) {
+                            File fileObj = new File(DenizenCore.implementation.
                                     getDataFolder().getAbsolutePath() + "/" + filename.asString());
                             String directory = URLDecoder.decode(System.getProperty("user.dir"));
                             if (!fileObj.getCanonicalPath().startsWith(directory)) {
@@ -418,9 +418,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                                 return;
                             }
                         }
-                        File fileObj = new File(DenizenCore.getImplementation().
+                        File fileObj = new File(DenizenCore.implementation.
                                 getDataFolder().getAbsolutePath() + "/" + filename.asString());
-                        if (!DenizenCore.getImplementation().canWriteToFile(fileObj)) {
+                        if (!DenizenCore.implementation.canWriteToFile(fileObj)) {
                             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
                             scriptEntry.setFinished(true);
                             return;

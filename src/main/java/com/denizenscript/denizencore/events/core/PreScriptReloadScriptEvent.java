@@ -22,7 +22,7 @@ public class PreScriptReloadScriptEvent extends ScriptEvent {
 
     @Override
     public ScriptEntryData getScriptEntryData() {
-        return DenizenCore.getImplementation().getEmptyScriptEntryData();
+        return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
     public PreScriptReloadScriptEvent() {

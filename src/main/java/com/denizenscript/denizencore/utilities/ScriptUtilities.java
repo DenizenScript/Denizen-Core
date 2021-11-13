@@ -54,7 +54,7 @@ public class ScriptUtilities {
             id = container.getName();
         }
         if (data == null) {
-            data = DenizenCore.getImplementation().getEmptyScriptEntryData();
+            data = DenizenCore.implementation.getEmptyScriptEntryData();
         }
         List<ScriptEntry> entries;
         if (path == null) {
@@ -69,10 +69,10 @@ public class ScriptUtilities {
         ScriptQueue queue;
         if (speed == null) {
             if (container.contains("SPEED", String.class)) {
-                speed = DurationTag.valueOf(container.getString("SPEED", "0"), DenizenCore.getImplementation().getTagContext(container));
+                speed = DurationTag.valueOf(container.getString("SPEED", "0"), DenizenCore.implementation.getTagContext(container));
             }
             if (speed == null) {
-                speed = DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed(), DenizenCore.getImplementation().getTagContext(container));
+                speed = DurationTag.valueOf(DenizenCore.implementation.scriptQueueSpeed(), DenizenCore.implementation.getTagContext(container));
             }
         }
         if (speed.getTicks() > 0) {

@@ -115,7 +115,7 @@ public class LogCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        if (!DenizenCore.getImplementation().allowLogging()) {
+        if (!DenizenCore.implementation.allowLogging()) {
             Debug.echoError("Logging disabled by administrator (refer to command documentation).");
             scriptEntry.setFinished(true);
             return;
@@ -129,7 +129,7 @@ public class LogCommand extends AbstractCommand implements Holdable {
         Type type = Type.valueOf(typeElement.asString().toUpperCase());
         String directory = URLDecoder.decode(System.getProperty("user.dir"));
         File file = new File(directory, fileName.asString());
-        if (!DenizenCore.getImplementation().canWriteToFile(file)) {
+        if (!DenizenCore.implementation.canWriteToFile(file)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.setFinished(true);
             return;

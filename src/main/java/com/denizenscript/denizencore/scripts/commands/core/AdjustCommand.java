@@ -154,7 +154,7 @@ public class AdjustCommand extends AbstractCommand {
             }
             object = ObjectFetcher.pickObjectFor(objectString, entry.context);
             if (object instanceof ElementTag) {
-                FlaggableObject altObject = DenizenCore.getImplementation().simpleWordToFlaggable(objectString, entry);
+                FlaggableObject altObject = DenizenCore.implementation.simpleWordToFlaggable(objectString, entry);
                 if (altObject != null && !(altObject instanceof ElementTag)) {
                     return altObject;
                 }

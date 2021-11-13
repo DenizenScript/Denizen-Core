@@ -35,7 +35,7 @@ public class CommandExecutor {
                 }
             }
         }
-        DenizenCore.getImplementation().debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
+        DenizenCore.implementation.debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
     }
 
     // <--[language]
@@ -91,7 +91,7 @@ public class CommandExecutor {
         try {
             TagContext context = scriptEntry.getContext();
             for (Argument arg : scriptEntry.internal.preprocArgs) {
-                if (DenizenCore.getImplementation().handleCustomArgs(scriptEntry, arg, false)) {
+                if (DenizenCore.implementation.handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
                 }
                 else if (arg.matchesPrefix("if")) {

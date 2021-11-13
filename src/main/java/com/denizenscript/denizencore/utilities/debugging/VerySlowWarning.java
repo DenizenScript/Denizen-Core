@@ -1,24 +1,24 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
-import java.util.ArrayList;
+import com.denizenscript.denizencore.DenizenCore;
 
 public class VerySlowWarning extends SlowWarning {
 
-    public static ArrayList<VerySlowWarning> allSlowWarnings = new ArrayList<>();
-
-    public boolean hasShown = false;
+    /**
+     * Last reload ID this warning was shown for, or -1 if never shown.
+     */
+    public int lastShown = -1;
 
     public VerySlowWarning(String message) {
         super(message);
-        allSlowWarnings.add(this);
     }
 
     @Override
     public boolean testShouldWarn() {
-        if (hasShown && !FutureWarning.futureWarningsEnabled) {
+        if (lastShown == DenizenCore.reloads && !FutureWarning.futureWarningsEnabled) {
             return false;
         }
-        hasShown = true;
+        lastShown = DenizenCore.reloads;
         return super.testShouldWarn();
     }
 }

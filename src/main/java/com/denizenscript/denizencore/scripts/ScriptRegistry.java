@@ -92,7 +92,7 @@ public class ScriptRegistry {
         scriptContainers.clear();
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
-        DenizenCore.getImplementation().refreshScriptContainers();
+        DenizenCore.implementation.refreshScriptContainers();
         if (yamlScripts == null) {
             return;
         }

@@ -47,7 +47,7 @@ public class TimedQueue extends ScriptQueue {
     }
 
     public TimedQueue(String id) {
-        this(id, DurationTag.valueOf(DenizenCore.getImplementation().scriptQueueSpeed(), CoreUtilities.basicContext));
+        this(id, DurationTag.valueOf(DenizenCore.implementation.scriptQueueSpeed(), CoreUtilities.basicContext));
     }
 
     public TimedQueue(String id, long ticks) {

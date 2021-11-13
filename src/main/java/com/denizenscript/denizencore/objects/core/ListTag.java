@@ -547,7 +547,7 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public <T extends ObjectTag> List<T> filter(Class<T> dClass, Debuggable debugger, boolean showFailure) {
-        TagContext context = DenizenCore.getImplementation().getTagContext((ScriptEntry) null);
+        TagContext context = DenizenCore.implementation.getTagContext((ScriptEntry) null);
         context.debug = debugger.shouldDebug();
         return filter(dClass, context, showFailure);
     }
@@ -2022,7 +2022,7 @@ public class ListTag implements List<String>, ObjectTag {
             try {
                 list.sort((o1, o2) -> {
                     List<ScriptEntry> entries = script.getBaseEntries(entry == null ?
-                            DenizenCore.getImplementation().getEmptyScriptEntryData() : entry.entryData.clone());
+                            DenizenCore.implementation.getEmptyScriptEntryData() : entry.entryData.clone());
                     if (entries.isEmpty()) {
                         return 0;
                     }

@@ -26,7 +26,7 @@ public class LogInterceptor extends PrintStream {
         antiLoop = true;
         try {
             ConsoleOutputScriptEvent event = ConsoleOutputScriptEvent.instance;
-            event.message = DenizenCore.getImplementation().cleanseLogString(s);
+            event.message = DenizenCore.implementation.cleanseLogString(s);
             event = (ConsoleOutputScriptEvent) event.fire();
             if (!event.cancelled) {
                 super.print(s);

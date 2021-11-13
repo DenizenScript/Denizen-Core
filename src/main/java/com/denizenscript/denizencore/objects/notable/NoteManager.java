@@ -150,7 +150,7 @@ public class NoteManager {
 
     public static void reload() {
         if (saveFilePath == null) {
-            saveFilePath = new File(DenizenCore.getImplementation().getDataFolder(), "notables.yml").getPath();
+            saveFilePath = new File(DenizenCore.implementation.getDataFolder(), "notables.yml").getPath();
         }
         String rawFileData = CoreUtilities.journallingLoadFile(saveFilePath);
         saveConfig = rawFileData == null ? new YamlConfiguration() : YamlConfiguration.load(rawFileData);

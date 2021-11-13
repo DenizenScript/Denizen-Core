@@ -172,7 +172,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             this.event = event;
             rawEventArgs = CoreUtilities.split(event, ' ').toArray(new String[0]);
             this.container = container;
-            context = DenizenCore.getImplementation().getTagContext(container);
+            context = DenizenCore.implementation.getTagContext(container);
             List<String> eventLabel = new ArrayList<>();
             for (String possible : CoreUtilities.split(event, ' ').toArray(new String[0])) {
                 List<String> split = CoreUtilities.split(possible, ':', 2);
@@ -441,7 +441,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public ScriptEntryData getScriptEntryData() {
-        return DenizenCore.getImplementation().getEmptyScriptEntryData();
+        return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
     public boolean couldMatch(ScriptPath path) {
