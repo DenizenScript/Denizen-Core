@@ -29,6 +29,12 @@ public class TickScriptEvent extends ScriptEvent {
 
     public static TickScriptEvent instance;
 
+    public TickScriptEvent() {
+        instance = this;
+        registerCouldMatcher("tick");
+        registerSwitches("every");
+    }
+
     public long ticks = 0;
 
     public ScriptEntryData data = DenizenCore.implementation.getEmptyScriptEntryData();
@@ -44,15 +50,6 @@ public class TickScriptEvent extends ScriptEvent {
             return new ElementTag(ticks);
         }
         return super.getContext(name);
-    }
-
-    public TickScriptEvent() {
-        instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("tick");
     }
 
     @Override

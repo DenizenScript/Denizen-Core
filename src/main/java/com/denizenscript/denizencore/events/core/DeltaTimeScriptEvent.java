@@ -10,11 +10,9 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // delta time [hourly/minutely/secondly]
+    // delta time hourly|minutely|secondly
     //
     // @Switch every:<count> to only run the event every *count* times (like "on delta time secondly every:5" for every 5 seconds).
-    //
-    // @Regex ^on delta time (hourly|minutely|secondly)$
     //
     // @Group Core
     //
@@ -33,11 +31,8 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
 
     public DeltaTimeScriptEvent() {
         instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("delta time");
+        registerCouldMatcher("delta time hourly|minutely|secondly");
+        registerSwitches("every");
     }
 
     @Override

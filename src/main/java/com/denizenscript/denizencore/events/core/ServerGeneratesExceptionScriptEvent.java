@@ -35,6 +35,7 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
 
     public ServerGeneratesExceptionScriptEvent() {
         instance = this;
+        registerCouldMatcher("server generates exception");
     }
 
     public Throwable exception;
@@ -63,14 +64,6 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
                 break;
         }
         return super.getContext(name);
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        if (!path.eventLower.startsWith("server generates exception")) {
-            return false;
-        }
-        return true;
     }
 
     @Override

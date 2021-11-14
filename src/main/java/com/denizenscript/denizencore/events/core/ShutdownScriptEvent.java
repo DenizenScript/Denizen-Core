@@ -19,18 +19,11 @@ public class ShutdownScriptEvent extends ScriptEvent {
     //
     // -->
 
-    public ShutdownScriptEvent() {
-        instance = this;
-    }
-
     public static ShutdownScriptEvent instance;
 
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        if (!path.eventLower.startsWith("shutdown")) {
-            return false;
-        }
-        return true;
+    public ShutdownScriptEvent() {
+        instance = this;
+        registerCouldMatcher("shutdown");
     }
 
     @Override

@@ -28,6 +28,13 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     public static ReloadScriptsScriptEvent instance;
 
+    public ReloadScriptsScriptEvent() {
+        instance = this;
+        registerCouldMatcher("reload scripts");
+        registerCouldMatcher("script reload");
+        registerSwitches("had_error");
+    }
+
     public boolean hadError = false;
 
     @Override
@@ -42,15 +49,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
                 return new ElementTag(hadError);
         }
         return super.getContext(name);
-    }
-
-    public ReloadScriptsScriptEvent() {
-        instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("reload scripts") || path.eventLower.startsWith("script reload");
     }
 
     @Override

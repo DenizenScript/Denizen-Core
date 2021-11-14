@@ -12,11 +12,10 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // system time [<HH:MM>/hourly/minutely/secondly]
+    // system time HH:MM
+    // system time hourly|minutely|secondly
     //
     // @Switch every:<count> to only run the event every *count* times (like "on system time secondly every:5" for every 5 seconds).
-    //
-    // @Regex ^on system time( (\d\d\:\d\d|hourly|minutely|secondly))?$
     //
     // @Synonyms cron
     //
@@ -37,11 +36,9 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     public SystemTimeScriptEvent() {
         instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("system time");
+        registerCouldMatcher("system time");
+        registerCouldMatcher("system time hourly|minutely|secondly");
+        registerSwitches("every");
     }
 
     public ElementTag hour;

@@ -48,11 +48,8 @@ public class CustomScriptEvent extends ScriptEvent {
 
     public CustomScriptEvent() {
         instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("custom event");
+        registerCouldMatcher("custom event");
+        registerSwitches("id", "data");
     }
 
     @Override

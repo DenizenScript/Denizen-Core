@@ -196,6 +196,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/09/08, but was irrelevant years earlier.
     public static Warning isValidTag = new SlowWarning("The 'server.x_is_valid' style tags are deprecated: use '.exists', '.is_spawned.if_null[false]', etc.");
 
+    // In Bukkit impl, Added 2021/11/14.
+    public static Warning blockSpreads = new SlowWarning("There are two '<block> spreads' events - use 'block spreads type:<block>' or 'liquid spreads type:<block>'");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
 

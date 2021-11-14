@@ -37,6 +37,7 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
 
     public ScriptGeneratesErrorScriptEvent() {
         instance = this;
+        registerCouldMatcher("script generates error");
     }
 
     public ScriptQueue queue;
@@ -70,14 +71,6 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
                 break;
         }
         return super.getContext(name);
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        if (!path.eventLower.startsWith("script generates error")) {
-            return false;
-        }
-        return true;
     }
 
     @Override

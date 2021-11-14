@@ -64,6 +64,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void registerScriptEvent(ScriptEvent event) {
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
+        if (!event.eventData.anyCouldMatchRegistered) {
+            legacyCouldMatchEvents.add(event);
+        }
     }
 
     /**
@@ -77,6 +80,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static ArrayList<ScriptEvent> events = new ArrayList<>();
 
     /**
+     * A special lookup table of script events to help optimize couldMatch calls.
+     */
+    public static HashMap<String, ArrayList<ScriptEvent>> couldMatchOptimizer = new HashMap<>();
+
+    public static ArrayList<ScriptEvent> legacyCouldMatchEvents = new ArrayList<>();
+
+    /**
      * Lookup table from script event names to their instances.
      */
     public static HashMap<String, ScriptEvent> eventLookup = new HashMap<>();
@@ -87,14 +97,32 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
          * Statistics about an event firing.
          */
         public long stats_fires = 0, stats_scriptFires = 0, stats_nanoTimes = 0;
+
+        /**
+         * Known paths that fire this event.
+         */
+        public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
+
+        /**
+         * Built-in could-matchers for this event.
+         */
+        public ArrayList<ScriptEventCouldMatcher> couldMatchers = new ArrayList<>();
+
+        /**
+         * Switches available to this event.
+         */
+        public HashSet<String> localSwitches = new HashSet<>();
+
+        /**
+         * If true, this event is inside couldMatchOptimizer.
+         */
+        public boolean anyCouldMatchRegistered = false;
     }
 
     /**
      * This ScriptEvent object's base data (separate from the firing-related data of an event happening). Stored in a separate instance to avoid duplication issues.
      */
     public InternalEventData eventData = new InternalEventData();
-
-    public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
 
     /**
      * Whether this event has been cancelled.
@@ -206,8 +234,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
-        public static HashSet<String> notSwitches = new HashSet<>(Arrays.asList("regex", "item_flagged", "world_flagged", "area_flagged", "inventory_flagged",
-                "player_flagged", "npc_flagged", "entity_flagged", "vanilla_tagged", "raw_exact", "item_enchanted", "material_flagged", "location_in", "block_flagged"));
+        /**
+         * List of all prefixed keys that should not be interpreted as switches.
+         */
+        public static HashSet<String> notSwitches = new HashSet<>(Collections.singleton("regex"));
 
         public ScriptPath(ScriptContainer container, String event, String rawEventPath) {
             this.event = event;
@@ -264,99 +294,121 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (Debug.showLoading) {
             Debug.log("Reloading script events...");
         }
+        reloadPreClear();
+        int total = 0;
         for (ScriptContainer container : worldContainers) {
-            if (!CoreUtilities.equalsIgnoreCase(container.getContents().getString("enabled", "true"),"true")) {
-                continue;
-            }
-            YamlConfiguration config = container.getConfigurationSection("events");
-            if (config == null) {
-                Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
-                continue;
-            }
-            for (StringHolder evt : config.getKeys(false)) {
-                if (evt == null || evt.str == null) {
-                    Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
-                }
-                else if (CoreUtilities.contains(evt.str, '@')) {
-                    Debug.echoError("Script '<Y>" + container.getName() + "<W>' has event '<Y>" + evt.str.replace("@", "<R>@<Y>")
-                            + "<W>' which contains object notation, which is deprecated for use in world events. Please remove it.");
-                }
-            }
-        }
-        List<ScriptPath> paths = new ArrayList<>(worldContainers.size() * 3);
-        for (ScriptContainer container : worldContainers) {
-            YamlConfiguration config = container.getConfigurationSection("events");
-            if (config == null) {
-                continue;
-            }
-            for (StringHolder evt1 : config.getKeys(false)) {
-                String evt;
-                boolean after = false;
-                if (evt1.low.startsWith("on ")) {
-                    evt = evt1.str.substring("on ".length());
-                }
-                else if (evt1.low.startsWith("after ")) {
-                    evt = evt1.str.substring("after ".length());
-                    after = true;
-                }
-                else {
-                    Debug.echoError("Script path '<Y>" + evt1.str + "<W>' is invalid (missing 'on' or 'after').");
-                    continue;
-                }
-                evt = evt.replace("&dot", ".").replace("&amp", "&");
-                ScriptPath path = new ScriptPath(container, evt, evt1.str);
-                path.fireAfter = after;
-                if (path.set == null) {
-                    Debug.echoError("Script path '<Y>" + path + "<W>' is invalid (empty or misconfigured).");
-                    continue;
-                }
-                paths.add(path);
-            }
-        }
-        for (ScriptEvent event : events) {
             try {
-                event.destroy();
-                event.eventPaths.clear();
-                boolean matched = false;
-                tryingToBuildEvent = event;
-                for (ScriptPath path : paths) {
-                    tryingToBuildPath = path;
-                    if (event.couldMatch(path)) {
-                        event.eventPaths.add(path);
-                        path.matches.add(event);
-                        if (Debug.showLoading) {
-                            Debug.log("Event match, <Y>" + event.getName() + "<W> matched for '<Y>" + path + "<W>'!");
-                        }
-                        matched = true;
-                    }
+                if (!CoreUtilities.equalsIgnoreCase(container.getContents().getString("enabled", "true"), "true")) {
+                    continue;
                 }
-                if (matched) {
-                    event.sort();
-                    event.init();
+                YamlConfiguration config = container.getConfigurationSection("events");
+                if (config == null) {
+                    Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
+                    continue;
+                }
+                for (StringHolder evt1 : config.getKeys(false)) {
+                    if (evt1 == null || evt1.str == null) {
+                        Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
+                        continue;
+                    }
+                    total++;
+                    loadSinglePath(evt1, container);
                 }
             }
-            catch (Throwable ex) {
-                Debug.echoError("Failed to reload event '<Y>" + event.getName() + "<W>':");
+            catch (Exception ex) {
+                Debug.echoError("Failed to load world script container '<Y>" + container.getName() + "<W>':");
                 Debug.echoError(ex);
             }
         }
-        tryingToBuildEvent = null;
-        tryingToBuildPath = null;
-        for (ScriptPath path : paths) {
-            if (path.matches.size() > 1) {
-                Debug.log("Event <Y>" + path + "<W> is matched to multiple ScriptEvents: <Y>" + CoreUtilities.join("<W>,<Y> ", path.matches));
+        reloadPostLoad();
+        Debug.log("Processed <A>" + total + "<W> script event paths.");
+    }
+
+    private static void reloadPreClear() {
+        for (ScriptEvent event : events) {
+            try {
+                event.destroy();
+                event.eventData.eventPaths.clear();
             }
-            else if (path.matches.isEmpty()) {
-                Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.");
-                if (path.matchFailReasons != null) {
-                    for (String reason : path.matchFailReasons) {
-                        Debug.log(reason);
-                    }
+            catch (Throwable ex) {
+                Debug.echoError("Failed to unload event '<Y>" + event.getName() + "<W>':");
+                Debug.echoError(ex);
+            }
+        }
+    }
+
+    private static void loadSinglePath(StringHolder evt1, ScriptContainer container) {
+        if (CoreUtilities.contains(evt1.str, '@')) {
+            Debug.echoError("Script '<Y>" + container.getName() + "<W>' has event '<Y>" + evt1.str.replace("@", "<R>@<Y>")
+                    + "<W>' which contains object notation, which is deprecated for use in world events. Please remove it.");
+        }
+        String evt;
+        boolean after = false;
+        if (evt1.low.startsWith("on ")) {
+            evt = evt1.str.substring("on ".length());
+        }
+        else if (evt1.low.startsWith("after ")) {
+            evt = evt1.str.substring("after ".length());
+            after = true;
+        }
+        else {
+            Debug.echoError("Script path '<Y>" + evt1.str + "<W>' is invalid (missing 'on' or 'after').");
+            return;
+        }
+        evt = evt.replace("&dot", ".").replace("&amp", "&");
+        ScriptPath path = new ScriptPath(container, evt, evt1.str);
+        path.fireAfter = after;
+        if (path.set == null) {
+            Debug.echoError("Script path '<Y>" + path + "<W>' is invalid (empty or misconfigured).");
+            return;
+        }
+        tryingToBuildPath = path;
+        ArrayList<ScriptEvent> toScan = couldMatchOptimizer.get(path.eventArgLowerAt(0));
+        if (toScan != null) {
+            tryLoadForSet(path, toScan);
+        }
+        tryLoadForSet(path, legacyCouldMatchEvents);
+        if (path.matches.size() > 1) {
+            Debug.log("Event <Y>" + path + "<W> is matched to multiple ScriptEvents: <Y>" + CoreUtilities.join("<W>,<Y> ", path.matches));
+        }
+        else if (path.matches.isEmpty()) {
+            Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.");
+            if (path.matchFailReasons != null) {
+                for (String reason : path.matchFailReasons) {
+                    Debug.log(reason);
                 }
             }
-            path.matchFailReasons = null;
         }
-        Debug.log("Processed <A>" + paths.size() + "<W> script event paths.");
+        path.matchFailReasons = null;
+    }
+
+    private static void tryLoadForSet(ScriptPath path, ArrayList<ScriptEvent> events) {
+        for (ScriptEvent event : events) {
+            tryingToBuildEvent = event;
+            if (event.couldMatch(path)) {
+                event.eventData.eventPaths.add(path);
+                path.matches.add(event);
+                if (Debug.showLoading) {
+                    Debug.log("Event match, <Y>" + event.getName() + "<W> matched for '<Y>" + path + "<W>'!");
+                }
+            }
+        }
+    }
+
+    private static void reloadPostLoad() {
+        for (ScriptEvent event : events) {
+            try {
+                if (event.eventData.eventPaths.isEmpty()) {
+                    continue;
+                }
+                event.sort();
+                event.init();
+            }
+            catch (Throwable ex) {
+                Debug.echoError("Failed to load event '<Y>" + event.getName() + "<W>':");
+                Debug.echoError(ex);
+            }
+        }
     }
 
     public static ScriptPath tryingToBuildPath = null;
@@ -372,7 +424,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         if (tryingToBuildPath.matchFailReasons == null) {
             tryingToBuildPath.matchFailReasons = new ArrayList<>();
         }
-        tryingToBuildPath.matchFailReasons.add("Almost matched: <Y>" + tryingToBuildEvent.getName() + "<W>, but failed because: <Y>" + reason + "<W>: '<LR>" + example + "<W>'");
+        String baseText = "Almost matched: <Y>" + tryingToBuildEvent.getName();
+        String reasonText = "<W>, but failed because: <Y>" + reason + "<W>: '<LR>" + example + "<W>'";
+        if (currentCouldMatcher == null) {
+            tryingToBuildPath.matchFailReasons.add(baseText + reasonText);
+        }
+        else {
+            tryingToBuildPath.matchFailReasons.add(baseText + "<W> as <Y>" + currentCouldMatcher.format + reasonText);
+        }
     }
 
     // <--[language]
@@ -443,7 +502,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // -->
     public void sort() {
         try {
-            for (ScriptPath path : eventPaths) {
+            for (ScriptPath path : eventData.eventPaths) {
                 String gotten = path.switches.get("priority");
                 path.priority = gotten == null ? 0 : Integer.parseInt(gotten);
             }
@@ -451,7 +510,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         catch (NumberFormatException ex) {
             Debug.echoError("Failed to sort events: not-a-number priority value! " + ex.getMessage());
         }
-        eventPaths.sort((scriptPath, t1) -> {
+        eventData.eventPaths.sort((scriptPath, t1) -> {
             int rel = scriptPath.priority - t1.priority;
             return Integer.compare(rel, 0);
         });
@@ -504,14 +563,90 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
-    public boolean couldMatch(ScriptPath path) {
-        throw new UnsupportedOperationException("CouldMatch not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
+    public final void registerSwitches(String... switches) {
+        eventData.localSwitches.addAll(Arrays.asList(switches));
     }
 
+    /**
+     * Registers a new couldMatcher format for this event. Usually called by a constructor.
+     */
+    public final void registerCouldMatcher(String format) {
+        int paren = format.indexOf('(');
+        if (paren == -1) {
+            ScriptEventCouldMatcher matcher = new ScriptEventCouldMatcher(format);
+            eventData.couldMatchers.add(matcher);
+            if (matcher.validators[0] instanceof ScriptEventCouldMatcher.StringBasedValidator) {
+                String text = ((ScriptEventCouldMatcher.StringBasedValidator) matcher.validators[0]).word;
+                ArrayList<ScriptEvent> list = couldMatchOptimizer.computeIfAbsent(text, k -> new ArrayList<>());
+                if (!list.contains(this)) {
+                    list.add(this);
+                }
+                eventData.anyCouldMatchRegistered = true;
+            }
+            return;
+        }
+        int endParen = format.indexOf(')', paren);
+        if (endParen == -1) {
+            Debug.echoError("Invalid couldMatcher registration '" + format + "': inconsistent parens");
+            return;
+        }
+        String base = paren == 0 ? "" : format.substring(0, paren - 1);
+        String afterText = endParen + 2 == format.length() ? "" : format.substring(endParen + 2);
+        String optional = format.substring(paren + 1, endParen);
+        registerCouldMatcher(base + afterText);
+        registerCouldMatcher(base + " " + optional + afterText);
+        registerCouldMatcher(base + (afterText.isEmpty() || base.isEmpty() ? afterText : (" " + afterText)));
+        registerCouldMatcher((base.isEmpty() ? "" : (base + " ")) + optional + (afterText.isEmpty() ? "" : (" " + afterText)));
+    }
+
+    private static ScriptEventCouldMatcher currentCouldMatcher = null;
+
+    /**
+     * Switches that are globally available.
+     */
+    public static HashSet<String> globalSwitches = new HashSet<>(Arrays.asList("cancelled", "ignorecancelled", "priority", "server_flagged", "in"));
+
+    private boolean couldMatchSwitches(ScriptPath path) {
+        for (String switchName : path.switches.keySet()) {
+            if (!globalSwitches.contains(switchName) && !eventData.localSwitches.contains(switchName)) {
+                ScriptEvent.addPossibleCouldMatchFailReason("unrecognized switch name", switchName);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if the event could possibly match the given path (for init/loading).
+     */
+    public boolean couldMatch(ScriptPath path) {
+        if (eventData.couldMatchers.isEmpty()) {
+            throw new UnsupportedOperationException("CouldMatch not implemented for event '" + getName() + "'! Report this error to the Denizen developers!");
+        }
+        try {
+            for (ScriptEventCouldMatcher matcher : eventData.couldMatchers) {
+                currentCouldMatcher = matcher;
+                if (matcher.doesMatch(path)) {
+                    return couldMatchSwitches(path);
+                }
+            }
+        }
+        finally {
+            currentCouldMatcher = null;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the current state of the event matches the specific data within the path.
+     */
     public boolean matches(ScriptPath path) {
         return true;
     }
 
+    /**
+     * Gets the name of the event class.
+     */
     public abstract String getName();
 
     /**
@@ -520,7 +655,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public ScriptEvent fire() {
         ScriptEvent copy = clone();
         eventData.stats_fires++;
-        for (ScriptPath path : eventPaths) {
+        for (ScriptPath path : eventData.eventPaths) {
             try {
                 if (matchesScript(copy, path)) {
                     if (path.fireAfter) {

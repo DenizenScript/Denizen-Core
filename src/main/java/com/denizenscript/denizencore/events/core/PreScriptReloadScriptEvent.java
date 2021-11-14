@@ -20,18 +20,14 @@ public class PreScriptReloadScriptEvent extends ScriptEvent {
 
     public static PreScriptReloadScriptEvent instance;
 
+    public PreScriptReloadScriptEvent() {
+        instance = this;
+        registerCouldMatcher("pre script reload");
+    }
+
     @Override
     public ScriptEntryData getScriptEntryData() {
         return DenizenCore.implementation.getEmptyScriptEntryData();
-    }
-
-    public PreScriptReloadScriptEvent() {
-        instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("pre script reload");
     }
 
     @Override

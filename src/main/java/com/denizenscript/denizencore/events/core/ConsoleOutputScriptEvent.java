@@ -27,6 +27,11 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
 
     public static ConsoleOutputScriptEvent instance;
 
+    public ConsoleOutputScriptEvent() {
+        instance = this;
+        registerCouldMatcher("console output");
+    }
+
     public String message = null;
 
     public ScriptEntryData data = DenizenCore.implementation.getEmptyScriptEntryData();
@@ -42,15 +47,6 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
             case "message": return new ElementTag(message);
         }
         return super.getContext(name);
-    }
-
-    public ConsoleOutputScriptEvent() {
-        instance = this;
-    }
-
-    @Override
-    public boolean couldMatch(ScriptPath path) {
-        return path.eventLower.startsWith("console output");
     }
 
     @Override
