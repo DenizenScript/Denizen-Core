@@ -65,7 +65,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static void registerScriptEvent(ScriptEvent event) {
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
-        if (!event.eventData.anyCouldMatchRegistered) {
+        if (event.eventData.couldMatchers.isEmpty() || event.eventData.needsLegacy) {
             legacyCouldMatchEvents.add(event);
         }
     }
@@ -115,9 +115,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public HashSet<String> localSwitches = new HashSet<>();
 
         /**
-         * If true, this event is inside couldMatchOptimizer.
+         * If true, this event needs to be in legacy event couldMatcher.
          */
-        public boolean anyCouldMatchRegistered = false;
+        public boolean needsLegacy = false;
     }
 
     /**
@@ -601,7 +601,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 if (!list.contains(this)) {
                     list.add(this);
                 }
-                eventData.anyCouldMatchRegistered = true;
+            }
+            else {
+                eventData.needsLegacy = true;
             }
             return;
         }
