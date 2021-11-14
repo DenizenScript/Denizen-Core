@@ -14,6 +14,7 @@ import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
 
+@Deprecated
 public class OldEventManager {
 
     ///////////////////
@@ -195,6 +196,7 @@ public class OldEventManager {
         }
     }
 
+    @Deprecated
     public static class OldEventContextSource implements ContextSource {
 
         public Map<String, ObjectTag> contexts;

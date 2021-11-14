@@ -170,12 +170,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         // For example, "on console output server_flagged:recording:" will only run the handler for console output when the "recording" flag is set on the server.
         //
         // Events that have a player linked have the "flagged" and "permission" switches available.
-        // Will always fail if the event doesn't have a linked player.
-        // The "flagged:<flag name>" will limit the event to only fire when the player has the flag with the specified name.
+        // If the switch is specified, and an event doesn't have a linked player, the event will automatically fail to match.
+        // The "flagged:<flag name>" switch will limit the event to only fire when the player has the flag with the specified name.
         // It can be used like "on player breaks block flagged:nobreak:" (that would be used alongside "- flag player nobreak").
         // The "permission:<perm key>" will limit the event to only fire when the player has the specified permission key.
         // It can be used like "on player breaks block permission:denizen.my.perm:"
-        // As with any advanced switch, for multiple flag or permission requirements, just list them separated by '|' pipes, like "flagged:a|b|c".
+        // For multiple flag or permission requirements, just list them separated by '|' pipes, like "flagged:a|b|c". This will require all named flags/permissions to be present, not just one.
+        //
+        // Events that have an NPC linked have the "assigned" switch available.
+        // If the switch is specified, and an event doesn't have a linked NPC, the event will automatically fail to match.
+        // The "assigned:<script name>" switch will limit the event to only fire when the NPC has an assignment script that matches the given advanced matcher.
         //
         // Events that occur at a specific location have the "in:<area>" and "location_flagged" switches.
         // This switches will be ignored (not counted one way or the other) for events that don't have a known location.
