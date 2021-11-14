@@ -199,14 +199,14 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/11/14.
     public static Warning blockSpreads = new SlowWarning("There are two '<block> spreads' events - use 'block spreads type:<block>' or 'liquid spreads type:<block>'");
 
+    // In Bukkit impl, Added 2019/10/03, bumped to slow 2021/11/14.
+    public static Warning inAreaSwitchFormat = new SlowWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
 
     // In Bukkit impl, Added 2019/11/11, bump to normal slow warning by 2022.
     public static Warning entityLocationCursorOnTag = new VerySlowWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
-
-    // In Bukkit impl, Added 2019/10/03, bump to normal slow warning by 2023.
-    public static Warning inAreaSwitchFormat = new VerySlowWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
     // Added 2020/05/23, bump to normal slow warning by 2023.
     public static Warning timeTagRewrite = new VerySlowWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
