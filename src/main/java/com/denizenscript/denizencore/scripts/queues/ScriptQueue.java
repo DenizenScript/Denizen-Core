@@ -28,14 +28,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         StringBuilder stats = new StringBuilder();
         TreeSet<Map.Entry<Long, String>> statsSet = new TreeSet<>(Comparator.comparingLong(Map.Entry::getKey));
         for (ScriptEvent event : ScriptEvent.events) {
-            if (event.stats.fires > 0) {
+            if (event.eventData.stats_fires > 0) {
                 stats.setLength(0);
-                stats.append(c1).append("Event '").append(event.getName()).append(c1).append("' ran ").append(c2).append(event.stats.fires)
-                        .append(c1).append(" times (").append(c2).append(event.stats.scriptFires).append(c1).append(" script fires)")
-                        .append(c1).append(", totalling ").append(c2).append((float) event.stats.nanoTimes / 1000000f)
-                        .append(c1).append("ms, averaging ").append(c2).append((float) event.stats.nanoTimes / 1000000f / (float) event.stats.fires)
-                        .append(c1).append("ms per event or ").append(c2).append(+((float) event.stats.nanoTimes / 1000000f / (float) event.stats.scriptFires)).append(c1).append("ms per script.\n");
-                statsSet.add(new HashMap.SimpleEntry<>(event.stats.nanoTimes, stats.toString()));
+                stats.append(c1).append("Event '").append(event.getName()).append(c1).append("' ran ").append(c2).append(event.eventData.stats_fires)
+                        .append(c1).append(" times (").append(c2).append(event.eventData.stats_scriptFires).append(c1).append(" script fires)")
+                        .append(c1).append(", totalling ").append(c2).append((float) event.eventData.stats_nanoTimes / 1000000f)
+                        .append(c1).append("ms, averaging ").append(c2).append((float) event.eventData.stats_nanoTimes / 1000000f / (float) event.eventData.stats_fires)
+                        .append(c1).append("ms per event or ").append(c2).append(+((float) event.eventData.stats_nanoTimes / 1000000f / (float) event.eventData.stats_scriptFires)).append(c1).append("ms per script.\n");
+                statsSet.add(new HashMap.SimpleEntry<>(event.eventData.stats_nanoTimes, stats.toString()));
             }
         }
         return "Total number of queues created: "
@@ -47,12 +47,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     public static ListTag getStatsRawData() {
         ListTag result = new ListTag();
         for (ScriptEvent event : ScriptEvent.events) {
-            if (event.stats.fires > 0) {
+            if (event.eventData.stats_fires > 0) {
                 MapTag map = new MapTag();
                 map.putObject("name", new ElementTag(event.getName()));
-                map.putObject("total_fires", new ElementTag(event.stats.fires));
-                map.putObject("script_fires", new ElementTag(event.stats.scriptFires));
-                map.putObject("total_time", new DurationTag(event.stats.nanoTimes / 1000.0));
+                map.putObject("total_fires", new ElementTag(event.eventData.stats_fires));
+                map.putObject("script_fires", new ElementTag(event.eventData.stats_scriptFires));
+                map.putObject("total_time", new DurationTag(event.eventData.stats_nanoTimes / 1000.0));
                 result.addObject(map);
             }
         }

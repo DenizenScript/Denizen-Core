@@ -8,9 +8,9 @@ public class AsciiMatcher {
 
     public boolean[] accepted = new boolean[256];
 
-    public AsciiMatcher(String allowThese) {
-        for (int i = 0; i < allowThese.length(); i++) {
-            accepted[allowThese.charAt(i)] = true;
+    public AsciiMatcher(String matchThese) {
+        for (int i = 0; i < matchThese.length(); i++) {
+            accepted[matchThese.charAt(i)] = true;
         }
     }
 

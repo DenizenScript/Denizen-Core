@@ -23,7 +23,6 @@ import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -82,19 +81,25 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      */
     public static HashMap<String, ScriptEvent> eventLookup = new HashMap<>();
 
-    /**
-     * Statistics about an event firing.
-     */
-    public static class StatData {
-        public long fires = 0;
-        public long scriptFires = 0;
-        public long nanoTimes = 0;
+    public static class InternalEventData {
+
+        /**
+         * Statistics about an event firing.
+         */
+        public long stats_fires = 0, stats_scriptFires = 0, stats_nanoTimes = 0;
     }
 
     /**
-     * This event's statistics. Stored in a separate instance to avoid duplication issues.
+     * This ScriptEvent object's base data (separate from the firing-related data of an event happening). Stored in a separate instance to avoid duplication issues.
      */
-    public StatData stats = new StatData();
+    public InternalEventData eventData = new InternalEventData();
+
+    public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
+
+    /**
+     * Whether this event has been cancelled.
+     */
+    public boolean cancelled = false;
 
     /**
      * Represents a single path for an event within a world container, based on raw text of a script.
@@ -424,10 +429,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      */
     public static List<BiFunction<ScriptEvent, ScriptPath, Boolean>> extraMatchers = new ArrayList<>();
 
-    public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
-
-    public boolean cancelled = false;
-
     // <--[language]
     // @name Script Event Priority
     // @group Script Events
@@ -518,7 +519,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      */
     public ScriptEvent fire() {
         ScriptEvent copy = clone();
-        stats.fires++;
+        eventData.stats_fires++;
         for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(copy, path)) {
@@ -539,11 +540,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return copy;
     }
 
-    private String currentEvent;
-
     public void run(ScriptPath path) {
         try {
-            stats.scriptFires++;
+            eventData.stats_scriptFires++;
             if (path.container.shouldDebug()) {
                 Debug.echoDebug(path.container, "<Y>Running script event '<A>" + getName() + "<Y>', event='<A>" + (path.fireAfter ? "after " : "on ") + path.event + "<Y>'"
                         + " for script '<A>" + path.container.getName() + "<Y>'");
@@ -554,13 +553,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             List<ScriptEntry> entries = ScriptContainer.cleanDup(getScriptEntryData(), path.set);
             ScriptQueue queue = new InstantQueue(path.container.getName());
             queue.addEntries(entries);
-            currentEvent = path.event;
             queue.setContextSource(this);
             if (!path.fireAfter) {
                 queue.determinationTarget = (o) -> handleBaseDetermination(path, o);
             }
             queue.start();
-            stats.nanoTimes += System.nanoTime() - queue.startTime;
+            eventData.stats_nanoTimes += System.nanoTime() - queue.startTime;
         }
         catch (Exception e) {
             Debug.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
@@ -574,10 +572,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // @description
     // Every modern ScriptEvent has some special context tags available.
     // The most noteworthy is "context.cancelled", which tracks whether the script event has been cancelled.
-    // You can also use "context.event_header", which returns the exact event header text that fired (which may be useful for some types of dynamic script).
     // That returns, for example, "on player breaks stone".
-    // You can also use "context.event_name", which returns the internal name of the script event that fired (which may be useful for some debugging techniques).
-    // That returns, for example, "PlayerBreaksBlock".
     // -->
 
     @Override
@@ -585,9 +580,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         switch (name) {
             case "cancelled":
                 return new ElementTag(cancelled);
-            case "event_header":
-                return new ElementTag(currentEvent);
-            case "event_name":
+            case "event_name": // Intentionally undocumented, can be removed without harm
                 return new ElementTag(getName());
         }
         return null;
