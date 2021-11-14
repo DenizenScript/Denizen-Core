@@ -165,21 +165,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return index < eventArgsLower.length ? eventArgsLower[index] : "";
         }
 
+        @Deprecated
         public final boolean eventArgsLowEqualStartingAt(int index, String a, String b) {
             return eventArgLowerAt(index).equals(a) && eventArgLowerAt(index + 1).equals(b);
-        }
-
-        public final boolean eventArgsLowEqualStartingAt(int index, String first, String second, String third, String... rest) {
-            if (!eventArgsLowEqualStartingAt(index, first, second) || !eventArgLowerAt(index + 2).equals(third)) {
-                return false;
-            }
-            index += 3;
-            for (int i = 0; i < rest.length; i++, index++) {
-                if (!eventArgLowerAt(i + index).equals(rest[i])) {
-                    return false;
-                }
-            }
-            return true;
         }
 
         // <--[language]
@@ -385,9 +373,23 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     Deprecations.inAreaSwitchFormat.warn(path.container);
                     return true;
                 }
-                return false;
             }
-            Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.");
+            if (toScan == null) {
+                Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.");
+            }
+            else {
+                int sizedRight = 0;
+                for (ScriptEvent evt : toScan) {
+                    for (ScriptEventCouldMatcher matcher : evt.eventData.couldMatchers) {
+                        if (matcher.validators.length == path.eventArgsLower.length) {
+                            sizedRight++;
+                            break;
+                        }
+                    }
+                }
+                Debug.echoError("Event <Y>" + path + "<W> is not matched to any ScriptEvents.  First word '<Y>"
+                        + path.eventArgLowerAt(0) + "<W>' matched lookup table, of which <Y>" + sizedRight + "<W> are correct length, but specific matching failed.");
+            }
             if (path.matchFailReasons != null) {
                 for (String reason : path.matchFailReasons) {
                     Debug.log(reason);

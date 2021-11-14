@@ -15,8 +15,6 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
     // @Events
     // script generates error
     //
-    // @Regex ^on script generates error$
-    //
     // @Group Core
     //
     // @Cancellable true

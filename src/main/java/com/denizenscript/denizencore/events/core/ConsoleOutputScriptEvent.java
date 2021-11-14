@@ -12,8 +12,6 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
     // @Events
     // console output
     //
-    // @Regex ^on console output$
-    //
     // @Group Core
     //
     // @Cancellable true

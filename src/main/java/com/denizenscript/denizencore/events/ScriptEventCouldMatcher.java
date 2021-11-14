@@ -48,7 +48,7 @@ public class ScriptEventCouldMatcher {
                 }
                 String toUse = arg.substring(1, arg.length() - 1);
                 if (toUse.startsWith("'") && toUse.endsWith("'")) {
-                    validatorList.add(new StringBasedValidator(arg));
+                    validatorList.add((word) -> true);
                 }
                 else {
                     PathArgumentValidator validator = knownValidatorTypes.get(toUse);

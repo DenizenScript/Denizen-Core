@@ -14,8 +14,6 @@ public class TickScriptEvent extends ScriptEvent {
     //
     // @Switch every:<count> to only run the event every *count* times (like "every:5" for every 5 ticks).
     //
-    // @Regex ^on tick$
-    //
     // @Group Core
     //
     // @Warning This event fires very rapidly and is usually not the most ideal way to handle things.

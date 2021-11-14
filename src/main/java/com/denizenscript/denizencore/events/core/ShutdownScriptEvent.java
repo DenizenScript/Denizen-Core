@@ -8,8 +8,6 @@ public class ShutdownScriptEvent extends ScriptEvent {
     // @Events
     // shutdown
     //
-    // @Regex ^on shutdown$
-    //
     // @Group Server
     //
     // @Warning not all plugins will be loaded and delayed scripts will be dropped.

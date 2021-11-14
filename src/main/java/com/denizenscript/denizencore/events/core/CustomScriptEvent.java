@@ -20,8 +20,6 @@ public class CustomScriptEvent extends ScriptEvent {
     // @Switch id:<id> to only run the event if the given ID is used. This should almost always be specified.
     // @Switch data:<key>:<value> to only run the event if the given data key matches the given value, using advanced matchers for the given object type (note: the 'customevent' command call has to be careful about object type for this).
     //
-    // @Regex ^on custom event$
-    //
     // @Group Core
     //
     // @Triggers when called by a script using <@link command customevent>.

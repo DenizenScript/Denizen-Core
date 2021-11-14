@@ -15,8 +15,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
     //
     // @Switch had_error:true/false to only process the event if there either was or was not an error message.
     //
-    // @Regex ^on ((reload scripts)|(script reload))$
-    //
     // @Group Core
     //
     // @Triggers when Denizen scripts are reloaded.

@@ -12,7 +12,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // system time HH:MM
+    // system time <'HH:MM'>
     // system time hourly|minutely|secondly
     //
     // @Switch every:<count> to only run the event every *count* times (like "on system time secondly every:5" for every 5 seconds).
@@ -36,7 +36,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     public SystemTimeScriptEvent() {
         instance = this;
-        registerCouldMatcher("system time");
+        registerCouldMatcher("system time <'HH:MM'>");
         registerCouldMatcher("system time hourly|minutely|secondly");
         registerSwitches("every");
     }

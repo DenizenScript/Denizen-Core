@@ -14,8 +14,6 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
     // @Events
     // server generates exception
     //
-    // @Regex ^on server generates exception$
-    //
     // @Group Core
     //
     // @Cancellable true
