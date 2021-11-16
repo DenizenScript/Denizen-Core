@@ -440,6 +440,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // For example, if the input hour is '14', and the original TimeTag is 5 AM, the return will be 2 PM yesterday.
         // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM today.
         // The minute/second/millisecond will be zeroed.
+        // If the input hour is 5, and the TimeTag is at 5 AM, will return the same day.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "last_hour_of_day", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -463,6 +464,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // For example, if the input hour is '14', and the original TimeTag is 5 AM, the return will be 2 PM today.
         // If the input is '14' and the TimeTag is 5 PM, the return will be 2 PM tomorrow.
         // The minute/second/millisecond will be zeroed.
+        // If the input hour is 5, and the TimeTag is at 5 AM, will return the next day.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "next_hour_of_day", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -484,6 +486,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the timetag of the previous day of the specified input day-of-week (like 'sunday').
         // The hour/minute/second/millisecond will be zeroed.
+        // If the TimeTag is on the input day, will return a day 7 days before then.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "last_day_of_week", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -499,6 +502,9 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
                 return null;
             }
             ZonedDateTime time = object.instant;
+            if (time.getDayOfWeek().equals(day)) { // If already on that day, jump back a bit.
+                time = time.minus(3, ChronoUnit.DAYS);
+            }
             while (!time.getDayOfWeek().equals(day)) {
                 time = time.minus(12, ChronoUnit.HOURS); // Subtract by 12 hours instead of 1 day to avoid most edge-cases.
             }
@@ -512,6 +518,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns the timetag of the next day of the specified input day-of-week (like 'thursday').
         // The hour/minute/second/millisecond will be zeroed.
+        // If the TimeTag is on the input day, will return a day 7 days from then.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "next_day_of_week", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -527,8 +534,11 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
                 return null;
             }
             ZonedDateTime time = object.instant;
+            if (time.getDayOfWeek().equals(day)) { // If already on that day, jump ahead a bit.
+                time = time.plus(3, ChronoUnit.DAYS);
+            }
             while (!time.getDayOfWeek().equals(day)) {
-                time = time.plus(12, ChronoUnit.HOURS); // Subtract by 12 hours instead of 1 day to avoid most edge-cases.
+                time = time.plus(12, ChronoUnit.HOURS); // Add by 12 hours instead of 1 day to avoid most edge-cases.
             }
             TimeTag outTime = new TimeTag(time);
             return new TimeTag(outTime.year(), outTime.month(), outTime.day(), 0, 0, 0, 0, object.instant.getOffset());
