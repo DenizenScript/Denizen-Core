@@ -45,6 +45,20 @@ public class ObjectFetcher {
     public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, List<Class<? extends ObjectTag>>> customSubtypeList = new HashMap<>();
 
+    private static ArrayList<Class<? extends ObjectTag>> createList(Class<? extends ObjectTag> clazz) {
+        ArrayList<Class<? extends ObjectTag>> classes = new ArrayList<>();
+        classes.add(clazz);
+        classes.add(ElementTag.class);
+        return classes;
+    }
+
+    public static void registerCrossType(Class<? extends ObjectTag> a, Class<? extends ObjectTag> b) {
+        List<Class<? extends ObjectTag>> listA = customSubtypeList.computeIfAbsent(a, ObjectFetcher::createList);
+        List<Class<? extends ObjectTag>> listB = customSubtypeList.computeIfAbsent(b, ObjectFetcher::createList);
+        listA.add(b);
+        listB.add(a);
+    }
+
     public static Collection<Class<? extends ObjectTag>> getAllApplicableSubTypesFor(Class<? extends ObjectTag> type) {
         if (type == ObjectTag.class) {
             return objectsByClass.keySet();
