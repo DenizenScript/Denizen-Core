@@ -202,6 +202,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2019/10/03, bumped to slow 2021/11/14.
     public static Warning inAreaSwitchFormat = new SlowWarning("The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
+    // In Bukkit impl, Added 2021/11/15.
+    public static Warning horseJumpsFormat = new SlowWarning("The '<color> horse jumps' event is deprecated: don't put the color in the event line. (Deprecated for technical design reasons).");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
 
