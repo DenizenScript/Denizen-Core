@@ -510,8 +510,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     }
 
     /**
-     * If the scriptEntry lacks the object corresponding to the
-     * key, set it to the first non-null argument
+     * If the scriptEntry lacks the object corresponding to the key, set it to the first non-null argument
      *
      * @param key The key of the object to check
      * @return The scriptEntry
@@ -525,15 +524,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 }
             }
         }
-
-        // Check if the object has been filled. If not, throw new Invalid Arguments Exception.
-        // TODO: Should this be here? Most checks are done separately.
-        if (!hasObject(key)) {
-            throw new InvalidArgumentsException("Missing '" + key + "' argument!");
-        }
-        else {
-            return this;
-        }
+        return this;
     }
 
     ////////////
