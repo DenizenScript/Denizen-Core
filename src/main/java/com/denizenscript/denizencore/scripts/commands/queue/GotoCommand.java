@@ -36,6 +36,8 @@ public class GotoCommand extends AbstractCommand {
     // - mark potato
     // </code>
     //
+    // Most scripters should never use this. This is only for certain special cases.
+    //
     // @Tags
     // None
     //

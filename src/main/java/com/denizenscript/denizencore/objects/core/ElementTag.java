@@ -1615,8 +1615,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element manipulation
         // @description
-        // Returns the value of an element extended to reach a minimum specified length
-        // by adding spaces to the left side.
+        // Returns the value of an element extended to reach a minimum specified length by adding spaces to the left side.
         // -->
         tagProcessor.registerTag(ElementTag.class, "pad_left", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -1652,8 +1651,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element manipulation
         // @description
-        // Returns the value of an element extended to reach a minimum specified length
-        // by adding spaces to the right side.
+        // Returns the value of an element extended to reach a minimum specified length by adding spaces to the right side.
         // -->
         tagProcessor.registerTag(ElementTag.class, "pad_right", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -1668,8 +1666,7 @@ public class ElementTag implements ObjectTag {
             // @returns ElementTag
             // @group element manipulation
             // @description
-            // Returns the value of an element extended to reach a minimum specified length
-            // by adding a specific symbol to the right side.
+            // Returns the value of an element extended to reach a minimum specified length by adding a specific symbol to the right side.
             // -->
             if (attribute.startsWith("with", 2) && attribute.hasContext(2)) {
                 with = String.valueOf(attribute.getContext(2).charAt(0));
@@ -1693,6 +1690,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the absolute value of the element.
+        // For example: <element[-5].abs> returns 5.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "abs", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1709,6 +1707,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the higher number: this element or the specified one.
+        // For example: <element[5].max[10]> returns 10.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "max", (attribute, ele) -> {
             if (!ele.isDouble()) {
@@ -1725,6 +1724,7 @@ public class ElementTag implements ObjectTag {
         // @group math
         // @description
         // Returns the lower number: this element or the specified one.
+        // For example: <element[5].min[10]> returns 5.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "min", (attribute, ele) -> {
             if (!ele.isDouble()) {
