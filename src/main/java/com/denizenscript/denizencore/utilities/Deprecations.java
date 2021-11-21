@@ -76,7 +76,7 @@ public class Deprecations {
     public static Warning oldNPCNavigator = new StrongWarning("'npc.navigator.*' tags are deprecated. Just remove the '.navigator' part, they're the same after that.");
 
     // In Bukkit impl, Added on 2019/09/24
-    public static Warning oldRecipeScript = new SlowWarning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
+    public static Warning oldRecipeScript = new Warning("Item script single-recipe format is outdated. Use the modern 'recipes' list key (see meta docs).");
 
     // In Bukkit impl, Added on 2020/01/15
     public static Warning worldRandomLoadedChunkTag = new StrongWarning("The 'world.random_loaded_chunk' tag is pointless. Use 'world.loaded_chunks.random' instead.");
@@ -141,31 +141,31 @@ public class Deprecations {
 
     // In Bukkit impl, added 2020/07/04.
     public static Warning cuboidFullTag = new Warning("The tag cuboid.full is deprecated: this should just never be used.");
-    public static Warning furnaceTimeTags = new SlowWarning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
-    public static Warning playerTimePlayedTags = new SlowWarning("The tags player.first_played, last_played, ban_expiration, and ban_created have been replaced by tags of the same name with '_time' added to the end (using TimeTag now).");
+    public static Warning furnaceTimeTags = new Warning("The furnace_burn_time, cook time, and cook total time tag/mechs have been replaced by _duration instead of _time equivalents (using DurationTag now).");
+    public static Warning playerTimePlayedTags = new Warning("The tags player.first_played, last_played, ban_expiration, and ban_created have been replaced by tags of the same name with '_time' added to the end (using TimeTag now).");
 
     // In Bukkit impl, added 2020/07/19.
-    public static Warning airLevelEventDuration = new SlowWarning("The 'entity changes air level' event uses 'air_duration' context now instead of the old tick count number.");
-    public static Warning damageEventTypeMap = new SlowWarning("The 'entity damaged' context 'damage_[TYPE]' is deprecated in favor of 'damage_type_map', which is operated as a MapTag.");
+    public static Warning airLevelEventDuration = new Warning("The 'entity changes air level' event uses 'air_duration' context now instead of the old tick count number.");
+    public static Warning damageEventTypeMap = new Warning("The 'entity damaged' context 'damage_[TYPE]' is deprecated in favor of 'damage_type_map', which is operated as a MapTag.");
 
     // In Bukkit impl, added 2020/07/28.
-    public static Warning headCommand = new SlowWarning("The 'head' command is deprecated: use the 'equip' command with a 'player_head' item using the 'skull_skin' mechanism.");
+    public static Warning headCommand = new Warning("The 'head' command is deprecated: use the 'equip' command with a 'player_head' item using the 'skull_skin' mechanism.");
 
     // In Bukkit impl, added 2020/08/01.
-    public static Warning entityRemoveWhenFar = new SlowWarning("The EntityTag remove_when_far_away property is deprecated in favor of the persistent property (which is the exact inverse).");
-    public static Warning entityPlayDeath = new SlowWarning("The EntityTag 'play_death' mechanism is deprecated: use the animate command.");
+    public static Warning entityRemoveWhenFar = new Warning("The EntityTag remove_when_far_away property is deprecated in favor of the persistent property (which is the exact inverse).");
+    public static Warning entityPlayDeath = new Warning("The EntityTag 'play_death' mechanism is deprecated: use the animate command.");
 
     // In Bukkit impl, added 2020/08/19.
-    public static Warning npcSpawnMechanism = new SlowWarning("The NPCTag 'spawn' mechanism is deprecated: use the spawn command.");
+    public static Warning npcSpawnMechanism = new Warning("The NPCTag 'spawn' mechanism is deprecated: use the spawn command.");
 
     // In Bukkit impl, Added 2020/05/17, made current on 2020/10/24.
     public static Warning itemFlagsProperty = new StrongWarning("The item.flags property has been renamed to item.hides, to avoid confusion with the new flaggable itemtags system.");
 
     // In Bukkit impl, Added 2020/11/22.
-    public static Warning biomeSpawnableTag = new SlowWarning(pointlessSubtagPrefix + "The tag BiomeTag.spawnable_entities.(type) is deprecated: the type is now an input context instead.");
+    public static Warning biomeSpawnableTag = new Warning(pointlessSubtagPrefix + "The tag BiomeTag.spawnable_entities.(type) is deprecated: the type is now an input context instead.");
 
     // In Bukkit impl, Added 2020/11/30.
-    public static Warning npcDespawnMech = new SlowWarning("The NPCTag despawn mechanism is deprecated: use the despawn command.");
+    public static Warning npcDespawnMech = new Warning("The NPCTag despawn mechanism is deprecated: use the despawn command.");
 
     // Added 2021/02/17.
     public static Warning listEscapeContents = new SlowWarning("The tags ListTag.escape_contents and unescape_contents are deprecated: use parse[escaped] and parse[unescaped], or just don't escape in the first place as most list escapes are no longer needed.");
@@ -174,7 +174,7 @@ public class Deprecations {
     public static Warning zapPrefix = new SlowWarning("The 'zap' command should be used with the scriptname and step as two separate arguments, not just one.");
 
     // Added 2021/04/16.
-    public static Warning ymlFileExtension = new SlowWarning("Denizen scripts use the '.dsc' file extension, not '.yml'. Please follow the Denizen beginner's guide https://guide.denizenscript.com/");
+    public static Warning ymlFileExtension = new Warning("Denizen scripts use the '.dsc' file extension, not '.yml'. Please follow the Denizen beginner's guide https://guide.denizenscript.com/");
 
     // In Bukkit impl, Added 2020/03/05, made current on 2021/04/16.
     public static Warning oldPlayEffectSpecials = new SlowWarning("The playeffect input of forms like 'iconcrack_' have been deprecated in favor of using the special_data input (refer to meta docs).");
@@ -205,11 +205,11 @@ public class Deprecations {
     // In Bukkit impl, Added 2021/11/15.
     public static Warning horseJumpsFormat = new SlowWarning("The '<color> horse jumps' event is deprecated: don't put the color in the event line. (Deprecated for technical design reasons).");
 
+    // In Bukkit impl, Added 2019/11/11.
+    public static Warning entityLocationCursorOnTag = new SlowWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
-
-    // In Bukkit impl, Added 2019/11/11, bump to normal slow warning by 2022.
-    public static Warning entityLocationCursorOnTag = new VerySlowWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
 
     // Added 2020/05/23, bump to normal slow warning by 2023.
     public static Warning timeTagRewrite = new VerySlowWarning("Using old Duration-Time - TimeTag is now separate from DurationTag, and some tags have changed as a result.");
@@ -233,37 +233,38 @@ public class Deprecations {
     // Added 2021/10/28, bump to normal slow warning by 2023.
     public static Warning dynamicPrefix = new VerySlowWarning("Dynamically prefixed arguments (for 'prefix:value' arguments, like '<[sometag]>:<[somevalue]>') were never officially permitted and are now deprecated. You must specify a prefix explicitly if one is needed.");
 
+    // In Bukkit impl, Added 2021/04/13, bump to normal slow warning by 2023.
+    public static Warning materialHasDataPackTag = new VerySlowWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
+    public static Warning materialPropertyTags = new VerySlowWarning("Old MaterialTag.is_x property tags are deprecated in favor of PropertyHolderObject.supports[property-name]");
+
+    // Added 2020/05/24, bump to normal slow warning by 2023.
+    public static Warning flagIsExpiredTag = new VerySlowWarning(pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");
+    public static Warning flagExpirationTag = new VerySlowWarning(pointlessSubtagPrefix + "'flag[...].expiration' is deprecated: use 'flag_expiration[...]' instead.");
+
+    // In Bukkit impl, Added 2020/06/13, bump to normal slow warning by 2023.
+    public static Warning listStyleTags = new VerySlowWarning("'list_' tags are deprecated: just remove the 'list_' prefix.");
+
+    // In Bukkit impl, Added 2020/07/03, bump to normal slow warning by 2023.
+    public static Warning attachToMech = new VerySlowWarning("The entity 'attach_to' mechanism is deprecated: use the new 'attach' command instead!");
+
+    // In Bukkit impl, Added 2020/07/12, bump to normal slow warning by 2023.
+    public static Warning entityEquipmentSubtags = new VerySlowWarning(pointlessSubtagPrefix + " 'entity.equipment.slotname' is deprecated: use 'entity.equipment_map.get[slotname]' instead.");
+
+    // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, bump to normal slow warning by 2023.
+    public static Warning queueClear = new VerySlowWarning("Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
+
+    // In Bukkit impl, Added 2020/12/25, bump to normal slow warning by 2023.
+    public static Warning itemEnchantmentTags = new VerySlowWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
+
     // ==================== FUTURE deprecations ====================
 
-    // In Bukkit impl, Added 2021/04/13, deprecate officially by 2022.
-    public static Warning materialHasDataPackTag = new FutureWarning("The tag 'MaterialTag.has_vanilla_data_tag[...]' is deprecated in favor of MaterialTag.vanilla_tags.contains[<name>]");
-    public static Warning materialPropertyTags = new FutureWarning("Old MaterialTag.is_x property tags are deprecated in favor of PropertyHolderObject.supports[property-name]");
-
-    // Added 2020/05/24, deprecate officially by 2022.
-    public static Warning flagIsExpiredTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");
-    public static Warning flagExpirationTag = new FutureWarning(pointlessSubtagPrefix + "'flag[...].expiration' is deprecated: use 'flag_expiration[...]' instead.");
-
-    // In Bukkit impl, Added 2020/06/13, deprecate officially by 2022.
-    public static Warning listStyleTags = new FutureWarning("'list_' tags are deprecated: just remove the 'list_' prefix.");
-
-    // In Bukkit impl, Added 2020/07/03, deprecate officially by 2022.
-    public static Warning attachToMech = new FutureWarning("The entity 'attach_to' mechanism is deprecated: use the new 'attach' command instead!");
-
-    // In Bukkit impl, Added 2020/07/12, deprecate officially by 2022.
-    public static Warning entityEquipmentSubtags = new FutureWarning(pointlessSubtagPrefix + " 'entity.equipment.slotname' is deprecated: use 'entity.equipment_map.get[slotname]' instead.");
-
-    // In Bukkit impl, Added 2020/10/18, deprecate officially by 2022.
+    // In Bukkit impl, Added 2020/10/18, deprecate officially by 2023.
+    // Bad candidate for functionality removal due to frequency of use and likelihood of pre-existing data in save files.
     public static Warning itemDisplayNameMechanism = new FutureWarning("The item 'display_name' mechanism is now just the 'display' mechanism.");
 
     // In Bukkit impl, Added 2020/12/05, deprecate officially by 2022.
     // Bad candidate for functionality removal due to frequency of use and likelihood of pre-existing data remaining in world data.
     public static Warning itemNbt = new FutureWarning("The item 'nbt' property is deprecated: use ItemTag flags instead!");
-
-    // In Bukkit impl, Added 2020/12/14, but deprecated unofficially earlier, deprecate officially by 2022.
-    public static Warning queueClear = new FutureWarning("Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
-
-    // In Bukkit impl, Added 2020/12/25, deprecate officially by 2022.
-    public static Warning itemEnchantmentTags = new FutureWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
 
     // In Bukkit impl, Added 2021/02/03, deprecate officially by 2023.
     public static Warning hasScriptTags = new FutureWarning("The ItemTag.scriptname and EntityTag.scriptname and ItemTag.has_script and NPCTag.has_script tags are deprecated: use '.script.name' or a null check on .script.");
