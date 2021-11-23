@@ -100,11 +100,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public long stats_fires = 0, stats_scriptFires = 0, stats_nanoTimes = 0;
 
         /**
-         * Known paths that fire this event.
-         */
-        public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
-
-        /**
          * Built-in could-matchers for this event.
          */
         public ArrayList<ScriptEventCouldMatcher> couldMatchers = new ArrayList<>();
@@ -119,6 +114,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
          */
         public boolean needsLegacy = false;
     }
+
+    /**
+     * Known paths that fire this event.
+     * Note: cannot be inside InternalEventData as it's uniquely modified for 'bukkit_priority'.
+     */
+    public ArrayList<ScriptPath> eventPaths = new ArrayList<>();
 
     /**
      * This ScriptEvent object's base data (separate from the firing-related data of an event happening). Stored in a separate instance to avoid duplication issues.
@@ -317,7 +318,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         for (ScriptEvent event : events) {
             try {
                 event.destroy();
-                event.eventData.eventPaths.clear();
+                event.eventPaths.clear();
             }
             catch (Throwable ex) {
                 Debug.echoError("Failed to unload event '<Y>" + event.getName() + "<W>':");
@@ -404,7 +405,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         for (ScriptEvent event : events) {
             tryingToBuildEvent = event;
             if (event.couldMatch(path) && !path.matches.contains(event)) {
-                event.eventData.eventPaths.add(path);
+                event.eventPaths.add(path);
                 path.matches.add(event);
                 if (Debug.showLoading) {
                     Debug.log("Event match, <Y>" + event.getName() + "<W> matched for '<Y>" + path + "<W>'!");
@@ -416,7 +417,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private static void reloadPostLoad() {
         for (ScriptEvent event : events) {
             try {
-                if (event.eventData.eventPaths.isEmpty()) {
+                if (event.eventPaths.isEmpty()) {
                     continue;
                 }
                 event.sort();
@@ -520,7 +521,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // -->
     public void sort() {
         try {
-            for (ScriptPath path : eventData.eventPaths) {
+            for (ScriptPath path : eventPaths) {
                 String gotten = path.switches.get("priority");
                 path.priority = gotten == null ? 0 : Integer.parseInt(gotten);
             }
@@ -528,7 +529,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         catch (NumberFormatException ex) {
             Debug.echoError("Failed to sort events: not-a-number priority value! " + ex.getMessage());
         }
-        eventData.eventPaths.sort((scriptPath, t1) -> {
+        eventPaths.sort((scriptPath, t1) -> {
             int rel = scriptPath.priority - t1.priority;
             return Integer.compare(rel, 0);
         });
@@ -673,7 +674,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public ScriptEvent fire() {
         ScriptEvent copy = clone();
         eventData.stats_fires++;
-        for (ScriptPath path : eventData.eventPaths) {
+        for (ScriptPath path : eventPaths) {
             try {
                 if (matchesScript(copy, path)) {
                     if (path.fireAfter) {
