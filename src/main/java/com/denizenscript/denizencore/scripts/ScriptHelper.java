@@ -3,44 +3,30 @@ package com.denizenscript.denizencore.scripts;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 
 import java.io.*;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Reloads and retrieves information from the scripts folder.
  */
 public class ScriptHelper {
-    public static YamlConfiguration _yamlScripts = null;
+    public static ArrayList<YamlConfiguration> _yamlScripts;
 
     public static void reloadScripts() {
-        String concatenated = _concatenateCoreScripts();
-
         try {
-            _yamlScripts = YamlConfiguration.load(concatenated);
+            _yamlScripts = buildScriptList();
         }
-        catch (Exception e) {
+        catch (Exception ex) {
             hadError = true;
             Debug.echoError("Could not load scripts!");
-            DenizenCore.implementation.debugException(e);
-            _yamlScripts = YamlConfiguration.load("scripts_failed_to_load:\n  type: data\n");
+            Debug.echoError(ex);
+            _yamlScripts = new ArrayList<>();
         }
-
         ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
-    }
-
-    public static YamlConfiguration getScripts() {
-        if (_yamlScripts == null) {
-            reloadScripts();
-        }
-        return _yamlScripts;
     }
 
     /**
@@ -58,19 +44,6 @@ public class ScriptHelper {
 
     public static void setHadError() {
         hadError = true;
-    }
-
-    static void handleListing(YamlConfiguration config, List<String> list) {
-        for (StringHolder str : config.getKeys(false)) {
-            String up = str.str.toUpperCase();
-            if (list.contains(up)) {
-                hadError = true;
-                Debug.echoError("There is more than one script named '" + up + "'!");
-            }
-            else {
-                list.add(up);
-            }
-        }
     }
 
     private static HashMap<String, String> scriptSources = new HashMap<>();
@@ -100,7 +73,7 @@ public class ScriptHelper {
             }
             else if (!trimmedLine.startsWith("#")) {
                 if (trackSources && !hasAnyScript && trimmedLine.endsWith(":")) {
-                    Debug.echoError("Script '" + filename + "' is broken: script container title has spaces in front.");
+                    Debug.echoError("Script '<Y>" + filename + "<W>' is broken: script container title has spaces in front.");
                     hasAnyScript = true;
                 }
                 if ((trimmedLine.startsWith("}") || trimmedLine.startsWith("{") || trimmedLine.startsWith("else")) && !trimmedLine.endsWith(":")) {
@@ -167,8 +140,7 @@ public class ScriptHelper {
         }
     }
 
-    private static String _concatenateCoreScripts() {
-
+    private static ArrayList<YamlConfiguration> buildScriptList() {
         scriptSources.clear();
         try {
             File file = DenizenCore.implementation.getScriptFolder();
@@ -176,12 +148,12 @@ public class ScriptHelper {
             if (!file.exists()) {
                 Debug.echoError("No script folder found, please create one.");
                 hadError = true;
-                return "";
+                return new ArrayList<>();
             }
             // Get files using script directory
             List<File> files = CoreUtilities.listDScriptFiles(file);
             if (files.size() > 0) {
-                StringBuilder sb = new StringBuilder();
+                ArrayList<YamlConfiguration> outList = new ArrayList<>();
                 List<String> scriptNames = new ArrayList<>(files.size() * 2);
                 YamlConfiguration yaml;
                 for (File f : files) {
@@ -193,16 +165,15 @@ public class ScriptHelper {
                         yaml = loadConfig(f.getAbsolutePath(), new FileInputStream(f));
                         String saved = yaml != null ? yaml.saveToString(false) : null;
                         if (saved != null && saved.length() > 0) {
-                            handleListing(yaml, scriptNames);
-                            sb.append(saved).append("\r\n");
+                            outList.add(yaml);
                         }
                         else {
-                            Debug.echoError("Error parsing " + fileName + "! This script has been skipped. No internal error - is the file empty?");
+                            Debug.echoError("Error parsing '<Y>" + fileName + "<W>'! This script has been skipped. No internal error - is the file empty?");
                             hadError = true;
                         }
                     }
                     catch (Exception e) {
-                        Debug.echoError("Error parsing " + fileName + "!");
+                        Debug.echoError("Error parsing '<Y>" + fileName + "<W>'!");
                         hadError = true;
                         Debug.echoError(e);
                     }
@@ -210,7 +181,7 @@ public class ScriptHelper {
                 if (Debug.showLoading) {
                     Debug.echoApproval("All scripts loaded!");
                 }
-                return sb.toString();
+                return outList;
             }
             else {
                 Debug.log("No scripts in /plugins/Denizen/scripts/ to load!");
@@ -222,7 +193,6 @@ public class ScriptHelper {
             hadError = true;
             Debug.echoError(e);
         }
-
-        return "";
+        return new ArrayList<>();
     }
 }

@@ -3,21 +3,23 @@ package com.denizenscript.denizencore.scripts;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.OldEventManager;
 
+import java.lang.invoke.MethodHandle;
 import java.util.*;
 
 public class ScriptRegistry {
 
     public static Map<String, ScriptContainer> scriptContainers = new HashMap<>();
-    public static Map<String, Class<? extends ScriptContainer>> scriptContainerTypes = new HashMap<>();
+    public static Map<String, MethodHandle> typeConstructors = new HashMap<>();
 
     public static void _registerType(String typeName, Class<? extends ScriptContainer> scriptContainerClass) {
-        scriptContainerTypes.put(typeName.toUpperCase(), scriptContainerClass);
+        typeConstructors.put(CoreUtilities.toLowerCase(typeName), ReflectionHelper.getConstructor(scriptContainerClass, YamlConfiguration.class, String.class));
     }
 
     public static void _registerCoreTypes() {
@@ -29,10 +31,6 @@ public class ScriptRegistry {
         _registerType("yaml data", DataScriptContainer.class);
     }
 
-    public static boolean containsScript(String id) {
-        return scriptContainers.containsKey(CoreUtilities.toLowerCase(id));
-    }
-
     public static boolean containsScript(String id, Class scriptContainerType) {
         if (!scriptContainers.containsKey(CoreUtilities.toLowerCase(id))) {
             return false;
@@ -41,54 +39,58 @@ public class ScriptRegistry {
         return scriptContainerType.isInstance(script);
     }
 
-    public static YamlConfiguration fullYaml;
-
-    public static ArrayList<String> toPostLoadAttempt = new ArrayList<>();
+    public static ArrayList<Map.Entry<String, YamlConfiguration>> toPostLoadAttempt = new ArrayList<>();
 
     public static void postLoadScripts() {
-        for (String scriptName : toPostLoadAttempt) {
-            attemptLoadSingle(scriptName, true);
+        try {
+            for (Map.Entry<String, YamlConfiguration> script : toPostLoadAttempt) {
+                attemptLoadSingle(script.getValue(), script.getKey(), true);
+            }
         }
-        toPostLoadAttempt.clear();
-        fullYaml = null;
+        finally {
+            toPostLoadAttempt.clear();
+        }
     }
 
-    public static void attemptLoadSingle(String scriptName, boolean shouldErrorOnType) {
+    public static void attemptLoadSingle(YamlConfiguration script, String scriptName, boolean shouldErrorOnType) {
         // Make sure the script has a type
-        if (fullYaml.contains(scriptName + ".TYPE")) {
-            String type = fullYaml.getString(scriptName + ".TYPE");
-            // Check that types is a registered type
-            if (!scriptContainerTypes.containsKey(type.toUpperCase())) {
-                if (shouldErrorOnType) {
-                    Debug.log("<G>Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")'<G> is an unknown type.");
-                    ScriptHelper.setHadError();
-                }
-                else {
-                    toPostLoadAttempt.add(scriptName);
-                }
-                return;
-            }
-            Class typeClass = scriptContainerTypes.get(type.toUpperCase());
-            if (Debug.showLoading) {
-                Debug.log("Adding script " + scriptName + " as type " + type.toUpperCase());
-            }
-            try {
-                scriptContainers.put(CoreUtilities.toLowerCase(scriptName), (ScriptContainer) typeClass.getConstructor(YamlConfiguration.class, String.class)
-                        .newInstance(ScriptHelper.getScripts().getConfigurationSection(scriptName), scriptName));
-            }
-            catch (Exception e) {
-                Debug.echoError(e);
+        String type = script.getString("type");
+        if (type == null) {
+            Debug.echoError("Found type-less container: '<Y>" + scriptName + "<W>'.");
+            ScriptHelper.setHadError();
+            return;
+        }
+        type = CoreUtilities.toLowerCase(type);
+        // Check that types is a registered type
+        if (!typeConstructors.containsKey(type)) {
+            if (shouldErrorOnType) {
+                Debug.echoError("Trying to load an invalid script. '<A>" + scriptName + "<Y>(" + type + ")<W>' is an unknown type.");
                 ScriptHelper.setHadError();
             }
+            else {
+                toPostLoadAttempt.add(new AbstractMap.SimpleEntry<>(scriptName, script));
+            }
+            return;
         }
-        else {
-            Debug.echoError("Found type-less container: '" + scriptName + "'.");
+        MethodHandle constructor = typeConstructors.get(type);
+        if (Debug.showLoading) {
+            Debug.log("Adding script " + scriptName + " as type " + type);
+        }
+        try {
+            String nameLow = CoreUtilities.toLowerCase(scriptName);
+            if (scriptContainers.containsKey(nameLow)) {
+                Debug.echoError("Duplicate script name '<Y>" + scriptName + "<W>'");
+            }
+            ScriptContainer instance = (ScriptContainer) constructor.invoke(script, scriptName);
+            scriptContainers.put(nameLow, instance);
+        }
+        catch (Throwable ex) {
+            Debug.echoError(ex);
             ScriptHelper.setHadError();
         }
     }
 
-    public static void buildCoreYamlScriptContainers(YamlConfiguration yamlScripts) {
-        fullYaml = yamlScripts;
+    public static void buildCoreYamlScriptContainers(List<YamlConfiguration> yamlScripts) {
         scriptContainers.clear();
         OldEventManager.world_scripts.clear();
         OldEventManager.events.clear();
@@ -96,10 +98,11 @@ public class ScriptRegistry {
         if (yamlScripts == null) {
             return;
         }
-        Set<StringHolder> scripts = yamlScripts.getKeys(false);
-        Debug.log("Loading " + scripts.size() + " scripts...");
-        for (StringHolder scriptName : scripts) {
-            attemptLoadSingle(scriptName.str, false);
+        Debug.log("Loading <A>" + yamlScripts.size() + "<W> scripts...");
+        for (YamlConfiguration script : yamlScripts) {
+            for (StringHolder key : script.contents.keySet()) {
+                attemptLoadSingle(script.getConfigurationSection(key.str), key.str, false);
+            }
         }
     }
 
