@@ -403,7 +403,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private static void tryLoadForSet(ScriptPath path, ArrayList<ScriptEvent> events) {
         for (ScriptEvent event : events) {
             tryingToBuildEvent = event;
-            if (event.couldMatch(path)) {
+            if (event.couldMatch(path) && !path.matches.contains(event)) {
                 event.eventData.eventPaths.add(path);
                 path.matches.add(event);
                 if (Debug.showLoading) {
