@@ -78,11 +78,8 @@ public class NoteCommand extends AbstractCommand {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         ObjectTag object = scriptEntry.getObjectTag("object");
-        ElementTag id = scriptEntry.argForPrefixAsElement("id", null);
+        ElementTag id = scriptEntry.requiredArgForPrefixAsElement("id");
         boolean remove = scriptEntry.argAsBoolean("remove");
-        if (id == null) {
-            throw new InvalidArgumentsRuntimeException("Must specify an id");
-        }
         if (object == null && !remove) {
             throw new InvalidArgumentsRuntimeException("Must specify an object to note.");
         }

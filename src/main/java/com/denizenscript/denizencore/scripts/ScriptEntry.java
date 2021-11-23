@@ -165,6 +165,14 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return null;
     }
 
+    public <T extends ObjectTag> T requiredArgForPrefix(String prefix, Class<T> clazz) {
+        T result = argForPrefix(prefix, clazz, true);
+        if (result == null) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + prefix + "' argument. Did you forget an argument? Check meta docs!");
+        }
+        return result;
+    }
+
     /**
      * Gets the ObjectTag value of an argument by prefix name and type class.
      * @param throwError true if objects of the wrong type should error. False if wrong type should be ignored. Missing prefix never errors.
@@ -189,6 +197,14 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return null;
         }
         return argAtIndex(internal.all_arguments, index);
+    }
+
+    public ElementTag requiredArgForPrefixAsElement(String prefix) {
+        ElementTag result = argForPrefixAsElement(prefix, null);
+        if (result == null) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + prefix + "' argument. Did you forget an argument? Check meta docs!");
+        }
+        return result;
     }
 
     public final ElementTag argForPrefixAsElement(String prefix, String defaultValue) {

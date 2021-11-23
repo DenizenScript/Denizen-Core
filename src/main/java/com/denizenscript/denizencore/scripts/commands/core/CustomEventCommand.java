@@ -71,11 +71,8 @@ public class CustomEventCommand extends AbstractCommand {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        ElementTag id = scriptEntry.argForPrefixAsElement("id", null);
+        ElementTag id = scriptEntry.requiredArgForPrefixAsElement("id");
         MapTag context = scriptEntry.argForPrefix("context", MapTag.class, true);
-        if (id == null) {
-            throw new InvalidArgumentsRuntimeException("Missing 'id' argument!");
-        }
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, context);
         }
