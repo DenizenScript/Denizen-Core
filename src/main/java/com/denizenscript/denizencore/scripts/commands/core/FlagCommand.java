@@ -213,7 +213,7 @@ public class FlagCommand extends AbstractCommand {
         TimeTag expiration = scriptEntry.getObjectTag("expiration");
         DataAction flagAction = (DataAction) scriptEntry.getObject("flag_action");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), targets, expiration, flagAction.debug());
+            Debug.report(scriptEntry, getName(), targets, expiration, flagAction);
         }
         ((FlagActionProvider) flagAction.provider).expiration = expiration;
         for (ObjectTag object : targets.objectForms) {

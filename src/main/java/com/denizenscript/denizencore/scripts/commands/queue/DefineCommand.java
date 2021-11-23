@@ -128,7 +128,7 @@ public class DefineCommand extends AbstractCommand {
         ElementTag remove = scriptEntry.getElement("remove");
         DataAction action = (DataAction) scriptEntry.getObject("action");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()), definition, value, action == null ? null : action.debug(), remove);
+            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()), definition, value, action, remove);
         }
         if (action != null) {
             action.execute(scriptEntry.getContext());
