@@ -24,8 +24,4 @@ public class InstantQueue extends ScriptQueue {
     public String getName() {
         return "InstantQueue";
     }
-
-    public void onStop() {
-        // Nothing to do here!
-    }
 }

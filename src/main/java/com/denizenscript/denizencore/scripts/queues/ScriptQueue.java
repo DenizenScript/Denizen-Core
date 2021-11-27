@@ -365,8 +365,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         callback = r;
     }
 
-    protected abstract void onStop();
-
     public final void stop() {
         if (is_stopping) {
             return;
@@ -374,13 +372,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         is_stopping = true;
         allQueues.remove(id);
         if (queueNeedsToDebug()) {
-            queueDebug("Completing queue '<QUEUE>' in " + ((System.nanoTime() - startTime) / 1000000) + "ms.");
+            queueDebug("Completing queue '<QUEUE>' in <A>" + ((System.nanoTime() - startTime) / 1000000) + "<O>ms.");
         }
         if (callback != null) {
             callback.run();
         }
         is_started = false;
-        onStop();
         isStopped = true;
     }
 

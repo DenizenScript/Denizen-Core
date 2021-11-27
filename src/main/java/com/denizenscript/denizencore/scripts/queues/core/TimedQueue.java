@@ -2,8 +2,6 @@ package com.denizenscript.denizencore.scripts.queues.core;
 
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -29,8 +27,6 @@ public class TimedQueue extends ScriptQueue {
             return serverTimeEnd > DenizenCore.serverTimeMillis;
         }
     }
-
-    private Schedulable schedulable;
 
     private long ticks;
 
@@ -112,11 +108,21 @@ public class TimedQueue extends ScriptQueue {
         if (script_entries.isEmpty()) {
             return;
         }
-        if (schedulable == null) {
-            Schedulable schedulable = new RepeatingSchedulable(
-                    this::revolve, (ticks <= 0 ? 1 : ticks) / 20f);
-            this.schedulable = schedulable;
-            DenizenCore.schedule(schedulable);
+        DenizenCore.timedQueues.add(this);
+    }
+
+    /**
+     * Tick counter for 'tryRevolveOnce'.
+     */
+    public int tickCounter = 0;
+
+    /**
+     * Tries to revolve the timedqueue, incrementing the tick counter and only revolving if it's time to.
+     */
+    public final void tryRevolveOnce() {
+        if (tickCounter++ >= ticks) {
+            tickCounter = 0;
+            revolve();
         }
     }
 
@@ -139,13 +145,5 @@ public class TimedQueue extends ScriptQueue {
     @Override
     public String getName() {
         return "TimedQueue";
-    }
-
-    @Override
-    protected void onStop() {
-        if (schedulable != null) {
-            schedulable.cancel();
-            schedulable = null;
-        }
     }
 }

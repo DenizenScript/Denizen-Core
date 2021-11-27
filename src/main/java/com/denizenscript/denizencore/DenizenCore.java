@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
+import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -21,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -84,6 +84,16 @@ public class DenizenCore {
      * Duration of time, in milliseconds, since the server started.
      */
     public static long serverTimeMillis = 1;
+
+    /**
+     * All current scheduled tasks.
+     */
+    public static final ArrayList<Schedulable> scheduled = new ArrayList<>();
+
+    /**
+     * All current delayed queues.
+     */
+    public static final ArrayList<TimedQueue> timedQueues = new ArrayList<>();
 
     /**
      * Implementation helper class, must be implemented for Denizen to function.
@@ -201,8 +211,6 @@ public class DenizenCore {
         Debug.log("Scripts reloaded.");
     }
 
-    public static final List<Schedulable> scheduled = new ArrayList<>();
-
     /**
      * Schedule an item to be run automatically after a given period of time, optionally repeating.
      */
@@ -248,6 +256,13 @@ public class DenizenCore {
                 if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
                     scheduled.remove(i--);
                 }
+            }
+        }
+        for (int i = 0; i < timedQueues.size(); i++) {
+            TimedQueue queue = timedQueues.get(i);
+            queue.tryRevolveOnce();
+            if (queue.isStopped) {
+                timedQueues.remove(i--);
             }
         }
     }
