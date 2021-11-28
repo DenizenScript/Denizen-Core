@@ -87,7 +87,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Run a command with unpredictable input.
-    // - redis id:name command:set args:my_key|<context.message>
+    // - redis id:name command:set args:<list[my_key].include_single[<context.message>]>
     //
     // @Usage
     // Get a key's value.
