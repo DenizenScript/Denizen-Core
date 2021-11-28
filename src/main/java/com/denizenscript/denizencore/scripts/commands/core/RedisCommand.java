@@ -25,14 +25,14 @@ public class RedisCommand extends AbstractCommand implements Holdable {
 
     public RedisCommand() {
         setName("redis");
-        setSyntax("redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>/unsubscribe/publish:<channel> message:<message>/command:<command>]");
+        setSyntax("redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]");
         setRequiredArguments(2, 4);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name Redis
-    // @Syntax redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>/unsubscribe/publish:<channel> message:<message>/command:<command>]
+    // @Syntax redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]
     // @Required 2
     // @Maximum 4
     // @Short Interacts with a Redis server.
@@ -45,10 +45,13 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     // The redis server runs in memory, meaning requests are insanely fast. If you run redis locally, you can expect responses to take under a millisecond.
     // Because of these fast responses, it is not normally advised to run commands as ~waitable, though this is still supported.
     //
+    // When running commands, make sure to escape unpredictable values such as player input.
+    // Alternatively, include the main redis command as the 'command' input and further arguments as a ListTag input for 'args'.
+    //
     // This command supports subscribing to pub/sub redis channels. This allows you to listen to published messages to redis from any source, including other servers.
     // When you subscribe to a channel, matching messages sent to the channel will trigger the <@link event redis pubsub message> event.
     // Connections that are subscribed to channels get tied up listening for messages and are unavailable to run redis commands.
-    // The channel you subscribe to supports wildcard (*) matchers and other patterns, defined by the redis docs: <@link url https://redis.io/commands/psubscribe>
+    // The channels you subscribe to support wildcard (*) matchers and other patterns, defined by the redis docs: <@link url https://redis.io/commands/psubscribe>
     //
     // Note: Make sure there are at least a few ticks between opening a subscription and closing it, otherwise strange behavior will occur.
     //
@@ -83,6 +86,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     // - redis id:name "command:setex my_key 60 'value with spaces'"
     //
     // @Usage
+    // Run a command with unpredictable input.
+    // - redis id:name command:set args:my_key|<context.message>
+    //
+    // @Usage
     // Get a key's value.
     // - redis id:name "command:get my_key" save:result
     //
@@ -103,6 +110,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Subscribe to a redis channel. This will match published messages to channel_1, channel_foo, etc.
     // - redis id:name subscribe:channel_*
+    //
+    // @Usage
+    // Subscribe to multiple redis channels. Supports wildcards for any list entry.
+    // - redis id:name subscribe:a|b*|c|d
     //
     // @Usage
     // Publish a message to a redis channel. This will trigger the <@link event redis pubsub message> event for any subscribed connections for any server.
@@ -169,7 +180,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("subscribe")) {
                 scriptEntry.addObject("action", new ElementTag("subscribe"));
-                scriptEntry.addObject("channel", arg.asElement());
+                scriptEntry.addObject("channels", arg.asType(ListTag.class));
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matches("unsubscribe")) {
@@ -188,6 +199,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("command")) {
                 scriptEntry.addObject("action", new ElementTag("command"));
                 scriptEntry.addObject("command", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("args")
+                    && arg.matchesPrefix("args")) {
+                scriptEntry.addObject("args", arg.asType(ListTag.class));
             }
             else {
                 arg.reportUnhandled();
@@ -229,12 +244,14 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         ElementTag host = scriptEntry.getElement("host");
         ElementTag port = scriptEntry.getElement("port");
         ElementTag ssl = scriptEntry.getElement("ssl");
+        ListTag channels = scriptEntry.getObjectTag("channels");
         ElementTag channel = scriptEntry.getElement("channel");
         ElementTag message = scriptEntry.getElement("message");
         ElementTag command = scriptEntry.getElement("command");
+        ListTag args = scriptEntry.getObjectTag("args");
         String redisID = CoreUtilities.toLowerCase(id.asString());
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), id, action, host, port, ssl, channel, message, command);
+            Debug.report(scriptEntry, getName(), id, action, host, port, ssl, channels, channel, message, command, args);
         }
         if (!action.asString().equalsIgnoreCase("connect") &&
                 (!action.asString().equalsIgnoreCase("command") || !scriptEntry.shouldWaitFor())) {
@@ -304,12 +321,14 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         pubSub.punsubscribe();
                     }
                     catch (Exception e) {
+                        Debug.echoError(e);
                     }
                 }
                 try {
                     con.close();
                 }
                 catch (Exception e) {
+                    Debug.echoError(e);
                 }
                 Debug.echoDebug(scriptEntry, "Disconnected from '" + redisID + "'.");
             }
@@ -327,7 +346,11 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 }
                 JedisPubSub jedisPubSub = new DenizenJedisPubSub(redisID);
                 subscriptions.put(redisID, jedisPubSub);
-                Thread thr = new Thread(() -> con.psubscribe(jedisPubSub, CoreUtilities.toLowerCase(channel.asString())));
+                String[] channelArr = new String[channels.size()];
+                for (int i = 0; i < channels.size(); i++) {
+                    channelArr[i] = CoreUtilities.toLowerCase(channels.get(i));
+                }
+                Thread thr = new Thread(() -> con.psubscribe(jedisPubSub, channelArr));
                 thr.start();
             }
             else if (action.asString().equalsIgnoreCase("unsubscribe")) {
@@ -346,6 +369,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     pubSub.punsubscribe();
                 }
                 catch (Exception e) {
+                    Debug.echoError(e);
                 }
             }
             else if (action.asString().equalsIgnoreCase("publish")) {
@@ -411,8 +435,18 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 Debug.echoDebug(scriptEntry, "Running command " + command.asString());
                 Runnable doQuery = () -> {
                     try {
-                        String[] args = ArgumentHelper.buildArgs(command.asString());
-                        ObjectTag result = processResponse(con.sendCommand(() -> SafeEncoder.encode(args[0]), Arrays.copyOfRange(args, 1, args.length)));
+                        String redisCommand;
+                        String[] redisArgs;
+                        if (args == null) {
+                            String[] splitCommand = ArgumentHelper.buildArgs(command.asString());
+                            redisCommand = splitCommand[0];
+                            redisArgs = Arrays.copyOfRange(splitCommand, 1, splitCommand.length);
+                        }
+                        else {
+                            redisCommand = command.asString();
+                            redisArgs = args.toArray(new String[0]);
+                        }
+                        ObjectTag result = processResponse(con.sendCommand(() -> SafeEncoder.encode(redisCommand), redisArgs));
                         scriptEntry.addObject("result", result);
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             scriptEntry.setFinished(true);
