@@ -46,7 +46,7 @@ public class RedisPubSubMessageScriptEvent extends ScriptEvent {
 
     @Override
     public boolean matches(ScriptPath path) {
-        if (!runGenericSwitchCheck(path, "channel", this.channel)) {
+        if (!runGenericSwitchCheck(path, "channel", channel)) {
             return false;
         }
         return super.matches(path);
