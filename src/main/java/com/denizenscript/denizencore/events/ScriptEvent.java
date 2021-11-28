@@ -50,6 +50,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         registerScriptEvent(new ConsoleOutputScriptEvent());
         registerScriptEvent(new CustomScriptEvent());
         registerScriptEvent(new DeltaTimeScriptEvent());
+        registerScriptEvent(new RedisPubSubMessageScriptEvent());
         registerScriptEvent(new PreScriptReloadScriptEvent());
         registerScriptEvent(new ReloadScriptsScriptEvent());
         registerScriptEvent(new ScriptGeneratesErrorScriptEvent());
