@@ -1,10 +1,8 @@
 package com.denizenscript.denizencore.events.core;
 
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
 
 public class RedisPubSubMessageScriptEvent extends ScriptEvent {
 
@@ -37,11 +35,6 @@ public class RedisPubSubMessageScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("redis pubsub message");
         registerSwitches("channel");
-    }
-
-    @Override
-    public ScriptEntryData getScriptEntryData() {
-        return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
     @Override

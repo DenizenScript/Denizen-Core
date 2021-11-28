@@ -3,8 +3,6 @@ package com.denizenscript.denizencore.events.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
-import com.denizenscript.denizencore.DenizenCore;
 
 public class ConsoleOutputScriptEvent extends ScriptEvent {
 
@@ -31,13 +29,6 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
     }
 
     public String message = null;
-
-    public ScriptEntryData data = DenizenCore.implementation.getEmptyScriptEntryData();
-
-    @Override
-    public ScriptEntryData getScriptEntryData() {
-        return data;
-    }
 
     @Override
     public ObjectTag getContext(String name) {

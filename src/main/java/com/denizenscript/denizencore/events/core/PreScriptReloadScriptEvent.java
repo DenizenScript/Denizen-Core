@@ -1,8 +1,6 @@
 package com.denizenscript.denizencore.events.core;
 
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
 
 public class PreScriptReloadScriptEvent extends ScriptEvent {
 
@@ -21,11 +19,6 @@ public class PreScriptReloadScriptEvent extends ScriptEvent {
     public PreScriptReloadScriptEvent() {
         instance = this;
         registerCouldMatcher("pre script reload");
-    }
-
-    @Override
-    public ScriptEntryData getScriptEntryData() {
-        return DenizenCore.implementation.getEmptyScriptEntryData();
     }
 
     @Override

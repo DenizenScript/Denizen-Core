@@ -3,7 +3,6 @@ package com.denizenscript.denizencore.events.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.DenizenCore;
 
 public class DeltaTimeScriptEvent extends ScriptEvent {
@@ -71,13 +70,6 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         return super.matches(path);
     }
 
-    public ScriptEntryData data = null;
-
-    @Override
-    public ScriptEntryData getScriptEntryData() {
-        return data;
-    }
-
     @Override
     public String getName() {
         return "DeltaTime";
@@ -110,7 +102,6 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
             return;
         }
         second = new ElementTag(DenizenCore.serverTimeMillis / 1000);
-        data = DenizenCore.implementation.getEmptyScriptEntryData();
         fire();
     }
 }

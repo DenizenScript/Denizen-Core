@@ -1,7 +1,5 @@
 package com.denizenscript.denizencore.utilities.scheduling;
 
-import com.denizenscript.denizencore.DenizenCore;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -14,12 +12,7 @@ public class AsyncSchedulable extends Schedulable {
         this.schedulable = schedulable;
         final Runnable runnable = schedulable.run;
         this.schedulable.run = () -> {
-            if (DenizenCore.MAIN_THREAD == Thread.currentThread()) {
-                executor.execute(runnable);
-            }
-            else {
-                runnable.run();
-            }
+            executor.execute(runnable);
         };
     }
 

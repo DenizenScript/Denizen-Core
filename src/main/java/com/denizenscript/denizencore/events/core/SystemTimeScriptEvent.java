@@ -3,8 +3,6 @@ package com.denizenscript.denizencore.events.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
-import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.Calendar;
 
@@ -43,16 +41,9 @@ public class SystemTimeScriptEvent extends ScriptEvent {
 
     public ElementTag hour;
 
-    public ScriptEntryData data = null;
-
     public ElementTag minute;
 
     public long seconds;
-
-    @Override
-    public ScriptEntryData getScriptEntryData() {
-        return data;
-    }
 
     @Override
     public boolean matches(ScriptPath path) {
@@ -146,7 +137,6 @@ public class SystemTimeScriptEvent extends ScriptEvent {
         else {
             minute = new ElementTag(m);
         }
-        data = DenizenCore.implementation.getEmptyScriptEntryData();
         fire();
     }
 }

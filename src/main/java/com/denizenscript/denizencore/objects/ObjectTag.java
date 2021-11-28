@@ -64,6 +64,7 @@ public interface ObjectTag {
      *
      * @return the debug information
      */
+    @Deprecated
     default String debug() {
         return "<G>" + getPrefix() + "='<Y>" + debuggable() + "<G>'  ";
     }

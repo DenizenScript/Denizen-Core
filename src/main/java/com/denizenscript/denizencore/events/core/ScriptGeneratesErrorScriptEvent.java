@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.events.core;
 
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -49,7 +48,7 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
         if (queue != null && queue.getLastEntryExecuted() != null) {
             return queue.getLastEntryExecuted().entryData;
         }
-        return DenizenCore.implementation.getEmptyScriptEntryData();
+        return super.getScriptEntryData();
     }
 
     @Override
