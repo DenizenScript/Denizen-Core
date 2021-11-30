@@ -53,23 +53,6 @@ public interface ObjectTag {
     String getPrefix();
 
     /**
-     * <p>Gets a standard dB representation of this argument. All ObjectTags should follow
-     * suit.</p>
-     * <p/>
-     * Example: <br/>
-     * <tt>
-     * Location='x,y,z,world'
-     * Location='unique_location(x,y,z,world)'
-     * </tt>
-     *
-     * @return the debug information
-     */
-    @Deprecated
-    default String debug() {
-        return "<G>" + getPrefix() + "='<Y>" + debuggable() + "<G>'  ";
-    }
-
-    /**
      * Gets a debuggable format of the object. Like identify, but for console output.
      */
     default String debuggable() {
