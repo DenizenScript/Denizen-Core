@@ -43,6 +43,7 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.28</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.freneticllc.freneticutilities</groupId>
