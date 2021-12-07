@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
@@ -27,7 +28,7 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         if (expirationObj == null) {
             return false;
         }
-        if (TimeTag.now().millis() > ((TimeTag) expirationObj).millis()) {
+        if (DenizenCore.currentTimeMillis > ((TimeTag) expirationObj).millis()) {
             return true;
         }
         return false;

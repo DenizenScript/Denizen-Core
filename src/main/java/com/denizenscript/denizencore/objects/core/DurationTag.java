@@ -290,6 +290,9 @@ public class DurationTag implements ObjectTag {
     @Override
     public String identify() {
         if (seconds == (int)seconds) {
+            if (seconds == 0) {
+                return "d@0s";
+            }
             double minutes = seconds / 60;
             double hours = minutes / 60;
             double days = hours / 24;

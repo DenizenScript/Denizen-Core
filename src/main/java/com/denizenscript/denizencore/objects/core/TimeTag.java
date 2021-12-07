@@ -682,7 +682,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // If positive/negative differences are required, consider instead using <@link tag TimeTag.duration_since>.
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, "from_now", (attribute, object) -> {
-            return new DurationTag(Math.abs(object.millis() - now().millis()) / 1000.0);
+            return new DurationTag(Math.abs(object.millis() - DenizenCore.currentTimeMillis) / 1000.0);
         });
 
         // <--[tag]
