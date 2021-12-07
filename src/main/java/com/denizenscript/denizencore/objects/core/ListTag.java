@@ -1410,61 +1410,66 @@ public class ListTag implements List<String>, ObjectTag {
                 attribute.echoError("Can't get from an empty list.");
                 return null;
             }
-            ListTag indices = getListFor(attribute.getParamObject(), attribute.context);
-            if (indices.size() > 1) {
-                ListTag results = new ListTag();
-                for (String index : indices) {
-                    int ind = Integer.parseInt(index);
-                    if (ind > 0 && ind <= object.size()) {
-                        results.add(object.get(ind - 1));
+            try {
+                ListTag indices = getListFor(attribute.getParamObject(), attribute.context);
+                if (indices.size() > 1) {
+                    ListTag results = new ListTag();
+                    for (String index : indices) {
+                        int ind = Integer.parseInt(index);
+                        if (ind > 0 && ind <= object.size()) {
+                            results.add(object.get(ind - 1));
+                        }
                     }
+                    return results;
                 }
-                return results;
-            }
-            if (indices.size() > 0) {
-                int index = Integer.parseInt(indices.get(0)) - 1;
-                if (index >= object.size()) {
-                    attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... list is only " + object.size() + " long.");
-                    return null;
-                }
-                if (index < 0) {
-                    attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... must be at least 1.");
-                    index = 0;
-                }
+                if (indices.size() > 0) {
+                    int index = Integer.parseInt(indices.get(0)) - 1;
+                    if (index >= object.size()) {
+                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... list is only " + object.size() + " long.");
+                        return null;
+                    }
+                    if (index < 0) {
+                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... must be at least 1.");
+                        index = 0;
+                    }
 
-                // <--[tag]
-                // @attribute <ListTag.get[<#>].to[<#>]>
-                // @returns ListTag
-                // @description
-                // returns all elements in the range from the first index to the second.
-                // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
-                // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
-                // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
-                // -->
-                if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                    int index2;
-                    if (CoreUtilities.equalsIgnoreCase(attribute.getContext(2), "last")) {
-                        index2 = object.size() - 1;
+                    // <--[tag]
+                    // @attribute <ListTag.get[<#>].to[<#>]>
+                    // @returns ListTag
+                    // @description
+                    // returns all elements in the range from the first index to the second.
+                    // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
+                    // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
+                    // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
+                    // -->
+                    if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
+                        int index2;
+                        if (CoreUtilities.equalsIgnoreCase(attribute.getContext(2), "last")) {
+                            index2 = object.size() - 1;
+                        }
+                        else {
+                            index2 = attribute.getIntContext(2) - 1;
+                        }
+                        if (index2 >= object.size()) {
+                            index2 = object.size() - 1;
+                        }
+                        if (index2 < 0) {
+                            index2 = 0;
+                        }
+                        ListTag newList = new ListTag();
+                        for (int i = index; i <= index2; i++) {
+                            newList.addObject(object.objectForms.get(i));
+                        }
+                        attribute.fulfill(1);
+                        return newList;
                     }
                     else {
-                        index2 = attribute.getIntContext(2) - 1;
+                        return object.objectForms.get(index);
                     }
-                    if (index2 >= object.size()) {
-                        index2 = object.size() - 1;
-                    }
-                    if (index2 < 0) {
-                        index2 = 0;
-                    }
-                    ListTag newList = new ListTag();
-                    for (int i = index; i <= index2; i++) {
-                        newList.addObject(object.objectForms.get(i));
-                    }
-                    attribute.fulfill(1);
-                    return newList;
                 }
-                else {
-                    return object.objectForms.get(index);
-                }
+            }
+            catch (NumberFormatException ex) {
+                attribute.echoError("ListTag.get[...] input invalid - not a valid number: " + ex.getMessage());
             }
             return null;
         };
