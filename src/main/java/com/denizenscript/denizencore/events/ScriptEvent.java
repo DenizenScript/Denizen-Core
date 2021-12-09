@@ -153,6 +153,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public List<ScriptEvent> matches = new ArrayList<>();
         public boolean fireAfter = false;
         public List<String> matchFailReasons = null;
+        public double switch_chance;
+        public List<String> switch_serverFlagged;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -192,6 +194,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         //
         // One switch available to every event is "server_flagged:<flag name>", which requires that there be a server flag under the given name.
         // For example, "on console output server_flagged:recording:" will only run the handler for console output when the "recording" flag is set on the server.
+        //
+        // "chance:<percent>" is also a globally available switch.
+        // For example, "on player breaks diamond_ore chance:25:" will only fire on average one in every four times that a player breaks a diamond ore block.
         //
         // Events that have a player linked have the "flagged" and "permission" switches available.
         // If the switch is specified, and an event doesn't have a linked player, the event will automatically fail to match.
@@ -252,6 +257,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             eventArgsLower = CoreUtilities.split(eventLower, ' ').toArray(new String[0]);
             switch_cancelled = switches.containsKey("cancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("cancelled"), "true") : null;
             switch_ignoreCancelled = switches.containsKey("ignorecancelled") ? CoreUtilities.equalsIgnoreCase(switches.get("ignorecancelled"), "true") : null;
+            switch_serverFlagged = switches.containsKey("server_flagged") ? CoreUtilities.split(switches.get("server_flagged"), '|') : null;
+            switch_chance = switches.containsKey("chance") ? new ElementTag(switches.get("chance")).asDouble() : 0;
             set = container.getSetFor("events." + rawContainerPath);
             if (set == null || set.entries == null) {
                 Debug.echoError("Invalid script (formatting error?) in container '" + container.getName() + " at event '" + rawContainerPath + "'.");
@@ -487,12 +494,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 return false;
             }
         }
-        String flagSwitch = path.switches.get("server_flagged");
-        if (flagSwitch != null) {
-            for (String flag : CoreUtilities.split(flagSwitch, '|')) {
+        if (path.switch_serverFlagged != null) {
+            for (String flag : path.switch_serverFlagged) {
                 if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
                     return false;
                 }
+            }
+        }
+        if (path.switch_chance != 0) {
+            if (CoreUtilities.getRandom().nextDouble() * 100 > path.switch_chance) {
+                return false;
             }
         }
         for (BiFunction<ScriptEvent, ScriptPath, Boolean> matcher : extraMatchers) {
@@ -624,7 +635,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     /**
      * Switches that are globally available.
      */
-    public static HashSet<String> globalSwitches = new HashSet<>(Arrays.asList("cancelled", "ignorecancelled", "priority", "server_flagged", "in"));
+    public static HashSet<String> globalSwitches = new HashSet<>(Arrays.asList("cancelled", "ignorecancelled", "priority", "server_flagged", "in", "chance"));
 
     private boolean couldMatchSwitches(ScriptPath path) {
         for (String switchName : path.switches.keySet()) {
