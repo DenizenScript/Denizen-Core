@@ -104,10 +104,12 @@ public class UtilTagBase {
             // <--[tag]
             // @attribute <util.random.decimal>
             // @returns ElementTag(Decimal)
+            // @deprecated use 'util.random_decimal' with a '_'
             // @description
-            // Returns a random decimal number from 0 to 1.
+            // Deprecated in favor of <@link tag util.random_decimal>
             // -->
             else if (attribute.startsWith("decimal")) {
+                Deprecations.oldUtilRandomTags.warn(attribute.context);
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble())
                         , attribute.fulfill(1)));
             }
@@ -115,10 +117,12 @@ public class UtilTagBase {
             // <--[tag]
             // @attribute <util.random.boolean>
             // @returns ElementTag(Boolean)
+            // @deprecated use 'util.random_boolean' with a '_'
             // @description
-            // Returns a random boolean (true or false). Essentially a coin flip.
+            // Deprecated in favor of <@link tag util.random_boolean>
             // -->
             else if (attribute.startsWith("boolean")) {
+                Deprecations.oldUtilRandomTags.warn(attribute.context);
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextBoolean())
                         , attribute.fulfill(1)));
             }
@@ -126,11 +130,12 @@ public class UtilTagBase {
             // <--[tag]
             // @attribute <util.random.gauss>
             // @returns ElementTag(Decimal)
+            // @deprecated use 'util.random_gauss' with a '_'
             // @description
-            // Returns a random decimal number with a gaussian distribution.
-            // 70% of all results will be within the range of -1 to 1.
+            // Deprecated in favor of <@link tag util.random_gauss>
             // -->
             else if (attribute.startsWith("gauss")) {
+                Deprecations.oldUtilRandomTags.warn(attribute.context);
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextGaussian())
                         , attribute.fulfill(1)));
             }
@@ -138,10 +143,12 @@ public class UtilTagBase {
             // <--[tag]
             // @attribute <util.random.uuid>
             // @returns ElementTag
+            // @deprecated use 'util.random_uuid' with a '_'
             // @description
-            // Returns a random unique ID.
+            // Deprecated in favor of <@link tag util.random_uuid>
             // -->
             else if (attribute.startsWith("uuid")) {
+                Deprecations.oldUtilRandomTags.warn(attribute.context);
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(UUID.randomUUID().toString())
                         , attribute.fulfill(1)));
             }
@@ -152,6 +159,7 @@ public class UtilTagBase {
             // @description
             // Returns a random 'denizen' unique ID, which is made of a randomly generated sentence.
             // Optionally specify the source context to base the value on.
+            // There is no guarantee of format or content of the returned value - generally, use any other random tag instead of this.
             // -->
             else if (attribute.startsWith("duuid")) {
                 int size = QueueWordList.FinalWordList.size();
@@ -164,6 +172,58 @@ public class UtilTagBase {
         }
 
         // <--[tag]
+        // @attribute <util.random_decimal>
+        // @returns ElementTag(Decimal)
+        // @description
+        // Returns a random decimal number from 0 to 1.
+        // -->
+        else if (attribute.startsWith("random_decimal")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.random_chance[<percent>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns a random boolean (true or false) with the given percent chance (from 0 to 100).
+        // For example, <util.random_chance[25]> will return 'true' 25% of the time and 'false' 75% of the time.
+        // -->
+        else if (attribute.startsWith("random_chance") && attribute.hasParam()) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble() * 100 <= attribute.getDoubleParam()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.random_boolean>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns a random boolean (true or false). Essentially a coin flip.
+        // -->
+        else if (attribute.startsWith("random_boolean")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextBoolean()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.random_gauss>
+        // @returns ElementTag(Decimal)
+        // @description
+        // Returns a random decimal number with a gaussian distribution.
+        // 70% of all results will be within the range of -1 to 1.
+        // -->
+        else if (attribute.startsWith("random_gauss")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextGaussian()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.random_uuid>
+        // @returns ElementTag
+        // @description
+        // Returns a random unique ID.
+        // -->
+        else if (attribute.startsWith("random_uuid")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(UUID.randomUUID().toString()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.list_numbers_to[<#>]>
         // @returns ListTag
         // @description
@@ -171,7 +231,7 @@ public class UtilTagBase {
         // Note that you should NEVER use this as the input to a "foreach" command. Instead, use "repeat".
         // In most cases, there's a better way to do what you're trying to accomplish than using this tag.
         // -->
-        if (attribute.startsWith("list_numbers_to") && attribute.hasParam()) {
+        else if (attribute.startsWith("list_numbers_to") && attribute.hasParam()) {
             int to = attribute.getIntParam();
             ListTag result = new ListTag();
             for (int i = 1; i <= to; i++) {
@@ -186,7 +246,7 @@ public class UtilTagBase {
         // @description
         // Returns a list of the specified size where each entry is blank (zero characters long).
         // -->
-        if (attribute.startsWith("empty_list_entries") && attribute.hasParam()) {
+        else if (attribute.startsWith("empty_list_entries") && attribute.hasParam()) {
             int to = attribute.getIntParam();
             ListTag result = new ListTag();
             for (int i = 1; i <= to; i++) {

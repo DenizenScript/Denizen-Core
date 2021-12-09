@@ -309,6 +309,9 @@ public class Deprecations {
     // In multiple places, Added 2021/11/20, deprecate officially by 2023.
     public static Warning pseudoTagBases = new FutureWarning("Pseudo-tags like '<text>', '<name>', '<amount>', and '<permission>' are deprecated in favor of definitions: just replace <text> with <[text]> or similar.");
 
+    // Added 2021/12/08, deprecate officially by 2023.
+    public static Warning oldUtilRandomTags = new FutureWarning("Several 'util.random.xxx' are deprecated in favor of 'util.random_xxx' (the same tag, but '_' instead of a '.', for format standardization reasons)");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
