@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.utilities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,28 +81,39 @@ public class QueueWordList {
 
     public static final String[] injectedWordsList = new String[] {
             "Minecraft", "Mine", "Craft", // Minecraft
+            "Paper", "Spigot", "Bukkit", // Server software
             "Citizens", "Denizen", "Sentinel", // Plugins
             "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", // Dev contributors
-            "Anthony", "Ricky", "Xeane", // Veterans list
-            "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer" // Helpers list
+            "Anthony", "Ricky", // Veterans list
+            "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer", "Xeane", "Jumpsplat", "Inquisitor" // Helpers list
+    };
+
+    public static final String[] donorList = new String[] {
+            "Goma", "Crckdns", "Berufeng", "Greenleeuw", "Pirateera", "Mrmango", "Aikovdp", "Declancaff", "Reph3x",
+            "Lasersrgb", "Sirbandersnatch", "Misquoth", "Bawb", "Slyyjacob", "Jcg4678", "Darwin", "Chrismwiggs",
+            "Unsubfromnimsy", "Tdvne", "Ms2221", "Xarieste", "Cloudshadow", "Voxlltv", "Rsnfreud", "Adw123", "Bullesta",
+            "Bredy", "Universum", "Tornix", "Inventorist", "Deadadm1n", "Mervinb", "Miamablue", "Hades", "Shadymac",
+            "Nurfuis", "Facundo", "Cowbilet", "Mistergank", "Noiknez", "Criticalmc", "New2pc", "Possumthecreator",
+            "Nestesio", "Insilvon", "Psycholynx", "Keiferhawk", "Gominecraft"
     };
 
     static {
         FinalWordList = CoreUtilities.split(WordList, ' ');
         FinalWordList.addAll(CoreUtilities.split(WordList2, ' '));
         // Weight the chances a bit heavily
-        FinalWordList.addAll(repeat("Denizen", 50));
+        repeatAdd("Denizen", 25);
         for (String word : injectedWordsList) {
-            FinalWordList.addAll(repeat(word, 25));
+            repeatAdd(word, 20);
         }
-        // Total word count is approximately 10,000 + 50 + (22 * 50) = 10,600
+        for (String donor : donorList) {
+            repeatAdd(donor, 10);
+        }
+        // Total word count is approximately 10,000 + 25 + (28 * 20) + (48 * 10) = 11,065
     }
 
-    static List<String> repeat(String str, int times) {
-        List<String> strs = new ArrayList<>(times);
+    static void repeatAdd(String str, int times) {
         for (int i = 0; i < times; i++) {
-            strs.add(str);
+            FinalWordList.add(str);
         }
-        return strs;
     }
 }
