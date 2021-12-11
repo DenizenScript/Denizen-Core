@@ -20,6 +20,7 @@ public class DefineMapCommand extends AbstractCommand {
         setRequiredArguments(1, -1);
         isProcedural = true;
         allowedDynamicPrefixes = true;
+        anyPrefixSymbolAllowed = true;
     }
 
     // <--[command]

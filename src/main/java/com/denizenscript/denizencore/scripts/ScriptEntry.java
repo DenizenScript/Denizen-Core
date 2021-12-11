@@ -432,7 +432,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 allArgs.set(i, argVal);
                 int first_colon = arg.indexOf(':');
                 argVal.hadColon = first_colon > 0;
-                int first_not_prefix = Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
+                int first_not_prefix = (internal.actualCommand != null && internal.actualCommand.anyPrefixSymbolAllowed) ? arg.length() : Argument.prefixCharsAllowed.indexOfFirstNonMatch(arg);
                 if (first_colon > 0 && first_not_prefix >= first_colon) {
                     argVal.prefix = new InternalArgument();
                     argVal.prefix.fullOriginalRawValue = arg.substring(0, first_colon);
@@ -467,7 +467,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.arguments_to_use = argsToUse.toArray(new InternalArgument[0]);
         }
         else {
-            internal.pre_tagged_args = new ArrayList<>();
             internal.preprocArgs = new ArrayList<>();
             internal.pre_tagged_args = new ArrayList<>();
             internal.all_arguments = new InternalArgument[0];

@@ -71,6 +71,8 @@ public abstract class AbstractCommand {
 
     public boolean allowedDynamicPrefixes = false;
 
+    public boolean anyPrefixSymbolAllowed = false;
+
     public void addRemappedPrefixes(String realName, String... alts) {
         prefixesHandled.add(realName);
         prefixesHandled.addAll(Arrays.asList(alts));
