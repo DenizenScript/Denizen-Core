@@ -56,7 +56,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // If you have an SQL database server other than MySQL, be sure to include the driver prefix (defaults to "mysql://" when unspecified).
     //
     // @Tags
-    // <entry[saveName].result> returns a ListTag of all rows from a query or update command, of the form escaped_text/escaped_text|escaped_text/escaped_text
+    // <entry[saveName].result_list> returns a ListTag of all row ListTags from a query or update command. That's a ListTag of ListTags, so for example to get the second entry of the first row you'd use "result_list.get[1].get[2]"
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
     //
     // @Usage
@@ -301,15 +301,20 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         final int columns = rsmd.getColumnCount();
                         int count = 0;
                         ListTag rows = new ListTag();
+                        ListTag resultList = new ListTag();
                         while (set.next()) {
                             count++;
                             StringBuilder current = new StringBuilder();
+                            ListTag subList = new ListTag();
                             for (int i = 0; i < columns; i++) {
                                 current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
+                                subList.addObject(new ElementTag(set.getString(i + 1)));
                             }
                             rows.add(current.toString());
+                            resultList.addObject(subList);
                         }
                         scriptEntry.addObject("result", rows);
+                        scriptEntry.addObject("result_list", resultList);
                         final int finalCount = count;
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
@@ -355,14 +360,19 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         ResultSetMetaData rsmd = set.getMetaData();
                         int columns = rsmd.getColumnCount();
                         ListTag rows = new ListTag();
+                        ListTag resultList = new ListTag();
                         while (set.next()) {
                             StringBuilder current = new StringBuilder();
+                            ListTag subList = new ListTag();
                             for (int i = 0; i < columns; i++) {
                                 current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
+                                subList.addObject(new ElementTag(set.getString(i + 1)));
                             }
                             rows.add(current.toString());
+                            resultList.addObject(subList);
                         }
                         scriptEntry.addObject("result", rows);
+                        scriptEntry.addObject("result_list", resultList);
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                             Debug.echoDebug(scriptEntry, "Updated " + affected + " rows");
