@@ -13,7 +13,6 @@ import com.denizenscript.denizencore.scripts.ScriptEntrySet;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
-import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -47,22 +46,33 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      * (Called by DenizenCore.init) registers primary core events.
      */
     public static void registerCoreEvents() {
-        registerScriptEvent(new ConsoleOutputScriptEvent());
-        registerScriptEvent(new CustomScriptEvent());
-        registerScriptEvent(new DeltaTimeScriptEvent());
-        registerScriptEvent(new RedisPubSubMessageScriptEvent());
-        registerScriptEvent(new PreScriptReloadScriptEvent());
-        registerScriptEvent(new ReloadScriptsScriptEvent());
-        registerScriptEvent(new ScriptGeneratesErrorScriptEvent());
-        registerScriptEvent(new ServerGeneratesExceptionScriptEvent());
-        registerScriptEvent(new ShutdownScriptEvent());
-        registerScriptEvent(new SystemTimeScriptEvent());
-        registerScriptEvent(new TickScriptEvent());
+        registerScriptEvent(ConsoleOutputScriptEvent.class);
+        registerScriptEvent(CustomScriptEvent.class);
+        registerScriptEvent(DeltaTimeScriptEvent.class);
+        registerScriptEvent(RedisPubSubMessageScriptEvent.class);
+        registerScriptEvent(PreScriptReloadScriptEvent.class);
+        registerScriptEvent(ReloadScriptsScriptEvent.class);
+        registerScriptEvent(ScriptGeneratesErrorScriptEvent.class);
+        registerScriptEvent(ServerGeneratesExceptionScriptEvent.class);
+        registerScriptEvent(ShutdownScriptEvent.class);
+        registerScriptEvent(SystemTimeScriptEvent.class);
+        registerScriptEvent(TickScriptEvent.class);
     }
 
     /**
      * Register a new script event to the system. All events must be registered to function in scripts, even if not currently used.
      */
+    public static void registerScriptEvent(Class<? extends ScriptEvent> eventClass) {
+        try {
+            ScriptEvent event = eventClass.getConstructor().newInstance();
+            registerScriptEvent(event);
+        }
+        catch (Throwable ex) {
+            Debug.echoError("Failed to register script event '" + eventClass.getName() + "':");
+            Debug.echoError(ex);
+        }
+    }
+
     public static void registerScriptEvent(ScriptEvent event) {
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
