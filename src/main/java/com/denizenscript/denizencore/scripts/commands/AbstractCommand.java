@@ -127,13 +127,6 @@ public abstract class AbstractCommand {
         name = commandName.toUpperCase();
     }
 
-    @Deprecated
-    public AbstractCommand as(String commandName) {
-        setName(commandName);
-        DenizenCore.commandRegistry.register(this.name, this);
-        return this;
-    }
-
     protected String name;
 
     public String getName() {

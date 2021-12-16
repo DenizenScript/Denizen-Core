@@ -98,7 +98,7 @@ public class ScriptRegistry {
         if (yamlScripts == null) {
             return;
         }
-        Debug.log("Loading <A>" + yamlScripts.size() + "<W> scripts...");
+        Debug.log("Loading <A>" + yamlScripts.size() + "<W> script files...");
         for (YamlConfiguration script : yamlScripts) {
             for (StringHolder key : script.contents.keySet()) {
                 attemptLoadSingle(script.getConfigurationSection(key.str), key.str, false);

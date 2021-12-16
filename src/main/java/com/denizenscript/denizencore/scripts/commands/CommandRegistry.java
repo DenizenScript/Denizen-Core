@@ -23,7 +23,7 @@ public abstract class CommandRegistry {
 
     public void register(String commandName, AbstractCommand commandInstance) {
         this.instances.put(CoreUtilities.toLowerCase(commandName), commandInstance);
-        this.classes.put(((AbstractCommand) commandInstance).getClass(), CoreUtilities.toLowerCase(commandName));
+        this.classes.put(commandInstance.getClass(), CoreUtilities.toLowerCase(commandName));
     }
 
     public Map<String, AbstractCommand> list() {
@@ -134,17 +134,6 @@ public abstract class CommandRegistry {
         }
         catch (Throwable e) {
             Debug.echoError("Could not register command " + cmd.getName() + ", exception follows...");
-            Debug.echoError(e);
-        }
-    }
-
-    @Deprecated
-    public <T extends AbstractCommand> void registerCoreMember(Class<T> cmd, String name, String hint, int args) {
-        try {
-            cmd.newInstance().as(name).withOptions(hint, args);
-        }
-        catch (Throwable e) {
-            Debug.echoError("Could not register command " + name + ": " + e.getMessage());
             Debug.echoError(e);
         }
     }

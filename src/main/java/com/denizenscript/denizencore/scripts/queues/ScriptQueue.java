@@ -286,7 +286,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.startTimeMilli = startTimeMilli;
         newQueue.script = script;
         newQueue.callBack(r);
-        newQueue.start(false);
+        if (newQueue.script_entries.isEmpty()) {
+            newQueue.stop();
+        }
+        else {
+            newQueue.start(false);
+        }
         return newQueue;
     }
 
