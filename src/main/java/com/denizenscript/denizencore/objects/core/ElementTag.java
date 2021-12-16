@@ -3,12 +3,9 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.*;
-import com.denizenscript.denizencore.utilities.AsciiMatcher;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
-import com.denizenscript.denizencore.utilities.SQLEscaper;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -1518,6 +1515,44 @@ public class ElementTag implements ObjectTag {
                 return new ElementTag("");
             }
             return new ElementTag(Character.toUpperCase(object.element.charAt(0)) + object.element.substring(1).toLowerCase());
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.to_roman_numerals>
+        // @returns ElementTag
+        // @group element manipulation
+        // @description
+        // Returns the element in roman numeral form. Must be in the range of 1 and 4000 (inclusive).
+        // For example: <element[1169].to_roman_numerals> returns MCLXIX.
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "to_roman_numerals", (attribute, object) -> {
+            if (!object.isInt()) {
+                attribute.echoError("Element '" + object + "' is not a valid number.");
+                return null;
+            }
+            int n = object.asInt();
+            if (n < 1 || n > 4000) {
+                attribute.echoError("Invalid range! Must be in the range of 1 and 4000 (inclusive).");
+                return null;
+            }
+            return new ElementTag(RomanNumerals.arabicToRoman(object.asInt()));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.from_roman_numerals>
+        // @returns ElementTag
+        // @group element manipulation
+        // @description
+        // Returns the roman numeral string in integer form.
+        // For example: <element[MCLXIX].from_roman_numerals> returns 1169.
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "from_roman_numerals", (attribute, object) -> {
+            int result = RomanNumerals.romanToArabic(object.element);
+            if (result == -1) {
+                attribute.echoError("Invalid roman numeral string!");
+                return null;
+            }
+            return new ElementTag(result);
         });
 
         // <--[tag]
