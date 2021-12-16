@@ -1,14 +1,11 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.Fetchable;
-import com.denizenscript.denizencore.objects.ObjectFetcher;
-import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.*;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -1525,7 +1522,8 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element manipulation
         // @description
-        // Returns the element in roman numeral form. Must be in the range of 0 and 4000 (inclusive).
+        // Returns the element in roman numeral form. Must be in the range of 1 and 4000 (inclusive).
+        // For example: <element[1169].to_roman_numerals> returns MCLXIX.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_roman_numerals", (attribute, object) -> {
             if (!object.isInt()) {
@@ -1546,6 +1544,7 @@ public class ElementTag implements ObjectTag {
         // @group element manipulation
         // @description
         // Returns the roman numeral string in integer form.
+        // For example: <element[MCLXIX].from_roman_numerals> returns 1169.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "from_roman_numerals", (attribute, object) -> {
             int result = RomanNumerals.romanToArabic(object.element);

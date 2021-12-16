@@ -46,18 +46,16 @@ public class RomanNumerals {
             return value;
         }
 
-        public static List<RomanNumeral> getReverseSortedValues() {
-            return Arrays.stream(values())
-                    .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
-                    .collect(Collectors.toList());
-        }
+        public static List<RomanNumeral> reverseSortedValues = Arrays.stream(values())
+                .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
+                .collect(Collectors.toList());
     }
 
     public static int romanToArabic(String input) {
         String romanNumeral = input.toUpperCase();
         int result = 0;
         int i = 0;
-        List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
+        List<RomanNumeral> romanNumerals = RomanNumeral.reverseSortedValues;
         while ((romanNumeral.length() > 0) && (i < romanNumerals.size())) {
             RomanNumeral symbol = romanNumerals.get(i);
             if (romanNumeral.startsWith(symbol.name())) {
@@ -75,7 +73,7 @@ public class RomanNumerals {
     }
 
     public static String arabicToRoman(int number) {
-        List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
+        List<RomanNumeral> romanNumerals = RomanNumeral.reverseSortedValues;
         int i = 0;
         StringBuilder sb = new StringBuilder();
         while (number > 0 && i < romanNumerals.size()) {
