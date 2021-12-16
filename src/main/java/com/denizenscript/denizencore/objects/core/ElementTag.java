@@ -1531,8 +1531,8 @@ public class ElementTag implements ObjectTag {
                 return null;
             }
             int n = object.asInt();
-            if (n <= 0 || n > 4000) {
-                Debug.echoError("Invalid range! Must be in the range of 0 and 4000 (inclusive).");
+            if (n < 1 || n > 4000) {
+                Debug.echoError("Invalid range! Must be in the range of 1 and 4000 (inclusive).");
                 return null;
             }
             return new ElementTag(RomanNumerals.arabicToRoman(object.asInt()));
