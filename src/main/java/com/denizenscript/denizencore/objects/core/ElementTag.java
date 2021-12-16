@@ -3,9 +3,9 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.*;
+import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
