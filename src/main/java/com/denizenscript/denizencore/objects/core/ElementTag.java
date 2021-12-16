@@ -1527,12 +1527,12 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_roman_numerals", (attribute, object) -> {
             if (!object.isInt()) {
-                Debug.echoError("Element '" + object + "' is not a valid number.");
+                attribute.echoError("Element '" + object + "' is not a valid number.");
                 return null;
             }
             int n = object.asInt();
             if (n < 1 || n > 4000) {
-                Debug.echoError("Invalid range! Must be in the range of 1 and 4000 (inclusive).");
+                attribute.echoError("Invalid range! Must be in the range of 1 and 4000 (inclusive).");
                 return null;
             }
             return new ElementTag(RomanNumerals.arabicToRoman(object.asInt()));
@@ -1549,7 +1549,7 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, "from_roman_numerals", (attribute, object) -> {
             int result = RomanNumerals.romanToArabic(object.element);
             if (result == -1) {
-                Debug.echoError("Invalid roman numeral string!");
+                attribute.echoError("Invalid roman numeral string!");
                 return null;
             }
             return new ElementTag(result);
