@@ -101,7 +101,13 @@ public class ScriptRegistry {
         Debug.log("Loading <A>" + yamlScripts.size() + "<W> script files...");
         for (YamlConfiguration script : yamlScripts) {
             for (StringHolder key : script.contents.keySet()) {
-                attemptLoadSingle(script.getConfigurationSection(key.str), key.str, false);
+                YamlConfiguration container = script.getConfigurationSection(key.str);
+                if (container == null) {
+                    Debug.echoError("Invalid container '" + key.str + "' in file '" + ScriptHelper.getSource(key.low) + "' - missing contents?");
+                }
+                else {
+                    attemptLoadSingle(container, key.str, false);
+                }
             }
         }
     }

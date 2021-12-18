@@ -1,3 +1,10 @@
+package com.denizenscript.denizencore.utilities;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /*
 MIT License
 
@@ -24,13 +31,6 @@ SOFTWARE.
 
 // Source: https://github.com/eugenp/tutorials/tree/master/algorithms-miscellaneous-3/src/main/java/com/baeldung/algorithms/romannumerals
 
-package com.denizenscript.denizencore.utilities;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class RomanNumerals {
 
     enum RomanNumeral {
@@ -56,7 +56,7 @@ public class RomanNumerals {
         int result = 0;
         int i = 0;
         List<RomanNumeral> romanNumerals = RomanNumeral.reverseSortedValues;
-        while ((romanNumeral.length() > 0) && (i < romanNumerals.size())) {
+        while (romanNumeral.length() > 0 && i < romanNumerals.size()) {
             RomanNumeral symbol = romanNumerals.get(i);
             if (romanNumeral.startsWith(symbol.name())) {
                 result += symbol.getValue();
