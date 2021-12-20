@@ -103,7 +103,7 @@ public class ScriptUtilities {
         if (configure != null) {
             configure.accept(queue);
         }
-        queue.start();
+        queue.start(true);
         return queue;
     }
 }

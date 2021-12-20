@@ -202,16 +202,20 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         //
         // There are also some standard switches available to every script event, and some available to an entire category of script events.
         //
-        // One switch available to every event is "server_flagged:<flag name>", which requires that there be a server flag under the given name.
+        // One switch available to every event is "server_flagged:<flag_name>", which requires that there be a server flag under the given name.
         // For example, "on console output server_flagged:recording:" will only run the handler for console output when the "recording" flag is set on the server.
+        // This can also be used to require the server does NOT have a flag with "server_flagged:!<flag_name>"
         //
         // "chance:<percent>" is also a globally available switch.
         // For example, "on player breaks diamond_ore chance:25:" will only fire on average one in every four times that a player breaks a diamond ore block.
         //
         // Events that have a player linked have the "flagged" and "permission" switches available.
+        //
         // If the switch is specified, and an event doesn't have a linked player, the event will automatically fail to match.
-        // The "flagged:<flag name>" switch will limit the event to only fire when the player has the flag with the specified name.
+        // The "flagged:<flag_name>" switch will limit the event to only fire when the player has the flag with the specified name.
         // It can be used like "on player breaks block flagged:nobreak:" (that would be used alongside "- flag player nobreak").
+        // You can also use "flagged:!<flag_name>" to require the player does NOT have the flag, like "on player breaks block flagged:!griefbypass:"
+        //
         // The "permission:<perm key>" will limit the event to only fire when the player has the specified permission key.
         // It can be used like "on player breaks block permission:denizen.my.perm:"
         // For multiple flag or permission requirements, just list them separated by '|' pipes, like "flagged:a|b|c". This will require all named flags/permissions to be present, not just one.
@@ -733,7 +737,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (!path.fireAfter) {
                 queue.determinationTarget = (o) -> handleBaseDetermination(path, o);
             }
-            queue.start();
+            queue.start(true);
             eventData.stats_nanoTimes += System.nanoTime() - queue.startTime;
         }
         catch (Exception e) {
@@ -1032,7 +1036,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return false;
         }
         for (String flag : CoreUtilities.split(flagged, '|')) {
-            if (!tracker.hasFlag(flag)) {
+            if (flag.startsWith("!")) {
+                if (tracker.hasFlag(flag.substring(1))) {
+                    return false;
+                }
+            }
+            else if (!tracker.hasFlag(flag)) {
                 return false;
             }
         }
