@@ -549,7 +549,7 @@ public class Attribute {
         }
         catch (Exception ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getParam() + "'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getParam() + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;
@@ -568,7 +568,7 @@ public class Attribute {
         }
         catch (Exception ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;
@@ -587,7 +587,7 @@ public class Attribute {
         }
         catch (NumberFormatException ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "> has invalid input - expected a decimal number, got '" + getContext(attribute) + "'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a decimal number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;

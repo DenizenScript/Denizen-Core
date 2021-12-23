@@ -39,6 +39,8 @@ public class EscapeTagBase {
     //
     // The mapping of symbols to escape codes is as follows:
     //
+    // (THESE ARE NOT TAG NAMES)
+    //
     // | = &pipe
     // < = &lt
     // > = &gt
@@ -70,7 +72,7 @@ public class EscapeTagBase {
     public static AsciiMatcher needsEscapingMatcher = new AsciiMatcher("&|<>\n;[]:@.\\'\"!/§#={}");
 
     /**
-     * A quick function to escape book Strings.
+     * A quick function to escape strings.
      * This is just to prevent tag reading errors.
      *
      * @param input the unescaped data.
@@ -108,7 +110,7 @@ public class EscapeTagBase {
     }
 
     /**
-     * A quick function to reverse a book string escaping.
+     * A quick function to reverse a string escaping.
      * This is just to prevent tag reading errors.
      *
      * @param input the escaped data.

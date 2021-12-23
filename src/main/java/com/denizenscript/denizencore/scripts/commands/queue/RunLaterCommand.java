@@ -64,6 +64,10 @@ public class RunLaterCommand extends AbstractCommand {
     // Use to run a task script named 'example' 3 days later.
     // - runlater example delay:3d
     //
+    // @Usage
+    // Use to run a task script named 'my_task' 5 hours later with definition 'targets' set to a list of all the players that were near the player before the delay.
+    // - runlater my_task delay:5h def.targets:<player.location.find_players_within[50]>
+    //
     // -->
 
     @Override

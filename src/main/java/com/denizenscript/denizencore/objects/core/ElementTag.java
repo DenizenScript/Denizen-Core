@@ -223,6 +223,9 @@ public class ElementTag implements ObjectTag {
             Debug.echoError("Unreasonably large number detected!");
             return max;
         }
+        if (bd.scale() < 50) {
+            bd = bd.setScale(50);
+        }
         return bd;
     }
 
@@ -1563,6 +1566,7 @@ public class ElementTag implements ObjectTag {
         // Returns the portion of an element between two element indices.
         // If no second index is specified, it will return the portion of an
         // element after the specified index.
+        // For example: <element[hello].substring[2,4]> returns "ell"
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "substring", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -2219,7 +2223,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag((long) Math.ceil(ele.asDouble()));
+            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.UP));
         });
 
         // <--[tag]
@@ -2234,7 +2238,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag((long) Math.floor(ele.asDouble()));
+            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.DOWN));
         });
 
         // <--[tag]
@@ -2254,8 +2258,11 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            int ten = (int) Math.pow(10, attribute.getIntParam());
-            return new ElementTag(((double) Math.round(object.asDouble() * ten)) / ten);
+            // BigDecimal is really strange with scale values.
+            BigDecimal tenVal = BigDecimal.valueOf((int) Math.pow(10, attribute.getIntParam()));
+            BigDecimal prec = BigDecimal.ONE.setScale(50).divide(tenVal, RoundingMode.HALF_UP);
+            BigDecimal result = object.asBigDecimal().divide(prec, RoundingMode.HALF_UP).setScale(0, RoundingMode.HALF_UP).multiply(prec);
+            return new ElementTag(result);
         });
 
         // <--[tag]
@@ -2275,8 +2282,9 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleParam();
-            return new ElementTag(((double) Math.round(object.asDouble() / precision)) * precision);
+            BigDecimal prec = attribute.getParamElement().asBigDecimal();
+            BigDecimal result = object.asBigDecimal().divide(prec, RoundingMode.HALF_UP).setScale(0, RoundingMode.HALF_UP).multiply(prec);
+            return new ElementTag(result);
         });
 
         // <--[tag]
@@ -2295,8 +2303,9 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleParam();
-            return new ElementTag(Math.floor(object.asDouble() / precision) * precision);
+            BigDecimal prec = attribute.getParamElement().asBigDecimal();
+            BigDecimal result = object.asBigDecimal().divide(prec, RoundingMode.DOWN).setScale(0, RoundingMode.DOWN).multiply(prec);
+            return new ElementTag(result);
         });
 
         // <--[tag]
@@ -2315,8 +2324,9 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + object + "' is not a valid decimal number!");
                 return null;
             }
-            double precision = attribute.getDoubleParam();
-            return new ElementTag(Math.ceil(object.asDouble() / precision) * precision);
+            BigDecimal prec = attribute.getParamElement().asBigDecimal();
+            BigDecimal result = object.asBigDecimal().divide(prec, RoundingMode.UP).setScale(0, RoundingMode.UP).multiply(prec);
+            return new ElementTag(result);
         });
 
         // <--[tag]
@@ -2331,7 +2341,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(Math.round(ele.asDouble()));
+            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.HALF_UP));
         });
 
         // <--[tag]
