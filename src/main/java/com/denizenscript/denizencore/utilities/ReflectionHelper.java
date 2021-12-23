@@ -4,12 +4,14 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ReflectionHelper {
 
@@ -120,11 +122,20 @@ public class ReflectionHelper {
 
     public static MethodHandle getConstructor(Class<?> clazz, Class<?>... params) {
         try {
-            return LOOKUP.unreflectConstructor(clazz.getConstructor(params));
+            Constructor<?> ctor = clazz.getDeclaredConstructor(params);
+            ctor.setAccessible(true);
+            MethodHandle result = LOOKUP.unreflectConstructor(ctor);
+            if (result != null) {
+                return result;
+            }
         }
         catch (Exception ex) {
             Debug.echoError(ex);
         }
+        String err = "[ReflectionHelper]: Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
+                + Arrays.stream(params).map(Class::getCanonicalName).collect(Collectors.joining(", ")) + "]";
+        System.err.println("[Denizen] " + err);
+        Debug.echoError(err);
         return null;
     }
 
