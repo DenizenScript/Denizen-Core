@@ -467,6 +467,9 @@ public class CoreUtilities {
                 }
             }
         }
+        if (temp.equals("0E-50")) {
+            return "0";
+        }
         return temp;
     }
 

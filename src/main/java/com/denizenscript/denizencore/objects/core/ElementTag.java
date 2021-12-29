@@ -223,6 +223,9 @@ public class ElementTag implements ObjectTag {
             Debug.echoError("Unreasonably large number detected!");
             return max;
         }
+        if (bd.scale() < 50) {
+            bd = bd.setScale(50);
+        }
         return bd;
     }
 
