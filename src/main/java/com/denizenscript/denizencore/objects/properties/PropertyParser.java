@@ -204,6 +204,29 @@ public class PropertyParser {
         return input;
     }
 
+    public static String getPropertiesDebuggable(ObjectTag object) {
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        if (properties == null) {
+            return "";
+        }
+        StringBuilder prop_string = new StringBuilder(properties.propertiesWithMechs.size() * 10);
+        for (PropertyGetter getter : properties.propertiesWithMechs) {
+            Property property = getter.get(object);
+            if (property != null) {
+                String description = property.getPropertyString();
+                if (description != null) {
+                    prop_string.append(property.getPropertyId()).append("<G>=<Y>").append(description).append("<G>; <Y>");
+                }
+            }
+        }
+        if (prop_string.length() > 0) {
+            return "<G>[<Y>" + prop_string.substring(0, prop_string.length() - "; <Y>".length()) + "<G>]";
+        }
+        else {
+            return "";
+        }
+    }
+
     public static String getPropertiesString(ObjectTag object) {
         ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
         if (properties == null) {

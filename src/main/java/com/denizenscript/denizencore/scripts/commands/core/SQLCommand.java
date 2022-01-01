@@ -45,10 +45,16 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // The general usage order is connect -> update/query -> disconnect.
     // It is not required that you disconnect right after using, and in fact encouraged that you keep a connection open where possible.
+    //
     // When connecting, the server format is IP:Port/Database, EG 'localhost:3306/test'.
+    // You can also append options to the end, like 'localhost:3306/test?autoReconnect=true'
+    //
     // You can switch whether SSL is used for the connection (defaults to false).
+    //
     // Note that when using tag, it is recommended you escape unusual inputs to avoid SQL injection.
+    //
     // The SQL command is merely a wrapper for SQL queries, and further usage details should be gathered from an official MySQL query reference rather than from Denizen command help.
+    //
     // SQL connections are not instant - they can take several seconds, or just never connect at all.
     // It is recommended you hold the command by doing "- ~sql ..." rather than just "- sql ..."
     // as this will delay the commands following the SQL command until after the SQL operation is complete.
