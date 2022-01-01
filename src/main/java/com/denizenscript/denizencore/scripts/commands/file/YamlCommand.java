@@ -66,7 +66,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // Similarly, "create" does not create any file, instead it only creates a YAML object in RAM.
     //
     // When loading, optionally specify 'raw_format' to indicate that this YAML file needs to maintain compatibility with some external system using raw YAML data
-    // (for example, when altering YAML data files used by external plugins). Note that this can have side effects of custom data disappearing (for example, the value "yes" gets magically converted to "true").
+    // (for example, when altering YAML data files used by external plugins).
+    // Note that this can have side effects of custom data disappearing (for example, the value "yes" gets magically converted to "true") or strange data parsing in.
     //
     // In-memory changes to a loaded YAML object will mark that object as having changes. Before saving,
     // you can check whether the YAML object needs to be written to disk with the has_changes tag.
@@ -595,7 +596,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             }
                             else {
                                 if (Debug.verbose) {
-                                    Debug.echoDebug(scriptEntry, "Remvoe value: " + valueStr);
+                                    Debug.echoDebug(scriptEntry, "Remove value: " + valueStr);
                                 }
                                 for (int i = 0; i < list.size(); i++) {
                                     if (list.get(i).equalsIgnoreCase(valueStr)) {

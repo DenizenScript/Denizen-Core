@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 import org.yaml.snakeyaml.scanner.ScannerImpl;
@@ -35,7 +35,7 @@ public class YamlConfiguration {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
-        Yaml yaml = new Yaml(new Constructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
+        Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
         Object obj = yaml.load(data);
         YamlConfiguration config = new YamlConfiguration();
         if (obj == null) {
@@ -49,7 +49,7 @@ public class YamlConfiguration {
             config.contents = (Map<StringHolder, Object>) obj;
         }
         else {
-            Debug.echoError("Invalid YAML object type: " + obj.toString() + " is " + obj.getClass().getSimpleName());
+            Debug.echoError("Invalid YAML object type: " + obj + " is " + obj.getClass().getSimpleName());
             return null;
         }
         switchKeys(config.contents);

@@ -93,7 +93,7 @@ public class ScriptHelper {
                             curLine = curLine.replace("&", "&amp").replace(".", "&dot");
                         }
                     }
-                    else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *"))) {
+                    else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *") || trimmedLine.contains(": !"))) {
                         int colon = curLine.indexOf(':');
                         curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + "\"";
                     }
