@@ -418,7 +418,9 @@ public class CoreUtilities {
                         }
                     }
                 }
-                Files.copy(file, destination.resolve(source.relativize(file)));
+                Path destPath = destination.resolve(source.relativize(file));
+                destPath.getParent().toFile().mkdirs();
+                Files.copy(file, destPath);
             }
             catch (IOException ex) {
                 throw new RuntimeException(ex);
