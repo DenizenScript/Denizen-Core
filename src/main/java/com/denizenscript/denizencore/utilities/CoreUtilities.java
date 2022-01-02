@@ -469,7 +469,7 @@ public class CoreUtilities {
                 }
             }
         }
-        if (temp.equals("0E-50")) {
+        if (temp.startsWith("0E")) {
             return "0";
         }
         return temp;

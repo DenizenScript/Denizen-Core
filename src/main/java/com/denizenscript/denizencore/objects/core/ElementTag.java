@@ -408,6 +408,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is equal to another element.
         // Equivalent to if comparison: ==
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "equals", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -423,6 +424,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether this decimal number is greater than the input decimal number.
         // Equivalent to if comparison: >
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -438,6 +440,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether this decimal number is less than the input decimal number.
         // Equivalent to if comparison: <
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_less_than", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -453,6 +456,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether this decimal number is greater than or equal to the input decimal number.
         // Equivalent to if comparison: >=
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_more_than_or_equal_to", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -468,6 +472,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether this decimal number is less than or equal to the input decimal number.
         // Equivalent to if comparison: <=
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerTag(ElementTag.class, "is_less_than_or_equal_to", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -1045,6 +1050,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the opposite of the element
         // IE, true returns false and false returns true.
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "not", (attribute, object) -> {
             return new ElementTag(!object.element.equalsIgnoreCase("true"));
@@ -1056,6 +1062,7 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether both the element and the second element are true.
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "and", (attribute, object) -> {
             return new ElementTag(object.element.equalsIgnoreCase("true") && attribute.getParam().equalsIgnoreCase("true"));
@@ -1067,6 +1074,7 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether either the element or the second element are true.
+        // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "or", (attribute, object) -> {
             return new ElementTag(object.element.equalsIgnoreCase("true") || attribute.getParam().equalsIgnoreCase("true"));
