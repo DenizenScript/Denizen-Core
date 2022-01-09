@@ -17,8 +17,7 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
     //
     // @Triggers every <count> seconds, minutes, or hours of game calculation time. Default repetitions count of 1.
     // This is specifically based on the rate of time advancement in the game server,
-    // which is not necessarily equivalent to the real passage of time
-    // (for example, this event may fire slower if the server is lagging).
+    // which is not necessarily equivalent to the real passage of time (for example, this event may fire slower if the server is lagging).
     // For real time, see <@link event system time>.
     //
     // @Context

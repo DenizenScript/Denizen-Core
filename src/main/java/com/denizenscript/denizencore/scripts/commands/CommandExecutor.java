@@ -128,7 +128,7 @@ public class CommandExecutor {
                 Debug.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             }
             Debug.log("Usage: " + command.getUsageHint());
-            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
+            Debug.log("(Attempted: " + scriptEntry + ")");
             Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);
             currentQueue = null;
@@ -137,7 +137,7 @@ public class CommandExecutor {
         catch (Throwable e) {
             Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
             Debug.echoError(scriptEntry.getResidingQueue(), e);
-            Debug.log("(Attempted: " + scriptEntry.toString() + ")");
+            Debug.log("(Attempted: " + scriptEntry + ")");
             Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);
             currentQueue = null;

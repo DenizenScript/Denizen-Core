@@ -48,6 +48,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // When connecting, the server format is IP:Port/Database, EG 'localhost:3306/test'.
     // You can also append options to the end, like 'localhost:3306/test?autoReconnect=true'
+    // You can create a simple text file to contain the password, and store it in 'plugins/Denizen' or a subfolder, and input it using the 'passwordfile' option.
     //
     // You can switch whether SSL is used for the connection (defaults to false).
     //

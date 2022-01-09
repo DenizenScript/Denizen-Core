@@ -14,7 +14,7 @@ public class TickScriptEvent extends ScriptEvent {
     //
     // @Group Core
     //
-    // @Warning This event fires very rapidly and is usually not the most ideal way to handle things.
+    // @Warning This event fires very rapidly and is usually not the most ideal way to handle things. Generally, prefer <@link event delta time>.
     //
     // @Triggers every single tick.
     //

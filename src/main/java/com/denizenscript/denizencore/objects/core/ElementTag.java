@@ -1185,28 +1185,6 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ElementTag.repeat_as_list[<#>]>
-        // @returns ListTag
-        // @group element manipulation
-        // @description
-        // Returns a list contained the input number of entries, each of which is an exact copy of the element.
-        // For example, "hello" .repeat_as_list[3] returns a ListTag of "hello|hello|hello|"
-        // An input value or zero or a negative number will result in an empty list.
-        // -->
-        tagProcessor.registerStaticTag(ListTag.class, "repeat_as_list", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag ElementTag.repeat_as_list[...] must have a value.");
-                return null;
-            }
-            int repeatTimes = attribute.getIntParam();
-            ListTag result = new ListTag();
-            for (int i = 0; i < repeatTimes; i++) {
-                result.addObject(object);
-            }
-            return result;
-        });
-
-        // <--[tag]
         // @attribute <ElementTag.after_last[<element>]>
         // @returns ElementTag
         // @group element manipulation

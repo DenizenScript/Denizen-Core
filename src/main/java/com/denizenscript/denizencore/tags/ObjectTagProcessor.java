@@ -266,6 +266,28 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return null;
         });
 
+        // <--[tag]
+        // @attribute <ObjectTag.repeat_as_list[<#>]>
+        // @returns ListTag
+        // @group element manipulation
+        // @description
+        // Returns a list contained the input number of entries, each of which is an exact copy of the object.
+        // For example, element[hello].repeat_as_list[3] returns a ListTag of "hello|hello|hello|"
+        // An input value or zero or a negative number will result in an empty list.
+        // -->
+        registerStaticTag(ListTag.class, "repeat_as_list", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                attribute.echoError("The tag ObjectTag.repeat_as_list[...] must have a value.");
+                return null;
+            }
+            int repeatTimes = attribute.getIntParam();
+            ListTag result = new ListTag();
+            for (int i = 0; i < repeatTimes; i++) {
+                result.addObject(object.duplicate());
+            }
+            return result;
+        });
+
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {
