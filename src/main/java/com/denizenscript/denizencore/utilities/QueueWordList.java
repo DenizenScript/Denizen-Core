@@ -83,7 +83,7 @@ public class QueueWordList {
             "Minecraft", "Mine", "Craft", // Minecraft
             "Paper", "Spigot", "Bukkit", // Server software
             "Citizens", "Denizen", "Sentinel", // Plugins
-            "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", // Dev contributors
+            "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", "Morphan", // Dev contributors
             "Anthony", "Ricky", // Veterans list
             "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer", "Xeane", "Jumpsplat", "Inquisitor" // Helpers list
     };

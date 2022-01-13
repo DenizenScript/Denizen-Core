@@ -90,6 +90,11 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 if (Debug.verbose) {
                     Debug.log("WaitUntil looping: " + counter);
                 }
+                if (scriptEntry.getResidingQueue().getEntries().isEmpty()) {
+                    Debug.echoDebug(scriptEntry, "WaitUntil stopping early: queue is empty or was externally stopped.");
+                    scriptEntry.setFinished(true);
+                    schedulable.cancel();
+                }
                 if (new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry)) {
                     Debug.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
                     scriptEntry.setFinished(true);
