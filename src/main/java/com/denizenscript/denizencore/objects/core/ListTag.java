@@ -626,11 +626,11 @@ public class ListTag implements List<String>, ObjectTag {
             return "li@";
         }
         StringBuilder debugText = new StringBuilder();
-        debugText.append("<G>li@<Y> ");
+        debugText.append("<LG>li@<Y> ");
         for (ObjectTag item : objectForms) {
-            debugText.append(item.debuggable()).append(" <G>|<Y> ");
+            debugText.append(item.debuggable()).append(" <LG>|<Y> ");
         }
-        return debugText.substring(0, debugText.length() - " <G>|<Y> ".length());
+        return debugText.substring(0, debugText.length() - " <LG>|<Y> ".length());
     }
 
     @Override

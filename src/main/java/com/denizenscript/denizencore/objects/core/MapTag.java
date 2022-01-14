@@ -169,11 +169,13 @@ public class MapTag implements ObjectTag, Adjustable {
             return "map@";
         }
         StringBuilder debugText = new StringBuilder();
-        debugText.append("<G>map@<Y> ");
+        debugText.append("<LG>map@[<Y>");
         for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
-            debugText.append(entry.getKey().str).append(" <G>/<Y> ").append(entry.getValue().debuggable()).append(" <G>|<Y> ");
+            debugText.append(entry.getKey().str).append(" <LG>=<Y> ").append(entry.getValue().debuggable()).append("<LG>;<Y> ");
         }
-        return debugText.substring(0, debugText.length() - " <G>|<Y> ".length());
+        debugText.setLength(debugText.length() - "<LG>;<Y> ".length());
+        debugText.append("<LG>]");
+        return debugText.toString();
     }
 
     @Override

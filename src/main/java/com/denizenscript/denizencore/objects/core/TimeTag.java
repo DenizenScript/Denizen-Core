@@ -161,17 +161,17 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public String debuggable() {
-        return "<G>time@ <Y>" +
+        return "<LG>time@ <Y>" +
                 // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill"
-                pad0(instant.get(ChronoField.YEAR), 4) + "<G> / <Y>" +
+                pad0(instant.get(ChronoField.YEAR), 4) + "<LG> / <Y>" +
                 pad0(instant.get(ChronoField.MONTH_OF_YEAR), 2) +
-                " <G>(<GR>" + Month.of(instant.get(ChronoField.MONTH_OF_YEAR)).name() + "<G>)" + "<G> / <Y>" +
+                " <LG>(<GR>" + Month.of(instant.get(ChronoField.MONTH_OF_YEAR)).name() + "<LG>)" + "<G> / <Y>" +
                 pad0(instant.get(ChronoField.DAY_OF_MONTH), 2) +
-                " <G>(<GR>" + DayOfWeek.of(instant.get(ChronoField.DAY_OF_WEEK)).name() + "<G>)" + "<G> _ <Y>" +
-                pad0(instant.get(ChronoField.HOUR_OF_DAY), 2) + "<G> : <Y>" +
-                pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2) + "<G> : <Y>" +
-                pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2) + "<G> : <Y>" +
-                pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4) + "<G> _ <Y>" +
+                " <LG>(<GR>" + DayOfWeek.of(instant.get(ChronoField.DAY_OF_WEEK)).name() + "<LG>)" + "<G> _ <Y>" +
+                pad0(instant.get(ChronoField.HOUR_OF_DAY), 2) + "<LG> : <Y>" +
+                pad0(instant.get(ChronoField.MINUTE_OF_HOUR), 2) + "<LG> : <Y>" +
+                pad0(instant.get(ChronoField.SECOND_OF_MINUTE), 2) + "<LG> : <Y>" +
+                pad0(instant.get(ChronoField.MILLI_OF_SECOND), 4) + "<LG> _ <Y>" +
                 instant.getOffset().getId();
     }
 
