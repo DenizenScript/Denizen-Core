@@ -32,23 +32,23 @@ public class ScriptContainer implements Debuggable {
     //
     // <code>
     // script name:
-    //   key: value
-    //   list key:
-    //     - list value
-    //     - ...
-    //   parent key:
-    //     child key: value
+    //     key: value
+    //     list key:
+    //         - list value
+    //         - ...
+    //     parent key:
+    //         child key: value
     // </code>
     //
     // And here's a container, put into a more familiar context:
     //
     // <code>
     // a haiku script:
-    //   type: task
-    //   script:
-    //   - narrate "A simple script,"
-    //   - narrate "with a key value relationship."
-    //   - narrate "Oh look, a list!"
+    //     type: task
+    //     script:
+    //       - narrate "A simple script,"
+    //       - narrate "with a key value relationship."
+    //       - narrate "Oh look, a list!"
     // </code>
     //
     // -->

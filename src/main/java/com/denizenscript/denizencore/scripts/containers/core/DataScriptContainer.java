@@ -21,14 +21,14 @@ public class DataScriptContainer extends ScriptContainer {
     // <code>
     // data_script_name:
     //
-    //   type: data
+    //     type: data
     //
-    //   # Your data here
-    //   some_key: some value
-    //   some_list_key:
-    //   - some list value
-    //   some_map_key:
-    //     some_subkey: some value
+    //     # Your data here
+    //     some_key: some value
+    //     some_list_key:
+    //     - some list value
+    //     some_map_key:
+    //         some_subkey: some value
     //
     // </code>
     //

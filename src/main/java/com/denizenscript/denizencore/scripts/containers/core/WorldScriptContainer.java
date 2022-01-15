@@ -19,20 +19,20 @@ public class WorldScriptContainer extends ScriptContainer {
     // <code>
     // World_Script_Name:
     //
-    //   type: world
+    //     type: world
     //
-    //   events:
+    //     events:
     //
-    //     # Any event label can be placed here
-    //     # This includes generic labels like 'on entity death:',
-    //     # Specified labels  like 'on player death:',
-    //     # And detailed labels like 'on player death ignorecancelled:true priority:5:'
-    //     some event label:
-    //     # Write any logic that should fire when the event runs.
-    //     # Optionally 'determine' any results to the event.
-    //     - some commands
+    //         # Any event label can be placed here
+    //         # This includes generic labels like 'on entity death:',
+    //         # Specified labels  like 'on player death:',
+    //         # And detailed labels like 'on player death ignorecancelled:true priority:5:'
+    //         some event label:
+    //         # Write any logic that should fire when the event runs.
+    //         # Optionally 'determine' any results to the event.
+    //         - some commands
     //
-    //     # List additional events here
+    //         # List additional events here
     //
     // </code>
     //

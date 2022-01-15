@@ -25,15 +25,15 @@ public class TaskScriptContainer extends ScriptContainer {
     // <code>
     // Task_Script_Name:
     //
-    //   type: task
+    //     type: task
     //
-    //   # When intending to run a task script via the run command with the "def:" argument to pass data through,
-    //   # use this "definitions" key to specify the names of the definitions (in the same order as the "def:" argument will use).
-    //   definitions: name1|name2|...
+    //     # When intending to run a task script via the run command with the "def:" argument to pass data through,
+    //     # use this "definitions" key to specify the names of the definitions (in the same order as the "def:" argument will use).
+    //     definitions: name1|name2|...
     //
-    //   script:
+    //     script:
     //
-    //   - your commands here
+    //     - your commands here
     //
     // </code>
     //

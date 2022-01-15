@@ -37,15 +37,15 @@ public class ProcedureScriptContainer extends ScriptContainer {
     // <code>
     // Proc_Script_Name:
     //
-    //   type: procedure
+    //     type: procedure
     //
-    //   # Optionally specify definition names to use with the 'context' input of the proc tag.
-    //   definitions: def|names|here
+    //     # Optionally specify definition names to use with the 'context' input of the proc tag.
+    //     definitions: def|names|here
     //
-    //   script:
+    //     script:
     //
-    //   # Put any logic, then determine the result.
-    //   - determine 5
+    //     # Put any logic, then determine the result.
+    //     - determine 5
     //
     // </code>
     //

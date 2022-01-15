@@ -70,26 +70,26 @@ public class IfCommand extends BracedCommand {
     // @Usage
     // Use to narrate a message only if a player has a flag.
     // - if <player.has_flag[secrets]>:
-    //   - narrate "The secret number is 3!"
+    //     - narrate "The secret number is 3!"
     //
     // @Usage
     // Use to narrate a different message depending on a player's money level.
     // - if <player.money> > 1000:
-    //   - narrate "You're rich!"
+    //     - narrate "You're rich!"
     // - else:
-    //   - narrate "You're poor!"
+    //     - narrate "You're poor!"
     //
     // @Usage
     // Use to stop a script if a player doesn't have all the prerequisites.
     // - if !<player.has_flag[quest_complete]> || !<player.has_permission[new_quests]> || <player.money> < 50:
-    //   - narrate "You're not ready!"
-    //   - stop
+    //     - narrate "You're not ready!"
+    //     - stop
     // - narrate "Okay so your quest is to find the needle item in the haystack build next to town."
     //
     // @Usage
     // Use to perform a complicated requirements test before before changing some event.
     // - if ( poison|magic|melting contains <context.cause> and <context.damage> > 5 ) or <player.has_flag[weak]>:
-    //   - determine <context.damage.mul[2]>
+    //     - determine <context.damage.mul[2]>
     //
     // -->
 
