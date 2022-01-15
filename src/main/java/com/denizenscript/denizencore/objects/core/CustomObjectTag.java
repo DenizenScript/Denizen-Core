@@ -86,7 +86,7 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     public String identify() {
         StringBuilder outp = new StringBuilder();
         for (Map.Entry<String, ObjectTag> var : vars.entrySet()) {
-            outp.append(var.getKey()).append("=").append(PropertyParser.escapePropertyValue(var.getValue().toString())).append(";");
+            outp.append(PropertyParser.escapePropertyKey(var.getKey())).append("=").append(PropertyParser.escapePropertyValue(var.getValue().toString())).append(";");
         }
         return "custom@" + container.getName() + "[" + (outp.length() > 0 ? outp.substring(0, outp.length() - 1) : "") + "]";
     }

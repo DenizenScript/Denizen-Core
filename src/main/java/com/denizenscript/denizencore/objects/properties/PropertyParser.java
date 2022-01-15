@@ -186,6 +186,17 @@ public class PropertyParser {
         return brackets == 0;
     }
 
+    public static String escapePropertyKey(String input) {
+        if (needsEscapingMatcher.containsAnyMatch(input)) {
+            input = CoreUtilities.replace(input, "&", "&amp");
+            input = CoreUtilities.replace(input, ";", "&sc");
+            input = CoreUtilities.replace(input, "[", "&lb");
+            input = CoreUtilities.replace(input, "]", "&rb");
+            input = CoreUtilities.replace(input, "=", "&eq");
+        }
+        return input;
+    }
+
     public static String escapePropertyValue(String input) {
         if (needsEscapingMatcher.containsAnyMatch(input)) {
             int openBracket = input.indexOf('[');
@@ -215,12 +226,12 @@ public class PropertyParser {
             if (property != null) {
                 String description = property.getPropertyString();
                 if (description != null) {
-                    prop_string.append(property.getPropertyId()).append("<G>=<Y>").append(description).append("<G>; <Y>");
+                    prop_string.append(property.getPropertyId()).append(" <LG>=<Y> ").append(description).append("<LG>; <Y>");
                 }
             }
         }
         if (prop_string.length() > 0) {
-            return "<G>[<Y>" + prop_string.substring(0, prop_string.length() - "; <Y>".length()) + "<G>]";
+            return "<LG>[<Y>" + prop_string.substring(0, prop_string.length() - "; <Y>".length()) + "<LG>]";
         }
         else {
             return "";
@@ -238,8 +249,7 @@ public class PropertyParser {
             if (property != null) {
                 String description = property.getPropertyString();
                 if (description != null) {
-                    description = escapePropertyValue(description);
-                    prop_string.append(property.getPropertyId()).append('=').append(description).append(';');
+                    prop_string.append(property.getPropertyId()).append('=').append(escapePropertyValue(description)).append(';');
                 }
             }
         }
