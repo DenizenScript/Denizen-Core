@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.core.DurationTag;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -82,6 +83,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         }
         long endTime = max == null ? -1 : DenizenCore.serverTimeMillis + max.getMillis();
         final RepeatingSchedulable schedulable = new RepeatingSchedulable(null, (float) rate.getSeconds());
+        QueueTag queue = new QueueTag(scriptEntry.getResidingQueue());
         schedulable.run = new Runnable() {
             public int counter = 0;
             @Override
@@ -90,7 +92,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 if (Debug.verbose) {
                     Debug.log("WaitUntil looping: " + counter);
                 }
-                if (scriptEntry.getResidingQueue().getEntries().isEmpty()) {
+                if (queue.getQueue().getEntries().isEmpty()) {
                     Debug.echoDebug(scriptEntry, "WaitUntil stopping early: queue is empty or was externally stopped.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();
