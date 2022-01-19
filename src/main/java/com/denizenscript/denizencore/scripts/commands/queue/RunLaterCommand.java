@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
@@ -69,6 +70,11 @@ public class RunLaterCommand extends AbstractCommand {
     // - runlater my_task delay:5h def.targets:<player.location.find_players_within[50]>
     //
     // -->
+
+    @Override
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.addScriptsOfType(TaskScriptContainer.class);
+    }
 
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {

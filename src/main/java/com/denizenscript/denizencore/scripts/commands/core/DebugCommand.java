@@ -81,6 +81,12 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         RECORD
     }
 
+    @Override
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.add(DebugType.values());
+        tab.add("start", "submit", "cancel");
+    }
+
     public static HashSet<String> DBINFO = Argument.precalcEnum(DebugType.values());
 
     @Override

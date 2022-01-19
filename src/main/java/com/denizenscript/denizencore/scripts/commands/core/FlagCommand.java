@@ -18,8 +18,6 @@ import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-import java.util.function.Consumer;
-
 public class FlagCommand extends AbstractCommand {
 
     public FlagCommand() {
@@ -143,13 +141,13 @@ public class FlagCommand extends AbstractCommand {
     // -->
 
     @Override
-    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
-        if (arg.contains(":")) {
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        if (tab.arg.contains(":")) {
             return;
         }
         for (String flagName : DenizenCore.serverFlagMap.listAllFlags()) {
             if (!flagName.startsWith("__")) {
-                addOne.accept(flagName);
+                tab.add(flagName);
             }
         }
     }

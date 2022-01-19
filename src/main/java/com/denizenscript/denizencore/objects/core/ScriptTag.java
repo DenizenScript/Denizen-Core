@@ -497,5 +497,4 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             mechanism.reportInvalid();
         }
     }
-
 }

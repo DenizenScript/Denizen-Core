@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.events.core.CustomScriptEvent;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;

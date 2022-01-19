@@ -25,7 +25,6 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class YamlCommand extends AbstractCommand implements Holdable {
 
@@ -148,12 +147,8 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     public enum DataType { STRING, INTEGER, DOUBLE, BOOLEAN }
 
     @Override
-    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
-        if (arg.startsWith("id:")) {
-            for (String yaml : yamlDocuments.keySet()) {
-                addOne.accept("id:" + yaml);
-            }
-        }
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.addWithPrefix("id:", yamlDocuments.keySet());
     }
 
     @Override

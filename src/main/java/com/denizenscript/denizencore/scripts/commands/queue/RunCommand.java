@@ -3,8 +3,6 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
-import com.denizenscript.denizencore.scripts.ScriptRegistry;
-import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
@@ -97,12 +95,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
     // -->
 
     @Override
-    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
-        for (ScriptContainer script : ScriptRegistry.scriptContainers.values()) {
-            if (script instanceof TaskScriptContainer) {
-                addOne.accept(script.getName());
-            }
-        }
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.addScriptsOfType(TaskScriptContainer.class);
     }
 
     @Override

@@ -79,7 +79,7 @@ public class Argument implements Cloneable {
 
     public static AsciiMatcher prefixCharsAllowed = new AsciiMatcher(AsciiMatcher.LETTERS_UPPER + AsciiMatcher.LETTERS_LOWER + "_.");
 
-    private final void fillStrNoColon(String string) {
+    private void fillStrNoColon(String string) {
         value = string;
         if (object == null) {
             object = new ElementTag(value);

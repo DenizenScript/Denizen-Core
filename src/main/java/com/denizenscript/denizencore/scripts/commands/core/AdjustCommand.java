@@ -71,10 +71,8 @@ public class AdjustCommand extends AbstractCommand {
     // -->
 
     @Override
-    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
-        for (String mech : PropertyParser.allMechanismsEver) {
-            addOne.accept(mech);
-        }
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.add(PropertyParser.allMechanismsEver);
     }
 
     @Override

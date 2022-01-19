@@ -1,14 +1,16 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.notable.Notable;
+import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public abstract class AbstractCommand {
 
@@ -52,7 +54,69 @@ public abstract class AbstractCommand {
         }
     }
 
-    public void addCustomTabCompletions(String arg, Consumer<String> addOne) {
+    public static class TabCompletionsBuilder {
+
+        public String arg;
+
+        public ArrayList<String> completions = new ArrayList<>();
+
+        public final void addWithPrefix(String prefix, Set<String> values) {
+            if (arg.startsWith(prefix)) {
+                for (String val : values) {
+                    add(prefix + val);
+                }
+            }
+        }
+
+        public final void addWithPrefix(String prefix, Enum<?>[] values) {
+            if (arg.startsWith(prefix)) {
+                for (Enum<?> val : values) {
+                    add(prefix + val.name());
+                }
+            }
+        }
+
+        public final void add(String text) {
+            if (CoreUtilities.toLowerCase(text).startsWith(arg)) {
+                completions.add(text);
+            }
+        }
+
+        public final void add(String a, String... values) {
+            add(a);
+            for (String val : values) {
+                add(val);
+            }
+        }
+
+        public final void add(Set<String> values) {
+            for (String val : values) {
+                add(val);
+            }
+        }
+
+        public final void add(Enum<?>[] values) {
+            for (Enum<?> val : values) {
+                add(val.name());
+            }
+        }
+
+        public final void addNotesOfType(Class<? extends Notable> type) {
+            for (Notable note : NoteManager.notesByType.get(type)) {
+                add(NoteManager.getSavedId(note));
+            }
+        }
+
+        public final void addScriptsOfType(Class<? extends ScriptContainer> type) {
+            for (ScriptContainer script : ScriptRegistry.scriptContainers.values()) {
+                if (type.isAssignableFrom(script.getClass())) {
+                    add(script.getName());
+                }
+            }
+        }
+    }
+
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
     }
 
     private boolean preparseArgs = true;
