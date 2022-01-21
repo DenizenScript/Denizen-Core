@@ -184,6 +184,10 @@ public interface ObjectTag {
         return CoreUtilities.canPossiblyBeType(this, type);
     }
 
+    default ElementTag asElement() {
+        return new ElementTag(toString());
+    }
+
     /**
      * Gets a specific attribute using this object to fetch the necessary data.
      *

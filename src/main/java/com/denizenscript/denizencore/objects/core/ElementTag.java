@@ -83,11 +83,9 @@ public class ElementTag implements ObjectTag {
     // In some cases, this will also be documented as "<#.#>".
     // -->
 
-    @Deprecated
-    public static ElementTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
+    /**
+     * Should never be called directly, exists only for internal compatibility reasons.
+     */
     @Fetchable("el")
     public static ElementTag valueOf(String string, TagContext context) {
         if (string == null) {
@@ -96,6 +94,9 @@ public class ElementTag implements ObjectTag {
         return new ElementTag(CoreUtilities.toLowerCase(string).startsWith("el@") ? string.substring(3) : string);
     }
 
+    /**
+     * Should never be called directly, exists only for internal compatibility reasons.
+     */
     public static boolean matches(String string) {
         return string != null;
     }
@@ -319,8 +320,14 @@ public class ElementTag implements ObjectTag {
         return ObjectFetcher.checkMatch(dClass, element);
     }
 
+    @Override
     public <T extends ObjectTag> T asType(Class<T> dClass, TagContext context) {
         return ObjectFetcher.getObjectFrom(dClass, element, context);
+    }
+
+    @Override
+    public ElementTag asElement() {
+        return this;
     }
 
     public boolean matchesEnum(Enum[] values) {
@@ -1050,7 +1057,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the opposite of the element
         // IE, true returns false and false returns true.
-        // You should never ever use this tag inside any 'if', 'while', etc. command.
+        // You should never ever use this tag inside any 'if', 'while', etc. command (instead, use the '!' negation prefix).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "not", (attribute, object) -> {
             return new ElementTag(!object.element.equalsIgnoreCase("true"));

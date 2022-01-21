@@ -72,10 +72,8 @@ public class Comparable {
 
     private static boolean compareDecimal(ObjectTag objA, ObjectTag objB, Operator operator, TagContext context) {
         try {
-            ElementTag elementA = new ElementTag(objA.toString());
-            ElementTag elementB = new ElementTag(objB.toString());
-            BigDecimal bigDecA = elementA.asBigDecimal();
-            BigDecimal bigDecB = elementB.asBigDecimal();
+            BigDecimal bigDecA = objA.asElement().asBigDecimal();
+            BigDecimal bigDecB = objB.asElement().asBigDecimal();
             int compared = bigDecA.compareTo(bigDecB);
             switch (operator) {
                 case LESS:

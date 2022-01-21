@@ -39,7 +39,7 @@ public class Mechanism {
         if (value == null) {
             return new ElementTag("");
         }
-        return new ElementTag(value.toString());
+        return value.asElement();
     }
 
     public <T extends ObjectTag> T valueAsType(Class<T> dClass) {
