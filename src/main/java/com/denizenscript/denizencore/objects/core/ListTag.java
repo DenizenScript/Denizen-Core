@@ -1188,7 +1188,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag
         // @description
         // returns a new ListTag excluding the items specified.
-        // For example: .exclude[two|four] on a list of "one|two|three|four" will return "one|three".
+        // For example: .exclude[two|four] on a list of "one|two|three|four|two" will return "one|three".
         // -->
         tagProcessor.registerTag(ListTag.class, "exclude", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -1196,7 +1196,11 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag exclusions = getListFor(attribute.getParamObject(), attribute.context);
-            int max = exclusions.size();
+            HashSet<String> toExclude = new HashSet<>(exclusions.size() * 2);
+            for (String str : exclusions) {
+                toExclude.add(CoreUtilities.toLowerCase(str));
+            }
+            int max = Integer.MAX_VALUE;
             // <--[tag]
             // @attribute <ListTag.exclude[...|...].max[<#>]>
             // @returns ListTag
@@ -1213,15 +1217,12 @@ public class ListTag implements List<String>, ObjectTag {
 
             // Create a new ListTag that will contain the exclusions
             ListTag copy = new ListTag(object);
-            baseLoop:
-            for (String exclusion : exclusions) {
-                for (int i = 0; i < copy.size(); i++) {
-                    if (CoreUtilities.equalsIgnoreCase(copy.get(i), exclusion)) {
-                        copy.removeObject(i--);
-                        removed++;
-                        if (removed >= max) {
-                            break baseLoop;
-                        }
+            for (int i = 0; i < copy.size(); i++) {
+                if (toExclude.contains(CoreUtilities.toLowerCase(copy.get(i)))) {
+                    copy.removeObject(i--);
+                    removed++;
+                    if (removed >= max) {
+                        break;
                     }
                 }
             }
