@@ -333,6 +333,28 @@ public class CoreUtilities {
         typeConverters.put(ElementTag.class, (obj, c) -> obj.asElement());
         typeConverters.put(ListTag.class, ListTag::getListFor);
         typeConverters.put(MapTag.class, MapTag::getMapFor);
+        typeCheckers.put(MapTag.class, new TypeComparisonRunnable() {
+            @Override
+            public boolean canBecome(ObjectTag inp) {
+                if (inp == null) {
+                    return false;
+                }
+                if (inp instanceof MapTag) {
+                    return true;
+                }
+                if (!(inp instanceof ElementTag)) {
+                    return false;
+                }
+                String simple = inp.toString();
+                if (simple.startsWith("map@")) {
+                    return true;
+                }
+                if (simple.startsWith("[") && simple.endsWith("]") && (simple.contains(";") || simple.contains("="))) {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {
@@ -347,7 +369,7 @@ public class CoreUtilities {
                     return true;
                 }
                 if (inpType == ElementTag.class) {
-                    String simple = inp.identifySimple();
+                    String simple = inp.toString();
                     int atIndex = simple.indexOf('@');
                     if (atIndex != -1) {
                         String code = simple.substring(0, atIndex);
@@ -842,6 +864,11 @@ public class CoreUtilities {
 
     public static Collection<ObjectTag> objectToList(ObjectTag list, TagContext context) {
         if (list instanceof MapTag) {
+            for (StringHolder key : ((MapTag) list).map.keySet()) {
+                if (!ArgumentHelper.matchesInteger(key.str)) {
+                    return Collections.singletonList(list);
+                }
+            }
             return ((MapTag) list).map.values();
         }
         else if (list instanceof ListTag) {
@@ -850,11 +877,17 @@ public class CoreUtilities {
         else {
             String raw = list.toString();
             if (raw.startsWith("map@") || raw.startsWith("[")) {
-                return MapTag.valueOf(raw, context).map.values();
+                MapTag map = MapTag.valueOf(raw, context);
+                if (map != null) {
+                    for (StringHolder key : map.map.keySet()) {
+                        if (!ArgumentHelper.matchesInteger(key.str)) {
+                            return Collections.singletonList(list);
+                        }
+                    }
+                    return map.map.values();
+                }
             }
-            else {
-                return ListTag.valueOf(raw, context).objectForms;
-            }
+            return ListTag.valueOf(raw, context).objectForms;
         }
     }
 }
