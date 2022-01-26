@@ -90,12 +90,17 @@ public class ScriptHelper {
                     }
                     else if (endsColon && !startsDash) {
                         if (curLine.contains(".")) {
-                            curLine = curLine.replace("&", "&amp").replace(".", "&dot");
+                            curLine = CoreUtilities.replace(curLine, "&", "&amp");
+                            curLine = CoreUtilities.replace(curLine, ".", "&dot");
                         }
                     }
                     else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *") || trimmedLine.contains(": !"))) {
                         int colon = curLine.indexOf(':');
                         curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + "\"";
+                    }
+                    else if (!endsColon) {
+                        int colon = curLine.indexOf(':');
+                        curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
                     }
                     if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
                         int dashIndex = curLine.indexOf('-');

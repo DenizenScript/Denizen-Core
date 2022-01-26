@@ -438,7 +438,7 @@ public class Attribute {
         if (obj == null) {
             return null;
         }
-        return obj.asType(ElementTag.class, context);
+        return obj.asElement();
     }
 
     private boolean hadAlternative = false;
