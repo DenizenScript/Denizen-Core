@@ -312,6 +312,9 @@ public class Deprecations {
     // Added 2021/12/08, deprecate officially by 2023.
     public static Warning oldUtilRandomTags = new FutureWarning("Several 'util.random.xxx' are deprecated in favor of 'util.random_xxx' (the same tag, but '_' instead of a '.', for format standardization reasons)");
 
+    // In Bukkit impl, Added 2022/01/30, deprecate officially by 2023.
+    public static Warning entityItemEnderman = new FutureWarning("The property 'entity.item' for endermen has been replaced by 'entity.material' due to usage of block materials.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
