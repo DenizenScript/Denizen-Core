@@ -386,7 +386,7 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public static boolean matches(String arg) {
-        return arg.contains("|") || arg.startsWith("li@");
+        return true;
     }
 
     @Override

@@ -32,6 +32,9 @@ public class CustomScriptEvent extends ScriptEvent {
     // @Determine
     // "OUTPUT:" + Anything, to add that value to the output list (note this is an ADD, not a SET).
     //
+    // @Player When the command is used with a player link.
+    // @NPC When the command is used with an NPC link.
+    //
     // -->
 
     public static CustomScriptEvent instance;
