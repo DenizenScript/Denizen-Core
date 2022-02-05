@@ -39,12 +39,11 @@ public class ForeachCommand extends BracedCommand {
     //
     // @Description
     // Loops through a ListTag of any type. For each item in the ListTag, the specified commands will be ran for that list entry.
-    // To call the value of the entry while in the loop, you can use <[value]>.
     //
     // Alternately, specify a map tag to loop over the set of key/value pairs in the map, where the key will be <[key]> and the value will be <[value]>.
-    // Optionally, specify "key:<name>" to change the key definition name to something other than "key".
+    // Specify "key:<name>" to set the key definition name (if unset, will be "key").
     //
-    // Optionally, specify "as:<name>" to change the value definition name to something other than "value".
+    // Specify "as:<name>" to set the value definition name (if unset, will be "value").
     // Use "as:__player" to change the queue's player link, or "as:__npc" to change the queue's NPC link.
     // Note that a changed player/NPC link persists after the end of the loop.
     //
@@ -65,8 +64,8 @@ public class ForeachCommand extends BracedCommand {
     //
     // @Usage
     // Use to run commands 'for each entry' in a manually created list of objects/elements.
-    // - foreach <[some_entity]>|<[some_npc]>|<[player]>:
-    //     - announce "There's something at <[value].location>!"
+    // - foreach <[some_entity]>|<[some_npc]>|<[player]> as:entity:
+    //     - announce "There's something at <[entity].location>!"
     //
     // @Usage
     // Use to iterate through entries in any tag that returns a list.

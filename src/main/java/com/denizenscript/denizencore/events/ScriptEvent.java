@@ -23,6 +23,7 @@ import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -826,6 +827,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static abstract class MatchHelper {
 
         public abstract boolean doesMatch(String input);
+
+        @FunctionalInterface
+        public interface ExactCheckerInterface {
+            boolean check(String text);
+        }
+
+        public boolean doesMatch(String input, ExactCheckerInterface exactChecker) {
+            return doesMatch(input);
+        }
     }
 
     public static class AlwaysMatchHelper extends MatchHelper {
@@ -847,6 +857,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         @Override
         public boolean doesMatch(String input) {
             return CoreUtilities.equalsIgnoreCase(text, input);
+        }
+
+        @Override
+        public boolean doesMatch(String input, ExactCheckerInterface exactChecker) {
+            return CoreUtilities.equalsIgnoreCase(text, input) || exactChecker.check(text);
         }
     }
 
@@ -938,6 +953,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
             return false;
         }
+
+        @Override
+        public boolean doesMatch(String input, ExactCheckerInterface checker) {
+            for (MatchHelper match : matches) {
+                if (match.doesMatch(input, checker)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     public static class InverseMatchHelper extends MatchHelper {
@@ -951,6 +976,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         @Override
         public boolean doesMatch(String input) {
             return !matcher.doesMatch(input);
+        }
+
+        @Override
+        public boolean doesMatch(String input, ExactCheckerInterface checker) {
+            return !matcher.doesMatch(input, checker);
         }
     }
 
