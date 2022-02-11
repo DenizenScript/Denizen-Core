@@ -333,6 +333,7 @@ public class CoreUtilities {
         registerTypeAsNoOtherTypeCode(QueueTag.class, "q");
         registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
         registerTypeAsNoOtherTypeCode(TimeTag.class, "d");
+        typeConverters.put(ObjectTag.class, (obj, c) -> obj);
         typeConverters.put(ElementTag.class, (obj, c) -> obj.asElement());
         typeConverters.put(ListTag.class, ListTag::getListFor);
         typeConverters.put(MapTag.class, MapTag::getMapFor);
