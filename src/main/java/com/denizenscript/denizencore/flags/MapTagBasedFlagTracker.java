@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.flags;
 
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -19,10 +18,6 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
     public static StringHolder expirationString = new StringHolder("__expiration");
 
     public static boolean skipAllCleanings = false;
-
-    public abstract MapTag getRootMap(String key);
-
-    public abstract void setRootMap(String key, MapTag map);
 
     public static boolean isExpired(ObjectTag expirationObj) {
         if (expirationObj == null) {
@@ -157,7 +152,7 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
     }
 
     @Override
-    public void setFlag(String key, ObjectTag value, TimeTag expiration) {
+    public void setFlag(String key, ObjectTag value, TimeTag expiration, boolean doFlaggify) {
         List<String> splitKey = CoreUtilities.split(key, '.');
         if (value == null && splitKey.size() == 1) {
             setRootMap(key, null);
@@ -191,19 +186,22 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
             setRootMap(splitKey.get(0), rootMap);
         }
         else {
-            MapTag resultMap = new MapTag();
-            if (value instanceof MapTag) {
-                value = flaggifyMapTag((MapTag) value);
+            MapTag resultMap;
+            if (value instanceof MapTag && !doFlaggify) {
+                resultMap = (MapTag) value;
             }
-            else if (value instanceof ElementTag && value.toString().startsWith("map@")) {
-                MapTag mappified = MapTag.valueOf(value.toString(), CoreUtilities.noDebugContext);
-                if (mappified != null) {
-                    value = flaggifyMapTag(mappified);
+            else {
+                resultMap = new MapTag();
+                if (value.shouldBeType(MapTag.class)) {
+                    MapTag mappified = value.asType(MapTag.class, CoreUtilities.noDebugContext);
+                    if (mappified != null) {
+                        value = flaggifyMapTag(mappified);
+                    }
                 }
-            }
-            resultMap.map.put(valueString, value);
-            if (expiration != null) {
-                resultMap.map.put(expirationString, expiration);
+                resultMap.map.put(valueString, value);
+                if (expiration != null) {
+                    resultMap.map.put(expirationString, expiration);
+                }
             }
             if (splitKey.size() != 1) {
                 map.putObject(endKey, resultMap);

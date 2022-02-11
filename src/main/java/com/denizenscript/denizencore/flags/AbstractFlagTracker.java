@@ -12,13 +12,21 @@ import java.util.Collection;
 
 public abstract class AbstractFlagTracker {
 
+    public abstract MapTag getRootMap(String key);
+
+    public abstract void setRootMap(String key, MapTag map);
+
     public abstract ObjectTag getFlagValue(String key);
 
     public abstract TimeTag getFlagExpirationTime(String key);
 
     public abstract Collection<String> listAllFlags();
 
-    public abstract void setFlag(String key, ObjectTag value, TimeTag expiration);
+    public void setFlag(String key, ObjectTag value, TimeTag expiration) {
+        setFlag(key, value, expiration, true);
+    }
+
+    public abstract void setFlag(String key, ObjectTag value, TimeTag expiration, boolean doFlaggify);
 
     public boolean hasFlag(String key) {
         return getFlagValue(key) != null;
@@ -94,11 +102,13 @@ public abstract class AbstractFlagTracker {
         });
 
         // <--[tag]
-        // @attribute <FlaggableObject.flag_map>
+        // @attribute <FlaggableObject.flag_map[<name>|...]>
         // @returns MapTag
         // @description
-        // Returns a raw map of the objects internal flag data.
-        // Note that this is exclusively for debug/testing reasons, and should never be used in a real script.
+        // Returns a raw map of the objects internal flag data for the flags with the given flag name. Names must be root names (no '.').
+        // Output is a MapTag wherein each key is a flag name, and each value is a MapTag, containing keys '__value' and '__expiration', where '__value' contains the real object value.
+        // Output also may contain key '__clear', which is a ListTag of flags that were listed in input but weren't present in output.
+        // Using this without a parameter to get ALL flags is allowed exclusively for debug/testing reasons, and should never be used in a real script.
         // See <@link language flag system>.
         // -->
         processor.registerTag(MapTag.class, "flag_map", (attribute, object) -> {
@@ -162,13 +172,30 @@ public abstract class AbstractFlagTracker {
     public MapTag getFlagMap() {
         MapTag result = new MapTag();
         for (String key : listAllFlags()) {
-            result.putObject(key, getFlagValue(key));
+            result.putObject(key, getRootMap(key));
         }
         return result;
     }
 
     public MapTag doFlagMapTag(Attribute attribute) {
-        listFlagsTagWarning.warn(attribute.context);
-        return getFlagMap();
+        if (!attribute.hasParam()) {
+            listFlagsTagWarning.warn(attribute.context);
+            return getFlagMap();
+        }
+        MapTag result = new MapTag();
+        ListTag clear = new ListTag();
+        for (String key : attribute.paramAsType(ListTag.class)) {
+            MapTag map = getRootMap(key);
+            if (map != null) {
+                result.putObject(key, map);
+            }
+            else {
+                clear.addObject(new ElementTag(key, true));
+            }
+        }
+        if (!clear.isEmpty()) {
+            result.putObject("__clear", clear);
+        }
+        return result;
     }
 }

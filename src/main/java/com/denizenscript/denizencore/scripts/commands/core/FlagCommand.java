@@ -6,10 +6,7 @@ import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.TimeTag;
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -17,6 +14,9 @@ import com.denizenscript.denizencore.utilities.data.ActionableDataProvider;
 import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
+
+import java.util.Map;
 
 public class FlagCommand extends AbstractCommand {
 
@@ -27,6 +27,7 @@ public class FlagCommand extends AbstractCommand {
         isProcedural = false;
         allowedDynamicPrefixes = true;
     }
+
     // <--[language]
     // @name Flag System
     // @group Denizen Scripting Language
@@ -57,9 +58,11 @@ public class FlagCommand extends AbstractCommand {
     // Item flags can also be used as a requirement in <@link command take>.
     //
     // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
-    // This includes '__scripts' which is where script flags are stored inside of server flags,
-    // and '__interact_step' which is used for interact script steps, related to <@link command zap>,
-    // and '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
+    // This includes:
+    // - '__raw' and '__clear' which are part of a fake-flag system used for forcibly setting raw data to a flaggable object,
+    // - '__scripts', '__time', etc. which is where some object-type flags are stored inside of server flags,
+    // - '__interact_step' which is used for interact script steps, related to <@link command zap>,
+    // - '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
     //
     // Flags have an expiration system, which is used by specifying a time at which they should expire (or via a duration which internally calculates the date/time of expiration by adding the duration input to the current date/time).
     // Expirations are then *checked for* in flag tags - meaning, the flag tags will internally compare a stored date/time against the real current date/time,
@@ -68,6 +71,15 @@ public class FlagCommand extends AbstractCommand {
     // In other words, it is correct to say a flag "is expired" or a flag "is not expired",
     // but it is incorrect to say a flag "expires", as it is not an active action (those this wording can be convenient when speaking informally).
     // Expired flags are sometimes 'cleaned up' (meaning, any expired flags get actually removed from internal storage), usually when a flag save file is loaded into the server.
+    //
+    // As a bonus feature-combo, it is possible to transmit sets of flags exactly in-place and reapply them, this is particular useful for example to synchronize player data across Bungee servers.
+    // To do this, you can read raw flag data with the tag <@link tag FlaggableObject.flag_map> and the '__raw' prefix in a flag command. For example:
+    // <code>
+    // # Gather the original data
+    // - define playerdata <player.flag[flag1|flag2|taco|potato|waffle|etc]>
+    // # Now reapply it elsewhere (eg a different Bungee server)
+    // - flag <player> __raw:<[playerdata]>
+    // </code>
     // -->
 
     // <--[command]
@@ -198,6 +210,23 @@ public class FlagCommand extends AbstractCommand {
 
         @Override
         public void setValueAt(String keyName, ObjectTag value) {
+            if (keyName.equals("__raw")) {
+                MapTag toSetMap = (MapTag) value;
+                ObjectTag toClear = toSetMap.getObject("__clear");
+                if (toClear != null) {
+                    for (String key : toClear.asType(ListTag.class, CoreUtilities.noDebugContext)) {
+                        if (toSetMap.getObject(key) == null) {
+                            tracker.setRootMap(key, null);
+                        }
+                    }
+                }
+                for (Map.Entry<StringHolder, ObjectTag> mapData : toSetMap.map.entrySet()) {
+                    if (!mapData.getKey().low.equals("__clear")) {
+                        tracker.setRootMap(mapData.getKey().str, (MapTag) mapData.getValue());
+                    }
+                }
+                return;
+            }
             if (keyName.startsWith("__")) {
                 Debug.echoError("Assigning flag value to reserved '__' namespace (key: '" + keyName + "')");
             }
