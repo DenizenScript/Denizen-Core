@@ -115,6 +115,7 @@ public class IfCommand extends BracedCommand {
                 }
                 scriptEntry.getResidingQueue().script_entries.removeFirst();
                 BracedData elseRef = getBracedCommands(nextEntry).get(0);
+                elseRef.entry = nextEntry;
                 elseRef.key = nextEntry.toString();
                 elseRef.args = new ArrayList<>();
                 elseRef.args.add("else");
@@ -229,7 +230,7 @@ public class IfCommand extends BracedCommand {
                             Debug.echoError("Else command has argument '" + key.get(1) + "' which is unknown.");
                             continue;
                         }
-                        if (!new ArgComparer().compare(key.subList(2, key.size()), scriptEntry)) {
+                        if (!new ArgComparer().compare(key.subList(2, key.size()), braceSet.entry)) {
                             continue;
                         }
                         Debug.echoDebug(scriptEntry, "<Y>If/else-if chain entry #" + (z + 1) + " passed, running block.");

@@ -94,7 +94,7 @@ public class QueueWordList {
             "Unsubfromnimsy", "Tdvne", "Ms2221", "Xarieste", "Cloudshadow", "Voxlltv", "Rsnfreud", "Adw123", "Bullesta",
             "Bredy", "Universum", "Tornix", "Inventorist", "Deadadm1n", "Mervinb", "Miamablue", "Hades", "Shadymac",
             "Nurfuis", "Facundo", "Cowbilet", "Mistergank", "Noiknez", "Criticalmc", "New2pc", "Possumthecreator",
-            "Nestesio", "Insilvon", "Psycholynx", "Keiferhawk", "Gominecraft"
+            "Nestesio", "Insilvon", "Psycholynx", "Keiferhawk", "Gominecraft", "Andarius", "Zarazor", "Rainpelt"
     };
 
     static {

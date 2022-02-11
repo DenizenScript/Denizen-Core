@@ -23,7 +23,6 @@ import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**

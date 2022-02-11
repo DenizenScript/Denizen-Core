@@ -16,6 +16,7 @@ public abstract class BracedCommand extends AbstractCommand {
         public List<String> args;
         public List<ScriptEntry> value;
         public int aStart, aEnd;
+        public ScriptEntry entry;
 
         @Override
         public int hashCode() {
@@ -88,6 +89,7 @@ public abstract class BracedCommand extends AbstractCommand {
             try {
                 for (BracedData bd : entryBracedSet) {
                     BracedData newbd = new BracedData();
+                    newbd.entry = scriptEntry;
                     newbd.key = bd.key;
                     newbd.value = new ArrayList<>(bd.value.size());
                     for (ScriptEntry sEntry : bd.value) {
@@ -112,6 +114,7 @@ public abstract class BracedCommand extends AbstractCommand {
         if (contents != null) {
             List<ScriptEntry> entries = ScriptBuilder.buildScriptEntries(contents, scriptEntry.getScript() == null ? null : scriptEntry.getScript().getContainer(), scriptEntry.entryData);
             BracedData bd = new BracedData();
+            bd.entry = scriptEntry;
             bd.key = "base";
             bd.args = new ArrayList<>();
             bd.value = entries;
@@ -193,6 +196,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 }
                 else {
                     BracedData bd = new BracedData();
+                    bd.entry = scriptEntry;
                     bd.key = bracesName;
                     if (bracedSections.contains(bd)) {
                         Debug.echoError(scriptEntry.getResidingQueue(), "You may not have braced commands with the same arguments.");
