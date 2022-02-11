@@ -176,10 +176,25 @@ public interface ObjectTag {
         return getClass();
     }
 
+    /**
+     * Converts the object to the given type. May error and/or return null if conversion is not possible.
+     */
     default <T extends ObjectTag> T asType(Class<T> type, TagContext context) {
         return CoreUtilities.asType(this, type, context);
     }
 
+    /**
+     * Returns whether the object is likely intended to be the type.
+     * This is if it already is that type, or if it has the proper prefixing to be that type.
+     */
+    default boolean shouldBeType(Class<? extends ObjectTag> type) {
+        return CoreUtilities.shouldBeType(this, type);
+    }
+
+    /**
+     * Returns whether the object can probably be converted to the type.
+     * This is if it already is that type, or if it's reasonably convertible.
+     */
     default boolean canBeType(Class<? extends ObjectTag> type) {
         return CoreUtilities.canPossiblyBeType(this, type);
     }

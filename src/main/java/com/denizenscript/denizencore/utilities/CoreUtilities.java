@@ -308,8 +308,9 @@ public class CoreUtilities {
         return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
     }
 
-    public static abstract class TypeComparisonRunnable {
-        public abstract boolean canBecome(ObjectTag inp);
+    @FunctionalInterface
+    public interface TypeComparisonRunnable {
+        boolean doesCompare(ObjectTag inp);
     }
 
     @FunctionalInterface
@@ -318,6 +319,8 @@ public class CoreUtilities {
     }
 
     public static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeCheckers = new HashMap<>();
+
+    public static Map<Class<? extends ObjectTag>, TypeComparisonRunnable> typeShouldBeCheckers = new HashMap<>();
 
     public static Map<Class<? extends ObjectTag>, TagTypeConverter> typeConverters = new HashMap<>();
 
@@ -333,74 +336,92 @@ public class CoreUtilities {
         typeConverters.put(ElementTag.class, (obj, c) -> obj.asElement());
         typeConverters.put(ListTag.class, ListTag::getListFor);
         typeConverters.put(MapTag.class, MapTag::getMapFor);
-        typeCheckers.put(MapTag.class, new TypeComparisonRunnable() {
-            @Override
-            public boolean canBecome(ObjectTag inp) {
-                if (inp == null) {
-                    return false;
-                }
-                if (inp instanceof MapTag) {
-                    return true;
-                }
-                if (!(inp instanceof ElementTag)) {
-                    return false;
-                }
-                String simple = inp.toString();
-                if (simple.startsWith("map@")) {
-                    return true;
-                }
-                if (simple.startsWith("[") && simple.endsWith("]") && (simple.contains(";") || simple.contains("="))) {
-                    return true;
-                }
+        typeCheckers.put(MapTag.class, (inp) -> {
+            if (inp == null) {
                 return false;
             }
+            if (inp instanceof MapTag) {
+                return true;
+            }
+            if (!(inp instanceof ElementTag)) {
+                return false;
+            }
+            String simple = inp.toString();
+            if (simple.startsWith("map@")) {
+                return true;
+            }
+            if (simple.startsWith("[") && simple.endsWith("]") && simple.contains("=")) {
+                return true;
+            }
+            return false;
         });
     }
 
     public static void registerTypeAsNoOtherTypeCode(Class<? extends ObjectTag> type, final String knownCode) {
-        typeCheckers.put(type, new TypeComparisonRunnable() {
-            @Override
-            public boolean canBecome(ObjectTag inp) {
-                if (inp == null) {
-                    return false;
-                }
-                Class<? extends ObjectTag> inpType = inp.getObjectTagClass();
-                if (inpType == type) {
-                    return true;
-                }
-                if (inpType == ElementTag.class) {
-                    String simple = inp.toString();
-                    int atIndex = simple.indexOf('@');
-                    if (atIndex != -1) {
-                        String code = simple.substring(0, atIndex);
-                        if (!code.equals(knownCode) && !code.equals("el")) {
-                            if (ObjectFetcher.objectsByPrefix.containsKey(code)) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
+        typeCheckers.put(type, (inp) -> {
+            if (inp == null) {
                 return false;
             }
+            Class<? extends ObjectTag> inpType = inp.getObjectTagClass();
+            if (inpType == type) {
+                return true;
+            }
+            if (inpType == ElementTag.class) {
+                String simple = inp.toString();
+                int atIndex = simple.indexOf('@');
+                if (atIndex != -1) {
+                    String code = simple.substring(0, atIndex);
+                    if (!code.equals(knownCode) && !code.equals("el")) {
+                        if (ObjectFetcher.objectsByPrefix.containsKey(code)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         });
     }
 
     public static void registerTypeAsTrueAlways(Class<? extends ObjectTag> type) {
-        typeCheckers.put(type, new TypeComparisonRunnable() {
-            @Override
-            public boolean canBecome(ObjectTag inp) {
-                return true;
-            }
-        });
+        typeCheckers.put(type, (inp) -> true);
+    }
+
+    public static boolean shouldBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
+        if (type == ElementTag.class || type == ObjectTag.class) {
+            return true;
+        }
+        if (inp.getObjectTagClass() == type) {
+            return true;
+        }
+        TypeComparisonRunnable comp = typeShouldBeCheckers.get(type);
+        if (comp != null) {
+            return comp.doesCompare(inp);
+        }
+        if (!(inp instanceof ElementTag)) {
+            return false;
+        }
+        if (((ElementTag) inp).isPlainText || ((ElementTag) inp).isRawInput) {
+            return false;
+        }
+        String raw = inp.toString();
+        int atSign = raw.indexOf('@');
+        if (atSign == -1) {
+            return false;
+        }
+        ObjectFetcher.ObjectType<?> typeData = ObjectFetcher.objectsByClass.get(type);
+        return typeData.prefix.equals(raw.substring(0, atSign));
     }
 
     public static boolean canPossiblyBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
+        if (type == ObjectTag.class) {
+            return true;
+        }
         if (inp.getObjectTagClass() == type) {
             return true;
         }
         TypeComparisonRunnable comp = typeCheckers.get(type);
-        if (comp != null && !comp.canBecome(inp)) {
+        if (comp != null && !comp.doesCompare(inp)) {
             return false;
         }
         return ObjectFetcher.checkMatch(type, inp.toString());
