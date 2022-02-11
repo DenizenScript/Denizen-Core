@@ -43,6 +43,22 @@ public class Argument implements Cloneable {
         raw_value = null;
     }
 
+    public ObjectTag getRawObject() {
+        if (prefix == null) {
+            return object;
+        }
+        return getRawElement();
+    }
+
+    public ElementTag getRawElement() {
+        if (prefix == null) {
+            return asElement();
+        }
+        ElementTag result = new ElementTag(getRawValue());
+        result.isRawInput = true;
+        return result;
+    }
+
     public String getRawValue() {
         requireValue();
         return raw_value;

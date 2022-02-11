@@ -97,7 +97,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("url")) {
-                scriptEntry.addObject("url", new ElementTag(arg.getRawValue()));
+                scriptEntry.addObject("url", arg.getRawElement());
             }
             else if (!scriptEntry.hasObject("data")
                     && arg.matchesPrefix("data", "post")) {

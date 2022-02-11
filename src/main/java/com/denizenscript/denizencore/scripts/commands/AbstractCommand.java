@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
@@ -201,11 +202,6 @@ public abstract class AbstractCommand {
         return syntax;
     }
 
-    /**
-     * Part of the Plugin disable sequence.
-     * <p/>
-     * Can be '@Override'n by a Command which requires a method when bukkit sends a onDisable() to Denizen. (ie. Server shuts down or restarts)
-     */
     public void onDisable() {
     }
 
@@ -218,20 +214,12 @@ public abstract class AbstractCommand {
     public abstract void execute(ScriptEntry scriptEntry);
 
     /**
-     * Called by the CommandExecutor before the execute() method is called. Arguments
-     * should be iterated through and checked before continuing to execute(). Note that
-     * PLAYER:<player> and NPC:<npc> arguments are parsed automatically by the Executor
-     * and should not be handled by this Command otherwise. Their output is stored in the
-     * attached {@link ScriptEntry} and can be retrieved with ((BukkitScriptEntryData)scriptEntry.entryData).getPlayer(),
-     * scriptEntry.getOfflinePlayer() (if the player specified is not online), and
-     * ((BukkitScriptEntryData)scriptEntry.entryData).getNPC(). Remember that any of these have a possibility of being null
-     * and should be handled accordingly if required by this Command.
-     *
-     * @param scriptEntry The {@link ScriptEntry}, which contains run-time context that may
-     *                    be utilized by this Command.
-     * @throws InvalidArgumentsException Will halt execution of this Command and hint usage to the console to avoid
-     *                                   unwanted behavior due to missing information.
+     * Legacy argument parsing method.
      */
-    public abstract void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException;
+    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
+        for (Argument arg : scriptEntry) {
+            arg.reportUnhandled();
+        }
+    }
 
 }

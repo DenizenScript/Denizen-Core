@@ -59,7 +59,7 @@ public class RateLimitCommand extends AbstractCommand {
             }
             else if (!scriptEntry.hasObject("object")
                     && arg.limitToOnlyPrefix("object")) {
-                scriptEntry.addObject("object", new ElementTag(arg.getRawValue()));
+                scriptEntry.addObject("object", arg.getRawElement());
             }
             else {
                 arg.reportUnhandled();

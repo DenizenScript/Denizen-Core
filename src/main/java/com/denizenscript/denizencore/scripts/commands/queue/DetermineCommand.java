@@ -60,7 +60,7 @@ public class DetermineCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", arg.hasPrefix() ? new ElementTag(arg.getRawValue()) : arg.object);
+                scriptEntry.addObject("outcome", arg.hasPrefix() ? arg.getRawElement() : arg.object);
             }
             else {
                 arg.reportUnhandled();

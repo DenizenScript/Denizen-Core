@@ -98,7 +98,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("type", arg.asElement());
             }
             else if (!scriptEntry.hasObject("debug")) {
-                scriptEntry.addObject("debug", new ElementTag(arg.getRawValue()));
+                scriptEntry.addObject("debug", arg.getRawElement());
             }
             else {
                 arg.reportUnhandled();
