@@ -93,7 +93,7 @@ public class ChooseCommand extends BracedCommand {
     public void execute(ScriptEntry scriptEntry) {
         List<BracedData> bdlist = getBracedCommands(scriptEntry, false);
         if (bdlist == null || bdlist.isEmpty()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Empty sub-commands (internal)!");
+            Debug.echoError(scriptEntry, "Empty sub-commands (internal)!");
             return;
         }
         List<ScriptEntry> bracedCommandsList = bdlist.get(0).value;
@@ -141,7 +141,7 @@ public class ChooseCommand extends BracedCommand {
         ScriptEntry result = bracedCommandsList.get(resultIndex);
         List<BracedData> new_commands = getBracedCommands(result);
         if (new_commands == null || new_commands.isEmpty()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Empty choose command case sub-commands (internal) for case '" + result.toString() + "'");
+            Debug.echoError(scriptEntry, "Empty choose command case sub-commands (internal) for case '" + result.toString() + "'");
             return;
         }
         List<ScriptEntry> new_command_list = new_commands.get(0).value;

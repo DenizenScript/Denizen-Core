@@ -23,7 +23,7 @@ public class CommandExecutor {
         }
         output.append(scriptEntry.getCommandName());
         if (scriptEntry.getOriginalArguments() == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Original Arguments null for " + scriptEntry.getCommandName());
+            Debug.echoError(scriptEntry, "Original Arguments null for " + scriptEntry.getCommandName());
         }
         else {
             for (String arg : scriptEntry.getOriginalArguments()) {
@@ -123,7 +123,7 @@ public class CommandExecutor {
         }
         catch (InvalidArgumentsException | InvalidArgumentsRuntimeException e) {
             // Give usage hint if InvalidArgumentsException was called.
-            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! Invalid arguments were specified!");
+            Debug.echoError(scriptEntry, "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0) {
                 Debug.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
             }
@@ -135,8 +135,8 @@ public class CommandExecutor {
             return false;
         }
         catch (Throwable e) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Woah! An exception has been called with this command!");
-            Debug.echoError(scriptEntry.getResidingQueue(), e);
+            Debug.echoError(scriptEntry, "Woah! An exception has been called with this command!");
+            Debug.echoError(scriptEntry, e);
             Debug.log("(Attempted: " + scriptEntry + ")");
             Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer);
             scriptEntry.setFinished(true);

@@ -185,11 +185,11 @@ public class RunCommand extends AbstractCommand implements Holdable {
         MapTag defMap = scriptEntry.getObjectTag("def_map");
         String path = pathElement != null ? pathElement.asString() : null;
         if (script == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid script name)!");
+            Debug.echoError(scriptEntry, "Script run failed (invalid script name)!");
             return;
         }
         if (path != null && !script.getContainer().containsScriptSection(path)) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (invalid path)!");
+            Debug.echoError(scriptEntry, "Script run failed (invalid path)!");
             return;
         }
         if (instant != null && instant.asBoolean()) {
@@ -221,7 +221,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         String idString = id != null ? "FORCE:" + id.asString() : null;
         ScriptQueue result = ScriptUtilities.createAndStartQueue(script.getContainer(), path, scriptEntry.entryData, null, configure, speed, idString, definitions, scriptEntry);
         if (result == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script run failed (are you sure it's a task script, and the path exists?)!");
+            Debug.echoError(scriptEntry, "Script run failed (are you sure it's a task script, and the path exists?)!");
             return;
         }
     }

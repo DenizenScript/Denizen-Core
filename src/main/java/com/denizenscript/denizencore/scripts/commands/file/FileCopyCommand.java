@@ -90,7 +90,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             Debug.report(scriptEntry, getName(), origin, destination, overwrite);
         }
         if (!DenizenCore.implementation.allowFileCopy()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "File copy disabled by server administrator (refer to command documentation).");
+            Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
@@ -107,7 +107,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             return;
         }
         if (!o.exists()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "File copy failed, origin does not exist!");
+            Debug.echoError(scriptEntry, "File copy failed, origin does not exist!");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
@@ -145,7 +145,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                 scriptEntry.setFinished(true);
             }
             catch (Exception e) {
-                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry, e);
                 scriptEntry.addObject("success", new ElementTag("false"));
                 scriptEntry.setFinished(true);
             }

@@ -42,6 +42,6 @@ public class ElseCommand extends AbstractCommand {
     public void execute(ScriptEntry scriptEntry) {
 
         // If this command executes normally, it's misplaced. It should always be skipped past under normal execution.
-        Debug.echoError(scriptEntry.getResidingQueue(), "Misplaced ELSE command.");
+        Debug.echoError(scriptEntry, "Misplaced ELSE command.");
     }
 }

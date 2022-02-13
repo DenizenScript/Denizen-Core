@@ -88,7 +88,7 @@ public class GotoCommand extends AbstractCommand {
             }
         }
         else {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Cannot go to that location - doesn't seem to exist!");
+            Debug.echoError(scriptEntry, "Cannot go to that location - doesn't seem to exist!");
         }
     }
 }

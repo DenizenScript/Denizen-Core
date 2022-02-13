@@ -500,7 +500,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         }
                         catch (Exception e) {
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                                Debug.echoError(scriptEntry, e);
                             }
                             index = -1;
                         }

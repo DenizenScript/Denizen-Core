@@ -120,7 +120,7 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "Cannot stop while: not in one!");
+                Debug.echoError(scriptEntry, "Cannot stop while: not in one!");
             }
             return;
         }
@@ -148,7 +148,7 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "Cannot 'while next': not in one!");
+                Debug.echoError(scriptEntry, "Cannot 'while next': not in one!");
             }
             return;
         }
@@ -193,7 +193,7 @@ public class WhileCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "While CALLBACK invalid: not a real callback!");
+                Debug.echoError(scriptEntry, "While CALLBACK invalid: not a real callback!");
             }
         }
         else {
@@ -217,7 +217,7 @@ public class WhileCommand extends BracedCommand {
             callbackEntry.setOwner(scriptEntry);
             List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
+                Debug.echoError(scriptEntry, "Empty subsection - did you forget a ':'?");
                 return;
             }
             datum.originalIndexValue = queue.getDefinitionObject("loop_index");

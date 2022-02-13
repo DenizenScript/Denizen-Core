@@ -3,7 +3,6 @@ package com.denizenscript.denizencore.utilities.debugging;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
 
 public class Debug {
@@ -71,30 +70,14 @@ public class Debug {
     }
 
     public static void echoError(ScriptEntry entry, String addedContext, String error) {
-        if (entry == null) {
-            DenizenCore.implementation.debugError(addedContext, error);
-        }
-        else if (entry.getResidingQueue() == null) {
-            if (entry.getScript() != null) {
-                addedContext = " <LR>In script '<A>" + entry.getScript().getName() + "<LR>' on line <A>" + entry.internal.lineNumber + "<LR>" + (addedContext == null ? "" : addedContext);
-            }
-            DenizenCore.implementation.debugError(addedContext, error);
-        }
-        else {
-            DenizenCore.implementation.debugError(entry.getResidingQueue(), addedContext, error);
-        }
-    }
-
-    public static void echoError(ScriptQueue queue, String error) {
-        DenizenCore.implementation.debugError(queue, null, error);
-    }
-
-    public static void echoError(ScriptQueue queue, Throwable error) {
-        DenizenCore.implementation.debugError(queue, error);
+        DenizenCore.implementation.debugError(entry, addedContext, error);
     }
 
     public static void echoError(Throwable ex) {
         DenizenCore.implementation.debugException(ex);
+    }
+    public static void echoError(ScriptEntry entry, Throwable error) {
+        DenizenCore.implementation.debugError(entry, error);
     }
 
     public static void log(String message) {

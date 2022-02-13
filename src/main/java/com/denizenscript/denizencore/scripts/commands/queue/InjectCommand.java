@@ -111,7 +111,7 @@ public class InjectCommand extends AbstractCommand {
             entries = script.getContainer().getBaseEntries(scriptEntry.entryData.clone());
         }
         if (entries == null) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Script inject failed (invalid script path '" + path + "')!");
+            Debug.echoError(scriptEntry, "Script inject failed (invalid script path '" + path + "')!");
             return;
         }
         if (instant != null && instant.asBoolean()) {

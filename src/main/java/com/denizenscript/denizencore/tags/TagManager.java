@@ -122,7 +122,10 @@ public class TagManager {
             catch (Throwable ex) {
                 Debug.echoError(ex);
             }
-            attribute.echoError("Tag-base '" + attribute.attributes[0].key + "' returned null.");
+            String base = attribute.attributes[0].key;
+            if (!base.isEmpty()) { // ignore def tag base, it has its own error
+                attribute.echoError("Tag-base '" + base + "' returned null.");
+            }
             return;
         }
         else {
@@ -212,17 +215,17 @@ public class TagManager {
             if (!event.hasAlternative()) {
                 Attribute attribute = event.getAttributes();
                 if (attribute.fulfilled < attribute.attributes.length) {
-                    Debug.echoDebug(event.getScriptEntry(), "   Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
+                    Debug.echoError(event.getScriptEntry(), "Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
                     if (attribute.lastValid != null) {
-                        Debug.echoDebug(event.getScriptEntry(), "   The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
+                        Debug.echoError(event.getScriptEntry(), "The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
                     }
                     if (attribute.seemingSuccesses.size() > 0) {
                         String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
                         if (attribute.hasContextFailed) {
-                            Debug.echoDebug(event.getScriptEntry(), "   Almost matched but failed (missing [context] parameter?): " + almost);
+                            Debug.echoError(event.getScriptEntry(), "Almost matched but failed (missing [context] parameter?): " + almost);
                         }
                         else {
-                            Debug.echoDebug(event.getScriptEntry(), "   Almost matched but failed (possibly bad input?): " + almost);
+                            Debug.echoError(event.getScriptEntry(), "Almost matched but failed (possibly bad input?): " + almost);
                         }
                     }
                 }

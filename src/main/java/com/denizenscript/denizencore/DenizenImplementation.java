@@ -53,12 +53,12 @@ public interface DenizenImplementation {
     /**
      * Output an error to console, specific to a script queue.
      */
-    void debugError(ScriptQueue queue, String addedContext, String error);
+    void debugError(ScriptEntry queue, String addedContext, String error);
 
     /**
      * Output an error to console, specific to a script queue.
      */
-    void debugError(ScriptQueue queue, Throwable error);
+    void debugError(ScriptEntry queue, Throwable error);
 
     /**
      * Output a command information report.

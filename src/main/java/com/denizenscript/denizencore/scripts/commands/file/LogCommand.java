@@ -176,8 +176,8 @@ public class LogCommand extends AbstractCommand implements Holdable {
             }
             catch (Throwable ex) {
                 DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Error logging to file...");
-                    Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                    Debug.echoError(scriptEntry, "Error logging to file...");
+                    Debug.echoError(scriptEntry, ex);
                 }, 0));
             }
             finally {

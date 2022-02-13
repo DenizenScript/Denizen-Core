@@ -233,7 +233,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     passwordRaw = passwordRaw.trim();
                 }
                 if (connections.containsKey(sqlID.asString().toUpperCase())) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry, "Already connected to a server with ID '" + sqlID.asString() + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -248,10 +248,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     }
                     catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, "SQL Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                                Debug.echoError(scriptEntry, e);
                             }
                         }, 0));
                     }
@@ -279,7 +279,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to server with ID '" + sqlID.asString() + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -289,13 +289,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("query")) {
                 if (query == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a query!");
+                    Debug.echoError(scriptEntry, "Must specify a query!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 final Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to server with ID '" + sqlID.asString() + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -330,10 +330,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     }
                     catch (final Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + ex.getMessage());
+                            Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                                Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
                     }
@@ -347,13 +347,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("update")) {
                 if (query == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify an update query!");
+                    Debug.echoError(scriptEntry, "Must specify an update query!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 final Connection con = connections.get(sqlID.asString().toUpperCase());
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to server with ID '" + sqlID.asString() + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to server with ID '" + sqlID.asString() + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -388,9 +388,9 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     }
                     catch (Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + ex.getMessage());
+                            Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                                Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
                     }
@@ -403,13 +403,13 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 }
             }
             else {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Unknown action '" + action.asString() + "'");
+                Debug.echoError(scriptEntry, "Unknown action '" + action.asString() + "'");
             }
         }
         catch (SQLException ex) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "SQL Exception: " + ex.getMessage());
+            Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
             if (Debug.verbose) {
-                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                Debug.echoError(scriptEntry, ex);
             }
         }
     }

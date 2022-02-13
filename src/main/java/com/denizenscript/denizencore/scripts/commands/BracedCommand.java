@@ -106,7 +106,7 @@ public abstract class BracedCommand extends AbstractCommand {
                 }
             }
             catch (Exception e) {
-                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                Debug.echoError(scriptEntry, e);
             }
             return res;
         }
@@ -199,14 +199,14 @@ public abstract class BracedCommand extends AbstractCommand {
                     bd.entry = scriptEntry;
                     bd.key = bracesName;
                     if (bracedSections.contains(bd)) {
-                        Debug.echoError(scriptEntry.getResidingQueue(), "You may not have braced commands with the same arguments.");
+                        Debug.echoError(scriptEntry, "You may not have braced commands with the same arguments.");
                         break;
                     }
                     ArrayList<ScriptEntry> bracesSection = new ArrayList<>();
                     for (ArrayList<String> command : commandList.values()) {
                         if (command.isEmpty()) {
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), "Empty command?");
+                                Debug.echoError(scriptEntry, "Empty command?");
                             }
                             continue;
                         }
@@ -276,7 +276,7 @@ public abstract class BracedCommand extends AbstractCommand {
             // Continue building the current command
             else {
                 if (waitingForDash) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Malformed braced section! Missing a - symbol!");
+                    Debug.echoError(scriptEntry, "Malformed braced section! Missing a - symbol!");
                     break;
                 }
                 newCommand = false;

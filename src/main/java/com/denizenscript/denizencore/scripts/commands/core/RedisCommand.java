@@ -265,7 +265,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (connections.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Already connected to a server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Already connected to a server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -279,10 +279,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     }
                     catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "Redis Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, "Redis Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), e);
+                                Debug.echoError(scriptEntry, e);
                             }
                         }, 0));
                     }
@@ -309,7 +309,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 if (!connections.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -335,12 +335,12 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("subscribe")) {
                 Jedis con = connections.get(redisID);
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 if (subscriptions.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Already subscribed to a channel on redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Already subscribed to a channel on redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -355,12 +355,12 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("unsubscribe")) {
                 if (!connections.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 if (!subscriptions.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not subscribed to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not subscribed to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -374,18 +374,18 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("publish")) {
                 if (message == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a valid message to publish!");
+                    Debug.echoError(scriptEntry, "Must specify a valid message to publish!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 final Jedis con = connections.get(redisID);
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 if (subscriptions.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Cannot publish messages while subscribed to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Cannot publish messages while subscribed to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -400,10 +400,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     }
                     catch (final Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "Redis Exception: " + ex.getMessage());
+                            Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                                Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
                     }
@@ -417,18 +417,18 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             }
             else if (action.asString().equalsIgnoreCase("command")) {
                 if (command == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Must specify a valid redis command!");
+                    Debug.echoError(scriptEntry, "Must specify a valid redis command!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 final Jedis con = connections.get(redisID);
                 if (con == null) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Not connected to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 if (subscriptions.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry.getResidingQueue(), "Cannot run commands while subscribed to redis server with ID '" + redisID + "'!");
+                    Debug.echoError(scriptEntry, "Cannot run commands while subscribed to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -454,10 +454,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     }
                     catch (final Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry.getResidingQueue(), "Redis Exception: " + ex.getMessage());
+                            Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (Debug.verbose) {
-                                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                                Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
                     }
@@ -470,13 +470,13 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 }
             }
             else {
-                Debug.echoError(scriptEntry.getResidingQueue(), "Unknown action '" + action.asString() + "'");
+                Debug.echoError(scriptEntry, "Unknown action '" + action.asString() + "'");
             }
         }
         catch (Exception ex) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "Redis Exception: " + ex.getMessage());
+            Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
             if (Debug.verbose) {
-                Debug.echoError(scriptEntry.getResidingQueue(), ex);
+                Debug.echoError(scriptEntry, ex);
             }
         }
     }

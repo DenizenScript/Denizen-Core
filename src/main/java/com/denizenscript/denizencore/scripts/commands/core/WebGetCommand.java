@@ -154,7 +154,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     @Override
     public void execute(final ScriptEntry scriptEntry) {
         if (!DenizenCore.implementation.allowedToWebget()) {
-            Debug.echoError(scriptEntry.getResidingQueue(), "WebGet disabled by config!");
+            Debug.echoError(scriptEntry, "WebGet disabled by config!");
             return;
         }
         final ElementTag url = scriptEntry.getElement("url");

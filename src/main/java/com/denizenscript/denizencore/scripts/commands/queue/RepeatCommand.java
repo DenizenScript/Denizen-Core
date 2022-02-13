@@ -213,7 +213,7 @@ public class RepeatCommand extends BracedCommand {
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
+                Debug.echoError(scriptEntry, "Empty subsection - did you forget a ':'?");
                 return;
             }
             datum.originalValue = queue.getDefinitionObject(datum.valueName);

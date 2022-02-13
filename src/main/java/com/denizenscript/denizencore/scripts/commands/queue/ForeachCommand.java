@@ -154,7 +154,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "Cannot stop foreach: not in one!");
+                Debug.echoError(scriptEntry, "Cannot stop foreach: not in one!");
             }
             return;
         }
@@ -182,7 +182,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "Cannot 'foreach next': not in one!");
+                Debug.echoError(scriptEntry, "Cannot 'foreach next': not in one!");
             }
             return;
         }
@@ -218,7 +218,7 @@ public class ForeachCommand extends BracedCommand {
                 }
             }
             else {
-                Debug.echoError(queue, "Foreach CALLBACK invalid: not a real callback!");
+                Debug.echoError(scriptEntry, "Foreach CALLBACK invalid: not a real callback!");
             }
         }
         else {
@@ -258,7 +258,7 @@ public class ForeachCommand extends BracedCommand {
                     (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
             List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
-                Debug.echoError(queue, "Empty subsection - did you forget a ':'?");
+                Debug.echoError(scriptEntry, "Empty subsection - did you forget a ':'?");
                 return;
             }
             if (datum.keys != null) {

@@ -22,7 +22,10 @@ public class Warning {
     }
 
     public void warn(ScriptEntry entry) {
-        warn(entry == null ? null : entry.getResidingQueue());
+        if (!testShouldWarn()) {
+            return;
+        }
+        Debug.echoError(entry, message);
     }
 
     public void warn() {
@@ -30,10 +33,7 @@ public class Warning {
     }
 
     public void warn(ScriptQueue queue) {
-        if (!testShouldWarn()) {
-            return;
-        }
-        Debug.echoError(queue, message);
+        warn(queue == null ? null : queue.getLastEntryExecuted());
     }
 
     public void warn(ScriptContainer script) {

@@ -141,7 +141,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 Debug.echoApproval(debug.asString());
                 break;
             case ERROR:
-                Debug.echoError(scriptEntry.getResidingQueue(), debug.asString());
+                Debug.echoError(scriptEntry, debug.asString());
                 break;
             case REPORT:
                 if (scriptEntry.dbCallShouldDebug()) {
@@ -149,7 +149,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 }
                 break;
             case EXCEPTION:
-                Debug.echoError(scriptEntry.getResidingQueue(), new RuntimeException(debug.asString()));
+                Debug.echoError(scriptEntry, new RuntimeException(debug.asString()));
                 break;
             case RECORD:
                 String form = CoreUtilities.toLowerCase(debug.asString());
