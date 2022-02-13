@@ -114,6 +114,9 @@ public class IfCommand extends BracedCommand {
                     break;
                 }
                 scriptEntry.getResidingQueue().script_entries.removeFirst();
+                nextEntry.context = scriptEntry.context;
+                nextEntry.entryData = scriptEntry.entryData;
+                nextEntry.queue = scriptEntry.queue;
                 BracedData elseRef = getBracedCommands(nextEntry).get(0);
                 elseRef.entry = nextEntry;
                 elseRef.key = nextEntry.toString();

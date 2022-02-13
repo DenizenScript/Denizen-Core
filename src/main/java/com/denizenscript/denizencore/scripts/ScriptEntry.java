@@ -225,7 +225,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     public ScriptEntryData entryData;
 
-    private ScriptQueue queue = null;
+    public ScriptQueue queue = null;
 
     public ScriptEntryInternal internal;
 

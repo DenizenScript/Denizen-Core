@@ -76,7 +76,7 @@ public class FlagCommand extends AbstractCommand {
     // To do this, you can read raw flag data with the tag <@link tag FlaggableObject.flag_map> and the '__raw' prefix in a flag command. For example:
     // <code>
     // # Gather the original data
-    // - define playerdata <player.flag[flag1|flag2|taco|potato|waffle|etc]>
+    // - define playerdata <player.flag_map[flag1|flag2|taco|potato|waffle|etc]>
     // # Now reapply it elsewhere (eg a different Bungee server)
     // - flag <player> __raw:<[playerdata]>
     // </code>
