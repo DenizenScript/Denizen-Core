@@ -315,6 +315,9 @@ public class Deprecations {
     // In Bukkit impl, Added 2022/01/30, deprecate officially by 2023.
     public static Warning entityItemEnderman = new FutureWarning("The property 'entity.item' for endermen has been replaced by 'entity.material' due to usage of block materials.");
 
+    // In Bukkit impl, Added 2022/02/21, deprecate officially by 2024.
+    public static Warning oldPotionEffects = new FutureWarning("The comma-separated-list potion effect tags like 'list_effects' are deprecated in favor of MapTag based tags - 'effects_data'. Refer to meta documentation for details.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13
