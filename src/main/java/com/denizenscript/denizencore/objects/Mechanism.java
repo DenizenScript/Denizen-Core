@@ -80,8 +80,8 @@ public class Mechanism {
         return requireDouble("Invalid decimal number specified.");
     }
 
-    public boolean requireEnum(boolean allowInt, Enum<?>... values) {
-        return requireEnum(null, allowInt, values);
+    public boolean requireEnum(Class<? extends Enum> clazz) {
+        return requireEnum(null, clazz);
     }
 
     public boolean requireFloat() {
@@ -112,25 +112,16 @@ public class Mechanism {
         return false;
     }
 
-    public boolean requireEnum(String error, boolean allowInt, Enum<?>... values) {
+    public boolean requireEnum(String error, Class<? extends Enum> clazz) {
         if (!hasValue()) {
             return false;
         }
         ElementTag value = getValue();
-        if (hasValue() && allowInt && value.isInt() && value.asInt() < values.length) {
+        if (value.matchesEnum(clazz)) {
             return true;
         }
-        if (hasValue() && value.isString()) {
-            String raw_value = value.asString().toUpperCase();
-            for (Enum<?> check_value : values) {
-                if (raw_value.equals(check_value.name())) {
-                    return true;
-                }
-            }
-        }
         if (error == null) {
-            echoError("Invalid " + values[0].getDeclaringClass().getSimpleName() + "."
-                    + " Must specify a valid name" + (allowInt ? " or number" : "") + ".");
+            echoError("Invalid " + clazz.getSimpleName() + ". Must specify a valid name.");
         }
         else {
             echoError(error);

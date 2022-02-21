@@ -88,7 +88,7 @@ public class LogCommand extends AbstractCommand implements Holdable {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("type")
                     && arg.matchesPrefix("type")
-                    && arg.matchesEnum(Type.values())) {
+                    && arg.matchesEnum(Type.class)) {
                 scriptEntry.addObject("type", arg.asElement());
             }
             else if (!scriptEntry.hasObject("file")

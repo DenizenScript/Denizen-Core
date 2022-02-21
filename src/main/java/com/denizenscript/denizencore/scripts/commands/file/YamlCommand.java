@@ -212,7 +212,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("data_type") &&
                     arg.matchesPrefix("data_type") &&
-                    arg.matchesEnum(DataType.values())) {
+                    arg.matchesEnum(DataType.class)) {
                 scriptEntry.addObject("data_type", arg.asElement());
             }
             // Check for key:value/action

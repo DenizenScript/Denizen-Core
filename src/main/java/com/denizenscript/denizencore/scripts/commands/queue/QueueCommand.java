@@ -76,7 +76,7 @@ public class QueueCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("action")
-                    && arg.matchesEnum(Action.values())) {
+                    && arg.matchesEnum(Action.class)) {
                 scriptEntry.addObject("action", Action.valueOf(arg.getValue().toUpperCase()));
                 if (scriptEntry.getObject("action") == Action.DELAY
                         && arg.matchesArgumentType(DurationTag.class)) {

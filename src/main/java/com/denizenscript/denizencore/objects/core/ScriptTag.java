@@ -485,7 +485,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public void applyProperty(Mechanism mechanism) {
-        Debug.echoError("Cannot apply properties to a script!");
+        mechanism.echoError("Cannot apply properties to a script!");
     }
 
     @Override

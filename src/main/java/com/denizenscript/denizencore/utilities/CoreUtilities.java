@@ -478,29 +478,6 @@ public class CoreUtilities {
         return random;
     }
 
-    static FilenameFilter scriptsFilter;
-
-    static {
-        scriptsFilter = (file, fileName) -> {
-            if (fileName.startsWith(".")) {
-                return false;
-            }
-
-            String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-            if (ext.equalsIgnoreCase("DSCRIPT")) {
-                Debug.echoError("Script '" + fileName + "' has invalid '.dscript' file extension.");
-                Deprecations.dscriptFileExtension.warn();
-                return false;
-            }
-            if (ext.equalsIgnoreCase("YML")) {
-                Debug.echoError("Script '" + fileName + "' has legacy '.yml' file extension.");
-                Deprecations.ymlFileExtension.warn();
-                return true;
-            }
-            return ext.equalsIgnoreCase("dsc");
-        };
-    }
-
     public static String bigDecToString(BigDecimal input) {
         String temp = input.toString();
         if (contains(temp, '.')) {
@@ -553,23 +530,31 @@ public class CoreUtilities {
         return df.format(input);
     }
 
-    /**
-     * Lists all files in the given directory.
-     *
-     * @param dir The directory to search in
-     * @return A {@link java.io.File} collection
-     */
+    static boolean isScriptFilename(String fileName) {
+        if (fileName.startsWith(".")) {
+            return false;
+        }
+
+        String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+        if (ext.equalsIgnoreCase("DSCRIPT")) {
+            Debug.echoError("Script '" + fileName + "' has invalid '.dscript' file extension.");
+            Deprecations.dscriptFileExtension.warn();
+            return false;
+        }
+        if (ext.equalsIgnoreCase("YML")) {
+            Debug.echoError("Script '" + fileName + "' has legacy '.yml' file extension.");
+            Deprecations.ymlFileExtension.warn();
+            return true;
+        }
+        return ext.equalsIgnoreCase("dsc");
+    }
+
     public static List<File> listDScriptFiles(File dir) {
         List<File> files = new ArrayList<>();
-        File[] entries = dir.listFiles();
-
-        for (File file : entries) {
-            // Add file
-            if (scriptsFilter == null || scriptsFilter.accept(dir, file.getName())) {
+        for (File file : dir.listFiles()) {
+            if (isScriptFilename(file.getName())) {
                 files.add(file);
             }
-
-            // Add subdirectories
             if (file.isDirectory()) {
                 files.addAll(listDScriptFiles(file));
             }

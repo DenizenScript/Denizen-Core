@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashSet;
@@ -196,23 +197,12 @@ public class Argument implements Cloneable {
         return result;
     }
 
-    public static HashSet<String> precalcEnum(Enum<?>[] values) {
-        HashSet<String> toRet = new HashSet<>(values.length);
-        for (Enum<?> value : values) {
-            toRet.add(value.name().toUpperCase().replace("_", ""));
-        }
-        return toRet;
-    }
-
-    public boolean matchesEnum(HashSet<String> values) {
-        if (!canBeElement) {
-            return false;
-        }
+    public boolean matchesEnum(Class<? extends Enum> clazz) {
         requireValue();
-        String upper = value.replace("_", "").toUpperCase();
-        return values.contains(upper);
+        return EnumHelper.get(clazz).valuesMapLower.containsKey(EnumHelper.cleanKey(value));
     }
 
+    @Deprecated
     public boolean matchesEnum(Enum<?>[] values) {
         if (!canBeElement) {
             return false;
@@ -227,14 +217,12 @@ public class Argument implements Cloneable {
         return false;
     }
 
-    public boolean matchesEnumList(Enum<?>[] values) {
+    public boolean matchesEnumList(Class<? extends Enum> clazz) {
         ListTag list = getList(CoreUtilities.noDebugContext);
+        EnumHelper helper = EnumHelper.get(clazz);
         for (String string : list) {
-            String tval = string.replace("_", "");
-            for (Enum<?> value : values) {
-                if (CoreUtilities.equalsIgnoreCase(value.name().replace("_", ""), tval)) {
-                    return true;
-                }
+            if (helper.valuesMapLower.containsKey(EnumHelper.cleanKey(string))) {
+                return true;
             }
         }
         return false;

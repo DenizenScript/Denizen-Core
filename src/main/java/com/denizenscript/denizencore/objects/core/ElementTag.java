@@ -330,14 +330,12 @@ public class ElementTag implements ObjectTag {
         return this;
     }
 
-    public boolean matchesEnum(Enum[] values) {
-        for (Enum value : values) {
-            if (CoreUtilities.equalsIgnoreCase(value.name(), element)) {
-                return true;
-            }
-        }
+    public boolean matchesEnum(Class<? extends Enum> clazz) {
+        return EnumHelper.get(clazz).valuesMapLower.containsKey(EnumHelper.cleanKey(element));
+    }
 
-        return false;
+    public <T extends Enum> T asEnum(Class<T> clazz) {
+        return (T) EnumHelper.get(clazz).valuesMapLower.get(EnumHelper.cleanKey(element));
     }
 
     @Override
