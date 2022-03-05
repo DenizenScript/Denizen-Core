@@ -33,6 +33,7 @@ public class ScriptHelper {
             Debug.echoError(ex);
             _yamlScripts = new ArrayList<>();
         }
+        _yamlScripts.addAll(additionalScripts);
         ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
     }
 
