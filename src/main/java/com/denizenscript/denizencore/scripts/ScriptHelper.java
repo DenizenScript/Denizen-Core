@@ -16,6 +16,13 @@ import java.util.*;
 public class ScriptHelper {
     public static ArrayList<YamlConfiguration> _yamlScripts;
 
+    /**
+     * Add additional script file references here as wanted/needed. Use like:
+     *
+     * ScriptHelper.additionalScripts.add(YamlConfiguration.load(ScriptHelper.clearComments(MY_FILENAME, MY_FILE_TEXT, true)));
+     */
+    public static ArrayList<YamlConfiguration> additionalScripts = new ArrayList<>();
+
     public static void reloadScripts() {
         try {
             _yamlScripts = buildScriptList();
