@@ -1638,6 +1638,29 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.count_matches[<matcher>]>
+        // @returns ElementTag(Number)
+        // @description
+        // returns how many times a value in the list matches the matcher,
+        // using the system behind <@link language Advanced Script Event Matching>,
+        // For example: a list of "one|two|three" .count[t*] returns 2.
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "count_matches", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                attribute.echoError("The tag ListTag.count_matches[...] must have a value.");
+                return null;
+            }
+            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
+            int count = 0;
+            for (String s : object) {
+                if (matcher.doesMatch(s)) {
+                    count++;
+                }
+            }
+            return new ElementTag(count);
+        });
+
+        // <--[tag]
         // @attribute <ListTag.sum>
         // @returns ElementTag(Decimal)
         // @description
