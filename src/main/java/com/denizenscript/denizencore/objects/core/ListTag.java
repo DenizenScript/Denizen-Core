@@ -695,7 +695,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.combine>
         // @returns ListTag
         // @description
-        // returns a list containing the contents of all sublists within this list.
+        // Returns a list containing the contents of all sublists within this list.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "combine", (attribute, object) -> {
             ListTag output = new ListTag();
@@ -709,7 +709,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.sub_lists[<#>]>
         // @returns ListTag(ListTag)
         // @description
-        // returns a list containing sublists of this list capped to a specific length.
+        // Returns a list containing sublists of this list capped to a specific length.
         // For example, a list of a|b|c|d|e|f .sub_lists[2] will return a list containing lists "a|b", "c|d", and "e|f".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "sub_lists", (attribute, object) -> {
@@ -737,7 +737,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.space_separated>
         // @returns ElementTag
         // @description
-        // returns the list in a cleaner format, separated by spaces.
+        // Returns the list in a cleaner format, separated by spaces.
         // For example: a list of "one|two|three" will return "one two three".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "space_separated", (attribute, object) -> {
@@ -751,7 +751,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.separated_by[<text>]>
         // @returns ElementTag
         // @description
-        // returns the list formatted, with each item separated by the defined text.
+        // Returns the list formatted, with each item separated by the defined text.
         // For example: <list[bob|joe|john].separated_by[ and ]> will return "bob and joe and john".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "separated_by", (attribute, object) -> {
@@ -766,7 +766,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.comma_separated>
         // @returns ElementTag
         // @description
-        // returns the list in a cleaner format, separated by commas.
+        // Returns the list in a cleaner format, separated by commas.
         // For example: a list of "one|two|three" will return "one, two, three".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "comma_separated", (attribute, object) -> {
@@ -780,7 +780,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.unseparated>
         // @returns ElementTag
         // @description
-        // returns the list in a less clean format, separated by nothing.
+        // Returns the list in a less clean format, separated by nothing.
         // For example: a list of "one|two|three" will return "onetwothree".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "unseparated", (attribute, object) -> {
@@ -794,7 +794,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.get_sub_items[<#>]>
         // @returns ListTag
         // @description
-        // returns a list of the specified sub items in the list, as split by the
+        // Returns a list of the specified sub items in the list, as split by the
         // forward-slash character (/).
         // For example: .get_sub_items[1] on a list of "one/alpha|two/beta" will return "one|two".
         // -->
@@ -808,7 +808,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.get_sub_items[<#>].split_by[<element>]>
             // @returns ListTag
             // @description
-            // returns a list of the specified sub item in the list, allowing you to specify a
+            // Returns a list of the specified sub item in the list, allowing you to specify a
             // character in which to split the sub items by. WARNING: When setting your own split
             // character, make note that it is CASE SENSITIVE.
             // For example: .get_sub_items[1].split_by[-] on a list of "one-alpha|two-beta" will return "one|two".
@@ -969,7 +969,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.size>
         // @returns ElementTag(Number)
         // @description
-        // returns the size of the list.
+        // Returns the size of the list.
         // For example: a list of "one|two|three" will return "3".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "size", (attribute, object) -> {
@@ -980,7 +980,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.is_empty>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list is empty.
+        // Returns whether the list is empty.
         // For example: a list of "" returns true, while "one" returns false.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_empty", (attribute, object) -> {
@@ -991,7 +991,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.any>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list is not empty.
+        // Returns whether the list is not empty.
         // For example: a list of "" returns false, while "one" returns true.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "any", (attribute, object) -> {
@@ -1002,7 +1002,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.insert[...|...].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the items specified inserted to the specified location.
+        // Returns a new ListTag with the items specified inserted to the specified location.
         // For example: .insert[two|three].at[2] on a list of "one|four" will return "one|two|three|four".
         // -->
         tagProcessor.registerTag(ListTag.class, "insert", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1036,7 +1036,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.set[...|...].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the items specified inserted to the specified location,
+        // Returns a new ListTag with the items specified inserted to the specified location,
         // replacing the element already at that location.
         // For example: .set[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // For example: .set[potato|taco|hotdog].at[2] on a list of "one|two|three" will return "one|potato|taco|hotdog|three".
@@ -1075,7 +1075,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.set_single[<value>].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the single item specified inserted to the specified location, replacing the element already at that location.
+        // Returns a new ListTag with the single item specified inserted to the specified location, replacing the element already at that location.
         // For example: .set_single[potato].at[2] on a list of "one|two|three" will return "one|potato|three".
         // -->
         tagProcessor.registerTag(ListTag.class, "set_single", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1110,7 +1110,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.overwrite[...|...].at[<#>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag with the index specified and beyond replaced with the input list.
+        // Returns a new ListTag with the index specified and beyond replaced with the input list.
         // The result list will be the same size as the original list, unless (input_list.size + at_index) is greater than the original list size.
         // For example: .overwrite[potato|taco].at[2] on a list of "one|two|three|four" will return "one|potato|taco|four".
         // For example: .overwrite[potato|taco|hotdog|cheeseburger].at[2] on a list of "one|two|three" will return "one|potato|taco|hotdog|cheeseburger".
@@ -1154,7 +1154,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.include_single[<value>]>
         // @returns ListTag
         // @description
-        // returns a new ListTag including the value specified as a new entry.
+        // Returns a new ListTag including the value specified as a new entry.
         // If the value input is a list, that list becomes a list-within-a-list, still only occupying one space in the outer list.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "include_single", (attribute, object) -> {
@@ -1171,7 +1171,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.include[...|...]>
         // @returns ListTag
         // @description
-        // returns a new ListTag including the items specified.
+        // Returns a new ListTag including the items specified.
         // For example: .include[three|four] on a list of "one|two" will return "one|two|three|four".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "include", (attribute, object) -> {
@@ -1188,7 +1188,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.exclude[...|...]>
         // @returns ListTag
         // @description
-        // returns a new ListTag excluding the items specified.
+        // Returns a new ListTag excluding the items specified.
         // For example: .exclude[two|four] on a list of "one|two|three|four|two" will return "one|three".
         // -->
         tagProcessor.registerTag(ListTag.class, "exclude", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1206,7 +1206,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.exclude[...|...].max[<#>]>
             // @returns ListTag
             // @description
-            // returns a new ListTag excluding the items specified. Specify a maximum number of items to remove from the list.
+            // Returns a new ListTag excluding the items specified. Specify a maximum number of items to remove from the list.
             // Max must be an integer >= 1.
             // For example: .exclude[potato].max[2] on a list of "taco|potato|taco|potato|taco|potato" will return "taco|taco|taco|potato".
             // -->
@@ -1234,7 +1234,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.remove[<#>|...]>
         // @returns ListTag
         // @description
-        // returns a new ListTag excluding the items at the specified index.
+        // Returns a new ListTag excluding the items at the specified index.
         // For example: .remove[2] on a list of "one|two|three|four" will return "one|three|four".
         // Also supports [first] and [last] values.
         // -->
@@ -1250,7 +1250,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.remove[<#>].to[<#>]>
             // @returns ListTag
             // @description
-            // returns a new ListTag excluding the items in the specified index range.
+            // Returns a new ListTag excluding the items in the specified index range.
             // For example: .remove[2].to[4] on a list of "one|two|three|four|five" will return "one|five".
             // Also supports [first] and [last] values.
             // -->
@@ -1286,7 +1286,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.shared_contents[...|...]>
         // @returns ListTag
         // @description
-        // returns a list of only items that appear in both this list and the input one.
+        // Returns a list of only items that appear in both this list and the input one.
         // For example: .shared_contents[two|four|five|six] on a list of "one|two|three|four" will return "two|four".
         // This will also inherently deduplicate the output as part of processing.
         // This will retain the list order of the list object the tag is on (so, for example "a|b|c" .shared_contents[c|b] returns "b|c").
@@ -1375,7 +1375,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.reverse>
         // @returns ListTag
         // @description
-        // returns a copy of the list, with all items placed in opposite order.
+        // Returns a copy of the list, with all items placed in opposite order.
         // For example: a list of "one|two|three" will become "three|two|one".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "reverse", (attribute, object) -> {
@@ -1388,7 +1388,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.deduplicate>
         // @returns ListTag
         // @description
-        // returns a copy of the list with any duplicate items removed.
+        // Returns a copy of the list with any duplicate items removed.
         // For example: a list of "one|one|two|three" will become "one|two|three".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "deduplicate", (attribute, object) -> {
@@ -1399,7 +1399,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.get[<#>|...]>
         // @returns ObjectTag
         // @description
-        // returns an element of the value specified by the supplied context.
+        // Returns an element of the value specified by the supplied context.
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
         // -->
@@ -1439,7 +1439,7 @@ public class ListTag implements List<String>, ObjectTag {
                     // @attribute <ListTag.get[<#>].to[<#>]>
                     // @returns ListTag
                     // @description
-                    // returns all elements in the range from the first index to the second.
+                    // Returns all elements in the range from the first index to the second.
                     // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
                     // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
                     // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
@@ -1482,7 +1482,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_all_partial[<element>]>
         // @returns ListTag
         // @description
-        // returns all the numbered locations of elements that contain the text within a list,
+        // Returns all the numbered locations of elements that contain the text within a list,
         // or an empty list if the list does not contain that item.
         // For example: .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
         // -->
@@ -1505,7 +1505,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_all_matches[<matcher>]>
         // @returns ListTag
         // @description
-        // returns all the numbered indices of elements that match within a list,
+        // Returns all the numbered indices of elements that match within a list,
         // using the system behind <@link language Advanced Script Event Matching>,
         // or an empty list if the list does not contain that item.
         // For example: .find_all_matches[t*] on a list of "one|two|three" will return "2|3".
@@ -1529,7 +1529,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_all[<element>]>
         // @returns ListTag
         // @description
-        // returns all the numbered indices of all entries that match the text within a list,
+        // Returns all the numbered indices of all entries that match the text within a list,
         // or an empty list if the list does not contain that item.
         // For example: .find_all[two] on a list of "one|two|three|two" will return "2|4".
         // -->
@@ -1552,7 +1552,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_partial[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns the numbered index of the first partially matching entry within a list,
+        // Returns the numbered index of the first partially matching entry within a list,
         // or -1 if the list does not contain that item.
         // For example: .find_partial[tw] on a list of "one|two|three" will return "2".
         // -->
@@ -1574,7 +1574,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_match[<matcher>]>
         // @returns ElementTag(Number)
         // @description
-        // returns the numbered index of the first match within a list,
+        // Returns the numbered index of the first match within a list,
         // using the system behind <@link language Advanced Script Event Matching>,
         // or -1 if the list does not contain that item.
         // For example: .find_match[t*] on a list of "one|two|three" will return "2".
@@ -1597,7 +1597,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns the numbered index of an entry within a list,
+        // Returns the numbered index of an entry within a list,
         // or -1 if the list does not contain that item.
         // For example: .find[two] on a list of "one|two|three" will return "2".
         // -->
@@ -1619,7 +1619,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.count[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns how many times a value in the list occurs.
+        // Returns how many times a value in the list occurs.
         // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "count", (attribute, object) -> {
@@ -1641,7 +1641,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.count_matches[<matcher>]>
         // @returns ElementTag(Number)
         // @description
-        // returns how many times a value in the list matches the matcher,
+        // Returns how many times a value in the list matches the matcher,
         // using the system behind <@link language Advanced Script Event Matching>,
         // For example: a list of "one|two|three" .count[t*] returns 2.
         // -->
@@ -1664,7 +1664,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.sum>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the sum of all numbers in the list. Ignores non-numerical values.
+        // Returns the sum of all numbers in the list. Ignores non-numerical values.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "sum", (attribute, object) -> {
             BigDecimal sum = BigDecimal.ZERO;
@@ -1680,7 +1680,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.average>
         // @returns ElementTag(Decimal)
         // @description
-        // returns the mean average of all numbers in the list. Ignores non-numerical values.
+        // Returns the mean average of all numbers in the list. Ignores non-numerical values.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "average", (attribute, object) -> {
             if (object.isEmpty()) {
@@ -1704,7 +1704,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.first>
         // @returns ObjectTag
         // @description
-        // returns the first element in the list.
+        // Returns the first element in the list.
         // If the list is empty, returns null instead.
         // For example: a list of "one|two|three" will return "one".
         // Effectively equivalent to .get[1]
@@ -1722,7 +1722,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.last>
         // @returns ObjectTag
         // @description
-        // returns the last element in the list.
+        // Returns the last element in the list.
         // If the list is empty, returns null instead.
         // For example: a list of "one|two|three" will return "three".
         // Effectively equivalent to .get[<list.size>]
@@ -1740,7 +1740,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.lowest[(<tag>)]>
         // @returns ObjectTag
         // @description
-        // returns the smallest value in a list of decimal numbers.
+        // Returns the smallest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "1".
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
         // For example, <server.online_players.lowest[money]> returns the player with the least money currently online.
@@ -1763,7 +1763,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.lowest[(<tag>)].count[<#>]>
             // @returns ListTag
             // @description
-            // returns a list of the smallest values in a list of decimal numbers.
+            // Returns a list of the smallest values in a list of decimal numbers.
             // For example: a list of "3|5|2|1|10" with .count[2] will return "1|2".
             // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
             // For example, <server.online_players.lowest[money].count[5]> returns the 5 players with the least money currently online.
@@ -1829,7 +1829,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.highest[(<tag>)]>
         // @returns ObjectTag
         // @description
-        // returns the highest value in a list of decimal numbers.
+        // Returns the highest value in a list of decimal numbers.
         // For example: a list of "3|2|1|10" will return "10".
         // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
         // For example, <server.players.highest[money]> returns the player with the most money.
@@ -1852,7 +1852,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.highest[(<tag>)].count[<#>]>
             // @returns ListTag
             // @description
-            // returns a list of the highest values in a list of decimal numbers.
+            // Returns a list of the highest values in a list of decimal numbers.
             // For example: a list of "3|5|2|1|10" with .highest.count[2] will return "10|5".
             // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
             // For example, <server.players.highest[money].count[5]> returns the 5 players with the most money.
@@ -1915,7 +1915,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.numerical>
         // @returns ListTag
         // @description
-        // returns the list sorted to be in numerical order.
+        // Returns the list sorted to be in numerical order.
         // For example: a list of "3|2|1|10" will return "1|2|3|10".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "numerical", (attribute, object) -> {
@@ -1939,7 +1939,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.alphanumeric>
         // @returns ListTag
         // @description
-        // returns the list sorted to be in alphabetical/numerical order.
+        // Returns the list sorted to be in alphabetical/numerical order.
         // For example: a list of "b|c|a10|a1" will return "a1|a10|b|c".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "alphanumeric", (attribute, object) -> {
@@ -1952,7 +1952,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.alphabetical>
         // @returns ListTag
         // @description
-        // returns the list sorted to be in alphabetical order.
+        // Returns the list sorted to be in alphabetical order.
         // For example: a list of "c|d|q|a|g" will return "a|c|d|g|q".
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "alphabetical", (attribute, object) -> {
@@ -1965,7 +1965,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.sort_by_value[<tag>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list, sorted alphanumerically.
+        // Returns a copy of the list, sorted alphanumerically.
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on their names, via .sort_by_value[name] on the list of valid players.
         // -->
@@ -2002,7 +2002,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.sort_by_number[<tag>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list, sorted such that the lower numbers appear first, and the higher numbers appear last.
+        // Returns a copy of the list, sorted such that the lower numbers appear first, and the higher numbers appear last.
         // Rather than sorting based on the item itself, it sorts based on a tag attribute read from within the object being read.
         // For example, you might sort a list of players based on the amount of money they have, via .sort_by_number[money] on the list of valid players.
         // Non-numerical input is considered an error, and the result is not guaranteed.
@@ -2056,7 +2056,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.sort[<procedure>]>
         // @returns ListTag
         // @description
-        // returns a list sorted according to the return values of a procedure.
+        // Returns a list sorted according to the return values of a procedure.
         // The <procedure> should link a procedure script that takes two definitions each of which will be an item
         // in the list, and returns -1, 0, or 1 based on whether the second item should be added. EG, if a procedure
         // with definitions "one" and "two" returned -1, it would place "two" after "one". Note that this
@@ -2131,7 +2131,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.filter[<tag>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
+        // Returns a copy of the list with all its contents parsed through the given tag and only including ones that returned 'true'.
         // For example: a list of '1|2|3|4|5' .filter[is[or_more].than[3]] returns a list of '3|4|5'.
         // One should generally prefer <@link tag ListTag.filter_tag>.
         // -->
@@ -2170,7 +2170,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.parse[<tag>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list with all its contents parsed through the given tag.
+        // Returns a copy of the list with all its contents parsed through the given tag.
         // For example: a list of 'one|two' .parse[to_uppercase] returns a list of 'ONE|TWO'.
         // One should generally prefer <@link tag ListTag.parse_tag>.
         // -->
@@ -2227,7 +2227,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.filter_tag[<dynamic-boolean>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list with all its contents parsed through the given input tag and only including ones that returned 'true'.
+        // Returns a copy of the list with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_value' definition.
         // For example: a list of '1|2|3|4|5' .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of '3|4|5'.
         // For example: a list of '1|2|3|4|5' .filter_tag[<list[4|5].contains[<[filter_value]>]>] returns a list of '4|5'.
@@ -2256,7 +2256,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.parse_tag[<parseable-value>]>
         // @returns ListTag
         // @description
-        // returns a copy of the list with all its contents parsed through the given tag.
+        // Returns a copy of the list with all its contents parsed through the given tag.
         // This requires a fully formed tag as input, making use of the 'parse_value' definition.
         // For example: a list of 'one|two' .parse_tag[<[parse_value].to_uppercase>] returns a list of 'ONE|TWO'.
         // For example: a list of '3|1|2' .parse_tag[<list[alpha|bravo|charlie].get[<[parse_value]>]>] returns a list of 'charlie|alpha|bravo'.
@@ -2365,7 +2365,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.contains_any_case_sensitive[<element>|...]>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list contains any of a list of given elements, case-sensitive.
+        // Returns whether the list contains any of a list of given elements, case-sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_any_case_sensitive", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -2389,7 +2389,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.contains_any[<element>|...]>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list contains any of a list of given elements.
+        // Returns whether the list contains any of a list of given elements.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_any", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -2413,7 +2413,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.contains_case_sensitive[<element>]>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list contains a given element, case-sensitive.
+        // Returns whether the list contains a given element, case-sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains_case_sensitive", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -2433,7 +2433,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.contains[<element>|...]>
         // @returns ElementTag(Boolean)
         // @description
-        // returns whether the list contains all of the given elements.
+        // Returns whether the list contains all of the given elements.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains", (attribute, object) -> {
             if (!attribute.hasParam()) {

@@ -287,7 +287,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.sort_by_value[(<tag>)]>
         // @returns MapTag
         // @description
-        // returns a copy of the map, sorted alphanumerically by the value under each key.
+        // Returns a copy of the map, sorted alphanumerically by the value under each key.
         // Optionally, specify a tag to apply to the value.
         // To sort by key, use <@link tag MapTag.get_subset> with list sort tags, like 'map.get_subset[map.keys.sort_by_value[...]]'.
         // This also lets you apply list filters or similar to the keyset.
@@ -330,7 +330,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.filter_tag[<parseable-boolean>]>
         // @returns MapTag
         // @description
-        // returns a copy of the map with all its contents parsed through the given input tag and only including ones that returned 'true'.
+        // Returns a copy of the map with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_key' and 'filter_value' definition.
         // For example: a map of [a=1;b=2;c=3;d=4;e=5] .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of [c=3;d=4;e=5].
         // -->
@@ -360,7 +360,7 @@ public class MapTag implements ObjectTag, Adjustable {
         // @attribute <MapTag.parse_value_tag[<parseable-value>]>
         // @returns MapTag
         // @description
-        // returns a copy of the map with all its values updated through the given tag.
+        // Returns a copy of the map with all its values updated through the given tag.
         // This requires a fully formed tag as input, making use of the 'parse_key' and 'parse_value' definition.
         // For example: a map of [alpha=one;bravo=two] .parse_value_tag[<[parse_value].to_uppercase>] returns a map of [alpha=ONE;bravo=TWO].
         // -->
