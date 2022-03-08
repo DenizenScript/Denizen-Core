@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.Fetchable;
@@ -1484,17 +1485,40 @@ public class ListTag implements List<String>, ObjectTag {
         // returns all the numbered locations of elements that contain the text within a list,
         // or an empty list if the list does not contain that item.
         // For example: .find_all_partial[tw] on a list of "one|two|three|two" will return "2|4".
-        // TODO: Take multiple inputs? Or a matcher?
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "find_all_partial", (attribute, object) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.find_all_partial[...] must have a value.");
                 return null;
             }
-            String test = attribute.getParam().toUpperCase();
+            String test = CoreUtilities.toLowerCase(attribute.getParam());
             ListTag positions = new ListTag();
             for (int i = 0; i < object.size(); i++) {
-                if (object.get(i).toUpperCase().contains(test)) {// TODO: Efficiency
+                if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
+                    positions.add(String.valueOf(i + 1));
+                }
+            }
+            return positions;
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.find_all_matches[<matcher>]>
+        // @returns ListTag
+        // @description
+        // returns all the numbered indices of elements that match within a list,
+        // using the system behind <@link language Advanced Script Event Matching>,
+        // or an empty list if the list does not contain that item.
+        // For example: .find_all_matches[t*] on a list of "one|two|three" will return "2|3".
+        // -->
+        tagProcessor.registerStaticTag(ListTag.class, "find_all_matches", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                attribute.echoError("The tag ListTag.find_all_matches[...] must have a value.");
+                return null;
+            }
+            ListTag positions = new ListTag();
+            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
+            for (int i = 0; i < object.size(); i++) {
+                if (matcher.doesMatch(object.get(i))) {
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1505,10 +1529,9 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_all[<element>]>
         // @returns ListTag
         // @description
-        // returns all the numbered locations of elements that match the text within a list,
+        // returns all the numbered indices of all entries that match the text within a list,
         // or an empty list if the list does not contain that item.
         // For example: .find_all[two] on a list of "one|two|three|two" will return "2|4".
-        // TODO: Take multiple inputs? Or a matcher?
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "find_all", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -1516,8 +1539,9 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag positions = new ListTag();
+            String test = CoreUtilities.toLowerCase(attribute.getParam());
             for (int i = 0; i < object.size(); i++) {
-                if (object.get(i).equalsIgnoreCase(attribute.getParam())) {
+                if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1528,19 +1552,41 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find_partial[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns the numbered location of the first partially matching element within a list,
+        // returns the numbered index of the first partially matching entry within a list,
         // or -1 if the list does not contain that item.
         // For example: .find_partial[tw] on a list of "one|two|three" will return "2".
-        // TODO: Take multiple inputs? Or a matcher?
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "find_partial", (attribute, object) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.find_partial[...] must have a value.");
                 return null;
             }
-            String test = attribute.getParam().toUpperCase();
+            String test = CoreUtilities.toLowerCase(attribute.getParam());
             for (int i = 0; i < object.size(); i++) {
-                if (object.get(i).toUpperCase().contains(test)) { // TODO: Efficiency
+                if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
+                    return new ElementTag(i + 1);
+                }
+            }
+            return new ElementTag(-1);
+        });
+
+        // <--[tag]
+        // @attribute <ListTag.find_match[<matcher>]>
+        // @returns ElementTag(Number)
+        // @description
+        // returns the numbered index of the first match within a list,
+        // using the system behind <@link language Advanced Script Event Matching>,
+        // or -1 if the list does not contain that item.
+        // For example: .find_match[t*] on a list of "one|two|three" will return "2".
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "find_match", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                attribute.echoError("The tag ListTag.find_match[...] must have a value.");
+                return null;
+            }
+            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
+            for (int i = 0; i < object.size(); i++) {
+                if (matcher.doesMatch(object.get(i))) {
                     return new ElementTag(i + 1);
                 }
             }
@@ -1551,28 +1597,21 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.find[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns the numbered location of an element within a list,
+        // returns the numbered index of an entry within a list,
         // or -1 if the list does not contain that item.
         // For example: .find[two] on a list of "one|two|three" will return "2".
-        // TODO: Take multiple inputs? Or a matcher?
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "find", (attribute, object) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.find[...] must have a value.");
                 return null;
             }
+            String test = CoreUtilities.toLowerCase(attribute.getParam());
             for (int i = 0; i < object.size(); i++) {
-                if (object.get(i).equalsIgnoreCase(attribute.getParam())) {
+                if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     return new ElementTag(i + 1);
                 }
             }
-            // TODO: This should be find_partial or something
-            /*
-            for (int i = 0; i < size(); i++) {
-                if (get(i).toUpperCase().contains(attribute.getParam().toUpperCase()))
-                    return new Element(i + 1);
-            }
-            */
             return new ElementTag(-1);
         });
 
@@ -1580,7 +1619,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.count[<element>]>
         // @returns ElementTag(Number)
         // @description
-        // returns how many times in the sub-list occurs.
+        // returns how many times a value in the list occurs.
         // For example: a list of "one|two|two|three" .count[two] returns 2.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "count", (attribute, object) -> {
@@ -1588,10 +1627,10 @@ public class ListTag implements List<String>, ObjectTag {
                 attribute.echoError("The tag ListTag.count[...] must have a value.");
                 return null;
             }
-            String element = attribute.getParam();
+            String test = CoreUtilities.toLowerCase(attribute.getParam());
             int count = 0;
             for (String s : object) {
-                if (CoreUtilities.equalsIgnoreCase(s, element)) {
+                if (CoreUtilities.toLowerCase(s).equals(test)) {
                     count++;
                 }
             }

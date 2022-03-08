@@ -153,11 +153,11 @@ public class AdjustCommand extends AbstractCommand {
             object = ObjectFetcher.pickObjectFor(objectString, entry.context);
             if (object instanceof ElementTag) {
                 FlaggableObject altObject = DenizenCore.implementation.simpleWordToFlaggable(objectString, entry);
-                if (altObject != null && !(altObject instanceof ElementTag)) {
-                    return altObject;
+                if (altObject == null || (altObject instanceof ElementTag)) {
+                    Debug.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
+                    return object;
                 }
-                Debug.echoError("Unable to determine what object to adjust (missing object notation?), for: " + objectString);
-                return object;
+                object = altObject;
             }
         }
         if (object instanceof ListTag) {
