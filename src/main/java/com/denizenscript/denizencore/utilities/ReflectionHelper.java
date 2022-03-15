@@ -74,6 +74,19 @@ public class ReflectionHelper {
             return f;
         }
 
+        public Field get(String name, Class expected) {
+            Field f = get(name);
+            if (f == null) {
+                return null;
+            }
+            if (f.getType() != expected) {
+                String err = "Reflection field incorrect type - read field '" + name + "' from class '" + clazz.getCanonicalName() + "', expected type '" + expected.getCanonicalName() + "' but is type '" + f.getType().getCanonicalName() + "'";
+                System.err.println("[Denizen] [ReflectionHelper]: " + err);
+                Debug.echoError(err);
+            }
+            return f;
+        }
+
         public Field getNoCheck(String name) {
             return super.get(name);
         }
@@ -157,7 +170,12 @@ public class ReflectionHelper {
         return getFinalSetter(clazz, field.getName());
     }
 
+
     public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
+        return getFinalSetter(clazz, field, null);
+    }
+
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field, Class expected) {
         Map<String, MethodHandle> map = cachedFieldSetters.computeIfAbsent(clazz, k -> new HashMap<>());
         MethodHandle result = map.get(field);
         if (result != null) {
@@ -167,6 +185,9 @@ public class ReflectionHelper {
         if (f == null) {
             Debug.echoError("Create get final setter for unknown field '" + field + "' (for class '" + clazz.getName() + "')");
             return null;
+        }
+        if (expected != null && f.getType() != expected) {
+            Debug.echoError("[ReflectionHelper] field type mismatch in getFinalSetter: field '" + field + "' in class '" + clazz.getName() + "' returns type '" + f.getType().getCanonicalName() + "' but expected '" + expected.getCanonicalName() + "'");
         }
         int mod = f.getModifiers();
         try {
