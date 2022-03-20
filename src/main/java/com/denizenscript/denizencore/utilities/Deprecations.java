@@ -258,6 +258,10 @@ public class Deprecations {
     // In Bukkit impl, Added 2020/12/25, bump to normal slow warning by 2023.
     public static Warning itemEnchantmentTags = new VerySlowWarning(pointlessSubtagPrefix + "The ItemTag.enchantments.* tags are deprecated: use enchantment_map and relevant MapTag subtags.");
 
+    // In Bukkit impl (paper module), Added 2022/03/20
+    // // bump to normal warning and/or past warning after 1.18 is the minimum supported version (change happened in MC 1.18)
+    public static Warning paperNoTickViewDistance = new VerySlowWarning("Paper's 'no_tick_view_distance' is deprecated in favor of modern minecraft's 'simulation_distance' and 'view_distance' separation");
+
     // ==================== FUTURE deprecations ====================
 
     // In Bukkit impl, Added 2020/10/18, deprecate officially by 2023.
