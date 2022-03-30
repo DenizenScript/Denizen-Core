@@ -30,7 +30,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     public YamlCommand() {
         setName("yaml");
-        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean)] [id:<name>]");
+        setSyntax("yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean/auto)] [id:<name>]");
         setRequiredArguments(2, 5);
         TagManager.registerTagHandler(ObjectTag.class, "yaml", this::yamlTagProcess);
         isProcedural = false;
@@ -39,7 +39,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Yaml
-    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean)] [id:<name>]
+    // @Syntax yaml [create]/[load:<file>]/[loadtext:<text> raw_format]/[unload]/[savefile:<file>]/[copykey:<source_key> <target_key> (to_id:<name>)]/[set <key>([<#>])(:<action>):<value> (data_type:{string}/integer/double/boolean/auto)] [id:<name>]
     // @Required 2
     // @Maximum 5
     // @Short Edits YAML data, especially for YAML files.
@@ -80,9 +80,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     //
     // For ways to use the "set" argument, refer to <@link language data actions>.
     //
-    // When setting a value directly, you can optionally specify "data_type" as "string", "integer", "double", or "boolean",
+    // When setting a value directly, you can optionally specify "data_type" as "string", "integer", "double", "boolean", or "auto",
     // to force the input to a specific data type, which may be needed for compatibility with some external YAML files.
     // Only applicable when setting a single value, not lists/maps/etc.
+    // 'Auto' will attempt to choose the best type for the value.
     //
     // @Tags
     // <yaml[<idname>].contains[<path>]>
@@ -144,7 +145,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         DIVIDE, INSERT, REMOVE, SPLIT, DELETE, SPLIT_NEW
     }
 
-    public enum DataType { STRING, INTEGER, DOUBLE, BOOLEAN }
+    public enum DataType { STRING, INTEGER, DOUBLE, BOOLEAN, AUTO }
 
     @Override
     public void addCustomTabCompletions(TabCompletionsBuilder tab) {
@@ -707,15 +708,32 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     public void Set(YamlConfiguration yaml, int index, String key, Object value, ElementTag dataType) {
         value = autoConvertObject(value);
         if (dataType != null && value instanceof String) {
+            String rawValue = value.toString();
             switch (DataType.valueOf(dataType.asString().toUpperCase())) {
                 case DOUBLE:
-                    value = Double.parseDouble(value.toString());
+                    value = Double.parseDouble(rawValue);
                     break;
                 case INTEGER:
-                    value = Long.parseLong(value.toString());
+                    value = Long.parseLong(rawValue);
                     break;
                 case BOOLEAN:
-                    value = CoreUtilities.equalsIgnoreCase(value.toString(), "true");
+                    value = CoreUtilities.equalsIgnoreCase(rawValue, "true");
+                    break;
+                case AUTO:
+                    if (CoreUtilities.equalsIgnoreCase(rawValue, "true")) {
+                        value = true;
+                    }
+                    else if (CoreUtilities.equalsIgnoreCase(rawValue, "false")) {
+                        value = false;
+                    }
+                    else if (ArgumentHelper.matchesDouble(rawValue)) {
+                        if (ArgumentHelper.matchesInteger(rawValue)) {
+                            value = Long.parseLong(rawValue);
+                        }
+                        else {
+                            value = Double.parseDouble(rawValue);
+                        }
+                    }
                     break;
             }
         }
