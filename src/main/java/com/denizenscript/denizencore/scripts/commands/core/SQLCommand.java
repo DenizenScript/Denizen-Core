@@ -2,6 +2,8 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -24,14 +26,14 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     public SQLCommand() {
         setName("sql");
-        setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (passwordfile:<file>) (ssl:true/{false})/query:<query>/update:<update>]");
+        setSyntax("sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<secret>) (ssl:true/{false})/query:<query>/update:<update>]");
         setRequiredArguments(2, 5);
         isProcedural = false;
     }
 
     // <--[command]
     // @Name SQL
-    // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (passwordfile:<file>) (ssl:true/{false})/query:<query>/update:<update>]
+    // @Syntax sql [id:<ID>] [disconnect/connect:<server> (username:<username>) (password:<secret>) (ssl:true/{false})/query:<query>/update:<update>]
     // @Required 2
     // @Maximum 5
     // @Short Interacts with a MySQL server.
@@ -48,7 +50,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // When connecting, the server format is IP:Port/Database, EG 'localhost:3306/test'.
     // You can also append options to the end, like 'localhost:3306/test?autoReconnect=true'
-    // You can create a simple text file to contain the password, and store it in 'plugins/Denizen' or a subfolder, and input it using the 'passwordfile' option.
+    // Store your password in the Denizen secrets file at 'plugins/Denizen/secrets.secret'. Refer to <@link ObjectType SecretTag> for usage info.
     //
     // You can switch whether SSL is used for the connection (defaults to false).
     //
@@ -68,15 +70,15 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to connect to an SQL server.
-    // - ~sql id:name connect:localhost:3306/test username:space passwordfile:pw.txt
+    // - ~sql id:name connect:localhost:3306/test username:space password:<secret[sql_pw]>
     //
     // @Usage
     // Use to connect to an SQL server over an SSL connection.
-    // - ~sql id:name connect:localhost:3306/test username:space passwordfile:pw.txt ssl:true
+    // - ~sql id:name connect:localhost:3306/test username:space password:<secret[sql_pw]> ssl:true
     //
     // @Usage
     // Use to connect to an SQL server with a UTF8 text encoding.
-    // - ~sql id:name connect:localhost:3306/test?characterEncoding=utf8 username:space passwordfile:pw.txt
+    // - ~sql id:name connect:localhost:3306/test?characterEncoding=utf8 username:space password:<secret[sql_pw]>
     //
     // @Usage
     // Use to update an SQL server.
@@ -148,7 +150,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
             }
             else if (!scriptEntry.hasObject("password")
                     && arg.matchesPrefix("password")) {
-                scriptEntry.addObject("password", arg.asElement());
+                scriptEntry.addObject("password", arg.object);
             }
             else if (!scriptEntry.hasObject("passwordfile")
                     && arg.matchesPrefix("passwordfile")) {
@@ -179,7 +181,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         ElementTag action = scriptEntry.getElement("action");
         final ElementTag server = scriptEntry.getElement("server");
         final ElementTag username = scriptEntry.getElement("username");
-        final ElementTag password = scriptEntry.getElement("password");
+        final ObjectTag password = scriptEntry.getElement("password");
         final ElementTag passwordFile = scriptEntry.getElement("passwordfile");
         final ElementTag ssl = scriptEntry.getElement("ssl");
         final ElementTag sqlID = scriptEntry.getElement("sqlid");
@@ -205,7 +207,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 }
                 String passwordRaw;
                 if (password != null) {
-                    passwordRaw = password.asString();
+                    if (password.canBeType(SecretTag.class)) {
+                        passwordRaw = password.asType(SecretTag.class, scriptEntry.context).getValue();
+                    }
+                    else {
+                        passwordRaw = password.toString();
+                    }
                 }
                 else {
                     if (passwordFile == null) {
