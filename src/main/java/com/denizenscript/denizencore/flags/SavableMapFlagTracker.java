@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.flags;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -87,18 +88,33 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         }
         ArrayList<StringHolder> toRemove = new ArrayList<>();
         for (Map.Entry<StringHolder, SaveOptimizedFlag> entry : map.entrySet()) {
-            if (!entry.getValue().canExpire) {
+            SaveOptimizedFlag val = entry.getValue();
+            if (!val.canExpire) {
                 continue;
             }
-            if (isExpired(entry.getValue().getMap().map.get(expirationString))) {
+            TimeTag expireTime = null;
+            boolean hasSubMap = false;
+            if (val.map != null) {
+                expireTime = (TimeTag) val.map.map.get(expirationString);
+                hasSubMap = val.map.map.get(valueString).canBeType(MapTag.class);
+            }
+            else if (val.string.startsWith("map@")) {
+                MapTag quickMap = MapTag.valueOf(val.string, CoreUtilities.noDebugContext, false);
+                ObjectTag time = quickMap.map.get(expirationString);
+                if (time != null) {
+                    expireTime = TimeTag.valueOf(time.toString(), CoreUtilities.noDebugContext);
+                }
+                hasSubMap = quickMap.map.get(valueString).canBeType(MapTag.class);
+            }
+            if (isExpired(expireTime)) {
                 toRemove.add(entry.getKey());
                 modified = true;
             }
-            else {
-                ObjectTag subValue = entry.getValue().getMap().map.get(valueString);
+            else if (hasSubMap) {
+                ObjectTag subValue = val.getMap().map.get(valueString);
                 if (subValue instanceof MapTag) {
                     if (doClean((MapTag) subValue)) {
-                        entry.getValue().string = null;
+                        val.string = null;
                         modified = true;
                     }
                 }

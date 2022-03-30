@@ -53,6 +53,10 @@ public class MapTag implements ObjectTag, Adjustable {
 
     @Fetchable("map")
     public static MapTag valueOf(String string, TagContext context) {
+        return valueOf(string, context, true);
+    }
+
+    public static MapTag valueOf(String string, TagContext context, boolean processValues) {
         if (string == null) {
             return null;
         }
@@ -97,7 +101,9 @@ public class MapTag implements ObjectTag, Adjustable {
                     }
                     return null;
                 }
-                result.putObject(ObjectFetcher.unescapeProperty(data.get(0)), ObjectFetcher.pickObjectFor(ObjectFetcher.unescapeProperty(data.get(1)), context));
+                String rawVal = ObjectFetcher.unescapeProperty(data.get(1));
+                ObjectTag val = processValues ? ObjectFetcher.pickObjectFor(rawVal, context) : new ElementTag(rawVal);
+                result.putObject(ObjectFetcher.unescapeProperty(data.get(0)), val);
             }
             return result;
         }

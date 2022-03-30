@@ -84,8 +84,8 @@ public class QueueWordList {
             "Paper", "Spigot", "Bukkit", // Server software
             "Citizens", "Denizen", "Sentinel", // Plugins
             "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", "Morphan", "Acikek", "Aya", // Dev contributors
-            "Anthony", "Ricky", // Veterans list
-            "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer", "Xeane", "Jumpsplat", "Inquisitor" // Helpers list
+            "Anthony", "Ricky", "Xeane", // Veterans list
+            "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer", "Jumpsplat", "Inquisitor" // Helpers list
     };
 
     public static final String[] donorList = new String[] {
