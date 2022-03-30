@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
@@ -211,6 +212,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         passwordRaw = password.asType(SecretTag.class, scriptEntry.context).getValue();
                     }
                     else {
+                        Deprecations.oldNonSecretTagPassword.warn(scriptEntry);
                         passwordRaw = password.toString();
                     }
                 }
@@ -220,6 +222,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         scriptEntry.setFinished(true);
                         return;
                     }
+                    Deprecations.oldNonSecretTagPassword.warn(scriptEntry);
                     File f = new File(DenizenCore.implementation.getDataFolder(), passwordFile.asString());
                     if (!DenizenCore.implementation.canReadFile(f)) {
                         Debug.echoError(scriptEntry, "Cannot read from that file path due to security settings in Denizen/config.yml.");
