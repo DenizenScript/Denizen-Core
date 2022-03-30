@@ -82,6 +82,7 @@ public class ObjectFetcher {
         registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
         registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
         registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
+        registerWithObjectFetcher(SecretTag.class, SecretTag.tagProcessor); // secret@
         registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor); // time@
     }
 

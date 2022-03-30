@@ -2,10 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ListTag;
-import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -63,6 +60,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // Optionally, specify the "timeout:" to set how long the command should wait for a webpage to load before giving up. Defaults to 10 seconds.
     //
     // Optionally, specify 'hide_failure' to indicate that connection errors are acceptable and shouldn't display in logs.
+    //
+    // This command accepts secret inputs via <@link ObjectType SecretTag> as the URL or as the value of any header.
+    // Note that you cannot mix secret with non-secret - meaning, "webget <secret[my_secret]>" and "webget https://example.com" are both valid, but "webget https://example.com/<secret[my_secret]>" is not.
+    // Similarly, for headers, each individual header value can either be a secret or not a secret.
     //
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
@@ -144,10 +145,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         if (!scriptEntry.hasObject("url")) {
             throw new InvalidArgumentsException("Must have a valid URL!");
         }
-        ElementTag url = scriptEntry.getElement("url");
-        if (!url.asString().startsWith("http://") && !url.asString().startsWith("https://")) {
-            throw new InvalidArgumentsException("Must have a valid (HTTP/HTTPS) URL! Attempted: " + url.asString());
-        }
         scriptEntry.defaultObject("timeout", new DurationTag(10));
     }
 
@@ -157,17 +154,51 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry, "WebGet disabled by config!");
             return;
         }
-        final ElementTag url = scriptEntry.getElement("url");
+        ElementTag originalUrl = scriptEntry.getElement("url");
         final ElementTag data = scriptEntry.getElement("data");
         final ElementTag method = scriptEntry.getElement("method");
         final DurationTag timeout = scriptEntry.getObjectTag("timeout");
-        final MapTag headers = scriptEntry.getObjectTag("headers");
+        MapTag headers = scriptEntry.getObjectTag("headers");
         final ElementTag saveFile = scriptEntry.getElement("savefile");
         final ElementTag hideFailure = scriptEntry.getElement("hide_failure");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), url, data, method, timeout, saveFile, hideFailure, headers);
+            Debug.report(scriptEntry, getName(), originalUrl, data, method, timeout, saveFile, hideFailure, headers);
         }
-        Thread thr = new Thread(() -> webGet(scriptEntry, data, method, url, timeout, headers, saveFile, hideFailure));
+        // Secrets processing
+        String urlText = originalUrl.asString();
+        final boolean urlIsSecret = originalUrl.canBeType(SecretTag.class);
+        if (urlIsSecret) {
+            SecretTag secret = originalUrl.asType(SecretTag.class, scriptEntry.context);
+            if (secret == null) {
+                Debug.echoError("Invalid URL SecretTag object '" + originalUrl.asString() + "' - secret not defined in 'secrets.secret'?");
+                return;
+            }
+            urlText = secret.getValue();
+        }
+        MapTag newHeaders = null;
+        if (headers != null) {
+            newHeaders = new MapTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : headers.map.entrySet()) {
+                ObjectTag value = entry.getValue();
+                if (value.canBeType(SecretTag.class)) {
+                    SecretTag secret = value.asType(SecretTag.class, scriptEntry.context);
+                    if (secret == null) {
+                        Debug.echoError("Invalid header SecretTag object '" + value + "' - secret not defined in 'secrets.secret'?");
+                        return;
+                    }
+                    value = new ElementTag(secret.getValue(), true);
+                }
+                newHeaders.map.put(entry.getKey(), value);
+            }
+        }
+        final MapTag headersFinal = newHeaders;
+        final String urlFinal = urlText;
+        // Actual execution
+        if (!urlFinal.startsWith("http://") && !urlFinal.startsWith("https://")) {
+            Debug.echoError("Must have a valid (HTTP/HTTPS) URL! Attempted: " + originalUrl.asString()); // Note: use original url for error, in case of secret input
+            return;
+        }
+        Thread thr = new Thread(() -> webGet(scriptEntry, data, method, urlFinal, timeout, headersFinal, saveFile, hideFailure, urlIsSecret));
         thr.start();
     }
 
@@ -221,12 +252,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         ReflectionHelper.setFieldValue(HttpURLConnection.class, "methods", null, outMethods);
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, ElementTag urlp, DurationTag timeout, MapTag headers, ElementTag saveFile, ElementTag hideFailure) {
+    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, String urlText, DurationTag timeout, MapTag headers, ElementTag saveFile, ElementTag hideFailure, boolean urlIsSecret) {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
             long timeStart = System.currentTimeMillis();
-            URL url = new URL(urlp.asString().replace(" ", "%20"));
+            URL url = new URL(urlText.replace(" ", "%20"));
             uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
             uc.setDoOutput(true);
@@ -286,7 +317,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
         catch (Exception e) {
             if (hideFailure == null || !hideFailure.asBoolean()) {
-                Debug.echoError(e);
+                if (urlIsSecret) {
+                    Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                }
+                else {
+                    Debug.echoError(e);
+                }
             }
             int tempStatus = -1;
             final StringBuilder sb = new StringBuilder();
@@ -307,12 +343,22 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 catch (Exception e2) {
-                    Debug.echoError(e2);
+                    if (urlIsSecret) {
+                        Debug.echoError("WebGet encountered an exception of type '" + e2.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                    }
+                    else {
+                        Debug.echoError(e2);
+                    }
                 }
             }
             else {
                 if (hideFailure != null && hideFailure.asBoolean()) {
-                    Debug.echoError(e);
+                    if (urlIsSecret) {
+                        Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                    }
+                    else {
+                        Debug.echoError(e);
+                    }
                 }
             }
             final int status = tempStatus;
@@ -338,7 +384,12 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
             }
             catch (Exception e) {
-                Debug.echoError(e);
+                if (urlIsSecret) {
+                    Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                }
+                else {
+                    Debug.echoError(e);
+                }
             }
         }
     }

@@ -84,7 +84,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // The identity format for scripts is simply the script name.
     //
     // @description
-    // A ObjectTag that represents a script container. ScriptTags contain all information inside the script,
+    // An ObjectTag that represents a script container. ScriptTags contain all information inside the script,
     // and can be used in a variety of commands that require script arguments.
     // For example, run and inject will 'execute' script entries inside of a script container when given a matching ScriptTag object.
     //
@@ -156,11 +156,9 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // Instance fields and methods
     /////////////////////
 
-    // Keep track of the corresponding ScriptContainer
     private ScriptContainer container;
 
-    // Make the default prefix "Container"
-    private String prefix = "Container";
+    private String prefix = "Script";
 
     private boolean valid = false;
 
@@ -208,7 +206,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public String getObjectType() {
-        return "Container";
+        return "Script";
     }
 
     @Override

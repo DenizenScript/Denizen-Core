@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
+import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
@@ -141,6 +142,7 @@ public class DenizenCore {
      */
     public static void reloadSaves() {
         serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(implementation.getDataFolder(), "server_flags").getPath());
+        SecretTag.load();
     }
 
     /**
@@ -201,7 +203,7 @@ public class DenizenCore {
     }
 
     /**
-     * Call when a script reload is required (EG, requested by user command.)
+     * Call when a script reload is required (EG, requested by user command).
      */
     public static void reloadScripts() {
         preloadScripts();

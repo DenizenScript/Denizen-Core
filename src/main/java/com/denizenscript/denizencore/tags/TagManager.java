@@ -28,6 +28,7 @@ public class TagManager {
         new MapTagBase();
         new QueueTagBase();
         new ScriptTagBase();
+        new SecretTagBase();
         new TimeTagBase();
 
         // Utilities
