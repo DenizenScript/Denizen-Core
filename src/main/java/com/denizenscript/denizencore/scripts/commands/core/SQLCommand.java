@@ -182,7 +182,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         ElementTag action = scriptEntry.getElement("action");
         final ElementTag server = scriptEntry.getElement("server");
         final ElementTag username = scriptEntry.getElement("username");
-        final ObjectTag password = scriptEntry.getElement("password");
+        final ObjectTag password = scriptEntry.getObjectTag("password");
         final ElementTag passwordFile = scriptEntry.getElement("passwordfile");
         final ElementTag ssl = scriptEntry.getElement("ssl");
         final ElementTag sqlID = scriptEntry.getElement("sqlid");
