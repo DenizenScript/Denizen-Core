@@ -4,10 +4,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
-import com.denizenscript.denizencore.utilities.QueueWordList;
-import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -221,6 +218,40 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_uuid")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(UUID.randomUUID().toString()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.random_simplex[<input_map>]>
+        // @returns ElementTag(Decimal)
+        // @description
+        // Returns a pseudo-random decimal number from -1 to 1, based on a Simplex Noise algorithm. See <@link url https://en.wikipedia.org/wiki/Simplex_noise>
+        // Input map is like "x=1.0", or "x=1.0;y=2.0", or "x=1.0;y=2.0;z=3" or "x=1;y=2;z=3;w=4"
+        // (That is: 1d, 2d, 3d, or 4d).
+        // -->
+        else if (attribute.startsWith("random_simplex") && attribute.hasParam()) {
+            MapTag input = attribute.paramAsType(MapTag.class);
+            if (input == null) {
+                return;
+            }
+            ObjectTag objX = input.getObject("x"), objY = input.getObject("y"), objZ = input.getObject("z"), objW = input.getObject("w");
+            double x = objX == null ? 0 : objX.asElement().asDouble(), y = objY == null ? 0 : objY.asElement().asDouble(), z = objZ == null ? 0 : objZ.asElement().asDouble(), w = objW == null ? 0 : objW.asElement().asDouble();
+            double res = 0;
+            if (objW != null && objZ != null && objY != null && objX != null) {
+                res = SimplexNoise.noise(x, y, z, w);
+            }
+            else if (objZ != null && objY != null && objX != null && objW == null) {
+                res = SimplexNoise.noise(x, y, z);
+            }
+            else if (objY != null && objX != null && objW == null && objZ == null) {
+                res = SimplexNoise.noise(y, x);
+            }
+            else if (objX != null && objW == null && objZ == null && objY == null) {
+                res = SimplexNoise.noise(y, x);
+            }
+            else {
+                return;
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(res), attribute.fulfill(1)));
         }
 
         // <--[tag]
