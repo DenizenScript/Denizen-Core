@@ -101,6 +101,9 @@ public class SecretTag implements ObjectTag {
     }
 
     public String getValue() {
+        if (secretsFile == null) {
+            return null;
+        }
         return secretsFile.getString(key);
     }
 
