@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -179,6 +180,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
+        if (CoreConfiguration.allowSQL) {
+            Debug.echoError(scriptEntry, "SQL disabled by config!");
+            return;
+        }
         ElementTag action = scriptEntry.getElement("action");
         final ElementTag server = scriptEntry.getElement("server");
         final ElementTag username = scriptEntry.getElement("username");

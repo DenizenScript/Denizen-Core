@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DenizenJedisPubSub;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -239,6 +240,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
+        if (CoreConfiguration.allowRedis) {
+            Debug.echoError(scriptEntry, "Redis disabled by config!");
+            return;
+        }
         ElementTag id = scriptEntry.getElement("id");
         ElementTag action = scriptEntry.getElement("action");
         ElementTag host = scriptEntry.getElement("host");
