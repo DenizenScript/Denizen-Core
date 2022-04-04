@@ -13,6 +13,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntrySet;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -303,7 +304,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // -->
 
     public static void reload() {
-        if (Debug.showLoading) {
+        if (CoreConfiguration.debugLoadingInfo) {
             Debug.log("Reloading script events...");
         }
         reloadPreClear();
@@ -429,7 +430,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (event.couldMatch(path) && !path.matches.contains(event)) {
                 event.eventPaths.add(path);
                 path.matches.add(event);
-                if (Debug.showLoading) {
+                if (CoreConfiguration.debugLoadingInfo) {
                     Debug.log("Event match, <Y>" + event.getName() + "<W> matched for '<Y>" + path + "<W>'!");
                 }
             }

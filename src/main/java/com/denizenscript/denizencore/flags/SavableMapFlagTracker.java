@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
@@ -83,7 +84,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     }
 
     public void doTotalClean() {
-        if (MapTagBasedFlagTracker.skipAllCleanings) {
+        if (CoreConfiguration.skipAllFlagCleanings) {
             return;
         }
         ArrayList<StringHolder> toRemove = new ArrayList<>();

@@ -586,7 +586,7 @@ public class UtilTagBase {
         // For example: - adjust system redirect_logging:true
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
-            if (!DenizenCore.implementation.allowConsoleRedirection()) {
+            if (!CoreConfiguration.allowConsoleRedirection) {
                 Debug.echoError("Console redirection disabled by administrator (refer to mechanism documentation).");
                 return;
             }

@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -36,7 +37,7 @@ public class OldEventManager {
             // Build a Map of scripts keyed by 'world events name'.
 
             // Loop through each world script
-            if (Debug.showLoading) {
+            if (CoreConfiguration.debugLoadingInfo) {
                 Debug.log("Scanning " + world_scripts.size() + " world scripts...");
             }
             for (WorldScriptContainer script : world_scripts.values()) {

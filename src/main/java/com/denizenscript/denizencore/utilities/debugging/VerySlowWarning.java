@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 
 public class VerySlowWarning extends SlowWarning {
 
@@ -15,7 +16,7 @@ public class VerySlowWarning extends SlowWarning {
 
     @Override
     public boolean testShouldWarn() {
-        if (lastShown == DenizenCore.reloads && !FutureWarning.futureWarningsEnabled) {
+        if (lastShown == DenizenCore.reloads && !CoreConfiguration.futureWarningsEnabled) {
             return false;
         }
         lastShown = DenizenCore.reloads;

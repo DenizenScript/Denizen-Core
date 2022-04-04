@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.objects.Fetchable;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -85,7 +86,7 @@ public class DurationTag implements ObjectTag {
                     int seconds = CoreUtilities.getRandom()
                             .nextInt((high.getSecondsAsInt() - low.getSecondsAsInt() + 1))
                             + low.getSecondsAsInt();
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Getting random duration between " + low.identify()
                                 + " and " + high.identify() + "... " + seconds + "s");
                     }

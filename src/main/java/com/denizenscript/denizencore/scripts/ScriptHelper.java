@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts;
 
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -125,19 +126,17 @@ public class ScriptHelper {
         return result.toString();
     }
 
-    public static CharsetDecoder encoding = null;
-
     public static String convertStreamToString(InputStream is) {
         return convertStreamToString(is, false);
     }
 
     public static String convertStreamToString(InputStream is, boolean defaultUTF8) {
         Scanner s;
-        if (encoding == null && !defaultUTF8) {
+        if (CoreConfiguration.scriptEncoding == null && !defaultUTF8) {
             s = new Scanner(is);
         }
         else {
-            s = new Scanner(new InputStreamReader(is, encoding == null ? StandardCharsets.UTF_8.newDecoder() : encoding));
+            s = new Scanner(new InputStreamReader(is, CoreConfiguration.scriptEncoding == null ? StandardCharsets.UTF_8.newDecoder() : CoreConfiguration.scriptEncoding));
         }
         s.useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
@@ -171,7 +170,7 @@ public class ScriptHelper {
                 YamlConfiguration yaml;
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
-                    if (Debug.showLoading) {
+                    if (CoreConfiguration.debugLoadingInfo) {
                         Debug.log("Processing '" + fileName + "'... ");
                     }
                     try {
@@ -191,7 +190,7 @@ public class ScriptHelper {
                         Debug.echoError(e);
                     }
                 }
-                if (Debug.showLoading) {
+                if (CoreConfiguration.debugLoadingInfo) {
                     Debug.echoApproval("All scripts loaded!");
                 }
                 return outList;

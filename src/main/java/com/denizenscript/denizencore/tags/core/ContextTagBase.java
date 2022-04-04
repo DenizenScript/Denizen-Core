@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -74,7 +75,7 @@ public class ContextTagBase {
                 if (got == null) {
                     if (!event.hasAlternative()) {
                         Debug.echoDebug(event.getScriptEntry(), "Missing saved entry object '" + attrib + "'");
-                        if (Debug.verbose) {
+                        if (CoreConfiguration.debugVerbose) {
                             Debug.log("Option set is: " + held.getObjects().keySet());
                         }
                     }

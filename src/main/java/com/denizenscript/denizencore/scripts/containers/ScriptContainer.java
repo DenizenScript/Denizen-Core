@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.containers;
 
 import com.denizenscript.denizencore.scripts.*;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -306,7 +307,7 @@ public class ScriptContainer implements Debuggable {
     public boolean shouldDebug() {
         if (shouldDebug == null) {
             if (!contents.contains("debug")) {
-                shouldDebug = DenizenCore.implementation.getDefaultDebugMode();
+                shouldDebug = CoreConfiguration.defaultDebugMode;
             }
             else {
                 shouldDebug = !CoreUtilities.equalsIgnoreCase(contents.getString("debug"), "false");

@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.*;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagCodeGenerator;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
@@ -92,7 +93,7 @@ public class TagManager {
     }
 
     public static void fireEvent(ReplaceableTagEvent event) {
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag fire: " + event.raw_tag + ", " + event.getAttributes().attributes[0].rawKey.contains("@") + ", " + event.hasAlternative() + "...");
         }
         TagBaseData baseHandler = event.alternateBase != null ? event.alternateBase : event.mainRef.tagBase;
@@ -134,7 +135,7 @@ public class TagManager {
                 Debug.echoError("No tag-base handler for '" + event.getName() + "'.");
             }
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag unhandled!");
         }
     }
@@ -184,11 +185,11 @@ public class TagManager {
     public static boolean recentTagError = true;
 
     public static ObjectTag readSingleTagObjectNoDebug(TagContext context, ReplaceableTagEvent event) {
-        int tT = DenizenCore.implementation.getTagTimeout();
-        if (Debug.verbose) {
+        int tT = CoreConfiguration.tagTimeoutUnsafe ? CoreConfiguration.tagTimeout : 0;
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag read: " + event.raw_tag + ", " + tT + "...");
         }
-        if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !DenizenCore.implementation.tagTimeoutWhenSilent())) {
+        if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !CoreConfiguration.tagTimeoutWhenSilent)) {
             fireEvent(event);
         }
         else {
@@ -261,7 +262,7 @@ public class TagManager {
     }
 
     public static ObjectTag parseChainObject(List<ParseableTagPiece> pieces, TagContext context) {
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag parse chain: " + pieces + "...");
         }
         if (pieces.size() < 2) {
@@ -358,7 +359,7 @@ public class TagManager {
                     midTag.tagData.compiledStart = TagCodeGenerator.generatePartialTag(midTag, context);
                 }
                 pieces.add(midTag);
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Tag: " + (preText == null ? "<null>" : preText.content) + " ||| " + midTag.content);
                 }
             }
@@ -383,7 +384,7 @@ public class TagManager {
             postText.content = arg;
             pieces.add(postText);
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag chainify complete: " + arg);
         }
         ParseableTagPiece priorPiece = pieces.get(0);
@@ -395,7 +396,7 @@ public class TagManager {
                 ElementTag element = new ElementTag(newPiece.content, true);
                 element.isRawInput = true;
                 newPiece.rawObject = element;
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Tag chain can simplify: " + priorPiece + " with " + currentPiece + " yields " + newPiece);
                 }
                 pieces.set(i - 1, newPiece);

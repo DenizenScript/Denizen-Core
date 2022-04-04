@@ -9,6 +9,7 @@ import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
@@ -294,7 +295,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         TagData properTag = registeredObjectTags.get(name);
         for (String variant : deprecatedVariants) {
             TagRunnable.ObjectInterface<T, ?> newRunnable = (attribute, object) -> {
-                if (FutureWarning.futureWarningsEnabled) {
+                if (CoreConfiguration.futureWarningsEnabled) {
                     Debug.echoError(attribute.context,  "Using deprecated form of tag '" + name + "': '" + variant + "'.");
                 }
                 return properTag.runner.run(attribute, object);
@@ -326,14 +327,14 @@ public class ObjectTagProcessor<T extends ObjectTag> {
 
     public final ObjectTag getObjectAttribute(T object, Attribute attribute) {
         if (attribute == null) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("TagProcessor - Attribute null!");
             }
             return null;
         }
         attribute.lastValid = object;
         if (attribute.isComplete()) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("TagProcessor - Attribute complete! Self return!");
             }
             return object;
@@ -345,12 +346,12 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             data = registeredObjectTags.get(nextComponent.key);
         }
         if (data != null) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("TagProcessor - Sub-tag found for " + nextComponent.key);
             }
             returned = data.runner.run(attribute, object);
             if (returned == null) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("TagProcessor - result was null");
                 }
                 attribute.trackLastTagFailure();

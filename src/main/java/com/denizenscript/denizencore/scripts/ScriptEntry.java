@@ -13,6 +13,7 @@ import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.ParseableTag;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
@@ -604,7 +605,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return objects.get(key);
         }
         catch (Exception ex) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(ex);
             }
             return null;
@@ -624,7 +625,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return (T) gotten;
         }
         catch (Exception ex) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(ex);
             }
             return null;
@@ -640,7 +641,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return (ElementTag) gotten;
         }
         catch (Exception ex) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(ex);
             }
             return null;

@@ -271,7 +271,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 }
                 DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
                     Jedis con = null;
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to " + host + " on port " + port);
                     }
                     try {
@@ -281,12 +281,12 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
                         }, 0));
                     }
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error");
                     }
                     final Jedis conn = con;
@@ -300,7 +300,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     else {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
                         }, 0));
@@ -402,7 +402,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
@@ -456,7 +456,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
@@ -475,7 +475,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         }
         catch (Exception ex) {
             Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(scriptEntry, ex);
             }
         }

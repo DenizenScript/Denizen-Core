@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -89,7 +90,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), origin, destination, overwrite);
         }
-        if (!DenizenCore.implementation.allowFileCopy()) {
+        if (!CoreConfiguration.allowFileCopy) {
             Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);

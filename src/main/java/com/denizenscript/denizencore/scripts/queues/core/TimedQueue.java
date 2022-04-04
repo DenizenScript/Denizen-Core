@@ -1,7 +1,7 @@
 package com.denizenscript.denizencore.scripts.queues.core;
 
 import com.denizenscript.denizencore.scripts.queues.ScriptEngine;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
@@ -43,7 +43,7 @@ public class TimedQueue extends ScriptQueue {
     }
 
     public TimedQueue(String id) {
-        this(id, DurationTag.valueOf(DenizenCore.implementation.scriptQueueSpeed(), CoreUtilities.basicContext));
+        this(id, new DurationTag(CoreConfiguration.scriptQueueSpeed));
     }
 
     public TimedQueue(String id, long ticks) {

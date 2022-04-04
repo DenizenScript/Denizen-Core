@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -405,7 +406,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             case SAVE:
                 if (yamlDocuments.containsKey(id)) {
                     try {
-                        if (!DenizenCore.implementation.allowStrangeYAMLSaves()) {
+                        if (!CoreConfiguration.allowStrangeFileSaves) {
                             File fileObj = new File(DenizenCore.implementation.
                                     getDataFolder().getAbsolutePath() + "/" + filename.asString());
                             String directory = URLDecoder.decode(System.getProperty("user.dir"));
@@ -428,7 +429,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         yaml.setDirty(false);
                         Runnable saveRunnable = () -> {
                             try {
-                                Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+                                Charset charset = CoreConfiguration.scriptEncoding == null ? null : CoreConfiguration.scriptEncoding.charset();
                                 FileOutputStream fiout = new FileOutputStream(fileObj);
                                 OutputStreamWriter writer;
                                 if (charset == null) {
@@ -494,13 +495,13 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                     int index = -1;
                     if (key.asString().contains("[")) {
                         try {
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Try index: " + key.asString().split("\\[")[1].replace("]", ""));
                             }
                             index = Integer.valueOf(key.asString().split("\\[")[1].replace("]", "")) - 1;
                         }
                         catch (Exception e) {
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
                             index = -1;
@@ -578,20 +579,20 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         case REMOVE: {
                             List<String> list = yaml.getStringList(keyStr);
                             if (list == null) {
-                                if (Debug.verbose) {
+                                if (CoreConfiguration.debugVerbose) {
                                     Debug.echoDebug(scriptEntry, "List null!");
                                 }
                                 break;
                             }
                             if (index > -1 && index < list.size()) {
-                                if (Debug.verbose) {
+                                if (CoreConfiguration.debugVerbose) {
                                     Debug.echoDebug(scriptEntry, "Remove ind: " + index);
                                 }
                                 list.remove(index);
                                 yaml.set(keyStr, list);
                             }
                             else {
-                                if (Debug.verbose) {
+                                if (CoreConfiguration.debugVerbose) {
                                     Debug.echoDebug(scriptEntry, "Remove value: " + valueStr);
                                 }
                                 for (int i = 0; i < list.size(); i++) {

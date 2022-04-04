@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -50,7 +51,7 @@ public abstract class AbstractCommand {
                 docFlagArgs.add(arg);
             }
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Command syntax '" + syntax + "' parsed to flat args: ( " + String.join(", ", docFlagArgs) + " ) and prefixes ( " + String.join(", ", docPrefixes) + " ).");
         }
     }

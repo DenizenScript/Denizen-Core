@@ -603,7 +603,7 @@ public class CoreUtilities {
             }
         }
         strings.add(str.substring(start));
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Splitting " + str + " around " + c + " limited to " + max + " returns " + concat(strings, ":::"));
         }
         return strings;
@@ -813,7 +813,7 @@ public class CoreUtilities {
         File saveToFile = new File(filePath + "~1");
         try {
             saveToFile.getParentFile().mkdirs();
-            Charset charset = ScriptHelper.encoding == null ? null : ScriptHelper.encoding.charset();
+            Charset charset = CoreConfiguration.scriptEncoding == null ? null : CoreConfiguration.scriptEncoding.charset();
             FileOutputStream fiout = new FileOutputStream(saveToFile);
             OutputStreamWriter writer;
             if (charset == null) {

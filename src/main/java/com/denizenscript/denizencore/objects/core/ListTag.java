@@ -11,10 +11,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
-import com.denizenscript.denizencore.utilities.AsciiMatcher;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
-import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
+import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -2522,7 +2519,7 @@ public class ListTag implements List<String>, ObjectTag {
     @Override
     public ObjectTag specialTagProcessing(Attribute attribute) {
         String attrLow = attribute.getAttributeWithoutParam(1);
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("ListTag alternate attribute " + attrLow);
         }
         if (ArgumentHelper.matchesInteger(attrLow)) {

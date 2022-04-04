@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.TimeTag;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
@@ -16,8 +17,6 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
     public static StringHolder valueString = new StringHolder("__value");
 
     public static StringHolder expirationString = new StringHolder("__expiration");
-
-    public static boolean skipAllCleanings = false;
 
     public static boolean isExpired(ObjectTag expirationObj) {
         if (expirationObj == null) {
@@ -109,7 +108,7 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
     }
 
     public boolean doClean(MapTag map) {
-        if (skipAllCleanings) {
+        if (CoreConfiguration.skipAllFlagCleanings) {
             return false;
         }
         boolean anyCleaned = false;

@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -130,7 +131,7 @@ public class IfCommand extends BracedCommand {
         else {
             for (String arg : scriptEntry.getOriginalArguments()) {
                 if (arg.equals("{")) {
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Has_brace = true");
                     }
                     has_brace = true;
@@ -187,7 +188,7 @@ public class IfCommand extends BracedCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), db("use_braces", braces != null));
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("comparisons=" + comparisons + ", sc:" + subcommand + ", ec:" + elsecommand);
         }
         boolean first_set = new ArgComparer().compare(comparisons, scriptEntry);
@@ -205,7 +206,7 @@ public class IfCommand extends BracedCommand {
                 return;
             }
             if (first_set) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Running the first set");
                 }
                 Debug.echoDebug(scriptEntry, "<Y>If command passed, running block.");
@@ -220,7 +221,7 @@ public class IfCommand extends BracedCommand {
             else {
                 for (int z = 1; z < braces.size(); z++) {
                     BracedData braceSet = braces.get(z);
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Trying: " + braceSet.key);
                     }
                     List<String> key = braceSet.args;
@@ -418,17 +419,17 @@ public class IfCommand extends BracedCommand {
 
         public boolean compareInternal() {
             List args = argstemp;
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("Comparing " + args);
             }
             if (args.isEmpty()) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Args.size == 0, return false");
                 }
                 return false;
             }
             else if (args.size() == 1) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
                 return tagbool(0);
@@ -444,17 +445,17 @@ public class IfCommand extends BracedCommand {
                         if (xarg.equals("(") || xarg.equals("!(")) {
                             count++;
                             subargs.add(xarg);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.log("Open paren");
                             }
                         }
                         else if (xarg.equals(")")) {
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.log("Close paren");
                             }
                             count--;
                             if (count == -1) {
-                                if (Debug.verbose) {
+                                if (CoreConfiguration.debugVerbose) {
                                     Debug.log("Crunch");
                                 }
                                 ArgComparer comp = new ArgComparer().construct(subargs, scriptEntry);
@@ -464,7 +465,7 @@ public class IfCommand extends BracedCommand {
                                 }
                                 args.add(i, comp);
                                 found = true;
-                                if (Debug.verbose) {
+                                if (CoreConfiguration.debugVerbose) {
                                     Debug.log("Shrunk to " + args);
                                 }
                                 break;
@@ -478,21 +479,21 @@ public class IfCommand extends BracedCommand {
                         }
                     }
                     if (!found) {
-                        if (Debug.verbose) {
+                        if (CoreConfiguration.debugVerbose) {
                             Debug.log("Returning false: strange(unfound) ()");
                         }
                         return false;
                     }
                 }
                 else if (arg.equals(")")) {
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Returning false: strange(stray) ()");
                     }
                     return false;
                 }
             }
             if (args.size() == 1) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
                 return tagbool(0);
@@ -507,7 +508,7 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (before) {
-                        if (Debug.verbose) {
+                        if (CoreConfiguration.debugVerbose) {
                             Debug.log("Returning true because true || irrel");
                         }
                         return true;
@@ -517,7 +518,7 @@ public class IfCommand extends BracedCommand {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Returning || comparison: " + comp);
                     }
                     return comp;
@@ -529,7 +530,7 @@ public class IfCommand extends BracedCommand {
                     }
                     boolean before = new ArgComparer().compare(beforeargs, scriptEntry);
                     if (!before) {
-                        if (Debug.verbose) {
+                        if (CoreConfiguration.debugVerbose) {
                             Debug.log("Returning false because false && irrel");
                         }
                         return false;
@@ -539,26 +540,26 @@ public class IfCommand extends BracedCommand {
                         afterargs.add(args.get(x));
                     }
                     boolean comp = new ArgComparer().compare(afterargs, scriptEntry);
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Returning && comparison: " + comp);
                     }
                     return comp;
                 }
             }
             if (args.size() == 1) {
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
                 return tagbool(0);
             }
             if (args.size() == 2) {
                 if (CoreUtilities.toLowerCase(procStringNoTag(args.get(0))).equals("not")) {
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.log("Returning negative comparison for " + args.get(0));
                     }
                     return !tagbool(1);
                 }
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning false because two args only (non-processable)");
                 }
                 return false;
@@ -596,7 +597,7 @@ public class IfCommand extends BracedCommand {
             }
             catch (Throwable ex) {
                 Debug.echoError(scriptEntry, "If command syntax invalid - possibly wrong number of arguments (check for stray spaces)? exception: " + ex.getClass().getName() + ": " + ex.getMessage());
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.echoError("Was comparing " + operatorArg + " with " + args.get(0) + " and " + args.get(2));
                     Debug.echoError(ex);
                 }

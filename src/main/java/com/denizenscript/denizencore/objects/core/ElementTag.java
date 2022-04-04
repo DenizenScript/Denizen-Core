@@ -142,7 +142,7 @@ public class ElementTag implements ObjectTag {
     public ElementTag(String string) {
         this.prefix = "element";
         if (string == null) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 try {
                     throw new RuntimeException("Trace");
                 }
@@ -2567,7 +2567,7 @@ public class ElementTag implements ObjectTag {
         }
         @Override
         public ObjectTag getObjectAttribute(Attribute attribute) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("Element - Unfilled! Null!");
             }
             return null;

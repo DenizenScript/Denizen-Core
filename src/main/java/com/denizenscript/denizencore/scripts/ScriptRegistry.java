@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.*;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -73,7 +74,7 @@ public class ScriptRegistry {
             return;
         }
         MethodHandle constructor = typeConstructors.get(type);
-        if (Debug.showLoading) {
+        if (CoreConfiguration.debugLoadingInfo) {
             Debug.log("Adding script " + scriptName + " as type " + type);
         }
         try {

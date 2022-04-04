@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.file;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.DebugLog;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -115,7 +116,7 @@ public class LogCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        if (!DenizenCore.implementation.allowLogging()) {
+        if (!CoreConfiguration.allowLog) {
             Debug.echoError("Logging disabled by administrator (refer to command documentation).");
             scriptEntry.setFinished(true);
             return;

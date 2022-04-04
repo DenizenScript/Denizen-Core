@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -160,8 +161,7 @@ public class WhileCommand extends BracedCommand {
                 data.index++;
                 if (System.currentTimeMillis() - data.LastChecked < 50) {
                     data.instaTicks++;
-                    int max = DenizenCore.implementation.whileMaxLoops();
-                    if (data.instaTicks > max && max != 0) {
+                    if (data.instaTicks > CoreConfiguration.whileMaxLoops && CoreConfiguration.whileMaxLoops != 0) {
                         return;
                     }
                 }

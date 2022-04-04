@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
@@ -89,7 +90,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
             @Override
             public void run() {
                 counter++;
-                if (Debug.verbose) {
+                if (CoreConfiguration.debugVerbose) {
                     Debug.log("WaitUntil looping: " + counter);
                 }
                 if (queue.getQueue().getEntries().isEmpty()) {

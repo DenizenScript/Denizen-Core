@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.DefinitionProvider;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -105,7 +106,7 @@ public class Attribute {
         if (braced != 0) {
             throw new TagProcessingException("The tag '" + attributes + "' is invalid due to misplaced [square brackets]. Did you forget to close some brackets?");
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("attribute splitter: '" + attributes + "' becomes: " + matches);
         }
         matchesRes = new AttributeComponent[matches.size()];
@@ -144,7 +145,7 @@ public class Attribute {
     int fulfilled = 0;
 
     public void resetErrorTrack() {
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.echoError("(Verbose) Attribute - error track reset");
         }
         if (!seemingSuccesses.isEmpty()) {
@@ -204,7 +205,7 @@ public class Attribute {
         if (fulfilled >= attributes.length) {
             return false;
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Trying tag startsWith " + string + " on tag " + toString());
         }
         if (string.indexOf('.') >= 0) {
@@ -217,14 +218,14 @@ public class Attribute {
                     return false;
                 }
             }
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("Chain-Tag found!");
             }
             seemingSuccesses.add(string);
             return true;
         }
         if (attributes[fulfilled].key.equals(string)) {
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.log("Sub-tag found!");
             }
             seemingSuccesses.add(string);
@@ -282,7 +283,7 @@ public class Attribute {
         if (attributes[fulfilled].rawParam != null) {
             return true;
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Attribute " + fulfilled + " is missing param, hasParamFailed");
         }
         hasContextFailed = true;
@@ -298,7 +299,7 @@ public class Attribute {
         if (attributes[attribute].rawParam != null) {
             return true;
         }
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             Debug.log("Attribute " + attribute + " is missing context, hasContextFailed");
         }
         hasContextFailed = true;

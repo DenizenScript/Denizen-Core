@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -265,7 +266,7 @@ public class ReplaceableTagEvent {
     }
 
     public void setReplaced(String string) {
-        if (Debug.verbose) {
+        if (CoreConfiguration.debugVerbose) {
             try {
                 throw new RuntimeException("Trace");
             }

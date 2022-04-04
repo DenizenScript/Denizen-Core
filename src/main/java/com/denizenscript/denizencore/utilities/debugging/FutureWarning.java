@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
-public class FutureWarning extends Warning {
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 
-    public static boolean futureWarningsEnabled = false;
+public class FutureWarning extends Warning {
 
     public FutureWarning(String message) {
         super(message);
@@ -10,6 +10,6 @@ public class FutureWarning extends Warning {
 
     @Override
     public boolean testShouldWarn() {
-        return futureWarningsEnabled;
+        return CoreConfiguration.futureWarningsEnabled;
     }
 }

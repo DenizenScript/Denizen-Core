@@ -250,7 +250,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                 final String passwordToUse = passwordRaw;
                 DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
                     Connection con = null;
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
                     }
                     try {
@@ -260,12 +260,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
                         }, 0));
                     }
-                    if (Debug.verbose) {
+                    if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error");
                     }
                     final Connection conn = con;
@@ -279,7 +279,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     else {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
                         }, 0));
@@ -342,7 +342,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
@@ -399,7 +399,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     catch (Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
-                            if (Debug.verbose) {
+                            if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
                         }, 0));
@@ -418,7 +418,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
         }
         catch (SQLException ex) {
             Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
-            if (Debug.verbose) {
+            if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(scriptEntry, ex);
             }
         }

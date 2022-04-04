@@ -13,6 +13,10 @@ public class Deprecations {
     // Recommend never removing.
     public static Warning playerByNameWarning = new Warning("Warning: loading player by name - use the UUID instead (or use tag server.match_player)!");
 
+    // Added 2020/03/14, moved from future to current 2021/11/12, moved to strong 2022/04/04.
+    // Should be rapidly advanced through deprecation levels: removing this allows for a significant amount of legacy code removal.
+    public static Warning eventCommand = new StrongWarning("The event command is deprecated: use 'customevent' instead. The 'event' command represents an outdated idea of how events should function inside.");
+
     // Added on 2019/02/06
     // Bad candidate for functionality remove - 'c' was used often.
     // Recommend removal 2023 or later.
@@ -135,10 +139,6 @@ public class Deprecations {
 
     // Added 2020/06/13.
     public static Warning scriptConstantTag = new Warning("The script.constant system has been deprecated in favor of just using data_key.");
-
-    // Added 2020/03/14, moved from future to current 2021/11/12.
-    // Should be rapidly advanced through deprecation levels: removing this allows for a significant amount of legacy code removal.
-    public static Warning eventCommand = new Warning("The event command is deprecated: use 'customevent' instead. The 'event' command represents an outdated idea of how events should function inside.");
 
     // In Bukkit impl, added 2020/07/04, made normal 2021/11/2021.
     public static Warning cuboidFullTag = new Warning("The tag cuboid.full is deprecated: this should just never be used.");

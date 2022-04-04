@@ -118,19 +118,11 @@ public interface DenizenImplementation {
 
     void refreshScriptContainers();
 
-    String scriptQueueSpeed();
-
     TagContext getTagContext(ScriptContainer container);
 
     TagContext getTagContext(ScriptEntry entry);
 
-    int getTagTimeout();
-
-    boolean allowConsoleRedirection();
-
     String cleanseLogString(String str);
-
-    boolean allowedToWebget();
 
     void preTagExecute();
 
@@ -142,25 +134,13 @@ public interface DenizenImplementation {
 
     void debugQueueExecute(ScriptEntry entry, String queue, String execute);
 
-    boolean tagTimeoutWhenSilent();
-
-    boolean getDefaultDebugMode();
-
     boolean canWriteToFile(File f);
 
     String getRandomColor();
 
-    int whileMaxLoops();
-
-    boolean allowLogging();
-
     boolean canReadFile(File f);
 
-    boolean allowFileCopy();
-
     File getDataFolder();
-
-    boolean allowStrangeYAMLSaves();
 
     String queueHeaderInfo(ScriptEntry entry);
 

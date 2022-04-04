@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -150,7 +151,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        if (!DenizenCore.implementation.allowedToWebget()) {
+        if (CoreConfiguration.allowWebget) {
             Debug.echoError(scriptEntry, "WebGet disabled by config!");
             return;
         }
