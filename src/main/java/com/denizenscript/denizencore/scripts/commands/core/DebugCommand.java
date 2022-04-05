@@ -10,8 +10,6 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 
-import java.util.HashSet;
-
 public class DebugCommand extends AbstractCommand implements Holdable {
 
     public DebugCommand() {

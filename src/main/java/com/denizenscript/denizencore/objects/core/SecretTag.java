@@ -38,6 +38,8 @@ public class SecretTag implements ObjectTag {
     // @name SecretTag
     // @prefix secret
     // @base ElementTag
+    // @ExampleTagBase secret[my_secret_key]
+    // @ExampleValues <secret[my_secret_key]>
     // @format
     // The identity format for secrets is simply the secret key (as defined by the file 'secrets.secret' in the Denizen folder).
     //

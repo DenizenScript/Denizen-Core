@@ -21,10 +21,12 @@ import java.util.regex.Pattern;
 
 public class ElementTag implements ObjectTag {
 
+    // NOTE: Explicitly not example value
     // <--[ObjectType]
     // @name ElementTag
     // @prefix el
     // @base None
+    // @ExampleTagBase element[hello_world]
     // @format
     // Just the plain text of the element value, no prefix or formatting.
     //

@@ -19,6 +19,8 @@ public class DurationTag implements ObjectTag {
     // @name DurationTag
     // @prefix d
     // @base ElementTag
+    // @ExampleTagBase duration[5m]
+    // @ExampleValues 1s,1m,5m,12h
     // @format
     // The identity format for DurationTags is the number of seconds, followed by an 's'.
     //

@@ -11,8 +11,6 @@ import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
-import java.util.HashSet;
-
 public class Argument implements Cloneable {
 
     @Override

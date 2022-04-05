@@ -28,6 +28,18 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     // <context.hour> returns the exact hour of the system time.
     // <context.minute> returns the exact minute of the system time.
     //
+    // @Example
+    // on system time hourly:
+    // - announce "Whoa an hour passed!"
+    // @Example
+    // on system time 12:00:
+    // - announce "Whoa it's noon!"
+    // @Example
+    // on system time 03:00:
+    // - announce "Daily restart in 5 minutes!"
+    // - wait 5m
+    // - adjust <server> restart
+    //
     // -->
 
     public static SystemTimeScriptEvent instance;

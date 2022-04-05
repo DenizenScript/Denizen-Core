@@ -27,10 +27,12 @@ import java.util.stream.Stream;
 
 public class ListTag implements List<String>, ObjectTag {
 
+    // NOTE: Explicitly not example value
     // <--[ObjectType]
     // @name ListTag
     // @prefix li
     // @base ElementTag
+    // @ExampleTagBase list[one|two]
     // @format
     // The identity format for ListTags is each item, one after the other, in order, separated by a pipe '|' symbol.
     // For example, for a list of 'taco', 'potatoes', and 'cheese', it would be 'li@taco|potatoes|cheese|'

@@ -27,6 +27,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     // @prefix time
     // @base ElementTag
     // @implements FlaggableObject
+    // @ExampleTagBase util.time_now
+    // @ExampleValues <util.time_now>
     // @format
     // The identity format for TimeTags is "yyyy/mm/dd_hh:mm:ss:mill_offset"
     // So, for example, 'time@2020/05/23_02:20:31:123_-07:00'

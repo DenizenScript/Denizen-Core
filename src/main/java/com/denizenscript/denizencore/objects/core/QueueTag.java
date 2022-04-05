@@ -23,6 +23,8 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     // @prefix q
     // @base ElementTag
     // @implements FlaggableObject
+    // @ExampleTagBase queue
+    // @ExampleValues <queue>
     // @format
     // The identity format for queues is simply the queue ID.
     //

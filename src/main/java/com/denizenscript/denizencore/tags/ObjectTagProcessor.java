@@ -14,7 +14,6 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.debugging.FutureWarning;
 
 import java.util.HashMap;
 

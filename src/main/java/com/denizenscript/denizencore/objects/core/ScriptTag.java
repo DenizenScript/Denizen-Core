@@ -80,6 +80,8 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // @prefix s
     // @base ElementTag
     // @implements FlaggableObject
+    // @ExampleTagBase script
+    // @ExampleValues <script>
     // @format
     // The identity format for scripts is simply the script name.
     //

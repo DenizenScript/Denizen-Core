@@ -14,12 +14,14 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class MapTag implements ObjectTag, Adjustable {
+public class MapTag implements ObjectTag {
 
+    // NOTE: Explicitly not example value
     // <--[ObjectType]
     // @name MapTag
     // @prefix map
     // @base ElementTag
+    // @ExampleTagBase map[key=value]
     // @format
     // The identity format for MapTags is a replica of property syntax - square brackets surrounded a semi-colon separated list of key=value pairs.
     // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@[taco=food;chicken=animal;bob=person]"
@@ -775,15 +777,5 @@ public class MapTag implements ObjectTag, Adjustable {
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
         return tagProcessor.getObjectAttribute(this, attribute);
-    }
-
-    @Override
-    public void applyProperty(Mechanism mechanism) {
-        Debug.echoError("MapTags can not hold properties.");
-    }
-
-    @Override
-    public void adjust(Mechanism mechanism) {
-        CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }

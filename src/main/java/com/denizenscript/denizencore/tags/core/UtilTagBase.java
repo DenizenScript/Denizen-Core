@@ -44,7 +44,9 @@ public class UtilTagBase {
             // @returns ElementTag(Number)
             // @description
             // Returns a random integer number between the 2 specified integer numbers, inclusive.
-            // For example: random.int[1].to[3] could return 1, 2, or 3.
+            // @Example
+            // # Will narrate '1', '2', or '3'
+            // - narrate <util.random.int[1].to[3]>
             // -->
             if (attribute.startsWith("int")) {
                 String stc = attribute.getParam();
@@ -73,7 +75,9 @@ public class UtilTagBase {
             // @returns ElementTag(Decimal)
             // @description
             // Returns a random decimal number between the 2 specified decimal numbers, inclusive.
-            // For example: random.decimal[1].to[2] could return 1.5, 1.75, or a massive number of other options.
+            // @Example
+            // # Will narrate '1.5', or '1.75', or '1.01230123', or any other decimal in range.
+            // - narrate <util.random.decimal[1].to[2]>
             // -->
             if (attribute.startsWith("decimal")
                     && attribute.hasParam()) {
@@ -183,7 +187,11 @@ public class UtilTagBase {
         // @returns ElementTag(Boolean)
         // @description
         // Returns a random boolean (true or false) with the given percent chance (from 0 to 100).
-        // For example, <util.random_chance[25]> will return 'true' 25% of the time and 'false' 75% of the time.
+        // @Example
+        // - if <util.random_chance[25]>:
+        //     - narrate "This happens 25% of the time"
+        // - else:
+        //     - narrate "This happens 75% of the time"
         // -->
         else if (attribute.startsWith("random_chance") && attribute.hasParam()) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble() * 100 <= attribute.getDoubleParam()), attribute.fulfill(1)));
@@ -564,6 +572,7 @@ public class UtilTagBase {
     // @name system
     // @prefix None
     // @base None
+    // @ExampleAdjustObject system
     // @format
     // N/A
     //

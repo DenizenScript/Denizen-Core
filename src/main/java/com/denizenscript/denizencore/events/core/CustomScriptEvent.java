@@ -35,6 +35,10 @@ public class CustomScriptEvent extends ScriptEvent {
     // @Player When the command is used with a player link.
     // @NPC When the command is used with an NPC link.
     //
+    // @Example
+    // on custom event id:my_custom_event:
+    // - narrate <context.my_custom_info>
+    //
     // -->
 
     public static CustomScriptEvent instance;
