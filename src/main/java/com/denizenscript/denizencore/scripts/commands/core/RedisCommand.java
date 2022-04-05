@@ -240,7 +240,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        if (CoreConfiguration.allowRedis) {
+        if (!CoreConfiguration.allowRedis) {
             Debug.echoError(scriptEntry, "Redis disabled by config!");
             return;
         }

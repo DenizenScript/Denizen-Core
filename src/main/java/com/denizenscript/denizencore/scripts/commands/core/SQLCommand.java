@@ -180,7 +180,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        if (CoreConfiguration.allowSQL) {
+        if (!CoreConfiguration.allowSQL) {
             Debug.echoError(scriptEntry, "SQL disabled by config!");
             return;
         }
