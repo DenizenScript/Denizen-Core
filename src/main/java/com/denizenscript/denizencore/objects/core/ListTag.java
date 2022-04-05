@@ -33,6 +33,9 @@ public class ListTag implements List<String>, ObjectTag {
     // @prefix li
     // @base ElementTag
     // @ExampleTagBase list[one|two]
+    // @ExampleForReturns
+    // - foreach %VALUE% as:entry:
+    //     - narrate "found <[entry]>"
     // @format
     // The identity format for ListTags is each item, one after the other, in order, separated by a pipe '|' symbol.
     // For example, for a list of 'taco', 'potatoes', and 'cheese', it would be 'li@taco|potatoes|cheese|'

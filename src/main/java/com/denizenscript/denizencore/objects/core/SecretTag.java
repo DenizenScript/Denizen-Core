@@ -40,6 +40,8 @@ public class SecretTag implements ObjectTag {
     // @base ElementTag
     // @ExampleTagBase secret[my_secret_key]
     // @ExampleValues <secret[my_secret_key]>
+    // @ExampleForReturns
+    // - webget %VALUE% "post:Message to secret address!"
     // @format
     // The identity format for secrets is simply the secret key (as defined by the file 'secrets.secret' in the Denizen folder).
     //

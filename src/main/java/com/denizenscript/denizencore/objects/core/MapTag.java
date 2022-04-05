@@ -22,6 +22,9 @@ public class MapTag implements ObjectTag {
     // @prefix map
     // @base ElementTag
     // @ExampleTagBase map[key=value]
+    // @ExampleForReturns
+    // - foreach %VALUE% key:key as:val:
+    //     - narrate "<[key]> is set as <[val]>"
     // @format
     // The identity format for MapTags is a replica of property syntax - square brackets surrounded a semi-colon separated list of key=value pairs.
     // For example, a map of "taco" to "food", "chicken" to "animal", and "bob" to "person" would be "map@[taco=food;chicken=animal;bob=person]"

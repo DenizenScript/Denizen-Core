@@ -27,6 +27,8 @@ public class ElementTag implements ObjectTag {
     // @prefix el
     // @base None
     // @ExampleTagBase element[hello_world]
+    // @ExampleForReturns
+    // - narrate %VALUE%
     // @format
     // Just the plain text of the element value, no prefix or formatting.
     //
