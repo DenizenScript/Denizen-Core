@@ -59,7 +59,7 @@ public class WebServerCommand extends AbstractCommand {
     // This command must be enabled in the Denizen/config.yml before it can be used.
     //
     // @Tags
-    // None.
+    // None
     //
     // @Usage
     // Use to start a webserver on port 8081.

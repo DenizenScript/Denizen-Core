@@ -161,7 +161,6 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
                     return true;
                 }
                 for (Map.Entry<StringHolder, ObjectTag> header : map.map.entrySet()) {
-                    Debug.log("set header " + header.getKey().str + " to val " + header.getValue().toString());
                     exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
                 }
                 return true;
