@@ -22,17 +22,18 @@ public class WebServerCommand extends AbstractCommand {
 
     public WebServerCommand() {
         setName("webserver");
-        setSyntax("webserver [start/stop] (port:<#>)");
-        setRequiredArguments(1, 2);
+        setSyntax("webserver [start/stop] (port:<#>) (ignore_errors)");
+        setRequiredArguments(1, 3);
         isProcedural = false;
         setPrefixesHandled("port");
+        setBooleansHandled("ignore_errors");
     }
 
     // <--[command]
     // @Name WebServer
-    // @Syntax webserver [start/stop] (port:<#>)
+    // @Syntax webserver [start/stop] (port:<#>) (ignore_errors)
     // @Required 1
-    // @Maximum 2
+    // @Maximum 3
     // @Short Creates a local HTTP web-server within your minecraft server.
     // @Group core
     //
@@ -45,6 +46,8 @@ public class WebServerCommand extends AbstractCommand {
     // If your webserver is meant for public connection, it is very strongly recommended you put the webserver behind a reverse-proxy server, such as Nginx or Apache2.
     //
     // The port, if unspecified, defaults to 8080. You should usually manually specify a port.
+    //
+    // The "ignore_errors" option can be enabled to silence basic connection errors that might otherwise spam your console logs.
     //
     // You can only exactly one webserver per port.
     // If you use multiple ports, you can thus have multiple webservers.
@@ -76,6 +79,8 @@ public class WebServerCommand extends AbstractCommand {
         public int port;
 
         public HttpServer server;
+
+        public boolean ignoreErrors;
 
         public void handleRequest(HttpExchange exchange) {
             WebserverWebRequestScriptEvent.fire(this, exchange);
@@ -125,8 +130,9 @@ public class WebServerCommand extends AbstractCommand {
         }
         ElementTag port = scriptEntry.argForPrefixAsElement("port", "8080");
         ElementTag mode = scriptEntry.getElement("mode");
+        boolean ignoreErrors = scriptEntry.argAsBoolean("ignore_errors");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), mode, port);
+            Debug.report(scriptEntry, getName(), mode, port, db("ignore_errors", ignoreErrors));
         }
         if (!port.isInt()) {
             throw new InvalidArgumentsRuntimeException("Invalid port, not a number");
@@ -141,6 +147,7 @@ public class WebServerCommand extends AbstractCommand {
                 }
                 instance = new WebserverInstance();
                 instance.port = portNum;
+                instance.ignoreErrors = ignoreErrors;
                 try {
                     instance.start();
                     Debug.echoDebug(scriptEntry, "Webserver at port " + portNum + " started.");

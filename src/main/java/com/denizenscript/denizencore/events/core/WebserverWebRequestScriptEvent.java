@@ -303,9 +303,11 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
                 os.close();
             }
             catch (Throwable ex) {
-                DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                    Debug.echoError(ex);
-                }, 0));
+                if (!server.ignoreErrors || !(ex instanceof IOException)) {
+                    DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        Debug.echoError(ex);
+                    }, 0));
+                }
             }
         }, 0)));
     }
