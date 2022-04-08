@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.events;
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -13,6 +14,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntrySet;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
@@ -58,6 +60,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         registerScriptEvent(ShutdownScriptEvent.class);
         registerScriptEvent(SystemTimeScriptEvent.class);
         registerScriptEvent(TickScriptEvent.class);
+        registerScriptEvent(WebserverWebRequestScriptEvent.class);
     }
 
     /**
@@ -745,6 +748,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             Debug.echoError("Handling script " + path.container.getName() + " path:" + path.event + ":::");
             Debug.echoError(e);
         }
+    }
+
+    public TagContext getTagContext(ScriptPath path) {
+        TagContext context = getScriptEntryData().getTagContext().clone();
+        context.script = new ScriptTag(path.container);
+        context.debug = path.container.shouldDebug();
+        return context;
     }
 
     // <--[language]

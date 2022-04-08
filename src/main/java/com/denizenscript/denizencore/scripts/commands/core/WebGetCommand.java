@@ -151,8 +151,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     @Override
     public void execute(final ScriptEntry scriptEntry) {
-        if (CoreConfiguration.allowWebget) {
-            Debug.echoError(scriptEntry, "WebGet disabled by config!");
+        if (!CoreConfiguration.allowWebget) {
+            Debug.echoError(scriptEntry, "WebGet disabled in config.yml!");
             return;
         }
         ElementTag originalUrl = scriptEntry.getElement("url");

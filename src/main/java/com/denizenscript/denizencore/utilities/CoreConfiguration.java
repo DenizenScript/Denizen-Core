@@ -10,7 +10,7 @@ public class CoreConfiguration {
 
     public static boolean debugVerbose = false, debugLoadingInfo = false;
 
-    public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowLog = false, allowFileCopy = false;
+    public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowLog = false, allowFileCopy = false, allowWebserver = false;
 
     public static boolean allowConsoleRedirection = false, allowRestrictedActions = false, allowStrangeFileSaves = false;
 
@@ -27,4 +27,6 @@ public class CoreConfiguration {
     public static CharsetDecoder scriptEncoding;
 
     public static boolean skipAllFlagCleanings = false;
+
+    public static String webserverRoot = "webroot/";
 }

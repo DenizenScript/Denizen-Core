@@ -100,6 +100,7 @@ public abstract class CommandRegistry {
         registerCommand(SQLCommand.class);
         registerCommand(RedisCommand.class);
         registerCommand(WebGetCommand.class);
+        registerCommand(WebServerCommand.class);
         // file
         registerCommand(FileCopyCommand.class);
         registerCommand(LogCommand.class);
