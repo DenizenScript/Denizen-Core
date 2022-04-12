@@ -3,10 +3,10 @@ package com.denizenscript.denizencore.events.core;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.BinaryTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
-import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.commands.core.WebServerCommand;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
@@ -48,13 +48,15 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
     // <context.raw_query> returns the raw query input (if no query, returns null).
     // <context.raw_user_info> returns the raw user info input (if any) (this is a historical HTTP system that allows sending username/password over query).
     // <context.headers> returns a MapTag of all input headers, where the key is the header name and the value is a ListTag of header values for that name.
-    // <context.body> returns the content body that was sent, if any. Particularly for POST requests.
+    // <context.body> returns the text content of the body that was sent, if any. Particularly for POST requests.
+    // <context.body_binary> returns the raw binary content body that was sent, if any. Particularly for POST requests.
     // <context.has_response> returns true if a response body determination (raw_text_content, file, or cached_file) was applied, or false if not.
     //
     // @Determine
     // "CODE:" + Element(Number), to set a standard web response code, such as 'code:200' for 'OK', or 'code:404' for 'File Not Found'
     // "HEADERS": + MapTag to set a map of headers, where map keys are the header name and map values are the text of the value, for example headers:[Content-Type=text/html] ... note that header are sometimes case-sensitive.
-    // "RAW_TEXT_CONTENT:" + ElementTag to set a raw text content body in response. You may determine only one response - raw text, a file, or a cached file. You cannot use multiple.
+    // "RAW_TEXT_CONTENT:" + ElementTag to set a raw text content body in response. You may determine only one response - raw text, raw binary, a file, or a cached file. You cannot use multiple.
+    // "RAW_BINARY_CONTENT:" + BinaryTag to set a raw binary content body in response.
     // "FILE:" + ElementTag to set a path to a file to send in response. File path must be within the web-root path configured in Denizen/config.yml. Files will be read async.
     // "CACHED_FILE:" + ElementTag to set a path to a file to send in response. The content of the file will be cached in RAM until the server restarts. This is useful for files that definitely won't change. First file read will be sync, all others are instant.
     //
@@ -94,17 +96,44 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
     public HttpExchange exchange;
     public WebResponse response;
 
+    public byte[] getBody() {
+        if (response.inputBody != null) {
+            return response.inputBody;
+        }
+        try {
+            InputStream stream = exchange.getRequestBody();
+            if (stream == null) {
+                return null;
+            }
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = stream.read(buffer, 0, 1024)) != -1) {
+                bytesOut.write(buffer, 0, len);
+            }
+            response.inputBody = bytesOut.toByteArray();
+            bytesOut.close();
+            return response.inputBody;
+        }
+        catch (IOException ex) {
+            Debug.echoError(ex);
+            return null;
+        }
+    }
+
     public static class WebResponse {
 
         public int code = 200;
 
-        public String rawContent;
+        public byte[] rawContent;
 
         public File fileResponse;
 
         public byte[] cachedFile;
 
         public boolean hasResponse = false;
+
+        public byte[] inputBody;
     }
 
     public static HashMap<String, byte[]> responseFileCache = new HashMap<>();
@@ -167,7 +196,12 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             }
             else if (determinationLow.startsWith("raw_text_content:") && !response.hasResponse) {
                 response.hasResponse = true;
-                response.rawContent = determination.substring("raw_text_content:".length());
+                response.rawContent = determination.substring("raw_text_content:".length()).getBytes(StandardCharsets.UTF_8);
+                return true;
+            }
+            else if (determinationLow.startsWith("raw_binary_content:") && !response.hasResponse) {
+                response.hasResponse = true;
+                response.rawContent = BinaryTag.valueOf(determination.substring("raw_binary_content:".length()), getTagContext(path)).data;
                 return true;
             }
             else if ((determinationLow.startsWith("file:") || determinationLow.startsWith("cached_file:")) && !response.hasResponse) {
@@ -254,19 +288,10 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             }
             case "has_response": return new ElementTag(response.hasResponse);
             case "body": {
-                try {
-                    InputStream stream = exchange.getRequestBody();
-                    if (stream == null) {
-                        return null;
-                    }
-                    ElementTag result = new ElementTag(ScriptHelper.convertStreamToString(stream, true));
-                    stream.close();
-                    return result;
-                }
-                catch (IOException ex) {
-                    Debug.echoError(ex);
-                    return null;
-                }
+                return new ElementTag(new String(getBody(), StandardCharsets.UTF_8));
+            }
+            case "body_binary": {
+                return new BinaryTag(getBody());
             }
         }
         return super.getContext(name);
@@ -286,7 +311,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             try {
                 byte[] body;
                 if (response.rawContent != null) {
-                    body = response.rawContent.getBytes(StandardCharsets.UTF_8);
+                    body = response.rawContent;
                 }
                 else if (response.cachedFile != null) {
                     body = response.cachedFile;

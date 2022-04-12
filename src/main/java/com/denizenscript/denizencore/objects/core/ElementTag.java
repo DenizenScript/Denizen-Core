@@ -2427,7 +2427,7 @@ public class ElementTag implements ObjectTag {
         // @group conversion
         // @description
         // Converts base64 encoded text to its raw binary form.
-        // See also <@link BinaryTag.to_base64>
+        // See also <@link tag BinaryTag.to_base64>
         // @example
         // - define data <binary[48454c4c4f20574f524c44]>
         // - define encoded <[data].to_base64>
@@ -2445,7 +2445,7 @@ public class ElementTag implements ObjectTag {
         // @group conversion
         // @description
         // Converts the text to a binary representation encoded with the standard UTF-8 encoding.
-        // See also <@link BinaryTag.utf8_decode>
+        // See also <@link tag BinaryTag.utf8_decode>
         // @example
         // # narrates "48454c4c4f20574f524c44"
         // - narrate "<element[HELLO WORLD].utf8_encode.to_hex>"
@@ -2461,7 +2461,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the text to a binary representation encoded using the specified encoding method.
         // Input can be for example "utf-8" or "iso-8859-1".
-        // See also <@link BinaryTag.text_decode>
+        // See also <@link tag BinaryTag.text_decode>
         // @example
         // # narrates "48454c4c4f20574f524c44"
         // - narrate "<element[HELLO WORLD].text_encode[us-ascii].to_hex>"

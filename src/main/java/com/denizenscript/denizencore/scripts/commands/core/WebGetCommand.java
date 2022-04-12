@@ -68,7 +68,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     //
     // @Tags
     // <entry[saveName].failed> returns whether the webget failed. A failure occurs when the status is not 2XX/3XX or webget failed to connect.
-    // <entry[saveName].result> returns the result of the webget. This is null only if webget failed to connect to the url.
+    // <entry[saveName].result> returns the text of the result of the webget. This is null only if webget failed to connect to the url.
+    // <entry[saveName].result_binary> returns the raw binary data of the result of the webget. This is null only if webget failed to connect to the url.
     // <entry[saveName].result_headers> returns a MapTag of the headers returned from the webserver. Every value in the result is a list.
     // <entry[saveName].status> returns the HTTP status code of the webget. This is null only if webget failed to connect to the url.
     // <entry[saveName].time_ran> returns a DurationTag indicating how long the web connection processing took.
@@ -203,22 +204,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         thr.start();
     }
 
-    public void buildResult(BufferedReader buffIn, StringBuilder sb) {
-        // Probably a better way to do this bit.
-        while (true) {
-            try {
-                String temp = buffIn.readLine();
-                if (temp == null) {
-                    break;
-                }
-                sb.append(temp).append("\n");
-            }
-            catch (Exception ex) {
-                break;
-            }
-        }
-    }
-
     public void writeToFile(InputStream in, ElementTag saveFile) throws Exception {
         File file = new File(saveFile.asString());
         if (!DenizenCore.implementation.canWriteToFile(file)) {
@@ -282,16 +267,23 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 uc.getOutputStream().write(data.asString().getBytes(StandardCharsets.UTF_8));
             }
             final int status = uc.getResponseCode();
-            final StringBuilder sb = new StringBuilder();
+            byte[] result = null;
             if (saveFile != null) {
                 writeToFile(uc.getInputStream(), saveFile);
             }
             else {
-                buffIn = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-                buildResult(buffIn, sb);
-                buffIn.close();
-                buffIn = null;
+                InputStream stream = uc.getInputStream();
+                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = stream.read(buffer, 0, 1024)) != -1) {
+                    bytesOut.write(buffer, 0, len);
+                }
+                result = bytesOut.toByteArray();
+                bytesOut.close();
+                stream.close();
             }
+            final byte[] outResult = result;
             MapTag resultHeaders = new MapTag();
             for (Map.Entry<String, List<String>> header : uc.getHeaderFields().entrySet()) {
                 String key = header.getKey();
@@ -307,7 +299,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     scriptEntry.addObject("status", new ElementTag(status));
                     scriptEntry.addObject("failed", new ElementTag(status >= 200 && status < 400 ? "false" : "true"));
                     if (saveFile == null) {
-                        scriptEntry.addObject("result", new ElementTag(sb.toString()));
+                        if (outResult != null) {
+                            scriptEntry.addObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
+                            scriptEntry.addObject("result_binary", new BinaryTag(outResult));
+                        }
                         scriptEntry.addObject("result_headers", resultHeaders);
                     }
                     scriptEntry.addObject("time_ran", new DurationTag((timeDone - timeStart) / 1000.0));
@@ -326,7 +321,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
             }
             int tempStatus = -1;
-            final StringBuilder sb = new StringBuilder();
+            byte[] result = null;
             if (uc != null) {
                 try {
                     tempStatus = uc.getResponseCode();
@@ -336,10 +331,15 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                             writeToFile(errorStream, saveFile);
                         }
                         else {
-                            buffIn = new BufferedReader(new InputStreamReader(errorStream));
-                            buildResult(buffIn, sb);
-                            buffIn.close();
-                            buffIn = null;
+                            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            while ((len = errorStream.read(buffer, 0, 1024)) != -1) {
+                                bytesOut.write(buffer, 0, len);
+                            }
+                            result = bytesOut.toByteArray();
+                            bytesOut.close();
+                            errorStream.close();
                         }
                     }
                 }
@@ -362,6 +362,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     }
                 }
             }
+            final byte[] outResult = result;
             final int status = tempStatus;
             DenizenCore.schedule(new Schedulable() {
                 @Override
@@ -370,7 +371,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     if (status != -1) {
                         scriptEntry.addObject("status", new ElementTag(status));
                         if (saveFile == null) {
-                            scriptEntry.addObject("result", new ElementTag(sb.toString()));
+                            if (outResult != null) {
+                                scriptEntry.addObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
+                                scriptEntry.addObject("result_binary", new BinaryTag(outResult));
+                            }
                         }
                     }
                     scriptEntry.setFinished(true);

@@ -182,7 +182,7 @@ public class BinaryTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns a base64 encoding of the binary data.
-        // See also <@link ElementTag.base64_to_binary>
+        // See also <@link tag ElementTag.base64_to_binary>
         // @example
         // - define data <binary[48454c4c4f20574f524c44]>
         // - define encoded <[data].to_base64>
@@ -199,7 +199,7 @@ public class BinaryTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the raw text represented by this binary data, decoding using the standard UTF-8 encoding.
-        // See also <@link ElementTag.utf8_encode>
+        // See also <@link tag ElementTag.utf8_encode>
         // @example
         // # narrates "HELLO WORLD"
         // - narrate <binary[48454c4c4f20574f524c44].utf8_decode>
@@ -214,7 +214,7 @@ public class BinaryTag implements ObjectTag {
         // @description
         // Returns the raw text represented by this binary data, decoding using the specified encoding method.
         // Input can be for example "utf-8" or "iso-8859-1".
-        // See also <@link ElementTag.text_encode>
+        // See also <@link tag ElementTag.text_encode>
         // @example
         // # narrates "HELLO WORLD"
         // - narrate <binary[48454c4c4f20574f524c44].text_decode[us-ascii]>

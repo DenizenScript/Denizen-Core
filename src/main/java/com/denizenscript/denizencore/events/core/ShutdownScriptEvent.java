@@ -15,7 +15,7 @@ public class ShutdownScriptEvent extends ScriptEvent {
     //
     // @Triggers when the server is shutting down.
     //
-    // @Examples
+    // @Example
     // # This *might* show a message in logs during shutdown. No guarantee.
     // on shutdown:
     // - announce to_console "Last message in the logs from Denizen probably!"
