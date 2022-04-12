@@ -1,12 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.scripts.commands.core.*;
-import com.denizenscript.denizencore.scripts.commands.file.LogCommand;
+import com.denizenscript.denizencore.scripts.commands.file.*;
 import com.denizenscript.denizencore.scripts.commands.queue.*;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.scripts.commands.file.FileCopyCommand;
-import com.denizenscript.denizencore.scripts.commands.file.YamlCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +101,8 @@ public abstract class CommandRegistry {
         registerCommand(WebServerCommand.class);
         // file
         registerCommand(FileCopyCommand.class);
+        registerCommand(FileReadCommand.class);
+        registerCommand(FileWriteCommand.class);
         registerCommand(LogCommand.class);
         registerCommand(YamlCommand.class);
         // queue
