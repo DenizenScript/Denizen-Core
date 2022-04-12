@@ -43,22 +43,6 @@ public class DurationTag implements ObjectTag {
     //
     // -->
 
-    /////////////////////
-    //   STATIC METHODS AND FIELDS
-    /////////////////
-
-    @Deprecated
-    final public static DurationTag ZERO = new DurationTag(0);
-
-    /////////////////////
-    //   OBJECT FETCHER
-    /////////////////
-
-    @Deprecated
-    public static DurationTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
     @Fetchable("d")
     public static DurationTag valueOf(String string, TagContext context) {
         if (string == null) {
@@ -162,10 +146,6 @@ public class DurationTag implements ObjectTag {
             return false;
         }
     }
-
-    /////////////////////
-    //   CONSTRUCTORS
-    /////////////////
 
     /**
      * Creates a duration object when given number of seconds.

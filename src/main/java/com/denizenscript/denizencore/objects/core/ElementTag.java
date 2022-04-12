@@ -7,11 +7,13 @@ import com.denizenscript.denizencore.tags.core.EscapeTagBase;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -2347,6 +2349,7 @@ public class ElementTag implements ObjectTag {
         // Encodes base-10 integer number to hexadecimal (base-16) format.
         // For example input of "15" will return "F".
         // See also <@link tag ElementTag.hex_to_number>
+        // Consider instead <@link tag ElementTag.integer_to_binary>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "number_to_hex", (attribute, object) -> {
             if (!object.isInt()) {
@@ -2364,6 +2367,7 @@ public class ElementTag implements ObjectTag {
         // Encodes base-16 hexadecimal value to an integer number.
         // For example input of "F" will return "15".
         // See also <@link tag ElementTag.number_to_hex>
+        // Consider instead <@link tag BinaryTag.decode_integer>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "hex_to_number", (attribute, object) -> {
             if (!ArgumentHelper.HEX_MATCHER.isOnlyMatches(object.element)) {
@@ -2374,13 +2378,31 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.integer_to_binary>
+        // @returns BinaryTag
+        // @group conversion
+        // @description
+        // Returns a BinaryTag holding 8 bytes of this integer number converted to binary format using big-endian 64-bit integer twos-complement encoding.
+        // @example
+        // # Narrates '00000000000000ff'
+        // - narrate <element[255].to_binary>
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "integer_to_binary", (attribute, object) -> {
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            buffer.putLong(object.asLong());
+            return new BinaryTag(buffer.array());
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.base64_encode>
         // @returns ElementTag
         // @group conversion
+        // @deprecated use BinaryTag.to_base64
         // @description
-        // Encodes the element using Base64 encoding.
+        // Deprecated in favor of <@link tag BinaryTag.to_base64>, consider also <@link tag ElementTag.utf8_encode>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_encode", (attribute, object) -> {
+            Deprecations.prebinaryTags.warn(attribute.context);
             String encoded = Base64.getEncoder().encodeToString(object.element.getBytes(StandardCharsets.UTF_8));
             return new ElementTag(encoded);
         });
@@ -2389,22 +2411,84 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.base64_decode>
         // @returns ElementTag
         // @group conversion
+        // @deprecated use ElementTag.base64_to_binary
         // @description
-        // Decodes the element using Base64 encoding. Must be valid Base64 input.
+        // Deprecated in favor of <@link tag ElementTag.base64_to_binary>, consider also <@link tag BinaryTag.utf8_decode>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_decode", (attribute, object) -> {
+            Deprecations.prebinaryTags.warn(attribute.context);
             String decoded = new String(Base64.getDecoder().decode(object.element));
             return new ElementTag(decoded);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.base64_to_binary>
+        // @returns BinaryTag
+        // @group conversion
+        // @description
+        // Converts base64 encoded text to its raw binary form.
+        // See also <@link BinaryTag.to_base64>
+        // @example
+        // - define data <binary[48454c4c4f20574f524c44]>
+        // - define encoded <[data].to_base64>
+        // - define decoded <[encoded].base64_to_binary>
+        // - if <[decoded].to_hex> == <[data].to_hex>:
+        //     - narrate "Everything works!"
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "base64_to_binary", (attribute, object) -> {
+            return new BinaryTag(Base64.getDecoder().decode(object.element));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.utf8_encode>
+        // @returns BinaryTag
+        // @group conversion
+        // @description
+        // Converts the text to a binary representation encoded with the standard UTF-8 encoding.
+        // See also <@link BinaryTag.utf8_decode>
+        // @example
+        // # narrates "48454c4c4f20574f524c44"
+        // - narrate "<element[HELLO WORLD].utf8_encode.to_hex>"
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "utf8_encode", (attribute, object) -> {
+            return new BinaryTag(object.element.getBytes(StandardCharsets.UTF_8));
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.text_encode[<encoding>]>
+        // @returns BinaryTag
+        // @group conversion
+        // @description
+        // Converts the text to a binary representation encoded using the specified encoding method.
+        // Input can be for example "utf-8" or "iso-8859-1".
+        // See also <@link BinaryTag.text_decode>
+        // @example
+        // # narrates "48454c4c4f20574f524c44"
+        // - narrate "<element[HELLO WORLD].text_encode[us-ascii].to_hex>"
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "text_encode", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            try {
+                return new BinaryTag(object.element.getBytes(attribute.getParam()));
+            }
+            catch (UnsupportedEncodingException ex) {
+                attribute.echoError("Invalid encoding '" + attribute.getParam() + "'");
+                return null;
+            }
         });
 
         // <--[tag]
         // @attribute <ElementTag.hex_encode>
         // @returns ElementTag
         // @group conversion
+        // @deprecated use utf8_encode
         // @description
-        // Encodes the element using hexadecimal encoding.
+        // Deprecated in favor of <@link tag ElementTag.utf8_encode> or <@link tag ElementTag.text_encode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "hex_encode", (attribute, object) -> {
+            Deprecations.prebinaryTags.warn(attribute.context);
             String encoded = CoreUtilities.hexEncode(object.element.getBytes());
             return new ElementTag(encoded);
         });
@@ -2413,10 +2497,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.hex_decode>
         // @returns ElementTag
         // @group conversion
+        // @deprecated use BinaryTag.utf8_decode
         // @description
-        // Decodes the element using hexadecimal encoding. Must be valid hexadecimal input.
+        // Deprecated in favor of <@link tag BinaryTag.utf8_decode> or <@link tag BinaryTag.text_decode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "hex_decode", (attribute, object) -> {
+            Deprecations.prebinaryTags.warn(attribute.context);
             String decoded = new String(CoreUtilities.hexDecode(object.element));
             return new ElementTag(decoded);
         });

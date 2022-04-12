@@ -327,6 +327,9 @@ public class Deprecations {
     // Added 2022/03/30, deprecate officially by 2024.
     public static Warning oldNonSecretTagPassword = new FutureWarning("Passwords and tokens used to be sent through tags or passwordfiles, it is now recommended instead that you use the 'secrets.secret' file with SecretTag. This includes the 'SQL connect' command.");
 
+    // Added 2022/04/11, deprecate officially by 2024.
+    public static Warning prebinaryTags = new FutureWarning("Tags and tools related to binary processing that predate the BinaryTag feature are deprecated in favor of using BinaryTag. This includes 'ElementTag.base64_encode/decode', 'hex_encode/decode', ... refer to meta-docs for specifics");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // In Bukkit impl, Added on 2019/10/13

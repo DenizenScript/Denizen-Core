@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -565,6 +566,16 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("event_stats_data")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue.getStatsRawData(), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.default_encoding>
+        // @returns ElementTag
+        // @description
+        // Returns the name of the default system text encoding charset, such as "UTF-8".
+        // -->
+        else if (attribute.startsWith("default_encoding")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Charset.defaultCharset().name()), attribute.fulfill(1)));
         }
     }
 

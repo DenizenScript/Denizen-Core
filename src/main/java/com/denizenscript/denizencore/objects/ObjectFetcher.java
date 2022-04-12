@@ -75,6 +75,7 @@ public class ObjectFetcher {
 
     public static void registerCoreObjects() {
         // Initialize the ObjectFetcher
+        registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor); // binary@
         registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
         registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
         registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@

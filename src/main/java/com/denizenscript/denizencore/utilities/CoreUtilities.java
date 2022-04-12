@@ -329,6 +329,7 @@ public class CoreUtilities {
         registerTypeAsTrueAlways(ListTag.class);
         registerTypeAsNoOtherTypeCode(CustomObjectTag.class, "custom");
         registerTypeAsNoOtherTypeCode(DurationTag.class, "d");
+        registerTypeAsNoOtherTypeCode(BinaryTag.class, "binary");
         registerTypeAsNoOtherTypeCode(MapTag.class, "map");
         registerTypeAsNoOtherTypeCode(QueueTag.class, "q");
         registerTypeAsNoOtherTypeCode(ScriptTag.class, "s");
