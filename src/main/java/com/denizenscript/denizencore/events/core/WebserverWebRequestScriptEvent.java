@@ -301,6 +301,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
                 OutputStream os = exchange.getResponseBody();
                 os.write(body);
                 os.close();
+                exchange.close();
             }
             catch (Throwable ex) {
                 if (!server.ignoreErrors || !(ex instanceof IOException)) {
