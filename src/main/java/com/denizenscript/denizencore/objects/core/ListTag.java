@@ -626,10 +626,10 @@ public class ListTag implements List<String>, ObjectTag {
     @Override
     public String debuggable() {
         if (isEmpty()) {
-            return "li@";
+            return "<LG>li@ (Size <GR>0<LG>)";
         }
         StringBuilder debugText = new StringBuilder();
-        debugText.append("<LG>li@<Y> ");
+        debugText.append("<LG>li@ (Size <GR>").append(size()).append("<LG>): <Y>");
         for (ObjectTag item : objectForms) {
             debugText.append(item.debuggable()).append(" <LG>|<Y> ");
         }

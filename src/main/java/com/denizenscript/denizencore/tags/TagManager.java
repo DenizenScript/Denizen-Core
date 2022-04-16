@@ -218,17 +218,17 @@ public class TagManager {
             if (!event.hasAlternative()) {
                 Attribute attribute = event.getAttributes();
                 if (attribute.fulfilled < attribute.attributes.length) {
-                    Debug.echoError(event.getScriptEntry(), "Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
+                    Debug.echoError(context, "Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
                     if (attribute.lastValid != null) {
-                        Debug.echoError(event.getScriptEntry(), "The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
+                        Debug.echoError(context, "The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
                     }
                     if (attribute.seemingSuccesses.size() > 0) {
                         String almost = attribute.seemingSuccesses.get(attribute.seemingSuccesses.size() - 1);
                         if (attribute.hasContextFailed) {
-                            Debug.echoError(event.getScriptEntry(), "Almost matched but failed (missing [context] parameter?): " + almost);
+                            Debug.echoError(context, "Almost matched but failed (missing [context] parameter?): " + almost);
                         }
                         else {
-                            Debug.echoError(event.getScriptEntry(), "Almost matched but failed (possibly bad input?): " + almost);
+                            Debug.echoError(context, "Almost matched but failed (possibly bad input?): " + almost);
                         }
                     }
                 }

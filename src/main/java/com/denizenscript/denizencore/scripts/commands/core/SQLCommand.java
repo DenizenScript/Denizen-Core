@@ -93,12 +93,12 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Use to query an SQL server.
     // - ~sql id:name "query:SELECT id,column_name1,column_name2 FROM things;" save:saveName
-    // - narrate <entry[saveName].result>
+    // - narrate <entry[saveName].result_list>
     //
     // @Usage
     // Use to query an SQL server.
     // - ~sql id:name "query:SELECT id,column_name1,column_name2 FROM things WHERE id=3;" save:saveName2
-    // - narrate <entry[saveName2].result>
+    // - narrate <entry[saveName2].result_list>
     //
     // @Usage
     // Use to disconnect from an SQL server.

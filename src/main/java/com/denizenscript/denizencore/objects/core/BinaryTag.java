@@ -28,8 +28,7 @@ public class BinaryTag implements ObjectTag {
     // @ExampleTagBase binary[ff000010]
     // @ExampleValues ff0000,48454c4c4f20574f524c44
     // @ExampleForReturns
-    // # TODO
-    // - narrate %VALUE%
+    // - filewrite path:data/mypath.dat data:%VALUE%
     // @format
     // The identity format for BinaryTag is a hex encoding of the byte set, in order.
     // Each byte is encoding as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
