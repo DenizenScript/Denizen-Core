@@ -150,6 +150,7 @@ public class WebServerCommand extends AbstractCommand {
                 instance.ignoreErrors = ignoreErrors;
                 try {
                     instance.start();
+                    webservers.put(portNum, instance);
                     Debug.echoDebug(scriptEntry, "Webserver at port " + portNum + " started.");
                 }
                 catch (IOException ex) {
