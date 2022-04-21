@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.core.TimeTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.ArrayList;
@@ -86,6 +87,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         if (CoreConfiguration.skipAllFlagCleanings) {
             return;
         }
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("Verbose - savable tracker is beginning doTotalClean");
+        }
         ArrayList<StringHolder> toRemove = new ArrayList<>();
         for (Map.Entry<StringHolder, SaveOptimizedFlag> entry : map.entrySet()) {
             SaveOptimizedFlag val = entry.getValue();
@@ -119,6 +123,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
                     }
                 }
             }
+        }
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("Verbose - savable tracker has finished doTotalClean and will remove " + toRemove.size());
         }
         for (StringHolder str : toRemove) {
             map.remove(str);
@@ -216,11 +223,20 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     }
 
     public static SavableMapFlagTracker loadFlagFile(String filePath, boolean doClean) {
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("Verbose - loading flag file path at " + filePath);
+        }
         String content = CoreUtilities.journallingLoadFile(filePath + ".dat");
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("Verbose - loaded flag content for " + filePath + " as " + (content == null ? "null" : content.length()));
+        }
         if (content == null) {
             return new SavableMapFlagTracker();
         }
         SavableMapFlagTracker tracker = new SavableMapFlagTracker(content);
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("Verbose - loading flag file path at " + filePath + " to tracker of " + tracker.map.size() + " flags... doClean=" + doClean);
+        }
         if (doClean) {
             tracker.doTotalClean();
         }
