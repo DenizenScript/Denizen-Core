@@ -15,6 +15,7 @@ import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
@@ -46,9 +47,9 @@ public class DenizenCore {
     public static ScriptEngine scriptEngine;
 
     /**
-     * Time (System.currentTimeMillis) that the engine first loaded.
+     * Monotonic time (CoreUtilities.monotonicMillis) that the engine first loaded.
      */
-    public final static long startTime = System.currentTimeMillis();
+    public final static long startTime = CoreUtilities.monotonicMillis();
 
     /**
      * Server flags, for the 'flag' command and 'server.flag[...]' tags.
@@ -56,7 +57,7 @@ public class DenizenCore {
     public static SavableMapFlagTracker serverFlagMap;
 
     /**
-     * Last time (System.currentTimeMillis) that scripts wre reloaded.
+     * Last monotonic time (CoreUtilities.monotonicMillis) that scripts wre reloaded.
      */
     public static long lastReloadTime;
 
@@ -80,6 +81,12 @@ public class DenizenCore {
      * Used to avoid multiple checks in the same tick having different time values.
      */
     public static long currentTimeMillis = System.currentTimeMillis();
+
+    /**
+     * Current monotonic time (System.nanoTime), updated per-tick.
+     * Used to avoid multiple checks in the same tick having different time values.
+     */
+    public static long currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();
 
     /**
      * Duration of time, in milliseconds, since the server started.
@@ -128,6 +135,7 @@ public class DenizenCore {
      */
     public static void init(DenizenImplementation implementation) {
         currentTimeMillis = System.currentTimeMillis();
+        currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();
         DenizenCore.implementation = implementation;
         MAIN_THREAD = Thread.currentThread();
         Debug.log("Initializing Denizen Core v" + VERSION +
@@ -194,7 +202,7 @@ public class DenizenCore {
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
-            lastReloadTime = System.currentTimeMillis();
+            lastReloadTime = CoreUtilities.monotonicMillis();
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");
@@ -243,6 +251,7 @@ public class DenizenCore {
     public static void tick(int ms_elapsed) {
         serverTimeMillis += ms_elapsed;
         currentTimeMillis = System.currentTimeMillis();
+        currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();
         TickScriptEvent.instance.ticks++;
         if (TickScriptEvent.instance.enabled) {
             TickScriptEvent.instance.fire();

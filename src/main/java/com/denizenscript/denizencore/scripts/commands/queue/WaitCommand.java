@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -69,12 +70,12 @@ public class WaitCommand extends AbstractCommand {
         public long systemTimeEnd;
 
         public SystemTimeDelayTracker(long millis) {
-            systemTimeEnd = System.currentTimeMillis() + millis;
+            systemTimeEnd = CoreUtilities.monotonicMillis() + millis;
         }
 
         @Override
         public boolean isDelayed() {
-            return systemTimeEnd > System.currentTimeMillis();
+            return systemTimeEnd > CoreUtilities.monotonicMillis();
         }
     }
 

@@ -898,4 +898,12 @@ public class CoreUtilities {
             return ListTag.valueOf(raw, context).objectForms;
         }
     }
+
+    public static long monotonicMillis() {
+        return System.nanoTime() / 1000000;
+    }
+
+    public static long monotonicMillisToReal(long monotonic) {
+        return System.currentTimeMillis() + (monotonic - monotonicMillis());
+    }
 }

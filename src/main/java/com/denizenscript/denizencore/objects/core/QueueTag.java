@@ -181,11 +181,11 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the time this queue started as a duration.
         // -->
         tagProcessor.registerTag(TimeTag.class, "started_time", (attribute, object) -> {
-            return new TimeTag(object.getQueue().startTimeMilli);
+            return new TimeTag(CoreUtilities.monotonicMillisToReal(object.getQueue().startTimeMilli));
         });
         tagProcessor.registerTag(DurationTag.class, "start_time", (attribute, object) -> {
             Deprecations.timeTagRewrite.warn(attribute.context);
-            return new DurationTag(object.getQueue().startTimeMilli / 50);
+            return new DurationTag(CoreUtilities.monotonicMillisToReal(object.getQueue().startTimeMilli) / 50);
         });
 
         // <--[tag]

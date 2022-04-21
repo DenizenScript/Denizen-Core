@@ -323,7 +323,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (doBasicConfig) {
             script = script_entries.get(0).getScript();
             startTime = System.nanoTime();
-            startTimeMilli = System.currentTimeMillis();
+            startTimeMilli = CoreUtilities.monotonicMillis();
         }
         String name = getName();
         if (queueNeedsToDebug()) {

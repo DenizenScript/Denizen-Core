@@ -158,7 +158,7 @@ public class WhileCommand extends BracedCommand {
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
                 WhileData data = (WhileData) scriptEntry.getOwner().getData();
                 data.index++;
-                if (System.currentTimeMillis() - data.LastChecked < 50) {
+                if (CoreUtilities.monotonicMillis() - data.LastChecked < 50) {
                     data.instaTicks++;
                     if (data.instaTicks > CoreConfiguration.whileMaxLoops && CoreConfiguration.whileMaxLoops != 0) {
                         return;
@@ -167,7 +167,7 @@ public class WhileCommand extends BracedCommand {
                 else {
                     data.instaTicks = 0;
                 }
-                data.LastChecked = System.currentTimeMillis();
+                data.LastChecked = CoreUtilities.monotonicMillis();
                 boolean run = new IfCommand.ArgComparer().compare(new ArrayList(data.value), scriptEntry);
                 if (run) {
                     if (scriptEntry.dbCallShouldDebug()) {
@@ -207,7 +207,7 @@ public class WhileCommand extends BracedCommand {
             WhileData datum = new WhileData();
             datum.index = 1;
             datum.value = comparisons;
-            datum.LastChecked = System.currentTimeMillis();
+            datum.LastChecked = CoreUtilities.monotonicMillis();
             datum.instaTicks = 1;
             scriptEntry.setData(datum);
             ScriptEntry callbackEntry = new ScriptEntry("WHILE", new String[] {"\0CALLBACK"},

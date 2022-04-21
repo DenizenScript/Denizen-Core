@@ -435,6 +435,8 @@ public class UtilTagBase {
         // @returns TimeTag
         // @description
         // Returns the current system date/time.
+        // This value may be wrong if a server is currently heavily lagging, as it only updates once each tick.
+        // Use <@link tag server.current_time_millis> if you need sub-tick precision.
         // -->
         else if (attribute.startsWith("time_now")) {
             event.setReplacedObject(TimeTag.now().getObjectAttribute(attribute.fulfill(1)));

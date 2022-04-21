@@ -242,7 +242,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
-            long timeStart = System.currentTimeMillis();
+            long timeStart = CoreUtilities.monotonicMillis();
             URL url = new URL(urlText.replace(" ", "%20"));
             uc = (HttpURLConnection) url.openConnection();
             uc.setDoInput(true);
@@ -292,7 +292,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
                 resultHeaders.putObject(key, new ListTag(header.getValue()));
             }
-            final long timeDone = System.currentTimeMillis();
+            final long timeDone = CoreUtilities.monotonicMillis();
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {

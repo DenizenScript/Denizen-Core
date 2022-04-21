@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 public class SlowWarning extends Warning {
 
@@ -12,7 +13,7 @@ public class SlowWarning extends Warning {
 
     @Override
     public boolean testShouldWarn() {
-        long cTime = System.currentTimeMillis();
+        long cTime = CoreUtilities.monotonicMillis();
         if (lastWarning + CoreConfiguration.deprecationWarningRate > cTime) {
             return false;
         }

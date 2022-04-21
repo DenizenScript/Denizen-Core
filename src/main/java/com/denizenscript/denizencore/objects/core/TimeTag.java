@@ -48,7 +48,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     // -->
 
     public static TimeTag now() {
-        return new TimeTag(ZonedDateTime.now());
+        return new TimeTag(DenizenCore.currentTimeMillis, ZoneId.systemDefault());
     }
 
     @Fetchable("time")
