@@ -110,7 +110,9 @@ public class NoteManager {
                 if (obj != null) {
                     obj.makeUnique(note);
                     if (flagText != null && obj instanceof FlaggableObject) {
-                        ((FlaggableObject) getSavedObject(note)).reapplyTracker(new SavableMapFlagTracker(flagText));
+                        SavableMapFlagTracker tracker = new SavableMapFlagTracker(flagText);
+                        tracker.doTotalClean();
+                        ((FlaggableObject) getSavedObject(note)).reapplyTracker(tracker);
                     }
                 }
                 else {

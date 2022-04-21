@@ -80,7 +80,6 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             startOfLine = eol + 1;
             eol = input.indexOf('\n', eol + 1);
         }
-        doTotalClean();
     }
 
     public void doTotalClean() {
@@ -216,12 +215,16 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         return toOutput.toString();
     }
 
-    public static SavableMapFlagTracker loadFlagFile(String filePath) {
+    public static SavableMapFlagTracker loadFlagFile(String filePath, boolean doClean) {
         String content = CoreUtilities.journallingLoadFile(filePath + ".dat");
         if (content == null) {
             return new SavableMapFlagTracker();
         }
-        return new SavableMapFlagTracker(content);
+        SavableMapFlagTracker tracker = new SavableMapFlagTracker(content);
+        if (doClean) {
+            tracker.doTotalClean();
+        }
+        return tracker;
     }
 
     public void saveToFile(String filePath) {

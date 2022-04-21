@@ -149,7 +149,7 @@ public class DenizenCore {
      * Call to reload anything that was saved, especially after init.
      */
     public static void reloadSaves() {
-        serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(implementation.getDataFolder(), "server_flags").getPath());
+        serverFlagMap = SavableMapFlagTracker.loadFlagFile(new File(implementation.getDataFolder(), "server_flags").getPath(), true);
         SecretTag.load();
     }
 
