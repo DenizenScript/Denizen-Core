@@ -210,6 +210,8 @@ public class Deprecations {
     // In Bukkit impl, Added 2019/11/11, made slow 2021/11/2021.
     public static Warning entityLocationCursorOnTag = new SlowWarning("entity.location.cursor_on tags should be replaced by entity.cursor_on (be careful with the slight differences though).");
 
+    public static Warning playerHasPlayedBefore = new SlowWarning("The tag player.has_played_before has never returned any value other than 'true', and as such is a useless tag. Use flags to track whether a player has joined.");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
 
