@@ -677,6 +677,26 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <MapTag.reverse>
+        // @returns MapTag
+        // @description
+        // Returns a reversed copy of the map. That is, the last key becomes the first key and vice-versa, akin to <@link tag ListTag.reverse>
+        // Not to be confused with <@link tag MapTag.invert>
+        // @example
+        // # Narrates a map of '[c=1;b=2;a=1]'
+        // - narrate <map[a=1;b=2;c=3].reverse>
+        // -->
+        tagProcessor.registerStaticTag(MapTag.class, "reverse", (attribute, object) -> {
+            ArrayList<Map.Entry<StringHolder, ObjectTag>> entries = new ArrayList<>(object.map.entrySet());
+            Collections.reverse(entries);
+            MapTag result = new MapTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : entries) {
+                result.map.put(entry.getKey(), entry.getValue());
+            }
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.deep_exclude[<key>|...]>
         // @returns MapTag
         // @description
@@ -827,16 +847,22 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <MapTag.to_list>
+        // @attribute <MapTag.to_list[(<separator>)]>
         // @returns ListTag
         // @description
-        // Returns a list of all key/value pairs in this map, separated by the slash '/' symbol.
-        // Note that there is no slash ('/') escaping, so maps that have slashes in their keys will not be possible to convert back to a map.
+        // Returns a list of all key/value pairs in this map, separated by the specified separator symbol. If none is given, uses the slash '/' symbol.
+        // Note that there is no escaping of the separator, so maps that have the separator in their keys will not be possible to convert back to a map.
+        // Inverted by <@link tag ListTag.to_map>
+        // @example
+        // # Narrates "a/1", then "b/2", then "c/3"
+        // - foreach <map[a=1;b=2;c=3].to_list> as:slashed:
+        //     - narrate "<[slashed]>"
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
+            String separator = attribute.hasParam() ? attribute.getParam() : "/";
             ListTag result = new ListTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                result.add(entry.getKey().str + "/" + entry.getValue().identify());
+                result.add(entry.getKey().str + separator + entry.getValue().identify());
             }
             return result;
         });
