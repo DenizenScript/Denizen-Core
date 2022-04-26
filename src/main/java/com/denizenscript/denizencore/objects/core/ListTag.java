@@ -1419,22 +1419,18 @@ public class ListTag implements List<String>, ObjectTag {
                 if (indices.size() > 1) {
                     ListTag results = new ListTag();
                     for (String index : indices) {
-                        int ind = Integer.parseInt(index);
-                        if (ind > 0 && ind <= object.size()) {
-                            results.add(object.get(ind - 1));
+                        int ind = CoreUtilities.parseIndex(indices, index);
+                        if (ind >= 0) {
+                            results.add(object.get(ind));
                         }
                     }
                     return results;
                 }
                 if (indices.size() > 0) {
-                    int index = Integer.parseInt(indices.get(0)) - 1;
-                    if (index >= object.size()) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... list is only " + object.size() + " long.");
-                        return null;
-                    }
+                    int index = CoreUtilities.parseIndex(indices, indices.get(0));
                     if (index < 0) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... must be at least 1.");
-                        index = 0;
+                        attribute.echoError("Invalid list.get index '" + (index + 1));
+                        return null;
                     }
 
                     // <--[tag]
@@ -1447,18 +1443,10 @@ public class ListTag implements List<String>, ObjectTag {
                     // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                        int index2;
-                        if (CoreUtilities.equalsIgnoreCase(attribute.getContext(2), "last")) {
-                            index2 = object.size() - 1;
-                        }
-                        else {
-                            index2 = attribute.getIntContext(2) - 1;
-                        }
-                        if (index2 >= object.size()) {
-                            index2 = object.size() - 1;
-                        }
-                        if (index2 < 0) {
-                            index2 = 0;
+                        int index2 = CoreUtilities.parseIndex(indices, attribute.getContext(2));
+                        if (index2 < 0 || index2 < index) {
+                            attribute.echoError("Invalid list.get.to index '" + (index2 + 1));
+                            return null;
                         }
                         ListTag newList = new ListTag();
                         for (int i = index; i <= index2; i++) {

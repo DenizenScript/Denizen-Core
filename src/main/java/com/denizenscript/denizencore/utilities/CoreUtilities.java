@@ -709,6 +709,30 @@ public class CoreUtilities {
         return closest;
     }
 
+    public static int parseIndex(List list, String str) {
+        if(str.equalsIgnoreCase("last")) {
+            return list.size() - 1;
+        }
+        if(str.equalsIgnoreCase("first")) {
+            return 0;
+        }
+        int index;
+        try {
+            index = Integer.parseInt(str);
+        } catch (Exception ex) {
+            Debug.echoError("Invalid index '" + str + "': " + ex.getMessage());
+            return -1;
+        }
+        if(index == 0) {
+            Debug.echoError("0 is not a valid index");
+            return -1;
+        }
+        if (index < 0) {
+            return list.size() + Math.max(1 - list.size(), index) - 1;
+        }
+        return Math.min(list.size(), index) - 1;
+    }
+
     public static int indexOfAny(String str, int start, char... chars) {
         int earliest = -1;
         for (char c : chars) {
