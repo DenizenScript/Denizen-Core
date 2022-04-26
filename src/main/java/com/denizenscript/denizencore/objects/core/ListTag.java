@@ -926,6 +926,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Interprets a list of "key/value" pairs as a map, and returns the resulting MapTag.
         // Optionally specify the map separator symbol, by default '/'.
+        // Inverted by <@link tag MapTag.to_list>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "to_map", (attribute, object) -> {
             String symbol = "/";

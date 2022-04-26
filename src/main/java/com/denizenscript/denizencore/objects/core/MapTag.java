@@ -279,6 +279,9 @@ public class MapTag implements ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns the size of the map - that is, how many key/value pairs are within it.
+        // @example
+        // # Narrates '2'
+        // - narrate <map[a=1;b=2].size>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "size", (attribute, object) -> {
             return new ElementTag(object.map.size());
@@ -289,6 +292,16 @@ public class MapTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns "true" if the map is empty (contains no keys), otherwise "false".
+        // @example
+        // - if <map[a=1;b=2].is_empty>:
+        //     - narrate "This won't show"
+        // - else:
+        //     - narrate "This will show! The map has stuff in it!"
+        // @example
+        // - if <map.is_empty>:
+        //     - narrate "This will show! That map is empty!"
+        // - else:
+        //     - narrate "This won't show"
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_empty", (attribute, object) -> {
             return new ElementTag(object.map.isEmpty());
@@ -303,6 +316,12 @@ public class MapTag implements ObjectTag {
         // To sort by key, use <@link tag MapTag.get_subset> with list sort tags, like 'map.get_subset[map.keys.sort_by_value[...]]'.
         // This also lets you apply list filters or similar to the keyset.
         // To apply a '.parse' to the values, use <@link tag ListTag.map_with>, like 'map.keys.map_with[map.values.parse[...]]'
+        // @example
+        // # Narrates a map of [a=1;b=2;c=3]
+        // - narrate <map[c=3;a=1;b=2].sort_by_value>
+        // @example
+        // # Narrates a map of [c=3;b=2;a=1]
+        // - narrate <map[c=3;a=1;b=2].sort_by_value[mul[-1]]>
         // -->
         tagProcessor.registerTag(MapTag.class, "sort_by_value", (attribute, object) -> {
             ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
@@ -343,7 +362,9 @@ public class MapTag implements ObjectTag {
         // @description
         // Returns a copy of the map with all its contents parsed through the given input tag and only including ones that returned 'true'.
         // This requires a fully formed tag as input, making use of the 'filter_key' and 'filter_value' definition.
-        // For example: a map of [a=1;b=2;c=3;d=4;e=5] .filter_tag[<[filter_value].is[or_more].than[3]>] returns a list of [c=3;d=4;e=5].
+        // @example
+        // # Narrates a map of '[c=3;d=4;e=5]'
+        // - narrate <map[a=1;b=2;c=3;d=4;e=5].filter_tag[<[filter_value].is[or_more].than[3]>]>
         // -->
         tagProcessor.registerTag(MapTag.class, "filter_tag", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -373,7 +394,9 @@ public class MapTag implements ObjectTag {
         // @description
         // Returns a copy of the map with all its values updated through the given tag.
         // This requires a fully formed tag as input, making use of the 'parse_key' and 'parse_value' definition.
-        // For example: a map of [alpha=one;bravo=two] .parse_value_tag[<[parse_value].to_uppercase>] returns a map of [alpha=ONE;bravo=TWO].
+        // @example
+        // # Narrates a map of '[alpha=ONE;bravo=TWO]'
+        // - narrate <map[alpha=one;bravo=two].parse_value_tag[<[parse_value].to_uppercase>]>
         // -->
         tagProcessor.registerTag(MapTag.class, "parse_value_tag", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -401,6 +424,20 @@ public class MapTag implements ObjectTag {
         // @description
         // Returns whether the map contains the specified key.
         // If a list is given as input, returns whether the map contains all of the specified keys.
+        // @example
+        // - if <map[a=1;b=2].contains[a]>:
+        //     - narrate "Yep it sure does have 'a' as a key!"
+        // @example
+        // - if <map[a=1;b=2].contains[c]>:
+        //     - narrate "This won't show"
+        // - else:
+        //     - narrate "No it doesn't have 'c'"
+        // @example
+        // # Narrates 'true'
+        // - narrate <map[a=1;b=2].contains[a|b]>
+        // @example
+        // # Narrates 'false'
+        // - narrate <map[a=1;b=2].contains[a|b|c]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "contains", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -427,8 +464,13 @@ public class MapTag implements ObjectTag {
         // @description
         // Returns the object value at the specified key.
         // If a list is given as input, returns a list of values.
-        // For example, on a map of [a=1;b=2;c=3], using ".get[b]" will return "2".
-        // For example, on a map of [a=1;b=2;c=3], using ".get[b|c]" will return a list of "2|3".
+        // @example
+        // # Narrates '2'
+        // - narrate <map[a=1;b=2;c=3].get[b]>
+        // @example
+        // # Demonstrates that list input gives list output - narrates '2' then '3'
+        // - foreach <map[a=1;b=2;c=3].get[b|c]> as:value:
+        //     - narrate "One of the values is <[value]>"
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, "get", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -451,9 +493,18 @@ public class MapTag implements ObjectTag {
         // @returns ObjectTag
         // @description
         // Returns the object value at the specified key, using deep key paths separated by the '.' symbol.
-        // This means if you have a MapTag with key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue"),
-        // then ".deep_get[root.leaf]" will return "myvalue".
         // If a list is given as input, returns a list of values.
+        // @example
+        // # Narrates 'myvalue'
+        // - narrate <map.with[root].as[<map[leaf=myvalue]>].deep_get[root.leaf]>
+        // @example
+        // # Narrates 'myvalue'
+        // - definemap mymap:
+        //     root:
+        //         leaf: myvalue
+        // - narrate <[mymap].deep_get[root.leaf]>
+        // # The below will also get the same result ('myvalue') using the definition tag's special automatic deep get syntax:
+        // - narrate <[mymap.root.leaf]>
         // -->
         TagRunnable.ObjectInterface<MapTag, ObjectTag> deepGetRunnable = (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -478,8 +529,10 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns the subset of the map represented by the given keys, ordered based on the input list.
-        // For example, on a map of [a=1;b=2;c=3], using ".get_subset[b|a]" will return [b=2;a=1].
         // Keys that aren't present in the original map will be ignored.
+        // @example
+        // # Narrates a map of '[b=2;a=1]'
+        // - narrate <map[a=1;b=2;c=3].get_subset[b|a]>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "get_subset", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -505,8 +558,12 @@ public class MapTag implements ObjectTag {
         // Returns a copy of the map, with the specified key defaulted to the specified value.
         // If the map does not already have the specified key, this is equivalent to the 'with[key].as[value]' tag.
         // If the map already has the specified key, this will return the original map, unmodified.
-        // For example, on a map of [a=1;b=2;c=3], using ".default[d].as[4]" will return [a=1;b=2;c=3;d=4].
-        // For example, on a map of [a=1;b=2;c=3], using ".default[c].as[4]" will return [a=1;b=2;c=3].
+        // @example
+        // # Narrates a map of '[a=1;b=2;c=3;d=4]'
+        // - narrate <map[a=1;b=2;c=3].default[d].as[4]>
+        // @example
+        // # Demonstrates matching keys not being replaced - narrates a map of '[a=1;b=2;c=3]'
+        // - narrate <map[a=1;b=2;c=3].default[c].as[4]>
         // -->
         tagProcessor.registerTag(MapTag.class, "default", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -537,7 +594,9 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns a copy of the map, with the specified key set to the specified value, using deep key paths separated by the '.' symbol.
-        // This means for example if you use "deep_with[root.leaf].as[myvalue]", you will have the key 'root' set to the value of a second MapTag (with key 'leaf' as "myvalue").
+        // @example
+        // # Narrates a map of '[root=[leaf=myvalue]]', such that <[that].get[root]> itself returns a map of '[leaf=myvalue]'
+        // - narrate <map.deep_with[root.leaf].as[myvalue]>
         // -->
         tagProcessor.registerTag(MapTag.class, "deep_with", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -565,8 +624,13 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns a copy of the map, with the specified key set to the specified value.
-        // For example, on a map of [a=1;b=2;c=3], using ".with[d].as[4]" will return [a=1;b=2;c=3;d=4].
-        // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".with[c].as[4]" will return [a=1;b=2;c=4].
+        // Matching keys will be overridden.
+        // @example
+        // # Narrates a map of '[a=1;b=2;c=3;d=4]'
+        // - narrate <map[a=1;b=2;c=3].with[d].as[4]>
+        // @example
+        // # Demonstrates matching key overriding - narrates a map of '[a=1;b=2;c=4]'
+        // - narrate <map[a=1;b=2;c=3].with[c].as[4]>
         // -->
         tagProcessor.registerTag(MapTag.class, "with", (attribute, object) -> { // Non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
@@ -594,11 +658,15 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns an inverted copy of the map. That is, keys become values and values become keys.
-        // For example, on a map of [a=1;b=2;c=3], using "invert" will return [1=a;2=b;3=c].
         // All values in the result will be ElementTags.
         // Note that the size of the result is not guaranteed to be the same as the input (as duplicate keys are not allowed, but duplicate values are).
         // In the case of duplicate new-keys, the last instance of the new-key will be preserved.
-        // For example, on a map of [a=1;b=2;c=2], using "invert" will return [1=a;2=c].
+        // @example
+        // # Narrates a map of '[1=a;2=b;3=c]'
+        // - narrate <map[a=1;b=2;c=3].invert>
+        // @example
+        // # Demonstrates how duplicate values in the input become a single key in the output - narrates a map of '[1=a;2=c]'
+        // - narrate <map[a=1;b=2;c=2].invert>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "invert", (attribute, object) -> {
             MapTag result = new MapTag();
@@ -609,10 +677,39 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <MapTag.reverse>
+        // @returns MapTag
+        // @description
+        // Returns a reversed copy of the map. That is, the last key becomes the first key and vice-versa, akin to <@link tag ListTag.reverse>
+        // Not to be confused with <@link tag MapTag.invert>
+        // @example
+        // # Narrates a map of '[c=1;b=2;a=1]'
+        // - narrate <map[a=1;b=2;c=3].reverse>
+        // -->
+        tagProcessor.registerStaticTag(MapTag.class, "reverse", (attribute, object) -> {
+            ArrayList<Map.Entry<StringHolder, ObjectTag>> entries = new ArrayList<>(object.map.entrySet());
+            Collections.reverse(entries);
+            MapTag result = new MapTag();
+            for (Map.Entry<StringHolder, ObjectTag> entry : entries) {
+                result.map.put(entry.getKey(), entry.getValue());
+            }
+            return result;
+        });
+
+        // <--[tag]
         // @attribute <MapTag.deep_exclude[<key>|...]>
         // @returns MapTag
         // @description
         // Returns a copy of the map with the specified deep key(s) excluded.
+        // @example
+        // - definemap mymap:
+        //     root:
+        //         first: kept
+        //         second: lost
+        // # Will narrate the initial map of '[root=[first=kept;second=lost]]'
+        // - narrate <[mymap]>
+        // # Demonstrates deep_exclude of 'second', narrating a new map of '[root=[first=kept]]' without 'second' in it
+        // - narrate <[mymap].deep_exclude[root.second]>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "deep_exclude", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -631,7 +728,9 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns a copy of the map with the specified key(s) excluded.
-        // For example, on a map of [a=1;b=2;c=3], using ".exclude[b]" will return [a=1;c=3].
+        // @example
+        // # Narrates a map of '[a=1;c=3]'
+        // - narrate <map[a=1;b=2;c=3].exclude[b]>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "exclude", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -650,8 +749,13 @@ public class MapTag implements ObjectTag {
         // @returns MapTag
         // @description
         // Returns a copy of the map with the specified map's contents copied in.
-        // For example, on a map of [a=1;b=2;c=3], using ".include[d=4;e=5]" will return [a=1;b=2;c=3;d=4;e=5].
-        // Matching keys will be overridden. For example, on a map of [a=1;b=2;c=3], using ".include[b=4;c=5]" will return [a=1;b=4;c=5].
+        // Matching keys will be overridden.
+        // @example
+        // # Narrates a map of '[a=1;b=2;c=3;d=4;e=5]'
+        // - narrate <map[a=1;b=2;c=3].include[d=4;e=5]>
+        // @example
+        // # Demonstrates matching keys overriding - Narrates a map of '[a=1;b=4;c=5]'
+        // - narrate <map[a=1;b=2;c=3].include[b=4;c=5]>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "include", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -669,6 +773,14 @@ public class MapTag implements ObjectTag {
         // @description
         // Returns a list of all keys in this map, including keys in any sub-maps (map values that are in turn MapTags), using deep key paths separated by the '.' symbol.
         // No returned key value will refer to a MapTag instance.
+        // @example
+        // - definemap mymap:
+        //     root:
+        //         first: 1
+        //         second: 2
+        // # Will narrate a list of 'root.first' and 'root.second'
+        // # Note that 'root' itself is not in the output list, as it is a map, not a leaf value.
+        // - narrate <[mymap].deep_keys>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "deep_keys", (attribute, object) -> {
             ListTag result = new ListTag();
@@ -688,7 +800,9 @@ public class MapTag implements ObjectTag {
         // @returns ListTag
         // @description
         // Returns a list of all keys in this map.
-        // For example, on a map of [a=1;b=2;c=3], using "keys" will return "a|b|c|".
+        // @example
+        // # Narrates a list of 'a|b|c|'
+        // - narrate <map[a=1;b=2;c=3].key>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "keys", (attribute, object) -> {
             return object.keys();
@@ -699,7 +813,9 @@ public class MapTag implements ObjectTag {
         // @returns ListTag
         // @description
         // Returns a list of all values in this map.
-        // For example, on a map of [a=1;b=2;c=3], using "values" will return "1|2|3|".
+        // @example
+        // # Narrates a list of '1|2|3|'
+        // - narrate <map[a=1;b=2;c=3].values>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "values", (attribute, object) -> {
             ListTag result = new ListTag();
@@ -714,6 +830,10 @@ public class MapTag implements ObjectTag {
         // @returns ListTag
         // @description
         // Returns a list of all key/value pairs in this map, where each entry in the list is itself a list with 2 entries: the key, then the value.
+        // @example
+        // # Narrates "a is set to 1", then "b is set to 2", then "c is set to 3"
+        // - foreach <map[a=1;b=2;c=3].to_pair_lists> as:pair:
+        //     - narrate "<[pair].get[1]> is set to <[pair].get[2]>"
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_pair_lists", (attribute, object) -> {
             ListTag result = new ListTag();
@@ -727,16 +847,22 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <MapTag.to_list>
+        // @attribute <MapTag.to_list[(<separator>)]>
         // @returns ListTag
         // @description
-        // Returns a list of all key/value pairs in this map, separated by the slash '/' symbol.
-        // Note that there is no slash ('/') escaping, so maps that have slashes in their keys will not be possible to convert back to a map.
+        // Returns a list of all key/value pairs in this map, separated by the specified separator symbol. If none is given, uses the slash '/' symbol.
+        // Note that there is no escaping of the separator, so maps that have the separator in their keys will not be possible to convert back to a map.
+        // Inverted by <@link tag ListTag.to_map>
+        // @example
+        // # Narrates "a/1", then "b/2", then "c/3"
+        // - foreach <map[a=1;b=2;c=3].to_list> as:slashed:
+        //     - narrate "<[slashed]>"
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
+            String separator = attribute.hasParam() ? attribute.getParam() : "/";
             ListTag result = new ListTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                result.add(entry.getKey().str + "/" + entry.getValue().identify());
+                result.add(entry.getKey().str + separator + entry.getValue().identify());
             }
             return result;
         });
@@ -745,7 +871,10 @@ public class MapTag implements ObjectTag {
         // @attribute <MapTag.to_json>
         // @returns ElementTag
         // @description
-        // Returns a JSON encoding of this map.
+        // Returns a JSON encoding of this map. Primarily useful with interop with other software, such as when use <@link command webget> or <@link command webserver>.
+        // @example
+        // # Narrates {"a":"1","b":"2"}
+        // - narrate <map[a=1;b=2].to_json>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_json", (attribute, object) -> {
             return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false)).toString());
@@ -755,7 +884,12 @@ public class MapTag implements ObjectTag {
         // @attribute <MapTag.to_yaml>
         // @returns ElementTag
         // @description
-        // Returns a YAML encoding of this map.
+        // Returns a YAML encoding of this map. Sometimes useful for debugging or for interop with other software.
+        // @example
+        // # Narrates multiple lines, as follows:
+        // # a: '1'
+        // # b: '2'
+        // - narrate <map[a=1;b=2].to_yaml>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_yaml", (attribute, object) -> {
             YamlConfiguration output = new YamlConfiguration();
