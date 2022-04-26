@@ -710,19 +710,20 @@ public class CoreUtilities {
     }
 
     public static int parseIndex(List list, String str) {
-        if(str.equalsIgnoreCase("last")) {
+        if (str.equalsIgnoreCase("last")) {
             return list.size() - 1;
         }
-        if(str.equalsIgnoreCase("first")) {
+        if (str.equalsIgnoreCase("first")) {
             return 0;
         }
         int index;
         try {
             index = Integer.parseInt(str);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return -1;
         }
-        if(index == 0) {
+        if (index == 0) {
             return -1;
         }
         if (index < 0) {
