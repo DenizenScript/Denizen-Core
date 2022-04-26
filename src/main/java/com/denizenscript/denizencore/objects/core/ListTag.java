@@ -1422,7 +1422,7 @@ public class ListTag implements List<String>, ObjectTag {
                 if (indices.size() > 1) {
                     ListTag results = new ListTag();
                     for (String index : indices) {
-                        int ind = CoreUtilities.parseIndex(indices, index);
+                        int ind = CoreUtilities.parseIndex(object.objectForms, index);
                         if (ind >= 0) {
                             results.add(object.get(ind));
                         } else {
@@ -1432,7 +1432,7 @@ public class ListTag implements List<String>, ObjectTag {
                     return results;
                 }
                 if (indices.size() > 0) {
-                    int index = CoreUtilities.parseIndex(indices, indices.get(0));
+                    int index = CoreUtilities.parseIndex(object.objectForms, indices.get(0));
                     if (index < 0) {
                         attribute.echoError("Invalid list.get index '" + (index + 1));
                         return null;
@@ -1450,7 +1450,7 @@ public class ListTag implements List<String>, ObjectTag {
                     // For example: .get[-1].to[last] on a list of "one|two|three|four" will return "three|four".
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                        int index2 = CoreUtilities.parseIndex(indices, attribute.getContext(2));
+                        int index2 = CoreUtilities.parseIndex(object.objectForms, attribute.getContext(2));
                         if (index2 < 0 || index2 < index) {
                             attribute.echoError("Invalid list.get.to index '" + (index2 + 1));
                             return null;
