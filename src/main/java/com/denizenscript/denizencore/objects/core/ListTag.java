@@ -1404,6 +1404,9 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns an element of the value specified by the supplied context.
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
+        // .get[first] and .get[last] can be used to get the first and last elements of the list.
+        // A negative index will count from the end of the list.
+        // So .get[-1] on a list of "one|two|three" will return "two".
         // -->
         TagRunnable.ObjectInterface<ListTag, ObjectTag> getRunnable = (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -1443,6 +1446,8 @@ public class ListTag implements List<String>, ObjectTag {
                     // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
                     // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
                     // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
+                    // Negative indices can be used for the 'get' index as well as the 'to', counting from the end of the list.
+                    // For example: .get[-1].to[last] on a list of "one|two|three|four" will return "three|four".
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
                         int index2 = CoreUtilities.parseIndex(indices, attribute.getContext(2));
