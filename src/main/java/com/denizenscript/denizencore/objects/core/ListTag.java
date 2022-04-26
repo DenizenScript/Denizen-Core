@@ -1422,6 +1422,8 @@ public class ListTag implements List<String>, ObjectTag {
                         int ind = CoreUtilities.parseIndex(indices, index);
                         if (ind >= 0) {
                             results.add(object.get(ind));
+                        } else {
+                            attribute.echoError("Invalid index '" + index + "'.");
                         }
                     }
                     return results;

@@ -720,11 +720,9 @@ public class CoreUtilities {
         try {
             index = Integer.parseInt(str);
         } catch (Exception ex) {
-            Debug.echoError("Invalid index '" + str + "': " + ex.getMessage());
             return -1;
         }
         if(index == 0) {
-            Debug.echoError("0 is not a valid index");
             return -1;
         }
         if (index < 0) {
