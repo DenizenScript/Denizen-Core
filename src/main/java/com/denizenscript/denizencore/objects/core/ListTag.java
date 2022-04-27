@@ -1426,7 +1426,8 @@ public class ListTag implements List<String>, ObjectTag {
                         int ind = CoreUtilities.parseIndex(object.objectForms, index);
                         if (ind >= 0) {
                             results.add(object.get(ind));
-                        } else {
+                        }
+                        else {
                             attribute.echoError("Invalid index '" + index + "'.");
                         }
                     }
@@ -1435,7 +1436,7 @@ public class ListTag implements List<String>, ObjectTag {
                 if (indices.size() > 0) {
                     int index = CoreUtilities.parseIndex(object.objectForms, indices.get(0));
                     if (index < 0) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1));
+                        attribute.echoError("Invalid list.get index '" + (index + 1) + "'.");
                         return null;
                     }
 
@@ -1452,8 +1453,8 @@ public class ListTag implements List<String>, ObjectTag {
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
                         int index2 = CoreUtilities.parseIndex(object.objectForms, attribute.getContext(2));
-                        if (index2 < 0 || index2 < index) {
-                            attribute.echoError("Invalid list.get.to index '" + (index2 + 1));
+                        if (index2 < 0) {
+                            attribute.echoError("Invalid list.get.to index of '" + (index2 + 1) + "'.");
                             return null;
                         }
                         ListTag newList = new ListTag();

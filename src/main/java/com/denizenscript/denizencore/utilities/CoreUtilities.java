@@ -710,10 +710,11 @@ public class CoreUtilities {
     }
 
     public static int parseIndex(List list, String str) {
-        if (str.equalsIgnoreCase("last")) {
+        str = toLowerCase(str);
+        if (str.equals("last")) {
             return list.size() - 1;
         }
-        if (str.equalsIgnoreCase("first")) {
+        if (str.equals("first")) {
             return 0;
         }
         int index;
@@ -724,10 +725,10 @@ public class CoreUtilities {
             return -1;
         }
         if (index == 0) {
-            return -1;
+            return 0;
         }
         if (index < 0) {
-            return list.size() + Math.max(1 - list.size(), index) - 1;
+            return Math.max(0, list.size() + index - 1);
         }
         return Math.min(list.size(), index) - 1;
     }
