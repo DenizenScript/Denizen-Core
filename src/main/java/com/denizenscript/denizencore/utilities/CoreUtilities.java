@@ -688,27 +688,6 @@ public class CoreUtilities {
         return closest;
     }
 
-    public static int parseIndex(List list, String str) {
-        str = toLowerCase(str);
-        if (str.equals("last")) {
-            return list.size() - 1;
-        }
-        if (str.equals("first")) {
-            return 0;
-        }
-        int index;
-        try {
-            index = Integer.parseInt(str);
-        }
-        catch (NumberFormatException ex) {
-            return -1;
-        }
-        if (index < 0) {
-            return Math.max(0, list.size() + index);
-        }
-        return Math.min(list.size(), index) - 1;
-    }
-
     public static int indexOfAny(String str, int start, char... chars) {
         int earliest = -1;
         for (char c : chars) {
