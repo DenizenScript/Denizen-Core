@@ -1405,6 +1405,9 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns an element of the value specified by the supplied context.
         // For example: .get[1] on a list of "one|two" will return "one", and .get[2] will return "two"
         // Specify more than one index to get a list of results.
+        // .get[first] and .get[last] can be used to get the first and last elements of the list.
+        // A negative index will count from the end of the list.
+        // So .get[-2] on a list of "one|two|three" will return "two".
         // -->
         TagRunnable.ObjectInterface<ListTag, ObjectTag> getRunnable = (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -1420,22 +1423,21 @@ public class ListTag implements List<String>, ObjectTag {
                 if (indices.size() > 1) {
                     ListTag results = new ListTag();
                     for (String index : indices) {
-                        int ind = Integer.parseInt(index);
-                        if (ind > 0 && ind <= object.size()) {
-                            results.add(object.get(ind - 1));
+                        int ind = CoreUtilities.parseIndex(object.objectForms, index);
+                        if (ind >= 0) {
+                            results.add(object.get(ind));
+                        }
+                        else {
+                            attribute.echoError("Invalid index '" + index + "'.");
                         }
                     }
                     return results;
                 }
                 if (indices.size() > 0) {
-                    int index = Integer.parseInt(indices.get(0)) - 1;
-                    if (index >= object.size()) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... list is only " + object.size() + " long.");
-                        return null;
-                    }
+                    int index = CoreUtilities.parseIndex(object.objectForms, indices.get(0));
                     if (index < 0) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1) + "' ... must be at least 1.");
-                        index = 0;
+                        attribute.echoError("Invalid list.get index '" + (index + 1) + "'.");
+                        return null;
                     }
 
                     // <--[tag]
@@ -1446,20 +1448,14 @@ public class ListTag implements List<String>, ObjectTag {
                     // For example: .get[1].to[3] on a list of "one|two|three|four" will return "one|two|three".
                     // Use "last" as the 'to' index to automatically get all of the list starting at the first index.
                     // For example: .get[3].to[last] on a list of "one|two|three|four" will return "three|four".
+                    // Negative indices can be used for the 'get' index as well as the 'to', counting from the end of the list.
+                    // For example: .get[-2].to[-1] on a list of "one|two|three|four" will return "three|four".
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                        int index2;
-                        if (CoreUtilities.equalsIgnoreCase(attribute.getContext(2), "last")) {
-                            index2 = object.size() - 1;
-                        }
-                        else {
-                            index2 = attribute.getIntContext(2) - 1;
-                        }
-                        if (index2 >= object.size()) {
-                            index2 = object.size() - 1;
-                        }
+                        int index2 = CoreUtilities.parseIndex(object.objectForms, attribute.getContext(2));
                         if (index2 < 0) {
-                            index2 = 0;
+                            attribute.echoError("Invalid list.get.to index of '" + (index2 + 1) + "'.");
+                            return null;
                         }
                         ListTag newList = new ListTag();
                         for (int i = index; i <= index2; i++) {
