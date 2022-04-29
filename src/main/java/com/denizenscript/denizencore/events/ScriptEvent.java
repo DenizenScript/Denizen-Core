@@ -100,6 +100,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      */
     public static HashMap<String, ArrayList<ScriptEvent>> couldMatchOptimizer = new HashMap<>();
 
+    /**
+     * How many paths are processed.
+     */
+    public static int totalPaths = 0;
+
     public static ArrayList<ScriptEvent> legacyCouldMatchEvents = new ArrayList<>();
 
     /**
@@ -311,7 +316,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             Debug.log("Reloading script events...");
         }
         reloadPreClear();
-        int total = 0;
+        totalPaths = 0;
         for (ScriptContainer container : worldContainers) {
             try {
                 if (!CoreUtilities.equalsIgnoreCase(container.getContents().getString("enabled", "true"), "true")) {
@@ -327,7 +332,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                         Debug.echoError("Missing or invalid events block for <Y>" + container.getName());
                         continue;
                     }
-                    total++;
+                    totalPaths++;
                     loadSinglePath(evt1, container);
                 }
             }
@@ -337,7 +342,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
         }
         reloadPostLoad();
-        Debug.log("Processed <A>" + total + "<W> script event paths.");
+        Debug.log("Processed <A>" + totalPaths + "<W> script event paths.");
     }
 
     private static void reloadPreClear() {

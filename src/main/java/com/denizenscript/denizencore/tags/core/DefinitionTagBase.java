@@ -18,6 +18,15 @@ public class DefinitionTagBase {
         // Returns a definition from the current queue.
         // The object will be returned as the most-valid type based on the input.
         // In most usages, the tag name is left blank, like "<[defhere]>".
+        // @example
+        // - define x 3
+        // # Narrates '3'
+        // - narrate <[x]>
+        // @example
+        // - definemap mymap:
+        //     mykey: example
+        // # Narrates 'example'
+        // - narrate <[mymap.mykey]>
         // -->
         TagRunnable.BaseInterface<ObjectTag> defTag = (attribute) -> {
             if (!attribute.hasParam()) {
@@ -45,4 +54,3 @@ public class DefinitionTagBase {
         TagManager.registerTagHandler(ObjectTag.class, "", defTag);
     }
 }
-
