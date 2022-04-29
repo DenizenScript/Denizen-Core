@@ -39,7 +39,7 @@ public class Comparable {
     // -->
 
     public enum Operator {
-        EQUALS, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IN
+        EQUALS, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IN, MATCHES
     }
 
     public static Operator getOperatorFor(String text) {
@@ -64,6 +64,8 @@ public class Comparable {
                 return Operator.CONTAINS;
             case "in":
                 return Operator.IN;
+            case "matches":
+                return Operator.MATCHES;
             default:
                 return null;
         }
@@ -131,7 +133,7 @@ public class Comparable {
     public static boolean compare(ObjectTag objA, ObjectTag objB, Operator operator, boolean negative, TagContext context) {
         boolean outcome;
         switch (operator) {
-            case EQUALS: // MATCHES, OR_MORE, OR_LESS, MORE, LESS, CONTAINS, IN
+            case EQUALS:
                 outcome = CoreUtilities.equalsIgnoreCase(objA.toString(), objB.toString());
                 break;
             case OR_MORE:
@@ -144,6 +146,9 @@ public class Comparable {
                 break;
             case IN:
                 outcome = listContains(objB, objA, context);
+                break;
+            case MATCHES:
+                outcome = objA.tryAdvancedMatcher(objB.toString());
                 break;
             default:
                 // Impossible to reach

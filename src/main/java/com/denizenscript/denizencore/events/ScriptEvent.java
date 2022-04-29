@@ -235,14 +235,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         //
         // Events that occur at a specific location have the "in:<area>" and "location_flagged" switches.
         // This switches will be ignored (not counted one way or the other) for events that don't have a known location.
-        // For "in:<area>" switches, 'area' is any area-defining tag type - refer to <@link language Script Event Object Matchables>.
+        // For "in:<area>" switches, 'area' is any area-defining tag type - refer to <@link language Advanced Object Matchables>.
         // "location_flagged:<flag name>" works just like "server_flagged" or the player "flagged" switches, but for locations.
         //
         // All script events have priority switches (see <@link language script event priority>),
         // All Bukkit events have bukkit priority switches (see <@link language bukkit event priority>),
         // All cancellable script events have cancellation switches (see <@link language script event cancellation>).
         //
-        // See also <@link language advanced script event matching>.
+        // See also <@link language Advanced Object Matching>.
         // -->
 
         public boolean checkSwitch(String key, String value) {
@@ -788,7 +788,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     // <--[language]
-    // @name Advanced Script Event Matching
+    // @name Advanced Object Matching
     // @group Script Events
     // @description
     // Script event lines often include specific 'matchable' keywords.
@@ -831,13 +831,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // For example, on player breaks !stone:" will fire for a player breaking any block type OTHER THAN stone.
     // This can be combined with other match modes, like "on player breaks !*wood|*planks|*log:" will fire for any block break other than any wood variant.
     //
-    // See also <@link language script event object matchables>.
+    // Object types have their own special supported matchable inputs, refer to <@link language Advanced Object Matchables>.
     //
-    // These advanced matchers are also used in some commands and tags.
+    // These advanced matchers are also used in some commands and tags, such as <@link tag ObjectTag.advanced_matches>, or in <@link command if> with the 'matches' operator.
     // -->
 
     /**
-     * Entry point of advanced matching tools, refer to 'Advanced Script Event Matching' meta docs.
+     * Entry point of advanced matching tools, refer to 'Advanced Object Matching' meta docs.
      */
     public static abstract class MatchHelper {
 

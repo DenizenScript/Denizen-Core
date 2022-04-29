@@ -269,7 +269,6 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // <--[tag]
         // @attribute <ObjectTag.repeat_as_list[<#>]>
         // @returns ListTag
-        // @group element manipulation
         // @description
         // Returns a list contained the input number of entries, each of which is an exact copy of the object.
         // For example, element[hello].repeat_as_list[3] returns a ListTag of "hello|hello|hello|"
@@ -288,6 +287,18 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return result;
         });
 
+        // <--[tag]
+        // @attribute <ObjectTag.advanced_matches[<matcher>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether the object matches some matcher text, using the system described at <@link language Advanced Object Matching>.
+        // -->
+        registerTag(ElementTag.class, "advanced_matches", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            return new ElementTag(object.tryAdvancedMatcher(attribute.getParam()));
+        }, "advanced_matches_text");
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

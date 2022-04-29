@@ -77,7 +77,7 @@ public class CustomScriptEvent extends ScriptEvent {
                 if (val == null) {
                     return false;
                 }
-                if (!val.advancedMatches(parts.get(1))) {
+                if (!val.tryAdvancedMatcher(parts.get(1))) {
                     return false;
                 }
             }

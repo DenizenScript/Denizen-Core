@@ -1509,19 +1509,20 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag
         // @description
         // Returns all the numbered indices of elements that match within a list,
-        // using the system behind <@link language Advanced Script Event Matching>,
+        // using the system behind <@link language Advanced Object Matching>,
         // or an empty list if the list does not contain that item.
         // For example: .find_all_matches[t*] on a list of "one|two|three" will return "2|3".
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "find_all_matches", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ListTag.class, "find_all_matches", (attribute, list) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.find_all_matches[...] must have a value.");
                 return null;
             }
             ListTag positions = new ListTag();
-            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
-            for (int i = 0; i < object.size(); i++) {
-                if (matcher.doesMatch(object.get(i))) {
+            String matcher = attribute.getParam();
+            for (int i = 0; i < list.size(); i++) {
+                ObjectTag object = list.getObject(i);
+                if (object != null && object.tryAdvancedMatcher(matcher)) {
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1578,18 +1579,19 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns the numbered index of the first match within a list,
-        // using the system behind <@link language Advanced Script Event Matching>,
+        // using the system behind <@link language Advanced Object Matching>,
         // or -1 if the list does not contain that item.
         // For example: .find_match[t*] on a list of "one|two|three" will return "2".
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "find_match", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "find_match", (attribute, list) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.find_match[...] must have a value.");
                 return null;
             }
-            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
-            for (int i = 0; i < object.size(); i++) {
-                if (matcher.doesMatch(object.get(i))) {
+            String matcher = attribute.getParam();
+            for (int i = 0; i < list.size(); i++) {
+                ObjectTag object = list.getObject(i);
+                if (object != null && object.tryAdvancedMatcher(matcher)) {
                     return new ElementTag(i + 1);
                 }
             }
@@ -1645,18 +1647,18 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns how many times a value in the list matches the matcher,
-        // using the system behind <@link language Advanced Script Event Matching>,
+        // using the system behind <@link language Advanced Object Matching>,
         // For example: a list of "one|two|three" .count[t*] returns 2.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "count_matches", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "count_matches", (attribute, list) -> {
             if (!attribute.hasParam()) {
                 attribute.echoError("The tag ListTag.count_matches[...] must have a value.");
                 return null;
             }
-            ScriptEvent.MatchHelper matcher = ScriptEvent.createMatcher(attribute.getParam());
+            String matcher = attribute.getParam();
             int count = 0;
-            for (String s : object) {
-                if (matcher.doesMatch(s)) {
+            for (ObjectTag object : list.objectForms) {
+                if (object != null && object.tryAdvancedMatcher(matcher)) {
                     count++;
                 }
             }

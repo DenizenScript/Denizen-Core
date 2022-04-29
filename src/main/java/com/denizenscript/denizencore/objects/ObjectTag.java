@@ -241,9 +241,23 @@ public interface ObjectTag {
     }
 
     /**
-     * Returns whether this object matches the specified input using 'advanced matcher' logic.
+     * Used for objects to override, should not be called externally. Call 'tryAdvancedMatcher' instead.
      */
     default boolean advancedMatches(String matcher) {
         return ScriptEvent.runGenericCheck(matcher, identify());
+    }
+
+    /**
+     * Returns whether this object matches the specified input using 'advanced matcher' logic.
+     * Do not override.
+     */
+    default boolean tryAdvancedMatcher(String matcher) {
+        if (matcher == null || matcher.isEmpty()) {
+            return false;
+        }
+        if (matcher.startsWith("!")) {
+            return !tryAdvancedMatcher(matcher.substring(1));
+        }
+        return advancedMatches(matcher);
     }
 }
