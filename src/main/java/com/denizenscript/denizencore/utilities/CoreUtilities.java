@@ -725,7 +725,7 @@ public class CoreUtilities {
             return -1;
         }
         if (index == 0) {
-            return 0;
+            return -1;
         }
         if (index < 0) {
             return Math.max(0, list.size() + index);
