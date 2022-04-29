@@ -80,7 +80,7 @@ public class ForeachCommand extends BracedCommand {
     //
     // -->
 
-    private class ForeachData {
+    private static class ForeachData {
         public int index;
         public ListTag list;
         public List<String> keys;

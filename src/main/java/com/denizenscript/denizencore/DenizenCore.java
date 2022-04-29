@@ -42,11 +42,6 @@ public class DenizenCore {
     public static CommandRegistry commandRegistry;
 
     /**
-     * Core script processing engine.
-     */
-    public static ScriptEngine scriptEngine;
-
-    /**
      * Monotonic time (CoreUtilities.monotonicMillis) that the engine first loaded.
      */
     public final static long startTime = CoreUtilities.monotonicMillis();
@@ -141,7 +136,6 @@ public class DenizenCore {
         Debug.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
-        scriptEngine = new ScriptEngine();
         ScriptEvent.registerCoreEvents();
     }
 

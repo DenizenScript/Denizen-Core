@@ -53,12 +53,7 @@ public class Debug {
         if (script != null) {
             addedContext = " <LR>In script '<A>" + script.getName() + "<LR>'" + (addedContext == null ? "" : addedContext);
         }
-        if (script == null) {
-            DenizenCore.implementation.debugError(addedContext, error);
-        }
-        else {
-            DenizenCore.implementation.debugError(addedContext, error);
-        }
+        DenizenCore.implementation.debugError(addedContext, error);
     }
 
     public static void echoError(ScriptEntry entry, String error) {

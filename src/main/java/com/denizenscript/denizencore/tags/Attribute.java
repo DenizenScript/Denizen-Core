@@ -206,7 +206,7 @@ public class Attribute {
             return false;
         }
         if (CoreConfiguration.debugVerbose) {
-            Debug.log("Trying tag startsWith " + string + " on tag " + toString());
+            Debug.log("Trying tag startsWith " + string + " on tag " + this);
         }
         if (string.indexOf('.') >= 0) {
             List<String> tmp = CoreUtilities.split(string, '.');
@@ -550,7 +550,7 @@ public class Attribute {
         }
         catch (Exception ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getParam() + "<W>'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + this + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getParam() + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;
@@ -569,7 +569,7 @@ public class Attribute {
         }
         catch (Exception ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + this + "<W>> has invalid input - expected a (non-decimal) number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;
@@ -588,7 +588,7 @@ public class Attribute {
         }
         catch (NumberFormatException ex) {
             if (!hasAlternative()) {
-                Debug.echoError("Tag <" + toString() + "<W>> has invalid input - expected a decimal number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
+                Debug.echoError("Tag <" + this + "<W>> has invalid input - expected a decimal number, got '<A>" + getContext(attribute) + "<W>'...: " + ex.getMessage());
             }
         }
         return 0;

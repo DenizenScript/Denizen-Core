@@ -28,10 +28,10 @@ public class DebugInvalidCommand extends AbstractCommand {
         AbstractCommand command = DenizenCore.commandRegistry.get(scriptEntry.internal.command);
         if (scriptEntry.internal.brokenArgs) {
             if (scriptEntry.getOriginalArguments().size() > command.maximumArguments) {
-                Debug.echoError(scriptEntry, scriptEntry.toString() + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());
+                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());
             }
             else {
-                Debug.echoError(scriptEntry, scriptEntry.toString() + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
+                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
             }
             return;
         }

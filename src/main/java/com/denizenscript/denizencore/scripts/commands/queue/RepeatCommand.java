@@ -65,7 +65,7 @@ public class RepeatCommand extends BracedCommand {
     //     - announce "Announce Number <[value]>"
     // -->
 
-    private class RepeatData {
+    private static class RepeatData {
         public int index;
         public int target;
         public String valueName;

@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.objects.core;
 
-import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.Fetchable;
@@ -675,8 +674,7 @@ public class ListTag implements List<String>, ObjectTag {
             dScriptArg.append(item);
             dScriptArg.append(spacer);
         }
-        return dScriptArg.toString().substring(0,
-                dScriptArg.length() - spacer.length());
+        return dScriptArg.substring(0, dScriptArg.length() - spacer.length());
     }
 
     public int parseIndex(String index) {
@@ -2041,7 +2039,7 @@ public class ListTag implements List<String>, ObjectTag {
                         }
                     }
                     catch (NumberFormatException ex) {
-                        attribute.echoError("Invalid non-numerical input to sort_by_number tag: " + or1.toString() + ", " + or2.toString());
+                        attribute.echoError("Invalid non-numerical input to sort_by_number tag: " + or1 + ", " + or2.toString());
                         return 0;
                     }
                 });
@@ -2469,7 +2467,7 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             if (attribute.hasParam()) {
-                int count = Integer.valueOf(attribute.getParam());
+                int count = Integer.parseInt(attribute.getParam());
                 int times = 0;
                 ArrayList<ObjectTag> available = new ArrayList<>(object.objectForms);
                 ListTag toReturn = new ListTag();

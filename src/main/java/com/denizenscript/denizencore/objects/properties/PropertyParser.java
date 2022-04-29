@@ -123,13 +123,12 @@ public class PropertyParser {
                 propInfo.propertiesByMechanism.put(mech, getter);
                 allMechanismsEver.add(mech);
             }
-            propInfo.propertiesWithMechs.add(getter);
         }
         else {
             Debug.log("Warning: property class '" + property.getName() + "' has unknown mechanism registration.");
             propInfo.propertiesAnyMechs.add(getter);
-            propInfo.propertiesWithMechs.add(getter);
         }
+        propInfo.propertiesWithMechs.add(getter);
     }
 
     public static String[] getStringField(Class property, String fieldName) {

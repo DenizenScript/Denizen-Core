@@ -212,7 +212,7 @@ public abstract class BracedCommand extends AbstractCommand {
                         command.remove(0);
                         int lineNum = 1;
                         if (cmd.length() > 2 && cmd.charAt(0) == ScriptBuilder.LINE_PREFIX_CHAR && cmd.charAt(cmd.length() - 1) == ScriptBuilder.LINE_PREFIX_CHAR) {
-                            lineNum = Integer.valueOf(cmd.substring(1, cmd.length() - 1));
+                            lineNum = Integer.parseInt(cmd.substring(1, cmd.length() - 1));
                             cmd = command.get(0);
                             command.remove(0);
                         }

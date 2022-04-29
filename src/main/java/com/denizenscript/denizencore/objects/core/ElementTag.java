@@ -608,7 +608,7 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, "as_decimal", (attribute, object) -> {
             String element = object.element;
             try {
-                return new ElementTag(Double.valueOf(element));
+                return new ElementTag(Double.parseDouble(element));
             }
             catch (NumberFormatException e) {
                 if (!attribute.hasAlternative()) {
@@ -2663,14 +2663,10 @@ public class ElementTag implements ObjectTag {
     @Override
     public boolean advancedMatches(String matcher) {
         String matcherLow = CoreUtilities.toLowerCase(matcher);
-        if (matcherLow.equals("integer")) {
-            return isInt();
-        }
-        else if (matcherLow.equals("decimal")) {
-            return isDouble();
-        }
-        else if (matcherLow.equals("boolean")) {
-            return isBoolean();
+        switch (matcherLow) {
+            case "integer": return isInt();
+            case "decimal": return isDouble();
+            case "boolean": return isBoolean();
         }
         return ScriptEvent.runGenericCheck(matcher, element);
     }

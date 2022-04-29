@@ -72,7 +72,7 @@ public class TagCodeGenerator {
                 if (staticParseResult != null) {
                     if (staticParts == pieces.length) {
                         if (genContext.shouldDebug()) {
-                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult.toString() + "<G>', and cached result.");
+                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult + "<G>', and cached result.");
                         }
                         toParse.rawObject = staticParseResult;
                         toParse.tagData.rawObject = staticParseResult;
@@ -85,7 +85,7 @@ public class TagCodeGenerator {
                         for (int i = 0; i < staticParts; i++) {
                             piecesText.append(pieces[i].toString()).append(".");
                         }
-                        Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult.toString() + "<G>', and cached result.");
+                        Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult + "<G>', and cached result.");
                     }
                     data.skippable = staticParts;
                 }

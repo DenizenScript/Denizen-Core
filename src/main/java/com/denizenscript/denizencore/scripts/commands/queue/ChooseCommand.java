@@ -116,7 +116,7 @@ public class ChooseCommand extends BracedCommand {
                         }
                     }
                     else {
-                        Debug.echoError("Unknown choose sub-command (missing arguments) '" + se.toString() + "'!");
+                        Debug.echoError("Unknown choose sub-command (missing arguments) '" + se + "'!");
                     }
                 }
                 else {

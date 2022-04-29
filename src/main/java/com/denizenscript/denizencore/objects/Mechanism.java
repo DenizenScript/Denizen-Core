@@ -65,7 +65,7 @@ public class Mechanism {
     }
 
     public String forMechanismText() {
-        String text = " <LR>For mechanism '<A>" + raw_mechanism + "<LR>'" + (value == null ? "" : " with value '<A>" + value.toString() + "<LR>'");
+        String text = " <LR>For mechanism '<A>" + raw_mechanism + "<LR>'" + (value == null ? "" : " with value '<A>" + value + "<LR>'");
         if (adjusting == null) {
             return text;
         }

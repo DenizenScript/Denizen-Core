@@ -205,10 +205,10 @@ public class TagManager {
     public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         readSingleTagObjectNoDebug(context, event);
         if (context.debug && event.replaced()) {
-            Debug.echoDebug(context, "<G>Filled tag <<W>" + event.toString() + "<G>> with '<W>" + event.getReplacedObj().debuggable() + "<G>'.");
+            Debug.echoDebug(context, "<G>Filled tag <<W>" + event + "<G>> with '<W>" + event.getReplacedObj().debuggable() + "<G>'.");
         }
         if (!event.replaced()) {
-            String tagStr = "<LG><" + event.toString() + "<LG>><W>";
+            String tagStr = "<LG><" + event + "<LG>><W>";
             Debug.echoError(context, "Tag " + tagStr + " is invalid!");
             recentTagError = true;
             if (OBJECTTAG_CONFUSION_PATTERN.matcher(tagStr).matches()) {

@@ -57,7 +57,7 @@ public class ScriptBuilder {
                 int infoEnd = entry.indexOf(LINE_PREFIX_CHAR, 1);
                 String lineNumStr = entry.substring(1, infoEnd);
                 entry = entry.substring(infoEnd + 2); // Skip the symbol and the space after.
-                lineNum = Integer.valueOf(lineNumStr);
+                lineNum = Integer.parseInt(lineNumStr);
             }
             String[] scriptEntry = entry.split(" ", 2);
             try {

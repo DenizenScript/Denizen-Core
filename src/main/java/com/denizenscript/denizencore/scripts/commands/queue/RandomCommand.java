@@ -127,14 +127,11 @@ public class RandomCommand extends BracedCommand {
         if (bracedCommands == null) {
             ScriptEntry keeping = null;
             for (int x = 0; x < possibilities; x++) {
-                if (x != selected) {
-                    queue.removeFirst();
-                }
-                else {
+                if (x == selected) {
                     Debug.echoDebug(scriptEntry, "...selected '" + queue.getEntry(0).getCommandName() + ": " + queue.getEntry(0).getOriginalArguments() + "'.");
                     keeping = queue.getEntry(0);
-                    queue.removeFirst();
                 }
+                queue.removeFirst();
             }
             queue.injectEntryAtStart(keeping);
         }

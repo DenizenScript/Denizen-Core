@@ -92,7 +92,7 @@ public class DurationTag implements ObjectTag {
         String numericString = Character.isDigit(string.charAt(string.length() - 1)) ? string : string.substring(0, string.length() - 1);
         // Standard DurationTag. Check the type and create new DurationTag object accordingly.
         try {
-            double numVal = Double.valueOf(numericString);
+            double numVal = Double.parseDouble(numericString);
             if (string.endsWith("y")) {
                 return new DurationTag(numVal * (60 * 60 * 24 * 365));
             }
@@ -117,7 +117,7 @@ public class DurationTag implements ObjectTag {
             }
             else if (numericString.equals(string)) {
                 // seconds
-                return new DurationTag(Double.valueOf(numericString));
+                return new DurationTag(Double.parseDouble(numericString));
             }
             else {
                 // Invalid.

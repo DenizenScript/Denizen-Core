@@ -34,7 +34,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                         .append(c1).append(" times (").append(c2).append(event.eventData.stats_scriptFires).append(c1).append(" script fires)")
                         .append(c1).append(", totalling ").append(c2).append((float) event.eventData.stats_nanoTimes / 1000000f)
                         .append(c1).append("ms, averaging ").append(c2).append((float) event.eventData.stats_nanoTimes / 1000000f / (float) event.eventData.stats_fires)
-                        .append(c1).append("ms per event or ").append(c2).append(+((float) event.eventData.stats_nanoTimes / 1000000f / (float) event.eventData.stats_scriptFires)).append(c1).append("ms per script.\n");
+                        .append(c1).append("ms per event or ").append(c2).append(((float) event.eventData.stats_nanoTimes / 1000000f / (float) event.eventData.stats_scriptFires)).append(c1).append("ms per script.\n");
                 statsSet.add(new HashMap.SimpleEntry<>(event.eventData.stats_nanoTimes, stats.toString()));
             }
         }

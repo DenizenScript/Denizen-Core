@@ -498,7 +498,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Try index: " + key.asString().split("\\[")[1].replace("]", ""));
                             }
-                            index = Integer.valueOf(key.asString().split("\\[")[1].replace("]", "")) - 1;
+                            index = Integer.parseInt(key.asString().split("\\[")[1].replace("]", "")) - 1;
                         }
                         catch (Exception e) {
                             if (CoreConfiguration.debugVerbose) {

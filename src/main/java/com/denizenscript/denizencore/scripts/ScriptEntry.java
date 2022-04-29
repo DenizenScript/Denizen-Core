@@ -739,6 +739,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         for (Argument arg : internal.preprocArgs) {
             sb.append(" ").append(stringifyArg(arg.toString()));
         }
-        return internal.command + sb.toString();
+        return internal.command + sb;
     }
 }

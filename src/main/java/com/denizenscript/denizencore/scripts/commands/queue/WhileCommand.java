@@ -48,7 +48,7 @@ public class WhileCommand extends BracedCommand {
     //
     // -->
 
-    private class WhileData {
+    private static class WhileData {
         public int index;
         public List<String> value;
         public long LastChecked;
