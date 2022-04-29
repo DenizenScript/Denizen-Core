@@ -14,6 +14,7 @@ import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -100,6 +101,32 @@ public class ScriptUtilities {
             }
             queue.addDefinition("raw_context", definitions);
         }
+        if (configure != null) {
+            configure.accept(queue);
+        }
+        queue.start(true);
+        return queue;
+    }
+
+    /**
+     * Creates and starts an arbitrary queue based on just a set of entries, useful for example with running a sub-script in a new queue.
+     */
+    public static ScriptQueue createAndStartQueueArbitrary(String id, List<ScriptEntry> entries, ScriptEntryData data, ContextSource context, Consumer<ScriptQueue> configure) {
+        if (data == null) {
+            data = DenizenCore.implementation.getEmptyScriptEntryData();
+        }
+        List<ScriptEntry> cleanedEntries = new ArrayList<>();
+        InstantQueue queue = new InstantQueue(id);
+        for (ScriptEntry entry : entries) {
+            ScriptEntry newEntry = entry.clone();
+            newEntry.queue = queue;
+            newEntry.entryData = data.clone();
+            newEntry.entryData.scriptEntry = newEntry;
+            newEntry.updateContext();
+            cleanedEntries.add(newEntry);
+        }
+        queue.addEntries(cleanedEntries);
+        queue.contextSource = context;
         if (configure != null) {
             configure.accept(queue);
         }

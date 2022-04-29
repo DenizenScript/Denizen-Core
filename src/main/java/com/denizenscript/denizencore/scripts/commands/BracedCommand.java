@@ -33,12 +33,6 @@ public abstract class BracedCommand extends AbstractCommand {
         }
     }
 
-    /**
-     * Gets the commands inside the braces of this ScriptEntry.
-     *
-     * @param scriptEntry The ScriptEntry to get the braced commands from.
-     * @return The list of ScriptEntries to be executed in the command.
-     */
     public static List<BracedData> getBracedCommands(ScriptEntry scriptEntry) {
         return getBracedCommands(scriptEntry, true);
     }
