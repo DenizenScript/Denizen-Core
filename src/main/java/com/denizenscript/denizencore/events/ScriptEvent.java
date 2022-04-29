@@ -789,7 +789,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     // <--[language]
     // @name Advanced Object Matching
-    // @group Script Events
+    // @group Object System
     // @description
     // Script event lines often include specific 'matchable' keywords.
     // For example, while you can write "on player breaks block:" as a script event line,

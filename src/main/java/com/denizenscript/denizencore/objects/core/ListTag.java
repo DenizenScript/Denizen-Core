@@ -1423,9 +1423,9 @@ public class ListTag implements List<String>, ObjectTag {
                 if (indices.size() > 1) {
                     ListTag results = new ListTag();
                     for (String index : indices) {
-                        int ind = CoreUtilities.parseIndex(object.objectForms, index);
+                        int ind = CoreUtilities.parseIndex(object, index);
                         if (ind >= 0) {
-                            results.add(object.get(ind));
+                            results.addObject(object.getObject(ind));
                         }
                         else {
                             attribute.echoError("Invalid index '" + index + "'.");
@@ -1434,9 +1434,9 @@ public class ListTag implements List<String>, ObjectTag {
                     return results;
                 }
                 if (indices.size() > 0) {
-                    int index = CoreUtilities.parseIndex(object.objectForms, indices.get(0));
+                    int index = CoreUtilities.parseIndex(object, indices.get(0));
                     if (index < 0) {
-                        attribute.echoError("Invalid list.get index '" + (index + 1) + "'.");
+                        attribute.echoError("Invalid list.get index '" + indices.get(0) + "' for list of size " + object.size() + ".");
                         return null;
                     }
 
@@ -1452,20 +1452,20 @@ public class ListTag implements List<String>, ObjectTag {
                     // For example: .get[-2].to[-1] on a list of "one|two|three|four" will return "three|four".
                     // -->
                     if (attribute.startsWith("to", 2) && attribute.hasContext(2)) {
-                        int index2 = CoreUtilities.parseIndex(object.objectForms, attribute.getContext(2));
+                        int index2 = CoreUtilities.parseIndex(object, attribute.getContext(2));
                         if (index2 < 0) {
-                            attribute.echoError("Invalid list.get.to index of '" + (index2 + 1) + "'.");
+                            attribute.echoError("Invalid list.get.to index of '" + attribute.getContext(2) + "' for list of size " + object.size() + ".");
                             return null;
                         }
                         ListTag newList = new ListTag();
                         for (int i = index; i <= index2; i++) {
-                            newList.addObject(object.objectForms.get(i));
+                            newList.addObject(object.getObject(i));
                         }
                         attribute.fulfill(1);
                         return newList;
                     }
                     else {
-                        return object.objectForms.get(index);
+                        return object.getObject(index);
                     }
                 }
             }

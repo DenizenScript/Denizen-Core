@@ -700,10 +700,7 @@ public class CoreUtilities {
         try {
             index = Integer.parseInt(str);
         }
-        catch (Exception ex) {
-            return -1;
-        }
-        if (index == 0) {
+        catch (NumberFormatException ex) {
             return -1;
         }
         if (index < 0) {
