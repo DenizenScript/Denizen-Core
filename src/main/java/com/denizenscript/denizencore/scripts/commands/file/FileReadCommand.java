@@ -48,7 +48,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Use to read 'myfile' and narrate the text content.
     // - ~fileread path:data/myfile.dat save:read
-    // - narrate "Read data: <entry[read].data.decode_utf8>"
+    // - narrate "Read data: <entry[read].data.utf8_decode>"
     //
     // -->
 

@@ -160,10 +160,12 @@ public abstract class AbstractFlagTracker {
         return getFlagExpirationTime(attribute.getParam());
     }
 
-    public static Warning listFlagsTagWarning = new SlowWarning("The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
+    public static Warning listFlagsTagWarning = new SlowWarning("listFlagsTagWarning", "The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
 
     public ListTag doListFlagsTag(Attribute attribute) {
-        listFlagsTagWarning.warn(attribute.context);
+        if (attribute.getScriptEntry() != null && attribute.getScriptEntry().getScript() != null) { // don't warn in '/ex'
+            listFlagsTagWarning.warn(attribute.context);
+        }
         ListTag list = new ListTag();
         list.addAll(listAllFlags());
         return list;
@@ -179,7 +181,9 @@ public abstract class AbstractFlagTracker {
 
     public MapTag doFlagMapTag(Attribute attribute) {
         if (!attribute.hasParam()) {
-            listFlagsTagWarning.warn(attribute.context);
+            if (attribute.getScriptEntry() != null && attribute.getScriptEntry().getScript() != null) { // don't warn in '/ex'
+                listFlagsTagWarning.warn(attribute.context);
+            }
             return getFlagMap();
         }
         MapTag result = new MapTag();

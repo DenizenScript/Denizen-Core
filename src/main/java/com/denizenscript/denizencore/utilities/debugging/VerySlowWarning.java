@@ -10,8 +10,8 @@ public class VerySlowWarning extends SlowWarning {
      */
     public int lastShown = -1;
 
-    public VerySlowWarning(String message) {
-        super(message);
+    public VerySlowWarning(String id, String message) {
+        super(id, message);
     }
 
     @Override

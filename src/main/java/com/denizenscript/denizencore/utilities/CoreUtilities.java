@@ -14,12 +14,15 @@ import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -884,5 +887,17 @@ public class CoreUtilities {
 
     public static long monotonicMillisToReal(long monotonic) {
         return System.currentTimeMillis() + (monotonic - monotonicMillis());
+    }
+
+    public static String hash_md5(byte[] bytes) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytes, 0, bytes.length);
+            return new BigInteger(1, md.digest()).toString(16).substring(0, 16);
+        }
+        catch (Throwable ex) {
+            Debug.echoError(ex);
+        }
+        return null;
     }
 }

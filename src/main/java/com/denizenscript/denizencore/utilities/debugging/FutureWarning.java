@@ -4,8 +4,8 @@ import com.denizenscript.denizencore.utilities.CoreConfiguration;
 
 public class FutureWarning extends Warning {
 
-    public FutureWarning(String message) {
-        super(message);
+    public FutureWarning(String id, String message) {
+        super(id, message);
     }
 
     @Override

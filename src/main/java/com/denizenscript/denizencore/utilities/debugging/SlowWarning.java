@@ -7,8 +7,8 @@ public class SlowWarning extends Warning {
 
     public long lastWarning;
 
-    public SlowWarning(String message) {
-        super(message);
+    public SlowWarning(String id, String message) {
+        super(id, message);
     }
 
     @Override
