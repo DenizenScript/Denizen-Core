@@ -210,12 +210,7 @@ public interface ObjectTag {
      * @return a string result of the fetched attribute
      */
     default ObjectTag getObjectAttribute(Attribute attribute) {
-        String res = getAttribute(attribute);
-        return res == null ? null : new ElementTag(res);
-    }
-
-    default String getAttribute(Attribute attribute) {
-        return CoreUtilities.stringifyNullPass(getObjectAttribute(attribute));
+        return null;
     }
 
     /**

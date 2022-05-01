@@ -5,7 +5,6 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -16,21 +15,14 @@ public class ReplaceableTagEvent {
 
     private boolean wasReplaced = false;
 
-    private String replaced;
     private String value_tagged = null;
     private Attribute core_attributes = null;
 
     public String raw_tag;
 
-    public ObjectTag replaced_obj = null;
+    public ObjectTag replaced_obj;
 
     public ObjectTag getReplacedObj() {
-        if (replaced_obj == null) {
-            if (replaced == null) {
-                return null;
-            }
-            replaced_obj = new ElementTag(replaced);
-        }
         return replaced_obj;
     }
 
@@ -69,7 +61,7 @@ public class ReplaceableTagEvent {
         // If tag is not replaced, return the tag
         // TODO: Possibly make this return "null" ... might break some
         // scripts using tags incorrectly, but makes more sense overall
-        this.replaced = tag;
+        this.replaced_obj = new ElementTag(tag);
 
         if (ref != null) {
             mainRef = ref;
@@ -244,40 +236,17 @@ public class ReplaceableTagEvent {
         return context;
     }
 
-    public String getReplaced() {
-        if (replaced == null && replaced_obj != null) {
-            replaced = replaced_obj.toString();
-        }
-        return replaced;
-    }
-
     public ScriptTag getScript() {
         return context.script;
     }
 
     public boolean replaced() {
-        return wasReplaced && (replaced != null || replaced_obj != null);
+        return wasReplaced && replaced_obj != null;
     }
 
     public void setReplacedObject(ObjectTag obj) {
         replaced_obj = obj;
-        replaced = null;
         wasReplaced = obj != null;
-    }
-
-    public void setReplaced(String string) {
-        if (CoreConfiguration.debugVerbose) {
-            try {
-                throw new RuntimeException("Trace");
-            }
-            catch (Exception ex) {
-                Debug.echoError(ex);
-            }
-            Debug.log("Tag " + raw_tag + " updating to value: " + string);
-        }
-        replaced = string;
-        replaced_obj = null;
-        wasReplaced = string != null;
     }
 
     public ScriptEntry getScriptEntry() {
