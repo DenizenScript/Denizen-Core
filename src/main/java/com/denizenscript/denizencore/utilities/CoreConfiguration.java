@@ -29,4 +29,6 @@ public class CoreConfiguration {
     public static boolean skipAllFlagCleanings = false;
 
     public static String webserverRoot = "webroot/", filePathLimit = "data/";
+
+    public static boolean verifyThreadMatches;
 }

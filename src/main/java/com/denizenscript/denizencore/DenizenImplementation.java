@@ -161,4 +161,6 @@ public interface DenizenImplementation {
     String getEmphasisColor();
 
     void saveClassToLoader(Class<?> clazz);
+
+    boolean isSafeThread();
 }
