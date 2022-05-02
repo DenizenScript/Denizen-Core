@@ -892,7 +892,7 @@ public class CoreUtilities {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(bytes, 0, bytes.length);
-            return new BigInteger(1, md.digest()).toString(16).substring(0, 16);
+            return new BigInteger(1, md.digest()).toString(16);
         }
         catch (Throwable ex) {
             Debug.echoError(ex);
