@@ -26,6 +26,7 @@ public class Warning {
     }
 
     public void warn(ScriptEntry entry) {
+        Deprecations.firedRecently.add(id);
         if (!testShouldWarn()) {
             return;
         }
