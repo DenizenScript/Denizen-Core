@@ -683,8 +683,11 @@ public class ListTag implements List<String>, ObjectTag {
     public int parseIndex(String index, Attribute attribute, boolean strict) {
         int size = size();
         if (size == 0) {
-            attribute.echoError("Invalid index parse, list is empty.");
-            return -1;
+            if (strict) {
+                attribute.echoError("Invalid index parse, list is empty.");
+                return -1;
+            }
+            return 0;
         }
         index = CoreUtilities.toLowerCase(index);
         if (index.equals("last")) {
@@ -708,11 +711,16 @@ public class ListTag implements List<String>, ObjectTag {
             attribute.echoError("Invalid index '0': lists start at index 1.");
             return 0;
         }
-        if (strict && integerIndex > size) {
-            attribute.echoError("Invalid index '" + index + "': list only has " + size + " entries in it.");
-            return -1;
+        if (integerIndex > size) {
+            if (strict) {
+                attribute.echoError("Invalid index '" + index + "': list only has " + size + " entries in it.");
+                return -1;
+            }
+            else {
+                return size;
+            }
         }
-        return Math.min(size, integerIndex) - 1;
+        return integerIndex - 1;
     }
 
     public static void registerTags() {
@@ -1113,7 +1121,7 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag items = getListFor(attribute.getParamObject(), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = object.parseIndex(attribute.getContext(2), attribute, false);
+                int index = object.parseIndex(attribute.getContext(2), attribute, true);
                 if (index == -1) {
                     return null;
                 }
@@ -1150,7 +1158,7 @@ public class ListTag implements List<String>, ObjectTag {
             ObjectTag value = attribute.getParamObject();
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = object.parseIndex(attribute.getContext(2), attribute, false);
+                int index = object.parseIndex(attribute.getContext(2), attribute, true);
                 attribute.fulfill(1);
                 if (index == -1) {
                     return null;
@@ -1192,7 +1200,7 @@ public class ListTag implements List<String>, ObjectTag {
             ListTag items = getListFor(attribute.getParamObject(), attribute.context);
             if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
                 ListTag result = new ListTag(object);
-                int index = object.parseIndex(attribute.getContext(2), attribute, false);
+                int index = object.parseIndex(attribute.getContext(2), attribute, true);
                 attribute.fulfill(1);
                 if (index == -1) {
                     return null;
