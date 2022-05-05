@@ -72,4 +72,3 @@ public class QueueTagBase {
         event.setReplacedObject(CoreUtilities.autoAttrib(new QueueTag(event.getScriptEntry().getResidingQueue()), attribute.fulfill(1)));
     }
 }
-
