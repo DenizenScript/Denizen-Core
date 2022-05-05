@@ -1346,6 +1346,9 @@ public class ListTag implements List<String>, ObjectTag {
                 if (fromIndex == -1 || toIndex == -1) {
                     return null;
                 }
+                if (toIndex >= object.size()) {
+                    toIndex = object.size() - 1;
+                }
                 if (toIndex < fromIndex) {
                     return copy;
                 }
@@ -1546,6 +1549,9 @@ public class ListTag implements List<String>, ObjectTag {
                         int index2 = object.parseIndex(attribute.getContext(2), attribute, false);
                         if (index2 == -1) {
                             return null;
+                        }
+                        if (index2 >= object.size()) {
+                            index2 = object.size() - 1;
                         }
                         ListTag newList = new ListTag();
                         for (int i = index; i <= index2; i++) {
