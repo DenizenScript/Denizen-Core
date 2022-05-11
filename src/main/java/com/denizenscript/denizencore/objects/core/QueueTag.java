@@ -158,10 +158,20 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         // @attribute <QueueTag.id>
         // @returns ElementTag
         // @description
-        // Returns the id of the queue.
+        // Returns the full textual id of the queue.
         // -->
         tagProcessor.registerTag(ElementTag.class, "id", (attribute, object) -> {
             return new ElementTag(object.getQueue().id);
+        });
+
+        // <--[tag]
+        // @attribute <QueueTag.numeric_id>
+        // @returns ElementTag(Number)
+        // @description
+        // Returns the raw numeric id of the queue. This is an incremental ID one higher than the previous queue's numeric ID.
+        // -->
+        tagProcessor.registerTag(ElementTag.class, "numeric_id", (attribute, object) -> {
+            return new ElementTag(object.getQueue().numericId);
         });
 
         // <--[tag]
@@ -197,6 +207,16 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         tagProcessor.registerTag(DurationTag.class, "time_ran", (attribute, object) -> {
             long timeNano = System.nanoTime() - object.getQueue().startTime;
             return new DurationTag(timeNano / (1000000 * 1000.0));
+        });
+
+        // <--[tag]
+        // @attribute <QueueTag.is_valid>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if the queue has not yet stopped.
+        // -->
+        tagProcessor.registerTag(ElementTag.class, "is_valid", (attribute, object) -> {
+            return new ElementTag(object.getQueue().is_started && !object.getQueue().isStopped);
         });
 
         // <--[tag]

@@ -57,12 +57,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public static ScriptQueue getExistingQueue(String id) {
-        if (!queueExists(id)) {
-            return null;
-        }
-        else {
-            return allQueues.get(id);
-        }
+        return allQueues.get(id);
     }
 
     protected static LinkedHashMap<String, ScriptQueue> allQueues = new LinkedHashMap<>();
@@ -130,10 +125,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     private Runnable callback = null;
 
+    public long numericId;
+
     protected ScriptQueue(String id) {
+        numericId = total_queues++;
         this.id = id;
-        generateId(id, 0);
-        total_queues++;
+        generateId(id, numericId, 0);
     }
 
     public final ScriptEntry getHeldScriptEntry(String id) {
@@ -219,29 +216,39 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         this.delay_time = delayTime;
     }
 
-    public final void generateId(String prefix, int depth) {
+    public final void generateId(String prefix, long numericId, int depth) {
         if (prefix.startsWith("FORCE:")) {
             id = prefix.substring("FORCE:".length());
             debugId = id;
             return;
         }
-        // DUUIDs v2.1
+        // DUUIDs v2.5
         int size = QueueWordList.FinalWordList.size();
         Random random = CoreUtilities.getRandom();
-        String wordOne = QueueWordList.FinalWordList.get(random.nextInt(size));
-        String wordTwo = QueueWordList.FinalWordList.get(random.nextInt(size));
-        String colorOne = DenizenCore.implementation.getRandomColor();
-        String colorTwo = DenizenCore.implementation.getRandomColor();
-        id = prefix + "_" + wordOne + wordTwo;
-        debugId = "<LG>" + prefix + "_" + colorOne + wordOne + colorTwo + wordTwo;
-        for (int i = 0; i < depth; i++) {
-            String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
-            String colorThree = DenizenCore.implementation.getRandomColor();
-            id += wordThree;
-            debugId += colorThree + wordThree;
+        String wordsRaw = "", wordsColor = "";
+        if (CoreConfiguration.queueIdWords) {
+            String wordOne = QueueWordList.FinalWordList.get(random.nextInt(size));
+            String wordTwo = QueueWordList.FinalWordList.get(random.nextInt(size));
+            String colorOne = DenizenCore.implementation.getRandomColor();
+            String colorTwo = DenizenCore.implementation.getRandomColor();
+            wordsRaw = wordOne + wordTwo;
+            wordsColor = colorOne + wordOne + colorTwo + wordTwo;
+            for (int i = 0; i < depth; i++) {
+                String wordThree = QueueWordList.FinalWordList.get(random.nextInt(size));
+                String colorThree = DenizenCore.implementation.getRandomColor();
+                wordsRaw += wordThree;
+                wordsColor += colorThree + wordThree;
+            }
         }
-        if (queueExists(id)) {
-            generateId(prefix, depth + 1);
+        id = (CoreConfiguration.queueIdPrefix ? prefix + "_" : "") + (CoreConfiguration.queueIdNumeric ? numericId + (CoreConfiguration.queueIdWords ? "_" : "") : "") + (CoreConfiguration.queueIdWords ? wordsRaw : "");
+        debugId = (CoreConfiguration.queueIdPrefix ? "<LG>" + prefix + "_" : "") + (CoreConfiguration.queueIdNumeric ? "<GR>" + numericId + (CoreConfiguration.queueIdWords ? "<LG>_" : "") : "") + (CoreConfiguration.queueIdWords ? wordsColor : "");
+        if (!CoreConfiguration.queueIdNumeric && queueExists(id)) {
+            if (!CoreConfiguration.queueIdWords) { // Prevent infinite loop from invalid config
+                Debug.echoError("WARNING: Configuration invalid! Trying to generate queue IDs with neither numbers nor words! Resetting to both enabled.");
+                CoreConfiguration.queueIdNumeric = true;
+                CoreConfiguration.queueIdWords = true;
+            }
+            generateId(prefix, numericId, depth + 1);
         }
     }
 
@@ -268,6 +275,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             entry.updateContext();
             newQueue.script_entries.add(entry);
         }
+        newQueue.determinations = determinations;
         newQueue.definitions = definitions.duplicate();
         newQueue.setContextSource(contextSource);
         newQueue.determinationTarget = determinationTarget;

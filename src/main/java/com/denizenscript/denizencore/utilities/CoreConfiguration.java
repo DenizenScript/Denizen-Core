@@ -31,4 +31,6 @@ public class CoreConfiguration {
     public static String webserverRoot = "webroot/", filePathLimit = "data/";
 
     public static boolean verifyThreadMatches;
+
+    public static boolean queueIdPrefix = true, queueIdNumeric = true, queueIdWords = true;
 }
