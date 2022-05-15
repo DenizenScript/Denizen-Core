@@ -2061,9 +2061,9 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate "<list[3|2|1|10].numerical>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "numerical", (attribute, object) -> {
-            ArrayList<String> sortable = new ArrayList<>(object);
-            sortable.sort((o1, o2) -> {
-                double value = new ElementTag(o1).asDouble() - new ElementTag(o2).asDouble();
+            ListTag sortable = new ListTag(object);
+            sortable.objectForms.sort((o1, o2) -> {
+                double value = o1.asElement().asDouble() - o2.asElement().asDouble();
                 if (value == 0) {
                     return 0;
                 }
@@ -2087,8 +2087,8 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate "<list[b|c|a10|a1].alphanumeric>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "alphanumeric", (attribute, object) -> {
-            ArrayList<String> sortable = new ArrayList<>(object);
-            sortable.sort(new NaturalOrderComparator());
+            ListTag sortable = new ListTag(object);
+            sortable.objectForms.sort(new NaturalOrderComparator());
             return new ListTag(sortable);
         });
 
@@ -2102,8 +2102,8 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate "<list[c|d|q|a|g].alphabetical>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "alphabetical", (attribute, object) -> {
-            ArrayList<String> sortable = new ArrayList<>(object);
-            sortable.sort(String::compareToIgnoreCase);
+            ListTag sortable = new ListTag(object);
+            sortable.objectForms.sort((o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
             return new ListTag(sortable);
         });
 
@@ -2232,9 +2232,8 @@ public class ListTag implements List<String>, ObjectTag {
                 context = attribute.paramAsType(ListTag.class);
             }
             final ListTag context_send = context;
-            List<String> list = new ArrayList<>(obj);
             try {
-                list.sort((o1, o2) -> {
+                obj.objectForms.sort((o1, o2) -> {
                     List<ScriptEntry> entries = script.getBaseEntries(entry == null ?
                             DenizenCore.implementation.getEmptyScriptEntryData() : entry.entryData.clone());
                     if (entries.isEmpty()) {
@@ -2244,8 +2243,8 @@ public class ListTag implements List<String>, ObjectTag {
                     queue.addEntries(entries);
                     int x = 1;
                     ListTag definitions = new ListTag();
-                    definitions.add(o1);
-                    definitions.add(o2);
+                    definitions.addObject(o1);
+                    definitions.addObject(o2);
                     definitions.addAll(context_send);
                     String[] definition_names = null;
                     try {
@@ -2270,7 +2269,7 @@ public class ListTag implements List<String>, ObjectTag {
             catch (Exception e) {
                 Debug.echoError("list.sort[...] tag failed - procedure returned unreasonable response - internal error: " + e.getMessage());
             }
-            return new ListTag(list);
+            return obj;
         });
 
         // <--[tag]
