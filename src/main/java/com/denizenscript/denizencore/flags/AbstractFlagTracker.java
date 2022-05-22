@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -121,6 +122,23 @@ public abstract class AbstractFlagTracker {
         });
     }
 
+    public static void tryFlagAdjusts(FlaggableObject object, Mechanism mechanism) {
+
+        // <--[mechanism]
+        // @object FlaggableObject
+        // @name clean_flags
+        // @input None
+        // @description
+        // Cleans any expired flags from the object.
+        // Generally doesn't need to be called, using the 'skip flag cleanings' setting was enabled.
+        // This is an internal/special case mechanism, and should be avoided where possible.
+        // Does not function on all flaggable objects, particularly those that just store their flags into other objects.
+        // -->
+        if (mechanism.matches("clean_flags")) {
+            object.getFlagTracker().doTotalClean();
+        }
+    }
+
     public ElementTag doHasFlagTag(Attribute attribute) {
         if (!attribute.hasParam()) {
             attribute.echoError("The has_flag[...] tag must have an input!");
@@ -201,5 +219,9 @@ public abstract class AbstractFlagTracker {
             result.putObject("__clear", clear);
         }
         return result;
+    }
+
+    public void doTotalClean() {
+        // Do nothing by default
     }
 }

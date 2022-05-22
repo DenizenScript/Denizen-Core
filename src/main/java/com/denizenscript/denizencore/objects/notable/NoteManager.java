@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -111,7 +112,9 @@ public class NoteManager {
                     obj.makeUnique(note);
                     if (flagText != null && obj instanceof FlaggableObject) {
                         SavableMapFlagTracker tracker = new SavableMapFlagTracker(flagText);
-                        tracker.doTotalClean();
+                        if (!CoreConfiguration.skipAllFlagCleanings) {
+                            tracker.doTotalClean();
+                        }
                         ((FlaggableObject) getSavedObject(note)).reapplyTracker(tracker);
                     }
                 }

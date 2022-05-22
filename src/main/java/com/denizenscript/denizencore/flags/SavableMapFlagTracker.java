@@ -83,10 +83,8 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         }
     }
 
+    @Override
     public void doTotalClean() {
-        if (CoreConfiguration.skipAllFlagCleanings) {
-            return;
-        }
         if (CoreConfiguration.debugVerbose) {
             Debug.echoError("Verbose - savable tracker is beginning doTotalClean");
         }
@@ -237,7 +235,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         if (CoreConfiguration.debugVerbose) {
             Debug.echoError("Verbose - loading flag file path at " + filePath + " to tracker of " + tracker.map.size() + " flags... doClean=" + doClean);
         }
-        if (doClean) {
+        if (doClean && !CoreConfiguration.skipAllFlagCleanings) {
             tracker.doTotalClean();
         }
         return tracker;
