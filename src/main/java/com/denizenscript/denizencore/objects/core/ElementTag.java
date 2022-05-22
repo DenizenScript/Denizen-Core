@@ -155,13 +155,7 @@ public class ElementTag implements ObjectTag {
         this.prefix = "element";
         if (string == null) {
             if (CoreConfiguration.debugVerbose) {
-                try {
-                    throw new RuntimeException("Trace");
-                }
-                catch (Exception ex) {
-                    Debug.echoError(ex);
-                }
-                Debug.log("Element - Null construction!");
+                Debug.echoError("Element - Null construction!");
             }
             this.element = "null";
         }
@@ -219,13 +213,10 @@ public class ElementTag implements ObjectTag {
     }
 
     public ElementTag(String prefix, String string) {
-        if (prefix == null) {
-            this.prefix = "element";
-        }
-        else {
+        this(string);
+        if (prefix != null) {
             this.prefix = prefix;
         }
-        this.element = string;
     }
 
     static final BigDecimal max = new BigDecimal("10E1000");
