@@ -10,8 +10,18 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
 public abstract class TagContext implements Debuggable, Cloneable {
+
+    @FunctionalInterface
+    public interface ShowErrorsMethod {
+        boolean showErrors();
+    }
+
+    private static boolean defaultShowErrors() {
+        return true;
+    }
+
     public boolean debug;
-    public boolean showErrors;
+    public ShowErrorsMethod showErrors = TagContext::defaultShowErrors;
     public ScriptEntry entry;
     public ScriptTag script;
     public DefinitionProvider definitionProvider;
@@ -29,7 +39,7 @@ public abstract class TagContext implements Debuggable, Cloneable {
     }
 
     public boolean showErrors() {
-        return debug || showErrors;
+        return debug || (showErrors != null && showErrors.showErrors());
     }
 
     @Override
@@ -69,4 +79,3 @@ public abstract class TagContext implements Debuggable, Cloneable {
 
     public abstract ScriptEntryData getScriptEntryData();
 }
-

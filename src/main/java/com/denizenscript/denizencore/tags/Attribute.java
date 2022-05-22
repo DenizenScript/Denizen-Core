@@ -167,14 +167,22 @@ public class Attribute {
         this(ref, scriptEntry, context, 0);
     }
 
+    private void setContext(TagContext context) {
+        if (context == null) {
+            context = CoreUtilities.basicContext;
+        }
+        this.context = context.clone();
+        this.context.showErrors = () -> !hasAlternative();
+    }
+
     public Attribute(Attribute ref, ScriptEntry scriptEntry, TagContext context, int skippable) {
         origin = ref.origin;
         this.scriptEntry = scriptEntry;
-        this.context = context;
+        setContext(context);
         attributes = ref.attributes;
         contexts = new ObjectTag[attributes.length];
         setHadAlternative(ref.hadAlternative);
-        if (context == null || context.debug) {
+        if (this.context.debug) {
             filled = new int[attributes.length];
             for (int i = 0; i < skippable; i++) {
                 filled[i] = 3;
@@ -186,10 +194,10 @@ public class Attribute {
     public Attribute(String attributes, ScriptEntry scriptEntry, TagContext context) throws TagProcessingException {
         origin = attributes;
         this.scriptEntry = scriptEntry;
-        this.context = context;
+        setContext(context);
         this.attributes = separate_attributes(attributes);
         contexts = new ObjectTag[this.attributes.length];
-        if (context == null || context.debug) {
+        if (this.context.debug) {
             filled = new int[this.attributes.length];
         }
     }

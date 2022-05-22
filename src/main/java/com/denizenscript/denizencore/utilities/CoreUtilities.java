@@ -29,8 +29,17 @@ import java.util.function.Function;
 
 public class CoreUtilities {
 
+    /**
+     * No debug, no errors.
+     */
     public static TagContext noDebugContext;
+    /**
+     * Debug and errors shown.
+     */
     public static TagContext basicContext;
+    /**
+     * No debug, yes errors.
+     */
     public static TagContext errorButNoDebugContext;
 
     public static DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);

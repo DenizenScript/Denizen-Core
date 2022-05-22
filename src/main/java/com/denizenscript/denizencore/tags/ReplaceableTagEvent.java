@@ -11,8 +11,6 @@ import java.util.HashMap;
 
 public class ReplaceableTagEvent {
 
-    private final TagContext context;
-
     private boolean wasReplaced = false;
 
     private String value_tagged = null;
@@ -25,9 +23,6 @@ public class ReplaceableTagEvent {
     public ObjectTag getReplacedObj() {
         return replaced_obj;
     }
-
-    ////////////
-    // Constructors
 
     public static class ReferenceData {
 
@@ -55,14 +50,10 @@ public class ReplaceableTagEvent {
     public static HashMap<String, ReferenceData> refs = new HashMap<>();
 
     public ReplaceableTagEvent(ReferenceData ref, String tag, TagContext context) {
-        // Reference context
-        this.context = context;
-
         // If tag is not replaced, return the tag
         // TODO: Possibly make this return "null" ... might break some
         // scripts using tags incorrectly, but makes more sense overall
         this.replaced_obj = new ElementTag(tag);
-
         if (ref != null) {
             mainRef = ref;
             core_attributes = new Attribute(ref.attribs, context.entry, context, ref.skippable);
@@ -76,37 +67,25 @@ public class ReplaceableTagEvent {
             return;
         }
         String otag = tag;
-
         mainRef = new ReferenceData();
-
-        // Get alternative text
         int alternativeLoc = locateAlternative(tag);
-
         if (alternativeLoc >= 0) {
             // get rid of the || at the alternative's start and any trailing spaces
             mainRef.alternative = tag.substring(alternativeLoc + 2).trim();
             // remove found alternative from tag
             tag = tag.substring(0, alternativeLoc);
         }
-
         // Get value (if present)
         int valueLoc = locateValue(tag);
-
         if (valueLoc > 0) {
             mainRef.value = tag.substring(valueLoc + 1);
             tag = tag.substring(0, valueLoc);
         }
-
-        // Alternatives are stripped, value is stripped, let's remember the raw tag for the attributer.
         raw_tag = tag.trim();
-
-        // Use Attributes system to get type/subtype/etc. etc. for 'static/legacy' tags.
         core_attributes = new Attribute(raw_tag, context.entry, context);
         core_attributes.setHadAlternative(hasAlternative());
-
         mainRef.attribs = new Attribute(core_attributes, null, null, 0);
         mainRef.rawTag = raw_tag;
-
         String startValue = getName();
         mainRef.tagBase = TagManager.baseTags.get(startValue);
         if (mainRef.tagBase == null) {
@@ -195,7 +174,7 @@ public class ReplaceableTagEvent {
     @Deprecated
     public String getValue() {
         if (value_tagged == null) {
-            value_tagged = TagManager.tag(mainRef.value, context);
+            value_tagged = TagManager.tag(mainRef.value, core_attributes.context);
         }
         return value_tagged;
     }
@@ -215,10 +194,10 @@ public class ReplaceableTagEvent {
             }
             core_attributes.fulfilled = index;
             alternateBase = Attribute.fallbackTags.get(core_attributes.getAttributeWithoutParam(1));
-            return TagManager.readSingleTagObjectNoDebug(context, this);
+            return TagManager.readSingleTagObjectNoDebug(core_attributes.context, this);
         }
         if (mainRef.alternative != null) {
-            return TagManager.tagObject(mainRef.alternative, context);
+            return TagManager.tagObject(mainRef.alternative, core_attributes.context);
         }
         return null;
     }
@@ -230,14 +209,8 @@ public class ReplaceableTagEvent {
         return core_attributes.hasAlternative();
     }
 
-    // Other internal mechanics
-
-    public TagContext getContext() {
-        return context;
-    }
-
     public ScriptTag getScript() {
-        return context.script;
+        return core_attributes.context.script;
     }
 
     public boolean replaced() {
@@ -250,15 +223,8 @@ public class ReplaceableTagEvent {
     }
 
     public ScriptEntry getScriptEntry() {
-        return context.entry;
+        return core_attributes.context.entry;
     }
-
-    /**
-     * Gets an Attribute object for easy parsing/reading
-     * of the different tag attributes.
-     *
-     * @return attributes
-     */
 
     public Attribute getAttributes() {
         return core_attributes;

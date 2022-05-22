@@ -73,7 +73,7 @@ public class ProcedureScriptTagBase {
             definitions = attribute.contextAsType(2, ListTag.class);
             attribute.fulfill(1);
         }
-        ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, event.getContext().getScriptEntryData(), null, (q) -> {
+        ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, attribute.context.getScriptEntryData(), null, (q) -> {
             q.procedural = true;
         }, new DurationTag(0), null, definitions, script.getContainer());
         if (queue == null) {
