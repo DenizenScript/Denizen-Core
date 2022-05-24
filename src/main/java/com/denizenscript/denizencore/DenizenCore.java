@@ -17,6 +17,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
 import java.io.File;
@@ -257,8 +258,18 @@ public class DenizenCore {
         }
         synchronized (scheduled) {
             for (int i = 0; i < scheduled.size(); i++) {
-                if (!scheduled.get(i).tick((float) ms_elapsed / 1000)) {
-                    scheduled.remove(i--);
+                Schedulable current = scheduled.get(i);
+                try {
+                    if (!current.tick((float) ms_elapsed / 1000)) {
+                        scheduled.remove(i--);
+                    }
+                }
+                catch (Throwable ex) {
+                    Debug.echoError("DenizenCore - Scheduler item failed");
+                    Debug.echoError(ex);
+                    if (current instanceof OneTimeSchedulable) {
+                        scheduled.remove(i--);
+                    }
                 }
             }
         }
