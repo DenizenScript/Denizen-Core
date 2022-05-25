@@ -93,7 +93,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
             }
             return new TimeTag(year, month, day, hour, minute, second, millisecond, offset);
         }
-        catch (NumberFormatException ex) {
+        catch (DateTimeException | NumberFormatException ex) {
             if (context == null || context.showErrors()) {
                 Debug.echoError(ex);
             }
@@ -102,7 +102,6 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     }
 
     public static boolean matches(String string) {
-        // Starts with time@? Assume match.
         if (CoreUtilities.toLowerCase(string).startsWith("time@")) {
             return true;
         }

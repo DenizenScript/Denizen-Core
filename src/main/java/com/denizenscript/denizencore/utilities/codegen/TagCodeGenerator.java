@@ -57,38 +57,44 @@ public class TagCodeGenerator {
         }
         ObjectTag staticParseResult = null;
         if (staticParts > 0) {
-            ReplaceableTagEvent staticParseEvent = new ReplaceableTagEvent(data, toParse.content, genContext);
-            Attribute staticParseAttrib = staticParseEvent.getAttributes();
-            staticParseResult = data.tagBase.baseForm.run(staticParseAttrib);
-            if (staticParseResult != null) {
-                staticParseAttrib.fulfillOne(staticParseResult);
-                for (int i = 1; i < staticParts; i++) {
-                    TagRunnable.ObjectInterface<ObjectTag, ObjectTag> runner = (TagRunnable.ObjectInterface<ObjectTag, ObjectTag>) pieces[i].data.runner;
-                    staticParseResult = runner.run(staticParseAttrib, staticParseResult);
-                    if (staticParseResult != null) {
-                        staticParseAttrib.fulfillOne(staticParseResult);
-                    }
-                }
+            try {
+                ReplaceableTagEvent staticParseEvent = new ReplaceableTagEvent(data, toParse.content, genContext);
+                Attribute staticParseAttrib = staticParseEvent.getAttributes();
+                staticParseResult = data.tagBase.baseForm.run(staticParseAttrib);
                 if (staticParseResult != null) {
-                    if (staticParts == pieces.length) {
+                    staticParseAttrib.fulfillOne(staticParseResult);
+                    for (int i = 1; i < staticParts; i++) {
+                        TagRunnable.ObjectInterface<ObjectTag, ObjectTag> runner = (TagRunnable.ObjectInterface<ObjectTag, ObjectTag>) pieces[i].data.runner;
+                        staticParseResult = runner.run(staticParseAttrib, staticParseResult);
+                        if (staticParseResult != null) {
+                            staticParseAttrib.fulfillOne(staticParseResult);
+                        }
+                    }
+                    if (staticParseResult != null) {
+                        if (staticParts == pieces.length) {
+                            if (genContext.shouldDebug()) {
+                                Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult + "<G>', and cached result.");
+                            }
+                            toParse.rawObject = staticParseResult;
+                            toParse.tagData.rawObject = staticParseResult;
+                            toParse.content = staticParseResult.toString();
+                            toParse.isTag = false;
+                            return null;
+                        }
                         if (genContext.shouldDebug()) {
-                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult + "<G>', and cached result.");
+                            StringBuilder piecesText = new StringBuilder("<");
+                            for (int i = 0; i < staticParts; i++) {
+                                piecesText.append(pieces[i].toString()).append(".");
+                            }
+                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult + "<G>', and cached result.");
                         }
-                        toParse.rawObject = staticParseResult;
-                        toParse.tagData.rawObject = staticParseResult;
-                        toParse.content = staticParseResult.toString();
-                        toParse.isTag = false;
-                        return null;
+                        data.skippable = staticParts;
                     }
-                    if (genContext.shouldDebug()) {
-                        StringBuilder piecesText = new StringBuilder("<");
-                        for (int i = 0; i < staticParts; i++) {
-                            piecesText.append(pieces[i].toString()).append(".");
-                        }
-                        Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult + "<G>', and cached result.");
-                    }
-                    data.skippable = staticParts;
                 }
+            }
+            catch (Throwable ex) {
+                Debug.echoError("Static tag pre-parse failed for: " + toParse.content);
+                Debug.echoError(ex);
             }
         }
         if (applicableParts == 0 && staticParts == 0) {

@@ -56,8 +56,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // @description
         // Returns the prefix of the tag type that is processing this tag, like 'List'.
         // Prefixes are generally only used for debugging (for example, command execution reports show them).
+        // This tag should not be relied on or expected to return any specific value. It may change arbitrarily or even be removed at any time.
         // -->
-        registerTag(ElementTag.class, "prefix", (attribute, object) -> {
+        registerStaticTag(ElementTag.class, "prefix", (attribute, object) -> {
             return new ElementTag(object.getPrefix());
         });
 
@@ -68,7 +69,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns the name of the tag type that is processing this tag, like 'List'.
         // This tag is made available to help you debug script issues, for example if you think an object isn't processing its own type correctly.
         // -->
-        registerTag(ElementTag.class, "object_type", (attribute, object) -> {
+        registerStaticTag(ElementTag.class, "object_type", (attribute, object) -> {
             return new ElementTag(object.getObjectType());
         }, "type");
 
@@ -135,7 +136,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // For example, "<player.if_null[<npc>]>" will return the player if there is a player, and otherwise will return the NPC.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag(ObjectTag.class, "if_null", (attribute, object) -> {
+        registerStaticTag(ObjectTag.class, "if_null", (attribute, object) -> {
             if (!attribute.hasParam()) {
                 return null;
             }
@@ -149,7 +150,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Returns true if the object exists (is non-null). Returns false if the object doesn't exist, is null, or the tag errored.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag(ElementTag.class, "exists", (attribute, object) -> {
+        registerStaticTag(ElementTag.class, "exists", (attribute, object) -> {
             return new ElementTag(true);
         });
 
@@ -163,7 +164,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // Errored/broken/invalid tags are also considered 'false' by this logic.
         // This functions as a fallback - meaning, if the tag up to this point errors, that error will be hidden.
         // -->
-        registerTag(ElementTag.class, "is_truthy", (attribute, object) -> {
+        registerTag(ElementTag.class, "is_truthy", (attribute, object) -> { // Not static as it can refer to temporary state, like whether an entity is spawned
             return new ElementTag(object.isTruthy());
         });
 
@@ -224,7 +225,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return object;
         });
 
-        registerTag(ElementTag.class, "is", (attribute, object) -> {
+        registerTag(ElementTag.class, "is", (attribute, object) -> { // Not static due to hacked sub-tag
 
             // <--[tag]
             // @attribute <ObjectTag.is[<operator>].to[<object>]>
@@ -293,7 +294,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // @description
         // Returns whether the object matches some matcher text, using the system described at <@link language Advanced Object Matching>.
         // -->
-        registerTag(ElementTag.class, "advanced_matches", (attribute, object) -> {
+        registerTag(ElementTag.class, "advanced_matches", (attribute, object) -> { // Not static as some advanced matchers check temporary state (eg note name)
             if (!attribute.hasParam()) {
                 return null;
             }
