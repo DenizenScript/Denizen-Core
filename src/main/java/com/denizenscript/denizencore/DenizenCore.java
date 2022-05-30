@@ -197,6 +197,8 @@ public class DenizenCore {
             ScriptEvent.reload();
             implementation.onScriptReload();
             lastReloadTime = CoreUtilities.monotonicMillis();
+            ScriptsLoadedScriptEvent.instance.hadError = ScriptHelper.hadError();
+            ScriptsLoadedScriptEvent.instance.fire();
         }
         catch (Exception ex) {
             implementation.debugMessage("Error loading scripts:");

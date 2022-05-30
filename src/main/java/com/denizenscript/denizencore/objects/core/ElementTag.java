@@ -1275,7 +1275,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element manipulation
         // @description
-        // Returns the element with all instances of a element removed.
+        // Returns the element with all instances of an element removed.
         // -->
 
         // <--[tag]

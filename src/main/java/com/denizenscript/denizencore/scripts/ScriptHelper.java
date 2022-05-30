@@ -37,9 +37,6 @@ public class ScriptHelper {
         ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
     }
 
-    /**
-     * Console will be alerted if error was had during reload
-     */
     private static boolean hadError = false;
 
     public static boolean hadError() {

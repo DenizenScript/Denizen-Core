@@ -57,6 +57,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         registerScriptEvent(ReloadScriptsScriptEvent.class);
         registerScriptEvent(ScriptGeneratesErrorScriptEvent.class);
         registerScriptEvent(ServerGeneratesExceptionScriptEvent.class);
+        registerScriptEvent(ScriptsLoadedScriptEvent.class);
         registerScriptEvent(ShutdownScriptEvent.class);
         registerScriptEvent(SystemTimeScriptEvent.class);
         registerScriptEvent(TickScriptEvent.class);

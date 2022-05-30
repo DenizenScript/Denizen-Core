@@ -1,33 +1,31 @@
 package com.denizenscript.denizencore.events.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 
-public class ReloadScriptsScriptEvent extends ScriptEvent {
+public class ScriptsLoadedScriptEvent extends ScriptEvent {
 
     // <--[event]
     // @Events
-    // reload scripts
-    // script reload
+    // scripts loaded
     //
     // @Switch had_error:true/false to only process the event if there either was or was not an error message.
     //
     // @Group Core
     //
-    // @Triggers when Denizen scripts are reloaded. Not triggered on initial load.
+    // @Triggers when Denizen scripts are loaded, but on reloaded and on initial load.
     //
     // @Context
     // <context.had_error> returns an ElementTag(Boolean) whether there was an error.
     //
     // -->
 
-    public static ReloadScriptsScriptEvent instance;
+    public static ScriptsLoadedScriptEvent instance;
 
-    public ReloadScriptsScriptEvent() {
+    public ScriptsLoadedScriptEvent() {
         instance = this;
-        registerCouldMatcher("reload scripts");
-        registerCouldMatcher("script reload");
+        registerCouldMatcher("scripts loaded");
         registerSwitches("had_error");
     }
 
@@ -52,6 +50,6 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
 
     @Override
     public String getName() {
-        return "ReloadScripts";
+        return "ScriptsLoaded";
     }
 }

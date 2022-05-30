@@ -13,6 +13,8 @@ public class SecretTagBase {
         // @description
         // Returns a SecretTag object constructed from the input value.
         // Refer to <@link ObjectType SecretTag>.
+        // @Example
+        // - webget <secret[my_secret_url]> "post:Message to secret address!"
         // -->
         TagManager.registerStaticTagBaseHandler(SecretTag.class, "secret", (attribute) -> {
             return SecretTag.valueOf(attribute.getParam(), attribute.context);
