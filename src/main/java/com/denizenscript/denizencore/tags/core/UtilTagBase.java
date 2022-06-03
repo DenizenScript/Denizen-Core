@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.*;
@@ -13,10 +14,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 public class UtilTagBase {
 
@@ -579,6 +577,17 @@ public class UtilTagBase {
         else if (attribute.startsWith("default_encoding")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Charset.defaultCharset().name()), attribute.fulfill(1)));
         }
+
+        // <--[tag]
+        // @attribute <util.runlater_ids>
+        // @returns ListTag
+        // @description
+        // Returns a list of all scheduled task IDs for <@link command runlater>.
+        // Note that usages of runlater that didn't specify an ID will not show up here.
+        // -->
+        else if (attribute.startsWith("runlater_ids")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(new ArrayList<>(RunLaterCommand.trackedById.keySet()), true), attribute.fulfill(1)));
+        }
     }
 
     // <--[ObjectType]
@@ -617,6 +626,22 @@ public class UtilTagBase {
             }
             else {
                 DenizenCore.logInterceptor.standardOutput();
+            }
+        }
+
+        // <--[mechanism]
+        // @object system
+        // @name cancel_runlater
+        // @input ElementTag
+        // @description
+        // Cancels a task scheduled in <@link command runlater> by its specified unique ID.
+        // If the ID isn't in use, will silently do nothing.
+        // Use <@link tag util.runlater_ids> to check whether there is already a scheduled task with the given ID.
+        // -->
+        if (mechanism.matches("cancel_runlater") && mechanism.hasValue()) {
+            RunLaterCommand.FutureRunData runner = RunLaterCommand.trackedById.remove(CoreUtilities.toLowerCase(mechanism.getValue().asString()));
+            if (runner != null) {
+                runner.cancelled = true;
             }
         }
 

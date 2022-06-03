@@ -2444,6 +2444,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the text to a binary representation encoded using the specified encoding method.
         // Input can be for example "utf-8" or "iso-8859-1".
+        // "encoding" label corresponds to the standard charset names listed at <@link url https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html>, or any other charsets added by your Java environment.
         // See also <@link tag BinaryTag.text_decode>
         // @example
         // # narrates "48454c4c4f20574f524c44"
