@@ -683,7 +683,7 @@ public class MapTag implements ObjectTag {
         // Returns a reversed copy of the map. That is, the last key becomes the first key and vice-versa, akin to <@link tag ListTag.reverse>
         // Not to be confused with <@link tag MapTag.invert>
         // @example
-        // # Narrates a map of '[c=1;b=2;a=1]'
+        // # Narrates a map of '[c=3;b=2;a=1]'
         // - narrate <map[a=1;b=2;c=3].reverse>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "reverse", (attribute, object) -> {

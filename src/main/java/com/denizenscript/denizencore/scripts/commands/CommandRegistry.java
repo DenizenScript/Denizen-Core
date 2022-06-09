@@ -68,7 +68,7 @@ public abstract class CommandRegistry {
     // An argument that contains a ":" (like "duration:<value>") is a prefix:value pair. The prefix is usually literal and the value dynamic. The prefix and the colon should be kept directly in the final command.
     //
     // A few examples:
-    // [<location>] is required and non-literal... you might fill it with a notable location, or a tag that returns one like '<player.location>'.
+    // [<location>] is required and non-literal... you might fill it with a noted location, or a tag that returns one like '<player.location>'.
     // (sound:{true}/false) is optional and has a default value of true... you can put sound:false to prevent sound, or leave it blank to allow sound.
     // (repeats:<#>) is optional, has no clear default, and is a number. You can put repeats:3 to repeat three times, or leave it blank to not repeat.
     // Note: Optional arguments without a default usually have a secret default... EG, the (repeats:<#>) above has a secret default of '0'.

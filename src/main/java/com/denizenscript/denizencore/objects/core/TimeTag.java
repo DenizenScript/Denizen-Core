@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.zone.ZoneRulesException;
 import java.util.List;
 import java.util.Locale;
 
@@ -412,7 +413,13 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Zone input can be like 'UTC-5' or like 'America/New_York'
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "to_zone", (attribute, object) -> {
-            return new TimeTag(object.instant.withZoneSameInstant(ZoneId.of(attribute.getParam())));
+            try {
+                return new TimeTag(object.instant.withZoneSameInstant(ZoneId.of(attribute.getParam())));
+            }
+            catch (DateTimeException ex) {
+                attribute.echoError("Timezone '" + attribute.getParam() + "' is invalid or doesn't exist.");
+                return null;
+            }
         });
 
         // <--[tag]
