@@ -2609,8 +2609,8 @@ public class ListTag implements List<String>, ObjectTag {
         // @attribute <ListTag.random[(<#>)]>
         // @returns ObjectTag
         // @description
-        // Gets a random item in the list and returns it as an Element.
-        // Optionally, add [<#>] to get a list of multiple randomly chosen elements.
+        // Gets a random item in the list and returns it.
+        // Optionally, add [<#>] to instead get a list of multiple randomly chosen list entries.
         // @Example
         // # Narrates EITHER "one" OR "two" - different each time!
         // - narrate "<list[one|two].random>
@@ -2622,9 +2622,6 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate "<list[one|two|three].random[9999]>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "random", (attribute, object) -> {
-            if (object.isEmpty()) {
-                return null;
-            }
             if (attribute.hasParam()) {
                 int count = Integer.parseInt(attribute.getParam());
                 int times = 0;
@@ -2639,6 +2636,9 @@ public class ListTag implements List<String>, ObjectTag {
                 return toReturn;
             }
             else {
+                if (object.isEmpty()) {
+                    return null;
+                }
                 return object.objectForms.get(CoreUtilities.getRandom().nextInt(object.size()));
             }
         });
