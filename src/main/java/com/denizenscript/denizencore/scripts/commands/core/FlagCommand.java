@@ -42,7 +42,7 @@ public class FlagCommand extends AbstractCommand {
     // For non-persistent temporary memory, see instead <@link command define>.
     // For more generic memory options, see <@link command yaml> or <@link command sql>.
     //
-    // Flags can be sub-mapped with the '.' key, meaning a flag named 'x.y.z' is actually a flag 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final flag value.
+    // Flags can be sub-mapped with the '.' character, meaning a flag named 'x.y.z' is actually a flag 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final flag value.
     // In other words, "<server.flag[a.b.c]>" is equivalent to "<server.flag[a].get[b].get[c]>"
     //
     // Server flags can be set by specifying 'server' as the object, essentially a global flag target, that will store data in the file "plugins/Denizen/server_flags.dat"

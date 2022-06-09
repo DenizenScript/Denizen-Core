@@ -14,9 +14,6 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 
-/**
- * Creates a queue/script-level variable.
- */
 public class DefineCommand extends AbstractCommand {
 
     public DefineCommand() {
@@ -47,6 +44,9 @@ public class DefineCommand extends AbstractCommand {
     //
     // This command supports data actions, see <@link language data actions>.
     //
+    // Definitions can be sub-mapped with the '.' character, meaning a def named 'x.y.z' is actually a def 'x' as a MapTag with key 'y' as a MapTag with key 'z' as the final defined value.
+    // In other words, "<[a.b.c]>" is equivalent to "<[a].get[b].get[c]>"
+    //
     // @Tags
     // <[<id>]> to get the value assigned to an ID
     // <QueueTag.definition[<definition>]>
@@ -54,30 +54,37 @@ public class DefineCommand extends AbstractCommand {
     //
     // @Usage
     // Use to make complex tags look less complex, and scripts more readable.
-    // - narrate 'You invoke your power of notice...'
+    // - narrate "You invoke your power of notice..."
     // - define range <player.flag[range_level].mul[3]>
     // - define blocks <player.flag[noticeable_blocks]>
-    // - narrate '[NOTICE] You have noticed <player.location.find_blocks[<[blocks]>].within[<[range]>].size> blocks in the area that may be of interest.'
+    // - define count <player.location.find_blocks[<[blocks]>].within[<[range]>].size>
+    // - narrate "<&[base]>[NOTICE] You have noticed <[count].custom_color[emphasis]> blocks in the area that may be of interest."
     //
     // @Usage
     // Use to validate a player input to a command script, and then output the found player's name.
     // - define target <server.match_player[<context.args.get[1]>]||null>
     // - if <[target]> == null:
-    //   - narrate '<red>Unknown player target.'
+    //   - narrate "<red>Unknown player target."
     //   - stop
-    // - narrate 'You targeted <[target].name>!'
+    // - narrate "You targeted <[target].name>!"
     //
     // @Usage
-    // Use to keep the value of a replaceable tag that you might use many times within a single script.
+    // Use to keep the value of a tag that you might use many times within a single script.
     // - define arg1 <context.args.get[1]>
     // - if <[arg1]> == hello:
-    //   - narrate 'Hello!'
+    //     - narrate Hello!
     // - else if <[arg1]> == goodbye:
-    //   - narrate 'Goodbye!'
+    //     - narrate Goodbye!
     //
     // @Usage
     // Use to remove a definition.
     // - define myDef:!
+    //
+    // @Usage
+    // Use to make a MapTag definition and set the value of a key inside.
+    // - define myroot.mykey MyValue
+    // - define myroot.myotherkey MyOtherValue
+    // - narrate "The main value is <[myroot.mykey]>, and the map's available key set is <[myroot].keys>"
     //
     // -->
 

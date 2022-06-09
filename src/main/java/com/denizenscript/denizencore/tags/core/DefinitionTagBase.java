@@ -18,6 +18,7 @@ public class DefinitionTagBase {
         // Returns a definition from the current queue.
         // The object will be returned as the most-valid type based on the input.
         // In most usages, the tag name is left blank, like "<[defhere]>".
+        // You can use "." in a definition name to read a submapped key if the root definition is a MapTag.
         // @example
         // - define x 3
         // # Narrates '3'
