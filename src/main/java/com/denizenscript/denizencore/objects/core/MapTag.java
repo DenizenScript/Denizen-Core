@@ -13,6 +13,7 @@ import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class MapTag implements ObjectTag {
 
@@ -228,6 +229,38 @@ public class MapTag implements ObjectTag {
             current = (MapTag) subValue;
         }
         return current.getObject(subkeys.get(subkeys.size() - 1));
+    }
+
+    public ObjectTag getObject(String key, Supplier<ObjectTag> defaultGetter) {
+        ObjectTag object = getDeepObject(key);
+        if (object == null) {
+            return defaultGetter == null ? null : defaultGetter.get();
+        }
+        return object;
+    }
+
+    public <T extends ObjectTag> T getObjectAs(String key, Class<T> type, TagContext context) {
+        return getObjectAs(key, type, context, null);
+    }
+
+    public <T extends ObjectTag> T getObjectAs(String key, Class<T> type, TagContext context, Supplier<T> defaultGetter) {
+        ObjectTag object = getDeepObject(key);
+        if (object == null) {
+            return defaultGetter == null ? null : defaultGetter.get();
+        }
+        return object.asType(type, context);
+    }
+
+    public ElementTag getElement(String key) {
+        return getElement(key, null);
+    }
+
+    public ElementTag getElement(String key, String defaultValue) {
+        ObjectTag object = getDeepObject(key);
+        if (object == null) {
+            return defaultValue == null ? null : new ElementTag(defaultValue);
+        }
+        return object.asElement();
     }
 
     public ObjectTag getObject(String key) {
