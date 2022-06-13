@@ -228,7 +228,7 @@ public class UtilTagBase {
         }
 
         // <--[tag]
-        // @attribute <util.random_simplex[<input_map>]>
+        // @attribute <util.random_simplex[x=<#.#>;(y=<#.#>);(z=<#.#>);(w=<#.#>)]>
         // @returns ElementTag(Decimal)
         // @description
         // Returns a pseudo-random decimal number from -1 to 1, based on a Simplex Noise algorithm. See <@link url https://en.wikipedia.org/wiki/Simplex_noise>
@@ -262,12 +262,49 @@ public class UtilTagBase {
         }
 
         // <--[tag]
+        // @attribute <util.list_numbers[to=<#>;(from=<#>);(every=<#>)]>
+        // @returns ListTag
+        // @description
+        // Returns a list of integer numbers in the specified range.
+        // You must specify at least the 'to' input, you can optionally specify 'from' (default 1), and 'every' (default 1).
+        // Note that this generally should not be used as input to the 'foreach' command. Instead, use <@link command repeat>.
+        // @example
+        // # Narrates "1, 2, and 3"
+        // - narrate <util.list_numbers[to=3].formatted>
+        // @example
+        // # Narrates "3, 4, and 5"
+        // - narrate <util.list_numbers[from=3;to=5].formatted>
+        // @example
+        // # Narrates "4, 8, and 12"
+        // - narrate <util.list_numbers[from=4;to=12;every=4].formatted>
+        // -->
+        else if (attribute.startsWith("list_numbers") && attribute.hasParam()) {
+            MapTag input = attribute.paramAsType(MapTag.class);
+            if (input == null) {
+                return;
+            }
+            ElementTag toElement = input.getElement("to");
+            if (toElement == null || !toElement.isInt()) {
+                return;
+            }
+            long to = toElement.asInt();
+            long from = input.getElement("from", "1").asInt();
+            long every = input.getElement("every", "1").asInt();
+            ListTag result = new ListTag();
+            for (long i = from; i <= to; i += every) {
+                result.addObject(new ElementTag(i));
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
         // @attribute <util.list_numbers_to[<#>]>
         // @returns ListTag
         // @description
         // Returns a list of integer numbers from 1 to the specified input number (inclusive).
-        // Note that you should NEVER use this as the input to a "foreach" command. Instead, use "repeat".
+        // Note that you should NEVER use this as the input to a "foreach" command. Instead, use <@link command repeat>.
         // In most cases, there's a better way to do what you're trying to accomplish than using this tag.
+        // Consider instead using <@link tag util.list_numbers>
         // -->
         else if (attribute.startsWith("list_numbers_to") && attribute.hasParam()) {
             int to = attribute.getIntParam();
