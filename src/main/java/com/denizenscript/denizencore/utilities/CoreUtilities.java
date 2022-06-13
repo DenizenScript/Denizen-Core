@@ -118,26 +118,44 @@ public class CoreUtilities {
     }
 
 
-    public static Object objectTagToJavaForm(ObjectTag obj, boolean stringHolder) {
+    public static Object objectTagToJavaForm(ObjectTag obj, boolean stringHolder, boolean nativeTypes) {
         if (obj == null) {
             return null;
         }
         else if (obj instanceof ListTag) {
             List<Object> output = new ArrayList<>(((ListTag) obj).size());
             for (ObjectTag entry : ((ListTag) obj).objectForms) {
-                output.add(objectTagToJavaForm(entry, stringHolder));
+                output.add(objectTagToJavaForm(entry, stringHolder, nativeTypes));
             }
             return output;
         }
         else if (obj instanceof MapTag) {
             Map<Object, Object> output = new LinkedHashMap<>();
             for (Map.Entry<StringHolder, ObjectTag> entry : ((MapTag) obj).map.entrySet()) {
-                output.put(stringHolder ? entry.getKey() : entry.getKey().str, objectTagToJavaForm(entry.getValue(), stringHolder));
+                output.put(stringHolder ? entry.getKey() : entry.getKey().str, objectTagToJavaForm(entry.getValue(), stringHolder, nativeTypes));
             }
             return output;
         }
         else {
-            return obj.toString();
+            String raw = obj.toString();
+            if (nativeTypes) {
+                if (raw.equals("true")) {
+                    return Boolean.TRUE;
+                }
+                else if (raw.equals("false")) {
+                    return Boolean.FALSE;
+                }
+                else if (ArgumentHelper.matchesDouble(raw)) {
+                    try {
+                        if (ArgumentHelper.matchesInteger(raw)) {
+                            return Long.parseLong(raw);
+                        }
+                        return Double.parseDouble(raw);
+                    }
+                    catch (NumberFormatException ex) { /* IGNORE */ }
+                }
+            }
+            return raw;
         }
     }
 

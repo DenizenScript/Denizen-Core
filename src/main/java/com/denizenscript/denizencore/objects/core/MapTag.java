@@ -901,16 +901,20 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <MapTag.to_json>
+        // @attribute <MapTag.to_json[(native_types=<true/false>)]>
         // @returns ElementTag
         // @description
         // Returns a JSON encoding of this map. Primarily useful with interop with other software, such as when use <@link command webget> or <@link command webserver>.
+        // Optionally specify configuration input with:
+        // 'native_types' (defaults to false) if 'true' will attempt to convert 'true' or 'false' to booleans, and numbers to raw numbers.
         // @example
         // # Narrates {"a":"1","b":"2"}
         // - narrate <map[a=1;b=2].to_json>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_json", (attribute, object) -> {
-            return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false)).toString());
+            MapTag input = attribute.paramAsType(MapTag.class);
+            boolean nativeTypes = input != null && input.getElement("native_types", "false").asBoolean();
+            return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false, nativeTypes)).toString());
         });
 
         // <--[tag]
@@ -926,7 +930,7 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_yaml", (attribute, object) -> {
             YamlConfiguration output = new YamlConfiguration();
-            output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true);
+            output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true, false);
             return new ElementTag(output.saveToString(false));
         });
     }

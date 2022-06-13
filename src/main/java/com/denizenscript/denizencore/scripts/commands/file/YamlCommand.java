@@ -701,7 +701,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
         }
         if (value instanceof ListTag || value instanceof MapTag) {
-            return CoreUtilities.objectTagToJavaForm((ObjectTag) value, true);
+            return CoreUtilities.objectTagToJavaForm((ObjectTag) value, true, false);
         }
         return value.toString();
     }
