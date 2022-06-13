@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -295,6 +296,31 @@ public class BinaryTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(BinaryTag.class, "gzip_decompress", (attribute, object) -> {
             return new BinaryTag(decompressGzip(object.data));
+        });
+
+        // <--[tag]
+        // @attribute <BinaryTag.hash[<format>]>
+        // @returns BinaryTag
+        // @description
+        // Returns the raw binary hash of the binary data, using the given hashing algorithm.
+        // Algorithm can be "MD5", "SHA-1", "SHA-256", or any other algorithm supported by your Java runtime environment per <@link url https://docs.oracle.com/javase/8/docs/api/java/security/MessageDigest.html>.
+        // @example
+        // # Narrates binary data "4b68507f1746b0e5f3efe99b8ef42afef79da017", the exact SHA-1 hash of ASCII "HELLO WORLD".
+        // - narrate <binary[48454c4c4f20574f524c44].hash[SHA-1]>
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "hash", (attribute, object) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            try {
+                MessageDigest md = MessageDigest.getInstance(attribute.getParam());
+                md.update(object.data, 0, object.data.length);
+                return new BinaryTag(md.digest());
+            }
+            catch (Throwable ex) {
+                attribute.echoError(ex);
+            }
+            return null;
         });
     }
 
