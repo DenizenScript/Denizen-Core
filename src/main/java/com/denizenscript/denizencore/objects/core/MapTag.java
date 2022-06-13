@@ -901,12 +901,13 @@ public class MapTag implements ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <MapTag.to_json[(native_types=<true/false>)]>
+        // @attribute <MapTag.to_json[(native_types=<true/false>);(indent=<#>)]>
         // @returns ElementTag
         // @description
         // Returns a JSON encoding of this map. Primarily useful with interop with other software, such as when use <@link command webget> or <@link command webserver>.
         // Optionally specify configuration input with:
         // 'native_types' (defaults to false) if 'true' will attempt to convert 'true' or 'false' to booleans, and numbers to raw numbers.
+        // 'indent' (defaults to 0) to specify the indentation level of the JSON text output. 0 means no spacing or newlines at all.
         // @example
         // # Narrates {"a":"1","b":"2"}
         // - narrate <map[a=1;b=2].to_json>
@@ -914,7 +915,8 @@ public class MapTag implements ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, "to_json", (attribute, object) -> {
             MapTag input = attribute.paramAsType(MapTag.class);
             boolean nativeTypes = input != null && input.getElement("native_types", "false").asBoolean();
-            return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false, nativeTypes)).toString());
+            int indent = input == null ? 0 : input.getElement("indent", "0").asInt();
+            return new ElementTag(new JSONObject((Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), false, nativeTypes)).toString(indent));
         });
 
         // <--[tag]
