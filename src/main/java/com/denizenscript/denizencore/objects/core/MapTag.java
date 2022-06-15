@@ -243,6 +243,14 @@ public class MapTag implements ObjectTag {
         return getObjectAs(key, type, context, null);
     }
 
+    public <T extends ObjectTag> T getRequiredObjectAs(String key, Class<T> type, Attribute attribute) {
+        T result = getObjectAs(key, type, attribute.context, null);
+        if (result == null) {
+            attribute.echoError("Invalid tag input - missing required key '" + key + "'");
+        }
+        return result;
+    }
+
     public <T extends ObjectTag> T getObjectAs(String key, Class<T> type, TagContext context, Supplier<T> defaultGetter) {
         ObjectTag object = getDeepObject(key);
         if (object == null) {

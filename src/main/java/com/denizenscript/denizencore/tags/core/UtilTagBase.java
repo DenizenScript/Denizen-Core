@@ -236,11 +236,8 @@ public class UtilTagBase {
         // (That is: 1d, 2d, 3d, or 4d).
         // -->
         else if (attribute.startsWith("random_simplex") && attribute.hasParam()) {
-            MapTag input = attribute.paramAsType(MapTag.class);
-            if (input == null) {
-                return;
-            }
-            ObjectTag objX = input.getObject("x"), objY = input.getObject("y"), objZ = input.getObject("z"), objW = input.getObject("w");
+            MapTag input = attribute.inputParameterMap();
+            ObjectTag objX = input.getRequiredObjectAs("x", ElementTag.class, attribute), objY = input.getObject("y"), objZ = input.getObject("z"), objW = input.getObject("w");
             double x = objX == null ? 0 : objX.asElement().asDouble(), y = objY == null ? 0 : objY.asElement().asDouble(), z = objZ == null ? 0 : objZ.asElement().asDouble(), w = objW == null ? 0 : objW.asElement().asDouble();
             double res = 0;
             if (objW != null && objZ != null && objY != null && objX != null) {
@@ -279,11 +276,8 @@ public class UtilTagBase {
         // - narrate <util.list_numbers[from=4;to=12;every=4].formatted>
         // -->
         else if (attribute.startsWith("list_numbers") && attribute.hasParam()) {
-            MapTag input = attribute.paramAsType(MapTag.class);
-            if (input == null) {
-                return;
-            }
-            ElementTag toElement = input.getElement("to");
+            MapTag input = attribute.inputParameterMap();
+            ElementTag toElement = input.getRequiredObjectAs("to", ElementTag.class, attribute);
             if (toElement == null || !toElement.isInt()) {
                 return;
             }

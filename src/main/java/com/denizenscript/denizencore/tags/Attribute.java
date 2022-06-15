@@ -387,6 +387,22 @@ public class Attribute {
         }
     }
 
+    public final MapTag inputParameterMap() {
+        ObjectTag contextObj = getParamObject();
+        if (contextObj == null) {
+            return new MapTag();
+        }
+        if (contextObj instanceof MapTag) {
+            return (MapTag) contextObj;
+        }
+        MapTag result = MapTag.getMapFor(contextObj, context);
+        if (result == null) {
+            echoError("Invalid input to tag - expected a Map of options, but got a non-map value '" + contextObj + "'");
+            return new MapTag();
+        }
+        return result;
+    }
+
     public final <T extends ObjectTag> T paramAsType(Class<T> dClass) {
         ObjectTag contextObj = getParamObject();
         if (contextObj == null) {
