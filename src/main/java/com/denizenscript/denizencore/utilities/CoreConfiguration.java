@@ -8,7 +8,7 @@ public class CoreConfiguration {
 
     public static boolean futureWarningsEnabled = false;
 
-    public static boolean debugVerbose = false, debugLoadingInfo = false;
+    public static boolean debugVerbose = false, debugExtraInfo = false, debugLoadingInfo = false;
 
     public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowLog = false, allowFileCopy = false, allowWebserver = false, allowFileRead = false, allowFileWrite = false;
 
