@@ -259,7 +259,7 @@ public class UtilTagBase {
         }
 
         // <--[tag]
-        // @attribute <util.list_numbers[to=<#>;(from=<#>);(every=<#>)]>
+        // @attribute <util.list_numbers[to=<#>;(from=<#>/{1});(every=<#>/{1})]>
         // @returns ListTag
         // @description
         // Returns a list of integer numbers in the specified range.

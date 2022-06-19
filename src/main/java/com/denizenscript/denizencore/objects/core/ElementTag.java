@@ -505,14 +505,14 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group comparison
         // @description
-        // Returns whether the element is an integer number (a number without a decimal point).
+        // Returns whether the element is an integer number (a number without a decimal point), within the limits of a Java "long" (64-bit signed integer).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_integer", (attribute, object) -> {
             if (!ArgumentHelper.matchesInteger(object.element)) {
                 return new ElementTag(false);
             }
             try {
-                object.asLong();
+                Long.parseLong(object.element);
                 return new ElementTag(true);
             }
             catch (NumberFormatException ex) {

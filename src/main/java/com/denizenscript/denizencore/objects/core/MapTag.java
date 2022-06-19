@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class MapTag implements ObjectTag {
 
-    // NOTE: Explicitly not example value
+    // NOTE: Explicitly no example value
     // <--[ObjectType]
     // @name MapTag
     // @prefix map
@@ -346,6 +346,26 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_empty", (attribute, object) -> {
             return new ElementTag(object.map.isEmpty());
+        });
+
+        // <--[tag]
+        // @attribute <MapTag.any>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns "true" if the map contains any keys, or "false" if it is empty.
+        // @example
+        // - if <map[a=1;b=2].any>:
+        //     - narrate "This will show! The map has stuff in it!"
+        // - else:
+        //     - narrate "This won't show"
+        // @example
+        // - if <map.any>:
+        //     - narrate "This won't show"
+        // - else:
+        //     - narrate "This will show! That map is empty!"
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "any", (attribute, object) -> {
+            return new ElementTag(!object.map.isEmpty());
         });
 
         // <--[tag]
