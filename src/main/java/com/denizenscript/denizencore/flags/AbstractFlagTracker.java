@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.utilities.debugging.Warning;
@@ -182,7 +183,9 @@ public abstract class AbstractFlagTracker {
 
     public ListTag doListFlagsTag(Attribute attribute) {
         if (attribute.getScriptEntry() != null && attribute.getScriptEntry().getScript() != null) { // don't warn in '/ex'
-            listFlagsTagWarning.warn(attribute.context);
+            if (!CoreConfiguration.listFlagsAllowed) {
+                listFlagsTagWarning.warn(attribute.context);
+            }
         }
         ListTag list = new ListTag();
         list.addAll(listAllFlags());
@@ -200,7 +203,9 @@ public abstract class AbstractFlagTracker {
     public MapTag doFlagMapTag(Attribute attribute) {
         if (!attribute.hasParam()) {
             if (attribute.getScriptEntry() != null && attribute.getScriptEntry().getScript() != null) { // don't warn in '/ex'
-                listFlagsTagWarning.warn(attribute.context);
+                if (!CoreConfiguration.listFlagsAllowed) {
+                    listFlagsTagWarning.warn(attribute.context);
+                }
             }
             return getFlagMap();
         }

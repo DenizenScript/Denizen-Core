@@ -33,4 +33,6 @@ public class CoreConfiguration {
     public static boolean verifyThreadMatches;
 
     public static boolean queueIdPrefix = true, queueIdNumeric = true, queueIdWords = true;
+
+    public static boolean listFlagsAllowed = false;
 }
