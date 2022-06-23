@@ -400,11 +400,11 @@ public class ListTag implements List<String>, ObjectTag {
 
     @Override
     public ListTag duplicate() {
-        List<ObjectTag> objs = new ArrayList<>(size());
+        ListTag outList = new ListTag(size());
         for (ObjectTag obj : objectForms) {
-            objs.add(obj == null ? null : obj.duplicate());
+            outList.addObject(obj == null ? null : obj.duplicate());
         }
-        return new ListTag(objs);
+        return outList;
     }
 
     /////////////
