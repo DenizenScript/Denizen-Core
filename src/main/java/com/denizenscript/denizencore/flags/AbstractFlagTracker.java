@@ -168,7 +168,11 @@ public abstract class AbstractFlagTracker {
             attribute.fulfill(1);
             return new DurationTag((time.millis() - TimeTag.now().millis()) / 1000.0);
         }
-        return getFlagValue(attribute.getParam());
+        ObjectTag retVal = getFlagValue(attribute.getParam());
+        if (retVal == null) {
+            return null;
+        }
+        return retVal.refreshState();
     }
 
     public TimeTag doFlagExpirationTag(Attribute attribute) {

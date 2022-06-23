@@ -46,7 +46,7 @@ public class DefinitionTagBase {
                 return null;
             }
             if (attribute.attributes.length == 1) {
-                return def;
+                return def.refreshState();
             }
             return CoreUtilities.fixType(def, attribute.context);
         };

@@ -248,7 +248,7 @@ public class CoreUtilities {
         if (input instanceof ElementTag && !((ElementTag) input).isPlainText) {
             return ObjectFetcher.pickObjectFor(input.toString(), context);
         }
-        return input;
+        return input.refreshState();
     }
 
     public static void autoPropertyMechanism(ObjectTag object, Mechanism mechanism) {

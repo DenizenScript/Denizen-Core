@@ -255,4 +255,12 @@ public interface ObjectTag {
         }
         return advancedMatches(matcher);
     }
+
+    /**
+     * If this object has unusual behavior when being read back (eg from a flag or def tag), override this method to apply that behavior.
+     * For example, noted objects might re-get the current note value instead of returning a broken formerly-noted raw object.
+     */
+    default ObjectTag refreshState() {
+        return this;
+    }
 }

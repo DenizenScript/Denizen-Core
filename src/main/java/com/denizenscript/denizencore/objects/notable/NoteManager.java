@@ -29,14 +29,6 @@ public class NoteManager {
         return objectToName.containsKey(object);
     }
 
-    public static boolean isExactSavedObject(Notable object) {
-        String id = objectToName.get(object);
-        if (id == null) {
-            return false;
-        }
-        return nameToObject.get(id) == object;
-    }
-
     public static Notable getSavedObject(String id) {
         return nameToObject.get(CoreUtilities.toLowerCase(id));
     }
