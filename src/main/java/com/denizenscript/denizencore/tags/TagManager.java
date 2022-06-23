@@ -204,7 +204,7 @@ public class TagManager {
 
     public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {
         readSingleTagObjectNoDebug(context, event);
-        if (context.debug && event.replaced()) {
+        if ((context.debug || CoreConfiguration.debugOverride) && event.replaced()) {
             Debug.echoDebug(context, "<G>Filled tag <<W>" + event + "<G>> with '<W>" + event.getReplacedObj().debuggable() + "<G>'.");
         }
         if (!event.replaced()) {
