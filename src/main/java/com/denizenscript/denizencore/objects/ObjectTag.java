@@ -129,7 +129,7 @@ public interface ObjectTag {
     String identify();
 
     default String savable() {
-        return identify();
+        return refreshState().identify();
     }
 
     /**

@@ -236,7 +236,7 @@ public class MapTag implements ObjectTag {
         if (object == null) {
             return defaultGetter == null ? null : defaultGetter.get();
         }
-        return object;
+        return object.refreshState();
     }
 
     public <T extends ObjectTag> T getObjectAs(String key, Class<T> type, TagContext context) {

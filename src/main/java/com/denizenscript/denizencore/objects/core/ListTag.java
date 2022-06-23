@@ -350,7 +350,11 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public ObjectTag getObject(int id) {
-        return objectForms.get(id);
+        ObjectTag result = objectForms.get(id);
+        if (result == null) {
+            return null;
+        }
+        return result.refreshState();
     }
 
     @Deprecated
