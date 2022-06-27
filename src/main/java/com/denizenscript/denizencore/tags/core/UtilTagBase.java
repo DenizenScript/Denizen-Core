@@ -1,8 +1,14 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.events.core.TickScriptEvent;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.objects.notable.Notable;
+import com.denizenscript.denizencore.objects.notable.NoteManager;
+import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.*;
@@ -12,7 +18,10 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 
+import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -22,17 +31,14 @@ public class UtilTagBase {
         TagManager.registerTagHandler(new TagRunnable.RootForm() {
             @Override
             public void run(ReplaceableTagEvent event) {
+                event.getAttributes().fulfill(1);
                 utilTag(event);
             }
         }, "util");
     }
 
-    public void utilTag(ReplaceableTagEvent event) {
-        if (!event.matches("util")) {
-            return;
-        }
-
-        Attribute attribute = event.getAttributes().fulfill(1);
+    public static void utilTag(ReplaceableTagEvent event) {
+        Attribute attribute = event.getAttributes();
 
         if (attribute.startsWith("random")) {
 
@@ -465,7 +471,7 @@ public class UtilTagBase {
         // @description
         // Returns the current system date/time.
         // This value may be wrong if a server is currently heavily lagging, as it only updates once each tick.
-        // Use <@link tag server.current_time_millis> if you need sub-tick precision.
+        // Use <@link tag util.current_time_millis> if you need sub-tick precision.
         // -->
         else if (attribute.startsWith("time_now")) {
             event.setReplacedObject(TimeTag.now().getObjectAttribute(attribute.fulfill(1)));
@@ -619,7 +625,316 @@ public class UtilTagBase {
         else if (attribute.startsWith("runlater_ids")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(new ArrayList<>(RunLaterCommand.trackedById.keySet()), true), attribute.fulfill(1)));
         }
+
+        // <--[tag]
+        // @attribute <util.java_version>
+        // @returns ElementTag
+        // @description
+        // Returns the current Java version of the server.
+        // -->
+        else if (attribute.startsWith("java_version")) {
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(System.getProperty("java.version")), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.has_file[<name>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns true if the specified file exists. The starting path is /plugins/Denizen.
+        // -->
+        else if (attribute.startsWith("has_file") && attribute.hasParam()) {
+            File f = new File(DenizenCore.implementation.getDataFolder(), attribute.getParam());
+            try {
+                if (!DenizenCore.implementation.canReadFile(f)) {
+                    Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
+                    return;
+                }
+            }
+            catch (Exception e) {
+                Debug.echoError(e);
+                return;
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(f.exists()), attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.list_files[<path>]>
+        // @returns ListTag
+        // @description
+        // Returns a list of all files (and directories) in the specified directory. The starting path is /plugins/Denizen.
+        // -->
+        else if (attribute.startsWith("list_files") && attribute.hasParam()) {
+            File folder = new File(DenizenCore.implementation.getDataFolder(), attribute.getParam());
+            try {
+                if (!DenizenCore.implementation.canReadFile(folder)) {
+                    Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
+                    return;
+                }
+                if (!folder.exists() || !folder.isDirectory()) {
+                    attribute.echoError("Invalid path specified. No directory exists at that path.");
+                    return;
+                }
+            }
+            catch (Exception e) {
+                Debug.echoError(e);
+                return;
+            }
+            File[] files = folder.listFiles();
+            if (files == null) {
+                return;
+            }
+            ListTag list = new ListTag();
+            for (File file : files) {
+                list.add(file.getName());
+            }
+            event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.started_time>
+        // @returns TimeTag
+        // @description
+        // Returns the time the server started.
+        // -->
+        if (attribute.startsWith("started_time")) {
+            event.setReplacedObject(new TimeTag(CoreUtilities.monotonicMillisToReal(DenizenCore.startTime))
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.disk_free>
+        // @returns ElementTag(Number)
+        // @description
+        // How much remaining disk space is available to this server, in bytes.
+        // This counts only the drive the server folder is on, not any other drives.
+        // This may be limited below the actual drive capacity by operating system settings.
+        // -->
+        if (attribute.startsWith("disk_free")) {
+            File folder = DenizenCore.implementation.getDataFolder();
+            event.setReplacedObject(new ElementTag(folder.getUsableSpace())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.disk_total>
+        // @returns ElementTag(Number)
+        // @description
+        // How much total disk space is on the drive containing this server, in bytes.
+        // This counts only the drive the server folder is on, not any other drives.
+        // -->
+        if (attribute.startsWith("disk_total")) {
+            File folder = DenizenCore.implementation.getDataFolder();
+            event.setReplacedObject(new ElementTag(folder.getTotalSpace())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.disk_usage>
+        // @returns ElementTag(Number)
+        // @description
+        // How much space on the drive is already in use, in bytes.
+        // This counts only the drive the server folder is on, not any other drives.
+        // This is approximately equivalent to "disk_total" minus "disk_free", but is not always exactly the same,
+        // as this tag will not include space "used" by operating system settings that simply deny the server write access.
+        // -->
+        if (attribute.startsWith("disk_usage")) {
+            File folder = DenizenCore.implementation.getDataFolder();
+            event.setReplacedObject(new ElementTag(folder.getTotalSpace() - folder.getFreeSpace())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.ram_allocated>
+        // @returns ElementTag(Number)
+        // @description
+        // How much RAM is allocated to the server, in bytes (total memory).
+        // This is how much of the system memory is reserved by the Java process, NOT how much is actually in use by the minecraft server.
+        // -->
+        if (attribute.startsWith("ram_allocated")) {
+            event.setReplacedObject(new ElementTag(Runtime.getRuntime().totalMemory())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.ram_max>
+        // @returns ElementTag(Number)
+        // @description
+        // How much RAM is available to the server (total), in bytes (max memory).
+        // -->
+        if (attribute.startsWith("ram_max")) {
+            event.setReplacedObject(new ElementTag(Runtime.getRuntime().maxMemory())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.ram_free>
+        // @returns ElementTag(Number)
+        // @description
+        // How much RAM is unused but available on the server, in bytes (free memory).
+        // -->
+        if (attribute.startsWith("ram_free")) {
+            event.setReplacedObject(new ElementTag(Runtime.getRuntime().freeMemory())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.ram_usage>
+        // @returns ElementTag(Number)
+        // @description
+        // How much RAM is used by the server, in bytes (free memory).
+        // Equivalent to ram_max minus ram_free
+        // -->
+        if (attribute.startsWith("ram_usage")) {
+            event.setReplacedObject(new ElementTag(Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.available_processors>
+        // @returns ElementTag(Number)
+        // @description
+        // How many virtual processors are available to the server.
+        // (In general, Minecraft only uses one, unfortunately.)
+        // -->
+        if (attribute.startsWith("available_processors")) {
+            event.setReplacedObject(new ElementTag(Runtime.getRuntime().availableProcessors())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.current_tick>
+        // @returns ElementTag(Number)
+        // @description
+        // Returns the number of ticks since the server was started.
+        // Note that this is NOT an accurate indicator for real server uptime, as ticks fluctuate based on server lag.
+        // -->
+        if (attribute.startsWith("current_tick")) {
+            event.setReplacedObject(new ElementTag(TickScriptEvent.instance.ticks)
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.delta_time_since_start>
+        // @returns DurationTag
+        // @description
+        // Returns the duration of delta time since the server started.
+        // Note that this is delta time, not real time, meaning it is calculated based on the server tick,
+        // which may change longer or shorter than expected due to lag or other influences.
+        // If you want real time instead of delta time, use <@link tag util.real_time_since_start>.
+        // -->
+        if (attribute.startsWith("delta_time_since_start")) {
+            event.setReplacedObject(new DurationTag(TickScriptEvent.instance.ticks)
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.real_time_since_start>
+        // @returns DurationTag
+        // @description
+        // Returns the duration of real time since the server started.
+        // Note that this is real time, not delta time, meaning that the it is accurate to the system clock, not the server's tick.
+        // System clock changes may cause this value to become inaccurate.
+        // In many cases <@link tag util.delta_time_since_start> is preferable.
+        // -->
+        if (attribute.startsWith("real_time_since_start")) {
+            event.setReplacedObject(new DurationTag((CoreUtilities.monotonicMillis() - serverStartTimeMillis) / 1000.0)
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.current_time_millis>
+        // @returns ElementTag(Number)
+        // @description
+        // Returns the number of milliseconds since Jan 1, 1970.
+        // Note that this can change every time the tag is read!
+        // Use <@link tag util.time_now> if you need stable time.
+        // -->
+        if (attribute.startsWith("current_time_millis")) {
+            event.setReplacedObject(new ElementTag(System.currentTimeMillis())
+                    .getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.notes[<type>]>
+        // @returns ListTag
+        // @description
+        // Lists all saved notable objects of a specific type currently on the server.
+        // Valid types: locations, cuboids, ellipsoids, inventories, polygons
+        // This is primarily intended for debugging purposes, and it's best to avoid using this in a live script if possible.
+        // -->
+        if (attribute.startsWith("notes")) {
+            ListTag allNotables = new ListTag();
+            if (attribute.hasParam()) {
+                String type = CoreUtilities.toLowerCase(attribute.getParam());
+                for (Map.Entry<String, Class> typeClass : NoteManager.namesToTypes.entrySet()) {
+                    if (type.equals(CoreUtilities.toLowerCase(typeClass.getKey()))) {
+                        for (Object notable : NoteManager.getAllType(typeClass.getValue())) {
+                            allNotables.addObject((ObjectTag) notable);
+                        }
+                        break;
+                    }
+                }
+            }
+            else {
+                for (Notable notable : NoteManager.nameToObject.values()) {
+                    allNotables.addObject((ObjectTag) notable);
+                }
+            }
+            event.setReplacedObject(allNotables.getObjectAttribute(attribute.fulfill(1)));
+        }
+
+        // <--[tag]
+        // @attribute <util.sql_connections>
+        // @returns ListTag
+        // @description
+        // Returns a list of all SQL connections opened by <@link command sql>.
+        // -->
+        if (attribute.startsWith("sql_connections")) {
+            ListTag list = new ListTag();
+            for (Map.Entry<String, Connection> entry : SQLCommand.connections.entrySet()) {
+                try {
+                    if (!entry.getValue().isClosed()) {
+                        list.add(entry.getKey());
+                    }
+                    else {
+                        SQLCommand.connections.remove(entry.getKey());
+                    }
+                }
+                catch (SQLException e) {
+                    Debug.echoError(attribute.getScriptEntry(), e);
+                }
+            }
+            event.setReplacedObject(list.getObjectAttribute(attribute.fulfill(1)));
+            return;
+        }
+
+        // <--[tag]
+        // @attribute <util.scripts>
+        // @returns ListTag(ScriptTag)
+        // @description
+        // Gets a list of all scripts currently loaded into Denizen.
+        // -->
+        if (attribute.startsWith("scripts")) {
+            ListTag scripts = new ListTag();
+            for (ScriptContainer script : ScriptRegistry.scriptContainers.values()) {
+                scripts.addObject(new ScriptTag(script));
+            }
+            event.setReplacedObject(scripts.getObjectAttribute(attribute.fulfill(1)));
+            return;
+        }
+
+        // <--[tag]
+        // @attribute <util.last_reload>
+        // @returns TimeTag
+        // @description
+        // Returns the time that Denizen scripts were last reloaded.
+        // -->
+        else if (attribute.startsWith("last_reload")) {
+            event.setReplacedObject(new TimeTag(CoreUtilities.monotonicMillisToReal(DenizenCore.lastReloadTime)).getObjectAttribute(attribute.fulfill(1)));
+        }
     }
+
+    public static final long serverStartTimeMillis = CoreUtilities.monotonicMillis();
 
     // <--[ObjectType]
     // @name system
