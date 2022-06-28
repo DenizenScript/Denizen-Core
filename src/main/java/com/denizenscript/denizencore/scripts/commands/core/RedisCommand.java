@@ -1,10 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
@@ -26,16 +28,18 @@ public class RedisCommand extends AbstractCommand implements Holdable {
 
     public RedisCommand() {
         setName("redis");
-        setSyntax("redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]");
-        setRequiredArguments(2, 4);
+        setSyntax("redis [id:<ID>] [connect:<host> (auth:<secret>) (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]");
+        setRequiredArguments(2, 5);
         isProcedural = false;
+        setPrefixesHandled("auth", "port", "id", "message", "args");
+        setBooleansHandled("ssl");
     }
 
     // <--[command]
     // @Name Redis
-    // @Syntax redis [id:<ID>] [connect:<host> (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]
+    // @Syntax redis [id:<ID>] [connect:<host> (auth:<secret>) (port:<port>/{6379}) (ssl:true/{false})/disconnect/subscribe:<channel>|.../unsubscribe/publish:<channel> message:<message>/command:<command> (args:<arg>|...)]
     // @Required 2
-    // @Maximum 4
+    // @Maximum 5
     // @Short Interacts with a Redis server.
     // @Group core
     //
@@ -70,6 +74,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     // @Usage
     // Use to connect to a Redis server.
     // - ~redis id:name connect:localhost
+    //
+    // @Usage
+    // Use to connect to a Redis server with a secret auth key.
+    // - ~redis id:name connect:localhost auth:<secret[my_redis_secret]>
     //
     // @Usage
     // Use to connect to a Redis server over ssl.
@@ -158,22 +166,10 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("id")
-                    && arg.matchesPrefix("id")) {
-                scriptEntry.addObject("id", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("action")
+            if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("connect")) {
                 scriptEntry.addObject("action", new ElementTag("connect"));
                 scriptEntry.addObject("host", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("port")
-                    && arg.matchesPrefix("port") && arg.matchesInteger()) {
-                scriptEntry.addObject("port", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("ssl")
-                    && arg.matchesPrefix("ssl") && arg.matchesBoolean()) {
-                scriptEntry.addObject("ssl", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matches("disconnect")) {
@@ -193,31 +189,18 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("publish"));
                 scriptEntry.addObject("channel", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("message")
-                    && arg.matchesPrefix("message")) {
-                scriptEntry.addObject("message", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("command")
+            else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("command")) {
                 scriptEntry.addObject("action", new ElementTag("command"));
                 scriptEntry.addObject("command", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("args")
-                    && arg.matchesPrefix("args")) {
-                scriptEntry.addObject("args", arg.asType(ListTag.class));
             }
             else {
                 arg.reportUnhandled();
             }
         }
-        if (!scriptEntry.hasObject("id")) {
-            throw new InvalidArgumentsException("Must specify an ID!");
-        }
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify a valid redis action!");
         }
-        scriptEntry.defaultObject("port", new ElementTag(6379));
-        scriptEntry.defaultObject("ssl", new ElementTag(false));
     }
 
     public ObjectTag processResponse(Object response) {
@@ -245,19 +228,23 @@ public class RedisCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry, "Redis disabled by config!");
             return;
         }
-        ElementTag id = scriptEntry.getElement("id");
+        ElementTag port = scriptEntry.argForPrefixAsElement("port", "6379");
+        if (!port.isInt()) {
+            throw new InvalidArgumentsRuntimeException("Port must be an integer number.");
+        }
+        ElementTag id = scriptEntry.requiredArgForPrefixAsElement("id");
+        ElementTag message = scriptEntry.argForPrefixAsElement("message", null);
+        ListTag args = scriptEntry.argForPrefix("args", ListTag.class, true);
+        boolean ssl = scriptEntry.argAsBoolean("ssl");
+        ObjectTag auth = scriptEntry.argForPrefix("auth", ObjectTag.class, true);
         ElementTag action = scriptEntry.getElement("action");
         ElementTag host = scriptEntry.getElement("host");
-        ElementTag port = scriptEntry.getElement("port");
-        ElementTag ssl = scriptEntry.getElement("ssl");
         ListTag channels = scriptEntry.getObjectTag("channels");
         ElementTag channel = scriptEntry.getElement("channel");
-        ElementTag message = scriptEntry.getElement("message");
         ElementTag command = scriptEntry.getElement("command");
-        ListTag args = scriptEntry.getObjectTag("args");
         String redisID = CoreUtilities.toLowerCase(id.asString());
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), id, action, host, port, ssl, channels, channel, message, command, args);
+            Debug.report(scriptEntry, getName(), id, action, host, auth, port, db("ssl", ssl), channels, channel, message, command, args);
         }
         if (!action.asString().equalsIgnoreCase("connect") &&
                 (!action.asString().equalsIgnoreCase("command") || !scriptEntry.shouldWaitFor())) {
@@ -281,7 +268,14 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         Debug.echoDebug(scriptEntry, "Connecting to " + host + " on port " + port);
                     }
                     try {
-                        con = new Jedis(host.asString(), port.asInt(), ssl.asBoolean());
+                        con = new Jedis(host.asString(), port.asInt(), ssl);
+                        if (auth != null) {
+                            String[] redisArgs = new String[] { auth.shouldBeType(SecretTag.class) ? auth.asType(SecretTag.class, scriptEntry.context).getValue() : auth.toString() };
+                            if (redisArgs[0] == null) {
+                                throw new Exception("Invalid SecretTag input for AUTH.");
+                            }
+                            con.sendCommand(() -> SafeEncoder.encode("AUTH"), redisArgs);
+                        }
                     }
                     catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
