@@ -69,6 +69,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <entry[saveName].result_list> returns a ListTag of all row ListTags from a query or update command. That's a ListTag of ListTags, so for example to get the second entry of the first row you'd use "result_list.get[1].get[2]"
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
+    // <util.sql_connections>
     //
     // @Usage
     // Use to connect to an SQL server.

@@ -65,6 +65,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     //
     // @Tags
     // <entry[saveName].result> returns an ElementTag or ListTag of the results of your command, depending on the redis command you ran.
+    // <util.redis_connections>
     //
     // @Usage
     // Use to connect to a Redis server.

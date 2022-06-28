@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.commands.core.RedisCommand;
 import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -894,7 +895,7 @@ public class UtilTagBase {
             for (Map.Entry<String, Connection> entry : SQLCommand.connections.entrySet()) {
                 try {
                     if (!entry.getValue().isClosed()) {
-                        list.add(entry.getKey());
+                        list.addObject(new ElementTag(entry.getKey(), true));
                     }
                     else {
                         SQLCommand.connections.remove(entry.getKey());
@@ -903,6 +904,21 @@ public class UtilTagBase {
                 catch (SQLException e) {
                     Debug.echoError(attribute.getScriptEntry(), e);
                 }
+            }
+            event.setReplacedObject(list.getObjectAttribute(attribute.fulfill(1)));
+            return;
+        }
+
+        // <--[tag]
+        // @attribute <util.redis_connections>
+        // @returns ListTag
+        // @description
+        // Returns a list of all Redis connections opened by <@link command redis>.
+        // -->
+        if (attribute.startsWith("redis_connections")) {
+            ListTag list = new ListTag();
+            for (String entry : RedisCommand.connections.keySet()) {
+                list.addObject(new ElementTag(entry, true));
             }
             event.setReplacedObject(list.getObjectAttribute(attribute.fulfill(1)));
             return;
