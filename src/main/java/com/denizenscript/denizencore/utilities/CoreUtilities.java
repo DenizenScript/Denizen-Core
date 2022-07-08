@@ -255,7 +255,7 @@ public class CoreUtilities {
         if (mechanism.fulfilled()) {
             return;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
         if (properties == null) {
             return;
         }
@@ -284,7 +284,7 @@ public class CoreUtilities {
         if (attribute.isComplete()) {
             return null;
         }
-        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getObjectTagClass());
+        PropertyParser.ClassPropertiesInfo properties = PropertyParser.propertiesByClass.get(object.getClass());
         if (properties == null) {
             return null;
         }
@@ -327,7 +327,7 @@ public class CoreUtilities {
     }
 
     public static <T extends ObjectTag> T asType(ObjectTag inp, Class<T> type, TagContext context) {
-        if (inp.getObjectTagClass() == type) {
+        if (inp.getClass() == type) {
             return (T) inp;
         }
         TagTypeConverter converter = typeConverters.get(type);
@@ -393,7 +393,7 @@ public class CoreUtilities {
             if (inp == null) {
                 return false;
             }
-            Class<? extends ObjectTag> inpType = inp.getObjectTagClass();
+            Class<? extends ObjectTag> inpType = inp.getClass();
             if (inpType == type) {
                 return true;
             }
@@ -422,7 +422,7 @@ public class CoreUtilities {
         if (type == ElementTag.class || type == ObjectTag.class) {
             return true;
         }
-        if (inp.getObjectTagClass() == type) {
+        if (inp.getClass() == type) {
             return true;
         }
         TypeComparisonRunnable comp = typeShouldBeCheckers.get(type);
@@ -448,7 +448,7 @@ public class CoreUtilities {
         if (type == ObjectTag.class) {
             return true;
         }
-        if (inp.getObjectTagClass() == type) {
+        if (inp.getClass() == type) {
             return true;
         }
         TypeComparisonRunnable comp = typeCheckers.get(type);

@@ -215,7 +215,7 @@ public class PropertyParser {
     }
 
     public static String getPropertiesDebuggable(ObjectTag object) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
         if (properties == null) {
             return "";
         }
@@ -238,7 +238,7 @@ public class PropertyParser {
     }
 
     public static String getPropertiesString(ObjectTag object) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
         if (properties == null) {
             return "";
         }
@@ -262,7 +262,7 @@ public class PropertyParser {
 
     public static MapTag getPropertiesMap(ObjectTag object) {
         MapTag map = new MapTag();
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
         if (properties == null) {
             return map;
         }
@@ -281,7 +281,7 @@ public class PropertyParser {
     public static List<Property> empty = new ArrayList<>();
 
     public static List<Property> getProperties(ObjectTag object, String attribLow) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
         if (properties == null) {
             return empty;
         }
@@ -299,7 +299,7 @@ public class PropertyParser {
     }
 
     public static List<Property> getProperties(ObjectTag object) {
-        ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+        ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
         if (properties == null) {
             return empty;
         }
@@ -409,7 +409,7 @@ public class PropertyParser {
                 return null;
             }
             String propertyName = attribute.getParam();
-            ClassPropertiesInfo properties = propertiesByClass.get(object.getObjectTagClass());
+            ClassPropertiesInfo properties = propertiesByClass.get(object.getClass());
             if (properties == null) {
                 return new ElementTag(false);
             }

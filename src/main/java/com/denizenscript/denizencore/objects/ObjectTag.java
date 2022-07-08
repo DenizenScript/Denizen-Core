@@ -172,10 +172,6 @@ public interface ObjectTag {
      */
     ObjectTag setPrefix(String prefix);
 
-    default Class<? extends ObjectTag> getObjectTagClass() {
-        return getClass();
-    }
-
     /**
      * Converts the object to the given type. May error and/or return null if conversion is not possible.
      */
@@ -233,6 +229,13 @@ public interface ObjectTag {
      */
     default boolean isTruthy() {
         return true;
+    }
+
+    /**
+     * Returns the ObjectType as set in the ObjectFetcher.
+     */
+    default ObjectFetcher.ObjectType<? extends ObjectTag> getDenizenObjectType() {
+        return ObjectFetcher.objectsByClass.get(getClass());
     }
 
     /**

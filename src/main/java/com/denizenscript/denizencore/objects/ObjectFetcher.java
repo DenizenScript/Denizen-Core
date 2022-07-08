@@ -128,8 +128,8 @@ public class ObjectFetcher {
         registerWithObjectFetcher(objectTag, null);
     }
 
-    public static <T extends ObjectTag> void registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
-        ObjectType newType = new ObjectType();
+    public static <T extends ObjectTag> ObjectType<T> registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
+        ObjectType<T> newType = new ObjectType<>();
         newType.clazz = objectTag;
         if (processor != null) {
             processor.type = objectTag;
@@ -160,6 +160,7 @@ public class ObjectFetcher {
             Debug.echoError("Failed to initialize an object type(" + objectTag.getSimpleName() + "): ");
             Debug.echoError(ex);
         }
+        return newType;
     }
 
     public static boolean canFetch(String id) {
