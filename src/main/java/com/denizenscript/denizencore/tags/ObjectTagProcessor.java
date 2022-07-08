@@ -15,7 +15,9 @@ import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ObjectTagProcessor<T extends ObjectTag> {
 
@@ -45,6 +47,34 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     }
 
     public HashMap<String, TagData<? extends ObjectTag, ? extends ObjectTag>> registeredObjectTags = new HashMap<>();
+
+    @FunctionalInterface
+    public interface CustomMatcher<T extends ObjectTag> {
+        /**
+         * Try a custom advanced matcher.
+         * Return 'true' to match, 'false' to strictly not match, or 'null' if this matcher doesn't apply.
+         *
+         * Example usage:
+         * <pre>
+         * // NOTE: REGISTER NOT-SWITCHES WITH CAUTION. "notSwitches" is a temporary hack and has side effects! Make sure your matcher name is definitely never a switch!
+         * // <--[data]
+         * // @name not_switches
+         * // @values example_matcher
+         * // -->
+         * ScriptEvent.ScriptPath.notSwitches.add("example_matcher");
+         * // The example matcher impl. "true" to match, "false" to definitely fail the match, "null" if text isn't relevant to your matcher (or not a match, but might match something else).
+         * MaterialTag.tagProcessor.custommatchers.add(((object, matcherText) -> {
+         *     if (matcherText.startsWith("example_matcher:")) {
+         *         return CoreUtilities.equalsIgnoreCase(matcherText.substring("example_matcher:".length()), object.getMaterial().name());
+         *     }
+         *     return null;
+         * }));
+         * </pre>
+         */
+        Boolean tryMatch(T object, String matcherText);
+    }
+
+    public List<CustomMatcher<T>> custommatchers = new ArrayList<>();
 
     public Class<T> type;
 

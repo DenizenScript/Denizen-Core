@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 
@@ -255,6 +256,16 @@ public interface ObjectTag {
         }
         if (matcher.startsWith("!")) {
             return !tryAdvancedMatcher(matcher.substring(1));
+        }
+        ObjectFetcher.ObjectType<? extends ObjectTag> thisType = getDenizenObjectType();
+        if (thisType != null && thisType.tagProcessor != null) {
+            for (ObjectTagProcessor.CustomMatcher customMatcher : thisType.tagProcessor.custommatchers) {
+                Boolean result = customMatcher.tryMatch(this, matcher);
+                if (result == null) {
+                    continue;
+                }
+                return result;
+            }
         }
         return advancedMatches(matcher);
     }
