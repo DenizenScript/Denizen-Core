@@ -1082,7 +1082,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "insert", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.insert[...] must have a value.");
                 return null;
             }
             ListTag items = getListFor(attribute.getParamObject(), attribute.context);
@@ -1105,6 +1104,37 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.insert_single[...|...].at[<#>]>
+        // @returns ListTag
+        // @description
+        // Returns a new ListTag with the single item specified inserted to the specified location.
+        // Note the index input options described at <@link objecttype listtag>
+        // @Example
+        // # Narrates a list with 3 values: "one", "two|alsotwo", "three"
+        // - narrate <list[one|three].insert_single[two|alsotwo].at[2]>
+        // -->
+        tagProcessor.registerTag(ListTag.class, "insert_single", (attribute, object) -> { // non-static due to hacked sub-tag
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            ObjectTag value = attribute.getParamObject();
+            if (attribute.startsWith("at", 2) && attribute.hasContext(2)) {
+                ListTag result = new ListTag(object);
+                int index = object.parseIndex(attribute.getContext(2), attribute, false);
+                if (index == -1) {
+                    return null;
+                }
+                result.addObject(index, value);
+                attribute.fulfill(1);
+                return result;
+            }
+            else {
+                Debug.echoError("The tag ListTag.insert_single[...] must be followed by .at[#]!");
+                return null;
+            }
+        });
+
+        // <--[tag]
         // @attribute <ListTag.set[...|...].at[<#>]>
         // @returns ListTag
         // @description
@@ -1119,7 +1149,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "set", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.set[...] must have a value.");
                 return null;
             }
             ListTag items = getListFor(attribute.getParamObject(), attribute.context);
@@ -1151,12 +1180,11 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns a new ListTag with the single item specified inserted to the specified location, replacing the object already at that location.
         // Note the index input options described at <@link objecttype listtag>
         // @Example
-        // # Narrates a list of "one|potato|three"
-        // - narrate <list[one|two|three].set_single[potato].at[2]>
+        // # Narrates a list with 3 values: "one", "potato|taco", "three"
+        // - narrate <list[one|two|three].set_single[potato|taco].at[2]>
         // -->
         tagProcessor.registerTag(ListTag.class, "set_single", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.set_single[...] must have a value.");
                 return null;
             }
             ObjectTag value = attribute.getParamObject();
@@ -1195,7 +1223,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "overwrite", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.overwrite[...] must have a value.");
                 return null;
             }
             if (object.isEmpty()) {
@@ -1234,7 +1261,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "include_single", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.include_single[...] must have a value.");
                 return null;
             }
             ListTag copy = new ListTag(object);
@@ -1253,7 +1279,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "include", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.include[...] must have a value.");
                 return null;
             }
             ListTag copy = new ListTag(object);
@@ -1272,7 +1297,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "exclude", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.exclude[...] must have a value.");
                 return null;
             }
             ListTag exclusions = getListFor(attribute.getParamObject(), attribute.context);
@@ -1323,7 +1347,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "remove", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.remove[#] must have a value.");
                 return null;
             }
             ListTag indices = getListFor(attribute.getParamObject(), attribute.context);
@@ -1386,7 +1409,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "shared_contents", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.shared_contents[...] must have a value.");
                 return null;
             }
             ListTag secondList = getListFor(attribute.getParamObject(), attribute.context);
@@ -1416,7 +1438,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerTag(ListTag.class, "replace", (attribute, object) -> { // non-static due to hacked sub-tag
             if (!attribute.hasParam()) {
-                Debug.echoError("The tag ListTag.replace[...] must have a value.");
                 return null;
             }
             String replace = attribute.getParam();
@@ -1508,7 +1529,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         TagRunnable.ObjectInterface<ListTag, ObjectTag> getRunnable = (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.get[...] must have a value.");
                 return null;
             }
             if (object.isEmpty()) {
@@ -1589,7 +1609,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "find_all_partial", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find_all_partial[...] must have a value.");
                 return null;
             }
             String test = CoreUtilities.toLowerCase(attribute.getParam());
@@ -1615,7 +1634,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "find_all_matches", (attribute, list) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find_all_matches[...] must have a value.");
                 return null;
             }
             ListTag positions = new ListTag();
@@ -1641,7 +1659,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "find_all", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find_all[...] must have a value.");
                 return null;
             }
             ListTag positions = new ListTag();
@@ -1666,7 +1683,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "find_partial", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find_partial[...] must have a value.");
                 return null;
             }
             String test = CoreUtilities.toLowerCase(attribute.getParam());
@@ -1691,7 +1707,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "find_match", (attribute, list) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find_match[...] must have a value.");
                 return null;
             }
             String matcher = attribute.getParam();
@@ -1716,7 +1731,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "find", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.find[...] must have a value.");
                 return null;
             }
             String test = CoreUtilities.toLowerCase(attribute.getParam());
@@ -1739,7 +1753,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "count", (attribute, object) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.count[...] must have a value.");
                 return null;
             }
             String test = CoreUtilities.toLowerCase(attribute.getParam());
@@ -1765,7 +1778,6 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "count_matches", (attribute, list) -> {
             if (!attribute.hasParam()) {
-                attribute.echoError("The tag ListTag.count_matches[...] must have a value.");
                 return null;
             }
             String matcher = attribute.getParam();
