@@ -254,10 +254,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
+        // <--[data]
+        // @name not_switches
+        // @values regex
+        // -->
+
         /**
          * List of all prefixed keys that should not be interpreted as switches.
          */
         public static HashSet<String> notSwitches = new HashSet<>(Collections.singleton("regex"));
+
 
         public ScriptPath(ScriptContainer container, String event, String rawContainerPath) {
             this.event = event;
@@ -655,6 +661,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     private static ScriptEventCouldMatcher currentCouldMatcher = null;
+
+    // <--[data]
+    // @name global_switches
+    // @values cancelled, ignorecancelled, priority, server_flagged, in, chance
+    // -->
 
     /**
      * Switches that are globally available.
