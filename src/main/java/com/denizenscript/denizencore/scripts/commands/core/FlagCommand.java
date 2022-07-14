@@ -211,7 +211,7 @@ public class FlagCommand extends AbstractCommand {
         @Override
         public void setValueAt(String keyName, ObjectTag value) {
             if (keyName.equals("__raw")) {
-                MapTag toSetMap = (MapTag) value;
+                MapTag toSetMap = value.asType(MapTag.class, CoreUtilities.noDebugContext);
                 ObjectTag toClear = toSetMap.getObject("__clear");
                 if (toClear != null) {
                     for (String key : toClear.asType(ListTag.class, CoreUtilities.noDebugContext)) {
