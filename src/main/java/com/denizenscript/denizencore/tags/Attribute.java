@@ -408,7 +408,7 @@ public class Attribute {
         if (contextObj == null) {
             return null;
         }
-        return CoreUtilities.asType(contextObj, dClass, context);
+        return contextObj.asType(dClass, context);
     }
 
     @Deprecated
@@ -417,7 +417,7 @@ public class Attribute {
         if (contextObj == null) {
             return null;
         }
-        return CoreUtilities.asType(contextObj, dClass, context);
+        return contextObj.asType(dClass, context);
     }
 
     public final ObjectTag getParamObject() {

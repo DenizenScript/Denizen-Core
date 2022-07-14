@@ -326,17 +326,6 @@ public class CoreUtilities {
         return inp.getObjectAttribute(attribute);
     }
 
-    public static <T extends ObjectTag> T asType(ObjectTag inp, Class<T> type, TagContext context) {
-        if (inp.getClass() == type) {
-            return (T) inp;
-        }
-        TagTypeConverter converter = typeConverters.get(type);
-        if (converter != null) {
-            return (T) converter.convert(inp, context);
-        }
-        return ObjectFetcher.getObjectFrom(type, inp.toString(), context);
-    }
-
     @FunctionalInterface
     public interface TypeComparisonRunnable {
         boolean doesCompare(ObjectTag inp);
@@ -416,46 +405,6 @@ public class CoreUtilities {
 
     public static void registerTypeAsTrueAlways(Class<? extends ObjectTag> type) {
         typeCheckers.put(type, (inp) -> true);
-    }
-
-    public static boolean shouldBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
-        if (type == ElementTag.class || type == ObjectTag.class) {
-            return true;
-        }
-        if (inp.getClass() == type) {
-            return true;
-        }
-        TypeComparisonRunnable comp = typeShouldBeCheckers.get(type);
-        if (comp != null) {
-            return comp.doesCompare(inp);
-        }
-        if (!(inp instanceof ElementTag)) {
-            return false;
-        }
-        if (((ElementTag) inp).isPlainText || ((ElementTag) inp).isRawInput) {
-            return false;
-        }
-        String raw = inp.toString();
-        int atSign = raw.indexOf('@');
-        if (atSign == -1) {
-            return false;
-        }
-        ObjectFetcher.ObjectType<?> typeData = ObjectFetcher.objectsByClass.get(type);
-        return typeData.prefix.equals(raw.substring(0, atSign));
-    }
-
-    public static boolean canPossiblyBeType(ObjectTag inp, Class<? extends ObjectTag> type) {
-        if (type == ObjectTag.class) {
-            return true;
-        }
-        if (inp.getClass() == type) {
-            return true;
-        }
-        TypeComparisonRunnable comp = typeCheckers.get(type);
-        if (comp != null && !comp.doesCompare(inp)) {
-            return false;
-        }
-        return ObjectFetcher.checkMatch(type, inp.toString());
     }
 
     public static void deleteDirectory(File directory) throws IOException {

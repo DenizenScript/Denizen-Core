@@ -146,7 +146,7 @@ public class Mechanism {
     }
 
     public <T extends ObjectTag> boolean requireObject(String error, Class<T> type) {
-        if (hasValue() && CoreUtilities.canPossiblyBeType(value, type)) {
+        if (hasValue() && value.canBeType(type)) {
             return true;
         }
         if (error == null) {

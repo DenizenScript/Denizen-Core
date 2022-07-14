@@ -283,7 +283,7 @@ public class Argument implements Cloneable {
 
     // Check if this argument matches a certain ObjectTag type
     public boolean matchesArgumentType(Class<? extends ObjectTag> dClass) {
-        return CoreUtilities.canPossiblyBeType(object, dClass);
+        return object.canBeType(dClass);
     }
 
     // Check if this argument matches any of multiple ObjectTag types
@@ -312,7 +312,7 @@ public class Argument implements Cloneable {
     }
 
     public <T extends ObjectTag> T asType(Class<T> clazz) {
-        T arg = CoreUtilities.asType(object, clazz, scriptEntry.context);
+        T arg = object.asType(clazz, scriptEntry.context);
         if (arg == null) {
             Debug.echoError("Cannot process argument '" + object + "' as type '" + clazz.getSimpleName() + "' (conversion returned null).");
             return null;

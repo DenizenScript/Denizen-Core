@@ -529,7 +529,7 @@ public class ListTag implements List<String>, ObjectTag {
 
     public boolean containsObjectsFrom(Class<? extends ObjectTag> dClass) {
         for (ObjectTag testable : objectForms) {
-            if (CoreUtilities.canPossiblyBeType(testable, dClass)) {
+            if (testable.canBeType(dClass)) {
                 return true;
             }
         }
@@ -569,8 +569,8 @@ public class ListTag implements List<String>, ObjectTag {
         List<T> results = new ArrayList<>(objectForms.size());
         for (ObjectTag obj : objectForms) {
             try {
-                if (CoreUtilities.canPossiblyBeType(obj, dClass)) {
-                    T object = CoreUtilities.asType(obj, dClass, context);
+                if (obj.canBeType(dClass)) {
+                    T object = obj.asType(dClass, context);
                     if (object != null) {
                         results.add(object);
                     }

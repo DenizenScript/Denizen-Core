@@ -329,6 +329,23 @@ public class ElementTag implements ObjectTag {
     }
 
     @Override
+    public boolean shouldBeType(Class<? extends ObjectTag> type) {
+        if (type == ElementTag.class || type == ObjectTag.class) {
+            return true;
+        }
+        if (isPlainText || isRawInput) {
+            return false;
+        }
+        String raw = toString();
+        int atSign = raw.indexOf('@');
+        if (atSign == -1) {
+            return false;
+        }
+        ObjectFetcher.ObjectType<?> typeData = ObjectFetcher.objectsByClass.get(type);
+        return typeData.prefix.equals(raw.substring(0, atSign));
+    }
+
+    @Override
     public ElementTag asElement() {
         return this;
     }

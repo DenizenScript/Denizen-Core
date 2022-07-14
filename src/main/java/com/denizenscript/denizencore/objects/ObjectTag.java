@@ -177,7 +177,14 @@ public interface ObjectTag {
      * Converts the object to the given type. May error and/or return null if conversion is not possible.
      */
     default <T extends ObjectTag> T asType(Class<T> type, TagContext context) {
-        return CoreUtilities.asType(this, type, context);
+        if (getClass() == type) {
+            return (T) this;
+        }
+        CoreUtilities.TagTypeConverter converter = CoreUtilities.typeConverters.get(type);
+        if (converter != null) {
+            return (T) converter.convert(this, context);
+        }
+        return ObjectFetcher.getObjectFrom(type, toString(), context);
     }
 
     /**
@@ -185,7 +192,17 @@ public interface ObjectTag {
      * This is if it already is that type, or if it has the proper prefixing to be that type.
      */
     default boolean shouldBeType(Class<? extends ObjectTag> type) {
-        return CoreUtilities.shouldBeType(this, type);
+        if (type == ElementTag.class || type == ObjectTag.class) {
+            return true;
+        }
+        if (getClass() == type) {
+            return true;
+        }
+        CoreUtilities.TypeComparisonRunnable comp = CoreUtilities.typeShouldBeCheckers.get(type);
+        if (comp != null) {
+            return comp.doesCompare(this);
+        }
+        return false;
     }
 
     /**
@@ -193,7 +210,17 @@ public interface ObjectTag {
      * This is if it already is that type, or if it's reasonably convertible.
      */
     default boolean canBeType(Class<? extends ObjectTag> type) {
-        return CoreUtilities.canPossiblyBeType(this, type);
+        if (type == ObjectTag.class) {
+            return true;
+        }
+        if (getClass() == type) {
+            return true;
+        }
+        CoreUtilities.TypeComparisonRunnable comp = CoreUtilities.typeCheckers.get(type);
+        if (comp != null && !comp.doesCompare(this)) {
+            return false;
+        }
+        return ObjectFetcher.checkMatch(type, toString());
     }
 
     default ElementTag asElement() {
