@@ -58,6 +58,16 @@ public class CustomEventCommand extends AbstractCommand {
     //     item: <player.item_in_hand>
     // - customevent id:things_happened context:<[context]>
     //
+    // @Usage
+    // Use to call a custom event and allow cancelling or replacing a value.
+    // - definemap context:
+    //     message: hello world
+    // - customevent id:custom_message context:<[context]> save:event
+    // - if <entry[event].was_cancelled>:
+    //     - stop
+    // - define message <entry[event].determination_list.first.if_null[<[context.message]>]>
+    // - narrate "Final message is: <[message]>"
+    //
     // -->
 
     @Override

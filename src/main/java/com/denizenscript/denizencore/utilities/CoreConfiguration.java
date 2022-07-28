@@ -35,4 +35,6 @@ public class CoreConfiguration {
     public static boolean queueIdPrefix = true, queueIdNumeric = true, queueIdWords = true;
 
     public static boolean listFlagsAllowed = false;
+
+    public static boolean allowReflectionFieldReads = false, allowReflectedCoreMethods = false;
 }

@@ -79,6 +79,7 @@ public class ObjectFetcher {
         registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
         registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
         registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
+        registerWithObjectFetcher(JavaReflectedObjectTag.class, JavaReflectedObjectTag.tagProcessor); // reflected@
         registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
         registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
         registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@

@@ -53,6 +53,8 @@ public class CommandExecutor {
     // The "saveName" part should be replaced with whatever name you gave to the "save" argument,
     // and the "created_queue" part changes between commands.
     // Some commands have multiple save entry keys, some have just one, most don't have any.
+    //
+    // Many users make the mistake of using dynamic save names like "save:<[something]>" - this is almost always wrong. Use a constant name, just like you do for definitions.
     // -->
 
     // <--[language]

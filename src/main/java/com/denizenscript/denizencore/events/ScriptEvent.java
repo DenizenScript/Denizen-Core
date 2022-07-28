@@ -781,6 +781,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // Every modern ScriptEvent has some special context tags available.
     // The most noteworthy is "context.cancelled", which tracks whether the script event has been cancelled.
     // That returns, for example, "on player breaks stone".
+    // The context 'reflect_event' is available in some events (eg Bukkit events) to get a JavaReflectedObjectTag of the raw internal event.
     // -->
 
     @Override
