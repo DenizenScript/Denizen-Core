@@ -20,8 +20,8 @@ public class JavaReflectedObjectTag implements ObjectTag {
     // @name JavaReflectedObjectTag
     // @prefix reflected
     // @base ElementTag
-    // @ExampleTagBase [some_reflected_obj]
-    // @ExampleValues TODO
+    // @ExampleTagBase reflected[some_reflected_obj]
+    // @ExampleValues <reflected[some_reflected_obj]>
     // @ExampleForReturns
     // - narrate <%VALUE%.full_class_name>
     // @format

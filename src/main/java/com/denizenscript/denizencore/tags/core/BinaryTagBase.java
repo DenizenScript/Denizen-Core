@@ -9,7 +9,7 @@ public class BinaryTagBase {
 
         // <--[tag]
         // @attribute <binary[<binary>]>
-        // @returns ElementTag
+        // @returns BinaryTag
         // @description
         // Returns a BinaryTag constructed from the input binary data in hexadecimal format.
         // Refer to <@link objecttype BinaryTag>.

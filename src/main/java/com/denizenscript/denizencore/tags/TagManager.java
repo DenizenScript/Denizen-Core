@@ -29,6 +29,7 @@ public class TagManager {
         new ListTagBase();
         new MapTagBase();
         new QueueTagBase();
+        new ReflectedTagBase();
         new ScriptTagBase();
         new SecretTagBase();
         new TimeTagBase();
