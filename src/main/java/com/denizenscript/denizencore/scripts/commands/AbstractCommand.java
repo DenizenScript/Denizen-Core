@@ -91,6 +91,12 @@ public abstract class AbstractCommand {
             }
         }
 
+        public final void add(String[] values) {
+            for (String val : values) {
+                add(val);
+            }
+        }
+
         public final void add(Set<String> values) {
             for (String val : values) {
                 add(val);
