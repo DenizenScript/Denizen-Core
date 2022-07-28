@@ -176,6 +176,7 @@ public class UtilTagBase {
                         + QueueWordList.FinalWordList.get(CoreUtilities.getRandom().nextInt(size));
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(id), attribute.fulfill(1)));
             }
+            return;
         }
 
         // <--[tag]
@@ -186,6 +187,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_decimal")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -201,6 +203,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_chance") && attribute.hasParam()) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextDouble() * 100 <= attribute.getDoubleParam()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -211,6 +214,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_boolean")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextBoolean()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -222,6 +226,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_gauss")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(CoreUtilities.getRandom().nextGaussian()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -232,6 +237,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("random_uuid")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(UUID.randomUUID().toString()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -263,6 +269,7 @@ public class UtilTagBase {
                 return;
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(res), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -296,6 +303,7 @@ public class UtilTagBase {
                 result.addObject(new ElementTag(i));
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -314,6 +322,7 @@ public class UtilTagBase {
                 result.add(String.valueOf(i));
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -329,6 +338,7 @@ public class UtilTagBase {
                 result.add("");
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -339,6 +349,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("short_max")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Short.MAX_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -349,6 +360,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("short_min")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Short.MIN_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -359,6 +371,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("int_max")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Integer.MAX_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -369,6 +382,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("int_min")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Integer.MIN_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -379,6 +393,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("long_max")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Long.MAX_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -389,6 +404,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("long_min")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Long.MIN_VALUE), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -399,6 +415,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("pi")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -409,6 +426,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("tau")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.PI * 2), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -419,6 +437,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.matches("e")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Math.E), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -430,6 +449,7 @@ public class UtilTagBase {
         else if (attribute.startsWith("list_denizen_commands")) {
             ListTag result = new ListTag(DenizenCore.commandRegistry.instances.keySet());
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -441,6 +461,7 @@ public class UtilTagBase {
         else if (attribute.startsWith("list_tag_bases")) {
             ListTag result = new ListTag(TagManager.baseTags.keySet());
             event.setReplacedObject(CoreUtilities.autoAttrib(result, attribute.fulfill(1)));
+            return;
         }
 
         else if (attribute.matches("time_at") && attribute.hasParam()) {
@@ -464,6 +485,7 @@ public class UtilTagBase {
             calendar.set(year, month, day, hour, minute, second);
             TimeTag result = new TimeTag(calendar.getTimeInMillis() + millisecond);
             event.setReplacedObject(result.getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -476,6 +498,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("time_now")) {
             event.setReplacedObject(TimeTag.now().getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         else if (attribute.startsWith("date")) {
@@ -559,6 +582,7 @@ public class UtilTagBase {
                 event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(format.format(currentDate))
                         , attribute));
             }
+            return;
         }
 
         // <--[tag]
@@ -570,6 +594,7 @@ public class UtilTagBase {
         else if (attribute.matches("parse_yaml") && attribute.hasParam()) {
             ObjectTag tagForm = CoreUtilities.objectToTagForm(YamlConfiguration.load(attribute.getParam()).contents, attribute.context);
             event.setReplacedObject(CoreUtilities.autoAttrib(tagForm, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -584,6 +609,7 @@ public class UtilTagBase {
                 list.addObject(new QueueTag(queue));
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -594,6 +620,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("event_stats")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(ScriptQueue.getStats()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -604,6 +631,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("event_stats_data")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(ScriptQueue.getStatsRawData(), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -614,6 +642,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("default_encoding")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(Charset.defaultCharset().name()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -625,6 +654,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("runlater_ids")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(new ArrayList<>(RunLaterCommand.trackedById.keySet()), true), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -635,6 +665,7 @@ public class UtilTagBase {
         // -->
         else if (attribute.startsWith("java_version")) {
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(System.getProperty("java.version")), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -656,6 +687,7 @@ public class UtilTagBase {
                 return;
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(f.exists()), attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -689,6 +721,7 @@ public class UtilTagBase {
                 list.add(file.getName());
             }
             event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -700,6 +733,7 @@ public class UtilTagBase {
         if (attribute.startsWith("started_time")) {
             event.setReplacedObject(new TimeTag(CoreUtilities.monotonicMillisToReal(DenizenCore.startTime))
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -714,6 +748,7 @@ public class UtilTagBase {
             File folder = DenizenCore.implementation.getDataFolder();
             event.setReplacedObject(new ElementTag(folder.getUsableSpace())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -727,6 +762,7 @@ public class UtilTagBase {
             File folder = DenizenCore.implementation.getDataFolder();
             event.setReplacedObject(new ElementTag(folder.getTotalSpace())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -742,6 +778,7 @@ public class UtilTagBase {
             File folder = DenizenCore.implementation.getDataFolder();
             event.setReplacedObject(new ElementTag(folder.getTotalSpace() - folder.getFreeSpace())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -754,6 +791,7 @@ public class UtilTagBase {
         if (attribute.startsWith("ram_allocated")) {
             event.setReplacedObject(new ElementTag(Runtime.getRuntime().totalMemory())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -765,6 +803,7 @@ public class UtilTagBase {
         if (attribute.startsWith("ram_max")) {
             event.setReplacedObject(new ElementTag(Runtime.getRuntime().maxMemory())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -776,6 +815,7 @@ public class UtilTagBase {
         if (attribute.startsWith("ram_free")) {
             event.setReplacedObject(new ElementTag(Runtime.getRuntime().freeMemory())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -788,6 +828,7 @@ public class UtilTagBase {
         if (attribute.startsWith("ram_usage")) {
             event.setReplacedObject(new ElementTag(Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -800,6 +841,7 @@ public class UtilTagBase {
         if (attribute.startsWith("available_processors")) {
             event.setReplacedObject(new ElementTag(Runtime.getRuntime().availableProcessors())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -812,6 +854,7 @@ public class UtilTagBase {
         if (attribute.startsWith("current_tick")) {
             event.setReplacedObject(new ElementTag(TickScriptEvent.instance.ticks)
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -826,6 +869,7 @@ public class UtilTagBase {
         if (attribute.startsWith("delta_time_since_start")) {
             event.setReplacedObject(new DurationTag(TickScriptEvent.instance.ticks)
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -840,6 +884,7 @@ public class UtilTagBase {
         if (attribute.startsWith("real_time_since_start")) {
             event.setReplacedObject(new DurationTag((CoreUtilities.monotonicMillis() - serverStartTimeMillis) / 1000.0)
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -853,6 +898,7 @@ public class UtilTagBase {
         if (attribute.startsWith("current_time_millis")) {
             event.setReplacedObject(new ElementTag(System.currentTimeMillis())
                     .getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -882,6 +928,7 @@ public class UtilTagBase {
                 }
             }
             event.setReplacedObject(allNotables.getObjectAttribute(attribute.fulfill(1)));
+            return;
         }
 
         // <--[tag]
@@ -945,8 +992,39 @@ public class UtilTagBase {
         // @description
         // Returns the time that Denizen scripts were last reloaded.
         // -->
-        else if (attribute.startsWith("last_reload")) {
+        if (attribute.startsWith("last_reload")) {
             event.setReplacedObject(new TimeTag(CoreUtilities.monotonicMillisToReal(DenizenCore.lastReloadTime)).getObjectAttribute(attribute.fulfill(1)));
+            return;
+        }
+
+        // <--[tag]
+        // @attribute <util.reflect_class[<name>]>
+        // @returns JavaReflectedObjectTag
+        // @description
+        // Returns a reflected reference to the class of the given full class name.
+        // Note that the class-name input is case-sensitive.
+        // This can be used like having an object of that class, but cannot read non-static fields.
+        // @example
+        // # Narrates the current NMS version known to Denizen, for example "v1_19"
+        // - narrate <util.reflect_class[com.denizenscript.denizen.nms.NMSHandler].read_field[version]>
+        // -->
+        if (attribute.startsWith("reflect_class")) {
+            if (!CoreConfiguration.allowReflectionFieldReads) {
+                attribute.echoError("Cannot reflect a class due to config reflection restrictions.");
+                return;
+            }
+            if (!attribute.hasParam()) {
+                return;
+            }
+            try {
+                Class<?> clazz = Class.forName(attribute.getParam());
+                event.setReplacedObject(new JavaReflectedObjectTag(clazz).getObjectAttribute(attribute.fulfill(1)));
+            }
+            catch (ClassNotFoundException ex) {
+                attribute.echoError("Class not found.");
+                return;
+            }
+            return;
         }
     }
 

@@ -429,17 +429,24 @@ public class JavaReflectedObjectTag implements ObjectTag {
     }
 
     public Field getFieldForTag(Attribute attribute, String fieldName) {
-        Class<?> clazz = object.getClass();
         Field field = null;
-        while (field == null && clazz != Object.class) {
-            field = ReflectionHelper.getFields(clazz).get(fieldName);
+        if (object instanceof Class) {
+            field = ReflectionHelper.getFields((Class<?>) object).get(fieldName);
             if (field == null) {
-                clazz = clazz.getSuperclass();
+                attribute.echoError("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object).getName());
             }
         }
-        if (field == null) {
-            attribute.echoError("Field '" + fieldName + "' does not exist in class: " + object.getClass().getName());
-            return null;
+        else {
+            Class<?> clazz = object.getClass();
+            while (field == null && clazz != Object.class) {
+                field = ReflectionHelper.getFields(clazz).get(fieldName);
+                if (field == null) {
+                    clazz = clazz.getSuperclass();
+                }
+            }
+            if (field == null) {
+                attribute.echoError("Field '" + fieldName + "' does not exist in class: " + object.getClass().getName());
+            }
         }
         return field;
     }
@@ -460,7 +467,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         if (field == null) {
             return null;
         }
-        return ReflectionHelper.getFieldValue(field.getDeclaringClass(), fieldName, Modifier.isStatic(field.getModifiers()) ? null : object);
+        if (object instanceof Class && !Modifier.isStatic(field.getModifiers())) {
+            attribute.echoError("Cannot read field '" + field.getName() + "' in class '" + field.getDeclaringClass().getName() + "' because the field is not static.");
+            return null;
+        }
+        return ReflectionHelper.getFieldValue(field.getDeclaringClass(), fieldName, Modifier.isStatic(field.getModifiers()) || object instanceof Class ? null : object);
     }
 
     public static ObjectTagProcessor<JavaReflectedObjectTag> tagProcessor = new ObjectTagProcessor<>();
