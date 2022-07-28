@@ -31,6 +31,7 @@ public class ListTag implements List<String>, ObjectTag {
     // @name ListTag
     // @prefix li
     // @base ElementTag
+    // @synonyms ArrayTag
     // @ExampleTagBase list[one|two]
     // @ExampleForReturns
     // - foreach %VALUE% as:entry:

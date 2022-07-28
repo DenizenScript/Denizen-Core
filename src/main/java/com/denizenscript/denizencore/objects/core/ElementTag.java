@@ -598,6 +598,7 @@ public class ElementTag implements ObjectTag {
         // @group conversion
         // @description
         // Returns the element as true/false.
+        // 'true', 't', or '1' become 'true', anything else becomes 'false'.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "as_boolean", (attribute, object) -> {
             String element = object.element;
@@ -612,6 +613,7 @@ public class ElementTag implements ObjectTag {
         // @group conversion
         // @description
         // Returns the element as a decimal number, or shows an error.
+        // Essentially an error-check-in-a-tag. Produces no functional output change in most cases.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "as_decimal", (attribute, object) -> {
             String element = object.element;

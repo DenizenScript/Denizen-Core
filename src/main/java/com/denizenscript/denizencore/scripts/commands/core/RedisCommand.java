@@ -48,7 +48,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     //
     // Redis is a simple key/value data store that is typically used for caching and sending data between servers.
     // The redis server runs in memory, meaning requests are insanely fast. If you run redis locally, you can expect responses to take under a millisecond.
-    // Because of these fast responses, it is not normally advised to run commands as ~waitable, though this is still supported.
+    // It is normally advised to run commands as ~waitable (see <@link language ~waitable>), but because of the usual fast responses when the server is on localhost, you can also run commands without ~waiting.
     //
     // When running commands, make sure to escape unpredictable values such as player input.
     // Alternatively, include the main redis command as the 'command' input and further arguments as a ListTag input for 'args'.
@@ -85,23 +85,23 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Set a key/value pair in the Redis server.
-    // - redis id:name "command:set my_key my_value"
+    // - ~redis id:name "command:set my_key my_value"
     //
     // @Usage
     // Delete the "foo" key.
-    // - redis id:name "command:del my_key"
+    // - ~redis id:name "command:del my_key"
     //
     // @Usage
     // Set a key that auto-expires in 60 seconds.
-    // - redis id:name "command:setex my_key 60 'value with spaces'"
+    // - ~redis id:name "command:setex my_key 60 'value with spaces'"
     //
     // @Usage
     // Run a command with unpredictable input.
-    // - redis id:name command:set args:<list[my_key].include_single[<context.message>]>
+    // - ~redis id:name command:set args:<list[my_key].include_single[<context.message>]>
     //
     // @Usage
     // Get a key's value.
-    // - redis id:name "command:get my_key" save:result
+    // - ~redis id:name "command:get my_key" save:result
     //
     // @Usage
     // Get a key's value in the background via a waitable.
@@ -109,25 +109,25 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Append values to the front or back of a redis list.
-    // - redis id:name "command:rpush my_list a"
-    // - redis id:name "command:rpush my_list b"
-    // - redis id:name "command:lpush my_list c"
+    // - ~redis id:name "command:rpush my_list a"
+    // - ~redis id:name "command:rpush my_list b"
+    // - ~redis id:name "command:lpush my_list c"
     //
     // @Usage
     // Retrieve a ListTag of the members stored in a redis list (0 is the start of the list, -1 is the end).
-    // - redis id:name "command:lrange my_list 0 -1"
+    // - ~redis id:name "command:lrange my_list 0 -1"
     //
     // @Usage
     // Subscribe to a redis channel. This will match published messages to channel_1, channel_foo, etc.
-    // - redis id:name subscribe:channel_*
+    // - ~redis id:name subscribe:channel_*
     //
     // @Usage
     // Subscribe to multiple redis channels. Supports wildcards for any list entry.
-    // - redis id:name subscribe:a|b*|c|d
+    // - ~redis id:name subscribe:a|b*|c|d
     //
     // @Usage
     // Publish a message to a redis channel. This will trigger the <@link event redis pubsub message> event for any subscribed connections for any server.
-    // - redis id:name publish:channel_1 "message:hey look something happened"
+    // - ~redis id:name publish:channel_1 "message:hey look something happened"
     //
     // @Usage
     // Unsubscribe from a redis channel. Leaves the connection intact.
@@ -308,9 +308,9 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 }, 0)));
             }
             else if (action.asString().equalsIgnoreCase("disconnect")) {
+                scriptEntry.setFinished(true);
                 if (!connections.containsKey(redisID)) {
                     Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
-                    scriptEntry.setFinished(true);
                     return;
                 }
                 Jedis con = connections.remove(redisID);
@@ -350,18 +350,17 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 for (int i = 0; i < channels.size(); i++) {
                     channelArr[i] = CoreUtilities.toLowerCase(channels.get(i));
                 }
-                Thread thr = new Thread(() -> con.psubscribe(jedisPubSub, channelArr));
+                Thread thr = new Thread(() -> { con.psubscribe(jedisPubSub, channelArr); scriptEntry.setFinished(true); });
                 thr.start();
             }
             else if (action.asString().equalsIgnoreCase("unsubscribe")) {
+                scriptEntry.setFinished(true);
                 if (!connections.containsKey(redisID)) {
                     Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
-                    scriptEntry.setFinished(true);
                     return;
                 }
                 if (!subscriptions.containsKey(redisID)) {
                     Debug.echoError(scriptEntry, "Not subscribed to redis server with ID '" + redisID + "'!");
-                    scriptEntry.setFinished(true);
                     return;
                 }
                 JedisPubSub pubSub = subscriptions.remove(redisID);
@@ -394,9 +393,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     try {
                         ElementTag result = new ElementTag(con.publish(CoreUtilities.toLowerCase(channel.asString()), message.asString()));
                         scriptEntry.addObject("result", result);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            scriptEntry.setFinished(true);
-                        }, 0));
+                        scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
@@ -448,9 +445,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                         }
                         ObjectTag result = processResponse(con.sendCommand(() -> SafeEncoder.encode(redisCommand), redisArgs));
                         scriptEntry.addObject("result", result);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            scriptEntry.setFinished(true);
-                        }, 0));
+                        scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {

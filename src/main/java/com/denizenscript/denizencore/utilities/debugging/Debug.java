@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 
 public class Debug {
 
@@ -69,6 +70,12 @@ public class Debug {
     }
     public static void echoError(ScriptEntry entry, Throwable error) {
         DenizenCore.implementation.debugError(entry, error);
+    }
+
+    public static void verboseLog(String message) {
+        if (CoreConfiguration.debugVerbose) {
+            DenizenCore.implementation.debugMessage(message);
+        }
     }
 
     public static void log(String message) {

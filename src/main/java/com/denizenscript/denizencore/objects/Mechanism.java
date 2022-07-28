@@ -164,7 +164,10 @@ public class Mechanism {
     }
 
     public void echoError(String error) {
-        // TODO: Consider special cases of whether object properties with debug off should even show errors
+        if (context == CoreUtilities.noDebugContext) {
+            return;
+        }
+        // TODO: Consider special cases of whether object properties with other reasons that debug is off should even show errors
         Debug.echoError(context, forMechanismText(), error);
     }
 
