@@ -207,7 +207,11 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         if (response instanceof List) {
             ListTag list = new ListTag();
             for (Object o : (List) response) {
-                list.addObject(processResponse(o));
+                ObjectTag resp = processResponse(o);
+                if (resp == null) {
+                    resp = new ElementTag("null");
+                }
+                list.addObject(resp);
             }
             return list;
         }
