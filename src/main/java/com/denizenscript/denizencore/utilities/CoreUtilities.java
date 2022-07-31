@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.utilities;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
@@ -443,7 +444,15 @@ public class CoreUtilities {
                 }
                 Path destPath = destination.resolve(source.relativize(file));
                 destPath.getParent().toFile().mkdirs();
-                Files.copy(file, destPath);
+                if (!DenizenCore.implementation.canReadFile(file.toFile())) {
+                    Debug.echoError("Directory copy excluding read-file '" + file + "' due to security restrictions in config.");
+                }
+                else if (!DenizenCore.implementation.canWriteToFile(destPath.toFile())) {
+                    Debug.echoError("Directory copy excluding write-file '" + file + "' due to security restrictions in config.");
+                }
+                else {
+                    Files.copy(file, destPath);
+                }
             }
             catch (IOException ex) {
                 throw new RuntimeException(ex);
