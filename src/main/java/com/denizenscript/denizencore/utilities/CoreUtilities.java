@@ -27,6 +27,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class CoreUtilities {
 
@@ -458,6 +460,34 @@ public class CoreUtilities {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static void zipDirectory(Path source, Path destination) throws IOException {
+        ZipOutputStream zs = new ZipOutputStream(new FileOutputStream(destination.toFile()));
+        FileVisitResult cont = FileVisitResult.CONTINUE;
+        try {
+            SimpleFileVisitor<Path> sfv = new SimpleFileVisitor<Path>() {
+                public FileVisitResult visit(Path path) throws IOException {
+                    zs.putNextEntry(
+                            new ZipEntry(source.relativize(path).toString())
+                    );
+                    Files.copy(path, zs);
+                    zs.closeEntry();
+                    return cont;
+                }
+
+                public FileVisitResult zvisit(Path path) throws IOException {
+                    zs.putNextEntry(
+                            new ZipEntry(source.relativize(path) + "/")
+                    );
+                    zs.closeEntry();
+                    return cont;
+                }
+            };
+            Files.walkFileTree(source, sfv);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     static Random random = new Random();

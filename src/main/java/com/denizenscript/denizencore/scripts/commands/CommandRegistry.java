@@ -105,6 +105,7 @@ public abstract class CommandRegistry {
         registerCommand(FileWriteCommand.class);
         registerCommand(LogCommand.class);
         registerCommand(YamlCommand.class);
+        registerCommand(FolderZipCommand.class);
         // queue
         registerCommand(ChooseCommand.class);
         registerCommand(DefineCommand.class);
