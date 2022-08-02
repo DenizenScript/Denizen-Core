@@ -119,8 +119,8 @@ public class RunLaterCommand extends AbstractCommand {
                     && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
                 int dotIndex = path.indexOf('.');
-                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                if (!script.isValid()) {
+                ScriptTag script = ScriptTag.valueOf(path.substring(0, dotIndex), CoreUtilities.noDebugContext);
+                if (script == null) {
                     arg.reportUnhandled();
                 }
                 else {

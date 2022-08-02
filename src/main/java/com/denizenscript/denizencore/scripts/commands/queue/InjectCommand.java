@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -67,8 +68,8 @@ public class InjectCommand extends AbstractCommand {
                     && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
             int dotIndex = path.indexOf('.');
-                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                if (!script.isValid()) {
+                ScriptTag script = ScriptTag.valueOf(path.substring(0, dotIndex), CoreUtilities.noDebugContext);
+                if (script == null) {
                     arg.reportUnhandled();
                 }
                 else {

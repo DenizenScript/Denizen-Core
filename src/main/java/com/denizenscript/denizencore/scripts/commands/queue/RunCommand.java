@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -146,8 +147,8 @@ public class RunCommand extends AbstractCommand implements Holdable {
                     && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
                 String path = arg.asElement().asString();
                 int dotIndex = path.indexOf('.');
-                ScriptTag script = new ScriptTag(path.substring(0, dotIndex));
-                if (!script.isValid()) {
+                ScriptTag script = ScriptTag.valueOf(path.substring(0, dotIndex), CoreUtilities.noDebugContext);
+                if (script == null) {
                     arg.reportUnhandled();
                 }
                 else {

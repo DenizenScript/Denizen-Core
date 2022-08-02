@@ -108,26 +108,20 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Fetchable("s")
     public static ScriptTag valueOf(String string, TagContext context) {
-
         if (string.startsWith("s@")) {
             string = string.substring(2);
         }
-
-        ScriptTag script = new ScriptTag(string);
-        // Make sure it's valid.
-        if (script.isValid()) {
-            return script;
-        }
-        else {
+        ScriptContainer container = ScriptRegistry.getScriptContainer(string);
+        if (container == null) {
             return null;
         }
+        return new ScriptTag(container);
     }
 
     public static boolean matches(String string) {
         if (CoreUtilities.toLowerCase(string).startsWith("s@")) {
             return true;
         }
-
         return ScriptRegistry.getScriptContainer(string) != null;
     }
 
@@ -135,23 +129,9 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // Constructor
     ////////////////
 
-    /**
-     * Creates a script object from a script name. If the script is valid, {@link #isValid()} will return true.
-     *
-     * @param scriptName the name of the script
-     */
-    public ScriptTag(String scriptName) {
-        container = ScriptRegistry.getScriptContainer(scriptName);
-        if (container != null) {
-            name = CoreUtilities.toLowerCase(scriptName);
-            valid = true;
-        }
-    }
-
     public ScriptTag(ScriptContainer container) {
         this.container = container;
         name = CoreUtilities.toLowerCase(container.getName());
-        valid = true;
     }
 
     ///////////////////////
@@ -162,15 +142,9 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
 
     private String prefix = "Script";
 
-    private boolean valid = false;
-
-    /**
-     * Confirms that the script references a valid name and type in current loaded ScriptsContainers.
-     *
-     * @return true if the script is valid, false if the script was not found, or the type is missing
-     */
-    public boolean isValid() {
-        return valid;
+    public ScriptTag validate() {
+        container = ScriptRegistry.getScriptContainer(name);
+        return container != null ? this : null;
     }
 
     /**
