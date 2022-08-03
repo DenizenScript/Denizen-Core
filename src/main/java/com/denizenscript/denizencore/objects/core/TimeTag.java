@@ -202,6 +202,11 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         return identify();
     }
 
+    @Override
+    public Object getJavaObject() {
+        return instant;
+    }
+
     public int year() {
         return instant.get(ChronoField.YEAR);
     }

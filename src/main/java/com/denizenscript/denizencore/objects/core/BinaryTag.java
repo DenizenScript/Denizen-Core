@@ -149,6 +149,11 @@ public class BinaryTag implements ObjectTag {
         return identify();
     }
 
+    @Override
+    public Object getJavaObject() {
+        return data;
+    }
+
     public static void registerTags() {
 
         // <--[tag]

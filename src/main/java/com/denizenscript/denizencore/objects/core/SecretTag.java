@@ -7,13 +7,16 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionRefuse;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
 
+@ReflectionRefuse
 public class SecretTag implements ObjectTag {
 
+    @ReflectionRefuse
     public static YamlConfiguration secretsFile;
 
     public static void load() {
@@ -104,6 +107,7 @@ public class SecretTag implements ObjectTag {
         return getValue() != null;
     }
 
+    @ReflectionRefuse
     public String getValue() {
         if (secretsFile == null) {
             return null;

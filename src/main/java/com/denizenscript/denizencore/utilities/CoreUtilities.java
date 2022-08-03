@@ -118,7 +118,10 @@ public class CoreUtilities {
         }
     }
 
-
+    /**
+     * Gets a Java form of an object, for serialization API usage.
+     * For raw object forms, use {@link ObjectTag#getJavaObject}
+     */
     public static Object objectTagToJavaForm(ObjectTag obj, boolean stringHolder, boolean nativeTypes) {
         if (obj == null) {
             return null;

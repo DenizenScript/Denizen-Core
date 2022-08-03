@@ -5,10 +5,7 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.utilities.AsciiMatcher;
-import com.denizenscript.denizencore.utilities.CoreConfiguration;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.ReflectionHelper;
+import com.denizenscript.denizencore.utilities.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -93,6 +90,12 @@ public class JavaReflectedObjectTag implements ObjectTag {
     public long lastIdentified;
 
     public JavaReflectedObjectTag(Object object) {
+        if (object == null) {
+            throw new NullPointerException();
+        }
+        if (object.getClass().isAnnotationPresent(ReflectionRefuse.class)) {
+            throw new RuntimeException("Cannot reflect into object of class " + object.getClass().getName() + " as it has a reflection refusal marked.");
+        }
         this.object = object;
         id = UUID.randomUUID();
     }
@@ -145,6 +148,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
     @Override
     public String toString() {
         return identify();
+    }
+
+    @Override
+    public Object getJavaObject() {
+        return object;
     }
 
     public static void registerTags() {
@@ -465,6 +473,10 @@ public class JavaReflectedObjectTag implements ObjectTag {
     public Object readFieldForTag(Attribute attribute, String fieldName) {
         Field field = getFieldForTag(attribute, fieldName);
         if (field == null) {
+            return null;
+        }
+        if (field.isAnnotationPresent(ReflectionRefuse.class) || field.getType().isAnnotationPresent(ReflectionRefuse.class)) {
+            attribute.echoError("Cannot read field '" + field.getName() + "' in class '" + field.getDeclaringClass().getName() + "' because it is marked for reflection refusal.");
             return null;
         }
         if (object instanceof Class && !Modifier.isStatic(field.getModifiers())) {

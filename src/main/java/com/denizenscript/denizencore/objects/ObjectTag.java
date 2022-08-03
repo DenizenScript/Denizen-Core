@@ -309,4 +309,11 @@ public interface ObjectTag {
     default ObjectTag refreshState() {
         return this;
     }
+
+    /**
+     * Return the appropriate Java object for this Denizen object, if any.
+     */
+    default Object getJavaObject() {
+        return CoreUtilities.objectTagToJavaForm(this, false, false);
+    }
 }

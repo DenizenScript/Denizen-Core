@@ -613,6 +613,15 @@ public class ListTag implements List<String>, ObjectTag {
         return identify();
     }
 
+    @Override
+    public Object getJavaObject() {
+        ArrayList<Object> result = new ArrayList<>();
+        for (ObjectTag obj : objectForms) {
+            result.add(obj.getJavaObject());
+        }
+        return result;
+    }
+
     //////////////////////////////
     //    DSCRIPT ARGUMENT METHODS
     /////////////////////////

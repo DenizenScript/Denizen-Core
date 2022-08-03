@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.JavaReflectedObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.commands.Comparable;
@@ -11,6 +12,7 @@ import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptCont
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionRefuse;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -330,6 +332,27 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return new ElementTag(object.tryAdvancedMatcher(attribute.getParam()));
         }, "advanced_matches_text");
+
+        // <--[tag]
+        // @attribute <ObjectTag.reflected_internal_object>
+        // @returns JavaReflectedObjectTag
+        // @description
+        // Returns the reflected internal Java object for a given ObjectTag.
+        // -->
+        registerTag(JavaReflectedObjectTag.class, "reflected_internal_object", (attribute, object) -> {
+            Object obj = object.getJavaObject();
+            if (!CoreConfiguration.allowReflectionFieldReads) {
+                return null;
+            }
+            if (obj == null) {
+                return null;
+            }
+            if (obj.getClass().isAnnotationPresent(ReflectionRefuse.class)) {
+                attribute.echoError("Cannot reflect object " + object + " as its type '" + obj.getClass().getName() + "' is marked as refused for reflection.");
+                return null;
+            }
+            return new JavaReflectedObjectTag(obj);
+        });
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

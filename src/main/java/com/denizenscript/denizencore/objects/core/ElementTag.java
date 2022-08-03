@@ -398,6 +398,11 @@ public class ElementTag implements ObjectTag {
     }
 
     @Override
+    public Object getJavaObject() {
+        return element;
+    }
+
+    @Override
     public boolean isUnique() {
         return false;
     }

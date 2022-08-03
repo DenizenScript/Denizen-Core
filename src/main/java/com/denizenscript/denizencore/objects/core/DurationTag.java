@@ -313,6 +313,11 @@ public class DurationTag implements ObjectTag {
         return this;
     }
 
+    @Override
+    public Object getJavaObject() {
+        return getSeconds();
+    }
+
     public static void registerTags() {
 
         /////////////////////

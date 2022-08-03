@@ -215,6 +215,15 @@ public class MapTag implements ObjectTag {
         return identify();
     }
 
+    @Override
+    public Object getJavaObject() {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+        for (Map.Entry<StringHolder, ObjectTag> pair : map.entrySet()) {
+            result.put(pair.getKey().str, pair.getValue().getJavaObject());
+        }
+        return result;
+    }
+
     public ObjectTag getDeepObject(String key) {
         if (!CoreUtilities.contains(key, '.')) {
             return getObject(key);
