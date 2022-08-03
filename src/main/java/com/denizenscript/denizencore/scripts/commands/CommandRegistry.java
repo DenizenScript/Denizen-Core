@@ -94,9 +94,10 @@ public abstract class CommandRegistry {
         registerCommand(EventCommand.class);
         registerCommand(FlagCommand.class);
         registerCommand(NoteCommand.class);
+        registerCommand(RedisCommand.class);
+        registerCommand(ReflectionSetCommand.class);
         registerCommand(ReloadCommand.class);
         registerCommand(SQLCommand.class);
-        registerCommand(RedisCommand.class);
         registerCommand(WebGetCommand.class);
         registerCommand(WebServerCommand.class);
         // file

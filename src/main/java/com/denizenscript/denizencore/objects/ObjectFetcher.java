@@ -220,6 +220,9 @@ public class ObjectFetcher {
     }
 
     public static <T extends ObjectTag> T getObjectFrom(Class<T> dClass, String value, TagContext context) {
+        if (dClass == ObjectTag.class) {
+            return (T) pickObjectFor(value, context);
+        }
         return getObjectFrom((ObjectType<T>) objectsByClass.get(dClass), value, context);
     }
 

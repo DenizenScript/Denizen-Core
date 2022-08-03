@@ -1018,6 +1018,10 @@ public class UtilTagBase {
             }
             try {
                 Class<?> clazz = Class.forName(attribute.getParam());
+                if (clazz.isAnnotationPresent(ReflectionRefuse.class)) {
+                    attribute.echoError("Cannot reflect class '" + clazz.getName() + "' as it is marked for reflection refusal.");
+                    return;
+                }
                 event.setReplacedObject(new JavaReflectedObjectTag(clazz).getObjectAttribute(attribute.fulfill(1)));
             }
             catch (ClassNotFoundException ex) {

@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -34,13 +33,6 @@ public class ReloadCommand extends AbstractCommand {
     // - reload
     //
     // -->
-
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        // No arguments
-
-        // TODO: Allow 'reload saves', etc?
-    }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {

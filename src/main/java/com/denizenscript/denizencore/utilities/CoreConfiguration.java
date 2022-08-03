@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.utilities;
 
 import java.nio.charset.CharsetDecoder;
 
+@ReflectionRefuse
 public class CoreConfiguration {
 
     public static long deprecationWarningRate = 10000;
@@ -36,5 +37,5 @@ public class CoreConfiguration {
 
     public static boolean listFlagsAllowed = false;
 
-    public static boolean allowReflectionFieldReads = false, allowReflectedCoreMethods = false;
+    public static boolean allowReflectionFieldReads = false, allowReflectedCoreMethods = false, allowReflectionSet = false, allowReflectionSetPrivate = false, allowReflectionSetFinal = false;
 }
