@@ -35,12 +35,12 @@ public class ReflectionSetCommand extends AbstractCommand {
     // @Group core
     //
     // @Description
-    // Give a <@link tag JavaReflectedObjectTag> as the object, a field name, and a value (or leave off for null) to set the value of a field on that object.
+    // Give a <@link objecttype JavaReflectedObjectTag> as the object, a field name, and a value (or leave off for null) to set the value of a field on that object.
     //
     // Uses reflection to set, and so can bypass 'private' or 'final' field limits if permitted by config.
     //
     // If the value is fed as a general ObjectTag, automatic conversion will be attempted.
-    // If automatic conversion is not possible, you must pass a <@link tag JavaReflectedObjectTag> with the appropriate type as the value.
+    // If automatic conversion is not possible, you must pass a <@link objecttype JavaReflectedObjectTag> with the appropriate type as the value.
     //
     // Requires config setting "Reflection.Allow set command".
     //

@@ -254,6 +254,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return CoreUtilities.equalsIgnoreCase(pathValue, value);
         }
 
+        public boolean tryObjectSwitch(String key, ObjectTag obj) {
+            String val = switches.get(key);
+            if (val == null) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            return obj.tryAdvancedMatcher(val);
+        }
+
         // <--[data]
         // @name not_switches
         // @values regex
