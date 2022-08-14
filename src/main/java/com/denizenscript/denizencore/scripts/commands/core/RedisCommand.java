@@ -23,6 +23,7 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.util.SafeEncoder;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RedisCommand extends AbstractCommand implements Holdable {
 
@@ -33,6 +34,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         isProcedural = false;
         setPrefixesHandled("auth", "port", "id", "message", "args");
         setBooleansHandled("ssl");
+        isEnabled.set(true);
     }
 
     // <--[command]
@@ -141,8 +143,11 @@ public class RedisCommand extends AbstractCommand implements Holdable {
     public static Map<String, Jedis> connections = new HashMap<>();
     public static Map<String, JedisPubSub> subscriptions = new HashMap<>();
 
+    public static AtomicBoolean isEnabled = new AtomicBoolean(true);
+
     @Override
     public void onDisable() {
+        isEnabled.set(false);
         for (Map.Entry<String, JedisPubSub> entry : subscriptions.entrySet()) {
             try {
                 entry.getValue().punsubscribe();
@@ -226,6 +231,22 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         }
     }
 
+    public static void runChecked(Runnable r, ScriptEntry scriptEntry) {
+        DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+            try {
+                r.run();
+            }
+            catch (Throwable ex) {
+                if (isEnabled.get()) { // Ignore errors when server is shutting down
+                    DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        Debug.echoError(ex);
+                        scriptEntry.setFinished(true);
+                    }, 0));
+                }
+            }
+        }, 0)));
+    }
+
     @Override
     public void execute(final ScriptEntry scriptEntry) {
         if (!CoreConfiguration.allowRedis) {
@@ -266,7 +287,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+                runChecked(() -> {
                     Jedis con = null;
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to " + host + " on port " + port);
@@ -309,7 +330,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                             }
                         }, 0));
                     }
-                }, 0)));
+                }, scriptEntry);
             }
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 scriptEntry.setFinished(true);
@@ -354,8 +375,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 for (int i = 0; i < channels.size(); i++) {
                     channelArr[i] = CoreUtilities.toLowerCase(channels.get(i));
                 }
-                Thread thr = new Thread(() -> { con.psubscribe(jedisPubSub, channelArr); scriptEntry.setFinished(true); });
-                thr.start();
+                runChecked(() -> { con.psubscribe(jedisPubSub, channelArr); scriptEntry.setFinished(true); }, scriptEntry);
             }
             else if (action.asString().equalsIgnoreCase("unsubscribe")) {
                 scriptEntry.setFinished(true);
@@ -410,7 +430,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
-                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(doQuery, 0)));
+                    runChecked(doQuery, scriptEntry);
                 }
                 else {
                     doQuery.run();
@@ -462,7 +482,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
-                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(doQuery, 0)));
+                    runChecked(doQuery, scriptEntry);
                 }
                 else {
                     doQuery.run();
