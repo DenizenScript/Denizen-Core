@@ -237,7 +237,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 r.run();
             }
             catch (Throwable ex) {
-                if (isEnabled.get()) { // Ignore errors when server is shutting down
+                if (isEnabled.get() || CoreConfiguration.debugVerbose) { // Ignore errors when server is shutting down
                     DenizenCore.schedule(new OneTimeSchedulable(() -> {
                         Debug.echoError(ex);
                         scriptEntry.setFinished(true);

@@ -54,8 +54,6 @@ public class Deprecations {
     // Valid candidate for functionality remove with a 'past deprecations' backup warning - has been deprecated for a while, and is a trivial update to apply
     public static Warning ymlFileExtension = new StrongWarning("ymlFileExtension", "Denizen scripts use the '.dsc' file extension, not '.yml'. Please follow the Denizen beginner's guide https://guide.denizenscript.com/ - if you need help, ask in the official Denizen Discord @ https://discord.gg/Q6pZGSR");
 
-    public static Warning playerHasPlayedBefore = new SlowWarning("playerHasPlayedBefore", "The tag player.has_played_before has never returned any value other than 'true', and as such is a useless tag. Use flags to track whether a player has joined.");
-
     // Added 2019/10/03, made slow 2021/11/14.
     public static Warning inAreaSwitchFormat = new SlowWarning("inAreaSwitchFormat", "The old 'in <area>' in-line event format is deprecated, use the switch format for 'in:<area>'.");
 
