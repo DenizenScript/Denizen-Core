@@ -12,6 +12,12 @@ public abstract class TagRunnable implements Cloneable {
     }
 
     @FunctionalInterface
+    public interface ObjectWithParamInterface<T extends ObjectTag, R extends ObjectTag, P extends ObjectTag> {
+
+        R run(Attribute attribute, T object, P param);
+    }
+
+    @FunctionalInterface
     public interface BaseInterface<R extends ObjectTag> {
 
         R run(Attribute attribute);

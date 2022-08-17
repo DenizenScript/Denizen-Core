@@ -368,10 +368,32 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
     }
 
+    public <R extends ObjectTag, P extends ObjectTag> void registerStaticTag(Class<R> returnType, Class<P> paramType, String name, TagRunnable.ObjectWithParamInterface<T, R, P> runnable, String... deprecatedVariants) {
+        registerTagInternal(returnType, paramType, name, runnable, true, deprecatedVariants);
+    }
+
+    public <R extends ObjectTag, P extends ObjectTag> void registerTag(Class<R> returnType, Class<P> paramType, String name, TagRunnable.ObjectWithParamInterface<T, R, P> runnable, String... deprecatedVariants) {
+        registerTagInternal(returnType, paramType, name, runnable, false, deprecatedVariants);
+    }
+
+    public <R extends ObjectTag, P extends ObjectTag> void registerTagInternal(Class<R> returnType, Class<P> paramType, String name, TagRunnable.ObjectWithParamInterface<T, R, P> runnable, boolean isStatic, String[] deprecatedVariants) {
+        registerTagInternal(returnType, name, (Attribute attribute, T obj) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            ObjectTag param = attribute.getParamObject();
+            P result = param.asType(paramType, attribute.context);
+            if (result == null) {
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                return null;
+            }
+            return runnable.run(attribute, obj, result);
+        }, isStatic, deprecatedVariants);
+    }
+
     public <R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
         registerTagInternal(returnType, name, runnable, true, deprecatedVariants);
     }
-
 
     public <R extends ObjectTag> void registerTag(Class<R> returnType, String name, TagRunnable.ObjectInterface<T, R> runnable, String... deprecatedVariants) {
         registerTagInternal(returnType, name, runnable, false, deprecatedVariants);

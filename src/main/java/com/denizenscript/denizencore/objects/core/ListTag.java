@@ -763,12 +763,8 @@ public class ListTag implements List<String>, ObjectTag {
         // - foreach <list[a|b|c|d|e|f].sub_lists[2]> as:sublist:
         //     - narrate <[sublist]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "sub_lists", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("list.sub_lists[...] tag must have an input.");
-                return null;
-            }
-            int subListLength = Math.max(1, attribute.getIntParam());
+        tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "sub_lists", (attribute, object, count) -> {
+            int subListLength = Math.max(1, count.asInt());
             ListTag output = new ListTag();
             ListTag building = new ListTag();
             for (int i = 0; i < object.size(); i++) {
@@ -809,12 +805,11 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "bob and joe and john"
         // - narrate "<list[bob|joe|john].separated_by[ and ]>"
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "separated_by", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "separated_by", (attribute, object, input) -> {
             if (object.isEmpty()) {
                 return new ElementTag("");
             }
-            String input = attribute.getParam();
-            return new ElementTag(parseString(object, input));
+            return new ElementTag(parseString(object, input.asString()));
         });
 
         // <--[tag]
@@ -1018,8 +1013,7 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a map of "[a=1;b=2;c=3]"
         // - narrate <list[a|b|c].map_with[1|2|3|]>
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "map_with", (attribute, object) -> {
-            ListTag inputList = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(MapTag.class, ListTag.class, "map_with", (attribute, object, inputList) -> {
             if (object.size() != inputList.size()) {
                 attribute.echoError("List.map_with tag failed: lists must be the same size!");
                 return null;
@@ -1269,12 +1263,9 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns a new ListTag including the value specified as a new entry.
         // If the value input is a list, that list becomes a list-within-a-list, still only occupying one space in the outer list.
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "include_single", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ListTag.class, ObjectTag.class, "include_single", (attribute, object, val) -> {
             ListTag copy = new ListTag(object);
-            copy.addObject(attribute.getParamObject());
+            copy.addObject(val);
             return copy;
         });
 
@@ -1287,12 +1278,9 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "one|two|three|four"
         // - narrate <list[one|two].include[three|four]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "include", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ListTag.class, ListTag.class, "include", (attribute, object, list) -> {
             ListTag copy = new ListTag(object);
-            copy.addAll(getListFor(attribute.getParamObject(), attribute.context));
+            copy.addAll(list);
             return copy;
         });
 
@@ -1305,11 +1293,7 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "one|three"
         // - narrate <list[one|two|three|four|two].exclude[two|four]>
         // -->
-        tagProcessor.registerTag(ListTag.class, "exclude", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag exclusions = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerTag(ListTag.class, ListTag.class, "exclude", (attribute, object, exclusions) -> { // non-static due to hacked sub-tag
             HashSet<String> toExclude = new HashSet<>(exclusions.size() * 2);
             for (String str : exclusions) {
                 toExclude.add(CoreUtilities.toLowerCase(str));
@@ -1355,11 +1339,7 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "two|three|four"
         // - narrate <list[one|two|three|four].remove[2]>
         // -->
-        tagProcessor.registerTag(ListTag.class, "remove", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag indices = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerTag(ListTag.class, ListTag.class, "remove", (attribute, object, indices) -> { // non-static due to hacked sub-tag
             ListTag copy = new ListTag(object);
 
             // <--[tag]
@@ -1417,11 +1397,7 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "two|four"
         // - narrate <list[one|two|three|four].shared_contents[two|four|five|six]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "shared_contents", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag secondList = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(ListTag.class, ListTag.class, "shared_contents", (attribute, object, secondList) -> {
             ListTag output = new ListTag();
             for (String val : object) {
                 if (secondList.containsCaseInsensitive(val) && !output.containsCaseInsensitive(val)) {
@@ -1617,11 +1593,8 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "2|4"
         // - narrate <list[one|two|three|two].find_all_partial[tw]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "find_all_partial", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String test = CoreUtilities.toLowerCase(attribute.getParam());
+        tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "find_all_partial", (attribute, object, input) -> {
+            String test = CoreUtilities.toLowerCase(input.asString());
             ListTag positions = new ListTag();
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
@@ -1642,12 +1615,9 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "2|3"
         // - narrate <list[one|two|three].find_all_matches[t*]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "find_all_matches", (attribute, list) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "find_all_matches", (attribute, list, matchText) -> {
             ListTag positions = new ListTag();
-            String matcher = attribute.getParam();
+            String matcher = matchText.asString();
             for (int i = 0; i < list.size(); i++) {
                 ObjectTag object = list.getObject(i);
                 if (object != null && object.tryAdvancedMatcher(matcher)) {
@@ -1667,12 +1637,9 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates a list of "2|4"
         // - narrate <list[one|two|three|two].find_all[two]>
         // -->
-        tagProcessor.registerStaticTag(ListTag.class, "find_all", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "find_all", (attribute, object, input) -> {
             ListTag positions = new ListTag();
-            String test = CoreUtilities.toLowerCase(attribute.getParam());
+            String test = CoreUtilities.toLowerCase(input.asString());
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     positions.add(String.valueOf(i + 1));
@@ -1691,11 +1658,8 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "2"
         // - narrate <list[one|two|three].find_partial[tw]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "find_partial", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String test = CoreUtilities.toLowerCase(attribute.getParam());
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find_partial", (attribute, object, input) -> {
+            String test = CoreUtilities.toLowerCase(input.asString());
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
                     return new ElementTag(i + 1);
@@ -1715,14 +1679,10 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "2"
         // - narrate <list[one|two|three].find_match[t*]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "find_match", (attribute, list) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String matcher = attribute.getParam();
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find_match", (attribute, list, matcher) -> {
             for (int i = 0; i < list.size(); i++) {
                 ObjectTag object = list.getObject(i);
-                if (object != null && object.tryAdvancedMatcher(matcher)) {
+                if (object != null && object.tryAdvancedMatcher(matcher.asString())) {
                     return new ElementTag(i + 1);
                 }
             }
@@ -1739,11 +1699,8 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "2"
         // - narrate <list[one|two|three].find[two]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "find", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String test = CoreUtilities.toLowerCase(attribute.getParam());
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find", (attribute, object, input) -> {
+            String test = CoreUtilities.toLowerCase(input.asString());
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     return new ElementTag(i + 1);
@@ -1761,11 +1718,8 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "2"
         // - narrate <list[one|two|two|three].count[two]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "count", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String test = CoreUtilities.toLowerCase(attribute.getParam());
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "count", (attribute, object, input) -> {
+            String test = CoreUtilities.toLowerCase(input.asString());
             int count = 0;
             for (String s : object) {
                 if (CoreUtilities.toLowerCase(s).equals(test)) {
@@ -1786,14 +1740,10 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "2"
         // - narrate <list[one|two|two|three].count_matches[t*]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "count_matches", (attribute, list) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            String matcher = attribute.getParam();
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "count_matches", (attribute, list, matcher) -> {
             int count = 0;
             for (ObjectTag object : list.objectForms) {
-                if (object != null && object.tryAdvancedMatcher(matcher)) {
+                if (object != null && object.tryAdvancedMatcher(matcher.asString())) {
                     count++;
                 }
             }
@@ -2238,9 +2188,9 @@ public class ListTag implements List<String>, ObjectTag {
         // Note that the script should ALWAYS return -1, 0, or 1, or glitches could happen!
         // Note that if two inputs are exactly equal, the procedure should always return 0.
         // -->
-        tagProcessor.registerTag(ListTag.class, "sort", (attribute, object) -> {
+        tagProcessor.registerTag(ListTag.class, ScriptTag.class, "sort", (attribute, object, procScript) -> {
             ListTag obj = new ListTag(object);
-            final ProcedureScriptContainer script = (ProcedureScriptContainer) attribute.paramAsType(ScriptTag.class).getContainer();
+            final ProcedureScriptContainer script = (ProcedureScriptContainer) procScript.getContainer();
             if (script == null) {
                 attribute.echoError("'" + attribute.getParam() + "' is not a valid procedure script!");
                 return obj;
@@ -2468,12 +2418,9 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a ListTag extended to reach a minimum specified length by adding entries to the left side.
         // -->
-        tagProcessor.registerTag(ListTag.class, "pad_left", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerTag(ListTag.class, ElementTag.class, "pad_left", (attribute, object, lengthText) -> { // non-static due to hacked sub-tag
             ObjectTag with = new ElementTag("");
-            int length = attribute.getIntParam();
+            int length = lengthText.asInt();
 
             // <--[tag]
             // @attribute <ListTag.pad_left[<#>].with[<element>]>
@@ -2498,12 +2445,9 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a ListTag extended to reach a minimum specified length by adding entries to the right side.
         // -->
-        tagProcessor.registerTag(ListTag.class, "pad_right", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerTag(ListTag.class, ElementTag.class, "pad_right", (attribute, object, lengthText) -> { // non-static due to hacked sub-tag
             ObjectTag with = new ElementTag("");
-            int length = attribute.getIntParam();
+            int length = lengthText.asInt();
 
             // <--[tag]
             // @attribute <ListTag.pad_right[<#>].with[<element>]>
@@ -2546,11 +2490,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns whether the list contains any of a list of given elements, case-sensitive.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "contains_any_case_sensitive", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag list = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_case_sensitive", (attribute, object, list) -> {
             boolean state = false;
             full_set:
             for (String element : object) {
@@ -2570,11 +2510,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns whether the list contains any of a list of given elements.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "contains_any", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag list = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any", (attribute, object, list) -> {
             boolean state = false;
             full_set:
             for (String element : object) {
@@ -2594,13 +2530,10 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns whether the list contains a given element, case-sensitive.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "contains_case_sensitive", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_case_sensitive", (attribute, object, input) -> {
             boolean state = false;
             for (String element : object) {
-                if (element.equals(attribute.getParam())) {
+                if (element.equals(input.asString())) {
                     state = true;
                     break;
                 }
@@ -2614,11 +2547,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns whether the list contains all of the given elements.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "contains", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            ListTag needed = getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains", (attribute, object, needed) -> {
             int gotten = 0;
             for (String check : needed) {
                 for (String element : object) {
@@ -2682,8 +2611,8 @@ public class ListTag implements List<String>, ObjectTag {
         // # Narrates "spawn"
         // - narrate "<list[dance|quit|spawn].closest_to[spwn]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "closest_to", (attribute, object) -> {
-            return new ElementTag(CoreUtilities.getClosestOption(object, attribute.getParam()));
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "closest_to", (attribute, object, input) -> {
+            return new ElementTag(CoreUtilities.getClosestOption(object, input.asString()));
         });
     }
 

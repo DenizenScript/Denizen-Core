@@ -49,7 +49,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 map.putObject("name", new ElementTag(event.getName()));
                 map.putObject("total_fires", new ElementTag(event.eventData.stats_fires));
                 map.putObject("script_fires", new ElementTag(event.eventData.stats_scriptFires));
-                map.putObject("total_time", new DurationTag(event.eventData.stats_nanoTimes / 1000000f));
+                map.putObject("total_time", new DurationTag(event.eventData.stats_nanoTimes / 1000000.0));
                 result.addObject(map);
             }
         }

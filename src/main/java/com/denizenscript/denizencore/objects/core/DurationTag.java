@@ -410,12 +410,8 @@ public class DurationTag implements ObjectTag {
         // @description
         // Returns this duration minus another.
         // -->
-        tagProcessor.registerStaticTag(DurationTag.class, "sub", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                Debug.echoError("The tag DurationTag.sub[...] must have a value.");
-                return null;
-            }
-            return new DurationTag(object.getTicks() - attribute.paramAsType(DurationTag.class).getTicks());
+        tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "sub", (attribute, object, secondVal) -> {
+            return new DurationTag(object.getTicks() - secondVal.getTicks());
         });
 
         // <--[tag]
@@ -424,72 +420,56 @@ public class DurationTag implements ObjectTag {
         // @description
         // Returns this duration plus another.
         // -->
-        tagProcessor.registerStaticTag(DurationTag.class, "add", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                Debug.echoError("The tag DurationTag.add[...] must have a value.");
-                return null;
-            }
-            return new DurationTag(object.getTicks() + attribute.paramAsType(DurationTag.class).getTicks());
+        tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "add", (attribute, object, secondVal) -> {
+            return new DurationTag(object.getTicks() + secondVal.getTicks());
         });
 
         // <--[tag]
-        // @attribute <DurationTag.is_more_than[<number>]>
+        // @attribute <DurationTag.is_more_than[<duration>]>
         // @returns ElementTag(Boolean)
         // @group comparison
         // @description
         // Returns whether this duration is greater than the input duration.
         // Equivalent to if comparison: >
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_more_than", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            return new ElementTag(object.seconds > attribute.paramAsType(DurationTag.class).seconds);
+        tagProcessor.registerStaticTag(ElementTag.class, DurationTag.class, "is_more_than", (attribute, object, secondVal) -> {
+            return new ElementTag(object.seconds > secondVal.seconds);
         });
 
         // <--[tag]
-        // @attribute <DurationTag.is_less_than[<number>]>
+        // @attribute <DurationTag.is_less_than[<duration>]>
         // @returns ElementTag(Boolean)
         // @group comparison
         // @description
         // Returns whether this duration is less than the input duration.
         // Equivalent to if comparison: <
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_less_than", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            return new ElementTag(object.seconds < attribute.paramAsType(DurationTag.class).seconds);
+        tagProcessor.registerStaticTag(ElementTag.class, DurationTag.class, "is_less_than", (attribute, object, secondVal) -> {
+            return new ElementTag(object.seconds < secondVal.seconds);
         });
 
         // <--[tag]
-        // @attribute <DurationTag.is_more_than_or_equal_to[<number>]>
+        // @attribute <DurationTag.is_more_than_or_equal_to[<duration>]>
         // @returns ElementTag(Boolean)
         // @group comparison
         // @description
         // Returns whether this duration is greater than or equal to the input duration.
         // Equivalent to if comparison: >=
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_more_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            return new ElementTag(object.seconds >= attribute.paramAsType(DurationTag.class).seconds);
+        tagProcessor.registerStaticTag(ElementTag.class, DurationTag.class, "is_more_than_or_equal_to", (attribute, object, secondVal) -> {
+            return new ElementTag(object.seconds >= secondVal.seconds);
         });
 
         // <--[tag]
-        // @attribute <DurationTag.is_less_than_or_equal_to[<number>]>
+        // @attribute <DurationTag.is_less_than_or_equal_to[<duration>]>
         // @returns ElementTag(Boolean)
         // @group comparison
         // @description
         // Returns whether this duration is less than or equal to the input duration.
         // Equivalent to if comparison: <=
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_less_than_or_equal_to", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            return new ElementTag(object.seconds <= attribute.paramAsType(DurationTag.class).seconds);
+        tagProcessor.registerStaticTag(ElementTag.class, DurationTag.class, "is_less_than_or_equal_to", (attribute, object, secondVal) -> {
+            return new ElementTag(object.seconds <= secondVal.seconds);
         });
 
         tagProcessor.registerTag(TimeTag.class, "time", (attribute, object) -> {

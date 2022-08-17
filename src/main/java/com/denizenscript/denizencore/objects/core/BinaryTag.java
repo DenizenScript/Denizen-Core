@@ -224,15 +224,12 @@ public class BinaryTag implements ObjectTag {
         // # narrates "HELLO WORLD"
         // - narrate <binary[48454c4c4f20574f524c44].text_decode[us-ascii]>
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "text_decode", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "text_decode", (attribute, object, encoding) -> {
             try {
-                return new ElementTag(new String(object.data, attribute.getParam()));
+                return new ElementTag(new String(object.data, encoding.asString()));
             }
             catch (UnsupportedEncodingException ex) {
-                attribute.echoError("Invalid encoding '" + attribute.getParam() + "'");
+                attribute.echoError("Invalid encoding '" + encoding + "'");
                 return null;
             }
         });
@@ -313,12 +310,9 @@ public class BinaryTag implements ObjectTag {
         // # Narrates binary data "4b68507f1746b0e5f3efe99b8ef42afef79da017", the exact SHA-1 hash of ASCII "HELLO WORLD".
         // - narrate <binary[48454c4c4f20574f524c44].hash[SHA-1]>
         // -->
-        tagProcessor.registerStaticTag(BinaryTag.class, "hash", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                return null;
-            }
+        tagProcessor.registerStaticTag(BinaryTag.class, ElementTag.class, "hash", (attribute, object, format) -> {
             try {
-                MessageDigest md = MessageDigest.getInstance(attribute.getParam());
+                MessageDigest md = MessageDigest.getInstance(format.asString());
                 md.update(object.data, 0, object.data.length);
                 return new BinaryTag(md.digest());
             }

@@ -416,12 +416,12 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns a copy of the time zone, converted to the specified time zone.
         // Zone input can be like 'UTC-5' or like 'America/New_York'
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "to_zone", (attribute, object) -> {
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "to_zone", (attribute, object, zone) -> {
             try {
-                return new TimeTag(object.instant.withZoneSameInstant(ZoneId.of(attribute.getParam())));
+                return new TimeTag(object.instant.withZoneSameInstant(ZoneId.of(zone.asString())));
             }
             catch (DateTimeException ex) {
-                attribute.echoError("Timezone '" + attribute.getParam() + "' is invalid or doesn't exist.");
+                attribute.echoError("Timezone '" + zone + "' is invalid or doesn't exist.");
                 return null;
             }
         });
@@ -456,12 +456,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The minute/second/millisecond will be zeroed.
         // If the input hour is 5, and the TimeTag is at 5 AM, will return the same day.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "last_hour_of_day", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.last_hour_of_day[...] must have input.");
-                return null;
-            }
-            int hour = attribute.getIntParam();
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "last_hour_of_day", (attribute, object, hourText) -> {
+            int hour = hourText.asInt();
             int todayHour = object.hour();
             TimeTag result = new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
             if (hour > todayHour) {
@@ -480,12 +476,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The minute/second/millisecond will be zeroed.
         // If the input hour is 5, and the TimeTag is at 5 AM, will return the next day.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "next_hour_of_day", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.next_hour_of_day[...] must have input.");
-                return null;
-            }
-            int hour = attribute.getIntParam();
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "next_hour_of_day", (attribute, object, hourText) -> {
+            int hour = hourText.asInt();
             int todayHour = object.hour();
             TimeTag result = new TimeTag(object.year(), object.month(), object.day(), 0, 0, 0, 0, object.instant.getOffset());
             if (hour <= todayHour) {
@@ -502,17 +494,13 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // If the TimeTag is on the input day, will return a day 7 days before then.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "last_day_of_week", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.last_day_of_week[...] must have input.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "last_day_of_week", (attribute, object, dayText) -> {
             DayOfWeek day;
             try {
-                day = DayOfWeek.valueOf(attribute.getParam().toUpperCase());
+                day = DayOfWeek.valueOf(dayText.asString().toUpperCase());
             }
             catch (IllegalArgumentException ex) {
-                attribute.echoError("'" + attribute.getParam() + "' is not a valid day-of-week.");
+                attribute.echoError("'" + dayText + "' is not a valid day-of-week.");
                 return null;
             }
             ZonedDateTime time = object.instant;
@@ -534,17 +522,13 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // If the TimeTag is on the input day, will return a day 7 days from then.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "next_day_of_week", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.next_day_of_week[...] must have input.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "next_day_of_week", (attribute, object, dayText) -> {
             DayOfWeek day;
             try {
-                day = DayOfWeek.valueOf(attribute.getParam().toUpperCase());
+                day = DayOfWeek.valueOf(dayText.asString().toUpperCase());
             }
             catch (IllegalArgumentException ex) {
-                attribute.echoError("'" + attribute.getParam() + "' is not a valid day-of-week.");
+                attribute.echoError("'" + dayText + "' is not a valid day-of-week.");
                 return null;
             }
             ZonedDateTime time = object.instant;
@@ -568,12 +552,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "last_day_of_month", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.last_day_of_month[...] must have input.");
-                return null;
-            }
-            int day = attribute.getIntParam();
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "last_day_of_month", (attribute, object, dayText) -> {
+            int day = dayText.asInt();
             if (day < 1 || day > 31) {
                 return null;
             }
@@ -600,12 +580,8 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // The hour/minute/second/millisecond will be zeroed.
         // Be careful with inputs of 29/30/31, as only some months contain those days.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "next_day_of_month", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("time.next_day_of_month[...] must have input.");
-                return null;
-            }
-            int day = attribute.getIntParam();
+        tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "next_day_of_month", (attribute, object, dayText) -> {
+            int day = dayText.asInt();
             if (day < 1 || day > 31) {
                 return null;
             }
@@ -659,12 +635,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the time that is this TimeTag plus a duration.
         // For example, a TimeTag on Monday, '.add[1d]', will return a time on Tuesday.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "add", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag TimeTag.add[...] must have an input.");
-                return null;
-            }
-            DurationTag toAdd = attribute.paramAsType(DurationTag.class);
+        tagProcessor.registerStaticTag(TimeTag.class, DurationTag.class, "add", (attribute, object, toAdd) -> {
             return new TimeTag(object.millis() + toAdd.getMillis(), object.instant.getZone());
         });
 
@@ -675,12 +646,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the time that is this TimeTag minus a duration.
         // For example, a TimeTag on Monday, '.sub[1d]', will return a time on Sunday.
         // -->
-        tagProcessor.registerStaticTag(TimeTag.class, "sub", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag TimeTag.sub[...] must have an input.");
-                return null;
-            }
-            DurationTag toSub = attribute.paramAsType(DurationTag.class);
+        tagProcessor.registerStaticTag(TimeTag.class, DurationTag.class, "sub", (attribute, object, toSub) -> {
             return new TimeTag(object.millis() - toSub.getMillis(), object.instant.getZone());
         });
 
@@ -707,12 +673,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // That is, a.duration_since[b] returns (a - b).
         // For example, a time on Monday, .duration_since[a time on Sunday], will return '1d'.
         // -->
-        tagProcessor.registerStaticTag(DurationTag.class, "duration_since", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag TimeTag.duration_since[...] must have an input.");
-                return null;
-            }
-            TimeTag toSub = attribute.paramAsType(TimeTag.class);
+        tagProcessor.registerStaticTag(DurationTag.class, TimeTag.class, "duration_since", (attribute, object, toSub) -> {
             return new DurationTag((object.millis() - toSub.millis()) / 1000.0);
         });
 
@@ -722,12 +683,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns true if this time object comes after the input time value, or false if it's before (or equal).
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_after", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag TimeTag.is_after[...] must have an input.");
-                return null;
-            }
-            TimeTag toCompare = attribute.paramAsType(TimeTag.class);
+        tagProcessor.registerStaticTag(ElementTag.class, TimeTag.class, "is_after", (attribute, object, toCompare) -> {
             return new ElementTag(object.millis() > toCompare.millis());
         });
 
@@ -737,12 +693,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @description
         // Returns true if this time object comes before the input time value, or false if it's after (or equal).
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "is_before", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag TimeTag.is_before[...] must have an input.");
-                return null;
-            }
-            TimeTag toCompare = attribute.paramAsType(TimeTag.class);
+        tagProcessor.registerStaticTag(ElementTag.class, TimeTag.class, "is_before", (attribute, object, toCompare) -> {
             return new ElementTag(object.millis() < toCompare.millis());
         });
 

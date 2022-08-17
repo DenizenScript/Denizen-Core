@@ -324,11 +324,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Will automatically parse any tags contained within the value of the key, preserving key data structure
         // (meaning, a tag that returns a ListTag, inside a data list, will insert a ListTag inside the returned ListTag, as you would expect).
         // -->
-        tagProcessor.registerTag(ObjectTag.class, "parsed_key", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                Debug.echoError("The tag ScriptTag.parsed_key[...] must have a value.");
-                return null;
-            }
+        tagProcessor.registerTag(ObjectTag.class, ElementTag.class, "parsed_key", (attribute, object, key) -> {
             ScriptContainer container = object.getContainer();
             if (container == null) {
                 Debug.echoError("Script '" + object.getName() + "' is missing script container?!");
@@ -339,7 +335,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(attribute.getParam().toUpperCase());
+            Object obj = section.get(key.asString().toUpperCase());
             if (obj == null) {
                 return null;
             }
@@ -354,11 +350,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // For example, "script.data_key[type]" on a task script will return "task".
         // Custom keys should usually go in a 'data' script container, or under a key labeled 'data' for other script containers.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "data_key", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                Debug.echoError("The tag ScriptTag.data_key[...] must have a value.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(ObjectTag.class, ElementTag.class, "data_key", (attribute, object, key) -> {
             ScriptContainer container = object.getContainer();
             if (container == null) {
                 Debug.echoError("Script '" + object.getName() + "' is missing script container?!");
@@ -369,7 +361,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(attribute.getParam().toUpperCase());
+            Object obj = section.get(key.asString().toUpperCase());
             if (obj == null) {
                 return null;
             }

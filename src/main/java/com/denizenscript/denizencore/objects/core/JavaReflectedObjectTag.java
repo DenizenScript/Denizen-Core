@@ -241,16 +241,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the result of the Java equals(<object>) call on the object with another JavaReflectedObjectTag.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "java_equals", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ObjectTag.class, JavaReflectedObjectTag.class, "java_equals", (attribute, object, compareTo) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
-                return null;
-            }
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            JavaReflectedObjectTag compareTo = attribute.getParamObject().asType(JavaReflectedObjectTag.class, attribute.context);
-            if (compareTo == null) {
                 return null;
             }
             return new ElementTag(object.object.equals(compareTo.object));
@@ -262,16 +255,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the result of the Java "==" exact memory equality call on the object with another JavaReflectedObjectTag.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "memory_equals", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ObjectTag.class, JavaReflectedObjectTag.class, "memory_equals", (attribute, object, compareTo) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
-                return null;
-            }
-            if (!attribute.hasParam()) {
-                return null;
-            }
-            JavaReflectedObjectTag compareTo = attribute.getParamObject().asType(JavaReflectedObjectTag.class, attribute.context);
-            if (compareTo == null) {
                 return null;
             }
             return new ElementTag(object.object == compareTo.object);
@@ -303,11 +289,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns whether the field for the given name on this object is a public field.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_is_public", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_public", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -320,11 +306,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns whether the field for the given name on this object is a private field.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_is_private", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_private", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -337,11 +323,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns whether the field for the given name on this object is a protected field.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_is_protected", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_protected", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -354,11 +340,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns whether the field for the given name on this object is a static field.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_is_static", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_static", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -371,11 +357,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns whether the field for the given name on this object is a final field.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_is_final", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_final", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -388,11 +374,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the full class name of the field of the given name on this object.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "field_class_type", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_class_type", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, attribute.getParam());
+            Field f = object.getFieldForTag(attribute, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -406,11 +392,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // Reads the field of the given name on the object and returns the value in its Denizen-valid format.
         // See also <@link tag JavaReflectedObjectTag.reflect_field>
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "read_field", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ObjectTag.class, ElementTag.class, "read_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Object val = object.readFieldForTag(attribute, attribute.getParam());
+            Object val = object.readFieldForTag(attribute, fieldName.asString());
             if (val == null) {
                 return null;
             }
@@ -424,11 +410,11 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // Reads the field of the given name on the object and returns the value as another reflected tag.
         // See also <@link tag JavaReflectedObjectTag.read_field>
         // -->
-        tagProcessor.registerStaticTag(JavaReflectedObjectTag.class, "reflect_field", (attribute, object) -> {
+        tagProcessor.registerStaticTag(JavaReflectedObjectTag.class, ElementTag.class, "reflect_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Object val = object.readFieldForTag(attribute, attribute.getParam());
+            Object val = object.readFieldForTag(attribute, fieldName.asString());
             if (val == null) {
                 return null;
             }

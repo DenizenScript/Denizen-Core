@@ -604,12 +604,7 @@ public class MapTag implements ObjectTag {
         // # Narrates a map of '[b=2;a=1]'
         // - narrate <map[a=1;b=2;c=3].get_subset[b|a]>
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "get_subset", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag 'MapTag.get_subset' must have an input value.");
-                return null;
-            }
-            ListTag keys = ListTag.getListFor(attribute.getParamObject(), attribute.context);
+        tagProcessor.registerStaticTag(MapTag.class, ListTag.class, "get_subset", (attribute, object, keys) -> {
             MapTag output = new MapTag();
             for (String key : keys) {
                 StringHolder keyHolder = new StringHolder(key);
@@ -781,13 +776,9 @@ public class MapTag implements ObjectTag {
         // # Demonstrates deep_exclude of 'second', narrating a new map of '[root=[first=kept]]' without 'second' in it
         // - narrate <[mymap].deep_exclude[root.second]>
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "deep_exclude", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag 'MapTag.deep_exclude' must have an input value.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(MapTag.class, ListTag.class, "deep_exclude", (attribute, object, list) -> {
             MapTag result = object.duplicate();
-            for (String key : ListTag.getListFor(attribute.getParamObject(), attribute.context)) {
+            for (String key : list) {
                 result.putDeepObject(key, null);
             }
             return result;
@@ -802,13 +793,9 @@ public class MapTag implements ObjectTag {
         // # Narrates a map of '[a=1;c=3]'
         // - narrate <map[a=1;b=2;c=3].exclude[b]>
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "exclude", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag 'MapTag.exclude' must have an input value.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(MapTag.class, ListTag.class, "exclude", (attribute, object, list) -> {
             MapTag result = object.duplicate();
-            for (String key : ListTag.getListFor(attribute.getParamObject(), attribute.context)) {
+            for (String key : list) {
                 result.map.remove(new StringHolder(key));
             }
             return result;
@@ -827,13 +814,9 @@ public class MapTag implements ObjectTag {
         // # Demonstrates matching keys overriding - Narrates a map of '[a=1;b=4;c=5]'
         // - narrate <map[a=1;b=2;c=3].include[b=4;c=5]>
         // -->
-        tagProcessor.registerStaticTag(MapTag.class, "include", (attribute, object) -> {
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag 'MapTag.include' must have an input value.");
-                return null;
-            }
+        tagProcessor.registerStaticTag(MapTag.class, MapTag.class, "include", (attribute, object, second) -> {
             MapTag result = object.duplicate();
-            result.map.putAll(getMapFor(attribute.getParamObject(), attribute.context).map);
+            result.map.putAll(second.duplicate().map);
             return result;
         });
 
