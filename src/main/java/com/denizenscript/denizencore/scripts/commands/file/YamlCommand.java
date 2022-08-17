@@ -338,7 +338,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         }
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());
-        final String id = CoreUtilities.toLowerCase(idElement.asString());
+        final String id = idElement.asLowerString();
         if (action != Action.LOAD && action != Action.SAVE && scriptEntry.shouldWaitFor()) {
             scriptEntry.setFinished(true);
         }

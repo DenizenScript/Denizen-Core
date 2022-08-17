@@ -170,7 +170,7 @@ public class RunLaterCommand extends AbstractCommand {
         runData.path = path;
         runData.entryData = scriptEntry.entryData.clone();
         runData.executeAt = System.currentTimeMillis() + delay.getMillis();
-        runData.id = id == null ? null : CoreUtilities.toLowerCase(id.asString());
+        runData.id = id == null ? null : id.asLowerString();
         if (id != null && trackedById.containsKey(runData.id)) {
             Debug.echoError("Cannot add new RunLater with the given id '" + runData.id + "': there is already a scheduled task with that ID.");
             return;

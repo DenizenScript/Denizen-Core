@@ -129,7 +129,7 @@ public class ChooseCommand extends BracedCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), choice);
         }
-        String choice_low = CoreUtilities.toLowerCase(choice.asString());
+        String choice_low = choice.asLowerString();
         Integer resultIndex = lookupTable.get(choice_low);
         if (resultIndex == null) {
             resultIndex = lookupTable.get("\0DEFAULT");

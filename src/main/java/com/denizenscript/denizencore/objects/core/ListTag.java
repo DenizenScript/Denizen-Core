@@ -1594,7 +1594,7 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate <list[one|two|three|two].find_all_partial[tw]>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "find_all_partial", (attribute, object, input) -> {
-            String test = CoreUtilities.toLowerCase(input.asString());
+            String test = input.asLowerString();
             ListTag positions = new ListTag();
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
@@ -1639,7 +1639,7 @@ public class ListTag implements List<String>, ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "find_all", (attribute, object, input) -> {
             ListTag positions = new ListTag();
-            String test = CoreUtilities.toLowerCase(input.asString());
+            String test = input.asLowerString();
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     positions.add(String.valueOf(i + 1));
@@ -1659,7 +1659,7 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate <list[one|two|three].find_partial[tw]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find_partial", (attribute, object, input) -> {
-            String test = CoreUtilities.toLowerCase(input.asString());
+            String test = input.asLowerString();
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).contains(test)) {
                     return new ElementTag(i + 1);
@@ -1700,7 +1700,7 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate <list[one|two|three].find[two]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find", (attribute, object, input) -> {
-            String test = CoreUtilities.toLowerCase(input.asString());
+            String test = input.asLowerString();
             for (int i = 0; i < object.size(); i++) {
                 if (CoreUtilities.toLowerCase(object.get(i)).equals(test)) {
                     return new ElementTag(i + 1);
@@ -1719,7 +1719,7 @@ public class ListTag implements List<String>, ObjectTag {
         // - narrate <list[one|two|two|three].count[two]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "count", (attribute, object, input) -> {
-            String test = CoreUtilities.toLowerCase(input.asString());
+            String test = input.asLowerString();
             int count = 0;
             for (String s : object) {
                 if (CoreUtilities.toLowerCase(s).equals(test)) {

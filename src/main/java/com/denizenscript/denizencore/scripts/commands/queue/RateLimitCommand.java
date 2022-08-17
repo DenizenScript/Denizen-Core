@@ -78,7 +78,7 @@ public class RateLimitCommand extends AbstractCommand {
             scriptEntry.internal.specialProcessedData = new HashMap<>(2);
         }
         HashMap<String, Long> map = (HashMap<String, Long>) scriptEntry.internal.specialProcessedData;
-        String key = CoreUtilities.toLowerCase(object.asString());
+        String key = object.asLowerString();
         Long endTime = map.get(key);
         long curTime = DenizenCore.serverTimeMillis;
         if (endTime != null && curTime < endTime) {

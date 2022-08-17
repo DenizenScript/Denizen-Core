@@ -273,6 +273,10 @@ public class ElementTag implements ObjectTag {
     public String asString() {
         return element;
     }
+    
+    public String asLowerString() {
+        return CoreUtilities.toLowerCase(element);
+    }
 
     public boolean isBoolean() {
         return CoreUtilities.equalsIgnoreCase(element, "true") || CoreUtilities.equalsIgnoreCase(element, "false");
@@ -881,7 +885,7 @@ public class ElementTag implements ObjectTag {
         // regular expression by prefixing the element with regex:
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_text", (attribute, object, contains) -> {
-            String contLow = CoreUtilities.toLowerCase(contains.asString());
+            String contLow = contains.asLowerString();
             if (contLow.startsWith("regex:")) {
                 if (Pattern.compile(contains.asString().substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(object.element).find()) {
                     return new ElementTag("true");
@@ -945,7 +949,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "ends_with", (attribute, object, compare) -> {
             return new ElementTag(CoreUtilities.toLowerCase(object.element).
-                    endsWith(CoreUtilities.toLowerCase(compare.asString())));
+                    endsWith(compare.asLowerString()));
         }, "endswith");
 
         // <--[tag]
@@ -1083,7 +1087,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element starts with a specified element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "starts_with", (attribute, object, compare) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element).startsWith(CoreUtilities.toLowerCase(compare.asString())));
+            return new ElementTag(CoreUtilities.toLowerCase(object.element).startsWith(compare.asLowerString()));
         }, "startswith");
 
         // <--[tag]
@@ -1096,7 +1100,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "index_of", (attribute, object, compare) -> {
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .indexOf(CoreUtilities.toLowerCase(compare.asString())) + 1);
+                    .indexOf(compare.asLowerString()) + 1);
         });
 
         // <--[tag]
@@ -1109,7 +1113,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "last_index_of", (attribute, object, compare) -> {
             return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .lastIndexOf(CoreUtilities.toLowerCase(compare.asString())) + 1);
+                    .lastIndexOf(compare.asLowerString()) + 1);
         });
 
         // <--[tag]
@@ -1161,9 +1165,9 @@ public class ElementTag implements ObjectTag {
         // For example: abcabc .after_last[b] returns c.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "after_last", (attribute, object, delimiter) -> {
-            if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter.asString()))) {
+            if (CoreUtilities.toLowerCase(object.element).contains(delimiter.asLowerString())) {
                 return new ElementTag(object.element.substring
-                        (CoreUtilities.toLowerCase(object.element).lastIndexOf(CoreUtilities.toLowerCase(delimiter.asString())) + delimiter.asString().length()));
+                        (CoreUtilities.toLowerCase(object.element).lastIndexOf(delimiter.asLowerString()) + delimiter.asString().length()));
             }
             else {
                 return new ElementTag("");
@@ -1179,9 +1183,9 @@ public class ElementTag implements ObjectTag {
         // For example: HelloWorld .after[Hello] returns World.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "after", (attribute, object, delimiter) -> {
-            if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter.asString()))) {
+            if (CoreUtilities.toLowerCase(object.element).contains(delimiter.asLowerString())) {
                 return new ElementTag(object.element.substring
-                        (CoreUtilities.toLowerCase(object.element).indexOf(CoreUtilities.toLowerCase(delimiter.asString())) + delimiter.asString().length()));
+                        (CoreUtilities.toLowerCase(object.element).indexOf(delimiter.asLowerString()) + delimiter.asString().length()));
             }
             else {
                 return new ElementTag("");
@@ -1197,9 +1201,9 @@ public class ElementTag implements ObjectTag {
         // For example: abcabc .before_last[b] returns abca.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "before_last", (attribute, object, delimiter) -> {
-            if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter.asString()))) {
+            if (CoreUtilities.toLowerCase(object.element).contains(delimiter.asLowerString())) {
                 return new ElementTag(object.element.substring
-                        (0, CoreUtilities.toLowerCase(object.element).lastIndexOf(CoreUtilities.toLowerCase(delimiter.asString()))));
+                        (0, CoreUtilities.toLowerCase(object.element).lastIndexOf(delimiter.asLowerString())));
             }
             else {
                 return new ElementTag(object.element);
@@ -1215,9 +1219,9 @@ public class ElementTag implements ObjectTag {
         // For example: abcd .before[c] returns ab.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "before", (attribute, object, delimiter) -> {
-            if (CoreUtilities.toLowerCase(object.element).contains(CoreUtilities.toLowerCase(delimiter.asString()))) {
+            if (CoreUtilities.toLowerCase(object.element).contains(delimiter.asLowerString())) {
                 return new ElementTag(object.element.substring
-                        (0, CoreUtilities.toLowerCase(object.element).indexOf(CoreUtilities.toLowerCase(delimiter.asString()))));
+                        (0, CoreUtilities.toLowerCase(object.element).indexOf(delimiter.asLowerString())));
             }
             else {
                 return new ElementTag(object.element);

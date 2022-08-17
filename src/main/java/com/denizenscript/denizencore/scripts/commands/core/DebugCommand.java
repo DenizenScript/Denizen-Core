@@ -148,7 +148,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 Debug.echoError(scriptEntry, new RuntimeException(debug.asString()));
                 break;
             case RECORD:
-                String form = CoreUtilities.toLowerCase(debug.asString());
+                String form = debug.asLowerString();
                 switch (form) {
                     case "start":
                         Debug.echoDebug(scriptEntry, "Starting debug recording...");

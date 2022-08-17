@@ -267,7 +267,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
         ListTag channels = scriptEntry.getObjectTag("channels");
         ElementTag channel = scriptEntry.getElement("channel");
         ElementTag command = scriptEntry.getElement("command");
-        String redisID = CoreUtilities.toLowerCase(id.asString());
+        String redisID = id.asLowerString();
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, action, host, auth, port, db("ssl", ssl), channels, channel, message, command, args);
         }
@@ -415,7 +415,7 @@ public class RedisCommand extends AbstractCommand implements Holdable {
                 Debug.echoDebug(scriptEntry, "Publishing message '" + message.asString() + "' to channel '" + channel.asString() + "'");
                 Runnable doQuery = () -> {
                     try {
-                        ElementTag result = new ElementTag(con.publish(CoreUtilities.toLowerCase(channel.asString()), message.asString()));
+                        ElementTag result = new ElementTag(con.publish(channel.asLowerString(), message.asString()));
                         scriptEntry.addObject("result", result);
                         scriptEntry.setFinished(true);
                     }

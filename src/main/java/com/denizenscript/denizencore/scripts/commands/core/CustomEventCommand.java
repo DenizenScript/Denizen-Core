@@ -75,7 +75,7 @@ public class CustomEventCommand extends AbstractCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, context);
         }
-        CustomScriptEvent ranEvent = CustomScriptEvent.runCustomEvent(scriptEntry.entryData, CoreUtilities.toLowerCase(id.asString()), context);
+        CustomScriptEvent ranEvent = CustomScriptEvent.runCustomEvent(scriptEntry.entryData, id.asLowerString(), context);
         scriptEntry.addObject("any_ran", new ElementTag(ranEvent != null && ranEvent.anyMatched));
         scriptEntry.addObject("was_cancelled", new ElementTag(ranEvent != null && ranEvent.cancelled));
         scriptEntry.addObject("determination_list", ranEvent == null ? new ListTag() : new ListTag(ranEvent.determinations));
