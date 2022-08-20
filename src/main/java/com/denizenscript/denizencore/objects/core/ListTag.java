@@ -387,7 +387,7 @@ public class ListTag implements List<String>, ObjectTag {
         if (inp instanceof ListTag) {
             return (ListTag) inp;
         }
-        if (inp instanceof ElementTag && !((ElementTag) inp).isPlainText) {
+        if (inp instanceof ElementTag) {
             return valueOf(inp.toString(), context);
         }
         ListTag output = new ListTag(1);
