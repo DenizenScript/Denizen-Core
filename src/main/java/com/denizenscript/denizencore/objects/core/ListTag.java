@@ -387,7 +387,7 @@ public class ListTag implements List<String>, ObjectTag {
         if (inp instanceof ListTag) {
             return (ListTag) inp;
         }
-        if (inp instanceof ElementTag) {
+        if (inp instanceof ElementTag && !((ElementTag) inp).isPlainText) {
             return valueOf(inp.toString(), context);
         }
         ListTag output = new ListTag(1);
@@ -2542,10 +2542,27 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.contains_single[<element>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether the list contains the given element.
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_single", (attribute, object, needed) -> {
+            String compare = needed.asLowerString();
+            for (String element : object) {
+                if (compare.equals(CoreUtilities.toLowerCase(element))) {
+                    return new ElementTag(true);
+                }
+            }
+            return new ElementTag(false);
+        });
+
+        // <--[tag]
         // @attribute <ListTag.contains[<element>|...]>
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the list contains all of the given elements.
+        // See also <@link tag ListTag.contains_single> for safer single-value checks.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains", (attribute, object, needed) -> {
             int gotten = 0;

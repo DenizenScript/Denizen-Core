@@ -273,7 +273,7 @@ public class ElementTag implements ObjectTag {
     public String asString() {
         return element;
     }
-    
+
     public String asLowerString() {
         return CoreUtilities.toLowerCase(element);
     }
@@ -325,11 +325,6 @@ public class ElementTag implements ObjectTag {
 
     public boolean matchesType(Class<? extends ObjectTag> dClass) {
         return ObjectFetcher.checkMatch(dClass, element);
-    }
-
-    @Override
-    public <T extends ObjectTag> T asType(Class<T> dClass, TagContext context) {
-        return ObjectFetcher.getObjectFrom(dClass, element, context);
     }
 
     @Override
@@ -1009,7 +1004,7 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element is contained by a list.
-        // Essentially equivalent to <@link tag ListTag.contains>, but with input order reversed.
+        // Essentially equivalent to <@link tag ListTag.contains_single>, but with input order reversed.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "is_in", (attribute, object, list) -> {
             for (String element : list) {
