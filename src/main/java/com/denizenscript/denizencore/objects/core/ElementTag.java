@@ -673,10 +673,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_list>
         // @returns ListTag
         // @group conversion
+        // @deprecated use as[list]
         // @description
-        // Returns the element as a ListTag.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "as_list", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, ListTag.valueOf(element, attribute.context), "ListTag", attribute.hasAlternative());
         }, "aslist");
@@ -685,10 +687,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_map>
         // @returns MapTag
         // @group conversion
+        // @deprecated use as[map]
         // @description
-        // Returns the element as a MapTag.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "as_map", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, MapTag.valueOf(element, attribute.context), "MapTag", attribute.hasAlternative());
         });
@@ -697,10 +701,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_custom>
         // @returns CustomObjectTag
         // @group conversion
+        // @deprecated use as[custom]
         // @description
-        // Returns the element as a custom object.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerTag(CustomObjectTag.class, "as_custom", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, CustomObjectTag.valueOf(element, attribute.context), "Custom", attribute.hasAlternative());
         }, "ascustom");
@@ -709,11 +715,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_script>
         // @returns ScriptTag
         // @group conversion
+        // @deprecated use as[script]
         // @description
-        // Returns the element as a ScriptTag.
-        // Note: the value must be a valid script.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerStaticTag(ScriptTag.class, "as_script", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, ScriptTag.valueOf(element, attribute.context), "ScriptTag", attribute.hasAlternative());
         }, "asscript");
@@ -722,11 +729,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_queue>
         // @returns QueueTag
         // @group conversion
+        // @deprecated use as[queue]
         // @description
-        // Returns the element as a QueueTag.
-        // Note: the value must be a valid QueueTag.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerTag(QueueTag.class, "as_queue", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, QueueTag.valueOf(element, attribute.context), "QueueTag", attribute.hasAlternative());
         }, "asqueue");
@@ -735,11 +743,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.as_duration>
         // @returns DurationTag
         // @group conversion
+        // @deprecated use as[duration]
         // @description
-        // Returns the element as a Duration.
-        // Note: the value must be a valid Duration.
+        // Deprecated in favor of <@link tag ObjectTag.as>
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, "as_duration", (attribute, object) -> {
+            Deprecations.asXTags.warn(attribute.context);
             String element = object.element;
             return handleNull(element, DurationTag.valueOf(element, attribute.context), "DurationTag", attribute.hasAlternative());
         }, "asduration");

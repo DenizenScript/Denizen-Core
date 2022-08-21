@@ -354,6 +354,34 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             }
             return new JavaReflectedObjectTag(obj);
         });
+
+        // <--[tag]
+        // @attribute <ObjectTag.as[<type>]>
+        // @returns ObjectTag
+        // @description
+        // Returns the object, automatically converted to the named object type.
+        // Type names can be of the long form, like "ListTag", "MapTag", "ElementTag", ... or the short form, like "List", "Map", "Element", ...
+        // Type name input is not case-sensitive, so "List" or "list" are the same.
+        // @example
+        // my_example:
+        //     type: task
+        //     # Some input can be any raw object type, but will be forced to a list using 'as[list]' below
+        //     definitions: some_input
+        //     script:
+        //     - narrate "Input list has size <[some_input].as[list].size>"
+        // -->
+        registerTag(ObjectTag.class, ElementTag.class, "as", (attribute, object, asType) -> {
+            ObjectType<?> type = ObjectFetcher.objectsByName.get(asType.asLowerString());
+            if (type == null) {
+                attribute.echoError("Invalid object type '" + asType + "'. Cannot convert.");
+                return null;
+            }
+            ObjectTag result = object.asType(type, attribute.context);
+            if (result == null) {
+                attribute.echoError("Cannot convert object '" + object + "' to type '" + type.longName + "'.");
+            }
+            return result;
+        });
     }
 
     public void registerFutureTagDeprecation(String name, String... deprecatedVariants) {

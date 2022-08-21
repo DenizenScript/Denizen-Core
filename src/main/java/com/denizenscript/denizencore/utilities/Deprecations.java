@@ -101,6 +101,9 @@ public class Deprecations {
     // Added 2022/04/11, deprecate officially by 2024.
     public static Warning prebinaryTags = new FutureWarning("prebinaryTags", "Tags and tools related to binary processing that predate the BinaryTag feature are deprecated in favor of using BinaryTag. This includes 'ElementTag.base64_encode/decode', 'hex_encode/decode', ... refer to meta-docs for specifics");
 
+    // Added 2022/08/21, deprecate officially by 2025.
+    public static Warning asXTags = new FutureWarning("asXTags", "Tags of the form 'as_x' where 'x' is a type, such as 'as_list', are deprecated in favor of the tag ObjectTag.as[<type>], used like 'as[list]'.");
+
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // Removed in February 2020.
