@@ -23,6 +23,12 @@ public abstract class TagRunnable implements Cloneable {
         R run(Attribute attribute);
     }
 
+    @FunctionalInterface
+    public interface BaseWithParamInterface<R extends ObjectTag, P extends ObjectTag> {
+
+        R run(Attribute attribute, P param);
+    }
+
     @Deprecated
     public static abstract class RootForm implements Cloneable {
 

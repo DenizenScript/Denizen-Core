@@ -76,12 +76,39 @@ public class TagManager {
 
     public static HashMap<String, TagBaseData> baseTags = new HashMap<>();
 
+    public static <R extends ObjectTag, P extends ObjectTag> void registerStaticTagBaseHandler(Class<R> returnType, Class<P> paramType, String name, TagRunnable.BaseWithParamInterface<R, P> run) {
+        internalRegisterTagHandler(returnType, paramType, name, run, true);
+    }
+
+    public static <R extends ObjectTag, P extends ObjectTag> void registerTagHandler(Class<R> returnType, Class<P> paramType, String name, TagRunnable.BaseWithParamInterface<R, P> run) {
+        internalRegisterTagHandler(returnType, paramType, name, run, false);
+    }
+
+    public static <R extends ObjectTag, P extends ObjectTag> void internalRegisterTagHandler(Class<R> returnType, Class<P> paramType, String name, TagRunnable.BaseWithParamInterface<R, P> run, boolean isStatic) {
+        internalRegisterTagHandler(returnType, name, (attribute) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            ObjectTag param = attribute.getParamObject();
+            P result = param.asType(paramType, attribute.context);
+            if (result == null) {
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                return null;
+            }
+            return run.run(attribute, result);
+        }, true);
+    }
+
     public static <R extends ObjectTag> void registerStaticTagBaseHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
-        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run), true));
+        internalRegisterTagHandler(returnType, name, run, true);
     }
 
     public static <R extends ObjectTag> void registerTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
-        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run), false));
+        internalRegisterTagHandler(returnType, name, run, false);
+    }
+
+    public static <R extends ObjectTag> void internalRegisterTagHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run, boolean isStatic) {
+        baseTags.put(name, new TagBaseData(name, returnType, TagNamer.nameBaseInterface(name, run), isStatic));
     }
 
     @Deprecated
