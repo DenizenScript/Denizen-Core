@@ -270,11 +270,6 @@ public class DurationTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "duration";
-    }
-
-    @Override
     public String identify() {
         if (seconds == (int)seconds) {
             if (seconds == 0) {

@@ -116,11 +116,6 @@ public class SecretTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "Secret";
-    }
-
-    @Override
     public String identify() {
         return "secret@" + key;
     }

@@ -93,11 +93,6 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     }
 
     @Override
-    public String getObjectType() {
-        return "queue";
-    }
-
-    @Override
     public String identify() {
         return "q@" + queue.id;
     }

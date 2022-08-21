@@ -251,7 +251,7 @@ public class FlagCommand extends AbstractCommand {
             else if (object instanceof FlaggableObject) {
                 tracker = ((FlaggableObject) object).getFlagTracker();
                 if (tracker == null) {
-                    Debug.echoError("The object type '" + object.getObjectType() + "' is flaggable, however the instance '" + object + "' is not: " + ((FlaggableObject) object).getReasonNotFlaggable());
+                    Debug.echoError("The object type '" + object.getDenizenObjectType() + "' is flaggable, however the instance '" + object + "' is not: " + ((FlaggableObject) object).getReasonNotFlaggable());
                     continue;
                 }
             }

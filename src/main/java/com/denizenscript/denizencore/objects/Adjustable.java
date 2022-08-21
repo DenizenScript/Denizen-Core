@@ -16,7 +16,7 @@ public interface Adjustable extends ObjectTag {
         mechanism.adjusting = this;
         mechanism.isProperty = false;
         if (mechanism.shouldDebug()) {
-            Debug.echoDebug(mechanism.context, "Adjust mechanism '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
+            Debug.echoDebug(mechanism.context, "Adjust mechanism '" + mechanism.getName() + "' on object of type '" + getDenizenObjectType() + "'...");
         }
         adjust(mechanism);
         mechanism.autoReport();
@@ -38,7 +38,7 @@ public interface Adjustable extends ObjectTag {
         mechanism.adjusting = this;
         mechanism.isProperty = true;
         if (mechanism.shouldDebug()) {
-            Debug.echoDebug(mechanism.context, "Applying property '" + mechanism.getName() + "' on object of type '" + getObjectType() + "'...");
+            Debug.echoDebug(mechanism.context, "Applying property '" + mechanism.getName() + "' on object of type '" + getDenizenObjectType() + "'...");
             if (CoreConfiguration.debugVerbose) {
                 try {
                     throw new Exception("Stack trace of property");

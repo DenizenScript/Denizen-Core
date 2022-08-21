@@ -130,11 +130,6 @@ public class BinaryTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "binary";
-    }
-
-    @Override
     public String identify() {
         return "binary@" + hexEncode(data, false);
     }

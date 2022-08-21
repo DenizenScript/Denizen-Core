@@ -149,11 +149,6 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         return true;
     }
 
-    @Override
-    public String getObjectType() {
-        return "time";
-    }
-
     public static String pad0(int value, int len) {
         String outputStr = String.valueOf(value);
         while (outputStr.length() < len) {

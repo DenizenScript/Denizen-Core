@@ -106,7 +106,7 @@ public class NoteCommand extends AbstractCommand {
             }
         }
         if (!(object instanceof Notable)) {
-            Debug.echoError("Object '" + object + "' has type '" + object.getObjectType() + "' which is not a notable object type.");
+            Debug.echoError("Object '" + object + "' has type '" + object.getDenizenObjectType() + "' which is not a notable object type.");
             return;
         }
         try {

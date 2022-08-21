@@ -358,11 +358,6 @@ public class ElementTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "Element";
-    }
-
-    @Override
     public String getPrefix() {
         return prefix;
     }

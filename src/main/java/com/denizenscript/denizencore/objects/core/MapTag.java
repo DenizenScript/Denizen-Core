@@ -166,11 +166,6 @@ public class MapTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "Map";
-    }
-
-    @Override
     public boolean isTruthy() {
         return !map.isEmpty();
     }

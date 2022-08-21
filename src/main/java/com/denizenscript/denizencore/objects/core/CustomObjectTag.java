@@ -78,11 +78,6 @@ public class CustomObjectTag implements ObjectTag, Adjustable {
     private String prefix = "Custom";
 
     @Override
-    public String getObjectType() {
-        return "Custom";
-    }
-
-    @Override
     public String identify() {
         StringBuilder outp = new StringBuilder();
         for (Map.Entry<String, ObjectTag> var : vars.entrySet()) {

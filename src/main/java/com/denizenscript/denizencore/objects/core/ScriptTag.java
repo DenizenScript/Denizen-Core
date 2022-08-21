@@ -181,11 +181,6 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     ////////////
 
     @Override
-    public String getObjectType() {
-        return "Script";
-    }
-
-    @Override
     public String identify() {
         return "s@" + name;
     }

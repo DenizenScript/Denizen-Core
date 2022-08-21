@@ -125,11 +125,6 @@ public class JavaReflectedObjectTag implements ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "reflected";
-    }
-
-    @Override
     public String debuggable() {
         return "<LG>reflected@<GR>" + id + " <LG>(<GR>" + object + "<LG>)";
     }

@@ -114,13 +114,10 @@ public interface ObjectTag {
      */
     boolean isUnique();
 
-    /**
-     * Returns the string type of the object. This is fairly verbose and crude, but used with
-     * a basic dScriptArg attribute.
-     *
-     * @return a straight-up string description of the type of dScriptArg. ie. ListTag, LocationTag
-     */
-    String getObjectType();
+    @Deprecated
+    default String getObjectType() {
+        return "";
+    }
 
     /**
      * Gets an ugly, but exact, string representation of this ObjectTag.

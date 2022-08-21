@@ -658,11 +658,6 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     @Override
-    public String getObjectType() {
-        return "List";
-    }
-
-    @Override
     public String identify() {
         return identifyList();
     }
