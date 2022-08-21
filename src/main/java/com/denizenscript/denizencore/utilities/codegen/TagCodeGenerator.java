@@ -194,8 +194,8 @@ public class TagCodeGenerator {
                 mv.visitLineNumber(line, returnLabel);
                 mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
                 mv.visitInsn(Opcodes.ARETURN);
-                mv.visitLocalVariable("attribute", CodeGenUtil.ATTRIBUTE_LOCAL_TYPE, null, startLabel, startLabel, LOCAL_ATTRIBUTE);
-                mv.visitLocalVariable("currentObject", CodeGenUtil.OBJECT_LOCAL_TYPE, null, startLabel, startLabel, LOCAL_CURRENTOBJECT);
+                mv.visitLocalVariable("attribute", CodeGenUtil.ATTRIBUTE_LOCAL_TYPE, null, startLabel, returnLabel, LOCAL_ATTRIBUTE);
+                mv.visitLocalVariable("currentObject", CodeGenUtil.OBJECT_LOCAL_TYPE, null, startLabel, returnLabel, LOCAL_CURRENTOBJECT);
                 mv.visitMaxs(0, 0);
                 mv.visitEnd();
             }

@@ -1,12 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.commands.generator.CommandExecutionGenerator;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -212,13 +212,20 @@ public abstract class AbstractCommand {
     public void onDisable() {
     }
 
-    @Deprecated
-    public void withOptions(String usageHint, int numberOfRequiredArgs) {
-        minimumArguments = numberOfRequiredArgs;
-        setSyntax(usageHint);
+    public CommandExecutionGenerator.CommandExecutor generatedExecutor;
+
+    public void autoCompile() {
+        generatedExecutor = CommandExecutionGenerator.generateExecutorFor(getClass(), this);
     }
 
-    public abstract void execute(ScriptEntry scriptEntry);
+    public void execute(ScriptEntry scriptEntry) {
+        if (generatedExecutor != null) {
+            generatedExecutor.execute(scriptEntry);
+        }
+        else {
+            Debug.echoError("Something went wrong! Command '" + name + "' has no executor?");
+        }
+    }
 
     /**
      * Legacy argument parsing method.

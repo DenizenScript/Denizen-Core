@@ -1,12 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.core.BinaryTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -22,7 +22,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
         setSyntax("fileread [path:<path>]");
         setRequiredArguments(1, 1);
         isProcedural = false;
-        setPrefixesHandled("path");
+        autoCompile();
     }
 
     // <--[command]
@@ -52,15 +52,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    @Override
-    public void execute(final ScriptEntry scriptEntry) {
-        ElementTag path = scriptEntry.argForPrefixAsElement("path", null);
-        if (path == null) {
-            throw new InvalidArgumentsRuntimeException("Missing 'path' argument.");
-        }
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), path);
-        }
+    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "path") final ElementTag path) {
         if (!CoreConfiguration.allowFileRead) {
             Debug.echoError(scriptEntry, "FileRead disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);

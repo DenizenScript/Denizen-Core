@@ -1,12 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.core.BinaryTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -22,7 +22,7 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
         setSyntax("filewrite [path:<path>] [data:<binary>]");
         setRequiredArguments(2, 2);
         isProcedural = false;
-        setPrefixesHandled("path", "data");
+        autoCompile();
     }
 
     // <--[command]
@@ -55,19 +55,7 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    @Override
-    public void execute(final ScriptEntry scriptEntry) {
-        ElementTag path = scriptEntry.argForPrefixAsElement("path", null);
-        BinaryTag data = scriptEntry.argForPrefix("data", BinaryTag.class, true);
-        if (path == null) {
-            throw new InvalidArgumentsRuntimeException("Missing 'path' argument.");
-        }
-        if (data == null) {
-            throw new InvalidArgumentsRuntimeException("Missing 'data' argument.");
-        }
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), path, data);
-        }
+    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "path") final ElementTag path, @PrefixedArg(prefix = "data") BinaryTag data) {
         if (!CoreConfiguration.allowFileWrite) {
             Debug.echoError(scriptEntry, "FileWrite disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);
