@@ -47,29 +47,68 @@ public class PropertyParser {
         R run(Attribute attribute, T prop);
     }
 
+    @FunctionalInterface
+    public interface PropertyTagWithReturnAndParam<T extends Property, R extends ObjectTag, P extends ObjectTag> {
+        R run(Attribute attribute, T prop, P param);
+    }
+
     public static Map<Class<? extends ObjectTag>, ClassPropertiesInfo> propertiesByClass = new HashMap<>();
 
-    public static <P extends Property, R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String... variants) {
-        registerTagInternal(returnType, name, runnable, variants, true);
+    public static <T extends Property, R extends ObjectTag, P extends ObjectTag> void registerStaticTag(Class<T> propType, Class<R> returnType, Class<P> paramType, String name, PropertyTagWithReturnAndParam<T, R, P> runnable, String... variants) {
+        registerTagInternal(propType, returnType, paramType, name, runnable, variants, true);
     }
 
-    public static <P extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String... variants) {
-        registerTagInternal(returnType, name, runnable, variants, false);
+    public static <T extends Property, R extends ObjectTag, P extends ObjectTag> void registerTag(Class<T> propType, Class<R> returnType, Class<P> paramType, String name, PropertyTagWithReturnAndParam<T, R, P> runnable, String... variants) {
+        registerTagInternal(propType, returnType, paramType, name, runnable, variants, false);
     }
 
-    public static <P extends Property, R extends ObjectTag> void registerTagInternal(Class<R> returnType, String name, PropertyTagWithReturn<P, R> runnable, String[] variants, boolean isStatic) {
+    public static <T extends Property, R extends ObjectTag, P extends ObjectTag> void registerTagInternal(Class<T> propType, Class<R> returnType, Class<P> paramType, String name, PropertyTagWithReturnAndParam<T, R, P> runnable, String[] variants, boolean isStatic) {
+        // NOTE: Java compiler gets confused about generic types if this isn't split into its own var.
+        PropertyTagWithReturn<T, R> altMethod = (attribute, prop) -> {
+            if (!attribute.hasParam()) {
+                return null;
+            }
+            ObjectTag param = attribute.getParamObject();
+            P result = param.asType(paramType, attribute.context);
+            if (result == null) {
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                return null;
+            }
+            return runnable.run(attribute, prop, result);
+        };
+        registerTagInternal(propType, returnType, name, altMethod, variants, isStatic);
+    }
+
+    @Deprecated
+    public static <T extends Property, R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
+        registerTagInternal(currentlyRegisteringPropertyClass, returnType, name, runnable, variants, true);
+    }
+
+    @Deprecated
+    public static <T extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
+        registerTagInternal(currentlyRegisteringPropertyClass, returnType, name, runnable, variants, false);
+    }
+
+    public static <T extends Property, R extends ObjectTag> void registerStaticTag(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
+        registerTagInternal(propType, returnType, name, runnable, variants, true);
+    }
+
+    public static <T extends Property, R extends ObjectTag> void registerTag(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
+        registerTagInternal(propType, returnType, name, runnable, variants, false);
+    }
+
+    public static <T extends Property, R extends ObjectTag> void registerTagInternal(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String[] variants, boolean isStatic) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
-        final Class propertyClass = PropertyParser.currentlyRegisteringPropertyClass;
         ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
         tagProcessor.registerTagInternal(returnType, name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
-                    attribute.echoError("Property '" + propertyClass.getSimpleName() + "' does not describe the input object.");
+                    attribute.echoError("Property '" + propType.getSimpleName() + "' does not describe the input object.");
                 }
                 return null;
             }
-            return runnable.run(attribute, (P) prop);
+            return runnable.run(attribute, (T) prop);
         }, isStatic, variants);
     }
 
