@@ -22,17 +22,10 @@ public class TagManager {
 
     public static void registerCoreTags() {
         // Objects
-        new BinaryTagBase();
-        new CustomTagBase();
-        new DurationTagBase();
-        new ElementTagBase();
         new ListTagBase();
         new MapTagBase();
         new QueueTagBase();
-        new ReflectedTagBase();
         new ScriptTagBase();
-        new SecretTagBase();
-        new TimeTagBase();
 
         // Utilities
         new ContextTagBase();

@@ -3,6 +3,8 @@ package com.denizenscript.denizencore.objects;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 public class ObjectType<T extends ObjectTag> {
 
@@ -47,7 +49,9 @@ public class ObjectType<T extends ObjectTag> {
 
     public TypeComparisonRunnable typeChecker, typeShouldBeChecker;
 
-    public void setAsNOtherCode() {
+    public boolean canConvertStatic;
+
+    public ObjectType<T> setAsNOtherCode() {
         typeChecker = (inp) -> {
             if (inp == null) {
                 return false;
@@ -71,6 +75,17 @@ public class ObjectType<T extends ObjectTag> {
             }
             return false;
         };
+        return this;
+    }
+
+    public ObjectType<T> setCanConvertStatic() {
+        canConvertStatic = true;
+        return this;
+    }
+
+    public ObjectType<T> generateBaseTag() {
+        TagManager.internalRegisterTagHandler(clazz, clazz, CoreUtilities.toLowerCase(shortName), (attribute, param) -> param, canConvertStatic);
+        return this;
     }
 
     @Override

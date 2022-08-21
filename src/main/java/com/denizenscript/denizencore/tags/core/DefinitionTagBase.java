@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.TagManager;
@@ -29,18 +30,13 @@ public class DefinitionTagBase {
         // # Narrates 'example'
         // - narrate <[mymap.mykey]>
         // -->
-        TagRunnable.BaseInterface<ObjectTag> defTag = (attribute) -> {
-            if (!attribute.hasParam()) {
-                Debug.echoError("Invalid definition tag, no context specified!");
-                return null;
-            }
-            String defName = attribute.getParam();
+        TagRunnable.BaseWithParamInterface<ObjectTag, ElementTag> defTag = (attribute, defName) -> {
             DefinitionProvider definitionProvider = attribute.context.definitionProvider;
             if (definitionProvider == null) {
                 Debug.echoError("No definitions are provided in this tag's context!");
                 return null;
             }
-            ObjectTag def = definitionProvider.getDefinitionObject(defName);
+            ObjectTag def = definitionProvider.getDefinitionObject(defName.asLowerString());
             if (def == null) {
                 attribute.echoError("Invalid definition name '" + defName + "'.");
                 return null;
@@ -50,8 +46,8 @@ public class DefinitionTagBase {
             }
             return CoreUtilities.fixType(def, attribute.context);
         };
-        TagManager.registerTagHandler(ObjectTag.class, "def", defTag);
-        TagManager.registerTagHandler(ObjectTag.class, "definition", defTag);
-        TagManager.registerTagHandler(ObjectTag.class, "", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, ElementTag.class, "def", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, ElementTag.class, "definition", defTag);
+        TagManager.registerTagHandler(ObjectTag.class, ElementTag.class, "", defTag);
     }
 }

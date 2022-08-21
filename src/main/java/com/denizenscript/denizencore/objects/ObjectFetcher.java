@@ -65,19 +65,61 @@ public class ObjectFetcher {
     public static ObjectType<TimeTag> TYPE_TIME;
 
     public static void registerCoreObjects() {
-        TYPE_BINARY = registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor); // binary@
-        TYPE_BINARY.setAsNOtherCode();
-        TYPE_CUSTOM = registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
-        TYPE_CUSTOM.setAsNOtherCode();
-        TYPE_DURATION = registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
-        TYPE_DURATION.setAsNOtherCode();
-        TYPE_ELEMENT = registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
+
+        // <--[tag]
+        // @attribute <binary[<binary>]>
+        // @returns BinaryTag
+        // @description
+        // Returns a BinaryTag constructed from the input binary data in hexadecimal format.
+        // Refer to <@link objecttype BinaryTag>.
+        // -->
+        TYPE_BINARY = registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // binary@
+
+        // <--[tag]
+        // @attribute <custom_object[<custom-object>]>
+        // @returns CustomObjectTag
+        // @description
+        // Returns a custom object constructed from the input value.
+        // Refer to <@link ObjectType CustomObjectTag>.
+        // -->
+        TYPE_CUSTOM = registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor).setAsNOtherCode().generateBaseTag(); // custom@
+
+        // <--[tag]
+        // @attribute <duration[<duration>]>
+        // @returns DurationTag
+        // @description
+        // Returns a duration object constructed from the input value.
+        // Refer to <@link ObjectType DurationTag>.
+        // -->
+        // non-static because there is a randomized constructor option
+        TYPE_DURATION = registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor).setAsNOtherCode().generateBaseTag(); // d@
+
+        // <--[tag]
+        // @attribute <element[<element>]>
+        // @returns ElementTag
+        // @description
+        // Returns an element constructed from the input value.
+        // Refer to <@link objecttype ElementTag>.
+        // -->
+        TYPE_ELEMENT = registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor).setCanConvertStatic().generateBaseTag(); // el@
         TYPE_ELEMENT.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
         TYPE_ELEMENT.typeConverter = (obj, c) -> obj.asElement();
-        TYPE_REFLECTEDOBJECT = registerWithObjectFetcher(JavaReflectedObjectTag.class, JavaReflectedObjectTag.tagProcessor); // reflected@
-        TYPE_LIST = registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
+
+        // <--[tag]
+        // @attribute <reflected[<reflected-tag>]>
+        // @returns JavaReflectedObjectTag
+        // @description
+        // Returns a JavaReflectedObjectTag constructed from the input reference ID lookup.
+        // Refer to <@link objecttype JavaReflectedObjectTag>.
+        // -->
+        TYPE_REFLECTEDOBJECT = registerWithObjectFetcher(JavaReflectedObjectTag.class, JavaReflectedObjectTag.tagProcessor).generateBaseTag(); // reflected@
+
+        // Tag generated externally as input is optional
+        TYPE_LIST = registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor).setCanConvertStatic(); // li@
         TYPE_LIST.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
         TYPE_LIST.typeConverter = ListTag::getListFor;
+
+        // Tag generated externally as input is optional
         TYPE_MAP = registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
         TYPE_MAP.typeConverter = MapTag::getMapFor;
         TYPE_MAP.typeChecker = (inp) -> {
@@ -99,13 +141,32 @@ public class ObjectFetcher {
             }
             return false;
         };
-        TYPE_QUEUE = registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
-        TYPE_QUEUE.setAsNOtherCode();
-        TYPE_SCRIPT = registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
-        TYPE_SCRIPT.setAsNOtherCode();
-        TYPE_SECRET = registerWithObjectFetcher(SecretTag.class, SecretTag.tagProcessor); // secret@
-        TYPE_TIME = registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor); // time@
-        TYPE_TIME.setAsNOtherCode();
+
+        // Tag generated externally as input is optional
+        TYPE_QUEUE = registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor).setAsNOtherCode(); // q@
+
+        // Tag generated externally as input is optional
+        TYPE_SCRIPT = registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor).setAsNOtherCode(); // s@
+
+        // <--[tag]
+        // @attribute <secret[<secret>]>
+        // @returns SecretTag
+        // @description
+        // Returns a SecretTag object constructed from the input value.
+        // Refer to <@link ObjectType SecretTag>.
+        // @Example
+        // - webget <secret[my_secret_url]> "post:Message to secret address!"
+        // -->
+        TYPE_SECRET = registerWithObjectFetcher(SecretTag.class, SecretTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // secret@
+
+        // <--[tag]
+        // @attribute <time[<time>]>
+        // @returns TimeTag
+        // @description
+        // Returns a time object constructed from the input value.
+        // Refer to <@link ObjectType TimeTag>.
+        // -->
+        TYPE_TIME = registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // time@
     }
 
     public static ObjectType.MatchesInterface getMatchesFor(Class clazz) {
