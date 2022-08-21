@@ -340,7 +340,7 @@ public class ElementTag implements ObjectTag {
         if (atSign == -1) {
             return false;
         }
-        ObjectFetcher.ObjectType<?> typeData = ObjectFetcher.objectsByClass.get(type);
+        ObjectType<?> typeData = ObjectFetcher.getType(type);
         return typeData.prefix.equals(raw.substring(0, atSign));
     }
 

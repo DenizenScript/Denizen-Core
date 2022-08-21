@@ -15,35 +15,14 @@ import java.util.*;
 
 public class ObjectFetcher {
 
-    @FunctionalInterface
-    public interface MatchesInterface {
-
-        boolean matches(String str);
-    }
-
-    public interface ValueOfInterface<T extends ObjectTag> {
-
-        T valueOf(String str, TagContext context);
-    }
-
-    public static class ObjectType<T extends ObjectTag> {
-
-        public Class<T> clazz;
-
-        public MatchesInterface matches;
-
-        public ValueOfInterface<T> valueOf;
-
-        public ObjectTagProcessor<T> tagProcessor;
-
-        public String prefix;
-
-        public boolean isAdjustable;
-    }
-
     public static Map<String, ObjectType<? extends ObjectTag>> objectsByPrefix = new HashMap<>();
+    public static Map<String, ObjectType<? extends ObjectTag>> objectsByName = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, List<Class<? extends ObjectTag>>> customSubtypeList = new HashMap<>();
+
+    public static <T extends ObjectTag> ObjectType<T> getType(Class<T> type) {
+        return (ObjectType<T>) objectsByClass.get(type);
+    }
 
     private static ArrayList<Class<? extends ObjectTag>> createList(Class<? extends ObjectTag> clazz) {
         ArrayList<Class<? extends ObjectTag>> classes = new ArrayList<>();
@@ -73,30 +52,71 @@ public class ObjectFetcher {
         return Arrays.asList(type, ElementTag.class);
     }
 
+    public static ObjectType<BinaryTag> TYPE_BINARY;
+    public static ObjectType<CustomObjectTag> TYPE_CUSTOM;
+    public static ObjectType<DurationTag> TYPE_DURATION;
+    public static ObjectType<ElementTag> TYPE_ELEMENT;
+    public static ObjectType<JavaReflectedObjectTag> TYPE_REFLECTEDOBJECT;
+    public static ObjectType<ListTag> TYPE_LIST;
+    public static ObjectType<MapTag> TYPE_MAP;
+    public static ObjectType<QueueTag> TYPE_QUEUE;
+    public static ObjectType<ScriptTag> TYPE_SCRIPT;
+    public static ObjectType<SecretTag> TYPE_SECRET;
+    public static ObjectType<TimeTag> TYPE_TIME;
+
     public static void registerCoreObjects() {
-        // Initialize the ObjectFetcher
-        registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor); // binary@
-        registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
-        registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
-        registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
-        registerWithObjectFetcher(JavaReflectedObjectTag.class, JavaReflectedObjectTag.tagProcessor); // reflected@
-        registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
-        registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
-        registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
-        registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
-        registerWithObjectFetcher(SecretTag.class, SecretTag.tagProcessor); // secret@
-        registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor); // time@
+        TYPE_BINARY = registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor); // binary@
+        TYPE_BINARY.setAsNOtherCode();
+        TYPE_CUSTOM = registerWithObjectFetcher(CustomObjectTag.class, CustomObjectTag.tagProcessor); // custom@
+        TYPE_CUSTOM.setAsNOtherCode();
+        TYPE_DURATION = registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor); // d@
+        TYPE_DURATION.setAsNOtherCode();
+        TYPE_ELEMENT = registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor); // el@
+        TYPE_ELEMENT.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
+        TYPE_ELEMENT.typeConverter = (obj, c) -> obj.asElement();
+        TYPE_REFLECTEDOBJECT = registerWithObjectFetcher(JavaReflectedObjectTag.class, JavaReflectedObjectTag.tagProcessor); // reflected@
+        TYPE_LIST = registerWithObjectFetcher(ListTag.class, ListTag.tagProcessor); // li@
+        TYPE_LIST.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
+        TYPE_LIST.typeConverter = ListTag::getListFor;
+        TYPE_MAP = registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
+        TYPE_MAP.typeConverter = MapTag::getMapFor;
+        TYPE_MAP.typeChecker = (inp) -> {
+            if (inp == null) {
+                return false;
+            }
+            if (inp instanceof MapTag) {
+                return true;
+            }
+            if (!(inp instanceof ElementTag)) {
+                return false;
+            }
+            String simple = inp.toString();
+            if (simple.startsWith("map@")) {
+                return true;
+            }
+            if (simple.startsWith("[") && simple.endsWith("]") && simple.contains("=")) {
+                return true;
+            }
+            return false;
+        };
+        TYPE_QUEUE = registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor); // q@
+        TYPE_QUEUE.setAsNOtherCode();
+        TYPE_SCRIPT = registerWithObjectFetcher(ScriptTag.class, ScriptTag.tagProcessor); // s@
+        TYPE_SCRIPT.setAsNOtherCode();
+        TYPE_SECRET = registerWithObjectFetcher(SecretTag.class, SecretTag.tagProcessor); // secret@
+        TYPE_TIME = registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor); // time@
+        TYPE_TIME.setAsNOtherCode();
     }
 
-    public static MatchesInterface getMatchesFor(Class clazz) {
+    public static ObjectType.MatchesInterface getMatchesFor(Class clazz) {
         try {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "matches", // MatchesInterface#matches
-                    MethodType.methodType(MatchesInterface.class), // Signature of invoke method
+                    MethodType.methodType(ObjectType.MatchesInterface.class), // Signature of invoke method
                     MethodType.methodType(Boolean.class, String.class).unwrap(), // signature of MatchesInterface#matches
                     lookup.findStatic(clazz, "matches", MethodType.methodType(Boolean.class, String.class).unwrap()), // signature of original matches method
                     MethodType.methodType(Boolean.class, String.class).unwrap()); // Signature of original matches again
-            return (MatchesInterface) site.getTarget().invoke();
+            return (ObjectType.MatchesInterface) site.getTarget().invoke();
         }
         catch (Throwable ex) {
             System.err.println("Failed to get matches for " + clazz.getCanonicalName());
@@ -106,15 +126,15 @@ public class ObjectFetcher {
         }
     }
 
-    public static ValueOfInterface getValueOfFor(Class clazz) {
+    public static ObjectType.ValueOfInterface getValueOfFor(Class clazz) {
         try {
             final MethodHandles.Lookup lookup = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(lookup, "valueOf", // ValueOfInterface#valueOf
-                    MethodType.methodType(ValueOfInterface.class), // Signature of invoke method
+                    MethodType.methodType(ObjectType.ValueOfInterface.class), // Signature of invoke method
                     MethodType.methodType(ObjectTag.class, String.class, TagContext.class), // signature of ValueOfInterface#valueOf
                     lookup.findStatic(clazz, "valueOf", MethodType.methodType(clazz, String.class, TagContext.class)), // signature of original valueOf method
                     MethodType.methodType(clazz, String.class, TagContext.class)); // Signature of original valueOf again
-            return (ValueOfInterface) site.getTarget().invoke();
+            return (ObjectType.ValueOfInterface) site.getTarget().invoke();
         }
         catch (Throwable ex) {
             System.err.println("Failed to get valueOf for " + clazz.getCanonicalName());
@@ -130,6 +150,15 @@ public class ObjectFetcher {
     }
 
     public static <T extends ObjectTag> ObjectType<T> registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
+        String className = objectTag.getSimpleName();
+        String shortName = null;
+        if (className.endsWith("Tag")) {
+            shortName = className.substring(0, className.length() - "Tag".length());
+        }
+        return registerWithObjectFetcher(objectTag, processor, shortName, className);
+    }
+
+    public static <T extends ObjectTag> ObjectType<T> registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor, String shortName, String longName) {
         ObjectType<T> newType = new ObjectType<>();
         newType.clazz = objectTag;
         if (processor != null) {
@@ -137,6 +166,8 @@ public class ObjectFetcher {
             processor.generateCoreTags();
             newType.tagProcessor = processor;
         }
+        newType.longName = longName;
+        newType.shortName = shortName;
         newType.isAdjustable = Adjustable.class.isAssignableFrom(objectTag);
         objectsByClass.put(objectTag, newType);
         try {
@@ -144,6 +175,10 @@ public class ObjectFetcher {
             if (valueOfMethod.isAnnotationPresent(Fetchable.class)) {
                 String identifier = valueOfMethod.getAnnotation(Fetchable.class).value();
                 objectsByPrefix.put(CoreUtilities.toLowerCase(identifier.trim()), newType);
+                objectsByName.put(CoreUtilities.toLowerCase(longName), newType);
+                if (shortName != null) {
+                    objectsByName.put(CoreUtilities.toLowerCase(shortName), newType);
+                }
                 newType.prefix = identifier;
             }
             else {
@@ -173,7 +208,11 @@ public class ObjectFetcher {
     }
 
     public static boolean checkMatch(Class<? extends ObjectTag> dClass, String value) {
-        if (value == null || dClass == null) {
+        return checkMatch(getType(dClass), value);
+    }
+
+    public static boolean checkMatch(ObjectType<? extends ObjectTag> objType, String value) {
+        if (value == null || objType == null) {
             return false;
         }
         int firstBracket = value.indexOf('[');
@@ -181,7 +220,7 @@ public class ObjectFetcher {
             value = value.substring(0, firstBracket);
         }
         try {
-            return objectsByClass.get(dClass).matches.matches(value);
+            return objType.matches.matches(value);
         }
         catch (Exception e) {
             Debug.echoError(e);
@@ -223,11 +262,11 @@ public class ObjectFetcher {
         if (dClass == ObjectTag.class) {
             return (T) pickObjectFor(value, context);
         }
-        return getObjectFrom((ObjectType<T>) objectsByClass.get(dClass), value, context);
+        return getObjectFrom(getType(dClass), value, context);
     }
 
     public static <T extends ObjectTag> T getObjectFromWithProperties(Class<T> dClass, String value, TagContext context) {
-        return getObjectFromWithProperties((ObjectType<T>) objectsByClass.get(dClass), value, context);
+        return getObjectFromWithProperties(getType(dClass), value, context);
     }
 
     public static String partialUnescape(String description) {

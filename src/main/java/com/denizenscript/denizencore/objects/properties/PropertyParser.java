@@ -1,8 +1,6 @@
 package com.denizenscript.denizencore.objects.properties;
 
-import com.denizenscript.denizencore.objects.Adjustable;
-import com.denizenscript.denizencore.objects.Mechanism;
-import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.tags.Attribute;
@@ -10,7 +8,6 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.lang.invoke.*;
@@ -80,12 +77,12 @@ public class PropertyParser {
 
     public static PropertyGetter currentlyRegisteringProperty;
 
-    public static ObjectFetcher.ObjectType currentlyRegisteringObjectType;
+    public static ObjectType currentlyRegisteringObjectType;
 
     public static void registerPropertyGetter(PropertyGetter getter, Class<? extends ObjectTag> object, String[] tags, String[] mechs, Class property) {
         currentlyRegisteringPropertyClass = property;
         currentlyRegisteringProperty = getter;
-        currentlyRegisteringObjectType = ObjectFetcher.objectsByClass.get(object);
+        currentlyRegisteringObjectType = ObjectFetcher.getType(object);
         boolean didRegisterTags = false;
         try {
             for (Method registerMethod : property.getDeclaredMethods()) {

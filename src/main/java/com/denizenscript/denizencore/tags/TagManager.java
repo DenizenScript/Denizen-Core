@@ -69,7 +69,7 @@ public class TagManager {
             this.returnType = returnType;
             this.baseForm = baseForm;
             this.isStatic = isStatic;
-            ObjectFetcher.ObjectType type = ObjectFetcher.objectsByClass.get(returnType);
+            ObjectType<R> type = ObjectFetcher.getType(returnType);
             processor = type == null ? null : type.tagProcessor;
         }
     }

@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.tags;
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.ObjectType;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.JavaReflectedObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -43,7 +44,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             this.runner = runner;
             this.returnType = returnType;
             this.isStatic = isStatic;
-            ObjectFetcher.ObjectType<R> type = (ObjectFetcher.ObjectType<R>) ObjectFetcher.objectsByClass.get(returnType);
+            ObjectType<R> type = ObjectFetcher.getType(returnType);
             this.processor = type == null ? null : type.tagProcessor;
         }
     }
@@ -98,11 +99,11 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         // @attribute <ObjectTag.object_type>
         // @returns ElementTag
         // @description
-        // Returns the name of the tag type that is processing this tag, like 'List'.
+        // Returns the short-form name of the tag type that is processing this tag, like 'List'.
         // This tag is made available to help you debug script issues, for example if you think an object isn't processing its own type correctly.
         // -->
         registerStaticTag(ElementTag.class, "object_type", (attribute, object) -> {
-            return new ElementTag(object.getObjectType());
+            return new ElementTag(object.getDenizenObjectType().shortName);
         }, "type");
 
         // <--[tag]

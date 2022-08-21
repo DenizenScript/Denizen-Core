@@ -179,14 +179,26 @@ public interface ObjectTag {
      * Converts the object to the given type. May error and/or return null if conversion is not possible.
      */
     default <T extends ObjectTag> T asType(Class<T> type, TagContext context) {
-        if (getClass() == type) {
+        if (getClass() == type || type == ObjectTag.class) {
             return (T) this;
         }
-        CoreUtilities.TagTypeConverter converter = CoreUtilities.typeConverters.get(type);
-        if (converter != null) {
-            return (T) converter.convert(this, context);
+        return asType(ObjectFetcher.getType(type), context);
+    }
+
+    /**
+     * Converts the object to the given type. May error and/or return null if conversion is not possible.
+     */
+    default <T extends ObjectTag> T asType(ObjectType<T> objTypeData, TagContext context) {
+        if (objTypeData == null) {
+            return null;
         }
-        return ObjectFetcher.getObjectFrom(type, toString(), context);
+        if (objTypeData.clazz == getClass()) {
+            return (T) this;
+        }
+        if (objTypeData.typeConverter != null) {
+            return (T) objTypeData.typeConverter.convert(this, context);
+        }
+        return ObjectFetcher.getObjectFrom(objTypeData, toString(), context);
     }
 
     /**
@@ -200,9 +212,12 @@ public interface ObjectTag {
         if (getClass() == type) {
             return true;
         }
-        CoreUtilities.TypeComparisonRunnable comp = CoreUtilities.typeShouldBeCheckers.get(type);
-        if (comp != null) {
-            return comp.doesCompare(this);
+        ObjectType<?> objTypeData = ObjectFetcher.getType(type);
+        if (objTypeData == null) {
+            return false;
+        }
+        if (objTypeData.typeShouldBeChecker != null) {
+            return objTypeData.typeShouldBeChecker.doesCompare(this);
         }
         return false;
     }
@@ -218,11 +233,14 @@ public interface ObjectTag {
         if (getClass() == type) {
             return true;
         }
-        CoreUtilities.TypeComparisonRunnable comp = CoreUtilities.typeCheckers.get(type);
-        if (comp != null && !comp.doesCompare(this)) {
+        ObjectType<?> objTypeData = ObjectFetcher.getType(type);
+        if (objTypeData == null) {
             return false;
         }
-        return ObjectFetcher.checkMatch(type, toString());
+        if (objTypeData.typeChecker != null && !objTypeData.typeChecker.doesCompare(this)) {
+            return false;
+        }
+        return ObjectFetcher.checkMatch(objTypeData, toString());
     }
 
     default ElementTag asElement() {
@@ -264,8 +282,8 @@ public interface ObjectTag {
     /**
      * Returns the ObjectType as set in the ObjectFetcher.
      */
-    default ObjectFetcher.ObjectType<? extends ObjectTag> getDenizenObjectType() {
-        return ObjectFetcher.objectsByClass.get(getClass());
+    default ObjectType<? extends ObjectTag> getDenizenObjectType() {
+        return ObjectFetcher.getType(getClass());
     }
 
     /**
@@ -289,7 +307,7 @@ public interface ObjectTag {
         if (matcher.startsWith("!")) {
             return !tryAdvancedMatcher(matcher.substring(1));
         }
-        ObjectFetcher.ObjectType<? extends ObjectTag> thisType = getDenizenObjectType();
+        ObjectType<? extends ObjectTag> thisType = getDenizenObjectType();
         if (thisType != null && thisType.tagProcessor != null) {
             for (ObjectTagProcessor.CustomMatcher customMatcher : thisType.tagProcessor.custommatchers) {
                 Boolean result = customMatcher.tryMatch(this, matcher);
