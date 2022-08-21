@@ -69,11 +69,6 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         return super.matches(path);
     }
 
-    @Override
-    public String getName() {
-        return "DeltaTime";
-    }
-
     public ElementTag second;
 
     @Override

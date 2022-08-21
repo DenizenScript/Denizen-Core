@@ -49,9 +49,4 @@ public class ReloadScriptsScriptEvent extends ScriptEvent {
         }
         return super.matches(path);
     }
-
-    @Override
-    public String getName() {
-        return "ReloadScripts";
-    }
 }

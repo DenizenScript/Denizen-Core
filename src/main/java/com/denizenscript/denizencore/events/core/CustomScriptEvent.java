@@ -92,11 +92,6 @@ public class CustomScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public String getName() {
-        return "CustomEvent";
-    }
-
-    @Override
     public ObjectTag getContext(String name) {
         switch (name) {
             case "id": return new ElementTag(id, true);

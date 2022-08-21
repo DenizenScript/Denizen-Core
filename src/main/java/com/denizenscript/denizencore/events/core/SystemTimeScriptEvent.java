@@ -92,11 +92,6 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public String getName() {
-        return "SystemTime";
-    }
-
-    @Override
     public ObjectTag getContext(String name) {
         switch (name) {
             case "hour": return hour;

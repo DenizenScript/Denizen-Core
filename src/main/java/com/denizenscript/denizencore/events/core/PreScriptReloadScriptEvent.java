@@ -20,9 +20,4 @@ public class PreScriptReloadScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("pre script reload");
     }
-
-    @Override
-    public String getName() {
-        return "PreScriptReload";
-    }
 }

@@ -297,11 +297,6 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         return super.getContext(name);
     }
 
-    @Override
-    public String getName() {
-        return "WebserverWebRequest";
-    }
-
     public static void fire(WebServerCommand.WebserverInstance server, final HttpExchange exchange) {
         instance.server = server;
         instance.exchange = exchange;

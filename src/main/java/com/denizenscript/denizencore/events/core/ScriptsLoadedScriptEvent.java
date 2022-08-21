@@ -47,9 +47,4 @@ public class ScriptsLoadedScriptEvent extends ScriptEvent {
         }
         return super.matches(path);
     }
-
-    @Override
-    public String getName() {
-        return "ScriptsLoaded";
-    }
 }

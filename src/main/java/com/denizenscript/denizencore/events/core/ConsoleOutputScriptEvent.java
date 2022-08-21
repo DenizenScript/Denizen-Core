@@ -37,9 +37,4 @@ public class ConsoleOutputScriptEvent extends ScriptEvent {
         }
         return super.getContext(name);
     }
-
-    @Override
-    public String getName() {
-        return "ConsoleOutput";
-    }
 }

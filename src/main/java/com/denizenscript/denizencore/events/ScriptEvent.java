@@ -78,7 +78,16 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
     }
 
+    public static List<String> notNameParts = new ArrayList<>(Collections.singleton("ScriptEvent"));
+
     public static void registerScriptEvent(ScriptEvent event) {
+        String name = event.getClass().getSimpleName();
+        for (String suffix : notNameParts) {
+            if (name.endsWith(suffix)) {
+                name = name.substring(0, name.length() - suffix.length());
+            }
+        }
+        event.eventData.name = name;
         events.add(event);
         eventLookup.put(CoreUtilities.toLowerCase(event.getName()), event);
         if (event.eventData.couldMatchers.isEmpty() || event.eventData.needsLegacy) {
@@ -134,6 +143,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
          * If true, this event needs to be in legacy event couldMatcher.
          */
         public boolean needsLegacy = false;
+
+        /**
+         * Cached name.
+         */
+        public String name;
     }
 
     /**
@@ -724,7 +738,9 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     /**
      * Gets the name of the event class.
      */
-    public abstract String getName();
+    public String getName() {
+        return eventData.name;
+    }
 
     /**
      * Makes a copy of this event object, fires it, and returns the copy.

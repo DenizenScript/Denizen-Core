@@ -51,11 +51,6 @@ public class TickScriptEvent extends ScriptEvent {
         return super.matches(path);
     }
 
-    @Override
-    public String getName() {
-        return "Tick";
-    }
-
     public boolean enabled = false;
 
     @Override

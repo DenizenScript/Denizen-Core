@@ -28,9 +28,4 @@ public class ShutdownScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("shutdown");
     }
-
-    @Override
-    public String getName() {
-        return "ServerShutdown";
-    }
 }

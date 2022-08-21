@@ -76,11 +76,6 @@ public class ScriptGeneratesErrorScriptEvent extends ScriptEvent {
         super.cancellationChanged();
     }
 
-    @Override
-    public String getName() {
-        return "ScriptGeneratesError";
-    }
-
     public boolean handle(String message, ScriptQueue queue, ScriptTag script, int line) {
         this.queue = queue;
         this.message = message;

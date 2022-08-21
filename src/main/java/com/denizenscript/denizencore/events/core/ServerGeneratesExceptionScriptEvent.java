@@ -69,11 +69,6 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
         super.cancellationChanged();
     }
 
-    @Override
-    public String getName() {
-        return "ServerGeneratesException";
-    }
-
     public boolean handle(Throwable ex, String trace, ScriptQueue queue) {
         this.queue = queue;
         this.fullTrace = trace;

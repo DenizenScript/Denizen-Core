@@ -46,11 +46,6 @@ public class RedisPubSubMessageScriptEvent extends ScriptEvent {
     }
 
     @Override
-    public String getName() {
-        return "RedisPubSubMessage";
-    }
-
-    @Override
     public ObjectTag getContext(String name) {
         switch (name) {
             case "redis_id": return new ElementTag(redisID);
