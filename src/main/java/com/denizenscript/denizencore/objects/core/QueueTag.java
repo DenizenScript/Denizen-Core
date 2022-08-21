@@ -270,6 +270,25 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
         });
 
         // <--[tag]
+        // @attribute <QueueTag.last_command>
+        // @returns ElementTag
+        // @description
+        // Returns the last command executed in this queue (if any).
+        // -->
+        tagProcessor.registerTag(ElementTag.class, "last_command", (attribute, object) -> {
+            ScriptEntry entry = object.getQueue().getLastEntryExecuted();
+            if (entry == null) {
+                return null;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(entry.getCommandName()).append(" ");
+            for (String arg : entry.getOriginalArguments()) {
+                sb.append(arg).append(" ");
+            }
+            return new ElementTag(sb.substring(0, sb.length() - 1));
+        });
+
+        // <--[tag]
         // @attribute <QueueTag.definitions>
         // @returns ListTag
         // @description
