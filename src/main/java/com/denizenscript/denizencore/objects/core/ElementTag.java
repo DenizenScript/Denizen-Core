@@ -2511,10 +2511,6 @@ public class ElementTag implements ObjectTag {
             return false;
         }
         @Override
-        public String getObjectType() {
-            return null;
-        }
-        @Override
         public String identify() {
             return null;
         }

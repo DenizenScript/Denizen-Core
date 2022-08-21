@@ -79,16 +79,6 @@ public class PropertyParser {
         registerTagInternal(propType, returnType, name, altMethod, variants, isStatic);
     }
 
-    @Deprecated
-    public static <T extends Property, R extends ObjectTag> void registerStaticTag(Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
-        registerTagInternal(currentlyRegisteringPropertyClass, returnType, name, runnable, variants, true);
-    }
-
-    @Deprecated
-    public static <T extends Property, R extends ObjectTag> void registerTag(Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
-        registerTagInternal(currentlyRegisteringPropertyClass, returnType, name, runnable, variants, false);
-    }
-
     public static <T extends Property, R extends ObjectTag> void registerStaticTag(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String... variants) {
         registerTagInternal(propType, returnType, name, runnable, variants, true);
     }

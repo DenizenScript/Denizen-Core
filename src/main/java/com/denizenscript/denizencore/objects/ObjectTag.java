@@ -114,11 +114,6 @@ public interface ObjectTag {
      */
     boolean isUnique();
 
-    @Deprecated
-    default String getObjectType() {
-        return "";
-    }
-
     /**
      * Gets an ugly, but exact, string representation of this ObjectTag.
      * While not specified in the ObjectTag Interface, this value should be
