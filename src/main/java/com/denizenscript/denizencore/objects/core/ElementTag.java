@@ -2531,6 +2531,7 @@ public class ElementTag implements ObjectTag {
         }
     }
 
+    @Override
     public ObjectTag getNextObjectTypeDown() {
         return new FailedObjectTag();
     }

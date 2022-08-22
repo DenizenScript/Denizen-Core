@@ -19,6 +19,7 @@ public class ObjectFetcher {
     public static Map<String, ObjectType<? extends ObjectTag>> objectsByName = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, ObjectType<? extends ObjectTag>> objectsByClass = new HashMap<>();
     public static Map<Class<? extends ObjectTag>, List<Class<? extends ObjectTag>>> customSubtypeList = new HashMap<>();
+    public static HashSet<Class<? extends ObjectTag>> realObjectClassSet = new HashSet<>();
 
     public static <T extends ObjectTag> ObjectType<T> getType(Class<T> type) {
         return (ObjectType<T>) objectsByClass.get(type);
@@ -40,7 +41,7 @@ public class ObjectFetcher {
 
     public static Collection<Class<? extends ObjectTag>> getAllApplicableSubTypesFor(Class<? extends ObjectTag> type) {
         if (type == ObjectTag.class) {
-            return objectsByClass.keySet();
+            return realObjectClassSet;
         }
         List<Class<? extends ObjectTag>> customSet = customSubtypeList.get(type);
         if (customSet != null) {
@@ -231,6 +232,7 @@ public class ObjectFetcher {
         newType.shortName = shortName;
         newType.isAdjustable = Adjustable.class.isAssignableFrom(objectTag);
         objectsByClass.put(objectTag, newType);
+        realObjectClassSet.add(objectTag);
         try {
             Method valueOfMethod = objectTag.getMethod("valueOf", String.class, TagContext.class);
             if (valueOfMethod.isAnnotationPresent(Fetchable.class)) {
