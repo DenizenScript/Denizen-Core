@@ -89,7 +89,7 @@ public class TagManager {
                 return null;
             }
             return run.run(attribute, result);
-        }, true);
+        }, isStatic);
     }
 
     public static <R extends ObjectTag> void registerStaticTagBaseHandler(Class<R> returnType, String name, TagRunnable.BaseInterface<R> run) {
