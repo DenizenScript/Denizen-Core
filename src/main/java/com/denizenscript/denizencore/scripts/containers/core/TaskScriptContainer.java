@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.scripts.containers.core;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ContextSource;
@@ -41,6 +42,10 @@ public class TaskScriptContainer extends ScriptContainer {
 
     public TaskScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
+        // Trigger load + cache
+        if (contains("script")) {
+            getBaseEntries(DenizenCore.implementation.getEmptyScriptEntryData());
+        }
     }
 
     /**
