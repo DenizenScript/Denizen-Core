@@ -16,6 +16,7 @@ import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -73,6 +74,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         public HashMap<String, Integer> argPrefixMap = null;
 
         public ArgumentIterator argumentIterator = null;
+
+        public HashMap<Class<? extends Enum>, Enum> enumValsHardcoded = new HashMap<>();
     }
 
     public static class InternalArgument {
@@ -456,6 +459,16 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                         }
                     }
                     internal.argPrefixMap.put(prefix, i);
+                }
+                if (argVal.prefix == null && !argVal.value.hasTag && internal.actualCommand != null) {
+                    String raw = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
+                    for (EnumHelper<? extends Enum> enumType : internal.actualCommand.enumsHandled) {
+                        Enum val = enumType.valuesMapLower.get(raw);
+                        if (val != null) {
+                            internal.enumValsHardcoded.put(enumType.targetClass, val);
+                            break;
+                        }
+                    }
                 }
             }
             internal.all_arguments = allArgs.toArray(new InternalArgument[0]);

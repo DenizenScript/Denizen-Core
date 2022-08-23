@@ -111,7 +111,7 @@ public class ReflectionSetCommand extends AbstractCommand {
     public static void autoExecute(
             @ArgPrefixed @ArgName("object") JavaReflectedObjectTag object,
             @ArgPrefixed @ArgName("field") String fieldName,
-            @ArgDefaultNull @ArgPrefixed @ArgName("value") ObjectTag value) {
+            @ArgPrefixed @ArgName("value") @ArgDefaultNull ObjectTag value) {
         if (!CoreConfiguration.allowReflectionSet) {
             Debug.echoError("The 'reflectionset' command is disabled in the Denizen config.");
             return;

@@ -2,12 +2,11 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.core.WebserverWebRequestScriptEvent;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
-import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
@@ -25,8 +24,7 @@ public class WebServerCommand extends AbstractCommand {
         setSyntax("webserver [start/stop] (port:<#>) (ignore_errors)");
         setRequiredArguments(1, 3);
         isProcedural = false;
-        setPrefixesHandled("port");
-        setBooleansHandled("ignore_errors");
+        autoCompile();
     }
 
     // <--[command]
@@ -106,39 +104,15 @@ public class WebServerCommand extends AbstractCommand {
 
     public enum Mode { START, STOP }
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("mode")
-               && arg.matchesEnum(Mode.class)) {
-                scriptEntry.addObject("mode", arg.asElement());
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("mode")) {
-            throw new InvalidArgumentsException("Missing start/stop argument.");
-        }
-    }
-
-    @Override
-    public void execute(final ScriptEntry scriptEntry) {
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgPrefixed @ArgName("port") @ArgDefaultText("8080") int portNum,
+                                   @ArgName("mode") Mode mode,
+                                   @ArgName("ignore_errors") boolean ignoreErrors) {
         if (!CoreConfiguration.allowWebserver) {
-            Debug.echoError(scriptEntry, "WebServer command disabled in config.yml!");
+            Debug.echoError("WebServer command disabled in config.yml!");
             return;
         }
-        ElementTag port = scriptEntry.argForPrefixAsElement("port", "8080");
-        ElementTag mode = scriptEntry.getElement("mode");
-        boolean ignoreErrors = scriptEntry.argAsBoolean("ignore_errors");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), mode, port, db("ignore_errors", ignoreErrors));
-        }
-        if (!port.isInt()) {
-            throw new InvalidArgumentsRuntimeException("Invalid port, not a number");
-        }
-        int portNum = port.asInt();
-        switch (mode.asEnum(Mode.class)) {
+        switch (mode) {
             case START: {
                 WebserverInstance instance = webservers.get(portNum);
                 if (instance != null) {

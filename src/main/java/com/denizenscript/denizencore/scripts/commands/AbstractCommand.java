@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.generator.CommandExecution
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
@@ -141,6 +142,8 @@ public abstract class AbstractCommand {
 
     public HashMap<String, String> prefixRemapper = new HashMap<>();
 
+    public HashSet<EnumHelper> enumsHandled = new HashSet<>();
+
     public boolean allowedDynamicPrefixes = false;
 
     public boolean anyPrefixSymbolAllowed = false;
@@ -164,6 +167,12 @@ public abstract class AbstractCommand {
     public void setBooleansHandled(String... boolNames) {
         setPrefixesHandled(boolNames);
         setRawValuesHandled(boolNames);
+    }
+
+    public void setEnumHandled(Class<? extends Enum> enumType) {
+        EnumHelper helper = EnumHelper.get(enumType);
+        enumsHandled.add(helper);
+        rawValuesHandled.addAll(helper.valuesMapLower.keySet());
     }
 
     public static String db(String prefix, boolean value) {

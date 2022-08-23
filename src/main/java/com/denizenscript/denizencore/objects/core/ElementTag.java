@@ -357,6 +357,10 @@ public class ElementTag implements ObjectTag {
         return EnumHelper.get(clazz).valuesMapLower.containsKey(EnumHelper.cleanKey(element));
     }
 
+    public static <T extends Enum> T asEnum(Class<T> clazz, String value) {
+        return (T) EnumHelper.get(clazz).valuesMapLower.get(EnumHelper.cleanKey(value));
+    }
+
     public <T extends Enum> T asEnum(Class<T> clazz) {
         return (T) EnumHelper.get(clazz).valuesMapLower.get(EnumHelper.cleanKey(element));
     }
