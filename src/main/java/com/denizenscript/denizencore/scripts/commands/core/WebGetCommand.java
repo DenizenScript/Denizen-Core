@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.*;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
@@ -28,6 +28,9 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         setSyntax("webget [<url>] (data:<data>) (method:<method>) (headers:<map>) (timeout:<duration>/{10s}) (savefile:<path>) (hide_failure)");
         setRequiredArguments(1, 7);
         isProcedural = false;
+        autoCompile();
+        addRemappedPrefixes("data", "post");
+        addRemappedPrefixes("timeout", "t");
     }
 
     // <--[command]
@@ -50,7 +53,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // Optionally, use "data:<data>" to specify a set of data to send to the server (changes the default method from GET to POST).
     //
     // Optionally, use "method:<method>" to specify the HTTP method to use in your request.
-    // Can be: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE.
+    // Can be: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, PATCH.
     //
     // Optionally, use "headers:" to specify a MapTag of headers.
     //
@@ -96,75 +99,32 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("url")) {
-                scriptEntry.addObject("url", arg.getRawElement());
-            }
-            else if (!scriptEntry.hasObject("data")
-                    && arg.matchesPrefix("data", "post")) {
-                scriptEntry.addObject("data", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("method")
-                    && arg.matchesPrefix("method")
-                    && arg.matches("get", "post", "head", "options", "put", "delete", "trace", "patch")) {
-                scriptEntry.addObject("method", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("hide_failure")
-                    && arg.matches("hide_failure")) {
-                scriptEntry.addObject("hide_failure", new ElementTag(true));
-            }
-            else if (!scriptEntry.hasObject("timeout")
-                    && arg.matchesPrefix("timeout", "t")
-                    && arg.matchesArgumentType(DurationTag.class)) {
-                scriptEntry.addObject("timeout", arg.asType(DurationTag.class));
-            }
-            else if (!scriptEntry.hasObject("headers")
-                    && arg.matchesPrefix("headers")
-                    && arg.getValue().startsWith("map@")) {
-                scriptEntry.addObject("headers", arg.asType(MapTag.class));
-            }
-            else if (!scriptEntry.hasObject("headers")
-                    && arg.matchesPrefix("headers")) {
-                MapTag map = new MapTag();
-                for (String str : arg.asType(ListTag.class)) {
-                    int ind = str.indexOf('/');
-                    if (ind > 0) {
-                        map.putObject(str.substring(0, ind), new ElementTag(str.substring(ind + 1)));
-                    }
-                }
-                scriptEntry.addObject("headers", map);
-            }
-            else if (!scriptEntry.hasObject("savefile")
-                    && arg.matchesPrefix("savefile")) {
-                scriptEntry.addObject("savefile", arg.asElement());
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("url")) {
-            throw new InvalidArgumentsException("Must have a valid URL!");
-        }
-        scriptEntry.defaultObject("timeout", new DurationTag(10));
-    }
+    public enum Method { GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, PATCH }
 
-    @Override
-    public void execute(final ScriptEntry scriptEntry) {
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgLinear @ArgName("url") @ArgRaw ElementTag originalUrl,
+                                   @ArgPrefixed @ArgName("data") @ArgDefaultNull ElementTag data,
+                                   @ArgName("method") @ArgDefaultNull Method method,
+                                   @ArgName("hide_failure") boolean hideFailure,
+                                   @ArgPrefixed @ArgName("timeout") @ArgDefaultText("10s") DurationTag timeout,
+                                   @ArgPrefixed @ArgName("headers") @ArgDefaultNull ObjectTag headersLegacyCompat,
+                                   @ArgPrefixed @ArgName("savefile") @ArgDefaultNull String saveFile) {
+        MapTag headers = null;
+        if (headersLegacyCompat != null && headersLegacyCompat.shouldBeType(MapTag.class)) {
+            headers = headersLegacyCompat.asType(MapTag.class, scriptEntry.context);
+        }
+        else if (headersLegacyCompat != null) {
+            headers = new MapTag();
+            for (String str : headersLegacyCompat.asType(ListTag.class, scriptEntry.context)) {
+                int ind = str.indexOf('/');
+                if (ind > 0) {
+                    headers.putObject(str.substring(0, ind), new ElementTag(str.substring(ind + 1)));
+                }
+            }
+        }
         if (!CoreConfiguration.allowWebget) {
             Debug.echoError(scriptEntry, "WebGet disabled in config.yml!");
             return;
-        }
-        ElementTag originalUrl = scriptEntry.getElement("url");
-        final ElementTag data = scriptEntry.getElement("data");
-        final ElementTag method = scriptEntry.getElement("method");
-        final DurationTag timeout = scriptEntry.getObjectTag("timeout");
-        MapTag headers = scriptEntry.getObjectTag("headers");
-        final ElementTag saveFile = scriptEntry.getElement("savefile");
-        final ElementTag hideFailure = scriptEntry.getElement("hide_failure");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), originalUrl, data, method, timeout, saveFile, hideFailure, headers);
         }
         // Secrets processing
         String urlText = originalUrl.asString();
@@ -204,8 +164,8 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         thr.start();
     }
 
-    public void writeToFile(InputStream in, ElementTag saveFile) throws Exception {
-        File file = new File(saveFile.asString());
+    public static void writeToFile(InputStream in, String saveFile) throws Exception {
+        File file = new File(saveFile);
         if (!DenizenCore.implementation.canWriteToFile(file)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             return;
@@ -238,7 +198,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         ReflectionHelper.setFieldValue(HttpURLConnection.class, "methods", null, outMethods);
     }
 
-    public void webGet(final ScriptEntry scriptEntry, final ElementTag data, ElementTag method, String urlText, DurationTag timeout, MapTag headers, ElementTag saveFile, ElementTag hideFailure, boolean urlIsSecret) {
+    public static void webGet(final ScriptEntry scriptEntry, final ElementTag data, Method method, String urlText, DurationTag timeout, MapTag headers, String saveFile, boolean hideFailure, boolean urlIsSecret) {
         BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
@@ -248,10 +208,10 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             uc.setDoInput(true);
             uc.setDoOutput(true);
             if (method != null) {
-                if (CoreUtilities.equalsIgnoreCase(method.asString(), "patch")) {
+                if (method == Method.PATCH) {
                     patchPatchMethodMethodsField();
                 }
-                uc.setRequestMethod(method.asString().toUpperCase());
+                uc.setRequestMethod(method.name());
             }
             else if (data != null) {
                 uc.setRequestMethod("POST");
@@ -312,7 +272,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             });
         }
         catch (Exception e) {
-            if (hideFailure == null || !hideFailure.asBoolean()) {
+            if (!hideFailure || uc == null) {
                 if (urlIsSecret) {
                     Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
                 }
@@ -349,16 +309,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     }
                     else {
                         Debug.echoError(e2);
-                    }
-                }
-            }
-            else {
-                if (hideFailure != null && hideFailure.asBoolean()) {
-                    if (urlIsSecret) {
-                        Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
-                    }
-                    else {
-                        Debug.echoError(e);
                     }
                 }
             }
