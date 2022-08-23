@@ -22,17 +22,22 @@ public class DebugInvalidCommand extends AbstractCommand {
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
     }
 
+    public static void informBrokenArgs(AbstractCommand command, ScriptEntry scriptEntry) {
+        if (scriptEntry.getOriginalArguments().size() > command.maximumArguments
+            || (command.generatedExecutor != null && scriptEntry.internal.arguments_to_use.length > command.linearHandledCount)) {
+            Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many arguments - did you forget to use quotes, or misspell a prefix?\nUsage: " + command.getUsageHint());
+        }
+        else {
+            Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
+        }
+    }
+
     @Override
     public void execute(ScriptEntry scriptEntry) {
         Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "Executing command: " + scriptEntry.getCommandName());
         AbstractCommand command = DenizenCore.commandRegistry.get(scriptEntry.internal.command);
         if (scriptEntry.internal.brokenArgs) {
-            if (scriptEntry.getOriginalArguments().size() > command.maximumArguments) {
-                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());
-            }
-            else {
-                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
-            }
+            informBrokenArgs(command, scriptEntry);
             return;
         }
         else {

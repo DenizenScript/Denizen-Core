@@ -27,6 +27,9 @@ public class CommandExecutor {
         }
         else {
             for (String arg : scriptEntry.getOriginalArguments()) {
+                if (arg.equals("\0CALLBACK")) {
+                    return;
+                }
                 if (CoreUtilities.contains(arg, ' ')) {
                     output.append(" \"").append(arg).append("\"");
                 }
@@ -115,8 +118,13 @@ public class CommandExecutor {
                     }
                 }
             }
-            command.parseArgs(scriptEntry);
-            command.execute(scriptEntry);
+            if (command.generatedExecutor != null) {
+                command.generatedExecutor.execute(scriptEntry);
+            }
+            else {
+                command.parseArgs(scriptEntry);
+                command.execute(scriptEntry);
+            }
             if (saveName != null) {
                 scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
             }

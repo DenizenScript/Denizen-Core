@@ -248,7 +248,7 @@ public class CommandExecutionGenerator {
             if (cmdCleanName.length() > 50) {
                 cmdCleanName = cmdCleanName.substring(0, 50);
             }
-            String className = CodeGenUtil.COMMAND_GEN_PACKAGE + "CommandExecutor" + (totalGenerated++) + "_" + cmdCleanName;
+            String className = CodeGenUtil.COMMAND_GEN_PACKAGE + "Cmd" + (totalGenerated++) + "_" + cmdCleanName;
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
             cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", new String[]{COMMAND_EXECUTOR_INTERFACE_PATH});
             cw.visitSource("GENERATED_CMD_EXEC", null);

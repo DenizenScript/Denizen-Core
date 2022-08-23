@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.core.DebugInvalidCommand;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.ParseableTag;
@@ -573,8 +574,10 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         }
         if (internal.actualCommand != null) {
             int argCount = getOriginalArguments().size();
-            if (argCount < internal.actualCommand.minimumArguments || (!hasBraces && argCount > internal.actualCommand.maximumArguments)) {
+            if (argCount < internal.actualCommand.minimumArguments || (!hasBraces && argCount > internal.actualCommand.maximumArguments)
+                    || (internal.actualCommand.generatedExecutor != null && internal.arguments_to_use.length > internal.actualCommand.linearHandledCount)) {
                 internal.brokenArgs = true;
+                DebugInvalidCommand.informBrokenArgs(internal.actualCommand, this);
                 internal.actualCommand = CommandRegistry.debugInvalidCommand;
             }
             if (internal.actualCommand instanceof BracedCommand) {
