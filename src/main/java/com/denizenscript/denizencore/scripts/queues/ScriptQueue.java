@@ -111,6 +111,8 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public boolean isStopped = false;
 
+    public ScriptEntry holdingOn = null;
+
     /**
      * If set true, the queue will simply freeze and wait when it's empty.
      * Otherwise (set false), it will fully stop and remove itself when empty.
@@ -290,6 +292,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.startTime = startTime;
         newQueue.startTimeMilli = startTimeMilli;
         newQueue.script = script;
+        newQueue.holdingOn = holdingOn;
         newQueue.callBack(r);
         if (newQueue.script_entries.isEmpty()) {
             newQueue.stop();

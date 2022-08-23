@@ -81,6 +81,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         public BooleanArg[] booleans = null;
 
         public Integer[] prefixedArgMapper = null;
+
+        public Boolean shouldDebugBool = null;
     }
 
     public static class BooleanArg {
@@ -277,9 +279,13 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     public TagContext context;
 
-    public Boolean shouldDebugBool = null;
-
     private Map<String, Object> objects = new HashMap<>(8);
+
+    private Object data;
+
+    public boolean forceInstant = false;
+
+    private ScriptEntry owner = null;
 
     public List<BracedCommand.BracedData> getBracedSet() {
         return internal.bracedSet;
@@ -654,8 +660,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return internal.actualCommand;
     }
 
-    private ScriptEntry owner = null;
-
     public void setOwner(ScriptEntry owner) {
         this.owner = owner;
     }
@@ -663,8 +667,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     public ScriptEntry getOwner() {
         return owner;
     }
-
-    private Object data;
 
     public Object getData() {
         return data;
@@ -765,8 +767,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     // TimedQueue FEATURES
     /////////
 
-    public boolean forceInstant = false;
-
     public boolean isInstant() {
         return internal.instant || forceInstant;
     }
@@ -776,15 +776,17 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return this;
     }
 
-    public boolean isFinished = false;
-
     public boolean shouldWaitFor() {
-        return internal.waitfor && !isFinished;
+        return internal.waitfor && queue.holdingOn == this;
     }
 
-    public ScriptEntry setFinished(boolean finished) {
-        isFinished = finished;
-        return this;
+    public void setFinished(boolean finished) {
+        if (!finished) {
+            throw new RuntimeException("setFinished called weird");
+        }
+        if (queue.holdingOn == this) {
+            queue.holdingOn = null;
+        }
     }
 
     /////////////
@@ -797,15 +799,15 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     @Override
     public boolean shouldDebug() {
-        if (shouldDebugBool != null) {
-            return shouldDebugBool;
+        if (internal.shouldDebugBool != null) {
+            return internal.shouldDebugBool;
         }
         if (internal.script == null || internal.script.getContainer() == null) {
-            shouldDebugBool = true;
+            internal.shouldDebugBool = true;
             return true;
         }
-        shouldDebugBool = internal.script.getContainer().shouldDebug();
-        return shouldDebugBool;
+        internal.shouldDebugBool = internal.script.getContainer().shouldDebug();
+        return internal.shouldDebugBool;
     }
 
     private static String stringifyArg(String arg) {

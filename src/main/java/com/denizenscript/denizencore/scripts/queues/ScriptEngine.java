@@ -11,11 +11,12 @@ public class ScriptEngine {
         if (scriptQueue instanceof TimedQueue && ((TimedQueue) scriptQueue).isPaused()) {
             return true;
         }
-        if (scriptQueue.getLastEntryExecuted() == null || !scriptQueue.getLastEntryExecuted().shouldWaitFor()) {
+        ScriptEntry last = scriptQueue.getLastEntryExecuted();
+        if (last == null || !last.shouldWaitFor()) {
             return false;
         }
         if (!(scriptQueue instanceof TimedQueue)) {
-            Debug.echoDebug(scriptQueue.getLastEntryExecuted(), "Forcing queue " + scriptQueue.id + " into a timed queue...");
+            Debug.echoDebug(last, "Forcing queue " + scriptQueue.id + " into a timed queue...");
             scriptQueue.forceToTimed(null);
         }
         return true;
@@ -29,6 +30,9 @@ public class ScriptEngine {
         scriptEntry.setSendingQueue(scriptQueue);
         scriptEntry.updateContext();
         scriptQueue.setLastEntryExecuted(scriptEntry);
+        if (scriptEntry.internal.waitfor) {
+            scriptQueue.holdingOn = scriptEntry;
+        }
         try {
             CommandExecutor.execute(scriptEntry);
         }
@@ -47,6 +51,9 @@ public class ScriptEngine {
             scriptEntry.setSendingQueue(scriptQueue);
             scriptEntry.updateContext();
             scriptQueue.setLastEntryExecuted(scriptEntry);
+            if (scriptEntry.internal.waitfor) {
+                scriptQueue.holdingOn = scriptEntry;
+            }
             CommandExecutor.execute(scriptEntry);
             if (scriptQueue instanceof TimedQueue) {
                 TimedQueue delayedQueue = (TimedQueue) scriptQueue;
