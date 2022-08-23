@@ -638,7 +638,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @description
         // Returns a list of all files (and directories) in the specified directory. The starting path is /plugins/Denizen.
         // -->
-        tagProcessor.registerTag(ListTag.class, ElementTag.class, "has_file", (attribute, object, folderName) -> {
+        tagProcessor.registerTag(ListTag.class, ElementTag.class, "list_files", (attribute, object, folderName) -> {
             File folder = new File(DenizenCore.implementation.getDataFolder(), folderName.asString());
             try {
                 if (!DenizenCore.implementation.canReadFile(folder)) {
