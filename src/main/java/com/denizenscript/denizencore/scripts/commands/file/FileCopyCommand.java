@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.BooleanArg;
+import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -23,6 +23,9 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         setSyntax("filecopy [origin:<origin>] [destination:<destination>] (overwrite)");
         setRequiredArguments(2, 3);
         isProcedural = false;
+        addRemappedPrefixes("destination", "d");
+        addRemappedPrefixes("origin", "o");
+        autoCompile();
     }
 
     // <--[command]
@@ -54,42 +57,9 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("origin")
-                    && arg.matchesPrefix("origin", "o")) {
-                scriptEntry.addObject("origin", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("destination")
-                    && arg.matchesPrefix("destination", "d")) {
-                scriptEntry.addObject("destination", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("overwrite")
-                    && arg.matches("overwrite")) {
-                scriptEntry.addObject("overwrite", new ElementTag("true"));
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("origin")) {
-            throw new InvalidArgumentsException("Must have a valid origin!");
-        }
-        if (!scriptEntry.hasObject("destination")) {
-            throw new InvalidArgumentsException("Must have a valid destination!");
-        }
-        scriptEntry.defaultObject("overwrite", new ElementTag("false"));
-    }
-
-    @Override
-    public void execute(final ScriptEntry scriptEntry) {
-        ElementTag origin = scriptEntry.getElement("origin");
-        ElementTag destination = scriptEntry.getElement("destination");
-        ElementTag overwrite = scriptEntry.getElement("overwrite");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), origin, destination, overwrite);
-        }
+    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "origin") final ElementTag origin,
+                                   @PrefixedArg(prefix = "destination") final ElementTag destination,
+                                   @BooleanArg(name = "overwrite") final boolean overwrite) {
         if (!CoreConfiguration.allowFileCopy) {
             Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));
@@ -98,7 +68,6 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         }
         File o = new File(DenizenCore.implementation.getDataFolder(), origin.asString());
         File d = new File(DenizenCore.implementation.getDataFolder(), destination.asString());
-        boolean ow = overwrite.asBoolean();
         boolean dexists = d.exists();
         boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
         if (!DenizenCore.implementation.canReadFile(o)) {
@@ -119,7 +88,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
             return;
         }
-        if (dexists && !disdir && !ow) {
+        if (dexists && !disdir && !overwrite) {
             Debug.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
             scriptEntry.addObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
