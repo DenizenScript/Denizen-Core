@@ -534,6 +534,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                                     internal.booleans[booleanIndex] = BooleanArg.FALSE;
                                 }
                                 else {
+                                    Debug.echoError(this, "Argument '" + prefix + "' expects a boolean ('true' or 'false') but was given '" + rawText + "'");
                                     internal.booleans[booleanIndex] = new BooleanArg(null, i);
                                 }
                             }
