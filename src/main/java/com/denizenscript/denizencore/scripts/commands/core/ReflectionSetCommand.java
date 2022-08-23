@@ -1,10 +1,11 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.JavaReflectedObjectTag;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultNull;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.ReflectionRefuse;
@@ -23,7 +24,7 @@ public class ReflectionSetCommand extends AbstractCommand {
         setSyntax("reflectionset [object:<object>] [field:<name>] (value:<value>)");
         setRequiredArguments(2, 3);
         isProcedural = false;
-        setPrefixesHandled("object", "field", "value");
+        autoCompile();
     }
 
     // <--[command]
@@ -107,23 +108,19 @@ public class ReflectionSetCommand extends AbstractCommand {
         return null;
     }
 
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
+    public static void autoExecute(
+            @ArgPrefixed @ArgName("object") JavaReflectedObjectTag object,
+            @ArgPrefixed @ArgName("field") String fieldName,
+            @ArgDefaultNull @ArgPrefixed @ArgName("value") ObjectTag value) {
         if (!CoreConfiguration.allowReflectionSet) {
             Debug.echoError("The 'reflectionset' command is disabled in the Denizen config.");
             return;
-        }
-        JavaReflectedObjectTag object = scriptEntry.requiredArgForPrefix("object", JavaReflectedObjectTag.class);
-        ElementTag fieldName = scriptEntry.requiredArgForPrefixAsElement("field");
-        ObjectTag value = scriptEntry.argForPrefix("value", ObjectTag.class, true);
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), object, fieldName, value);
         }
         Class<?> clazz;
         Field field = null;
         if (object.object instanceof Class) {
             clazz = (Class<?>) object.object;
-            field = ReflectionHelper.getFields(clazz).get(fieldName.asString());
+            field = ReflectionHelper.getFields(clazz).get(fieldName);
             if (field == null) {
                 Debug.echoError("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object.object).getName());
                 return;
@@ -132,7 +129,7 @@ public class ReflectionSetCommand extends AbstractCommand {
         else {
             clazz = object.object.getClass();
             while (field == null && clazz != Object.class) {
-                field = ReflectionHelper.getFields(clazz).get(fieldName.asString());
+                field = ReflectionHelper.getFields(clazz).get(fieldName);
                 if (field == null) {
                     clazz = clazz.getSuperclass();
                 }

@@ -183,7 +183,7 @@ public class CommandExecutionGenerator {
                     }
                     ArgName argName = param.getAnnotation(ArgName.class);
                     ArgPrefixed argPrefixed = param.getAnnotation(ArgPrefixed.class);
-                    ArgDefault argDefault =param.getAnnotation(ArgDefault.class);
+                    ArgDefaultText argDefaultText = param.getAnnotation(ArgDefaultText.class);
                     LinearArg linearArg = param.getAnnotation(LinearArg.class);
                     if (argName == null) {
                         Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' which lacks a proper naming parameter.");
@@ -242,11 +242,13 @@ public class CommandExecutionGenerator {
                     }
                     gen.storeLocal(argLocal);
                     argData.prefix = argName.value();
-                    if (argDefault == null) {
-                        argData.required = true;
-                    }
-                    else {
-                        argData.defaultValue = argDefault.value();
+                    if (!param.isAnnotationPresent(ArgDefaultNull.class)) {
+                        if (argDefaultText == null) {
+                            argData.required = true;
+                        }
+                        else {
+                            argData.defaultValue = argDefaultText.value();
+                        }
                     }
                     argLocals.add(argLocal);
                     args.add(argData);

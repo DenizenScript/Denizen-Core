@@ -125,9 +125,11 @@ public class CommandExecutor {
         }
         catch (InvalidArgumentsException | InvalidArgumentsRuntimeException e) {
             // Give usage hint if InvalidArgumentsException was called.
-            Debug.echoError(scriptEntry, "Woah! Invalid arguments were specified!");
             if (e.getMessage() != null && e.getMessage().length() > 0) {
-                Debug.log("+> MESSAGE follows: " + "'" + e.getMessage() + "'");
+                Debug.echoError(scriptEntry, "Woah! Invalid arguments were specified!\n<FORCE_ALIGN>" + e.getMessage());
+            }
+            else {
+                Debug.echoError(scriptEntry, "Woah! Invalid arguments were specified!");
             }
             Debug.log("Usage: " + command.getUsageHint());
             Debug.log("(Attempted: " + scriptEntry + ")");

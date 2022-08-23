@@ -187,7 +187,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return arg.asType(clazz);
         }
         else if (throwError) {
-            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + clazz.getName());
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + clazz.getSimpleName());
         }
         return null;
     }

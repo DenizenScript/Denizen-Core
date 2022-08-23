@@ -6,7 +6,9 @@ import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultNull;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 
 public class CustomEventCommand extends AbstractCommand {
 
@@ -15,7 +17,7 @@ public class CustomEventCommand extends AbstractCommand {
         setSyntax("customevent [id:<id>] (context:<map>)");
         setRequiredArguments(1, 2);
         isProcedural = false;
-        setPrefixesHandled("id", "context");
+        autoCompile();
     }
 
     // <--[command]
@@ -67,13 +69,9 @@ public class CustomEventCommand extends AbstractCommand {
     //
     // -->
 
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        ElementTag id = scriptEntry.requiredArgForPrefixAsElement("id");
-        MapTag context = scriptEntry.argForPrefix("context", MapTag.class, true);
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), id, context);
-        }
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgPrefixed @ArgName("id") ElementTag id,
+                                   @ArgDefaultNull @ArgPrefixed @ArgName("context") MapTag context) {
         CustomScriptEvent ranEvent = CustomScriptEvent.runCustomEvent(scriptEntry.entryData, id.asLowerString(), context);
         scriptEntry.addObject("any_ran", new ElementTag(ranEvent != null && ranEvent.anyMatched));
         scriptEntry.addObject("was_cancelled", new ElementTag(ranEvent != null && ranEvent.cancelled));
