@@ -6,7 +6,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
+import com.denizenscript.denizencore.scripts.commands.generator.RequiredPrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -52,7 +54,8 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "path") final ElementTag path) {
+    public static void autoExecute(final ScriptEntry scriptEntry,
+                                   @ArgPrefixed @ArgName("path") final ElementTag path) {
         if (!CoreConfiguration.allowFileRead) {
             Debug.echoError(scriptEntry, "FileRead disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);

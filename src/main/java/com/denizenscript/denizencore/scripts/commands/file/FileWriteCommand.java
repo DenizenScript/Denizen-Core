@@ -6,7 +6,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
+import com.denizenscript.denizencore.scripts.commands.generator.RequiredPrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -55,7 +57,9 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "path") final ElementTag path, @PrefixedArg(prefix = "data") BinaryTag data) {
+    public static void autoExecute(final ScriptEntry scriptEntry,
+                                   @ArgPrefixed @ArgName("path") final ElementTag path,
+                                   @ArgPrefixed @ArgName("data") BinaryTag data) {
         if (!CoreConfiguration.allowFileWrite) {
             Debug.echoError(scriptEntry, "FileWrite disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);

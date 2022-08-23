@@ -2,8 +2,9 @@ package com.denizenscript.denizencore.scripts.commands.file;
 
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
-import com.denizenscript.denizencore.scripts.commands.generator.BooleanArg;
-import com.denizenscript.denizencore.scripts.commands.generator.PrefixedArg;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
+import com.denizenscript.denizencore.scripts.commands.generator.RequiredPrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -57,9 +58,10 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     //
     // -->
 
-    public static void autoExecute(final ScriptEntry scriptEntry, @PrefixedArg(prefix = "origin") final ElementTag origin,
-                                   @PrefixedArg(prefix = "destination") final ElementTag destination,
-                                   @BooleanArg(name = "overwrite") final boolean overwrite) {
+    public static void autoExecute(final ScriptEntry scriptEntry,
+                                   @ArgPrefixed @ArgName("origin") final ElementTag origin,
+                                   @ArgPrefixed @ArgName("destination") final ElementTag destination,
+                                   @ArgName("overwrite") final boolean overwrite) {
         if (!CoreConfiguration.allowFileCopy) {
             Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
             scriptEntry.addObject("success", new ElementTag("false"));

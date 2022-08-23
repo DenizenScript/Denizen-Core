@@ -101,24 +101,27 @@ public class CommandExecutionGenerator {
                         hasScriptEntry = true;
                         continue;
                     }
-                    PrefixedArg prefixArg = param.getAnnotation(PrefixedArg.class);
-                    if (prefixArg != null) {
-                        cmd.setPrefixesHandled(prefixArg.prefix());
+                    ArgName argName = param.getAnnotation(ArgName.class);
+                    ArgPrefixed argPrefixed = param.getAnnotation(ArgPrefixed.class);
+                    LinearArg linearArg = param.getAnnotation(LinearArg.class);
+                    if (argName == null) {
+                        Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' which lacks a proper naming parameter.");
+                        return null;
+                    }
+                    MethodGenerator.Local argLocal = gen.addLocal("arg_" + args.size() + "_" + CodeGenUtil.cleanName(argName.value()), paramType);
+                    Method argMethod = null;
+                    boolean doCast = false;
+                    ArgData argData = null;
+                    if (argPrefixed != null) {
+                        cmd.setPrefixesHandled(argName.value());
                         if (ObjectTag.class.isAssignableFrom(paramType)) {
-                            MethodGenerator.Local argLocal = gen.addLocal("argPrefix_" + args.size() + "_" + CodeGenUtil.cleanName(prefixArg.prefix()), paramType);
-                            gen.loadLocal(scriptEntryLocal);
-                            gen.loadStaticField(className, argLocal.name, PrefixArgData.class);
-                            gen.invokeStatic(HELPER_PREFIX_ENTRY_ARG_METHOD);
-                            gen.cast(paramType);
-                            gen.storeLocal(argLocal);
-                            PrefixArgData argData = new PrefixArgData();
-                            argData.prefix = prefixArg.prefix();
-                            argData.required = prefixArg.required();
-                            argData.throwTypeError = prefixArg.throwTypeError();
-                            argData.type = paramType;
-                            argLocals.add(argLocal);
-                            args.add(argData);
-                            continue;
+                            argMethod = HELPER_PREFIX_ENTRY_ARG_METHOD;
+                            doCast = true;
+                            PrefixArgData prefixArgData = new PrefixArgData();
+                            prefixArgData.required = argPrefixed.required();
+                            prefixArgData.throwTypeError = argPrefixed.throwTypeError();
+                            prefixArgData.type = paramType;
+                            argData = prefixArgData;
                         }
                         else if (paramType == boolean.class) {
                             // TODO
@@ -127,26 +130,28 @@ public class CommandExecutionGenerator {
                             // TODO
                         }
                     }
-                    BooleanArg booleanArg = param.getAnnotation(BooleanArg.class);
-                    if (booleanArg != null && paramType == boolean.class) {
-                        cmd.setBooleansHandled(booleanArg.name());
-                        MethodGenerator.Local argLocal = gen.addLocal("argBool_" + args.size() + "_" + CodeGenUtil.cleanName(booleanArg.name()), boolean.class);
-                        gen.loadLocal(scriptEntryLocal);
-                        gen.loadStaticField(className, argLocal.name, BooleanArgData.class);
-                        gen.invokeStatic(HELPER_BOOLEAN_ARG_METHOD);
-                        gen.storeLocal(argLocal);
-                        BooleanArgData argData = new BooleanArgData();
-                        argData.prefix = booleanArg.name();
-                        argLocals.add(argLocal);
-                        args.add(argData);
-                        continue;
+                    else if (paramType == boolean.class) {
+                        cmd.setBooleansHandled(argName.value());
+                        argMethod = HELPER_BOOLEAN_ARG_METHOD;
+                        argData = new BooleanArgData();
                     }
-                    LinearArg linearArg = param.getAnnotation(LinearArg.class);
                     if (linearArg != null) {
                         // TODO
                     }
-                    Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' of type '" + paramType.getName() + "' which is not supported.");
-                    return null;
+                    if (argMethod == null) {
+                        Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argName.value() + "' of type '" + paramType.getName() + "' which is not supported.");
+                        return null;
+                    }
+                    gen.loadLocal(scriptEntryLocal);
+                    gen.loadStaticField(className, argLocal.name, argData.getClass());
+                    gen.invokeStatic(argMethod);
+                    if (doCast) {
+                        gen.cast(paramType);
+                    }
+                    gen.storeLocal(argLocal);
+                    argData.prefix = argName.value();
+                    argLocals.add(argLocal);
+                    args.add(argData);
                 }
                 gen.advanceAndLabel();
                 Label afterDebugLabel = new Label();
