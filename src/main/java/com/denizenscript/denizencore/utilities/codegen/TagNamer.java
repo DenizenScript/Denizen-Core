@@ -40,61 +40,34 @@ public class TagNamer {
             cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", new String[] { typePath });
             cw.visitSource("GENERATED_TAG", null);
             cw.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "runnable", typeDescription, null, null);
-            // ====== Gen constructor ======
-            {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-                mv.visitCode();
-                Label startLabel = new Label();
-                mv.visitLabel(startLabel);
-                mv.visitLineNumber(0, startLabel);
-                mv.visitVarInsn(Opcodes.ALOAD, 0);
-                mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-                mv.visitInsn(Opcodes.RETURN);
-                mv.visitLocalVariable("this", "L" + className + ";", null, startLabel, startLabel, 0);
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
-            }
+            MethodGenerator.genDefaultConstructor(cw, className);
             // ====== Gen 'staticRun' method ======
             {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "staticRun", runDescriptor, null, null);
-                mv.visitCode();
-                Label startLabel = new Label();
-                mv.visitLabel(startLabel);
-                mv.visitLineNumber(1, startLabel);
-                mv.visitFieldInsn(Opcodes.GETSTATIC, className, "runnable", typeDescription);
-                mv.visitVarInsn(Opcodes.ALOAD, 0);
+                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "staticRun", runDescriptor);
+                MethodGenerator.Local attributeLocal = gen.addLocal("attribute", Attribute.class);
+                MethodGenerator.Local objectLocal = gen.addLocal("object", ObjectTag.class);
+                gen.loadStaticField(className, "runnable", typeDescription);
+                gen.loadLocal(attributeLocal);
                 if (hasObject) {
-                    mv.visitVarInsn(Opcodes.ALOAD, 1);
+                    gen.loadLocal(objectLocal);
                 }
-                mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, typePath, "run", runDescriptor, true);
-                mv.visitInsn(Opcodes.ARETURN);
-                mv.visitLocalVariable("attribute", CodeGenUtil.ATTRIBUTE_LOCAL_TYPE, null, startLabel, startLabel, 0);
-                if (hasObject) {
-                    mv.visitLocalVariable("object", CodeGenUtil.OBJECT_LOCAL_TYPE, null, startLabel, startLabel, 1);
-                }
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
+                gen.invokeInterface(typePath, "run", runDescriptor);
+                gen.returnValue(ObjectTag.class);
+                gen.end();
             }
             // ====== Gen 'run' method ======
             {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", runDescriptor, null, null);
-                mv.visitCode();
-                Label startLabel = new Label();
-                mv.visitLabel(startLabel);
-                mv.visitLineNumber(1, startLabel);
-                mv.visitFieldInsn(Opcodes.GETSTATIC, className, "runnable", typeDescription);
-                mv.visitVarInsn(Opcodes.ALOAD, 1);
+                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", runDescriptor);
+                MethodGenerator.Local attributeLocal = gen.addLocal("attribute", Attribute.class);
+                MethodGenerator.Local objectLocal = gen.addLocal("object", ObjectTag.class);
+                gen.loadStaticField(className, "runnable", typeDescription);
+                gen.loadLocal(attributeLocal);
                 if (hasObject) {
-                    mv.visitVarInsn(Opcodes.ALOAD, 2);
+                    gen.loadLocal(objectLocal);
                 }
-                mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, typePath, "run", runDescriptor, true);
-                mv.visitInsn(Opcodes.ARETURN);
-                mv.visitLocalVariable("attribute", CodeGenUtil.ATTRIBUTE_LOCAL_TYPE, null, startLabel, startLabel, 0);
-                if (hasObject) {
-                    mv.visitLocalVariable("object", CodeGenUtil.OBJECT_LOCAL_TYPE, null, startLabel, startLabel, 1);
-                }
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
+                gen.invokeInterface(typePath, "run", runDescriptor);
+                gen.returnValue(ObjectTag.class);
+                gen.end();
             }
             // ====== Compile and return ======
             cw.visitEnd();

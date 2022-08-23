@@ -7,13 +7,16 @@ import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import org.objectweb.asm.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 public class TagCodeGenerator {
 
     public static long totalGenerated = 0;
 
-    private static final int LOCAL_ATTRIBUTE = 1, LOCAL_CURRENTOBJECT = 2;
-
-    public static String FULFILL_ONE_RUN_DESCRIPTOR = "(L" + CodeGenUtil.OBJECT_TAG_PATH + ";)V";
+    public static final Method ATTRIBUTE_FULFILLONE_METHOD = ReflectionHelper.getMethod(Attribute.class, "fulfillOne", ObjectTag.class);
+    public static final Method ATTRIBUTE_TRACKLASTTAGFAILURE_METHOD = ReflectionHelper.getMethod(Attribute.class, "trackLastTagFailure");
+    public static final Field ATTRIBUTE_HADMANUALFULFILL_FIELD = ReflectionHelper.getFields(Attribute.class).get("hadManualFulfill", boolean.class);
 
     public static boolean hasStaticContext(Attribute.AttributeComponent component, TagContext genContext) {
         if (component.rawParam == null) {
@@ -41,7 +44,7 @@ public class TagCodeGenerator {
         int staticParts = canBeStatic ? 1 : 0;
         int applicableParts = 0;
         for (int i = 1; i < pieces.length; i++) {
-            ObjectTagProcessor.TagData piece = pieces[i].data;
+            ObjectTagProcessor.TagData<?,?> piece = pieces[i].data;
             if (piece == null || piece.runner == null) {
                 break;
             }
@@ -113,91 +116,62 @@ public class TagCodeGenerator {
             if (staticParseResult != null) {
                 cw.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "staticParseResult", CodeGenUtil.OBJECT_LOCAL_TYPE, null, null);
             }
-            // ====== Gen constructor ======
-            {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-                mv.visitCode();
-                Label startLabel = new Label();
-                mv.visitLabel(startLabel);
-                mv.visitLineNumber(0, startLabel);
-                mv.visitVarInsn(Opcodes.ALOAD, 0);
-                mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-                mv.visitInsn(Opcodes.RETURN);
-                mv.visitLocalVariable("this", "L" + className + ";", null, startLabel, startLabel, 0);
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
-            }
+            MethodGenerator.genDefaultConstructor(cw, className);
             // ====== Gen 'run' method ======
             {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR, null, null);
-                mv.visitCode();
+                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "run", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR);
+                MethodGenerator.Local attributeLocal = gen.addLocal("attribute", Attribute.class);
+                MethodGenerator.Local objectLocal = gen.addLocal("currentObject", ObjectTag.class);
                 Label returnLabel = new Label();
                 Label failLabel = new Label();
-                int line = 1;
-                Label startLabel = new Label();
-                mv.visitLabel(startLabel);
-                mv.visitLineNumber(line++, startLabel);
                 // Run the initial tag base
                 if (staticParseResult != null) {
-                    mv.visitFieldInsn(Opcodes.GETSTATIC, className, "staticParseResult", CodeGenUtil.OBJECT_LOCAL_TYPE);
-                    mv.visitVarInsn(Opcodes.ASTORE, LOCAL_CURRENTOBJECT);
+                    gen.loadStaticField(className, "staticParseResult", ObjectTag.class);
+                    gen.storeLocal(objectLocal);
                 }
                 else {
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, Type.getInternalName(data.tagBase.baseForm.getClass()), "staticRun", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR, false);
-                    mv.visitVarInsn(Opcodes.ASTORE, LOCAL_CURRENTOBJECT);
+                    gen.loadLocal(attributeLocal);
+                    gen.invokeStatic(Type.getInternalName(data.tagBase.baseForm.getClass()), "staticRun", TagNamer.BASE_INTERFACE_RUN_DESCRIPTOR);
+                    gen.storeLocal(objectLocal);
                     // If tag base returned null, fail
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                    mv.visitJumpInsn(Opcodes.IFNULL, failLabel);
+                    gen.loadLocal(objectLocal);
+                    gen.jumpIfNullTo(failLabel);
                     // otherwise, fulfill one
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "fulfillOne", FULFILL_ONE_RUN_DESCRIPTOR, false);
+                    gen.loadLocal(attributeLocal);
+                    gen.loadLocal(objectLocal);
+                    gen.invokeVirtual(ATTRIBUTE_FULFILLONE_METHOD);
                 }
                 for (int i = staticParseResult == null ? 1 : staticParts; i < applicableParts; i++) {
-                    ObjectTagProcessor.TagData piece = pieces[i].data;
+                    ObjectTagProcessor.TagData<?,?> piece = pieces[i].data;
                     // Run sub-tag
-                    Label methodLabel = new Label();
-                    mv.visitLabel(methodLabel);
-                    mv.visitLineNumber(line++, methodLabel);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, Type.getInternalName(piece.runner.getClass()), "staticRun", TagNamer.OBJECT_INTERFACE_RUN_DESCRIPTOR, false);
-                    mv.visitVarInsn(Opcodes.ASTORE, LOCAL_CURRENTOBJECT);
+                    gen.advanceAndLabel();
+                    gen.loadLocal(attributeLocal);
+                    gen.loadLocal(objectLocal);
+                    gen.invokeStatic(Type.getInternalName(piece.runner.getClass()), "staticRun", TagNamer.OBJECT_INTERFACE_RUN_DESCRIPTOR);
+                    gen.storeLocal(objectLocal);
                     // If null return, fail
-                    Label checkLabel1 = new Label();
-                    mv.visitLabel(checkLabel1);
-                    mv.visitLineNumber(line++, checkLabel1);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                    mv.visitJumpInsn(Opcodes.IFNULL, failLabel);
+                    gen.advanceAndLabel();
+                    gen.loadLocal(objectLocal);
+                    gen.jumpIfNullTo(failLabel);
                     // otherwise, fulfill one
-                    Label fulfillLabel = new Label();
-                    mv.visitLabel(fulfillLabel);
-                    mv.visitLineNumber(line++, fulfillLabel);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "fulfillOne", FULFILL_ONE_RUN_DESCRIPTOR, false);
+                    gen.advanceAndLabel();
+                    gen.loadLocal(attributeLocal);
+                    gen.loadLocal(objectLocal);
+                    gen.invokeVirtual(ATTRIBUTE_FULFILLONE_METHOD);
                     // If manual fulfill happened, a legacy multi-part tag handler was used, so code gen is no longer trustworthy - exit and let legacy handler run
-                    Label checkLabel2 = new Label();
-                    mv.visitLabel(checkLabel2);
-                    mv.visitLineNumber(line++, checkLabel2);
-                    mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                    mv.visitFieldInsn(Opcodes.GETFIELD, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "hadManualFulfill", "Z");
-                    mv.visitJumpInsn(Opcodes.IFNE, returnLabel);
+                    gen.advanceAndLabel();
+                    gen.loadLocal(attributeLocal);
+                    gen.loadInstanceField(ATTRIBUTE_HADMANUALFULFILL_FIELD);
+                    gen.jumpIfTrueTo(returnLabel);
                 }
-                mv.visitJumpInsn(Opcodes.GOTO, returnLabel);
-                mv.visitLabel(failLabel);
-                mv.visitLineNumber(line++, failLabel);
-                mv.visitVarInsn(Opcodes.ALOAD, LOCAL_ATTRIBUTE);
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CodeGenUtil.ATTRIBUTE_TYPE_PATH, "trackLastTagFailure", "()V", false);
-                mv.visitLabel(returnLabel);
-                mv.visitLineNumber(line, returnLabel);
-                mv.visitVarInsn(Opcodes.ALOAD, LOCAL_CURRENTOBJECT);
-                mv.visitInsn(Opcodes.ARETURN);
-                mv.visitLocalVariable("attribute", CodeGenUtil.ATTRIBUTE_LOCAL_TYPE, null, startLabel, returnLabel, LOCAL_ATTRIBUTE);
-                mv.visitLocalVariable("currentObject", CodeGenUtil.OBJECT_LOCAL_TYPE, null, startLabel, returnLabel, LOCAL_CURRENTOBJECT);
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
+                gen.jumpTo(returnLabel);
+                gen.advanceAndLabel(failLabel);
+                gen.loadLocal(attributeLocal);
+                gen.invokeVirtual(ATTRIBUTE_TRACKLASTTAGFAILURE_METHOD);
+                gen.advanceAndLabel(returnLabel);
+                gen.loadLocal(objectLocal);
+                gen.returnValue(ObjectTag.class);
+                gen.end();
             }
             // ====== Compile and return ======
             cw.visitEnd();
