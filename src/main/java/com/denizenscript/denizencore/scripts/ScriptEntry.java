@@ -559,6 +559,9 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.all_arguments = allArgs.toArray(new InternalArgument[0]);
             ArrayList<InternalArgument> argsToUse = new ArrayList<>(internal.all_arguments.length);
             for (InternalArgument arg : internal.all_arguments) {
+                if (internal.actualCommand instanceof BracedCommand && arg.fullOriginalRawValue.equals("{")) {
+                    break;
+                }
                 if (arg.shouldUse) {
                     argsToUse.add(arg);
                 }

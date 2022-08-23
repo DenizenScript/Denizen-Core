@@ -10,8 +10,8 @@ public class EnumHelper<T extends Enum> {
 
     public static HashMap<Class<? extends Enum>, EnumHelper<?>> helpers = new HashMap<>();
 
-    public static <T extends Enum> EnumHelper get(Class<T> enumClass) {
-        return helpers.computeIfAbsent(enumClass, EnumHelper::new);
+    public static <T extends Enum> EnumHelper<T> get(Class<T> enumClass) {
+        return (EnumHelper<T>) helpers.computeIfAbsent(enumClass, EnumHelper::new);
     }
 
     public static String cleanKey(String name) {

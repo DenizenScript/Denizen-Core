@@ -1,12 +1,14 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 
@@ -19,8 +21,8 @@ public class RepeatCommand extends BracedCommand {
         setSyntax("repeat [stop/next/<amount>] (from:<#>) (as:<name>) [<commands>]");
         setRequiredArguments(1, 3);
         isProcedural = true;
-        setPrefixesHandled("from", "as");
-        setBooleansHandled("stop", "next", "\0callback");
+        generateDebug = false;
+        autoCompile();
     }
 
     // <--[command]
@@ -76,30 +78,23 @@ public class RepeatCommand extends BracedCommand {
         }
     }
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (arg.matchesInteger() && !arg.hasPrefix()) {
-                scriptEntry.addObject("quantity", arg.asElement());
-            }
-            else if (arg.matches("{")) {
-                break;
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
+    public enum Action { RUN, STOP, NEXT, CALLBACK }
+
+    static {
+        EnumHelper<Action> enumHack = EnumHelper.get(Action.class);
+        enumHack.valuesMapLower.remove("callback");
+        enumHack.valuesMapLower.put("\0callback", Action.CALLBACK);
     }
 
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        boolean stop = scriptEntry.argAsBoolean("stop");
-        boolean next = scriptEntry.argAsBoolean("next");
-        boolean callback = scriptEntry.argAsBoolean("\0callback");
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgLinear @ArgName("quantity") @ArgDefaultText("-1") int quantity,
+                                   @ArgName("action") @ArgDefaultText("run") Action action,
+                                   @ArgPrefixed @ArgName("from") @ArgDefaultText("1") int from,
+                                   @ArgPrefixed @ArgName("as") @ArgDefaultText("value") String asName) {
         ScriptQueue queue = scriptEntry.getResidingQueue();
-        if (stop) {
+        if (action == Action.STOP) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), db("instruction", "stop"));
+                Debug.report(scriptEntry, "repeat", db("instruction", "stop"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -127,9 +122,9 @@ public class RepeatCommand extends BracedCommand {
             }
             return;
         }
-        else if (next) {
+        else if (action == Action.NEXT) {
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), db("instruction", "next"));
+                Debug.report(scriptEntry, "repeat", db("instruction", "next"));
             }
             boolean hasnext = false;
             for (int i = 0; i < queue.getQueueSize(); i++) {
@@ -155,7 +150,7 @@ public class RepeatCommand extends BracedCommand {
             }
             return;
         }
-        else if (callback) {
+        else if (action == Action.CALLBACK) {
             if (scriptEntry.getOwner() != null && (scriptEntry.getOwner().getCommandName().equals("REPEAT") ||
                     scriptEntry.getOwner().getBracedSet() == null || scriptEntry.getOwner().getBracedSet().isEmpty() ||
                     scriptEntry.getBracedSet().get(0).value.get(scriptEntry.getBracedSet().get(0).value.size() - 1) != scriptEntry)) {
@@ -188,29 +183,24 @@ public class RepeatCommand extends BracedCommand {
             }
         }
         else {
-            ElementTag as_name = scriptEntry.argForPrefixAsElement("as", "value");
-            ElementTag from = scriptEntry.argForPrefixAsElement("from", "1");
-            ElementTag quantity = scriptEntry.getElement("quantity");
-            if (quantity == null) {
+            if (quantity == -1) {
                 throw new InvalidArgumentsRuntimeException("Must specify a quantity or 'stop' or 'next'!");
             }
             if (scriptEntry.dbCallShouldDebug()) {
-                Debug.report(scriptEntry, getName(), from, quantity, as_name);
+                Debug.report(scriptEntry, "repeat", db("from", from), db("times", quantity), db("as_name", asName));
             }
-            int target = quantity.asInt();
-            if (target <= 0) {
+            if (quantity <= 0) {
                 if (scriptEntry.dbCallShouldDebug()) {
                     Debug.echoDebug(scriptEntry, "Zero count, not looping...");
                 }
                 return;
             }
             RepeatData datum = new RepeatData();
-            datum.index = from.asInt();
-            datum.target = datum.index + target - 1;
-            datum.valueName = as_name.asString();
+            datum.index = from;
+            datum.target = datum.index + quantity - 1;
+            datum.valueName = asName;
             scriptEntry.setData(datum);
-            ScriptEntry callbackEntry = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK"},
-                    (scriptEntry.getScript() != null ? scriptEntry.getScript().getContainer() : null));
+            ScriptEntry callbackEntry = getCallback(scriptEntry);
             List<ScriptEntry> bracedCommandsList = getBracedCommandsDirect(scriptEntry, scriptEntry);
             if (bracedCommandsList == null || bracedCommandsList.isEmpty()) {
                 Debug.echoError(scriptEntry, "Empty subsection - did you forget a ':'?");
@@ -227,5 +217,12 @@ public class RepeatCommand extends BracedCommand {
             scriptEntry.setInstant(true);
             queue.injectEntriesAtStart(bracedCommandsList);
         }
+    }
+
+    public static ScriptEntry getCallback(ScriptEntry forEntry) {
+        if (forEntry.internal.specialProcessedData == null) {
+            forEntry.internal.specialProcessedData = new ScriptEntry("REPEAT", new String[] {"\0CALLBACK"}, forEntry.getScript() != null ? forEntry.getScript().getContainer() : null);
+        }
+        return ((ScriptEntry) forEntry.internal.specialProcessedData).clone();
     }
 }
