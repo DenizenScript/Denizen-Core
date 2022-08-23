@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -54,6 +55,9 @@ public class RateLimitCommand extends AbstractCommand {
             if (arg.matchesArgumentType(DurationTag.class)
                     && !scriptEntry.hasObject("duration")
                     && arg.limitToOnlyPrefix("duration")) {
+                if (!scriptEntry.hasObject("object")) {
+                    Deprecations.outOfOrderArgs.warn(scriptEntry);
+                }
                 scriptEntry.addObject("duration", arg.asType(DurationTag.class));
             }
             else if (!scriptEntry.hasObject("object")

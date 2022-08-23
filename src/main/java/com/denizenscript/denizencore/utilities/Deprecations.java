@@ -84,6 +84,9 @@ public class Deprecations {
     // Added 2020/12/14, but deprecated unofficially earlier, bump to normal slow warning by 2023.
     public static Warning queueClear = new VerySlowWarning("queueClear", "Usage of 'queue clear' or 'queue stop' to stop the current queue is deprecated: use the 'stop' command.");
 
+    // Added 2022/08/23, bump forward rapidly to enable spread of autoExecute.
+    public static Warning outOfOrderArgs = new VerySlowWarning("outOfOrderArgs", "Command has out-of-order linear arguments. This can only be interpreted by the legacy parser, and will not be understood by the modern parser. Please make sure your command's linear arguments match the documented order.");
+
     // ==================== FUTURE deprecations ====================
 
     // Added 2021/02/04, deprecate officially by 2024.

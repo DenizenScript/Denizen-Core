@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.scripts.commands.generator.*;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -14,16 +15,15 @@ public class WaitCommand extends AbstractCommand {
 
     public WaitCommand() {
         setName("wait");
-        setSyntax("wait (<duration>) (queue:<name>) (system)");
+        setSyntax("wait (<duration>) (queue:<name>) (system/{delta})");
         setRequiredArguments(0, 3);
         isProcedural = false; // A procedure can't wait
-        setBooleansHandled("system");
-        setPrefixesHandled("queue");
+        autoCompile();
     }
 
     // <--[command]
     // @Name Wait
-    // @Syntax wait (<duration>) (queue:<name>) (system)
+    // @Syntax wait (<duration>) (queue:<name>) (system/{delta})
     // @Required 0
     // @Maximum 3
     // @Short Delays a script for a specified amount of time.
@@ -50,21 +50,6 @@ public class WaitCommand extends AbstractCommand {
     // - wait 1h system
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (arg.matchesArgumentType(DurationTag.class)
-                    && !scriptEntry.hasObject("delay")
-                    && arg.limitToOnlyPrefix("delay")) {
-                scriptEntry.addObject("delay", arg.asType(DurationTag.class));
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        scriptEntry.defaultObject("delay", new DurationTag(3));
-    }
-
     public static class SystemTimeDelayTracker implements TimedQueue.DelayTracker {
 
         public long systemTimeEnd;
@@ -79,19 +64,17 @@ public class WaitCommand extends AbstractCommand {
         }
     }
 
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        QueueTag queue = scriptEntry.argForPrefix("queue", QueueTag.class, true);
+    public enum Mode {SYSTEM, DELTA}
+
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgLinear @ArgName("delay") DurationTag delay,
+                                   @ArgName("mode") @ArgDefaultText("delta") Mode mode,
+                                   @ArgPrefixed @ArgName("queue") @ArgDefaultNull QueueTag queue) {
         if (queue == null) {
             queue = new QueueTag(scriptEntry.getResidingQueue());
         }
-        DurationTag delay = scriptEntry.getObjectTag("delay");
-        boolean system = scriptEntry.argAsBoolean("system");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), queue, delay, db("mode", system ? "system" : "delta"));
-        }
         TimedQueue.DelayTracker tracker;
-        if (system) {
+        if (mode == Mode.SYSTEM) {
             tracker = new SystemTimeDelayTracker(delay.getMillis());
         }
         else {

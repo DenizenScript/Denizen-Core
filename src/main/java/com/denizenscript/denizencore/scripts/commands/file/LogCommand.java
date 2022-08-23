@@ -1,13 +1,11 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.*;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.DebugLog;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -24,6 +22,7 @@ public class LogCommand extends AbstractCommand implements Holdable {
         setSyntax("log [<text>] (type:{info}/severe/warning/fine/finer/finest/none/clear) [file:<name>]");
         setRequiredArguments(2, 3);
         isProcedural = false;
+        autoCompile();
     }
 
     // <--[command]
@@ -84,58 +83,23 @@ public class LogCommand extends AbstractCommand implements Holdable {
 
     public enum Type {SEVERE, INFO, WARNING, FINE, FINER, FINEST, NONE, CLEAR}
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("type")
-                    && arg.matchesPrefix("type")
-                    && arg.matchesEnum(Type.class)) {
-                scriptEntry.addObject("type", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("file")
-                    && arg.matchesPrefix("file")) {
-                scriptEntry.addObject("file", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("message")) {
-                scriptEntry.addObject("message", arg.getRawElement());
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("message")) {
-            throw new InvalidArgumentsException("Must specify a message.");
-        }
-        if (!scriptEntry.hasObject("file")) {
-            throw new InvalidArgumentsException("Must specify a file.");
-        }
-        if (!scriptEntry.hasObject("type")) {
-            scriptEntry.addObject("type", new ElementTag("INFO"));
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgRaw @ArgLinear @ArgName("message") String message,
+                                   @ArgPrefixed @ArgName("file") String fileName,
+                                   @ArgPrefixed @ArgName("type") @ArgDefaultText("info") Type type) {
         if (!CoreConfiguration.allowLog) {
             Debug.echoError("Logging disabled by administrator (refer to command documentation).");
             scriptEntry.setFinished(true);
             return;
         }
-        ElementTag message = scriptEntry.getElement("message");
-        ElementTag fileName = scriptEntry.getElement("file");
-        ElementTag typeElement = scriptEntry.getElement("type");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), message, fileName, typeElement);
-        }
-        Type type = Type.valueOf(typeElement.asString().toUpperCase());
         String directory = URLDecoder.decode(System.getProperty("user.dir"));
-        File file = new File(directory, fileName.asString());
+        File file = new File(directory, fileName);
         if (!DenizenCore.implementation.canWriteToFile(file)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.setFinished(true);
             return;
         }
-        String output = message.asString();
+        String output = message;
         Runnable run = () -> {
             try {
                 file.getParentFile().mkdirs();

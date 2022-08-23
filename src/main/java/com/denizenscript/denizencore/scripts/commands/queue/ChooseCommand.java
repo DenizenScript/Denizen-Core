@@ -1,7 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgRaw;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -18,6 +19,7 @@ public class ChooseCommand extends BracedCommand {
         setSyntax("choose [<option>] [<cases>]");
         setRequiredArguments(1, 1);
         isProcedural = true;
+        autoCompile();
     }
 
     // <--[command]
@@ -72,25 +74,8 @@ public class ChooseCommand extends BracedCommand {
     //
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("choice")) {
-                scriptEntry.addObject("choice", arg.asElement());
-                break;
-            }
-            else {
-                arg.reportUnhandled();
-                break;
-            }
-        }
-        if (!scriptEntry.hasObject("choice")) {
-            throw new InvalidArgumentsException("Must have a choice!"); // Should never happen
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgRaw @ArgLinear @ArgName("choice") ElementTag choice) {
         List<BracedData> bdlist = getBracedCommands(scriptEntry, false);
         if (bdlist == null || bdlist.isEmpty()) {
             Debug.echoError(scriptEntry, "Empty sub-commands (internal)!");
@@ -124,10 +109,6 @@ public class ChooseCommand extends BracedCommand {
                 }
             }
             scriptEntry.internal.specialProcessedData = lookupTable;
-        }
-        ElementTag choice = scriptEntry.getElement("choice");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), choice);
         }
         String choice_low = choice.asLowerString();
         Integer resultIndex = lookupTable.get(choice_low);

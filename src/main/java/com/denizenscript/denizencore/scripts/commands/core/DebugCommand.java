@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.scripts.commands.generator.*;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -16,7 +16,8 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         setSyntax("debug [<type>] [<message>] (name:<name>)");
         setRequiredArguments(2, 3);
         isProcedural = true;
-        setPrefixesHandled("name");
+        generateDebug = false;
+        autoCompile();
     }
 
     // <--[command]
@@ -84,70 +85,45 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         tab.add("start", "submit", "cancel");
     }
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("type")
-                    && arg.limitToOnlyPrefix("type")
-                    && arg.matchesEnum(DebugType.class)) {
-                scriptEntry.addObject("type", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("debug")) {
-                scriptEntry.addObject("debug", arg.getRawElement());
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("type") || !scriptEntry.hasObject("debug")) {
-            throw new InvalidArgumentsException("Must specify a debug type and message!");
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        ElementTag debug = scriptEntry.getElement("debug");
-        ElementTag type = scriptEntry.getElement("type");
-        ElementTag name = scriptEntry.argForPrefixAsElement("name", "name");
-
-        // Intentionally do not DB REPORT - we're making our own debug output!
-
-        DebugType dbType = DebugType.valueOf(type.asString().toUpperCase());
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgRaw @ArgLinear @ArgName("debug") String debug,
+                                   @ArgName("type") DebugType dbType,
+                                   @ArgPrefixed @ArgName("name") @ArgDefaultText("name") String name) {
         if (dbType != DebugType.RECORD) {
             scriptEntry.setFinished(true);
         }
         switch (dbType) {
             case DEBUG:
-                Debug.echoDebug(scriptEntry, debug.asString());
+                Debug.echoDebug(scriptEntry, debug);
                 break;
             case HEADER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
                 break;
             case FOOTER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
                 break;
             case SPACER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug.asString());
+                Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
                 break;
             case LOG:
-                Debug.log(debug.asString());
+                Debug.log(debug);
                 break;
             case APPROVAL:
-                Debug.echoApproval(debug.asString());
+                Debug.echoApproval(debug);
                 break;
             case ERROR:
-                Debug.echoError(scriptEntry, debug.asString());
+                Debug.echoError(scriptEntry, debug);
                 break;
             case REPORT:
                 if (scriptEntry.dbCallShouldDebug()) {
-                    Debug.report(scriptEntry, name.asString(), debug.asString());
+                    Debug.report(scriptEntry, name, debug);
                 }
                 break;
             case EXCEPTION:
-                Debug.echoError(scriptEntry, new RuntimeException(debug.asString()));
+                Debug.echoError(scriptEntry, new RuntimeException(debug));
                 break;
             case RECORD:
-                String form = debug.asLowerString();
+                String form = CoreUtilities.toLowerCase(debug);
                 switch (form) {
                     case "start":
                         Debug.echoDebug(scriptEntry, "Starting debug recording...");

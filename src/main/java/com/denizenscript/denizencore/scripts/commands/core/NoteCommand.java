@@ -1,8 +1,5 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
-import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -10,6 +7,9 @@ import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class NoteCommand extends AbstractCommand {
@@ -18,8 +18,8 @@ public class NoteCommand extends AbstractCommand {
         setSyntax("note [<object>/remove] [as:<name>]");
         setRequiredArguments(2, 2);
         isProcedural = false;
-        addRemappedPrefixes("id", "as", "i");
-        setBooleansHandled("remove");
+        autoCompile();
+        addRemappedPrefixes("as", "id", "i");
     }
 
     // <--[command]
@@ -61,39 +61,18 @@ public class NoteCommand extends AbstractCommand {
     // - note <context.location> as:mylocation
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (ObjectFetcher.canFetch(arg.getValue().split("@")[0])
-                    && !scriptEntry.hasObject("object")
-                    && !scriptEntry.hasObject("remove")) {
-                scriptEntry.addObject("object", arg.object);
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        ObjectTag object = scriptEntry.getObjectTag("object");
-        ElementTag id = scriptEntry.requiredArgForPrefixAsElement("id");
-        boolean remove = scriptEntry.argAsBoolean("remove");
-        if (object == null && !remove) {
-            throw new InvalidArgumentsRuntimeException("Must specify an object to note.");
-        }
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), object, id, db("remove", remove));
-        }
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgLinear @ArgName("object") ObjectTag object,
+                                   @ArgPrefixed @ArgName("as") String id) {
+        boolean remove = object instanceof ElementTag && object.asElement().asLowerString().equals("remove");
         if (remove) {
-            Notable note = NoteManager.getSavedObject(id.asString());
+            Notable note = NoteManager.getSavedObject(id);
             if (note != null) {
                 note.forget();
-                Debug.echoDebug(scriptEntry, "Note '" + id.asString() + "' removed");
+                Debug.echoDebug(scriptEntry, "Note '" + id + "' removed");
             }
             else {
-                Debug.echoDebug(scriptEntry, id.asString() + " is not saved");
+                Debug.echoDebug(scriptEntry, id + " is not saved");
             }
             return;
         }
@@ -110,7 +89,7 @@ public class NoteCommand extends AbstractCommand {
             return;
         }
         try {
-            ((Notable) object).makeUnique(id.asString());
+            ((Notable) object).makeUnique(id);
         }
         catch (Throwable ex) {
             Debug.echoError("Something went wrong converting that object!");

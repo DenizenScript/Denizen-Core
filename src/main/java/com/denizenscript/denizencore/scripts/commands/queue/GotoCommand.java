@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgRaw;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -17,6 +17,7 @@ public class GotoCommand extends AbstractCommand {
         setSyntax("goto [<name>]");
         setRequiredArguments(1, 1);
         isProcedural = true;
+        autoCompile();
     }
 
     // <--[command]
@@ -46,28 +47,8 @@ public class GotoCommand extends AbstractCommand {
     // - goto potato
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            if (!scriptEntry.hasObject("m_name")) {
-                scriptEntry.addObject("m_name", arg.asElement());
-            }
-            else {
-                arg.reportUnhandled();
-            }
-        }
-        if (!scriptEntry.hasObject("m_name")) {
-            throw new InvalidArgumentsException("Must have a mark name!");
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        ElementTag mName = scriptEntry.getElement("m_name");
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), mName);
-        }
-        String markName = mName.asString();
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgRaw @ArgLinear @ArgName("mark_name") String markName) {
         boolean hasmark = false;
         for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
             ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);

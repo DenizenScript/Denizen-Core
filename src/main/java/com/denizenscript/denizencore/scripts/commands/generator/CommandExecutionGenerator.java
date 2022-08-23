@@ -53,7 +53,7 @@ public class CommandExecutionGenerator {
         public boolean required;
         public String name;
         public String defaultValue;
-        public ObjectTag defaultObject;
+        public Object defaultObject;
         public int index;
         public boolean isLinear;
         public boolean getRaw;
@@ -85,7 +85,7 @@ public class CommandExecutionGenerator {
     public static ObjectTag helperPrefixEntryArg(ScriptEntry entry, ArgData arg) {
         Argument givenArg = getArgumentFor(entry, arg);
         if (givenArg == null) {
-            return arg.defaultObject;
+            return (ObjectTag) arg.defaultObject;
         }
         ObjectTag output = givenArg.asType(arg.type);
         if (output == null) {
@@ -134,7 +134,7 @@ public class CommandExecutionGenerator {
         if (arg.required) {
             throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.name + "' argument. Did you forget an argument? Check meta docs!");
         }
-        return arg.defaultValue == null ? null : ElementTag.asEnum(arg.type, arg.defaultValue);
+        return (Enum) arg.defaultObject;
     }
 
     public static ElementTag getElementForPrefix(ScriptEntry entry, ArgData arg) {
@@ -167,9 +167,13 @@ public class CommandExecutionGenerator {
     public static Enum helperPrefixEnum(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value != null) {
-            return value.asEnum(arg.type);
+            Enum result = value.asEnum(arg.type);
+            if (result == null) {
+                throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
+            }
+            return result;
         }
-        return arg.defaultValue == null ? null : ElementTag.asEnum(arg.type, arg.defaultValue);
+        return (Enum) arg.defaultObject;
     }
 
     /** Used for generated calls. */
@@ -288,6 +292,14 @@ public class CommandExecutionGenerator {
                                     return null;
                                 }
                             }
+                            else if (Enum.class.isAssignableFrom(argData.type)) {
+                                argData.defaultObject = EnumHelper.get(argData.type).valuesMapLower.get(CoreUtilities.toLowerCase(argData.defaultValue));
+                                if (argData.defaultObject == null) {
+                                    Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
+                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + argData.type.getSimpleName() + "'");
+                                    return null;
+                                }
+                            }
                         }
                     }
                     MethodGenerator.Local argLocal = gen.addLocal("arg_" + args.size() + "_" + CodeGenUtil.cleanName(argData.name), paramType);
@@ -355,26 +367,28 @@ public class CommandExecutionGenerator {
                     args.add(argData);
                 }
                 gen.advanceAndLabel();
-                Label afterDebugLabel = new Label();
-                gen.loadLocal(scriptEntryLocal);
-                gen.invokeVirtual(SCRIPTENTRY_SHOULDDEBUG_METHOD);
-                gen.jumpIfFalseTo(afterDebugLabel);
-                gen.loadLocal(scriptEntryLocal);
-                gen.loadString(cmd.getName());
-                gen.loadInt(args.size());
-                gen.createArray(Object.class);
-                for (int i = 0; i < argLocals.size(); i++) {
-                    MethodGenerator.Local local = argLocals.get(i);
-                    gen.stackDuplicate();
-                    gen.loadInt(i);
-                    gen.loadLocal(local);
-                    gen.autoBox(local.descriptor);
-                    gen.loadStaticField(className, local.name, args.get(i).getClass());
-                    gen.invokeStatic(HELPER_DEBUG_FORMAT_METHOD);
-                    gen.arrayStore(Object.class);
+                if (cmd.generateDebug) {
+                    Label afterDebugLabel = new Label();
+                    gen.loadLocal(scriptEntryLocal);
+                    gen.invokeVirtual(SCRIPTENTRY_SHOULDDEBUG_METHOD);
+                    gen.jumpIfFalseTo(afterDebugLabel);
+                    gen.loadLocal(scriptEntryLocal);
+                    gen.loadString(cmd.getName());
+                    gen.loadInt(args.size());
+                    gen.createArray(Object.class);
+                    for (int i = 0; i < argLocals.size(); i++) {
+                        MethodGenerator.Local local = argLocals.get(i);
+                        gen.stackDuplicate();
+                        gen.loadInt(i);
+                        gen.loadLocal(local);
+                        gen.autoBox(local.descriptor);
+                        gen.loadStaticField(className, local.name, args.get(i).getClass());
+                        gen.invokeStatic(HELPER_DEBUG_FORMAT_METHOD);
+                        gen.arrayStore(Object.class);
+                    }
+                    gen.invokeStatic(DEBUG_REPORT_METHOD);
+                    gen.advanceAndLabel(afterDebugLabel);
                 }
-                gen.invokeStatic(DEBUG_REPORT_METHOD);
-                gen.advanceAndLabel(afterDebugLabel);
                 if (hasScriptEntry) {
                     gen.loadLocal(scriptEntryLocal);
                 }

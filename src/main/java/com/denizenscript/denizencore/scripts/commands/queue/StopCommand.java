@@ -1,9 +1,5 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.Argument;
-import com.denizenscript.denizencore.objects.core.QueueTag;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 
@@ -14,6 +10,7 @@ public class StopCommand extends AbstractCommand {
         setSyntax("stop");
         setRequiredArguments(0, 0);
         isProcedural = true;
+        autoCompile();
     }
 
     // <--[command]
@@ -35,18 +32,7 @@ public class StopCommand extends AbstractCommand {
     // - stop
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-        for (Argument arg : scriptEntry) {
-            arg.reportUnhandled();
-        }
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), new QueueTag(scriptEntry.getResidingQueue()));
-        }
+    public static void autoExecute(ScriptEntry scriptEntry) {
         scriptEntry.getResidingQueue().clear();
         scriptEntry.getResidingQueue().stop();
     }
