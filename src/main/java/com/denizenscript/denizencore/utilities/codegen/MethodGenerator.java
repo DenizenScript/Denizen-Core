@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.utilities.codegen;
 
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -130,6 +131,44 @@ public final class MethodGenerator {
     /** Casts the object on top of the stack to the given type. */
     public void cast(Class<?> type) {
         mv.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(type));
+    }
+
+    /** Method references for autoBox to use. */
+    public static Method METHOD_BOOLEAN_VALUEOF = ReflectionHelper.getMethod(Boolean.class, "valueOf", boolean.class),
+            METHOD_INTEGER_VALUEOF = ReflectionHelper.getMethod(Integer.class, "valueOf", int.class),
+            METHOD_LONG_VALUEOF = ReflectionHelper.getMethod(Long.class, "valueOf", long.class),
+            METHOD_FLOAT_VALUEOF = ReflectionHelper.getMethod(Float.class, "valueOf", float.class),
+            METHOD_DOUBLE_VALUEOF = ReflectionHelper.getMethod(Double.class, "valueOf", double.class),
+            METHOD_CHARACTER_VALUEOF = ReflectionHelper.getMethod(Character.class, "valueOf", char.class),
+            METHOD_BYTE_VALUEOF = ReflectionHelper.getMethod(Byte.class, "valueOf", byte.class),
+            METHOD_SHORT_VALUEOF = ReflectionHelper.getMethod(Short.class, "valueOf", short.class);
+
+    /** Helper to get the correct method reference for autoBox to use. */
+    public static Method getAutoBoxMethodFor(char c) {
+        switch (c) {
+            case 'I': return METHOD_INTEGER_VALUEOF;
+            case 'Z': return METHOD_BOOLEAN_VALUEOF;
+            case 'B': return METHOD_BYTE_VALUEOF;
+            case 'C': return METHOD_CHARACTER_VALUEOF;
+            case 'S': return METHOD_SHORT_VALUEOF;
+            case 'D': return METHOD_DOUBLE_VALUEOF;
+            case 'F': return METHOD_FLOAT_VALUEOF;
+            case 'J': return METHOD_LONG_VALUEOF;
+        }
+        return null;
+    }
+
+    /** Automatically casts a primitive to an object (if needed). */
+    public void autoBox(Class<?> type) {
+        autoBox(Type.getDescriptor(type));
+    }
+
+    /** Automatically casts a primitive to an object (if needed). */
+    public void autoBox(String typeDescriptor) {
+        Method method = getAutoBoxMethodFor(typeDescriptor.charAt(0));
+        if (method != null) {
+            invokeStatic(method);
+        }
     }
 
     /** Loads the given instance field from the object on top of the stack. */

@@ -105,7 +105,7 @@ public class TagCodeGenerator {
         }
         try {
             // ====== Gen class ======
-            String tagFullName = CodeGenUtil.TAG_NAME_PERMITTED.trimToMatches(data.rawTag.replace('.', '_'));
+            String tagFullName = CodeGenUtil.cleanName(data.rawTag.replace('.', '_'));
             if (tagFullName.length() > 50) {
                 tagFullName = tagFullName.substring(0, 50);
             }
