@@ -83,6 +83,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         public Integer[] prefixedArgMapper = null;
 
         public Boolean shouldDebugBool = null;
+
+        public int defObjects = 8;
     }
 
     public static class BooleanArg {
@@ -317,7 +319,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     public ScriptEntry clone() {
         try {
             ScriptEntry se = (ScriptEntry) super.clone();
-            se.objects = new HashMap<>(8);
+            se.objects = new HashMap<>(internal.defObjects);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
             se.updateContext();
@@ -598,6 +600,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
         internal.argumentIterator = new ArgumentIterator(this);
+        internal.defObjects = internal.actualCommand != null && internal.actualCommand.generatedExecutor != null ? 0 : 8;
     }
 
     /**
