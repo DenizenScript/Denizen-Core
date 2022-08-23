@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
+import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptHelper;
@@ -39,7 +40,7 @@ public class DenizenCore {
     /**
      * All commands known to the system are registered here.
      */
-    public static CommandRegistry commandRegistry;
+    public static CommandRegistry commandRegistry = new CommandRegistry();
 
     /**
      * Monotonic time (CoreUtilities.monotonicMillis) that the engine first loaded.
@@ -136,7 +137,11 @@ public class DenizenCore {
         Debug.log("Initializing Denizen Core v" + VERSION +
                 ", implementation for " + implementation.getImplementationName()
                 + " version " + implementation.getImplementationVersion());
+        ScriptRegistry._registerCoreTypes();
         ScriptEvent.registerCoreEvents();
+        ObjectFetcher.registerCoreObjects();
+        TagManager.registerCoreTags();
+        commandRegistry.registerCoreCommands();
     }
 
     /**

@@ -9,7 +9,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CommandRegistry {
+public class CommandRegistry {
 
     public CommandRegistry() {
     }
