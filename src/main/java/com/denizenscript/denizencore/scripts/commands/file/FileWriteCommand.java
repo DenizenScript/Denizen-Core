@@ -8,7 +8,6 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
-import com.denizenscript.denizencore.scripts.commands.generator.RequiredPrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -58,14 +57,14 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
     // -->
 
     public static void autoExecute(final ScriptEntry scriptEntry,
-                                   @ArgPrefixed @ArgName("path") final ElementTag path,
+                                   @ArgPrefixed @ArgName("path") final String path,
                                    @ArgPrefixed @ArgName("data") BinaryTag data) {
         if (!CoreConfiguration.allowFileWrite) {
             Debug.echoError(scriptEntry, "FileWrite disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);
             return;
         }
-        File file = new File(DenizenCore.implementation.getDataFolder(), path.asString());
+        File file = new File(DenizenCore.implementation.getDataFolder(), path);
         if (!DenizenCore.implementation.canWriteToFile(file)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.setFinished(true);
@@ -75,7 +74,7 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
             if (!CoreConfiguration.filePathLimit.equals("none")) {
                 File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.filePathLimit);
                 if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
-                    Debug.echoError("File path '" + path.asString() + "' is not within the config's restricted data file path.");
+                    Debug.echoError("File path '" + path + "' is not within the config's restricted data file path.");
                     scriptEntry.setFinished(true);
                     return;
                 }

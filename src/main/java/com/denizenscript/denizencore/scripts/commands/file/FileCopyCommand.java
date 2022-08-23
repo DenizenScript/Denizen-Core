@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
-import com.denizenscript.denizencore.scripts.commands.generator.RequiredPrefixedArg;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -59,8 +58,8 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
     // -->
 
     public static void autoExecute(final ScriptEntry scriptEntry,
-                                   @ArgPrefixed @ArgName("origin") final ElementTag origin,
-                                   @ArgPrefixed @ArgName("destination") final ElementTag destination,
+                                   @ArgPrefixed @ArgName("origin") final String origin,
+                                   @ArgPrefixed @ArgName("destination") final String destination,
                                    @ArgName("overwrite") final boolean overwrite) {
         if (!CoreConfiguration.allowFileCopy) {
             Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
@@ -68,10 +67,10 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
             return;
         }
-        File o = new File(DenizenCore.implementation.getDataFolder(), origin.asString());
-        File d = new File(DenizenCore.implementation.getDataFolder(), destination.asString());
+        File o = new File(DenizenCore.implementation.getDataFolder(), origin);
+        File d = new File(DenizenCore.implementation.getDataFolder(), destination);
         boolean dexists = d.exists();
-        boolean disdir = d.isDirectory() || destination.asString().endsWith("/");
+        boolean disdir = d.isDirectory() || destination.endsWith("/");
         if (!DenizenCore.implementation.canReadFile(o)) {
             Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
             scriptEntry.addObject("success", new ElementTag("false"));

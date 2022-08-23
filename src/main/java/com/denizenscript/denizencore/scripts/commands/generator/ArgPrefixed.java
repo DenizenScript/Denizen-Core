@@ -8,6 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface ArgPrefixed {
-    boolean required() default true;
     boolean throwTypeError() default true;
 }

@@ -251,14 +251,18 @@ public class ElementTag implements ObjectTag {
         return (int) asLong();
     }
 
+    public String cleanedForLong() {
+        String cleaned = percentageMatcher.trimToNonMatches(element);
+        int dot = cleaned.indexOf('.');
+        if (dot > 0) {
+            cleaned = cleaned.substring(0, dot);
+        }
+        return cleaned;
+    }
+
     public long asLong() {
         try {
-            String cleaned = percentageMatcher.trimToNonMatches(element);
-            int dot = cleaned.indexOf('.');
-            if (dot > 0) {
-                cleaned = cleaned.substring(0, dot);
-            }
-            return Long.parseLong(cleaned);
+            return Long.parseLong(cleanedForLong());
         }
         catch (NumberFormatException ex) {
             Debug.echoError("'" + element + "' is not a valid integer!");

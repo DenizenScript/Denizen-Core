@@ -1,9 +1,12 @@
 package com.denizenscript.denizencore.scripts.commands.generator;
 
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.codegen.CodeGenUtil;
 import com.denizenscript.denizencore.utilities.codegen.MethodGenerator;
@@ -29,6 +32,12 @@ public class CommandExecutionGenerator {
     public static final Method COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class);
     public static final String COMMAND_EXECUTORINTERFACE_EXECUTE_DESCRIPTOR = Type.getMethodDescriptor(COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD);
     public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEntryArg", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_STRING_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixString", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_BOOLEAN_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixBoolean", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_INTEGER_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixInteger", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_LONG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixLong", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_FLOAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixFloat", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_DOUBLE_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixDouble", ScriptEntry.class, PrefixArgData.class);
     public static final Method HELPER_BOOLEAN_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperBooleanArg", ScriptEntry.class, BooleanArgData.class);
     public static final Method HELPER_DEBUG_FORMAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperDebugFormat", Object.class, ArgData.class);
     public static final Method SCRIPTENTRY_SHOULDDEBUG_METHOD = ReflectionHelper.getMethod(ScriptEntry.class, "dbCallShouldDebug");
@@ -38,6 +47,7 @@ public class CommandExecutionGenerator {
         public Class type;
         public boolean required;
         public String prefix;
+        public String defaultValue;
     }
 
     public static class PrefixArgData extends ArgData {
@@ -47,21 +57,91 @@ public class CommandExecutionGenerator {
     public static class BooleanArgData extends ArgData {
         public BooleanArgData() {
             type = boolean.class;
-            required = false;
         }
     }
 
     /** Used for generated calls. */
     public static ObjectTag helperPrefixEntryArg(ScriptEntry entry, PrefixArgData arg) {
-        if (arg.required) {
-            return entry.requiredArgForPrefix(arg.prefix, arg.type);
+        ObjectTag result = entry.argForPrefix(arg.prefix, arg.type, arg.throwTypeError);
+        if (result == null && arg.required) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
         }
-        return entry.argForPrefix(arg.prefix, arg.type, arg.throwTypeError);
+        return result;
     }
 
     /** Used for generated calls. */
     public static boolean helperBooleanArg(ScriptEntry entry, BooleanArgData arg) {
         return entry.argAsBoolean(arg.prefix);
+    }
+
+    public static ElementTag getElementForPrefix(ScriptEntry entry, PrefixArgData arg) {
+        ElementTag value = entry.argForPrefixAsElement(arg.prefix, null);
+        if (value == null && arg.required) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+        }
+        return value;
+    }
+
+    /** Used for generated calls. */
+    public static String helperPrefixString(ScriptEntry entry, PrefixArgData arg) {
+        ElementTag value = getElementForPrefix(entry, arg);
+        if (value == null) {
+            return arg.defaultValue;
+        }
+        return value.asString();
+    }
+
+    /** Used for generated calls. */
+    public static boolean helperPrefixBoolean(ScriptEntry entry, PrefixArgData arg) {
+        ElementTag value = getElementForPrefix(entry, arg);
+        if (value == null) {
+            return arg.defaultValue != null && CoreUtilities.equalsIgnoreCase(arg.defaultValue, "true");
+        }
+        if (CoreUtilities.equalsIgnoreCase(value.asString(), "false")) {
+            return false;
+        }
+        if (CoreUtilities.equalsIgnoreCase(value.asString(), "true")) {
+            return true;
+        }
+        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
+    }
+
+    /** Used for generated calls. */
+    public static int helperPrefixInteger(ScriptEntry entry, PrefixArgData arg) {
+        return (int) helperPrefixLong(entry, arg);
+    }
+
+    /** Used for generated calls. */
+    public static long helperPrefixLong(ScriptEntry entry, PrefixArgData arg) {
+        ElementTag value = getElementForPrefix(entry, arg);
+        if (value == null) {
+            return Long.parseLong(arg.defaultValue);
+        }
+        try {
+            return Long.parseLong(value.cleanedForLong());
+        }
+        catch (NumberFormatException ex) {
+            throw new InvalidArgumentsRuntimeException("Input to integer argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify an integer number!");
+        }
+    }
+
+    /** Used for generated calls. */
+    public static float helperPrefixFloat(ScriptEntry entry, PrefixArgData arg) {
+        return (float) helperPrefixDouble(entry, arg);
+    }
+
+    /** Used for generated calls. */
+    public static double helperPrefixDouble(ScriptEntry entry, PrefixArgData arg) {
+        ElementTag value = getElementForPrefix(entry, arg);
+        if (value == null) {
+            return Double.parseDouble(arg.defaultValue);
+        }
+        try {
+            return Double.parseDouble(ElementTag.percentageMatcher.trimToNonMatches(value.asString()));
+        }
+        catch (NumberFormatException ex) {
+            throw new InvalidArgumentsRuntimeException("Input to decimal argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify a decimal number!");
+        }
     }
 
     /** Used for generated calls. */
@@ -103,6 +183,7 @@ public class CommandExecutionGenerator {
                     }
                     ArgName argName = param.getAnnotation(ArgName.class);
                     ArgPrefixed argPrefixed = param.getAnnotation(ArgPrefixed.class);
+                    ArgDefault argDefault =param.getAnnotation(ArgDefault.class);
                     LinearArg linearArg = param.getAnnotation(LinearArg.class);
                     if (argName == null) {
                         Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' which lacks a proper naming parameter.");
@@ -114,20 +195,31 @@ public class CommandExecutionGenerator {
                     ArgData argData = null;
                     if (argPrefixed != null) {
                         cmd.setPrefixesHandled(argName.value());
+                        PrefixArgData prefixArgData = new PrefixArgData();
+                        prefixArgData.throwTypeError = argPrefixed.throwTypeError();
+                        prefixArgData.type = paramType;
+                        argData = prefixArgData;
                         if (ObjectTag.class.isAssignableFrom(paramType)) {
                             argMethod = HELPER_PREFIX_ENTRY_ARG_METHOD;
                             doCast = true;
-                            PrefixArgData prefixArgData = new PrefixArgData();
-                            prefixArgData.required = argPrefixed.required();
-                            prefixArgData.throwTypeError = argPrefixed.throwTypeError();
-                            prefixArgData.type = paramType;
-                            argData = prefixArgData;
+                        }
+                        else if (paramType == String.class) {
+                            argMethod = HELPER_PREFIX_STRING_METHOD;
                         }
                         else if (paramType == boolean.class) {
-                            // TODO
+                            argMethod = HELPER_PREFIX_BOOLEAN_METHOD;
                         }
-                        else {
-                            // TODO
+                        else if (paramType == int.class) {
+                            argMethod = HELPER_PREFIX_INTEGER_METHOD;
+                        }
+                        else if (paramType == long.class) {
+                            argMethod = HELPER_PREFIX_LONG_METHOD;
+                        }
+                        else if (paramType == float.class) {
+                            argMethod = HELPER_PREFIX_FLOAT_METHOD;
+                        }
+                        else if (paramType == double.class) {
+                            argMethod = HELPER_PREFIX_DOUBLE_METHOD;
                         }
                     }
                     else if (paramType == boolean.class) {
@@ -150,6 +242,12 @@ public class CommandExecutionGenerator {
                     }
                     gen.storeLocal(argLocal);
                     argData.prefix = argName.value();
+                    if (argDefault == null) {
+                        argData.required = true;
+                    }
+                    else {
+                        argData.defaultValue = argDefault.value();
+                    }
                     argLocals.add(argLocal);
                     args.add(argData);
                 }
