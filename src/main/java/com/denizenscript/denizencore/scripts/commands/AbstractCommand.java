@@ -136,43 +136,63 @@ public abstract class AbstractCommand {
 
     public int maximumArguments = Integer.MAX_VALUE;
 
-    public HashSet<String> prefixesHandled = new HashSet<>();
+    public int prefixesThusFar = 0;
 
-    public HashSet<String> rawValuesHandled = new HashSet<>();
+    public HashMap<String, Integer> prefixesHandled = new HashMap<>();
+
+    public HashMap<String, Integer> booleansHandled = new HashMap<>();
 
     public HashMap<String, String> prefixRemapper = new HashMap<>();
 
-    public HashSet<EnumHelper> enumsHandled = new HashSet<>();
+    public HashMap<EnumHelper, Integer> enumsHandled = new HashMap<>();
+
+    public HashMap<String, Integer> enumPrefixes = new HashMap<>();
 
     public boolean allowedDynamicPrefixes = false;
 
     public boolean anyPrefixSymbolAllowed = false;
 
     public void addRemappedPrefixes(String realName, String... alts) {
-        prefixesHandled.add(realName);
-        prefixesHandled.addAll(Arrays.asList(alts));
+        Integer oldIndex = prefixesHandled.get(realName);
+        int index = oldIndex != null ? oldIndex : prefixesThusFar++;
+        prefixesHandled.put(realName, index);
+        for (String str : alts) {
+            prefixesHandled.put(str, index);
+        }
         for (String alt : alts) {
             prefixRemapper.put(alt, realName);
         }
     }
 
     public void setPrefixesHandled(String... prefixes) {
-        prefixesHandled.addAll(Arrays.asList(prefixes));
+        for (String str : prefixes) {
+            setPrefixHandled(str);
+        }
     }
 
-    public void setRawValuesHandled(String... values) {
-        rawValuesHandled.addAll(Arrays.asList(values));
+    public int setPrefixHandled(String prefixes) {
+        int index = prefixesThusFar++;
+        prefixesHandled.put(prefixes, index);
+        return index;
     }
 
     public void setBooleansHandled(String... boolNames) {
-        setPrefixesHandled(boolNames);
-        setRawValuesHandled(boolNames);
+        for (String str : boolNames) {
+            setBooleanHandled(str);
+        }
     }
 
-    public void setEnumHandled(Class<? extends Enum> enumType) {
-        EnumHelper helper = EnumHelper.get(enumType);
-        enumsHandled.add(helper);
-        rawValuesHandled.addAll(helper.valuesMapLower.keySet());
+    public int setBooleanHandled(String boolName) {
+        int index = booleansHandled.size();
+        booleansHandled.put(boolName, index);
+        return index;
+    }
+
+    public int setEnumHandled(String prefix, Class<? extends Enum> enumType) {
+        int index = enumsHandled.size();
+        enumPrefixes.put(prefix, index);
+        enumsHandled.put(EnumHelper.get(enumType), index);
+        return index;
     }
 
     public static String db(String prefix, boolean value) {

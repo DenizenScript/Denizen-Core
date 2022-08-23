@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 
 public class ReloadCommand extends AbstractCommand {
 
@@ -11,6 +10,7 @@ public class ReloadCommand extends AbstractCommand {
         setSyntax("reload");
         setRequiredArguments(0, 0);
         isProcedural = false;
+        autoCompile();
     }
 
     // <--[command]
@@ -34,8 +34,7 @@ public class ReloadCommand extends AbstractCommand {
     //
     // -->
 
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
+    public static void autoExecute() {
         DenizenCore.reloadScripts();
     }
 }

@@ -1,12 +1,14 @@
 package com.denizenscript.denizencore.scripts.commands.generator;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.codegen.CodeGenUtil;
 import com.denizenscript.denizencore.utilities.codegen.MethodGenerator;
@@ -31,16 +33,16 @@ public class CommandExecutionGenerator {
     public static final String COMMAND_EXECUTOR_INTERFACE_PATH = Type.getInternalName(CommandExecutor.class);
     public static final Method COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class);
     public static final String COMMAND_EXECUTORINTERFACE_EXECUTE_DESCRIPTOR = Type.getMethodDescriptor(COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD);
-    public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEntryArg", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEntryArg", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_BOOLEAN_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperBooleanArg", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_ENUM_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperEnumArg", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_STRING_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixString", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_BOOLEAN_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixBoolean", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_INTEGER_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixInteger", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_LONG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixLong", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_FLOAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixFloat", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_DOUBLE_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixDouble", ScriptEntry.class, PrefixArgData.class);
-    public static final Method HELPER_PREFIX_ENUM_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEnum", ScriptEntry.class, PrefixArgData.class);
+    public static final Method HELPER_PREFIX_STRING_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixString", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_BOOLEAN_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixBoolean", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_INTEGER_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixInteger", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_LONG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixLong", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_FLOAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixFloat", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_DOUBLE_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixDouble", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_ENUM_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEnum", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_DEBUG_FORMAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperDebugFormat", Object.class, ArgData.class);
     public static final Method SCRIPTENTRY_SHOULDDEBUG_METHOD = ReflectionHelper.getMethod(ScriptEntry.class, "dbCallShouldDebug");
     public static final Method DEBUG_REPORT_METHOD = ReflectionHelper.getMethod(Debug.class, "report", Debuggable.class, String.class, Object[].class);
@@ -50,49 +52,83 @@ public class CommandExecutionGenerator {
         public boolean required;
         public String prefix;
         public String defaultValue;
-    }
-
-    public static class PrefixArgData extends ArgData {
-        public boolean throwTypeError;
+        public int index;
     }
 
     /** Used for generated calls. */
-    public static ObjectTag helperPrefixEntryArg(ScriptEntry entry, PrefixArgData arg) {
-        ObjectTag result = entry.argForPrefix(arg.prefix, arg.type, arg.throwTypeError);
-        if (result == null && arg.required) {
-            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+    public static ObjectTag helperPrefixEntryArg(ScriptEntry entry, ArgData arg) {
+        Integer index = entry.internal.prefixedArgMapper[arg.index];
+        if (index == null) {
+            if (arg.required) {
+                throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+            }
+            return null;
         }
-        return result;
+        Argument givenArg = entry.argAtIndex(entry.internal.all_arguments, index);
+        ObjectTag output = givenArg.asType(arg.type);
+        if (output == null) {
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.prefix + "': '" + givenArg.getValue() + "': not a valid " + arg.type.getSimpleName());
+        }
+        return output;
     }
 
     /** Used for generated calls. */
     public static boolean helperBooleanArg(ScriptEntry entry, ArgData arg) {
-        return entry.argAsBoolean(arg.prefix);
+        ScriptEntry.BooleanArg givenArg = entry.internal.booleans[arg.index];
+        if (givenArg == null) {
+            return false;
+        }
+        if (givenArg.rawValue != null) {
+            return givenArg.rawValue;
+        }
+        Argument dynamicArg = entry.argAtIndex(entry.internal.all_arguments, givenArg.argIndex);
+        ElementTag value = dynamicArg.asElement();
+        if (CoreUtilities.equalsIgnoreCase(value.asString(), "false")) {
+            return false;
+        }
+        if (CoreUtilities.equalsIgnoreCase(value.asString(), "true")) {
+            return true;
+        }
+        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
     }
 
     /** Used for generated calls. */
     public static Enum helperEnumArg(ScriptEntry entry, ArgData arg) {
-        Enum rawVal = entry.internal.enumValsHardcoded.get(arg.type);
-        if (rawVal != null) {
-            return rawVal;
+        ScriptEntry.EnumArg givenArg = entry.internal.enumVals[arg.index];
+        if (givenArg == null) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
         }
-        ElementTag value = getElementForPrefix(entry, arg);
+        if (givenArg.rawValue != null) {
+            return givenArg.rawValue;
+        }
+        Argument dynamicArg = entry.argAtIndex(entry.internal.all_arguments, givenArg.argIndex);
+        ElementTag value = dynamicArg.asElement();
+        if (value == null && arg.required) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+        }
         if (value != null) {
-            return value.asEnum(arg.type);
+            Enum enumVal = value.asEnum(arg.type);
+            if (enumVal == null) {
+                throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.prefix + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
+            }
+            return enumVal;
         }
         return arg.defaultValue == null ? null : ElementTag.asEnum(arg.type, arg.defaultValue);
     }
 
     public static ElementTag getElementForPrefix(ScriptEntry entry, ArgData arg) {
-        ElementTag value = entry.argForPrefixAsElement(arg.prefix, null);
-        if (value == null && arg.required) {
-            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+        Integer index = entry.internal.prefixedArgMapper[arg.index];
+        if (index == null) {
+            if (arg.required) {
+                throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
+            }
+            return null;
         }
-        return value;
+        return entry.argAtIndex(entry.internal.all_arguments, index).asElement();
     }
 
     /** Used for generated calls. */
-    public static String helperPrefixString(ScriptEntry entry, PrefixArgData arg) {
+    public static String helperPrefixString(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value == null) {
             return arg.defaultValue;
@@ -101,7 +137,7 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static Enum helperPrefixEnum(ScriptEntry entry, PrefixArgData arg) {
+    public static Enum helperPrefixEnum(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value != null) {
             return value.asEnum(arg.type);
@@ -110,7 +146,7 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static boolean helperPrefixBoolean(ScriptEntry entry, PrefixArgData arg) {
+    public static boolean helperPrefixBoolean(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value == null) {
             return arg.defaultValue != null && CoreUtilities.equalsIgnoreCase(arg.defaultValue, "true");
@@ -125,12 +161,12 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static int helperPrefixInteger(ScriptEntry entry, PrefixArgData arg) {
+    public static int helperPrefixInteger(ScriptEntry entry, ArgData arg) {
         return (int) helperPrefixLong(entry, arg);
     }
 
     /** Used for generated calls. */
-    public static long helperPrefixLong(ScriptEntry entry, PrefixArgData arg) {
+    public static long helperPrefixLong(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value == null) {
             return Long.parseLong(arg.defaultValue);
@@ -144,12 +180,12 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static float helperPrefixFloat(ScriptEntry entry, PrefixArgData arg) {
+    public static float helperPrefixFloat(ScriptEntry entry, ArgData arg) {
         return (float) helperPrefixDouble(entry, arg);
     }
 
     /** Used for generated calls. */
-    public static double helperPrefixDouble(ScriptEntry entry, PrefixArgData arg) {
+    public static double helperPrefixDouble(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value == null) {
             return Double.parseDouble(arg.defaultValue);
@@ -210,12 +246,9 @@ public class CommandExecutionGenerator {
                     MethodGenerator.Local argLocal = gen.addLocal("arg_" + args.size() + "_" + CodeGenUtil.cleanName(argName.value()), paramType);
                     Method argMethod = null;
                     boolean doCast = false;
-                    ArgData argData = null;
+                    ArgData argData = new ArgData();
                     if (argPrefixed != null) {
-                        cmd.setPrefixesHandled(argName.value());
-                        PrefixArgData prefixArgData = new PrefixArgData();
-                        prefixArgData.throwTypeError = argPrefixed.throwTypeError();
-                        argData = prefixArgData;
+                        argData.index = cmd.setPrefixHandled(argName.value());
                         if (ObjectTag.class.isAssignableFrom(paramType)) {
                             argMethod = HELPER_PREFIX_ENTRY_ARG_METHOD;
                             doCast = true;
@@ -244,15 +277,14 @@ public class CommandExecutionGenerator {
                         }
                     }
                     else if (paramType == boolean.class) {
-                        cmd.setBooleansHandled(argName.value());
                         argMethod = HELPER_BOOLEAN_ARG_METHOD;
                         argData = new ArgData();
+                        argData.index = cmd.setBooleanHandled(argName.value());
                     }
                     else if (Enum.class.isAssignableFrom(paramType)) {
-                        cmd.setPrefixesHandled(argName.value());
-                        cmd.setEnumHandled((Class<? extends Enum>) paramType);
                         argMethod = HELPER_ENUM_ARG_METHOD;
                         argData = new ArgData();
+                        argData.index = cmd.setEnumHandled(argName.value(), (Class<? extends Enum>) paramType);
                         doCast = true;
                     }
                     if (linearArg != null) {

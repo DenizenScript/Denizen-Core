@@ -75,7 +75,38 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         public ArgumentIterator argumentIterator = null;
 
-        public HashMap<Class<? extends Enum>, Enum> enumValsHardcoded = new HashMap<>();
+        public EnumArg[] enumVals = null;
+
+        public BooleanArg[] booleans = null;
+
+        public Integer[] prefixedArgMapper = null;
+    }
+
+    public static class BooleanArg {
+
+        public static BooleanArg TRUE = new BooleanArg(true, 0);
+        public static BooleanArg FALSE = new BooleanArg(false, 0);
+
+        public final Boolean rawValue;
+
+        public final int argIndex;
+
+        public BooleanArg(Boolean rawValue, int argIndex) {
+            this.rawValue = rawValue;
+            this.argIndex = argIndex;
+        }
+    }
+
+    public static class EnumArg {
+
+        public final Enum rawValue;
+
+        public final int argIndex;
+
+        public EnumArg(Enum rawValue, int argIndex) {
+            this.rawValue = rawValue;
+            this.argIndex = argIndex;
+        }
     }
 
     public static class InternalArgument {
@@ -91,6 +122,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         public boolean hadColon = false;
 
         public String fullOriginalRawValue = null;
+
+        public boolean shouldUse = true;
     }
 
     public static class ArgumentIterator implements Iterator<Argument> {
@@ -140,14 +173,18 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     }
 
     public final boolean argAsBoolean(String argName) {
-        if (internal.raw_input_args.contains(argName)) {
-            return true;
-        }
-        Integer index = internal.argPrefixMap.get(argName);
+        Integer index = internal.actualCommand.booleansHandled.get(argName);
         if (index == null) {
+            throw new InvalidArgumentsRuntimeException("Invalid command '" + internal.actualCommand.getName() + "' has mishandled booleans.");
+        }
+        BooleanArg boolArg = internal.booleans[index];
+        if (boolArg == null) {
             return false;
         }
-        Argument arg = argAtIndex(internal.all_arguments, index);
+        if (boolArg.rawValue != null) {
+            return boolArg.rawValue;
+        }
+        Argument arg = argAtIndex(internal.all_arguments, boolArg.argIndex);
         return arg.asElement().asBoolean();
     }
 
@@ -409,6 +446,11 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             TagContext refContext = DenizenCore.implementation.getTagContext(this);
             ArrayList<InternalArgument> allArgs = new ArrayList<>(internal.pre_tagged_args.size());
             internal.raw_input_args = new HashSet<>();
+            if (internal.actualCommand != null) {
+                internal.booleans = new BooleanArg[internal.actualCommand.booleansHandled.size()];
+                internal.enumVals = new EnumArg[internal.actualCommand.enumsHandled.size()];
+                internal.prefixedArgMapper = new Integer[internal.actualCommand.prefixesThusFar];
+            }
             for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
                 String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
@@ -447,8 +489,16 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 if ((argVal.value.hasTag || argVal.prefix != null) && (internal.actualCommand == null || internal.actualCommand.shouldPreParse())) {
                     argVal.shouldProcess = true;
                 }
-                if (argVal.value.rawObject != null) {
-                    internal.raw_input_args.add(CoreUtilities.toLowerCase(argVal.value.rawObject.toString()));
+                if (argVal.value.rawObject != null && argVal.prefix == null && internal.actualCommand != null) {
+                    String raw = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
+                    if (!internal.raw_input_args.contains(raw)) {
+                        internal.raw_input_args.add(raw);
+                        Integer booleanIndex = internal.actualCommand.booleansHandled.get(raw);
+                        if (booleanIndex != null && internal.booleans[booleanIndex] == null) {
+                            internal.booleans[booleanIndex] = BooleanArg.TRUE;
+                            argVal.shouldUse = false;
+                        }
+                    }
                 }
                 if (argVal.prefix != null && argVal.prefix.value.rawObject != null) {
                     String prefix = CoreUtilities.toLowerCase(argVal.prefix.value.rawObject.toString());
@@ -457,15 +507,45 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                         if (altPrefix != null) {
                             prefix = altPrefix;
                         }
+                        Integer prefixIndex = internal.actualCommand.prefixesHandled.get(prefix);
+                        if (prefixIndex != null && !internal.argPrefixMap.containsKey(prefix)) {
+                            argVal.shouldUse = false;
+                            internal.prefixedArgMapper[prefixIndex] = i;
+                        }
+                        Integer enumIndex = internal.actualCommand.enumPrefixes.get(prefix);
+                        if (enumIndex != null && internal.enumVals[enumIndex] == null) {
+                            argVal.shouldUse = false;
+                            internal.enumVals[enumIndex] = new EnumArg(null, i);
+                        }
+                        Integer booleanIndex = internal.actualCommand.booleansHandled.get(prefix);
+                        if (booleanIndex != null && internal.booleans[booleanIndex] == null) {
+                            argVal.shouldUse = false;
+                            if (argVal.value.rawObject != null) {
+                                String rawText = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
+                                if (rawText.equals("true")) {
+                                    internal.booleans[booleanIndex] = BooleanArg.TRUE;
+                                }
+                                else if (rawText.equals("false")) {
+                                    internal.booleans[booleanIndex] = BooleanArg.FALSE;
+                                }
+                                else {
+                                    internal.booleans[booleanIndex] = new BooleanArg(null, i);
+                                }
+                            }
+                            else {
+                                internal.booleans[booleanIndex] = new BooleanArg(null, i);
+                            }
+                        }
                     }
                     internal.argPrefixMap.put(prefix, i);
                 }
-                if (argVal.prefix == null && !argVal.value.hasTag && internal.actualCommand != null) {
+                if (argVal.prefix == null && argVal.value.rawObject != null && internal.actualCommand != null) {
                     String raw = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
-                    for (EnumHelper<? extends Enum> enumType : internal.actualCommand.enumsHandled) {
-                        Enum val = enumType.valuesMapLower.get(raw);
-                        if (val != null) {
-                            internal.enumValsHardcoded.put(enumType.targetClass, val);
+                    for (Map.Entry<EnumHelper, Integer> enumType : internal.actualCommand.enumsHandled.entrySet()) {
+                        Enum val = (Enum) enumType.getKey().valuesMapLower.get(raw);
+                        if (val != null && internal.enumVals[enumType.getValue()] == null) {
+                            internal.enumVals[enumType.getValue()] = new EnumArg(val, 0);
+                            argVal.shouldUse = false;
                             break;
                         }
                     }
@@ -474,7 +554,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.all_arguments = allArgs.toArray(new InternalArgument[0]);
             ArrayList<InternalArgument> argsToUse = new ArrayList<>(internal.all_arguments.length);
             for (InternalArgument arg : internal.all_arguments) {
-                if (shouldUseArg(arg)) {
+                if (arg.shouldUse) {
                     argsToUse.add(arg);
                 }
             }
@@ -501,22 +581,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
         internal.argumentIterator = new ArgumentIterator(this);
-    }
-
-    public boolean shouldUseArg(InternalArgument arg) {
-        if (internal.actualCommand == null) {
-            return true;
-        }
-        if (arg.value == null) {
-            return true;
-        }
-        if (arg.prefix != null) {
-            return arg.prefix.value.rawObject == null || !internal.actualCommand.prefixesHandled.contains(CoreUtilities.toLowerCase(arg.prefix.value.rawObject.toString()));
-        }
-        if (arg.value.rawObject == null) {
-            return true;
-        }
-        return !internal.actualCommand.rawValuesHandled.contains(CoreUtilities.toLowerCase(arg.value.rawObject.toString()));
     }
 
     /**
