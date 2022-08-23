@@ -152,6 +152,8 @@ public abstract class AbstractCommand {
 
     public boolean anyPrefixSymbolAllowed = false;
 
+    public int linearHandledCount = 0;
+
     public void addRemappedPrefixes(String realName, String... alts) {
         Integer oldIndex = prefixesHandled.get(realName);
         int index = oldIndex != null ? oldIndex : prefixesThusFar++;

@@ -37,6 +37,7 @@ public class CommandExecutionGenerator {
     public static final Method HELPER_BOOLEAN_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperBooleanArg", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_ENUM_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperEnumArg", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_PREFIX_STRING_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixString", ScriptEntry.class, ArgData.class);
+    public static final Method HELPER_PREFIX_ELEMENT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixElement", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_PREFIX_BOOLEAN_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixBoolean", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_PREFIX_INTEGER_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixInteger", ScriptEntry.class, ArgData.class);
     public static final Method HELPER_PREFIX_LONG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixLong", ScriptEntry.class, ArgData.class);
@@ -50,24 +51,45 @@ public class CommandExecutionGenerator {
     public static class ArgData {
         public Class type;
         public boolean required;
-        public String prefix;
+        public String name;
         public String defaultValue;
+        public ObjectTag defaultObject;
         public int index;
+        public boolean isLinear;
+        public boolean getRaw;
+    }
+
+    public static Argument getArgumentFor(ScriptEntry entry, ArgData arg) {
+        if (arg.isLinear) {
+            if (entry.internal.arguments_to_use.length <= arg.index) {
+                if (arg.required) {
+                    throw new InvalidArgumentsRuntimeException("Must specify input to linear argument '" + arg.name + "'. Did you forget an argument? Check meta docs!");
+                }
+                return null;
+            }
+            return entry.argAtIndex(true, arg.index);
+        }
+        else {
+            Integer index = entry.internal.prefixedArgMapper[arg.index];
+            if (index == null) {
+                if (arg.required) {
+                    throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.name + "' argument. Did you forget an argument? Check meta docs!");
+                }
+                return null;
+            }
+            return entry.argAtIndex(false, index);
+        }
     }
 
     /** Used for generated calls. */
     public static ObjectTag helperPrefixEntryArg(ScriptEntry entry, ArgData arg) {
-        Integer index = entry.internal.prefixedArgMapper[arg.index];
-        if (index == null) {
-            if (arg.required) {
-                throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
-            }
-            return null;
+        Argument givenArg = getArgumentFor(entry, arg);
+        if (givenArg == null) {
+            return arg.defaultObject;
         }
-        Argument givenArg = entry.argAtIndex(entry.internal.all_arguments, index);
         ObjectTag output = givenArg.asType(arg.type);
         if (output == null) {
-            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.prefix + "': '" + givenArg.getValue() + "': not a valid " + arg.type.getSimpleName());
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + givenArg.getValue() + "': not a valid " + arg.type.getSimpleName());
         }
         return output;
     }
@@ -81,7 +103,7 @@ public class CommandExecutionGenerator {
         if (givenArg.rawValue != null) {
             return givenArg.rawValue;
         }
-        Argument dynamicArg = entry.argAtIndex(entry.internal.all_arguments, givenArg.argIndex);
+        Argument dynamicArg = entry.argAtIndex(arg.isLinear, givenArg.argIndex);
         ElementTag value = dynamicArg.asElement();
         if (CoreUtilities.equalsIgnoreCase(value.asString(), "false")) {
             return false;
@@ -89,42 +111,47 @@ public class CommandExecutionGenerator {
         if (CoreUtilities.equalsIgnoreCase(value.asString(), "true")) {
             return true;
         }
-        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
+        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.name + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
     }
 
     /** Used for generated calls. */
     public static Enum helperEnumArg(ScriptEntry entry, ArgData arg) {
         ScriptEntry.EnumArg givenArg = entry.internal.enumVals[arg.index];
-        if (givenArg == null) {
-            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
-        }
-        if (givenArg.rawValue != null) {
-            return givenArg.rawValue;
-        }
-        Argument dynamicArg = entry.argAtIndex(entry.internal.all_arguments, givenArg.argIndex);
-        ElementTag value = dynamicArg.asElement();
-        if (value == null && arg.required) {
-            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
-        }
-        if (value != null) {
-            Enum enumVal = value.asEnum(arg.type);
-            if (enumVal == null) {
-                throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.prefix + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
+        if (givenArg != null) {
+            if (givenArg.rawValue != null) {
+                return givenArg.rawValue;
             }
-            return enumVal;
+            Argument dynamicArg = entry.argAtIndex(false, givenArg.argIndex);
+            ElementTag value = dynamicArg.asElement();
+            if (value != null) {
+                Enum enumVal = value.asEnum(arg.type);
+                if (enumVal == null) {
+                    throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
+                }
+                return enumVal;
+            }
+        }
+        if (arg.required) {
+            throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.name + "' argument. Did you forget an argument? Check meta docs!");
         }
         return arg.defaultValue == null ? null : ElementTag.asEnum(arg.type, arg.defaultValue);
     }
 
     public static ElementTag getElementForPrefix(ScriptEntry entry, ArgData arg) {
-        Integer index = entry.internal.prefixedArgMapper[arg.index];
-        if (index == null) {
-            if (arg.required) {
-                throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.prefix + "' argument. Did you forget an argument? Check meta docs!");
-            }
+        Argument givenArg = getArgumentFor(entry, arg);
+        if (givenArg == null) {
             return null;
         }
-        return entry.argAtIndex(entry.internal.all_arguments, index).asElement();
+        return arg.getRaw ? givenArg.getRawElement() : givenArg.asElement();
+    }
+
+    /** Used for generated calls. */
+    public static ElementTag helperPrefixElement(ScriptEntry entry, ArgData arg) {
+        ElementTag value = getElementForPrefix(entry, arg);
+        if (value == null) {
+            return (ElementTag) arg.defaultObject;
+        }
+        return value;
     }
 
     /** Used for generated calls. */
@@ -157,7 +184,7 @@ public class CommandExecutionGenerator {
         if (CoreUtilities.equalsIgnoreCase(value.asString(), "true")) {
             return true;
         }
-        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
+        throw new InvalidArgumentsRuntimeException("Input to boolean argument '" + arg.name + "' of '" + value + "' is invalid: must specify either 'true' or 'false'!");
     }
 
     /** Used for generated calls. */
@@ -175,7 +202,7 @@ public class CommandExecutionGenerator {
             return Long.parseLong(value.cleanedForLong());
         }
         catch (NumberFormatException ex) {
-            throw new InvalidArgumentsRuntimeException("Input to integer argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify an integer number!");
+            throw new InvalidArgumentsRuntimeException("Input to integer argument '" + arg.name + "' of '" + value + "' is invalid: must specify an integer number!");
         }
     }
 
@@ -194,7 +221,7 @@ public class CommandExecutionGenerator {
             return Double.parseDouble(ElementTag.percentageMatcher.trimToNonMatches(value.asString()));
         }
         catch (NumberFormatException ex) {
-            throw new InvalidArgumentsRuntimeException("Input to decimal argument '" + arg.prefix + "' of '" + value + "' is invalid: must specify a decimal number!");
+            throw new InvalidArgumentsRuntimeException("Input to decimal argument '" + arg.name + "' of '" + value + "' is invalid: must specify a decimal number!");
         }
     }
 
@@ -203,7 +230,7 @@ public class CommandExecutionGenerator {
         if (value == null) {
             return "";
         }
-        return ArgumentHelper.debugObj(arg.prefix, value);
+        return ArgumentHelper.debugObj(arg.name, value);
     }
 
     public static CommandExecutor generateExecutorFor(Class<? extends AbstractCommand> cmdClass, AbstractCommand cmd) {
@@ -238,18 +265,46 @@ public class CommandExecutionGenerator {
                     ArgName argName = param.getAnnotation(ArgName.class);
                     ArgPrefixed argPrefixed = param.getAnnotation(ArgPrefixed.class);
                     ArgDefaultText argDefaultText = param.getAnnotation(ArgDefaultText.class);
-                    LinearArg linearArg = param.getAnnotation(LinearArg.class);
+                    ArgLinear argLinear = param.getAnnotation(ArgLinear.class);
                     if (argName == null) {
                         Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' which lacks a proper naming parameter.");
                         return null;
                     }
-                    MethodGenerator.Local argLocal = gen.addLocal("arg_" + args.size() + "_" + CodeGenUtil.cleanName(argName.value()), paramType);
+                    ArgData argData = new ArgData();
+                    argData.getRaw = param.isAnnotationPresent(ArgRaw.class);
+                    argData.type = paramType;
+                    argData.name = argName.value();
+                    if (!param.isAnnotationPresent(ArgDefaultNull.class)) {
+                        if (argDefaultText == null) {
+                            argData.required = true;
+                        }
+                        else {
+                            argData.defaultValue = argDefaultText.value();
+                            if (ObjectTag.class.isAssignableFrom(argData.type)) {
+                                argData.defaultObject = new ElementTag(argData.defaultValue).asType(argData.type, CoreUtilities.noDebugContext);
+                                if (argData.defaultObject == null) {
+                                    Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
+                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + argData.type.getSimpleName() + "'");
+                                    return null;
+                                }
+                            }
+                        }
+                    }
+                    MethodGenerator.Local argLocal = gen.addLocal("arg_" + args.size() + "_" + CodeGenUtil.cleanName(argData.name), paramType);
                     Method argMethod = null;
                     boolean doCast = false;
-                    ArgData argData = new ArgData();
-                    if (argPrefixed != null) {
-                        argData.index = cmd.setPrefixHandled(argName.value());
-                        if (ObjectTag.class.isAssignableFrom(paramType)) {
+                    if (argPrefixed != null || argLinear != null) {
+                        if (argPrefixed != null) {
+                            argData.index = cmd.setPrefixHandled(argData.name);
+                        }
+                        else {
+                            argData.index = cmd.linearHandledCount++;
+                            argData.isLinear = true;
+                        }
+                        if (paramType == ElementTag.class) {
+                            argMethod = HELPER_PREFIX_ELEMENT_METHOD;
+                        }
+                        else if (ObjectTag.class.isAssignableFrom(paramType)) {
                             argMethod = HELPER_PREFIX_ENTRY_ARG_METHOD;
                             doCast = true;
                         }
@@ -278,20 +333,15 @@ public class CommandExecutionGenerator {
                     }
                     else if (paramType == boolean.class) {
                         argMethod = HELPER_BOOLEAN_ARG_METHOD;
-                        argData = new ArgData();
-                        argData.index = cmd.setBooleanHandled(argName.value());
+                        argData.index = cmd.setBooleanHandled(argData.name);
                     }
                     else if (Enum.class.isAssignableFrom(paramType)) {
                         argMethod = HELPER_ENUM_ARG_METHOD;
-                        argData = new ArgData();
-                        argData.index = cmd.setEnumHandled(argName.value(), (Class<? extends Enum>) paramType);
+                        argData.index = cmd.setEnumHandled(argData.name, (Class<? extends Enum>) paramType);
                         doCast = true;
                     }
-                    if (linearArg != null) {
-                        // TODO
-                    }
                     if (argMethod == null) {
-                        Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argName.value() + "' of type '" + paramType.getName() + "' which is not supported.");
+                        Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name + "' of type '" + paramType.getName() + "' which is not supported.");
                         return null;
                     }
                     gen.loadLocal(scriptEntryLocal);
@@ -301,16 +351,6 @@ public class CommandExecutionGenerator {
                         gen.cast(paramType);
                     }
                     gen.storeLocal(argLocal);
-                    argData.type = paramType;
-                    argData.prefix = argName.value();
-                    if (!param.isAnnotationPresent(ArgDefaultNull.class)) {
-                        if (argDefaultText == null) {
-                            argData.required = true;
-                        }
-                        else {
-                            argData.defaultValue = argDefaultText.value();
-                        }
-                    }
                     argLocals.add(argLocal);
                     args.add(argData);
                 }

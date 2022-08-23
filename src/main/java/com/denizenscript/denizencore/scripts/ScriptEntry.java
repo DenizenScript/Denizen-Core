@@ -150,9 +150,13 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     @Override
     public ArgumentIterator iterator() {
         // NOTE: This relies strongly on the assumption of non-async execution for performance benefit.
-        internal.argumentIterator.index = 0;
+        internal.argumentIterator.index = internal.actualCommand != null ? internal.actualCommand.linearHandledCount : 0;
         internal.argumentIterator.entry = this;
         return internal.argumentIterator;
+    }
+
+    public final Argument argAtIndex(boolean isLinear, int index) {
+        return argAtIndex(isLinear ? internal.arguments_to_use : internal.all_arguments, index);
     }
 
     public final Argument argAtIndex(ScriptEntry.InternalArgument[] argSet, int index) {
