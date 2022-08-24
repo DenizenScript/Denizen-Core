@@ -67,6 +67,9 @@ public class ScriptContainer implements Debuggable {
         this.name = scriptContainerName.toUpperCase();
     }
 
+    public void postCheck() {
+    }
+
     /**
      * Whether this script container type can run script logic.
      * If this is false, this is a data-only script container.

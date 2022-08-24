@@ -42,6 +42,10 @@ public class TaskScriptContainer extends ScriptContainer {
 
     public TaskScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
+    }
+
+    @Override
+    public void postCheck() {
         // Trigger load + cache
         if (contains("script")) {
             getBaseEntries(DenizenCore.implementation.getEmptyScriptEntryData());

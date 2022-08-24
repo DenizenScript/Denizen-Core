@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
@@ -198,6 +199,9 @@ public class DenizenCore {
             Attribute.attribsLookup.clear();
             ReplaceableTagEvent.refs.clear();
             ScriptRegistry.postLoadScripts();
+            for (ScriptContainer container : ScriptRegistry.scriptContainers.values()) {
+                container.postCheck();
+            }
             OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
