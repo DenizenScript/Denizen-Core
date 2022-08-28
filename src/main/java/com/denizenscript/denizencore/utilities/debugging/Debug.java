@@ -56,7 +56,7 @@ public class Debug {
             echoError(context.script.getContainer(), addedContext, error);
         }
         else {
-            DenizenCore.implementation.debugError(addedContext, error);
+            DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugError(addedContext, error));
         }
     }
 
@@ -68,7 +68,8 @@ public class Debug {
         if (script != null) {
             addedContext = " <LR>In script '<A>" + script.getName() + "<LR>'" + (addedContext == null ? "" : addedContext);
         }
-        DenizenCore.implementation.debugError(addedContext, error);
+        final String text = addedContext;
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugError(text, error));
     }
 
     public static void echoError(ScriptEntry entry, String error) {
@@ -76,56 +77,72 @@ public class Debug {
     }
 
     public static void echoError(ScriptEntry entry, String addedContext, String error) {
-        DenizenCore.implementation.debugError(entry, addedContext, error);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugError(entry, addedContext, error));
     }
 
     public static void echoError(Throwable ex) {
-        DenizenCore.implementation.debugException(ex);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugException(ex));
     }
     public static void echoError(ScriptEntry entry, Throwable error) {
-        DenizenCore.implementation.debugError(entry, error);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugError(entry, error));
     }
 
     public static void verboseLog(String message) {
         if (CoreConfiguration.debugVerbose) {
-            DenizenCore.implementation.debugMessage(message);
+            DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugMessage(message));
         }
     }
 
     public static void log(String message) {
-        DenizenCore.implementation.debugMessage(message);
+        if (DenizenCore.isMainThread()) { // Note: 'Log' needs this check to compensate for Stack expectations in Log internals
+            DenizenCore.implementation.debugMessage(message);
+        }
+        else {
+            DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugMessage(message));
+        }
     }
 
     public static void log(String caller, String message) {
-        DenizenCore.implementation.debugMessage(caller, message);
+        if (DenizenCore.isMainThread()) { // Note: 'Log' needs this check to compensate for Stack expectations in Log internals
+            DenizenCore.implementation.debugMessage(caller, message);
+        }
+        else {
+            DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugMessage(caller, message));
+        }
     }
 
     public static void log(DebugElement element, String message) {
+        if (DenizenCore.isMainThread()) { // Note: 'Log' needs this check to compensate for Stack expectations in Log internals
+            DenizenCore.implementation.debugMessage(element, message);
+        }
+        else {
+            DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugMessage(element, message));
+        }
         DenizenCore.implementation.debugMessage(element, message);
     }
 
     public static void echoApproval(String message) {
-        DenizenCore.implementation.debugApproval(message);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugApproval(message));
     }
 
     public static void echoDebug(Debuggable entry, String message) {
-        DenizenCore.implementation.debugEntry(entry, message);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugEntry(entry, message));
     }
 
     public static void echoDebug(Debuggable entry, DebugElement element, String message) {
-        DenizenCore.implementation.debugEntry(entry, element, message);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugEntry(entry, element, message));
     }
 
     public static void echoDebug(Debuggable entry, DebugElement element) {
-        DenizenCore.implementation.debugEntry(entry, element);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugEntry(entry, element));
     }
 
     public static void report(Debuggable caller, String name, String message) {
-        DenizenCore.implementation.debugReport(caller, name, message);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugReport(caller, name, message));
     }
 
     public static void report(Debuggable caller, String name, Object... values) {
-        DenizenCore.implementation.debugReport(caller, name, values);
+        DenizenCore.runOnMainThread(() -> DenizenCore.implementation.debugReport(caller, name, values));
     }
 
     public static boolean shouldDebug(Debuggable caller) {

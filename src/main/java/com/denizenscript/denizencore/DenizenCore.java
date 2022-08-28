@@ -235,6 +235,21 @@ public class DenizenCore {
         }
     }
 
+    /** Returns true if called from the thread that DenizenCore understands to be the main thread, or false if on a different thread. */
+    public static boolean isMainThread() {
+        return Thread.currentThread().equals(MAIN_THREAD);
+    }
+
+    /** Runs the task immediately if called on main thread, or later if called off-thread. */
+    public static void runOnMainThread(Runnable run) {
+        if (isMainThread()) {
+            run.run();
+        }
+        else {
+            schedule(new OneTimeSchedulable(run, 0));
+        }
+    }
+
     /**
      * Ran by 'tick' once per second.
      */
