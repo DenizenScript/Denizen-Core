@@ -17,6 +17,8 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
+import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
@@ -135,14 +137,13 @@ public class DenizenCore {
         currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();
         DenizenCore.implementation = implementation;
         MAIN_THREAD = Thread.currentThread();
-        Debug.log("Initializing Denizen Core v" + VERSION +
-                ", implementation for " + implementation.getImplementationName()
-                + " version " + implementation.getImplementationVersion());
+        Debug.log("Initializing Denizen Core v" + VERSION + ", impl for " + implementation.getImplementationName() + " v" + implementation.getImplementationVersion());
         ScriptRegistry._registerCoreTypes();
         ScriptEvent.registerCoreEvents();
         ObjectFetcher.registerCoreObjects();
         TagManager.registerCoreTags();
         commandRegistry.registerCoreCommands();
+        DebugSubmitter.init();
     }
 
     /**
@@ -184,8 +185,8 @@ public class DenizenCore {
             ScriptHelper.reloadScripts();
         }
         catch (Exception ex) {
-            implementation.debugMessage("Error loading scripts:");
-            implementation.debugException(ex);
+            Debug.echoError("Error loading scripts:");
+            Debug.echoError(ex);
         }
     }
 
@@ -210,8 +211,8 @@ public class DenizenCore {
             ScriptsLoadedScriptEvent.instance.fire();
         }
         catch (Exception ex) {
-            implementation.debugMessage("Error loading scripts:");
-            implementation.debugException(ex);
+            Debug.echoError("Error loading scripts:");
+            Debug.echoError(ex);
         }
     }
 
@@ -237,7 +238,8 @@ public class DenizenCore {
 
     /** Returns true if called from the thread that DenizenCore understands to be the main thread, or false if on a different thread. */
     public static boolean isMainThread() {
-        return Thread.currentThread().equals(MAIN_THREAD);
+        Thread curThread = Thread.currentThread();
+        return curThread.equals(MAIN_THREAD) || (curThread.equals(TagManager.tagThread));
     }
 
     /** Runs the task immediately if called on main thread, or later if called off-thread. */
@@ -269,6 +271,7 @@ public class DenizenCore {
      * @param ms_elapsed how many MS have actually elapsed. (50 on a standard engine).
      */
     public static void tick(int ms_elapsed) {
+        DebugInternals.onTick();
         serverTimeMillis += ms_elapsed;
         currentTimeMillis = System.currentTimeMillis();
         currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();

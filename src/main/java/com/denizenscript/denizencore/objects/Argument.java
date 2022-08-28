@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public class Argument implements Cloneable {
 
@@ -314,7 +315,7 @@ public class Argument implements Cloneable {
     public <T extends ObjectTag> T asType(Class<T> clazz) {
         T arg = object.asType(clazz, scriptEntry.context);
         if (arg == null) {
-            Debug.echoError("Cannot process argument '" + object + "' as type '" + clazz.getSimpleName() + "' (conversion returned null).");
+            Debug.echoError("Cannot process argument '" + object + "' as type '" + DebugInternals.getClassNameOpti(clazz) + "' (conversion returned null).");
             return null;
         }
         arg.setPrefix(prefix);

@@ -15,6 +15,7 @@ import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -938,6 +939,19 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
                 attribute.echoError("Class not found.");
                 return null;
             }
+        });
+
+        // <--[tag]
+        // @attribute <util.stack_trace>
+        // @returns ElementTag
+        // @description
+        // Generates and shows a stack trace for the current context.
+        // This tag is strictly for internal debugging reasons.
+        // WARNING: Different Java versions generate different stack trace formats and details.
+        // WARNING: Java internally limits stack trace generation in a variety of ways. This tag cannot be relied on to output anything.
+        // -->
+        tagProcessor.registerTag(ElementTag.class, "stack_trace", (attribute, object) -> {
+            return new ElementTag(DebugInternals.getFullExceptionMessage(new RuntimeException("TRACE"), false));
         });
     }
 

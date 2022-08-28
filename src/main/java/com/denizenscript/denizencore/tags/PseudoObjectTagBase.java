@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.ObjectType;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public abstract class PseudoObjectTagBase<T extends PseudoObjectTagBase> implements ObjectTag {
 
@@ -57,7 +58,7 @@ public abstract class PseudoObjectTagBase<T extends PseudoObjectTagBase> impleme
         tagProcessor.type = (Class<T>) getClass();
         type.tagProcessor = tagProcessor;
         type.clazz = tagProcessor.type;
-        type.longName = getClass().getSimpleName();
+        type.longName = DebugInternals.getClassNameOpti(getClass());
         ObjectFetcher.objectsByClass.put(type.clazz, type);
         registerTags();
     }

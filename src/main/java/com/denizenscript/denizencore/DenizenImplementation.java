@@ -8,11 +8,8 @@ import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
-import java.util.function.Consumer;
 
 /**
  * Interface representing all the information that an implementation must provide to the engine.
@@ -29,71 +26,6 @@ public interface DenizenImplementation {
      * EG, "Gamey Game 1.0 Denizen 0.9"
      */
     String getImplementationVersion();
-
-    /**
-     * Output a debug message to console.
-     */
-    void debugMessage(String message);
-
-    /**
-     * Output a debug message to console.
-     */
-    void debugMessage(String caller, String message);
-
-    /**
-     * Output a debug message to console.
-     */
-    void debugMessage(Debug.DebugElement element, String message);
-
-    /**
-     * Output an exception to console.
-     */
-    void debugException(Throwable ex);
-
-    /**
-     * Output an error to console.
-     */
-    void debugError(String addedContext, String error);
-
-    /**
-     * Output an error to console, specific to a script queue.
-     */
-    void debugError(ScriptEntry queue, String addedContext, String error);
-
-    /**
-     * Output an error to console, specific to a script queue.
-     */
-    void debugError(ScriptEntry queue, Throwable error);
-
-    /**
-     * Output a command information report.
-     */
-    void debugReport(Debuggable caller, String name, String message);
-
-    /**
-     * Output a command information report.
-     */
-    void debugReport(Debuggable caller, String name, Object... values);
-
-    /**
-     * Output an 'Okay!' message.
-     */
-    void debugApproval(String message);
-
-    /**
-     * Outputs a message specific to a debuggable object.
-     */
-    void debugEntry(Debuggable entry, String message);
-
-    /**
-     * Outputs a message specific to a debuggable object.
-     */
-    void debugEntry(Debuggable entry, Debug.DebugElement element, String message);
-
-    /**
-     * Outputs a message specific to a debuggable object.
-     */
-    void debugEntry(Debuggable entry, Debug.DebugElement element);
 
     /**
      * Return the name of the implementation.
@@ -135,10 +67,6 @@ public interface DenizenImplementation {
 
     boolean needsHandleArgPrefix(String prefix);
 
-    boolean shouldDebug(Debuggable debug);
-
-    void debugQueueExecute(ScriptEntry entry, String queue, String execute);
-
     boolean canWriteToFile(File f);
 
     String getRandomColor();
@@ -149,19 +77,19 @@ public interface DenizenImplementation {
 
     String queueHeaderInfo(ScriptEntry entry);
 
-    void submitRecording(Consumer<String> processResult);
-
     FlaggableObject simpleWordToFlaggable(String word, ScriptEntry entry);
 
     ObjectTag getSpecialDef(String def, ScriptQueue queue);
 
     boolean setSpecialDef(String def, ScriptQueue queue, ObjectTag value);
 
-    String getTextColor();
-
-    String getEmphasisColor();
-
     void saveClassToLoader(Class<?> clazz);
 
-    boolean isSafeThread();
+    void addExtraErrorHeaders(StringBuilder headerBuilder, ScriptEntry source);
+
+    String applyDebugColors(String uncolored);
+
+    void doFinalDebugOutput(String rawText);
+
+    String stripColor(String message);
 }

@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
@@ -212,7 +213,7 @@ public class ObjectFetcher {
     }
 
     public static <T extends ObjectTag> ObjectType<T> registerWithObjectFetcher(Class<T> objectTag, ObjectTagProcessor<T> processor) {
-        String className = objectTag.getSimpleName();
+        String className = DebugInternals.getClassNameOpti(objectTag);
         String shortName = null;
         if (className.endsWith("Tag")) {
             shortName = className.substring(0, className.length() - "Tag".length());
@@ -245,7 +246,7 @@ public class ObjectFetcher {
                 newType.prefix = identifier;
             }
             else {
-                Debug.echoError("Type '" + objectTag.getSimpleName() + "' registered as an object type, but doesn't have a fetcher prefix.");
+                Debug.echoError("Type '" + DebugInternals.getClassNameOpti(objectTag) + "' registered as an object type, but doesn't have a fetcher prefix.");
             }
             newType.matches = getMatchesFor(objectTag);
             newType.valueOf = getValueOfFor(objectTag);
@@ -256,7 +257,7 @@ public class ObjectFetcher {
             }
         }
         catch (Throwable ex) {
-            Debug.echoError("Failed to initialize an object type(" + objectTag.getSimpleName() + "): ");
+            Debug.echoError("Failed to initialize an object type(" + DebugInternals.getClassNameOpti(objectTag) + "): ");
             Debug.echoError(ex);
         }
         return newType;

@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import org.objectweb.asm.*;
 
 import java.lang.reflect.Method;
@@ -19,7 +20,7 @@ public class TagNamer {
     public static final String OBJECT_INTERFACE_RUN_DESCRIPTOR = Type.getMethodDescriptor(OBJECT_INTERFACE_RUN_METHOD);
 
     public static <T extends ObjectTag, R extends ObjectTag> TagRunnable.ObjectInterface<T, R> nameTagInterface(Class<T> mainType, String tagName, TagRunnable.ObjectInterface<T, R> tag) {
-        String fullTagName = mainType.getSimpleName() + "_" + tagName;
+        String fullTagName = DebugInternals.getClassNameOpti(mainType) + "_" + tagName;
         return (TagRunnable.ObjectInterface<T, R>) nameInternal(fullTagName, tag, OBJECT_INTERFACE_PATH, OBJECT_INTERFACE_DESCRIPTOR, true, OBJECT_INTERFACE_RUN_DESCRIPTOR);
     }
 

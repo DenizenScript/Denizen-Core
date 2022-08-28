@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts;
 
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 
@@ -23,12 +24,12 @@ public class ScriptBuilder {
 
     public static List<ScriptEntry> buildScriptEntries(List<Object> contents, ScriptContainer parent, ScriptEntryData data) {
         if (contents == null || contents.isEmpty()) {
-            if (Debug.showScriptBuilder) {
+            if (CoreConfiguration.debugScriptBuilder) {
                 Debug.echoError("Building script entries... no entries to build!");
             }
             return null;
         }
-        if (Debug.showScriptBuilder) {
+        if (CoreConfiguration.debugScriptBuilder) {
             Debug.echoDebug(parent, "Building script entries:");
         }
         List<ScriptEntry> scriptCommands = new ArrayList<>(contents.size());
@@ -63,7 +64,7 @@ public class ScriptBuilder {
             try {
                 /* Build new script commands */
                 String[] args = scriptEntry.length > 1 ?  ArgumentHelper.buildArgs(scriptEntry[1]) : null;
-                if (Debug.showScriptBuilder) {
+                if (CoreConfiguration.debugScriptBuilder) {
                     Debug.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 }
                 ScriptEntry newEntry = new ScriptEntry(scriptEntry[0], args, parent, inside, lineNum);

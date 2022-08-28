@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public class Mechanism {
 
@@ -121,7 +122,7 @@ public class Mechanism {
             return true;
         }
         if (error == null) {
-            echoError("Invalid " + clazz.getSimpleName() + ". Must specify a valid name.");
+            echoError("Invalid " + DebugInternals.getClassNameOpti(clazz) + ". Must specify a valid name.");
         }
         else {
             echoError(error);
@@ -150,8 +151,7 @@ public class Mechanism {
             return true;
         }
         if (error == null) {
-            // TODO: Remove getSimpleName(), or simplify somehow.
-            echoError("Invalid " + type.getSimpleName() + " specified.");
+            echoError("Invalid " + DebugInternals.getClassNameOpti(type) + " specified.");
         }
         else {
             echoError(error);

@@ -11,6 +11,8 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagManager;
 
+import java.util.function.Consumer;
+
 public class CommandExecutor {
 
     public static ScriptQueue currentQueue;
@@ -38,7 +40,10 @@ public class CommandExecutor {
                 }
             }
         }
-        DenizenCore.implementation.debugQueueExecute(scriptEntry, scriptEntry.getResidingQueue().debugId, output.toString());
+        Consumer<String> altDebug = scriptEntry.getResidingQueue().debugOutput;
+        scriptEntry.getResidingQueue().debugOutput = null;
+        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "<LP>Queue '" + scriptEntry.getResidingQueue().debugId + "<LP>' Executing: <W>" + output);
+        scriptEntry.getResidingQueue().debugOutput = altDebug;
     }
 
     // <--[language]

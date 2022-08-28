@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
@@ -82,11 +83,9 @@ public class ArgumentHelper {
         if (start < len) {
             matchList.add(stringArgs.substring(start));
         }
-
-        if (Debug.showScriptBuilder) {
+        if (CoreConfiguration.debugScriptBuilder) {
             Debug.log("Constructed args: " + Arrays.toString(matchList.toArray()));
         }
-
         return matchList.toArray(new String[0]);
     }
 

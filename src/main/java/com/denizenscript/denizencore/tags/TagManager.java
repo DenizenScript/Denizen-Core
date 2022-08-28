@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.utilities.codegen.TagCodeGenerator;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public class TagManager {
             ObjectTag param = attribute.getParamObject();
             P result = param.asType(paramType, attribute.context);
             if (result == null) {
-                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
                 return null;
             }
             return run.run(attribute, result);
@@ -164,10 +165,13 @@ public class TagManager {
 
     public static boolean isInTag = false;
 
+    public static volatile Thread tagThread = null;
+
     public static void executeWithTimeLimit(final ReplaceableTagEvent event, int seconds) {
         ExecutorService executor = Executors.newFixedThreadPool(4);
         Future<?> future = executor.submit(() -> {
             try {
+                tagThread = Thread.currentThread();
                 DenizenCore.implementation.preTagExecute();
                 if (isInTag) {
                     fireEvent(event);
@@ -180,6 +184,7 @@ public class TagManager {
             }
             finally {
                 DenizenCore.implementation.postTagExecute();
+                tagThread = null;
             }
         });
         executor.shutdown();
@@ -214,7 +219,7 @@ public class TagManager {
         TagContext last = Debug.currentContext;
         Debug.currentContext = context;
         try {
-            if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !CoreConfiguration.tagTimeoutWhenSilent)) {
+            if (tT <= 0 || isInTag || (!Debug.shouldDebug(context) && !CoreConfiguration.tagTimeoutWhenSilent)) {
                 fireEvent(event);
             }
             else {
@@ -246,7 +251,7 @@ public class TagManager {
             if (!event.hasAlternative()) {
                 Attribute attribute = event.getAttributes();
                 if (attribute.fulfilled < attribute.attributes.length) {
-                    Debug.echoError(context, "Unfilled or unrecognized sub-tag(s) '<R>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
+                    Debug.echoError(context, "Unfilled or unrecognized sub-tag(s) '<LR>" + attribute.unfilledString() + "<W>' for tag <LG><" + attribute.origin + "<LG>><W>!");
                     if (attribute.lastValid != null) {
                         Debug.echoError(context, "The returned value from initial tag fragment '<LG>" + attribute.filledString() + "<W>' was: '<LG>" + attribute.lastValid.debuggable() + "<W>'.");
                     }

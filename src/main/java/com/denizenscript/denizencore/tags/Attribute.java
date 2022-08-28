@@ -691,7 +691,7 @@ public class Attribute {
                         sb.append("<GR>");
                         break;
                     case 2:
-                        sb.append("<R>");
+                        sb.append("<LR>");
                         break;
                     case 3:
                         sb.append("<LG>");
@@ -699,7 +699,7 @@ public class Attribute {
                 }
             }
             else {
-                sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<R>" : "<Y>"));
+                sb.append(i < fulfilled ? "<GR>" : (i == fulfilled ? "<LR>" : "<Y>"));
             }
             sb.append(attributes[i].key);
             if (contexts[i] != null) {

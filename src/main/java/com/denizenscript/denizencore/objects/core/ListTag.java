@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptCont
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -576,11 +577,11 @@ public class ListTag implements List<String>, ObjectTag {
                         results.add(object);
                     }
                     else if (showFailure) {
-                        Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + dClass.getSimpleName() + "' (conversion returned null).");
+                        Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + DebugInternals.getClassNameOpti(dClass) + "' (conversion returned null).");
                     }
                 }
                 else if (showFailure) {
-                    Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + dClass.getSimpleName() + "' (does not match expected type).");
+                    Debug.echoError("Cannot process list-entry '" + obj + "' as type '" + DebugInternals.getClassNameOpti(dClass) + "' (does not match expected type).");
                 }
             }
             catch (Exception e) {

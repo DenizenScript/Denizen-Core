@@ -18,6 +18,7 @@ import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.EnumHelper;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
@@ -236,7 +237,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             return arg.asType(clazz);
         }
         else if (throwError) {
-            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + clazz.getSimpleName());
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + prefix + "': '" + arg.getValue() + "': not a valid " + DebugInternals.getClassNameOpti(clazz));
         }
         return null;
     }
@@ -797,7 +798,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     /////////
 
     public boolean dbCallShouldDebug() {
-        return DenizenCore.implementation.shouldDebug(this);
+        return Debug.shouldDebug(this);
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.codegen.CodeGenUtil;
 import com.denizenscript.denizencore.utilities.codegen.MethodGenerator;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 import org.objectweb.asm.*;
 
@@ -89,7 +90,7 @@ public class CommandExecutionGenerator {
         }
         ObjectTag output = givenArg.asType(arg.type);
         if (output == null) {
-            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + givenArg.getValue() + "': not a valid " + arg.type.getSimpleName());
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + givenArg.getValue() + "': not a valid " + DebugInternals.getClassNameOpti(arg.type));
         }
         return output;
     }
@@ -244,7 +245,7 @@ public class CommandExecutionGenerator {
                 return null;
             }
             // ====== Gen class ======
-            String cmdCleanName = CodeGenUtil.cleanName(cmdClass.getSimpleName().replace('.', '_'));
+            String cmdCleanName = CodeGenUtil.cleanName(DebugInternals.getClassNameOpti(cmdClass).replace('.', '_'));
             if (cmdCleanName.length() > 50) {
                 cmdCleanName = cmdCleanName.substring(0, 50);
             }
@@ -288,7 +289,7 @@ public class CommandExecutionGenerator {
                                 argData.defaultObject = new ElementTag(argData.defaultValue).asType(argData.type, CoreUtilities.noDebugContext);
                                 if (argData.defaultObject == null) {
                                     Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
-                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + argData.type.getSimpleName() + "'");
+                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");
                                     return null;
                                 }
                             }
@@ -296,7 +297,7 @@ public class CommandExecutionGenerator {
                                 argData.defaultObject = EnumHelper.get(argData.type).valuesMapLower.get(CoreUtilities.toLowerCase(argData.defaultValue));
                                 if (argData.defaultObject == null) {
                                     Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
-                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + argData.type.getSimpleName() + "'");
+                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");
                                     return null;
                                 }
                             }

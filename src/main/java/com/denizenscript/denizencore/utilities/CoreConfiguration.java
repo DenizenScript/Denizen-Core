@@ -9,7 +9,9 @@ public class CoreConfiguration {
 
     public static boolean futureWarningsEnabled = false;
 
-    public static boolean debugVerbose = false, debugExtraInfo = false, debugLoadingInfo = false, debugOverride = false;
+    public static boolean debugVerbose = false, debugExtraInfo = false, debugLoadingInfo = false, debugOverride = false, debugStackTraces = true, debugScriptBuilder = false, debugShowSources = false, debugShouldTrim = true, debugRecordingAllowed = false;
+
+    public static int debugLimitPerTick = 5000, debugTrimLength = 1024, debugLineLength = 300;
 
     public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowLog = false, allowFileCopy = false, allowWebserver = false, allowFileRead = false, allowFileWrite = false;
 
@@ -40,4 +42,6 @@ public class CoreConfiguration {
     public static boolean allowReflectionFieldReads = false, allowReflectedCoreMethods = false, allowReflectionSet = false, allowReflectionSetPrivate = false, allowReflectionSetFinal = false;
 
     public static boolean shouldShowDebug = true, shouldRecordDebug = false;
+
+    public static String debugPrefix = "";
 }

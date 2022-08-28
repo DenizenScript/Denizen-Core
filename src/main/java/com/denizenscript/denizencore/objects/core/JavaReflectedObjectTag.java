@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -159,7 +160,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // Returns the simple/short class name of the reflected object, such as "JavaReflectedObjectTag".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "simple_class_name", (attribute, object) -> {
-            return new ElementTag(object.object.getClass().getSimpleName());
+            return new ElementTag(DebugInternals.getClassNameOpti(object.object.getClass()));
         });
 
         // <--[tag]

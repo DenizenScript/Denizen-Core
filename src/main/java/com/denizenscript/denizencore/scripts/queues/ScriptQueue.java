@@ -21,7 +21,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     protected static long total_queues = 0;
 
     public static String getStats() {
-        String c1 = DenizenCore.implementation.getTextColor(), c2 = DenizenCore.implementation.getEmphasisColor();
+        String c1 = DenizenCore.implementation.applyDebugColors("<W>"), c2 = DenizenCore.implementation.applyDebugColors("<A>");
         StringBuilder stats = new StringBuilder();
         TreeSet<Map.Entry<Long, String>> statsSet = new TreeSet<>(Comparator.comparingLong(Map.Entry::getKey));
         for (ScriptEvent event : ScriptEvent.events) {
@@ -324,7 +324,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (script_entries.isEmpty()) {
             return;
         }
-        if (CoreConfiguration.verifyThreadMatches && !DenizenCore.implementation.isSafeThread()) {
+        if (CoreConfiguration.verifyThreadMatches && !DenizenCore.isMainThread()) {
             try {
                 throw new RuntimeException("Invalid thread access - starting queue from thread " + Thread.currentThread());
             }
@@ -391,7 +391,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             return;
         }
         is_stopping = true;
-        if (CoreConfiguration.verifyThreadMatches && !DenizenCore.implementation.isSafeThread()) {
+        if (CoreConfiguration.verifyThreadMatches && !DenizenCore.isMainThread()) {
             try {
                 throw new RuntimeException("Invalid thread access - stopping queue from thread " + Thread.currentThread());
             }
@@ -459,7 +459,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public final boolean queueNeedsToDebug() {
-        return DenizenCore.implementation.shouldDebug(this);
+        return Debug.shouldDebug(this);
     }
 
     @Override

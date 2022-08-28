@@ -20,6 +20,7 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
@@ -81,7 +82,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public static List<String> notNameParts = new ArrayList<>(Collections.singleton("ScriptEvent"));
 
     public static void registerScriptEvent(ScriptEvent event) {
-        String name = event.getClass().getSimpleName();
+        String name = DebugInternals.getClassNameOpti(event.getClass());
         for (String suffix : notNameParts) {
             if (name.endsWith(suffix)) {
                 name = name.substring(0, name.length() - suffix.length());
@@ -392,7 +393,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     private static void loadSinglePath(StringHolder evt1, ScriptContainer container) {
         if (CoreUtilities.contains(evt1.str, '@')) {
-            Debug.echoError("Script '<Y>" + container.getName() + "<W>' has event '<Y>" + evt1.str.replace("@", "<R>@<Y>")
+            Debug.echoError("Script '<Y>" + container.getName() + "<W>' has event '<Y>" + evt1.str.replace("@", "<LR>@<Y>")
                     + "<W>' which contains object notation, which is deprecated for use in world events. Please remove it.");
         }
         String evt;

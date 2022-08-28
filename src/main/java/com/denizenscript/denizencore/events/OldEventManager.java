@@ -85,10 +85,6 @@ public class OldEventManager {
         List<String> event = new ArrayList<>(original);
         List<String> parsed = new ArrayList<>();
 
-        if (Debug.showEventsTrimming) {
-            Debug.echoApproval("Trimming world events '" + event + '\'');
-        }
-
         // Remove any duplicate event names
         for (int i = 0; i < event.size(); i++) {
             for (int x = 0; x < event.size(); x++) {

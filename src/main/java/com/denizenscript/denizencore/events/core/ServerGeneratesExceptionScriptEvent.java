@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
 
@@ -58,7 +59,7 @@ public class ServerGeneratesExceptionScriptEvent extends ScriptEvent {
         switch (name) {
             case "message": return new ElementTag(exception.getMessage());
             case "full_trace": return new ElementTag(fullTrace);
-            case "type": return new ElementTag(exception.getClass().getSimpleName());
+            case "type": return new ElementTag(DebugInternals.getClassNameOpti(exception.getClass()));
             case "queue":
                 if (queue != null) {
                     return new QueueTag(queue);

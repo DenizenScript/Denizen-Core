@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -49,7 +50,7 @@ public class YamlConfiguration {
             config.contents = (Map<StringHolder, Object>) obj;
         }
         else {
-            Debug.echoError("Invalid YAML object type: " + obj + " is " + obj.getClass().getSimpleName());
+            Debug.echoError("Invalid YAML object type: " + obj + " is " + DebugInternals.getClassNameOpti(obj.getClass()));
             return null;
         }
         switchKeys(config.contents);

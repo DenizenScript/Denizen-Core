@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.lang.invoke.*;
@@ -71,7 +72,7 @@ public class PropertyParser {
             ObjectTag param = attribute.getParamObject();
             P result = param.asType(paramType, attribute.context);
             if (result == null) {
-                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
                 return null;
             }
             return runnable.run(attribute, prop, result);
@@ -94,7 +95,7 @@ public class PropertyParser {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
-                    attribute.echoError("Property '" + propType.getSimpleName() + "' does not describe the input object.");
+                    attribute.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object.");
                 }
                 return null;
             }
@@ -134,7 +135,7 @@ public class PropertyParser {
         }
         propInfo.allProperties.add(getter);
         if (tags != null) {
-            String propName = property.getSimpleName();
+            String propName = DebugInternals.getClassNameOpti(property);
             for (String tag : tags) {
                 propInfo.propertiesByTag.put(tag, getter);
                 propInfo.propertyNamesByTag.put(tag, propName);
@@ -163,7 +164,7 @@ public class PropertyParser {
             return (String[]) f.get(null);
         }
         catch (IllegalAccessException e) {
-            Debug.echoError("Invalid property field '" + fieldName + "' for property class '" + property.getSimpleName() + "': field is not a String[]: " + e.getMessage() + "!");
+            Debug.echoError("Invalid property field '" + fieldName + "' for property class '" + DebugInternals.getClassNameOpti(property) + "': field is not a String[]: " + e.getMessage() + "!");
         }
         catch (NoSuchFieldException e) {
             // Ignore this exception.
@@ -187,7 +188,7 @@ public class PropertyParser {
             registerProperty(property, object, getter);
         }
         catch (Throwable e) {
-            Debug.echoError("Unable to register property '" + property.getSimpleName() + "'!");
+            Debug.echoError("Unable to register property '" + DebugInternals.getClassNameOpti(property) + "'!");
             Debug.echoError(e);
         }
     }

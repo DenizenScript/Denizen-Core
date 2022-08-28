@@ -17,6 +17,7 @@ import com.denizenscript.denizencore.utilities.ReflectionRefuse;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -413,7 +414,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             ObjectTag param = attribute.getParamObject();
             P result = param.asType(paramType, attribute.context);
             if (result == null) {
-                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + paramType.getSimpleName() + "<W>' but received input '<R>" + param + "<W>'.");
+                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
                 return null;
             }
             return runnable.run(attribute, obj, result);
