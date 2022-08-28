@@ -1059,8 +1059,8 @@ public class ElementTag implements ObjectTag {
         // Returns whether both the element and the second element are true.
         // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "and", (attribute, object, compare) -> {
-            return new ElementTag(object.element.equalsIgnoreCase("true") && compare.asString().equalsIgnoreCase("true"));
+        tagProcessor.registerStaticTag(ElementTag.class, "and", (attribute, object) -> { // Intentional don't register param to allow short-circuit-eval
+            return new ElementTag(object.asBoolean() && attribute.getParamElement().asBoolean());
         });
 
         // <--[tag]
@@ -1071,8 +1071,8 @@ public class ElementTag implements ObjectTag {
         // Returns whether either the element or the second element are true.
         // You should never ever use this tag inside any 'if', 'while', etc. command.
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "or", (attribute, object, compare) -> {
-            return new ElementTag(object.element.equalsIgnoreCase("true") || compare.asString().equalsIgnoreCase("true"));
+        tagProcessor.registerStaticTag(ElementTag.class, "or", (attribute, object) -> { // Intentional don't register param to allow short-circuit-eval
+            return new ElementTag(object.asBoolean() || attribute.getParamElement().asBoolean());
         });
 
         // <--[tag]
