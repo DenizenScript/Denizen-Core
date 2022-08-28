@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.tags;
 
+import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.ObjectType;
@@ -40,7 +41,9 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
     }
 
-    public HashMap<String, TagData<? extends ObjectTag, ? extends ObjectTag>> registeredObjectTags = new HashMap<>();
+    public HashMap<String, TagData<T, ? extends ObjectTag>> registeredObjectTags = new HashMap<>();
+
+    public HashMap<String, MechanismData<T>> registeredMechanisms = new HashMap<>();
 
     @FunctionalInterface
     public interface CustomMatcher<T extends ObjectTag> {
@@ -173,5 +176,50 @@ public class ObjectTagProcessor<T extends ObjectTag> {
             return returned;
         }
         return object.getNextObjectTypeDown().getObjectAttribute(attribute);
+    }
+
+    public static class MechanismData<T extends ObjectTag> {
+
+        public String name;
+
+        public Mechanism.GenericMechRunnerInterface<T> runner;
+
+        public boolean allowProperty;
+    }
+
+    public final void processMechanism(T object, Mechanism mechanism) {
+        MechanismData<T> mechData = registeredMechanisms.get(mechanism.getName());
+        if (mechData == null) {
+            return;
+        }
+        mechanism.fulfill();
+        if (mechanism.isProperty && !mechData.allowProperty) {
+            mechanism.echoError("Error: mechanism '" + mechData.name + "' may not be used as property input.");
+            return;
+        }
+        mechData.runner.run(object, mechanism);
+    }
+
+    public void registerMechanism(String name, boolean allowProperty, Mechanism.GenericMechRunnerInterface<T> runner) {
+        MechanismData<T> data = new MechanismData<>();
+        data.allowProperty = allowProperty;
+        data.name = name;
+        data.runner = runner;
+        registeredMechanisms.put(name, data);
+    }
+
+    public <P extends ObjectTag> void registerMechanism(String name, boolean allowProperty, Class<P> paramType, Mechanism.ObjectInputMechRunnerInterface<T, P> runner) {
+        registerMechanism(name, allowProperty, (object, mechanism) -> {
+            if (mechanism.value == null) {
+                mechanism.echoError("Error: mechanism '" + name + "' must have input of type '" + DebugInternals.getClassNameOpti(paramType) + "', but none was given.");
+                return;
+            }
+            P input = mechanism.value.asType(paramType, mechanism.context);
+            if (input == null) {
+                mechanism.echoError("Error: mechanism '" + name + "' must have input of type '" + DebugInternals.getClassNameOpti(paramType) + "', but value '" + mechanism.value + "' cannot be converted to the required type.");
+                return;
+            }
+            runner.run(object, mechanism, input);
+        });
     }
 }

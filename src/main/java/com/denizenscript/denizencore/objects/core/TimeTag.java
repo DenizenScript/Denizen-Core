@@ -746,6 +746,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
 
     @Override
     public void adjust(Mechanism mechanism) {
+        tagProcessor.processMechanism(this, mechanism);
         CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }

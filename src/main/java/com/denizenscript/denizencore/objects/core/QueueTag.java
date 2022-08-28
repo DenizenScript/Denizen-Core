@@ -379,6 +379,7 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     @Override
     public void adjust(Mechanism mechanism) {
         ensure();
+        tagProcessor.processMechanism(this, mechanism);
         CoreUtilities.autoPropertyMechanism(this, mechanism);
     }
 }

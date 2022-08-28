@@ -8,6 +8,16 @@ import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public class Mechanism {
 
+    @FunctionalInterface
+    public interface GenericMechRunnerInterface<T extends ObjectTag> {
+        void run(T object, Mechanism mechanism);
+    }
+
+    @FunctionalInterface
+    public interface ObjectInputMechRunnerInterface<T extends ObjectTag, P extends ObjectTag> {
+        void run(T object, Mechanism mechanism, P param);
+    }
+
     private boolean fulfilled;
     private String raw_mechanism;
     public ObjectTag value;
