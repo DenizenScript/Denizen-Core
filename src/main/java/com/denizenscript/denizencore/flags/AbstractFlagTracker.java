@@ -121,9 +121,6 @@ public abstract class AbstractFlagTracker {
             }
             return tracker.doFlagMapTag(attribute);
         });
-    }
-
-    public static void tryFlagAdjusts(FlaggableObject object, Mechanism mechanism) {
 
         // <--[mechanism]
         // @object FlaggableObject
@@ -135,9 +132,9 @@ public abstract class AbstractFlagTracker {
         // This is an internal/special case mechanism, and should be avoided where possible.
         // Does not function on all flaggable objects, particularly those that just store their flags into other objects.
         // -->
-        if (mechanism.matches("clean_flags")) {
+        processor.registerMechanism("clean_flags", false, (object, mechanism) -> {
             object.getFlagTracker().doTotalClean();
-        }
+        });
     }
 
     public ElementTag doHasFlagTag(Attribute attribute) {

@@ -190,6 +190,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     public final void processMechanism(T object, Mechanism mechanism) {
         MechanismData<T> mechData = registeredMechanisms.get(mechanism.getName());
         if (mechData == null) {
+            CoreUtilities.autoPropertyMechanism(object, mechanism);
             return;
         }
         mechanism.fulfill();

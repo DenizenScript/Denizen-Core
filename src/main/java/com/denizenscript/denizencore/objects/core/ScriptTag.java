@@ -452,10 +452,8 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     @Override
     public void adjust(Mechanism mechanism) {
 
-        // TODO: enable/disable
+        // TODO: enable/disable mechs?
 
-        if (!mechanism.fulfilled()) {
-            mechanism.reportInvalid();
-        }
+        tagProcessor.processMechanism(this, mechanism);
     }
 }
