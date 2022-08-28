@@ -211,16 +211,23 @@ public class TagManager {
         if (CoreConfiguration.debugVerbose) {
             Debug.log("Tag read: " + event.raw_tag + ", " + tT + "...");
         }
-        if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !CoreConfiguration.tagTimeoutWhenSilent)) {
-            fireEvent(event);
+        TagContext last = Debug.currentContext;
+        Debug.currentContext = context;
+        try {
+            if (tT <= 0 || isInTag || (!DenizenCore.implementation.shouldDebug(context) && !CoreConfiguration.tagTimeoutWhenSilent)) {
+                fireEvent(event);
+            }
+            else {
+                executeWithTimeLimit(event, tT);
+            }
+            if (!event.replaced() && event.hasAlternative()) {
+                event.setReplacedObject(event.getAlternative());
+            }
+            return event.getReplacedObj();
         }
-        else {
-            executeWithTimeLimit(event, tT);
+        finally {
+            Debug.currentContext = last;
         }
-        if (!event.replaced() && event.hasAlternative()) {
-            event.setReplacedObject(event.getAlternative());
-        }
-        return event.getReplacedObj();
     }
 
     public static ObjectTag readSingleTagObject(TagContext context, ReplaceableTagEvent event) {

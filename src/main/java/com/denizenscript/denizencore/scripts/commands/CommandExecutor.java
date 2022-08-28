@@ -93,8 +93,10 @@ public class CommandExecutor {
             return false;
         }
         String saveName = null;
+        TagContext lastContext = Debug.currentContext;
         try {
             TagContext context = scriptEntry.getContext();
+            Debug.currentContext = context;
             for (Argument arg : scriptEntry.internal.preprocArgs) {
                 if (DenizenCore.implementation.handleCustomArgs(scriptEntry, arg, false)) {
                     // Do nothing
@@ -154,6 +156,9 @@ public class CommandExecutor {
             scriptEntry.setFinished(true);
             currentQueue = null;
             return false;
+        }
+        finally {
+            Debug.currentContext = lastContext;
         }
     }
 }

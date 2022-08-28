@@ -14,6 +14,8 @@ public class Debug {
 
     public static StringBuilder debugRecording = new StringBuilder();
 
+    public static TagContext currentContext = null;
+
     public static void startRecording() {
         CoreConfiguration.shouldRecordDebug = true;
         debugRecording = new StringBuilder();
@@ -39,7 +41,7 @@ public class Debug {
     }
 
     public static void echoError(String error) {
-        DenizenCore.implementation.debugError((String) null, error);
+        echoError(currentContext, error);
     }
 
     public static void echoError(TagContext context, String error) {
