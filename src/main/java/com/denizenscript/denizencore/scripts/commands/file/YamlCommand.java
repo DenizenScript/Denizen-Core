@@ -11,6 +11,9 @@ import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.data.ActionableDataProvider;
+import com.denizenscript.denizencore.utilities.data.DataAction;
+import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
@@ -219,89 +222,9 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             // Check for key:value/action
             else if (isSet &&
-                    !scriptEntry.hasObject("value")) {
-                if (!arg.canBeElement) {
-                    scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                    scriptEntry.addObject("key", new ElementTag(arg.prefix));
-                    scriptEntry.addObject("value", arg.object);
-                }
-                else {
-                    int split = arg.getRawValue().split(":", 3).length;
-                    if (split == 2) {
-                        String[] flagArgs = arg.getRawValue().split(":", 2);
-                        scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
-
-                        switch (flagArgs[1]) {
-                            case "++":
-                            case "+":
-                                scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                                scriptEntry.addObject("value", new ElementTag(1));
-                                break;
-                            case "--":
-                            case "-":
-                                scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                                scriptEntry.addObject("value", new ElementTag(1));
-                                break;
-                            case "!":
-                                scriptEntry.addObject("yaml_action", YAML_Action.DELETE);
-                                scriptEntry.addObject("value", new ElementTag(false));
-                                break;
-                            case "<-":
-                                scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                                scriptEntry.addObject("value", new ElementTag(false));
-                                break;
-                            default:
-                                // No ACTION, we're just setting a value...
-                                scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                                scriptEntry.addObject("value", new ElementTag(flagArgs[1]));
-                                break;
-                        }
-                    }
-                    else if (split == 3) {
-                        String[] flagArgs = arg.getRawValue().split(":", 3);
-                        scriptEntry.addObject("key", new ElementTag(flagArgs[0]));
-
-                        switch (flagArgs[1]) {
-                            case "->":
-                                scriptEntry.addObject("yaml_action", YAML_Action.INSERT);
-                                break;
-                            case "<-":
-                                scriptEntry.addObject("yaml_action", YAML_Action.REMOVE);
-                                break;
-                            case "||":
-                            case "|":
-                                scriptEntry.addObject("yaml_action", YAML_Action.SPLIT);
-                                break;
-                            case "!|":
-                                scriptEntry.addObject("yaml_action", YAML_Action.SPLIT_NEW);
-                                break;
-                            case "++":
-                            case "+":
-                                scriptEntry.addObject("yaml_action", YAML_Action.INCREASE);
-                                break;
-                            case "--":
-                            case "-":
-                                scriptEntry.addObject("yaml_action", YAML_Action.DECREASE);
-                                break;
-                            case "**":
-                            case "*":
-                                scriptEntry.addObject("yaml_action", YAML_Action.MULTIPLY);
-                                break;
-                            case "//":
-                            case "/":
-                                scriptEntry.addObject("yaml_action", YAML_Action.DIVIDE);
-                                break;
-                            default:
-                                scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
-                                scriptEntry.addObject("value", new ElementTag(arg.getRawValue().split(":", 2)[1]));
-                                continue;
-                        }
-                        scriptEntry.addObject("value", new ElementTag(flagArgs[2]));
-                    }
-                    else {
-                        arg.reportUnhandled();
-                    }
-                }
+                    !scriptEntry.hasObject("data_action")) {
+                scriptEntry.addObject("yaml_action", YAML_Action.SET_VALUE);
+                scriptEntry.addObject("data_action", DataActionHelper.parse(new YamlActionProvider(), arg, scriptEntry.context));
             }
             else if (isCopyKey && !scriptEntry.hasObject("value")) {
                 scriptEntry.addObject("value", arg.asElement());
@@ -332,9 +255,10 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         ElementTag toId = scriptEntry.getElement("to_id");
         ElementTag dataType = scriptEntry.getElement("data_type");
         ElementTag rawFormat = scriptEntry.getElement("raw_format");
+        DataAction dataAction = (DataAction) scriptEntry.getObject("data_action");
         YamlConfiguration yamlConfiguration;
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat, (yaml_action != null ? db("yaml_action", yaml_action.name()) : null));
+            Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat, (yaml_action != null ? db("yaml_action", yaml_action.name()) : null), dataAction);
         }
         // Do action
         Action action = Action.valueOf(actionElement.asString().toUpperCase());
@@ -486,34 +410,36 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             }
             case SET:
                 if (yamlDocuments.containsKey(id)) {
-                    if (yaml_action == null || key == null || value == null) {
-                        Debug.echoError("Must specify a YAML action, key, and value!");
+                    if (dataAction == null) {
+                        Debug.echoError("Must specify a data action to associate with SET action.");
                         return;
                     }
                     YamlConfiguration yaml = yamlDocuments.get(id);
 
-                    int index = -1;
-                    if (key.asString().contains("[")) {
-                        try {
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoDebug(scriptEntry, "Try index: " + key.asString().split("\\[")[1].replace("]", ""));
-                            }
-                            index = Integer.parseInt(key.asString().split("\\[")[1].replace("]", "")) - 1;
-                        }
-                        catch (Exception e) {
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
-                            index = -1;
-                        }
-                        key = new ElementTag(key.asString().split("\\[")[0]);
-                    }
+                    int index = dataAction.index - 1;
 
-                    String keyStr = key.asString();
-                    String valueStr = yaml_action == YAML_Action.SET_VALUE ? null : value.identify();
+                    String keyStr = dataAction.key;
+                    value = dataAction.inputValue;
+                    String valueStr = value == null ? null : value.toString();
 
-                    switch (yaml_action) {
-                        case INCREASE: {
+                    switch (dataAction.type) {
+                        case INCREMENT: {
+                            String originalVal = Get(yaml, index, keyStr, "0");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) + 1), dataType);
+                            break;
+                        }
+                        case DECREMENT: {
+                            String originalVal = Get(yaml, index, keyStr, "0");
+                            if (!ArgumentHelper.matchesDouble(originalVal)) {
+                                originalVal = "0";
+                            }
+                            Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) - 1), dataType);
+                            break;
+                        }
+                        case ADD: {
                             String originalVal = Get(yaml, index, keyStr, "0");
                             if (!ArgumentHelper.matchesDouble(originalVal)) {
                                 originalVal = "0";
@@ -525,7 +451,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) + Double.parseDouble(valueStr)), dataType);
                             break;
                         }
-                        case DECREASE: {
+                        case SUBTRACT: {
                             String originalVal = Get(yaml, index, keyStr, "0");
                             if (!ArgumentHelper.matchesDouble(originalVal)) {
                                 originalVal = "0";
@@ -561,10 +487,13 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             Set(yaml, index, keyStr, CoreUtilities.doubleToString(Double.parseDouble(originalVal) / Double.parseDouble(valueStr)), dataType);
                             break;
                         }
-                        case DELETE:
+                        case CLEAR:
                             yaml.set(keyStr, null);
                             break;
-                        case SET_VALUE:
+                        case AUTO_SET:
+                            Set(yaml, index, keyStr, new ElementTag(true), dataType);
+                            break;
+                        case SET:
                             Set(yaml, index, keyStr, value, dataType);
                             break;
                         case INSERT: {
@@ -666,6 +595,19 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             newSection.set(key.str, deepCopyObject(obj));
         }
         return newSection;
+    }
+
+    public static class YamlActionProvider extends ActionableDataProvider {
+
+        @Override
+        public ObjectTag getValueAt(String keyName) {
+            throw new RuntimeException("Yaml Action Provider mis-called");
+        }
+
+        @Override
+        public void setValueAt(String keyName, ObjectTag value) {
+            throw new RuntimeException("Yaml Action Provider mis-called");
+        }
     }
 
     public String Get(YamlConfiguration yaml, int index, String key, String def) {

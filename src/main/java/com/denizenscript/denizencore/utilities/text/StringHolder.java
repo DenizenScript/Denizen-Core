@@ -2,10 +2,13 @@ package com.denizenscript.denizencore.utilities.text;
 
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 
+/** Helper for case-insensitive strings that remember their original casing. */
 public class StringHolder {
 
+    /** Input text with original casing. */
     public final String str;
 
+    /** Input text, pre-lowercased. */
     public final String low;
 
     public StringHolder(String _str) {
