@@ -127,12 +127,12 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                 switch (form) {
                     case "start":
                         Debug.echoDebug(scriptEntry, "Starting debug recording...");
-                        DenizenCore.implementation.startRecording();
+                        Debug.startRecording();
                         scriptEntry.setFinished(true);
                         break;
                     case "cancel":
                         Debug.echoDebug(scriptEntry, "Stopping debug recording...");
-                        DenizenCore.implementation.stopRecording();
+                        Debug.stopRecording();
                         scriptEntry.setFinished(true);
                         break;
                     case "submit":

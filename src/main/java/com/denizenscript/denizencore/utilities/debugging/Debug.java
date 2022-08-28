@@ -12,6 +12,18 @@ public class Debug {
 
     public static boolean showEventsTrimming = false;
 
+    public static StringBuilder debugRecording = new StringBuilder();
+
+    public static void startRecording() {
+        CoreConfiguration.shouldRecordDebug = true;
+        debugRecording = new StringBuilder();
+    }
+
+    public static void stopRecording() {
+        CoreConfiguration.shouldRecordDebug = false;
+        debugRecording = new StringBuilder();
+    }
+
     /**
      * Can be used with echoDebug(...) to output a header, footer,
      * or a spacer.
@@ -86,6 +98,10 @@ public class Debug {
         DenizenCore.implementation.debugMessage(caller, message);
     }
 
+    public static void log(DebugElement element, String message) {
+        DenizenCore.implementation.debugMessage(element, message);
+    }
+
     public static void echoApproval(String message) {
         DenizenCore.implementation.debugApproval(message);
     }
@@ -108,5 +124,18 @@ public class Debug {
 
     public static void report(Debuggable caller, String name, Object... values) {
         DenizenCore.implementation.debugReport(caller, name, values);
+    }
+
+    public static boolean shouldDebug(Debuggable caller) {
+        if (CoreConfiguration.debugOverride) {
+            return true;
+        }
+        if (!CoreConfiguration.shouldShowDebug) {
+            return false;
+        }
+        if (caller != null) {
+            return caller.shouldDebug();
+        }
+        return true;
     }
 }

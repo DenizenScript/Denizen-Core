@@ -41,6 +41,11 @@ public interface DenizenImplementation {
     void debugMessage(String caller, String message);
 
     /**
+     * Output a debug message to console.
+     */
+    void debugMessage(Debug.DebugElement element, String message);
+
+    /**
      * Output an exception to console.
      */
     void debugException(Throwable ex);
@@ -143,10 +148,6 @@ public interface DenizenImplementation {
     File getDataFolder();
 
     String queueHeaderInfo(ScriptEntry entry);
-
-    void startRecording();
-
-    void stopRecording();
 
     void submitRecording(Consumer<String> processResult);
 

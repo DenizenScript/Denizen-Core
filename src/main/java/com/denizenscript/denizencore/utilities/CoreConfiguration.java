@@ -38,4 +38,6 @@ public class CoreConfiguration {
     public static boolean listFlagsAllowed = false;
 
     public static boolean allowReflectionFieldReads = false, allowReflectedCoreMethods = false, allowReflectionSet = false, allowReflectionSetPrivate = false, allowReflectionSetFinal = false;
+
+    public static boolean shouldShowDebug = true, shouldRecordDebug = false;
 }
