@@ -6,7 +6,6 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
-import com.denizenscript.denizencore.scripts.commands.core.RedisCommand;
 import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -878,7 +877,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
             ListTag list = new ListTag();
-            for (String entry : RedisCommand.connections.keySet()) {
+            for (String entry : RedisHelper.connections.keySet()) {
                 list.addObject(new ElementTag(entry, true));
             }
             return list;
