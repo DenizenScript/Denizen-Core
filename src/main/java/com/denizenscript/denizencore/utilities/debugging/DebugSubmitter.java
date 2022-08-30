@@ -64,7 +64,6 @@ public class DebugSubmitter extends Thread {
     }
 
     public void build() {
-        recording = Debug.debugRecording.toString();
         title = pasteTitleGetter.get();
         StringBuilder addedLines = new StringBuilder();
         for (Supplier<String> line : debugHeaderLines) {
