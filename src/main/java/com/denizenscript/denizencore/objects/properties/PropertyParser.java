@@ -28,10 +28,6 @@ public class PropertyParser {
 
         public List<PropertyGetter> allProperties = new ArrayList<>();
 
-        public List<PropertyGetter> propertiesAnyTags = new ArrayList<>();
-
-        public List<PropertyGetter> propertiesAnyMechs = new ArrayList<>();
-
         public List<PropertyGetter> propertiesWithMechs = new ArrayList<>();
 
         public Map<String, PropertyGetter> propertiesByTag = new HashMap<>();
@@ -103,6 +99,24 @@ public class PropertyParser {
         }, isStatic, variants);
     }
 
+    @FunctionalInterface
+    public interface PropertyMechanismWithParam<T extends Property, P extends ObjectTag> {
+        void run(T prop, Mechanism mechanism, P param);
+    }
+
+    public static <T extends Property, P extends ObjectTag> void registerMechanism(Class<T> propType, Class<P> paramType, String name, PropertyMechanismWithParam<T, P> runner) {
+        final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
+        ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
+        tagProcessor.registerMechanism(name, true, paramType, (object, mechanism, param) -> {
+            Property prop = getter.get(object);
+            if (prop == null) {
+                mechanism.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object.");
+                return;
+            }
+            runner.run((T) prop, mechanism, param);
+        });
+    }
+
     public static Class currentlyRegisteringPropertyClass;
 
     public static PropertyGetter currentlyRegisteringProperty;
@@ -113,12 +127,10 @@ public class PropertyParser {
         currentlyRegisteringPropertyClass = property;
         currentlyRegisteringProperty = getter;
         currentlyRegisteringObjectType = ObjectFetcher.getType(object);
-        boolean didRegisterTags = false;
         try {
             for (Method registerMethod : property.getDeclaredMethods()) {
                 if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
                     registerMethod.invoke(null);
-                    didRegisterTags = true;
                 }
             }
         }
@@ -134,6 +146,7 @@ public class PropertyParser {
             propertiesByClass.put(object, propInfo);
         }
         propInfo.allProperties.add(getter);
+        // TODO: warn/remove legacy name-based tag/mechanism registrations
         if (tags != null) {
             String propName = DebugInternals.getClassNameOpti(property);
             for (String tag : tags) {
@@ -141,19 +154,11 @@ public class PropertyParser {
                 propInfo.propertyNamesByTag.put(tag, propName);
             }
         }
-        else if (!didRegisterTags) {
-            Debug.log("Warning: property class '" + property.getName() + "' has unknown tag registration.");
-            propInfo.propertiesAnyTags.add(getter);
-        }
         if (mechs != null) {
             for (String mech : mechs) {
                 propInfo.propertiesByMechanism.put(mech, getter);
                 allMechanismsEver.add(mech);
             }
-        }
-        else {
-            Debug.log("Warning: property class '" + property.getName() + "' has unknown mechanism registration.");
-            propInfo.propertiesAnyMechs.add(getter);
         }
         propInfo.propertiesWithMechs.add(getter);
     }

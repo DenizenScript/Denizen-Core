@@ -273,15 +273,6 @@ public class CoreUtilities {
             prop.adjust(mechanism);
             return;
         }
-        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyMechs) {
-            Property prop = listGetter.get(object);
-            if (prop != null) {
-                prop.adjust(mechanism);
-                if (mechanism.fulfilled()) {
-                    return;
-                }
-            }
-        }
     }
 
     public static ObjectTag autoPropertyTagObject(ObjectTag object, Attribute attribute) {
@@ -302,15 +293,6 @@ public class CoreUtilities {
                 return null;
             }
             return prop.getObjectAttribute(attribute);
-        }
-        for (PropertyParser.PropertyGetter listGetter : properties.propertiesAnyTags) {
-            Property prop = listGetter.get(object);
-            if (prop != null) {
-                ObjectTag returned = prop.getObjectAttribute(attribute);
-                if (returned != null) {
-                    return returned;
-                }
-            }
         }
         return null;
     }

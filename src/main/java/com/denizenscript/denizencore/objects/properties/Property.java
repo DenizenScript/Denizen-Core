@@ -14,5 +14,6 @@ public interface Property {
         return null;
     }
 
-    void adjust(Mechanism mechanism);
+    default void adjust(Mechanism mechanism) {
+    }
 }
