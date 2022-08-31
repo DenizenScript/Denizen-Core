@@ -2286,12 +2286,11 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.base64_encode>
         // @returns ElementTag
         // @group conversion
-        // @deprecated use BinaryTag.to_base64
         // @description
-        // Deprecated in favor of <@link tag BinaryTag.to_base64>, consider also <@link tag ElementTag.utf8_encode>.
+        // Encodes some text to UTF-8 Base64.
+        // Equivalent to using <@link tag ElementTag.utf8_encode> and then <@link tag BinaryTag.to_base64>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_encode", (attribute, object) -> {
-            Deprecations.prebinaryTags.warn(attribute.context);
             String encoded = Base64.getEncoder().encodeToString(object.element.getBytes(StandardCharsets.UTF_8));
             return new ElementTag(encoded);
         });
@@ -2300,12 +2299,11 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.base64_decode>
         // @returns ElementTag
         // @group conversion
-        // @deprecated use ElementTag.base64_to_binary
         // @description
-        // Deprecated in favor of <@link tag ElementTag.base64_to_binary>, consider also <@link tag BinaryTag.utf8_decode>.
+        // Decodes a Base64 UTF-8 encoded text to its original text.
+        // Equivalent to using <@link tag ElementTag.base64_to_binary> and then <@link tag BinaryTag.utf8_decode>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_decode", (attribute, object) -> {
-            Deprecations.prebinaryTags.warn(attribute.context);
             String decoded = new String(Base64.getDecoder().decode(object.element));
             return new ElementTag(decoded);
         });
