@@ -7,6 +7,8 @@ import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 
+import java.util.Stack;
+
 public class Debug {
 
     /** Current debug recording text, if recording enabled, for submission to paste server. */
@@ -14,6 +16,49 @@ public class Debug {
 
     /** Current main thread context, maintained automatically by stacked calls, for error handling. */
     public static TagContext currentContext = null;
+
+    /** Stack trace helper for current error context. */
+    public static Stack<Object> errorContextStack = new Stack<>();
+
+    /** Push an error context object to the stack. */
+    public static void pushErrorContext(Object context) {
+        if (DenizenCore.isMainThread()) {
+            errorContextStack.push(context);
+        }
+    }
+
+    // NOTE: the '2' and '3' pushes are intentionally separate methods, for naming reasons (you must know the exact number) and performance reasons (using '...' causes an object construction).
+
+    /** Push 2 error context objects to the stack. */
+    public static void push2ErrorContexts(Object context1, Object context2) {
+        if (DenizenCore.isMainThread()) {
+            errorContextStack.push(context1);
+            errorContextStack.push(context2);
+        }
+    }
+
+    /** Push 3 error context objects to the stack. */
+    public static void push3ErrorContexts(Object context1, Object context2, Object context3) {
+        if (DenizenCore.isMainThread()) {
+            errorContextStack.push(context1);
+            errorContextStack.push(context2);
+            errorContextStack.push(context3);
+        }
+    }
+
+    /** Pop the top of the error context stack. */
+    public static void popErrorContext() {
+        popErrorContext(1);
+    }
+
+    /** Pop the top X entries of the error context stack. */
+    public static void popErrorContext(int count) {
+        if (DenizenCore.isMainThread()) {
+            for (int i = 0; i < count; i++) {
+                errorContextStack.pop();
+            }
+        }
+    }
 
     /** Start debug recording, for submission to paste server. */
     public static void startRecording() {
@@ -78,11 +123,13 @@ public class Debug {
 
     /** Echos an error message, using a specific script container as the context source with optional extra text content. */
     public static void echoError(ScriptContainer script, String addedContext, String error) {
-        if (script != null) {
-            addedContext = " <LR>In script '<A>" + script.getName() + "<LR>'" + (addedContext == null ? "" : addedContext);
+        Debug.pushErrorContext(script);
+        try {
+            DenizenCore.runOnMainThread(() -> DebugInternals.echoErrorInternal(null, addedContext, error, true));
         }
-        final String text = addedContext;
-        DenizenCore.runOnMainThread(() -> DebugInternals.echoErrorInternal(null, text, error, true));
+        finally {
+            Debug.popErrorContext();
+        }
     }
 
     /** Echos an error message, using a specific script entry as the context source. */

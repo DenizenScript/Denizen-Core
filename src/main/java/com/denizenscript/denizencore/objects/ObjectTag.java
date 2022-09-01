@@ -326,4 +326,11 @@ public interface ObjectTag {
     default Object getJavaObject() {
         return CoreUtilities.objectTagToJavaForm(this, false, false);
     }
+
+    /**
+     * Return an appropriate error-header output for this object, if any.
+     */
+    default String getErrorHeaderContext() {
+        return " with object '<A>" + debuggable() + "<LR>'";
+    }
 }

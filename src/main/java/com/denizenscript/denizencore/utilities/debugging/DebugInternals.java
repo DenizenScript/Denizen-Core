@@ -4,6 +4,8 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.core.ConsoleOutputScriptEvent;
 import com.denizenscript.denizencore.events.core.ScriptGeneratesErrorScriptEvent;
 import com.denizenscript.denizencore.events.core.ServerGeneratesExceptionScriptEvent;
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.CommandExecutor;
@@ -16,9 +18,11 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class DebugInternals {
 
@@ -27,6 +31,7 @@ public class DebugInternals {
         outputThisTick = 0;
         errorDuplicatePrevention = false;
         lastErrorHeader = "";
+        Debug.errorContextStack.clear();
     }
 
     /** Some debug methods trim to keep super-long messages from hitting the console. */
@@ -93,6 +98,40 @@ public class DebugInternals {
                         .append("<LR>' on line '<A>").append(source.internal.lineNumber).append("<LR>'");
             }
             DenizenCore.implementation.addExtraErrorHeaders(headerBuilder, source);
+        }
+        HashSet<Object> duplicatePrevention = new HashSet<>();
+        for (Object context : Debug.errorContextStack) {
+            if (context instanceof ScriptTag) {
+                context = ((ScriptTag) context).getContainer();
+            }
+            else if (context instanceof QueueTag) {
+                context = ((QueueTag) context).getQueue();
+            }
+            else if (context instanceof Supplier<?>) {
+                context = ((Supplier<?>) context).get();
+            }
+            if (!duplicatePrevention.add(context)) {
+                continue;
+            }
+            if (context instanceof ScriptContainer) {
+                if (sourceScript == null || context != sourceScript.getContainer()) {
+                    headerBuilder.append(" in script '<A>").append(((ScriptContainer) context).getName()).append("<LR>'");
+                }
+            }
+            else if (context instanceof ScriptQueue) {
+                if (context != sourceQueue) {
+                    headerBuilder.append(" in queue '").append(((ScriptQueue) context).debugId).append("<LR>'");
+                }
+            }
+            else if (context instanceof String) {
+                headerBuilder.append(" ").append((String) context);
+            }
+            else if (context instanceof ObjectTag) {
+                headerBuilder.append(((ObjectTag) context).getErrorHeaderContext());
+            }
+            else if (context != null) {
+                headerBuilder.append("\n<FORCE_ALIGN>With non-context-valid object '<A>").append(context).append("<LR>'");
+            }
         }
         if (addedContext != null) {
             headerBuilder.append("\n<FORCE_ALIGN>").append(addedContext);
