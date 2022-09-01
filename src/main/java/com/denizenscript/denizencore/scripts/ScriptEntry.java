@@ -402,9 +402,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.preprocArgs = new ArrayList<>(arguments.length);
             int nested_depth = 0;
             for (String arg : arguments) {
-                if (arg.lastIndexOf('%') > arg.indexOf('%')) {
-                    Deprecations.ancientDefs.warn(this);
-                }
                 if (arg.lastIndexOf('>') > arg.indexOf('<') && arg.contains("<^")) {
                     Deprecations.instantTags.warn(this);
                 }

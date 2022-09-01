@@ -110,7 +110,6 @@ public class Deprecations {
     // ==================== PAST deprecations of things that are already gone but still have a warning left behind ====================
 
     // Removed in February 2020.
-    public static Warning ancientDefs = new StrongWarning("ancientDefs", "Ancient-style definitions (those with percent signs like %def%) were removed in Denizen 1.1.3, and can no longer be used. Instead, use <[def]>.");
     public static Warning instantTags = new StrongWarning("instantTags", "Instant tags (those with a caret prefix, like <^tag>) were removed in Denizen 1.1.3, and can no longer be used. Instead, pre-define the player or NPC on the line before.");
 
     // Added on 2019/08/27, removed 2020/10/24.
