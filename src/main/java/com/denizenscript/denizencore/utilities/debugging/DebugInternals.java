@@ -41,7 +41,7 @@ public class DebugInternals {
         }
         int trimSize = CoreConfiguration.debugTrimLength;
         if (message.length() > trimSize) {
-            message = message.substring(0, (trimSize / 2) - 10) + " ... * snip! * ... " + message.substring(message.length() - ((trimSize / 2) - 10));
+            message = message.substring(0, (trimSize / 2) - 10) + "... *snip!*..." + message.substring(message.length() - ((trimSize / 2) - 10));
         }
         return message;
     }

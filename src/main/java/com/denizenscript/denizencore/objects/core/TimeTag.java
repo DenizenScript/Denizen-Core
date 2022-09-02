@@ -408,8 +408,11 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @attribute <TimeTag.to_zone[<zone>]>
         // @returns TimeTag
         // @description
-        // Returns a copy of the time zone, converted to the specified time zone.
+        // Returns a copy of the TimeTag, converted to the specified time zone.
+        // The hour (and when relevant: day/month/year) of this TimeTag will automatically be converted from the value for the original TimeTag's timezone to the new timezone.
+        // For some zones, the minute might also change.
         // Zone input can be like 'UTC-5' or like 'America/New_York'
+        // You can find a list of named zones here: <@link url https://en.wikipedia.org/wiki/List_of_tz_database_time_zones> using the "TZ database name"
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "to_zone", (attribute, object, zone) -> {
             try {
@@ -425,7 +428,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @attribute <TimeTag.to_local>
         // @returns TimeTag
         // @description
-        // Returns a copy of the time zone, converted to the local time zone.
+        // Returns a copy of the TimeTag, converted to the local time zone.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "to_local", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneId.systemDefault()));
@@ -435,7 +438,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // @attribute <TimeTag.to_utc>
         // @returns TimeTag
         // @description
-        // Returns a copy of the time zone, converted to Universal Coordinated Time.
+        // Returns a copy of the TimeTag, converted to Universal Coordinated Time.
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "to_utc", (attribute, object) -> {
             return new TimeTag(object.instant.withZoneSameInstant(ZoneOffset.UTC));
