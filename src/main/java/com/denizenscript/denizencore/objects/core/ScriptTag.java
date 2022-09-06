@@ -291,7 +291,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (section == null) {
                 return null;
             }
-            Object obj = section.get(attribute.getParam().toUpperCase());
+            Object obj = section.get(attribute.getParam());
             if (obj == null) {
                 return null;
             }
@@ -330,7 +330,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(key.asString().toUpperCase());
+            Object obj = section.get(key.asString());
             if (obj == null) {
                 return null;
             }
@@ -356,7 +356,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
                 Debug.echoError("Script '" + container.getName() + "' missing root section?!");
                 return null;
             }
-            Object obj = section.get(key.asString().toUpperCase());
+            Object obj = section.get(key.asString());
             if (obj == null) {
                 return null;
             }

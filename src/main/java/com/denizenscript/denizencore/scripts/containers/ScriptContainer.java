@@ -65,7 +65,7 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("debug");
         configurationSection.forceLoweredRootKey("script");
         configurationSection.forceLoweredRootKey("speed");
-        this.name = scriptContainerName.toUpperCase();
+        this.name = CoreUtilities.toUpperCase(scriptContainerName);
     }
 
     public void postCheck() {
@@ -182,9 +182,8 @@ public class ScriptContainer implements Debuggable {
      * @return the type of container
      */
     public String getContainerType() {
-        return contents.contains("type")
-                ? contents.getString("type").toUpperCase()
-                : null;
+        String type = contents.getString("type");
+        return type == null ? null : CoreUtilities.toUpperCase(type);
     }
 
     /**

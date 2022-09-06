@@ -495,7 +495,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "last_day_of_week", (attribute, object, dayText) -> {
             DayOfWeek day;
             try {
-                day = DayOfWeek.valueOf(dayText.asString().toUpperCase());
+                day = DayOfWeek.valueOf(CoreUtilities.toUpperCase(dayText.asString()));
             }
             catch (IllegalArgumentException ex) {
                 attribute.echoError("'" + dayText + "' is not a valid day-of-week.");
@@ -523,7 +523,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         tagProcessor.registerStaticTag(TimeTag.class, ElementTag.class, "next_day_of_week", (attribute, object, dayText) -> {
             DayOfWeek day;
             try {
-                day = DayOfWeek.valueOf(dayText.asString().toUpperCase());
+                day = DayOfWeek.valueOf(CoreUtilities.toUpperCase(dayText.asString()));
             }
             catch (IllegalArgumentException ex) {
                 attribute.echoError("'" + dayText + "' is not a valid day-of-week.");

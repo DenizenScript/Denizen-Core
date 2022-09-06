@@ -1,5 +1,7 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
+import com.denizenscript.denizencore.utilities.CoreUtilities;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -11,7 +13,6 @@ public class DebugLog extends Logger {
 
     public DebugLog(String l, String f) {
         super(l, null);
-
         try {
             handler = new FileHandler(f, true);
             addHandler(handler);
@@ -36,19 +37,14 @@ public class DebugLog extends Logger {
         @Override
         public String format(LogRecord rec) {
             Throwable exception = rec.getThrown();
-
             String out = this.date.format(rec.getMillis());
-
-            out += "[" + rec.getLevel().getName().toUpperCase() + "] ";
+            out += "[" + CoreUtilities.toUpperCase(rec.getLevel().getName()) + "] ";
             out += rec.getMessage() + '\n';
-
             if (exception != null) {
                 StringWriter writer = new StringWriter();
                 exception.printStackTrace(new PrintWriter(writer));
-
                 return out + writer;
             }
-
             return out;
         }
     }

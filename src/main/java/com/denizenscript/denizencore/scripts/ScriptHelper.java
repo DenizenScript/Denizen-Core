@@ -55,11 +55,11 @@ public class ScriptHelper {
     private static HashMap<String, String> scriptOriginalNames = new HashMap<>();
 
     public static String getSource(String script) {
-        return scriptSources.get(script.toUpperCase());
+        return scriptSources.get(CoreUtilities.toLowerCase(script));
     }
 
     public static String getOriginalName(String script) {
-        return scriptOriginalNames.get(script.toUpperCase());
+        return scriptOriginalNames.get(CoreUtilities.toLowerCase(script));
     }
 
     public static String clearComments(String filename, String input, boolean trackSources) {
@@ -71,9 +71,9 @@ public class ScriptHelper {
             String trimStart = lines[lineNum].replaceAll("^[\\s]+", "");
             if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == lines[lineNum].length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
                 String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
-                scriptSources.put(name.toUpperCase(), filename);
-                scriptOriginalNames.put(name.toUpperCase(), name);
-                result.append(name.toUpperCase()).append(":\n");
+                scriptSources.put(CoreUtilities.toLowerCase(name), filename);
+                scriptOriginalNames.put(CoreUtilities.toLowerCase(name), name);
+                result.append(CoreUtilities.toUpperCase(name)).append(":\n");
                 hasAnyScript = true;
             }
             else if (!trimmedLine.startsWith("#")) {

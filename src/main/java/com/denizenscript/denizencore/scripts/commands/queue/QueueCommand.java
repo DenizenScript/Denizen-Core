@@ -77,7 +77,7 @@ public class QueueCommand extends AbstractCommand {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("action")
                     && arg.matchesEnum(Action.class)) {
-                scriptEntry.addObject("action", Action.valueOf(arg.getValue().toUpperCase()));
+                scriptEntry.addObject("action", arg.asElement().asEnum(Action.class));
                 if (scriptEntry.getObject("action") == Action.DELAY
                         && arg.matchesArgumentType(DurationTag.class)) {
                     scriptEntry.addObject("delay", arg.asType(DurationTag.class));

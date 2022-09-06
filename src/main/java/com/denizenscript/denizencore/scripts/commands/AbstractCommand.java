@@ -229,7 +229,7 @@ public abstract class AbstractCommand {
     }
 
     public void setName(String commandName) {
-        name = commandName.toUpperCase();
+        name = CoreUtilities.toUpperCase(commandName);
     }
 
     protected String name;

@@ -155,7 +155,7 @@ public class IfCommand extends BracedCommand {
                 in_elsecommand = true;
                 in_subcommand = false;
             }
-            else if (!has_brace && !in_elsecommand && DenizenCore.commandRegistry.get(arg.toUpperCase()) != null) {
+            else if (!has_brace && !in_elsecommand && DenizenCore.commandRegistry.get(CoreUtilities.toUpperCase(arg)) != null) {
                 Deprecations.ifCommandSingleLine.warn(scriptEntry);
                 in_subcommand = true;
                 subcommand.add(arg);

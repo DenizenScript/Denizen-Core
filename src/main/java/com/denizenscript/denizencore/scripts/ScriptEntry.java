@@ -361,7 +361,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         internal = new ScriptEntryInternal();
         internal.lineNumber = lineNum;
         entryData = DenizenCore.implementation.getEmptyScriptEntryData();
-        internal.command = command.toUpperCase();
+        internal.command = CoreUtilities.toUpperCase(command);
         internal.yamlSubcontent = insides;
         internal.argPrefixMap = new HashMap<>();
         if (script != null) {

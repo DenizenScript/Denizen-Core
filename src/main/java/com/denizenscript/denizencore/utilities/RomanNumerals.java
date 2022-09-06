@@ -52,7 +52,7 @@ public class RomanNumerals {
     }
 
     public static int romanToArabic(String input) {
-        String romanNumeral = input.toUpperCase();
+        String romanNumeral = CoreUtilities.toUpperCase(input);
         int result = 0;
         int i = 0;
         List<RomanNumeral> romanNumerals = RomanNumeral.reverseSortedValues;

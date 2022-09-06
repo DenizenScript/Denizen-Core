@@ -261,7 +261,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
             Debug.report(scriptEntry, getName(), idElement, actionElement, filename, key, value, split, rawText, toId, dataType, rawFormat, (yaml_action != null ? db("yaml_action", yaml_action.name()) : null), dataAction);
         }
         // Do action
-        Action action = Action.valueOf(actionElement.asString().toUpperCase());
+        Action action = actionElement.asEnum(Action.class);
         final String id = idElement.asLowerString();
         if (action != Action.LOAD && action != Action.SAVE && scriptEntry.shouldWaitFor()) {
             scriptEntry.setFinished(true);
@@ -652,7 +652,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         value = autoConvertObject(value);
         if (dataType != null && value instanceof String) {
             String rawValue = value.toString();
-            switch (DataType.valueOf(dataType.asString().toUpperCase())) {
+            switch (dataType.asEnum(DataType.class)) {
                 case DOUBLE:
                     value = Double.parseDouble(rawValue);
                     break;
