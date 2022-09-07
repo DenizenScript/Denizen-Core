@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.flags;
 
-import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.Attribute;

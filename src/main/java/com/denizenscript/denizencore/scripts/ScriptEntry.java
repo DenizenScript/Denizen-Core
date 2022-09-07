@@ -397,6 +397,12 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             internal.actualCommand = null;
         }
         boolean hasBraces = false;
+        internal.raw_input_args = new HashSet<>();
+        if (internal.actualCommand != null) {
+            internal.booleans = new BooleanArg[internal.actualCommand.booleansHandled.size()];
+            internal.enumVals = new EnumArg[internal.actualCommand.enumsHandled.size()];
+            internal.prefixedArgMapper = new Integer[internal.actualCommand.prefixesThusFar];
+        }
         if (arguments != null) {
             internal.pre_tagged_args = new ArrayList<>(arguments.length);
             internal.preprocArgs = new ArrayList<>(arguments.length);
@@ -456,12 +462,6 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             nested_depth = 0;
             TagContext refContext = DenizenCore.implementation.getTagContext(this);
             ArrayList<InternalArgument> allArgs = new ArrayList<>(internal.pre_tagged_args.size());
-            internal.raw_input_args = new HashSet<>();
-            if (internal.actualCommand != null) {
-                internal.booleans = new BooleanArg[internal.actualCommand.booleansHandled.size()];
-                internal.enumVals = new EnumArg[internal.actualCommand.enumsHandled.size()];
-                internal.prefixedArgMapper = new Integer[internal.actualCommand.prefixesThusFar];
-            }
             for (int i = 0; i < internal.pre_tagged_args.size(); i++) {
                 String arg = internal.pre_tagged_args.get(i);
                 if (arg.equals("{")) {
