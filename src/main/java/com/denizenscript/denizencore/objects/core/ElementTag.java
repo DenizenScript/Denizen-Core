@@ -838,8 +838,8 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_case_sensitive_text", (attribute, object, list) -> {
             String element = object.element;
-            for (String list_element : list) {
-                if (element.contains(list_element)) {
+            for (String value : list) {
+                if (element.contains(value)) {
                     return new ElementTag(true);
                 }
             }
@@ -852,13 +852,12 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains any of a list of specified elements, case insensitive.
+        // Returns whether the element contains any of the specified elements, case insensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_text", (attribute, object, list) -> {
-            String element = object.element;
-            String ellow = CoreUtilities.toLowerCase(element);
-            for (String list_element : list) {
-                if (ellow.contains(list_element)) {
+            String low = object.asLowerString();
+            for (String value : list) {
+                if (low.contains(CoreUtilities.toLowerCase(value))) {
                     return new ElementTag(true);
                 }
             }
@@ -874,12 +873,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element contains a specified element, case sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_case_sensitive_text", (attribute, object, contains) -> {
-            if (object.element.contains(contains.asString())) {
-                return new ElementTag("true");
-            }
-            else {
-                return new ElementTag("false");
-            }
+            return new ElementTag(object.asString().contains(contains.asString()));
         });
         tagProcessor.registerFutureTagDeprecation("contains_case_sensitive_text", "contains_case_sensitive");
 
@@ -894,19 +888,9 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_text", (attribute, object, contains) -> {
             String contLow = contains.asLowerString();
             if (contLow.startsWith("regex:")) {
-                if (Pattern.compile(contains.asString().substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(object.element).find()) {
-                    return new ElementTag("true");
-                }
-                else {
-                    return new ElementTag("false");
-                }
+                return new ElementTag(Pattern.compile(contains.asString().substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(object.asString()).find());
             }
-            else if (CoreUtilities.toLowerCase(object.element).contains(contLow)) {
-                return new ElementTag("true");
-            }
-            else {
-                return new ElementTag("false");
-            }
+            return new ElementTag(object.asLowerString().contains(contLow));
         });
         tagProcessor.registerFutureTagDeprecation("contains_text", "contains");
 
@@ -915,17 +899,16 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains all of the specified strings, case insensitive.
+        // Returns whether the element contains all the specified elements, case insensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_all_text", (attribute, object, list) -> {
-            String element = object.element;
-            String ellow = CoreUtilities.toLowerCase(element);
-            for (String list_element : list) {
-                if (!ellow.contains(list_element)) {
-                    return new ElementTag("false");
+            String low = object.asLowerString();
+            for (String value : list) {
+                if (!low.contains(CoreUtilities.toLowerCase(value))) {
+                    return new ElementTag(false);
                 }
             }
-            return new ElementTag("true");
+            return new ElementTag(true);
         });
         tagProcessor.registerFutureTagDeprecation("contains_all_text", "contains_all");
 
@@ -934,16 +917,16 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains all of the specified strings, case sensitive.
+        // Returns whether the element contains all the specified strings, case sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_all_case_sensitive_text", (attribute, object, list) -> {
             String element = object.element;
-            for (String list_element : list) {
-                if (!element.contains(list_element)) {
-                    return new ElementTag("false");
+            for (String value : list) {
+                if (!element.contains(value)) {
+                    return new ElementTag(false);
                 }
             }
-            return new ElementTag("true");
+            return new ElementTag(true);
         });
         tagProcessor.registerFutureTagDeprecation("contains_all_case_sensitive_text", "contains_all_case_sensitive");
 
