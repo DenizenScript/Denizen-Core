@@ -852,7 +852,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains any of the specified elements, case insensitive.
+        // Returns whether the element contains any of a list of specified elements, case insensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_text", (attribute, object, list) -> {
             String low = object.asLowerString();
@@ -882,13 +882,13 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains a specified element, case insensitive. Can use
-        // regular expression by prefixing the element with regex:
+        // Returns whether the element contains a specified element, case insensitive.
+        // Can use regular expression by prefixing the element with 'regex:'.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_text", (attribute, object, contains) -> {
             String contLow = contains.asLowerString();
             if (contLow.startsWith("regex:")) {
-                return new ElementTag(Pattern.compile(contains.asString().substring(("regex:").length()), Pattern.CASE_INSENSITIVE).matcher(object.asString()).find());
+                return new ElementTag(Pattern.compile(contains.asString().substring("regex:".length()), Pattern.CASE_INSENSITIVE).matcher(object.asString()).find());
             }
             return new ElementTag(object.asLowerString().contains(contLow));
         });
@@ -899,7 +899,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains all the specified elements, case insensitive.
+        // Returns whether the element contains all of the specified elements, case insensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_all_text", (attribute, object, list) -> {
             String low = object.asLowerString();
@@ -917,7 +917,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @group element checking
         // @description
-        // Returns whether the element contains all the specified strings, case sensitive.
+        // Returns whether the element contains all of the specified elements, case sensitive.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_all_case_sensitive_text", (attribute, object, list) -> {
             String element = object.element;
