@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.commands.core.MongoCommand;
 import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -951,6 +952,20 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerTag(ElementTag.class, "stack_trace", (attribute, object) -> {
             return new ElementTag(DebugInternals.getFullExceptionMessage(new RuntimeException("TRACE"), false));
+        });
+
+        // <--[tag]
+        // @attribute <util.mongo_connections>
+        // @returns ElementTag
+        // @description
+        // Returns a list of all Mongo connections opened by <@link command mongo>
+        // -->
+        tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
+            ListTag list = new ListTag();
+            for (String entry : MongoCommand.connections.keySet()) {
+                list.addObject(new ElementTag(entry, true));
+            }
+            return list;
         });
     }
 
