@@ -195,7 +195,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Interprets the object to Denizen object format.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "interpret", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "interpret", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
                 return null;
@@ -209,7 +209,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the result of the Java toString() call on the object.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "to_string", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "to_string", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
                 return null;
@@ -223,7 +223,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the result of the Java hashCode() call on the object.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, "hash_code", (attribute, object) -> {
+        tagProcessor.registerTag(ObjectTag.class, "hash_code", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
                 return null;
@@ -237,7 +237,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Returns the result of the Java equals(<object>) call on the object with another JavaReflectedObjectTag.
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, JavaReflectedObjectTag.class, "java_equals", (attribute, object, compareTo) -> {
+        tagProcessor.registerTag(ObjectTag.class, JavaReflectedObjectTag.class, "java_equals", (attribute, object, compareTo) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
                 attribute.echoError("Core-reflected-method-calling tags are forbidden by current Denizen config.");
                 return null;
@@ -388,7 +388,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // Reads the field of the given name on the object and returns the value in its Denizen-valid format.
         // See also <@link tag JavaReflectedObjectTag.reflect_field>
         // -->
-        tagProcessor.registerStaticTag(ObjectTag.class, ElementTag.class, "read_field", (attribute, object, fieldName) -> {
+        tagProcessor.registerTag(ObjectTag.class, ElementTag.class, "read_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
@@ -406,7 +406,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // Reads the field of the given name on the object and returns the value as another reflected tag.
         // See also <@link tag JavaReflectedObjectTag.read_field>
         // -->
-        tagProcessor.registerStaticTag(JavaReflectedObjectTag.class, ElementTag.class, "reflect_field", (attribute, object, fieldName) -> {
+        tagProcessor.registerTag(JavaReflectedObjectTag.class, ElementTag.class, "reflect_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
                 return null;
             }
