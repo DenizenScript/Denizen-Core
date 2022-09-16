@@ -16,9 +16,7 @@ import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import org.bson.BsonDocument;
-import org.bson.BsonInt64;
-import org.bson.Document;
+import org.bson.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,15 +24,20 @@ import java.util.Map;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database>/disconnect/command:<command> query:<query>]");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database>/disconnect/command:<command> data:<data>]");
         setRequiredArguments(2, 100);
-        isProcedural = false;
         allowedDynamicPrefixes = true;
+        isProcedural = false;
     }
 
     // <--[command]
     // @Name Mongo
     // @Short Interacts with a MongoDB server.
+    //
+    // @Tags
+    // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
+    // <entry[saveName].result> returns the text result sent back from Mongo in a JSON format.
+    // <entry[saveName].ok_result> returns the 'ok' value from the result.
     // -->
 
     // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
@@ -46,12 +49,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         for (Map.Entry<String, MongoClient> entry : connections.entrySet()) {
             try {
                 entry.getValue().close();
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 Debug.echoError(e);
             }
         }
         connections.clear();
+    }
+
+    @Override
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tab.addWithPrefix("id:", connections.keySet());
     }
 
     @Override
@@ -79,9 +86,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("command"));
                 scriptEntry.addObject("command", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("query")
-                    && arg.matchesPrefix("query", "q")) {
-                scriptEntry.addObject("query", arg.asElement());
+            else if (!scriptEntry.hasObject("data")
+                    && arg.matchesPrefix("data", "d")) {
+                scriptEntry.addObject("data", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
@@ -102,14 +109,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         ObjectTag uri = scriptEntry.getObjectTag("uri");
         ElementTag database = scriptEntry.getElement("database");
         ElementTag command = scriptEntry.getElement("command");
-        ElementTag query = scriptEntry.getElement("query");
+        ObjectTag data = scriptEntry.getObjectTag("data");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
-//        if (!action.asString().equalsIgnoreCase("connect") &&
-//                (!action.asString().equalsIgnoreCase("action" ) || !scriptEntry.shouldWaitFor())) {
-//            scriptEntry.setFinished(true);
-//        }
         try {
             if (action.asString().equalsIgnoreCase("connect")) {
                 if (connections.containsKey(id.asString().toLowerCase())) {
@@ -145,8 +148,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                     try {
                         con = MongoClients.create(conStr);
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
@@ -161,8 +163,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     MongoDatabase db = null;
                     try {
                         db = con.getDatabase(database.asString());
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
@@ -186,11 +187,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
-                        },0));
+                        }, 0));
                     }
                 }, 0)));
-            }
-            else if (action.asString().equalsIgnoreCase("disconnect")) {
+            } else if (action.asString().equalsIgnoreCase("disconnect")) {
                 MongoClient con = connections.get(id.asLowerString());
                 if (con == null) {
                     Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
@@ -200,13 +200,11 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 connections.remove(id.asLowerString());
                 try {
                     con.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Debug.echoError(e);
                 }
                 Debug.echoDebug(scriptEntry, "Disconnected from '" + id.asString() + "'.");
-            }
-            else if (action.asString().equalsIgnoreCase("command")) {
+            } else if (action.asString().equalsIgnoreCase("command")) {
                 MongoClient con = connections.get(id.asLowerString());
                 if (con == null) {
                     Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
@@ -218,22 +216,43 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                if (query == null) {
-                    Debug.echoError("You must specify a query to run!");
+                if (data == null) {
+                    Debug.echoError("You must specify the data to run!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 MongoDatabase db = databases.get(id.asLowerString());
-                try {
-                    Document commandResult = db.runCommand(new BsonDocument(command.asString(), new BsonInt64(query.asInt())));
-                    Debug.echoDebug(scriptEntry, commandResult.toJson());
+                Runnable runnable = () -> {
+                    try {
+                        Object obj = data.getJavaObject();
+                        // TODO: See what would happen if a MapTag was passed in. Will it create multiple command arguments? Or will it error? ...
+                        // TODO: ... So far I have only tested with a single ElementTag.
+                        Document commandResult = db.runCommand(new Document(command.asString(), obj));
+                        ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
+                        ElementTag resultRaw = new ElementTag(commandResult.toJson());
+                        scriptEntry.addObject("result", resultRaw);
+                        scriptEntry.addObject("ok_result", okResult);
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            scriptEntry.setFinished(true);
+                        }, 0));
+                    } catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
+                    }
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
                 }
-                catch (Exception e) {
-                    Debug.echoError(e);
+                else {
+                    runnable.run();
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Debug.echoError("Mongo Exception: " + e.getMessage());
             if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(scriptEntry, e);
