@@ -294,7 +294,7 @@ public class CommandExecutionGenerator {
                                 }
                             }
                             else if (Enum.class.isAssignableFrom(argData.type)) {
-                                argData.defaultObject = EnumHelper.get(argData.type).valuesMapLower.get(CoreUtilities.toLowerCase(argData.defaultValue));
+                                argData.defaultObject = EnumHelper.get(argData.type).valuesMapLower.get(EnumHelper.cleanKey(argData.defaultValue));
                                 if (argData.defaultObject == null) {
                                     Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
                                             + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");

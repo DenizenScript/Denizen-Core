@@ -104,7 +104,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgLinear @ArgName("url") @ArgRaw ElementTag originalUrl,
                                    @ArgPrefixed @ArgName("data") @ArgDefaultNull ElementTag data,
-                                   @ArgName("method") @ArgDefaultNull Method method,
+                                   @ArgPrefixed @ArgName("method") @ArgDefaultNull Method method,
                                    @ArgName("hide_failure") boolean hideFailure,
                                    @ArgPrefixed @ArgName("timeout") @ArgDefaultText("10s") DurationTag timeout,
                                    @ArgPrefixed @ArgName("headers") @ArgDefaultNull ObjectTag headersLegacyCompat,

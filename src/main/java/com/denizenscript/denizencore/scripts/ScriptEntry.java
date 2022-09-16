@@ -554,7 +554,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 if (argVal.prefix == null && argVal.value.rawObject != null && internal.actualCommand != null) {
                     String raw = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
                     for (Map.Entry<EnumHelper, Integer> enumType : internal.actualCommand.enumsHandled.entrySet()) {
-                        Enum val = (Enum) enumType.getKey().valuesMapLower.get(raw);
+                        Enum val = (Enum) enumType.getKey().valuesMapLower.get(EnumHelper.cleanKey(raw));
                         if (val != null && internal.enumVals[enumType.getValue()] == null) {
                             internal.enumVals[enumType.getValue()] = new EnumArg(val, 0);
                             argVal.shouldUse = false;
