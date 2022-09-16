@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.containers;
 
 import com.denizenscript.denizencore.scripts.*;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -65,7 +66,22 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("debug");
         configurationSection.forceLoweredRootKey("script");
         configurationSection.forceLoweredRootKey("speed");
+        configurationSection.forceLoweredRootKey("enabled");
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
+    }
+
+    public Boolean enabledCache = null;
+
+    public boolean shouldEnable() {
+        if (enabledCache != null) {
+            return enabledCache;
+        }
+        String enabledText = contents.getString("enabled");
+        if (enabledText == null) {
+            return enabledCache = true;
+        }
+        String result = TagManager.tag(enabledText, DenizenCore.implementation.getTagContext(this));
+        return enabledCache = (result == null || CoreUtilities.equalsIgnoreCase(result, "true"));
     }
 
     public void postCheck() {

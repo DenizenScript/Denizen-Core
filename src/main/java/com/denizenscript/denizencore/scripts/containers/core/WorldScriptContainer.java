@@ -16,6 +16,8 @@ public class WorldScriptContainer extends ScriptContainer {
     //
     // The only required key is 'events:', within which you can list any events to handle.
     //
+    // World scripts can be automatically disabled by adding "enabled: false" as a root key (supports any load-time-parseable tags).
+    //
     // <code>
     // World_Script_Name:
     //

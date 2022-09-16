@@ -69,7 +69,7 @@ public class FlagCommand extends AbstractCommand {
     // and if the flag's expiration time is in the past, the flag tag will return values equivalent to if the flag doesn't exist.
     // There is no system actively monitoring for flag expirations or applying them. There is no event for expirations occurring, as they don't "occur" per se.
     // In other words, it is correct to say a flag "is expired" or a flag "is not expired",
-    // but it is incorrect to say a flag "expires", as it is not an active action (those this wording can be convenient when speaking informally).
+    // but it is incorrect to say a flag "expires", as it is not an active action (though this wording can be convenient when speaking informally).
     // Expired flags are sometimes 'cleaned up' (meaning, any expired flags get actually removed from internal storage), usually when a flag save file is loaded into the server.
     //
     // As a bonus feature-combo, it is possible to transmit sets of flags exactly in-place and reapply them, this is particular useful for example to synchronize player data across Bungee servers.

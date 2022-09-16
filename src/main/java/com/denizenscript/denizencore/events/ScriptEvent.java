@@ -352,7 +352,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         totalPaths = 0;
         for (ScriptContainer container : worldContainers) {
             try {
-                if (!CoreUtilities.equalsIgnoreCase(container.getContents().getString("enabled", "true"), "true")) {
+                if (!container.shouldEnable()) {
                     continue;
                 }
                 YamlConfiguration config = container.getConfigurationSection("events");
