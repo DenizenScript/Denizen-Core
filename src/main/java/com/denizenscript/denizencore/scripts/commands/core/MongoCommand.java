@@ -5,26 +5,31 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database>/disconnect/command:<command> data:<data>]");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database>/disconnect/command:<command> data:<data>/command_map:<map>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -37,7 +42,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
     // <entry[saveName].result> returns the text result sent back from Mongo in a JSON format.
-    // <entry[saveName].ok_result> returns the 'ok' value from the result.
+    // <entry[saveName].ok> returns the 'ok' value from the result.
     // -->
 
     // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
@@ -90,6 +95,11 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("data", "d")) {
                 scriptEntry.addObject("data", arg.asElement());
             }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("command_map", "commandmap")) {
+                scriptEntry.addObject("action", new ElementTag("command_map"));
+                scriptEntry.addObject("command_map", arg.object);
+            }
             else {
                 arg.reportUnhandled();
             }
@@ -110,6 +120,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         ElementTag database = scriptEntry.getElement("database");
         ElementTag command = scriptEntry.getElement("command");
         ObjectTag data = scriptEntry.getObjectTag("data");
+        MapTag command_map = scriptEntry.getObjectTag("command_map");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
@@ -206,6 +217,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 Debug.echoDebug(scriptEntry, "Disconnected from '" + id.asString() + "'.");
             } else if (action.asString().equalsIgnoreCase("command")) {
                 MongoClient con = connections.get(id.asLowerString());
+                MongoDatabase db = databases.get(id.asLowerString());
                 if (con == null) {
                     Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
                     scriptEntry.setFinished(true);
@@ -221,17 +233,61 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                MongoDatabase db = databases.get(id.asLowerString());
                 Runnable runnable = () -> {
                     try {
                         Object obj = data.getJavaObject();
-                        // TODO: See what would happen if a MapTag was passed in. Will it create multiple command arguments? Or will it error? ...
-                        // TODO: ... So far I have only tested with a single ElementTag.
                         Document commandResult = db.runCommand(new Document(command.asString(), obj));
                         ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
                         ElementTag resultRaw = new ElementTag(commandResult.toJson());
                         scriptEntry.addObject("result", resultRaw);
-                        scriptEntry.addObject("ok_result", okResult);
+                        scriptEntry.addObject("ok", okResult);
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            scriptEntry.setFinished(true);
+                        }, 0));
+                    } catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
+                    }
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
+                }
+                else {
+                    runnable.run();
+                }
+            }
+            else if (action.asString().equalsIgnoreCase("command_map")) {
+                MongoClient con = connections.get(id.asLowerString());
+                MongoDatabase db = databases.get(id.asLowerString());
+                if (con == null) {
+                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (command_map == null) {
+                    Debug.echoError("You must specify a map of commands and their data to run!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                Runnable runnable = () -> {
+                    try {
+                        HashMap<String, Object> commandMap = new HashMap<>();
+                        for (Map.Entry<StringHolder, ObjectTag> entry : command_map.map.entrySet()) {
+                            String key = entry.getKey().toString();
+                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                            commandMap.put(key, value);
+                        }
+                        Debug.echoDebug(scriptEntry, new Document(commandMap).toJson());
+                        Document commandResult = db.runCommand(new Document(commandMap));
+                        ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
+                        ElementTag resultRaw = new ElementTag(commandResult.toJson());
+                        scriptEntry.addObject("result", resultRaw);
+                        scriptEntry.addObject("ok", okResult);
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             scriptEntry.setFinished(true);
                         }, 0));
