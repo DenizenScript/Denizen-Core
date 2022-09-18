@@ -18,15 +18,15 @@ import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.mongodb.client.*;
+import com.mongodb.client.result.InsertOneResult;
 import org.bson.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database>/disconnect/command:<command> data:<data>/command_map:<map>/find collection:<collection> filter:<map>");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find filter:<map>/insert:<map>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -39,13 +39,15 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
     // <entry[saveName].result> returns the text result sent back from Mongo in a JSON format. JSON can be in an ElementTag or a ListTag depending on the action run.
-    // <entry[saveName].ok> returns the 'ok' value from the result.
+    // <entry[saveName].inserted_id>
+    // <entry[saveName].ok> returns the 'ok' value from the result. Used with the `command` and `command_map` actions.
     // -->
 
     // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
     // TODO: MAYBE add a custom tag or something like that to do add cursor operations like .sort or .skip? Maybe it can also add a better way of turning the JSON into denizen tags.
     public static Map<String, MongoClient> connections = new HashMap<>();
     public static Map<String, MongoDatabase> databases = new HashMap<>();
+    public static Map<String, MongoCollection<Document>> collections = new HashMap<>();
 
     @Override
     public void onDisable() {
@@ -57,6 +59,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             }
         }
         connections.clear();
+        databases.clear();
+        collections.clear();
     }
 
     @Override
@@ -80,6 +84,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("database", "db")) {
                 scriptEntry.addObject("database", arg.asElement());
             }
+            else if (!scriptEntry.hasObject("collection") && arg.matchesPrefix("collection", "col")) {
+                scriptEntry.addObject("collection", arg.asElement());
+            }
             else if (!scriptEntry.hasObject("action")
                     && arg.matches("disconnect")) {
                 scriptEntry.addObject("action", new ElementTag("disconnect"));
@@ -89,9 +96,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("command"));
                 scriptEntry.addObject("command", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("data")
-                    && arg.matchesPrefix("data", "d")) {
-                scriptEntry.addObject("data", arg.asElement());
+            else if (!scriptEntry.hasObject("parameters")
+                    && arg.matchesPrefix("parameters", "params", "p")) {
+                scriptEntry.addObject("parameters", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("command_map", "commandmap")) {
@@ -102,13 +109,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     && arg.matches("find")) {
                 scriptEntry.addObject("action", new ElementTag("find"));
             }
-            else if (!scriptEntry.hasObject("find_collection")
-                    && arg.matchesPrefix("collection", "col")) {
-                scriptEntry.addObject("find_collection", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("find_filter")
+            else if (!scriptEntry.hasObject("filter")
                     && arg.matchesPrefix("filter", "filters", "f")) {
-                scriptEntry.addObject("find_filter", arg.object);
+                scriptEntry.addObject("filter", arg.object);
+            }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("insert", "i")) {
+                scriptEntry.addObject("action", new ElementTag("insert"));
+                scriptEntry.addObject("insert_data", arg.object);
             }
             else {
                 arg.reportUnhandled();
@@ -128,11 +136,12 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         ElementTag action = scriptEntry.getElement("action");
         ObjectTag uri = scriptEntry.getObjectTag("uri");
         ElementTag database = scriptEntry.getElement("database");
+        ElementTag collection = scriptEntry.getElement("collection");
         ElementTag command = scriptEntry.getElement("command");
-        ObjectTag data = scriptEntry.getObjectTag("data");
+        ObjectTag parameters = scriptEntry.getObjectTag("parameters");
         MapTag commandMap = scriptEntry.getObjectTag("command_map");
-        ElementTag findCollection = scriptEntry.getElement("find_collection");
-        MapTag findFilter = scriptEntry.getObjectTag("find_filter");
+        MapTag findFilter = scriptEntry.getObjectTag("filter");
+        MapTag insertData = scriptEntry.getObjectTag("insert_data");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
@@ -160,6 +169,11 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
+                if (collection == null) {
+                    Debug.echoError(scriptEntry, "You must specify a Collection!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
                 DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
                     MongoClient con = null;
                     String conStr = rawUri;
@@ -169,8 +183,12 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to Mongo server. . .");
                     }
+                    MongoDatabase db = null;
+                    MongoCollection<Document> col = null;
                     try {
                         con = MongoClients.create(conStr);
+                        db = con.getDatabase(database.asString());
+                        col = db.getCollection(collection.asString());
                     } catch (final Exception e) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
@@ -183,24 +201,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error.");
                     }
-                    MongoDatabase db = null;
-                    try {
-                        db = con.getDatabase(database.asString());
-                    } catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
-                        }, 0));
-                    }
                     final MongoClient conn = con;
                     final MongoDatabase connDB = db;
+                    final MongoCollection<Document> coll = col;
                     if (con != null) {
                         DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            connections.put(id.asString().toLowerCase(), conn);
-                            databases.put(id.asString().toLowerCase(), connDB);
+                            connections.put(id.asLowerString(), conn);
+                            databases.put(id.asLowerString(), connDB);
+                            collections.put(id.asLowerString(), coll);
                             Debug.echoDebug(scriptEntry, "Successfully connected to Mongo server.");
                             scriptEntry.setFinished(true);
                         }, 0));
@@ -221,6 +229,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 connections.remove(id.asLowerString());
+                databases.remove(id.asLowerString());
+                collections.remove(id.asLowerString());
                 try {
                     con.close();
                 } catch (Exception e) {
@@ -245,14 +255,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                if (data == null) {
-                    Debug.echoError("You must specify the data to run!");
+                if (parameters == null) {
+                    Debug.echoError("You must specify the parameters to run!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 Runnable runnable = () -> {
                     try {
-                        Object obj = data.getJavaObject();
+                        Object obj = parameters.getJavaObject();
                         Debug.echoDebug(scriptEntry, "Running command: " + command);
                         Document commandResult = db.runCommand(new Document(command.asString(), obj));
                         ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
@@ -332,6 +342,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             else if (action.asString().equalsIgnoreCase("find")) {
                 MongoClient con = connections.get(id.asLowerString());
                 MongoDatabase db = databases.get(id.asLowerString());
+                MongoCollection<Document> col = collections.get(id.asLowerString());
                 if (con == null) {
                     Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
                     scriptEntry.setFinished(true);
@@ -342,7 +353,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                if (findCollection == null) {
+                if (col == null) {
                     Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
                     scriptEntry.setFinished(true);
                     return;
@@ -354,19 +365,73 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 }
                 Runnable runnable = () -> {
                     try {
-                        MongoCollection<Document> collection = db.getCollection(findCollection.asString());
                         HashMap<String, Object> query = new HashMap<>();
                         for (Map.Entry<StringHolder, ObjectTag> entry : findFilter.map.entrySet()) {
                             String key = entry.getKey().toString();
                             Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
                             query.put(key, value);
                         }
-                        FindIterable<Document> findResult = collection.find(new Document(query));
+                        Debug.echoDebug(scriptEntry, "Finding data in Collection: '" + collection + "'. . .");
+                        FindIterable<Document> findResult = col.find(new Document(query));
                         ListTag result = new ListTag();
                         for (Document doc : findResult) {
                             result.addObject(new ElementTag(doc.toJson()));
                         }
                         scriptEntry.addObject("result", result);
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                    }
+                    catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
+                    }
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
+                }
+                else {
+                    runnable.run();
+                }
+            }
+            else if (action.asString().equalsIgnoreCase("insert")) {
+                MongoClient con = connections.get(id.asLowerString());
+                MongoDatabase db = databases.get(id.asLowerString());
+                MongoCollection<Document> col = collections.get(id.asLowerString());
+                if (con == null) {
+                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (db == null) {
+                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (col == null) {
+                    Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (insertData == null) {
+                    Debug.echoError(scriptEntry, "You must specify data to insert!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                Runnable runnable = () -> {
+                    try {
+                        HashMap<String, Object> insert = new HashMap<>();
+                        for (Map.Entry<StringHolder, ObjectTag> entry : insertData.map.entrySet()) {
+                            String key = entry.getKey().toString();
+                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                            insert.put(key, value);
+                        }
+                        Debug.echoDebug(scriptEntry, "Inserting data into Collection: '" + collection + "'. . .");
+                        InsertOneResult result = col.insertOne(new Document(insert));
+                        scriptEntry.addObject("inserted_id", new ElementTag(result.getInsertedId().toString()));
                         DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
                     }
                     catch (final Exception e) {
