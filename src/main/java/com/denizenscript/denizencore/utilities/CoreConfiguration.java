@@ -9,7 +9,10 @@ public class CoreConfiguration {
 
     public static boolean futureWarningsEnabled = false;
 
-    public static boolean debugVerbose = false, debugExtraInfo = false, debugLoadingInfo = false, debugOverride = false, debugStackTraces = true, debugScriptBuilder = false, debugShowSources = false, debugShouldTrim = true, debugRecordingAllowed = false;
+    public static boolean debugVerbose = false, debugUltraVerbose = false, debugExtraInfo = false, debugLoadingInfo = false,
+            debugOverride = false, debugStackTraces = true,
+            debugScriptBuilder = false, debugShowSources = false, debugShouldTrim = true,
+            debugRecordingAllowed = false;
 
     public static int debugLimitPerTick = 5000, debugTrimLength = 1024, debugLineLength = 300;
 

@@ -146,7 +146,7 @@ public class DebugInternals {
         }
         finalOutputDebugText(header + message + (showDebugSuffix ? ENABLE_DEBUG_MESSAGE : ""), sourceQueue, reformat);
         errorDuplicatePrevention = false;
-        if (CoreConfiguration.debugVerbose && depthCorrectError == 0) {
+        if (CoreConfiguration.debugVerbose && CoreConfiguration.debugUltraVerbose && depthCorrectError == 0) {
             depthCorrectError++;
             try {
                 throw new RuntimeException("Verbose info for above error");
