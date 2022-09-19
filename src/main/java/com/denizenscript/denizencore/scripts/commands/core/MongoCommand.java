@@ -18,7 +18,9 @@ import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.mongodb.client.*;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.*;
 
 import java.util.*;
@@ -26,7 +28,7 @@ import java.util.*;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find filter:<map>/insert:<map>");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find filter:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -39,8 +41,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // @Tags
     // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
     // <entry[saveName].result> returns the text result sent back from Mongo in a JSON format. JSON can be in an ElementTag or a ListTag depending on the action run.
-    // <entry[saveName].inserted_id>
+    // <entry[saveName].inserted_id> returns the ID of the item that has been inserted via the `insert` action.
     // <entry[saveName].ok> returns the 'ok' value from the result. Used with the `command` and `command_map` actions.
+    // <entry[saveName].upserted_id> returns the ID the upserted item. Returned if the `upsert` bool is true when updating.
+    // <entry[saveName].updated_count> returns the amount of Documents updated via the `update` action.
     // -->
 
     // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
@@ -118,6 +122,20 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("insert"));
                 scriptEntry.addObject("insert_data", arg.object);
             }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("update", "u")) {
+                scriptEntry.addObject("action", new ElementTag("update"));
+                scriptEntry.addObject("update", arg.object);
+            }
+            else if (!scriptEntry.hasObject("new")
+                    && arg.matchesPrefix("new")) {
+                scriptEntry.addObject("new", arg.object);
+            }
+            else if (!scriptEntry.hasObject("upsert")
+                    && arg.matchesPrefix("upsert")
+                    && arg.asElement().isBoolean()) {
+                scriptEntry.addObject("upsert", arg.asElement());
+            }
             else {
                 arg.reportUnhandled();
             }
@@ -127,6 +145,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         }
         if (!scriptEntry.hasObject("action")) {
             throw new InvalidArgumentsException("Must specify an action!");
+        }
+        if (!scriptEntry.hasObject("upsert")) {
+            scriptEntry.defaultObject("upsert", new ElementTag("false"));
         }
     }
 
@@ -142,6 +163,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         MapTag commandMap = scriptEntry.getObjectTag("command_map");
         MapTag findFilter = scriptEntry.getObjectTag("filter");
         MapTag insertData = scriptEntry.getObjectTag("insert_data");
+        MapTag updateData = scriptEntry.getObjectTag("update");
+        MapTag newData = scriptEntry.getObjectTag("new");
+        ElementTag upsert = scriptEntry.getElement("upsert");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
@@ -443,6 +467,66 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             }
                         }, 0));
                     }
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
+                }
+                else {
+                    runnable.run();
+                }
+            }
+            else if (action.asString().equalsIgnoreCase("update")) {
+                MongoClient con = connections.get(id.asLowerString());
+                MongoDatabase db = databases.get(id.asLowerString());
+                MongoCollection<Document> col = collections.get(id.asLowerString());
+                if (con == null) {
+                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (db == null) {
+                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (col == null) {
+                    Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (updateData == null) {
+                    Debug.echoError(scriptEntry, "You must specify the data you wish to update!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (newData == null) {
+                    Debug.echoError(scriptEntry, "You must specify the new data to be updated!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                Runnable runnable = () -> {
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    HashMap<String, Object> newMap = new HashMap<>();
+                    for (Map.Entry<StringHolder, ObjectTag> entry : updateData.map.entrySet()) {
+                        String key = entry.getKey().toString();
+                        Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                        updateMap.put(key, value);
+                    }
+                    for (Map.Entry<StringHolder, ObjectTag> entry : newData.map.entrySet()) {
+                        String key = entry.getKey().toString();
+                        Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                        newMap.put(key, value);
+                    }
+                    Debug.echoDebug(scriptEntry, "Updating data. . .");
+                    UpdateResult result;
+                    if (upsert.asBoolean()) {
+                        result = col.updateOne(new Document(updateMap), new Document(newMap), new UpdateOptions().upsert(true));
+                        scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().toString()));
+                    } else {
+                        result = col.updateOne(new Document(updateMap), new Document(newMap));
+                    }
+                    scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
+                    DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
                 };
                 if (!scriptEntry.shouldWaitFor()) {
                     DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
