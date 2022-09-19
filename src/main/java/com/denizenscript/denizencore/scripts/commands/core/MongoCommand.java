@@ -28,7 +28,7 @@ import java.util.*;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find filter:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -110,11 +110,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("command_map", arg.object);
             }
             else if (!scriptEntry.hasObject("action")
-                    && arg.matches("find")) {
+                    && arg.matchesPrefix("find")) {
                 scriptEntry.addObject("action", new ElementTag("find"));
-            }
-            else if (!scriptEntry.hasObject("filter")
-                    && arg.matchesPrefix("filter", "filters", "f")) {
                 scriptEntry.addObject("filter", arg.object);
             }
             else if (!scriptEntry.hasObject("action")
