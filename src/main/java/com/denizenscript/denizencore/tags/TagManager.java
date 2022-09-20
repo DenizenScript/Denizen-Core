@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.core.*;
+import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagCodeGenerator;
@@ -463,6 +464,8 @@ public class TagManager {
         return parseTextToTag(arg, context).parse(context);
     }
 
+    public static AsciiMatcher validTagFirstCharacter = new AsciiMatcher(AsciiMatcher.LETTERS_LOWER + AsciiMatcher.LETTERS_UPPER + AsciiMatcher.DIGITS + "&_");
+
     private static void locateTag(String arg, int[] holder, int start) {
         int first = arg.indexOf('<', start);
         holder[0] = first;
@@ -471,7 +474,7 @@ public class TagManager {
         }
         int len = arg.length();
         // Handle "<-" for the flag command
-        if (first + 1 < len && (arg.charAt(first + 1) == '-')) {
+        if (first + 1 < len && !validTagFirstCharacter.isMatch(arg.charAt(first + 1))) {
             locateTag(arg, holder, first + 1);
             return;
         }

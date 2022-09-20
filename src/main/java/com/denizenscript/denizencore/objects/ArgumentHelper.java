@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -39,31 +40,43 @@ public class ArgumentHelper {
     /**
      * Builds an arguments array, recognizing items in quotes as a single item, but
      * otherwise splitting on a space.
-     *
-     * @param stringArgs the line of arguments that need split
-     * @return an array of arguments
      */
-    public static String[] buildArgs(String stringArgs) {
+    public static String[] buildArgs(String stringArgs, boolean tagsContainSpaces) {
         if (stringArgs == null) {
             return null;
         }
         stringArgs = stringArgs.trim();
         stringArgs = stringArgs.replace('\r', ' ').replace('\n', ' ');
-        ArrayList<String> matchList = new ArrayList<>(stringArgs.length() / 7);
+        ArrayList<String> matchList = new ArrayList<>(stringArgs.length() / 6);
         int start = 0;
         int len = stringArgs.length();
         char currentQuote = 0;
+        int inTags = 0, inTagParams = 0;
         for (int i = 0; i < len; i++) {
             char c = stringArgs.charAt(i);
-            if (c == ' ' && currentQuote == 0) {
+            if (c == ' ' && currentQuote == 0 && inTagParams == 0) {
                 if (i > start) {
                     matchList.add(stringArgs.substring(start, i));
                 }
                 start = i + 1;
             }
+            else if (c == '<' && tagsContainSpaces) {
+                if (i + 1 < len && TagManager.validTagFirstCharacter.isMatch(stringArgs.charAt(i + 1))) {
+                    inTags++;
+                }
+            }
+            else if (c == '>' && inTags > 0) {
+                inTags--;
+            }
+            else if (c == '[' && inTags > 0) {
+                inTagParams++;
+            }
+            else if (c == ']' && inTagParams > 0) {
+                inTagParams--;
+            }
             else if (c == '"' || c == '\'') {
-                if (currentQuote == 0) {
-                    if (i - 1 < 0 || stringArgs.charAt(i - 1) == ' ') {
+                if (currentQuote == 0 && inTagParams == 0) {
+                    if (i == 0 || stringArgs.charAt(i - 1) == ' ') {
                         currentQuote = c;
                         start = i + 1;
                     }

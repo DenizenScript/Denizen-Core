@@ -18,31 +18,13 @@ public class CommandExecutor {
     public static ScriptQueue currentQueue;
 
     public static void debugSingleExecution(ScriptEntry scriptEntry) {
-        StringBuilder output = new StringBuilder();
-        output.append("<G>(line ").append(scriptEntry.internal.lineNumber).append(")<W> ");
-        if (scriptEntry.internal.waitfor) {
-            output.append("~");
-        }
-        output.append(scriptEntry.getCommandName());
-        if (scriptEntry.getOriginalArguments() == null) {
-            Debug.echoError(scriptEntry, "Original Arguments null for " + scriptEntry.getCommandName());
-        }
-        else {
-            for (String arg : scriptEntry.getOriginalArguments()) {
-                if (arg.equals("\0CALLBACK")) {
-                    return;
-                }
-                if (CoreUtilities.contains(arg, ' ')) {
-                    output.append(" \"").append(arg).append("\"");
-                }
-                else {
-                    output.append(" ").append(arg);
-                }
-            }
+        if (scriptEntry.getOriginalArguments().size() == 1 && scriptEntry.getOriginalArguments().get(0).equals("\0CALLBACK")) {
+            return;
         }
         Consumer<String> altDebug = scriptEntry.getResidingQueue().debugOutput;
         scriptEntry.getResidingQueue().debugOutput = null;
-        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "<LP>Queue '" + scriptEntry.getResidingQueue().debugId + "<LP>' Executing: <W>" + output);
+        Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, "<LP>Queue '" + scriptEntry.getResidingQueue().debugId
+                + "<LP>' Executing: <G>(line " + scriptEntry.internal.lineNumber + ")<W> " + scriptEntry.internal.originalLine);
         scriptEntry.getResidingQueue().debugOutput = altDebug;
     }
 

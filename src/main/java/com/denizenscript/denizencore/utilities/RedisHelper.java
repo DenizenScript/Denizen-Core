@@ -298,7 +298,7 @@ public class RedisHelper {
                         String redisCommand;
                         String[] redisArgs;
                         if (args == null) {
-                            String[] splitCommand = ArgumentHelper.buildArgs(command.asString());
+                            String[] splitCommand = ArgumentHelper.buildArgs(command.asString(), false);
                             redisCommand = splitCommand[0];
                             redisArgs = Arrays.copyOfRange(splitCommand, 1, splitCommand.length);
                         }

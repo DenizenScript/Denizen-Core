@@ -1531,7 +1531,7 @@ public class ElementTag implements ObjectTag {
         // That is, split by spaces but respecting the use of "quotes" to contain spaces within a single argument.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "split_args", (attribute, object) -> {
-            return new ListTag(Arrays.asList(ArgumentHelper.buildArgs(object.element)));
+            return new ListTag(Arrays.asList(ArgumentHelper.buildArgs(object.element, false)));
         });
 
         // <--[tag]

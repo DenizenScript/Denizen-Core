@@ -421,6 +421,10 @@ public class PropertyParser {
                 return null;
             }
             MapTag properties = attribute.paramAsType(MapTag.class);
+            if (properties == null) {
+                attribute.echoError("Cannot process 'with_map': invalid map input.");
+                return null;
+            }
             T instance = (T) object.duplicate();
             for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
                 instance.safeApplyProperty(new Mechanism(pair.getKey().low, pair.getValue(), attribute.context));

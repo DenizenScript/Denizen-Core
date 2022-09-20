@@ -63,7 +63,7 @@ public class ScriptBuilder {
             String[] scriptEntry = entry.split(" ", 2);
             try {
                 /* Build new script commands */
-                String[] args = scriptEntry.length > 1 ?  ArgumentHelper.buildArgs(scriptEntry[1]) : null;
+                String[] args = scriptEntry.length > 1 ?  ArgumentHelper.buildArgs(scriptEntry[1], true) : null;
                 if (CoreConfiguration.debugScriptBuilder) {
                     Debug.echoDebug(parent, "Adding '" + scriptEntry[0] + "'  Args: " + Arrays.toString(args));
                 }
