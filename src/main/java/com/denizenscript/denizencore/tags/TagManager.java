@@ -464,7 +464,7 @@ public class TagManager {
         return parseTextToTag(arg, context).parse(context);
     }
 
-    public static AsciiMatcher validTagFirstCharacter = new AsciiMatcher(AsciiMatcher.LETTERS_LOWER + AsciiMatcher.LETTERS_UPPER + AsciiMatcher.DIGITS + "&_");
+    public static AsciiMatcher validTagFirstCharacter = new AsciiMatcher(AsciiMatcher.LETTERS_LOWER + AsciiMatcher.LETTERS_UPPER + AsciiMatcher.DIGITS + "&_[");
 
     private static void locateTag(String arg, int[] holder, int start) {
         int first = arg.indexOf('<', start);
