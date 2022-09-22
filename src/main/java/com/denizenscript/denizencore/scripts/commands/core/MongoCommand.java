@@ -28,7 +28,7 @@ import java.util.*;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -105,7 +105,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("parameters", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action")
-                    && arg.matchesPrefix("command_map", "commandmap")) {
+                    && arg.matchesPrefix("command_map", "cmd_map")) {
                 scriptEntry.addObject("action", new ElementTag("command_map"));
                 scriptEntry.addObject("command_map", arg.object);
             }
@@ -132,6 +132,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("upsert")
                     && arg.asElement().isBoolean()) {
                 scriptEntry.addObject("upsert", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("use_database", "use_db")) {
+                scriptEntry.addObject("action", new ElementTag("use_database"));
+                scriptEntry.addObject("new_database", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("use_collection", "use_col")) {
+                scriptEntry.addObject("action", new ElementTag("use_collection"));
+                scriptEntry.addObject("new_collection", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
@@ -163,6 +173,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         MapTag updateData = scriptEntry.getObjectTag("update");
         MapTag newData = scriptEntry.getObjectTag("new");
         ElementTag upsert = scriptEntry.getElement("upsert");
+        ElementTag useDatabase = scriptEntry.getElement("new_database");
+        ElementTag useCollection = scriptEntry.getElement("new_collection");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
@@ -502,28 +514,119 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 Runnable runnable = () -> {
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    HashMap<String, Object> newMap = new HashMap<>();
-                    for (Map.Entry<StringHolder, ObjectTag> entry : updateData.map.entrySet()) {
-                        String key = entry.getKey().toString();
-                        Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                        updateMap.put(key, value);
+                    try {
+                        HashMap<String, Object> updateMap = new HashMap<>();
+                        HashMap<String, Object> newMap = new HashMap<>();
+                        for (Map.Entry<StringHolder, ObjectTag> entry : updateData.map.entrySet()) {
+                            String key = entry.getKey().toString();
+                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                            updateMap.put(key, value);
+                        }
+                        for (Map.Entry<StringHolder, ObjectTag> entry : newData.map.entrySet()) {
+                            String key = entry.getKey().toString();
+                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
+                            newMap.put(key, value);
+                        }
+                        Debug.echoDebug(scriptEntry, "Updating data. . .");
+                        UpdateResult result;
+                        if (upsert.asBoolean()) {
+                            result = col.updateOne(new Document(updateMap), new Document(newMap), new UpdateOptions().upsert(true));
+                            scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().toString()));
+                        } else {
+                            result = col.updateOne(new Document(updateMap), new Document(newMap));
+                        }
+                        scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
                     }
-                    for (Map.Entry<StringHolder, ObjectTag> entry : newData.map.entrySet()) {
-                        String key = entry.getKey().toString();
-                        Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                        newMap.put(key, value);
+                    catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
                     }
-                    Debug.echoDebug(scriptEntry, "Updating data. . .");
-                    UpdateResult result;
-                    if (upsert.asBoolean()) {
-                        result = col.updateOne(new Document(updateMap), new Document(newMap), new UpdateOptions().upsert(true));
-                        scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().toString()));
-                    } else {
-                        result = col.updateOne(new Document(updateMap), new Document(newMap));
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
+                }
+                else {
+                    runnable.run();
+                }
+            }
+            else if (action.asString().equalsIgnoreCase("use_database")) {
+                MongoClient con = connections.get(id.asLowerString());
+                if (con == null) {
+                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (useDatabase == null) {
+                    Debug.echoError("You must provide a new Database to use!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                Runnable runnable = () -> {
+                    try {
+                        MongoDatabase newDB = con.getDatabase(useDatabase.asString());
+                        Debug.echoDebug(scriptEntry, "Using new Database: '" + useDatabase + "'.");
+                        databases.remove(id.asLowerString());
+                        databases.put(id.asLowerString(), newDB);
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
                     }
-                    scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
-                    DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                    catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
+                    }
+                };
+                if (!scriptEntry.shouldWaitFor()) {
+                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
+                }
+                else {
+                    runnable.run();
+                }
+            }
+            else if (action.asString().equalsIgnoreCase("use_collection")) {
+                MongoClient con = connections.get(id.asLowerString());
+                MongoDatabase db = databases.get(id.asLowerString());
+                if (con == null) {
+                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (db == null) {
+                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (useCollection == null) {
+                    Debug.echoError("You must provide a new Collection to use!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                Runnable runnable = () -> {
+                    try {
+                        MongoCollection<Document> newCol = db.getCollection(useCollection.asString());
+                        Debug.echoDebug(scriptEntry, "Using new Collection: '" + useCollection + "'.");
+                        collections.remove(id.asLowerString());
+                        collections.put(id.asLowerString(), newCol);
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                    }
+                    catch (final Exception e) {
+                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            scriptEntry.setFinished(true);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
+                        }, 0));
+                    }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
                     DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runnable, 0)));
