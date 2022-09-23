@@ -22,13 +22,14 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.*;
+import org.bson.types.ObjectId;
 
 import java.util.*;
 
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map>/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>/create_database:<name>/create_collection:<name>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -114,6 +115,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("find"));
                 scriptEntry.addObject("filter", arg.object);
             }
+            else if (!scriptEntry.hasObject("find_by_id")
+                    && arg.matchesPrefix("by_id", "find_by_id")) {
+                scriptEntry.addObject("find_by_id", arg.asElement());
+            }
             else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("insert", "i")) {
                 scriptEntry.addObject("action", new ElementTag("insert"));
@@ -142,6 +147,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     && arg.matchesPrefix("use_collection", "use_col")) {
                 scriptEntry.addObject("action", new ElementTag("use_collection"));
                 scriptEntry.addObject("new_collection", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("create_database", "create_db")) {
+                scriptEntry.addObject("action", new ElementTag("create_database"));
+                scriptEntry.addObject("create_database_name", arg.asElement());
+            }
+            else if (!scriptEntry.hasObject("action")
+                    && arg.matchesPrefix("create_collection", "create_col")) {
+                scriptEntry.addObject("action", new ElementTag("create_collection"));
+                scriptEntry.addObject("create_collection_name", arg.asElement());
             }
             else {
                 arg.reportUnhandled();
@@ -173,8 +188,11 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         MapTag updateData = scriptEntry.getObjectTag("update");
         MapTag newData = scriptEntry.getObjectTag("new");
         ElementTag upsert = scriptEntry.getElement("upsert");
+        ElementTag findByID = scriptEntry.getElement("find_by_id");
         ElementTag useDatabase = scriptEntry.getElement("new_database");
         ElementTag useCollection = scriptEntry.getElement("new_collection");
+        ElementTag createDatabase = scriptEntry.getElement("create_database_name");
+        ElementTag createCollection = scriptEntry.getElement("create_collection_name");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
@@ -279,7 +297,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -331,7 +349,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -382,7 +400,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -404,7 +422,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
                             query.put(key, value);
                         }
-                        Debug.echoDebug(scriptEntry, "Finding data in Collection: '" + collection + "'. . .");
+                        if (findByID != null) {
+                            query.put("_id", new BsonObjectId(new ObjectId(findByID.toString())));
+                        }
+                        Debug.echoDebug(scriptEntry, "Finding data in Collection: '" + col.getNamespace() + "'. . .");
                         FindIterable<Document> findResult = col.find(new Document(query));
                         ListTag result = new ListTag();
                         for (Document doc : findResult) {
@@ -440,7 +461,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -462,9 +483,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
                             insert.put(key, value);
                         }
-                        Debug.echoDebug(scriptEntry, "Inserting data into Collection: '" + collection + "'. . .");
+                        Debug.echoDebug(scriptEntry, "Inserting data into Collection: '" + col.getNamespace() + "'. . .");
                         InsertOneResult result = col.insertOne(new Document(insert));
-                        scriptEntry.addObject("inserted_id", new ElementTag(result.getInsertedId().toString()));
+                        if (result.getInsertedId() != null) {
+                            scriptEntry.addObject("inserted_id", new ElementTag(result.getInsertedId().asObjectId().getValue().toString()));
+                        }
+                        else {
+                            scriptEntry.addObject("inserted_id", null);
+                        }
                         DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
                     }
                     catch (final Exception e) {
@@ -494,7 +520,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -531,7 +557,12 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         UpdateResult result;
                         if (upsert.asBoolean()) {
                             result = col.updateOne(new Document(updateMap), new Document(newMap), new UpdateOptions().upsert(true));
-                            scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().toString()));
+                            if (result.getUpsertedId() != null) {
+                                scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().asObjectId().getValue().toString()));
+                            }
+                            else {
+                                scriptEntry.addObject("upserted_id", null);
+                            }
                         } else {
                             result = col.updateOne(new Document(updateMap), new Document(newMap));
                         }
@@ -601,7 +632,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (db == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database: '" + databases + "'! Was it dropped?");
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
