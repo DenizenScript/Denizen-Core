@@ -29,7 +29,7 @@ import java.util.*;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameter:<parameter>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -39,6 +39,33 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // @Name Mongo
     // @Short Interacts with a MongoDB server.
     //
+    // @Description
+    // This command is used to interact with a MongoDB server.
+    //
+    // MongoDB is a NoSQL database which uses concepts such as Documents and Collections to store data. MongoDB uses a form of JSON to represent its data.
+    // It can interact with localhost connections as well as hosted connections (such as MongoDB's Atlas) via a connection URI.
+    // Store your connection URI in the Denizen secrets file at 'plugins/Denizen/secrets.secret'. Refer to <@link ObjectType SecretTag> for usage info.
+    //
+    // Mongo works as a document-oriented database, where data is stored in Documents. Documents are stored inside Collections. Collections can contain many Documents. Collections are then stored inside Databases.
+    //
+    // Usage of the mongo command should almost always be used as ~awaitable (see <@link language ~waitable>), as large queries and insertions can take a while to retrieve or send.
+    //
+    // You can open a mongo connection with connect:<uri>. You must specify a database and collection to connect to with the database:<database> and collection:<collection> options.
+    // You can change the database or collection you are connected to with use_database:<database> and use_collection:<collection>
+    // If a Database or Collection you connect to does not exist, once you insert some data then the Database or Collection will be created automatically.
+    //
+    // To insert Documents, use insert:<map>.
+    // To find a specific document from fragments of data, use find:<map>. You can include MongoDB's special query filters to further refine your query. If you want to search by a Document's ID, use by_id:id.
+    //
+    // To update a Document's data, use update:<update> with the old data, and new:<new> for the new data being updated.
+    // You can also include the upsert flag, to create a new Document if the Document you are trying to update does not already exist.
+    //
+    // As MongoDB offers a variety of commands, to run a command not wrapped here you can use command:<command> and parameters:<parameters>. This will run a SINGLE basic command with parameters.
+    // To run commands with multiple parameters, use command_map:<map>.
+    //
+    // The mongo command is merely a wrapper, and further usage details should be gathered from an official MongoDB command reference rather than from Denizen command help.
+    // You can view the official redis documentation and the supported commands here: <@link url https://www.mongodb.com/docs/manual/introduction/>
+    //
     // @Tags
     // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
     // <entry[saveName].result> returns the text result sent back from Mongo in a JSON format. JSON can be in an ElementTag or a ListTag depending on the action run.
@@ -46,10 +73,71 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // <entry[saveName].ok> returns the 'ok' value from the result. Used with the `command` and `command_map` actions.
     // <entry[saveName].upserted_id> returns the ID the upserted item. Returned if the `upsert` bool is true when updating.
     // <entry[saveName].updated_count> returns the amount of Documents updated via the `update` action.
+    //
+    // @Usage
+    // Use to connect to a Mongo instance.
+    // - ~mongo id:name connect:<secret[uri]>
+    //
+    // @Usage
+    // Use to disconnect from a Mongo instance.
+    // - mongo id:name disconnect
+    //
+    // @Usage
+    // Run a simple command.
+    // - ~mongo id:name command:dbStats parameter:1
+    //
+    // @Usage
+    // Run more complex commands.
+    // - definemap commands:
+    //      count: my_collection
+    //      skip: 4
+    //  - ~mongo id:name command_map:<[commands]>
+    //
+    // @Usage
+    // Simple find query.
+    // - ~mongo id:name find:<map[name=Bob]>
+    //
+    // @Usage
+    // Complex find query with query filters.
+    // - definemap filters:
+    //      $and:
+    //          - number_greater_than:
+    //              $gt: 2
+    //          - number_less_than:
+    //              $lt: 5
+    // - ~mongo id:name find:<[filters]>
+    //
+    // @Usage
+    // Insert data into a Collection.
+    // - definemap data:
+    //      name: Pluto
+    //      order_from_sun: 9
+    //      has_rings: false
+    //      main_atmosphere:
+    //          - N2
+    //          - CH4
+    //          - CO
+    // - ~mongo id:name insert:<[data]> save:mg
+    //
+    // @Usage
+    // Update data.
+    // - definemap old_data:
+    //      name: Pluto
+    // - definemap new_data:
+    //      $set:
+    //          name: Pluto (A Dwarf Planet)
+    // - ~mongo id:name update:<[old_data]> new:<[new_data]>
+    //
+    // @Usage
+    // Change Databases.
+    // - ~mongo id:name use_database:my_new_database
+    //
+    // @Usage
+    // Change Collections.
+    // - ~mongo id:name use_collection:my_new_collection
     // -->
 
     // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
-    // TODO: MAYBE add a custom tag or something like that to do add cursor operations like .sort or .skip? Maybe it can also add a better way of turning the JSON into denizen tags.
     public static Map<String, MongoClient> connections = new HashMap<>();
     public static Map<String, MongoDatabase> databases = new HashMap<>();
     public static Map<String, MongoCollection<Document>> collections = new HashMap<>();
@@ -101,9 +189,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("command"));
                 scriptEntry.addObject("command", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("parameters")
-                    && arg.matchesPrefix("parameters", "params", "p")) {
-                scriptEntry.addObject("parameters", arg.asElement());
+            else if (!scriptEntry.hasObject("parameter")
+                    && arg.matchesPrefix("parameter", "param", "p")) {
+                scriptEntry.addObject("parameter", arg.asElement());
             }
             else if (!scriptEntry.hasObject("action")
                     && arg.matchesPrefix("command_map", "cmd_map")) {
@@ -181,7 +269,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         ElementTag database = scriptEntry.getElement("database");
         ElementTag collection = scriptEntry.getElement("collection");
         ElementTag command = scriptEntry.getElement("command");
-        ObjectTag parameters = scriptEntry.getObjectTag("parameters");
+        ObjectTag parameter = scriptEntry.getObjectTag("parameter");
         MapTag commandMap = scriptEntry.getObjectTag("command_map");
         MapTag findFilter = scriptEntry.getObjectTag("filter");
         MapTag insertData = scriptEntry.getObjectTag("insert_data");
@@ -304,14 +392,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                if (parameters == null) {
-                    Debug.echoError("You must specify the parameters to run!");
+                if (parameter == null) {
+                    Debug.echoError("You must specify the parameter to run!");
                     scriptEntry.setFinished(true);
                     return;
                 }
                 Runnable runnable = () -> {
                     try {
-                        Object obj = parameters.getJavaObject();
+                        Object obj = parameter.getJavaObject();
                         Debug.echoDebug(scriptEntry, "Running command: " + command);
                         Document commandResult = db.runCommand(new Document(command.asString(), obj));
                         ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
