@@ -29,7 +29,7 @@ import java.util.*;
 public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
-        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>/create_database:<name>/create_collection:<name>");
+        setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameters:<parameters>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
         setRequiredArguments(2, 100);
         allowedDynamicPrefixes = true;
         isProcedural = false;
@@ -191,8 +191,6 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         ElementTag findByID = scriptEntry.getElement("find_by_id");
         ElementTag useDatabase = scriptEntry.getElement("new_database");
         ElementTag useCollection = scriptEntry.getElement("new_collection");
-        ElementTag createDatabase = scriptEntry.getElement("create_database_name");
-        ElementTag createCollection = scriptEntry.getElement("create_collection_name");
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), id, uri, database, action);
         }
