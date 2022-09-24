@@ -63,6 +63,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // As MongoDB offers a variety of commands, to run a command not wrapped here you can use command:<command> and parameters:<parameters>. This will run a SINGLE basic command with parameters.
     // To run commands with multiple parameters, use command_map:<map>.
     //
+    // TODO: When opening a connection, Mongo will output a lot of data to the console. There currently is not a way to turn this off.
+    //
     // The mongo command is merely a wrapper, and further usage details should be gathered from an official MongoDB command reference rather than from Denizen command help.
     // You can view the official redis documentation and the supported commands here: <@link url https://www.mongodb.com/docs/manual/introduction/>
     //
@@ -137,7 +139,6 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // - ~mongo id:name use_collection:my_new_collection
     // -->
 
-    // TODO: Mongo will log a whole bunch of stuff to the console. Add way to prevent this.
     public static Map<String, MongoClient> connections = new HashMap<>();
     public static Map<String, MongoDatabase> databases = new HashMap<>();
     public static Map<String, MongoCollection<Document>> collections = new HashMap<>();
