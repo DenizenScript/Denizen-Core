@@ -30,7 +30,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     public MongoCommand() {
         setName("mongo");
         setSyntax("mongo [id:<ID>] [connect:<uri> database:<database> collection:<collection>/disconnect/command:<command> parameter:<parameter>/command_map:<map>/find:<map> (by_id:<id>)/insert:<map>/update:<update> new:<new> (upsert:true/{false})/use_database:<database>/use_collection:<collection>");
-        setRequiredArguments(2, 100);
+        setRequiredArguments(2, 4);
         allowedDynamicPrefixes = true;
         isProcedural = false;
     }
