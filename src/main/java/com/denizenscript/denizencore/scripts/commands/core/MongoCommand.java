@@ -236,16 +236,6 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 scriptEntry.addObject("action", new ElementTag("use_collection"));
                 scriptEntry.addObject("new_collection", arg.asElement());
             }
-            else if (!scriptEntry.hasObject("action")
-                    && arg.matchesPrefix("create_database", "create_db")) {
-                scriptEntry.addObject("action", new ElementTag("create_database"));
-                scriptEntry.addObject("create_database_name", arg.asElement());
-            }
-            else if (!scriptEntry.hasObject("action")
-                    && arg.matchesPrefix("create_collection", "create_col")) {
-                scriptEntry.addObject("action", new ElementTag("create_collection"));
-                scriptEntry.addObject("create_collection_name", arg.asElement());
-            }
             else {
                 arg.reportUnhandled();
             }
