@@ -371,7 +371,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         injectEntriesAtStart(entries);
         while (getQueueSize() > 0 && getEntry(0) != nextup) {
             getEntry(0).setInstant(true);
-            getEntry(0).setFinished(true);
+            holdingOn = null;
             ScriptEngine.revolveOnceForce(this);
         }
         return;
