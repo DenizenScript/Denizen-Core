@@ -148,7 +148,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         for (Map.Entry<String, MongoClient> entry : connections.entrySet()) {
             try {
                 entry.getValue().close();
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 Debug.echoError(e);
             }
         }
@@ -318,13 +319,13 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         db = con.getDatabase(database.asString());
                         col = db.getCollection(collection.asString());
                     } catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error.");
@@ -333,20 +334,21 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     final MongoDatabase connDB = db;
                     final MongoCollection<Document> coll = col;
                     if (con != null) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             connections.put(id.asLowerString(), conn);
                             databases.put(id.asLowerString(), connDB);
                             collections.put(id.asLowerString(), coll);
                             Debug.echoDebug(scriptEntry, "Successfully connected to Mongo server.");
                             scriptEntry.setFinished(true);
-                        }, 0));
-                    } else {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        });
+                    }
+                    else {
+                        DenizenCore.runOnMainThread(() -> {
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
-                        }, 0));
+                        });
                     }
                 }, 0)));
             } else if (action.asString().equalsIgnoreCase("disconnect")) {
@@ -397,17 +399,15 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         ElementTag resultRaw = new ElementTag(commandResult.toJson());
                         scriptEntry.addObject("result", resultRaw);
                         scriptEntry.addObject("ok", okResult);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                            scriptEntry.setFinished(true);
-                        }, 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     } catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -449,15 +449,15 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         ElementTag resultRaw = new ElementTag(commandResult.toJson());
                         scriptEntry.addObject("result", resultRaw);
                         scriptEntry.addObject("ok", okResult);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     } catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -509,16 +509,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             result.addObject(new ElementTag(doc.toJson()));
                         }
                         scriptEntry.addObject("result", result);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -568,16 +568,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         else {
                             scriptEntry.addObject("inserted_id", null);
                         }
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -644,16 +644,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             result = col.updateOne(new Document(updateMap), new Document(newMap));
                         }
                         scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -681,16 +681,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         Debug.echoDebug(scriptEntry, "Using new Database: '" + useDatabase + "'.");
                         databases.remove(id.asLowerString());
                         databases.put(id.asLowerString(), newDB);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
@@ -724,16 +724,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         Debug.echoDebug(scriptEntry, "Using new Collection: '" + useCollection + "'.");
                         collections.remove(id.asLowerString());
                         collections.put(id.asLowerString(), newCol);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> scriptEntry.setFinished(true), 0));
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (!scriptEntry.shouldWaitFor()) {
