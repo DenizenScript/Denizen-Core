@@ -85,7 +85,7 @@ public class CommandExecutor {
             TagContext context = scriptEntry.getContext();
             Debug.currentContext = context;
             for (Argument arg : scriptEntry.internal.preprocArgs) {
-                if (DenizenCore.implementation.handleCustomArgs(scriptEntry, arg, false)) {
+                if (DenizenCore.implementation.handleCustomArgs(scriptEntry, arg)) {
                     // Do nothing
                 }
                 else if (arg.matchesPrefix("if")) {

@@ -51,7 +51,7 @@ public interface DenizenImplementation {
      */
     ScriptEntryData getEmptyScriptEntryData();
 
-    boolean handleCustomArgs(ScriptEntry entry, Argument arg, boolean if_ignore);
+    boolean handleCustomArgs(ScriptEntry entry, Argument arg);
 
     void refreshScriptContainers();
 
