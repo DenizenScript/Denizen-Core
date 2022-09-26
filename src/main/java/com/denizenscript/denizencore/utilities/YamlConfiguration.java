@@ -11,6 +11,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 import org.yaml.snakeyaml.scanner.ScannerImpl;
 
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -28,16 +29,35 @@ public class YamlConfiguration {
         }
     }
 
+    public static Yaml createBaseYaml(boolean useCustomResolver) {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setAllowUnicode(true);
+        return new Yaml(new SafeConstructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
+    }
+
     public static YamlConfiguration load(String data) {
         return load(data, true);
     }
 
     public static YamlConfiguration load(String data, boolean useCustomResolver) {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setAllowUnicode(true);
-        Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
-        Object obj = yaml.load(data);
+        Object obj = createBaseYaml(useCustomResolver).load(data);
+        return loadRaw(obj);
+    }
+
+    public static YamlConfiguration load(InputStream inputStream) {
+        return load(inputStream, true);
+    }
+
+    public static YamlConfiguration load(InputStream inputStream, boolean useCustomResolver) {
+        Object obj = createBaseYaml(useCustomResolver).load(inputStream);
+        return loadRaw(obj);
+    }
+
+    /**
+     * Loads a raw object into a YamlConfiguration. For internal use.
+     */
+    public static YamlConfiguration loadRaw(Object obj) {
         YamlConfiguration config = new YamlConfiguration();
         if (obj == null) {
             return null;
