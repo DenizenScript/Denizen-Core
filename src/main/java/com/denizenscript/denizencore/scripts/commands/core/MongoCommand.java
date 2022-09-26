@@ -289,7 +289,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         return;
                     }
                     rawUri = secret.getValue();
-                } else {
+                }
+                else {
                     Debug.echoError("Connection URI must be of type SecretTag!");
                     return;
                 }
@@ -318,7 +319,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         con = MongoClients.create(conStr);
                         db = con.getDatabase(database.asString());
                         col = db.getCollection(collection.asString());
-                    } catch (final Exception e) {
+                    }
+                    catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
@@ -351,7 +353,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         });
                     }
                 }, 0)));
-            } else if (action.asString().equalsIgnoreCase("disconnect")) {
+            }
+            else if (action.asString().equalsIgnoreCase("disconnect")) {
                 MongoClient con = connections.get(id.asLowerString());
                 if (con == null) {
                     Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id.asString() + "'!");
@@ -363,11 +366,13 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 collections.remove(id.asLowerString());
                 try {
                     con.close();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Debug.echoError(e);
                 }
                 Debug.echoDebug(scriptEntry, "Disconnected from '" + id.asString() + "'.");
-            } else if (action.asString().equalsIgnoreCase("command")) {
+            }
+            else if (action.asString().equalsIgnoreCase("command")) {
                 MongoClient con = connections.get(id.asLowerString());
                 MongoDatabase db = databases.get(id.asLowerString());
                 if (con == null) {
@@ -400,7 +405,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         scriptEntry.addObject("result", resultRaw);
                         scriptEntry.addObject("ok", okResult);
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
-                    } catch (final Exception e) {
+                    }
+                    catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
@@ -450,7 +456,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         scriptEntry.addObject("result", resultRaw);
                         scriptEntry.addObject("ok", okResult);
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
-                    } catch (final Exception e) {
+                    }
+                    catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
@@ -640,7 +647,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             else {
                                 scriptEntry.addObject("upserted_id", null);
                             }
-                        } else {
+                        }
+                        else {
                             result = col.updateOne(new Document(updateMap), new Document(newMap));
                         }
                         scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
@@ -746,7 +754,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             else {
                 Debug.echoError(scriptEntry, "Unknown action '" + action.asString() + "'!");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Debug.echoError("Mongo Exception: " + e.getMessage());
             if (CoreConfiguration.debugVerbose) {
                 Debug.echoError(scriptEntry, e);
