@@ -13,7 +13,7 @@ public class CoreConfiguration {
 
     public static int debugLimitPerTick = 5000, debugTrimLength = 1024, debugLineLength = 300;
 
-    public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowLog = false, allowFileCopy = false, allowWebserver = false, allowFileRead = false, allowFileWrite = false;
+    public static boolean allowWebget = false, allowSQL = false, allowRedis = false, allowMongo = false, allowLog = false, allowFileCopy = false, allowWebserver = false, allowFileRead = false, allowFileWrite = false;
 
     public static boolean allowConsoleRedirection = false, allowRestrictedActions = false, allowStrangeFileSaves = false;
 

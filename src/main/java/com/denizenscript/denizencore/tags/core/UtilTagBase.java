@@ -885,6 +885,20 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         });
 
         // <--[tag]
+        // @attribute <util.mongo_connections>
+        // @returns ElementTag
+        // @description
+        // Returns a list of all Mongo connections opened by <@link command mongo>.
+        // -->
+        tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
+            ListTag list = new ListTag();
+            for (String entry : MongoCommand.connections.keySet()) {
+                list.addObject(new ElementTag(entry, true));
+            }
+            return list;
+        });
+
+        // <--[tag]
         // @attribute <util.scripts>
         // @returns ListTag(ScriptTag)
         // @description
@@ -952,20 +966,6 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerTag(ElementTag.class, "stack_trace", (attribute, object) -> {
             return new ElementTag(DebugInternals.getFullExceptionMessage(new RuntimeException("TRACE"), false));
-        });
-
-        // <--[tag]
-        // @attribute <util.mongo_connections>
-        // @returns ElementTag
-        // @description
-        // Returns a list of all Mongo connections opened by <@link command mongo>
-        // -->
-        tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (String entry : MongoCommand.connections.keySet()) {
-                list.addObject(new ElementTag(entry, true));
-            }
-            return list;
         });
     }
 
