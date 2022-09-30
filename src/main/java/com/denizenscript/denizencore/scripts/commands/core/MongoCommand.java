@@ -1,7 +1,6 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
@@ -15,7 +14,6 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
-import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.mongodb.client.*;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.InsertOneResult;
@@ -190,10 +188,11 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             Debug.echoError(scriptEntry, "Missing connection ID!");
             return;
         }
+        String connectionId = CoreUtilities.toLowerCase(id);
         Runnable runnable = () -> {
             try {
                 if (uri != null) {
-                    if (connections.containsKey(id.toLowerCase())) {
+                    if (connections.containsKey(connectionId)) {
                         Debug.echoError(scriptEntry, "Already connected to a server with ID '" + id + "'!");
                         scriptEntry.setFinished(true);
                         return;
@@ -241,9 +240,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         final MongoCollection<Document> coll = col;
                         if (con != null) {
                             DenizenCore.runOnMainThread(() -> {
-                                connections.put(id.toLowerCase(), conn);
-                                databases.put(id.toLowerCase(), connDB);
-                                collections.put(id.toLowerCase(), coll);
+                                connections.put(connectionId, conn);
+                                databases.put(connectionId, connDB);
+                                collections.put(connectionId, coll);
                                 Debug.echoDebug(scriptEntry, "Successfully connected to Mongo server.");
                                 scriptEntry.setFinished(true);
                             });
@@ -258,15 +257,15 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 }
                 // If disconnect is true, it means it is present.
                 else if (disconnect) {
-                    MongoClient con = connections.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
                         return;
                     }
-                    connections.remove(id);
-                    databases.remove(id);
-                    collections.remove(id);
+                    connections.remove(connectionId);
+                    databases.remove(connectionId);
+                    collections.remove(connectionId);
                     try {
                         con.close();
                     }
@@ -276,8 +275,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     Debug.echoDebug(scriptEntry, "Disconnected from '" + id + "'.");
                 }
                 else if (command != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
-                    MongoDatabase db = databases.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
+                    MongoDatabase db = databases.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
@@ -289,14 +288,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         return;
                     }
                     try {
-                        HashMap<String, Object> commandsToIssue = new HashMap<>();
-                        for (Map.Entry<StringHolder, ObjectTag> entry : command.map.entrySet()) {
-                            String key = entry.getKey().toString();
-                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                            commandsToIssue.put(key, value);
-                        }
                         Debug.echoDebug(scriptEntry, "Running commands: " + command);
-                        Document commandResult = db.runCommand(new Document(commandsToIssue));
+                        HashMap<String, Object> finalCommand = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(command, false, true);
+                        Document commandResult = db.runCommand(new Document(finalCommand));
                         ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
                         ElementTag resultRaw = new ElementTag(commandResult.toJson());
                         scriptEntry.addObject("result", resultRaw);
@@ -314,9 +308,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else if (findQuery != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
-                    MongoDatabase db = databases.get(id.toLowerCase());
-                    MongoCollection<Document> col = collections.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
+                    MongoDatabase db = databases.get(connectionId);
+                    MongoCollection<Document> col = collections.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
@@ -333,12 +327,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         return;
                     }
                     try {
-                        HashMap<String, Object> query = new HashMap<>();
-                        for (Map.Entry<StringHolder, ObjectTag> entry : findQuery.map.entrySet()) {
-                            String key = entry.getKey().toString();
-                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                            query.put(key, value);
-                        }
+                        HashMap<String, Object> query = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(findQuery, false, true);
                         if (findByID != null) {
                             query.put("_id", new BsonObjectId(new ObjectId(findByID)));
                         }
@@ -362,9 +351,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else if (insert != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
-                    MongoDatabase db = databases.get(id.toLowerCase());
-                    MongoCollection<Document> col = collections.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
+                    MongoDatabase db = databases.get(connectionId);
+                    MongoCollection<Document> col = collections.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
@@ -381,12 +370,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         return;
                     }
                     try {
-                        HashMap<String, Object> insertData = new HashMap<>();
-                        for (Map.Entry<StringHolder, ObjectTag> entry : insert.map.entrySet()) {
-                            String key = entry.getKey().toString();
-                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                            insertData.put(key, value);
-                        }
+                        HashMap<String, Object> insertData = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(insert, false, true);
                         Debug.echoDebug(scriptEntry, "Inserting data into Collection: '" + col.getNamespace() + "'. . .");
                         InsertOneResult result = col.insertOne(new Document(insertData));
                         if (result.getInsertedId() != null) {
@@ -408,9 +392,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else if (oldData != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
-                    MongoDatabase db = databases.get(id.toLowerCase());
-                    MongoCollection<Document> col = collections.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
+                    MongoDatabase db = databases.get(connectionId);
+                    MongoCollection<Document> col = collections.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
@@ -432,18 +416,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         return;
                     }
                     try {
-                        HashMap<String, Object> updateMap = new HashMap<>();
-                        HashMap<String, Object> newMap = new HashMap<>();
-                        for (Map.Entry<StringHolder, ObjectTag> entry : oldData.map.entrySet()) {
-                            String key = entry.getKey().toString();
-                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                            updateMap.put(key, value);
-                        }
-                        for (Map.Entry<StringHolder, ObjectTag> entry : newData.map.entrySet()) {
-                            String key = entry.getKey().toString();
-                            Object value = CoreUtilities.objectTagToJavaForm(entry.getValue(), false, true);
-                            newMap.put(key, value);
-                        }
+                        HashMap<String, Object> updateMap = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(oldData, false, true);
+                        HashMap<String, Object> newMap = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(newData, false, true);
                         Debug.echoDebug(scriptEntry, "Updating data. . .");
                         UpdateResult result;
                         if (upsert) {
@@ -472,7 +446,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else if (newDatabase != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
@@ -496,8 +470,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 else if (newCollection != null) {
-                    MongoClient con = connections.get(id.toLowerCase());
-                    MongoDatabase db = databases.get(id.toLowerCase());
+                    MongoClient con = connections.get(connectionId);
+                    MongoDatabase db = databases.get(connectionId);
                     if (con == null) {
                         Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
                         scriptEntry.setFinished(true);
