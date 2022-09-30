@@ -31,6 +31,7 @@ public class TagManager {
 
         // Utilities
         new ContextTagBase();
+        new CoreTextTagBases();
         new DefinitionTagBase();
         new EscapeTagBase();
         new ListSingleTagBase();
