@@ -83,8 +83,6 @@ public interface DenizenImplementation {
 
     boolean setSpecialDef(String def, ScriptQueue queue, ObjectTag value);
 
-    void saveClassToLoader(Class<?> clazz);
-
     void addExtraErrorHeaders(StringBuilder headerBuilder, ScriptEntry source);
 
     String applyDebugColors(String uncolored);

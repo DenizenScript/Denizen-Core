@@ -15,17 +15,20 @@ public class CodeGenUtil {
 
     public static final String OBJECT_LOCAL_TYPE = "L" + Type.getInternalName(ObjectTag.class) + ";";
 
-    public static DynamicClassLoader loader = new DynamicClassLoader();
+    public static DynamicClassLoader loader = new DynamicClassLoader(CodeGenUtil.class.getClassLoader());
 
     public static String cleanName(String text) {
         return PERMITTED_NAME_CHARS.trimToMatches(text);
     }
 
     public static class DynamicClassLoader extends ClassLoader {
+        public DynamicClassLoader(ClassLoader parent) {
+            super(parent);
+        }
+
         public Class<?> define(String className, byte[] bytecode) {
             Class<?> clazz = super.defineClass(className, bytecode, 0, bytecode.length);
             resolveClass(clazz);
-            DenizenCore.implementation.saveClassToLoader(clazz);
             return clazz;
         }
         @Override
