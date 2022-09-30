@@ -132,8 +132,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.freneticllc.freneticutilities:freneticdatasyntax</include>
-                                    <include>org.ow2.asm:asm</include>
-                                    <include>org.ow2.asm:asm-commons</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
