@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.HashMap;
@@ -90,7 +91,10 @@ public class ReplaceableTagEvent {
         mainRef.tagBase = TagManager.baseTags.get(startValue);
         if (mainRef.tagBase == null) {
             if (!hasAlternative()) {
-                Debug.echoError(context.entry, "(Initial detection) No tag-base handler for '" + startValue + "'.");
+                // This fires even for cases where it's intended, eg Depenizen optional features, so just trust the VS Code ext to handle bad-tag-base-detection in most cases
+                if (CoreConfiguration.debugVerbose) {
+                    Debug.echoError(context.entry, "(Initial detection) No tag-base handler for '" + startValue + "'.");
+                }
             }
         }
         refs.put(otag, mainRef);
