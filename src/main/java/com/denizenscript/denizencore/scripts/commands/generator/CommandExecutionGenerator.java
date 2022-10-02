@@ -353,6 +353,10 @@ public class CommandExecutionGenerator {
                         argData.index = cmd.setEnumHandled(argData.name, (Class<? extends Enum>) paramType);
                         doCast = true;
                     }
+                    else {
+                        Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name + "' which does not have a valid order specifier (Linear, Prefixed, ...).");
+                        return null;
+                    }
                     if (argMethod == null) {
                         Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name + "' of type '" + paramType.getName() + "' which is not supported.");
                         return null;
