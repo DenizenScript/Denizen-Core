@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -29,11 +30,22 @@ public class YamlConfiguration {
         }
     }
 
+    private static boolean hasModernYaml = true;
+
     public static Yaml createBaseYaml(boolean useCustomResolver) {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
-        return new Yaml(new SafeConstructor(), new Representer(), options, useCustomResolver ? new CustomResolver() : new Resolver());
+        LoaderOptions loaderOptions = new LoaderOptions();
+        try {
+            if (hasModernYaml) {
+                loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
+            }
+        }
+        catch (NoSuchMethodError ignored) {
+            hasModernYaml = false; // pre-1.32 snakeyaml
+        }
+        return new Yaml(new SafeConstructor(), new Representer(), options, loaderOptions, useCustomResolver ? new CustomResolver() : new Resolver());
     }
 
     public static YamlConfiguration load(String data) {

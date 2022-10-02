@@ -351,6 +351,9 @@ public class TagManager {
     }
 
     public static ParseableTag parseTextToTagInternal(String arg, TagContext context) {
+        if (CoreConfiguration.debugVerbose) {
+            Debug.echoError("(Verbose) Parse text to tag: " + arg);
+        }
         List<ParseableTagPiece> pieces = new ArrayList<>(1);
         if (arg.indexOf('>') == -1 || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
