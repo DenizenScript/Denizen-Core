@@ -892,7 +892,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
             ListTag list = new ListTag();
-            for (String entry : MongoCommand.connections.keySet()) {
+            for (String entry : MongoCommand.mongoConnections.keySet()) {
                 list.addObject(new ElementTag(entry, true));
             }
             return list;
