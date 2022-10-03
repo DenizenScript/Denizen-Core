@@ -211,9 +211,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         if (!conStr.startsWith("mongodb://") && !conStr.startsWith("mongodb+srv://")) {
                             conStr = "mongodb://" + conStr;
                         }
-                        if (CoreConfiguration.debugVerbose) {
-                            Debug.echoDebug(scriptEntry, "Connecting to Mongo server...");
-                        }
+                        Debug.echoDebug(scriptEntry, "Connecting to Mongo server...");
                         MongoClient con = null;
                         MongoDatabase db = null;
                         MongoCollection<Document> col = null;
