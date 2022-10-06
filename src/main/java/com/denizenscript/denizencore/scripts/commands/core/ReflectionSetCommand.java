@@ -116,28 +116,9 @@ public class ReflectionSetCommand extends AbstractCommand {
             Debug.echoError("The 'reflectionset' command is disabled in the Denizen config.");
             return;
         }
-        Class<?> clazz;
-        Field field = null;
-        if (object.object instanceof Class) {
-            clazz = (Class<?>) object.object;
-            field = ReflectionHelper.getFields(clazz).get(fieldName);
-            if (field == null) {
-                Debug.echoError("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object.object).getName());
-                return;
-            }
-        }
-        else {
-            clazz = object.object.getClass();
-            while (field == null && clazz != Object.class) {
-                field = ReflectionHelper.getFields(clazz).get(fieldName);
-                if (field == null) {
-                    clazz = clazz.getSuperclass();
-                }
-            }
-            if (field == null) {
-                Debug.echoError("Field '" + fieldName + "' does not exist in class: " + object.object.getClass().getName());
-                return;
-            }
+        Field field = object.getFieldForTag(Debug::echoError, fieldName);
+        if (field == null) {
+            return;
         }
         if (field.isAnnotationPresent(ReflectionRefuse.class) || field.getType().isAnnotationPresent(ReflectionRefuse.class)) {
             Debug.echoError("Cannot ReflectionSet field '" + field + "' because it is marked for reflection refusal.");
@@ -155,7 +136,7 @@ public class ReflectionSetCommand extends AbstractCommand {
         if (setVal == null && value != null) {
             return;
         }
-        MethodHandle handle = ReflectionHelper.getFinalSetter(clazz, field.getName());
+        MethodHandle handle = ReflectionHelper.getFinalSetter(field.getDeclaringClass(), field.getName());
         try {
             if (object.object instanceof Class) {
                 handle.invoke(setVal);

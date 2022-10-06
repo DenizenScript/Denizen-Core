@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class JavaReflectedObjectTag implements ObjectTag {
 
@@ -289,7 +290,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -306,7 +307,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -323,7 +324,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -340,7 +341,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -357,7 +358,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -374,7 +375,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
             if (denyFieldTag(attribute)) {
                 return null;
             }
-            Field f = object.getFieldForTag(attribute, fieldName.asString());
+            Field f = object.getFieldForTag(attribute::echoError, fieldName.asString());
             if (f == null) {
                 return null;
             }
@@ -418,12 +419,12 @@ public class JavaReflectedObjectTag implements ObjectTag {
         });
     }
 
-    public Field getFieldForTag(Attribute attribute, String fieldName) {
+    public Field getFieldForTag(Consumer<String> error, String fieldName) {
         Field field = null;
         if (object instanceof Class) {
             field = ReflectionHelper.getFields((Class<?>) object).getNoCheck(fieldName);
             if (field == null) {
-                attribute.echoError("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object).getName());
+                error.accept("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object).getName());
             }
         }
         else {
@@ -435,7 +436,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
                 }
             }
             if (field == null) {
-                attribute.echoError("Field '" + fieldName + "' does not exist in class: " + object.getClass().getName());
+                error.accept("Field '" + fieldName + "' does not exist in class: " + object.getClass().getName());
             }
         }
         return field;
@@ -453,7 +454,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
     }
 
     public Object readFieldForTag(Attribute attribute, String fieldName) {
-        Field field = getFieldForTag(attribute, fieldName);
+        Field field = getFieldForTag(attribute::echoError, fieldName);
         if (field == null) {
             return null;
         }
