@@ -421,7 +421,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
     public Field getFieldForTag(Attribute attribute, String fieldName) {
         Field field = null;
         if (object instanceof Class) {
-            field = ReflectionHelper.getFields((Class<?>) object).get(fieldName);
+            field = ReflectionHelper.getFields((Class<?>) object).getNoCheck(fieldName);
             if (field == null) {
                 attribute.echoError("Field '" + fieldName + "' does not exist in class: " + ((Class<?>) object).getName());
             }
@@ -429,7 +429,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         else {
             Class<?> clazz = object.getClass();
             while (field == null && clazz != Object.class) {
-                field = ReflectionHelper.getFields(clazz).get(fieldName);
+                field = ReflectionHelper.getFields(clazz).getNoCheck(fieldName);
                 if (field == null) {
                     clazz = clazz.getSuperclass();
                 }

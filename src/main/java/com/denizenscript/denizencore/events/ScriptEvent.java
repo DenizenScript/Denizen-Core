@@ -855,7 +855,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // You can also specify lists. For example, if you want an event to work with certain tool types,
     // the 'on player breaks block:' event supports a switch named 'with', like 'on player breaks block with:iron_pickaxe:'
     // So lets match multiple tools for our event...
-    // 'on player breaks block with:iron_pickaxe|gold_pickaxe|diamond_axe|wood_shovel:'
+    // 'on player breaks block with:iron_pickaxe|gold_pickaxe|diamond_axe|wooden_shovel:'
     //
     // You can also combine wildcards and lists... note that lists are the 'wider' option.
     // That is, if you have wildcards and lists together, you will have a list of possible matches, where each entry may contain wildcards, you will not have a wildcard match with a list.
