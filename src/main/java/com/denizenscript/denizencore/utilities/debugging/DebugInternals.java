@@ -411,13 +411,19 @@ public class DebugInternals {
     /** Used for "log" to get class names. */
     public static final Map<Class<?>, String> classNameCache = new WeakHashMap<>();
 
-    /** Used for "log" to get class names. This class janks access to SecurityManager to be open to the DebugInternals class. */
+    /** Used for "log" to get class names. This class janks access to SecurityManager to be open to the DebugInternals class.
+     * Note: the format of this code is extremely unstable and jank as it relates to Java security internals stuff, do not touch unless you 100% know what you're doing. */
     public static class SecurityManagerTrick extends SecurityManager {
         @Override
         @SuppressWarnings("rawtypes")
         protected Class[] getClassContext() {
             return super.getClassContext();
         }
+    }
+
+    /** Helper to get the current class context. */
+    public static Class[] getClassContext() {
+        return new SecurityManagerTrick().getClassContext();
     }
 
     /** Used for "log" to get class names. */

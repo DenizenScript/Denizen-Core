@@ -948,9 +948,28 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // This tag is strictly for internal debugging reasons.
         // WARNING: Different Java versions generate different stack trace formats and details.
         // WARNING: Java internally limits stack trace generation in a variety of ways. This tag cannot be relied on to output anything.
+        // For gathering stable context, prefer <@link tag util.java_class_context>
         // -->
         tagProcessor.registerTag(ElementTag.class, "stack_trace", (attribute, object) -> {
             return new ElementTag(DebugInternals.getFullExceptionMessage(new RuntimeException("TRACE"), false));
+        });
+
+        // <--[tag]
+        // @attribute <util.java_class_context>
+        // @returns ListTag
+        // @description
+        // Returns a list of class names in the current stack history.
+        // More stable than <@link tag util.stack_trace>
+        // This contains a lot of stray content, the first 4 to 20 or so classes in this list are likely irrelevant to what you're searching for.
+        // Each entry in the list is a raw class name, like "com.denizenscript.denizencore.tags.core.UtilTagBase".
+        // Class names may appear multiple times in a row if that class contains methods that call each other.
+        // -->
+        tagProcessor.registerTag(ListTag.class, "java_class_context", (attribute, object) -> {
+            ListTag list = new ListTag();
+            for (Class<?> clazz : DebugInternals.getClassContext()) {
+                list.addObject(new ElementTag(clazz.getName(), true));
+            }
+            return list;
         });
     }
 
