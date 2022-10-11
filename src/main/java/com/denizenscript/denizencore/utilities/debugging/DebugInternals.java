@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class DebugInternals {
@@ -34,10 +35,16 @@ public class DebugInternals {
         Debug.errorContextStack.clear();
     }
 
+    /** An implementation can replace trimming if desired. */
+    public static Function<String, String> alternateTrimLogic;
+
     /** Some debug methods trim to keep super-long messages from hitting the console. */
     public static String trimMessage(String message) {
         if (!CoreConfiguration.debugShouldTrim) {
             return message;
+        }
+        if (alternateTrimLogic != null) {
+            return alternateTrimLogic.apply(message);
         }
         int trimSize = CoreConfiguration.debugTrimLength;
         if (message.length() > trimSize) {

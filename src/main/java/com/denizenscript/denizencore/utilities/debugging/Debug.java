@@ -211,7 +211,7 @@ public class Debug {
             return;
         }
         DenizenCore.runOnMainThread(() -> {
-            DebugInternals.echo("<W>"+ DebugInternals.trimMessage(message), entry);
+            DebugInternals.echo("<W>" + DebugInternals.trimMessage(message), entry);
             if (CoreConfiguration.debugVerbose && entry != null) {
                 DebugInternals.echo("<LG>(Verbose) Caller = " + entry, entry);
             }
