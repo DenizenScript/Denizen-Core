@@ -21,6 +21,7 @@ import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
@@ -250,6 +251,11 @@ public class DenizenCore {
         else {
             schedule(new OneTimeSchedulable(run, 0));
         }
+    }
+
+    /** Runs the task on a separate thread. */
+    public static void runAsync(Runnable run) {
+        AsyncSchedulable.executor.execute(run);
     }
 
     /**

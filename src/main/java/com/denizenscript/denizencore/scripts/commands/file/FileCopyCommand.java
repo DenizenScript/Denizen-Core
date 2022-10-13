@@ -7,8 +7,6 @@ import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -122,7 +120,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
             }
         };
         if (scriptEntry.shouldWaitFor()) {
-            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runme, 0)));
+            DenizenCore.runAsync(runme);
         }
         else {
             runme.run();

@@ -10,8 +10,6 @@ import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
@@ -254,7 +252,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 final String passwordToUse = passwordRaw;
-                DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+                DenizenCore.runAsync(() -> {
                     Connection con = null;
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connecting to " + server.asString());
@@ -263,34 +261,34 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         con = getConnection(username.asString(), passwordToUse, server.asString(), ssl.asString());
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error");
                     }
                     final Connection conn = con;
                     if (con != null) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             connections.put(sqlID.asString().toUpperCase(), conn);
                             Debug.echoDebug(scriptEntry, "Successfully connected to " + server);
                             scriptEntry.setFinished(true);
-                        }, 0));
+                        });
                     }
                     else {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
-                        }, 0));
+                        });
                     }
-                }, 0)));
+                });
             }
             else if (action.asString().equalsIgnoreCase("disconnect")) {
                 Connection con = connections.get(sqlID.asString().toUpperCase());
@@ -339,23 +337,23 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         scriptEntry.addObject("result", rows);
                         scriptEntry.addObject("result_list", resultList);
                         final int finalCount = count;
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
                             scriptEntry.setFinished(true);
-                        }, 0));
+                        });
                     }
                     catch (final Exception ex) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
-                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(doQuery, 0)));
+                    DenizenCore.runAsync(doQuery);
                 }
                 else {
                     doQuery.run();
@@ -396,23 +394,23 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         }
                         scriptEntry.addObject("result", rows);
                         scriptEntry.addObject("result_list", resultList);
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                             Debug.echoDebug(scriptEntry, "Updated " + affected + " rows");
                             scriptEntry.setFinished(true);
-                        }, 0));
+                        });
                     }
                     catch (Exception ex) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "SQL Exception: " + ex.getMessage());
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
-                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(doUpdate, 0)));
+                    DenizenCore.runAsync(doUpdate);
                 }
                 else {
                     doUpdate.run();

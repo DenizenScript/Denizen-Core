@@ -8,8 +8,6 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -140,17 +138,17 @@ public class LogCommand extends AbstractCommand implements Holdable {
                 log.close();
             }
             catch (Throwable ex) {
-                DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                DenizenCore.runOnMainThread(() -> {
                     Debug.echoError(scriptEntry, "Error logging to file...");
                     Debug.echoError(scriptEntry, ex);
-                }, 0));
+                });
             }
             finally {
                 scriptEntry.setFinished(true);
             }
         };
         if (scriptEntry.shouldWaitFor()) {
-            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(run, 0)));
+            DenizenCore.runAsync(run);
         }
         else {
             run.run();

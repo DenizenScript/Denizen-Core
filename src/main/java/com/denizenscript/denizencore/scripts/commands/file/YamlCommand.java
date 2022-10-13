@@ -15,8 +15,6 @@ import com.denizenscript.denizencore.utilities.data.ActionableDataProvider;
 import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -294,19 +292,14 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                         if (runnableConfigs[0] == null) {
                             runnableConfigs[0] = new YamlConfiguration();
                         }
-                        if (scriptEntry.shouldWaitFor()) {
-                            DenizenCore.schedule(new OneTimeSchedulable(onLoadCompleted, 0));
-                        }
-                        else {
-                            onLoadCompleted.run();
-                        }
+                        DenizenCore.runOnMainThread(onLoadCompleted);
                     }
                     catch (Exception e) {
                         Debug.echoError("Failed to load yaml file: " + e);
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
-                    DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(loadRunnable, 0)));
+                    DenizenCore.runAsync(loadRunnable);
                 }
                 else {
                     loadRunnable.run();
@@ -371,7 +364,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
                             scriptEntry.setFinished(true);
                         };
                         if (scriptEntry.shouldWaitFor()) {
-                            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(saveRunnable, 0)));
+                            DenizenCore.runAsync(saveRunnable);
                         }
                         else {
                             saveRunnable.run();

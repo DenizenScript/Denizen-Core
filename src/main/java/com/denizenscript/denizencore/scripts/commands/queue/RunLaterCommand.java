@@ -14,8 +14,6 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.io.File;
@@ -353,7 +351,7 @@ public class RunLaterCommand extends AbstractCommand {
             }
         };
         if (async) {
-            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(doSave, 0)));
+            DenizenCore.runAsync(doSave);
         }
         else {
             doSave.run();

@@ -9,7 +9,6 @@ import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -85,7 +84,7 @@ public class WebServerCommand extends AbstractCommand {
         }
 
         public void executor(Runnable command) {
-            DenizenCore.schedule(new OneTimeSchedulable(command, 0));
+            DenizenCore.runOnMainThread(command);
         }
 
         public void start() throws IOException {

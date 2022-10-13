@@ -9,8 +9,6 @@ import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,7 +98,7 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
             }
         };
         if (scriptEntry.shouldWaitFor()) {
-            DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(runme, 0)));
+            DenizenCore.runAsync(runme);
         }
         else {
             runme.run();

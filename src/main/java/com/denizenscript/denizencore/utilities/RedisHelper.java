@@ -10,8 +10,6 @@ import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.util.SafeEncoder;
@@ -75,19 +73,19 @@ public class RedisHelper {
     }
 
     public static void runChecked(Runnable r, ScriptEntry scriptEntry) {
-        DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+        DenizenCore.runAsync(() -> {
             try {
                 r.run();
             }
             catch (Throwable ex) {
                 if (isEnabled.get() || CoreConfiguration.debugVerbose) { // Ignore errors when server is shutting down
-                    DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                    DenizenCore.runOnMainThread(() -> {
                         Debug.echoError(ex);
                         scriptEntry.setFinished(true);
-                    }, 0));
+                    });
                 }
             }
-        }, 0)));
+        });
     }
 
     public static void executeCommand(ScriptEntry scriptEntry) {
@@ -142,32 +140,32 @@ public class RedisHelper {
                         }
                     }
                     catch (final Exception e) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + e.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, e);
                             }
-                        }, 0));
+                        });
                     }
                     if (CoreConfiguration.debugVerbose) {
                         Debug.echoDebug(scriptEntry, "Connection did not error");
                     }
                     final Jedis conn = con;
                     if (con != null) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             connections.put(redisID, conn);
                             Debug.echoDebug(scriptEntry, "Successfully connected to " + host + " on port " + port);
                             scriptEntry.setFinished(true);
-                        }, 0));
+                        });
                     }
                     else {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoDebug(scriptEntry, "Connecting errored!");
                             }
-                        }, 0));
+                        });
                     }
                 }, scriptEntry);
             }
@@ -259,13 +257,13 @@ public class RedisHelper {
                         scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {
@@ -311,13 +309,13 @@ public class RedisHelper {
                         scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {
-                        DenizenCore.schedule(new OneTimeSchedulable(() -> {
+                        DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Redis Exception: " + ex.getMessage());
                             scriptEntry.setFinished(true);
                             if (CoreConfiguration.debugVerbose) {
                                 Debug.echoError(scriptEntry, ex);
                             }
-                        }, 0));
+                        });
                     }
                 };
                 if (scriptEntry.shouldWaitFor()) {

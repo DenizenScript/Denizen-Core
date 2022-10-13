@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore.utilities.codegen;
 
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.debugging.Debug;

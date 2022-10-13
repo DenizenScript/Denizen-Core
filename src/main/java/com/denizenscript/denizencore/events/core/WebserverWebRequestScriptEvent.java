@@ -12,8 +12,6 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -302,7 +300,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         instance.exchange = exchange;
         final WebResponse response = instance.response = new WebResponse();
         instance.fire();
-        DenizenCore.schedule(new AsyncSchedulable(new OneTimeSchedulable(() -> {
+        DenizenCore.runAsync(() -> {
             try {
                 byte[] body;
                 if (response.rawContent != null) {
@@ -325,11 +323,9 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             }
             catch (Throwable ex) {
                 if (!server.ignoreErrors || !(ex instanceof IOException)) {
-                    DenizenCore.schedule(new OneTimeSchedulable(() -> {
-                        Debug.echoError(ex);
-                    }, 0));
+                    Debug.echoError(ex);
                 }
             }
-        }, 0)));
+        });
     }
 }
