@@ -23,9 +23,23 @@ public class DebugInvalidCommand extends AbstractCommand {
     }
 
     public static void informBrokenArgs(AbstractCommand command, ScriptEntry scriptEntry) {
-        if (scriptEntry.getOriginalArguments().size() > command.maximumArguments
-            || (command.generatedExecutor != null && scriptEntry.internal.arguments_to_use.length > command.linearHandledCount)) {
-            Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many arguments - did you forget to use quotes, or misspell a prefix?\nUsage: " + command.getUsageHint());
+        if (scriptEntry.getOriginalArguments().size() > command.maximumArguments) {
+            Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many arguments - did you forget to use quotes?\nUsage: " + command.getUsageHint());
+        }
+        else if (command.generatedExecutor != null && scriptEntry.internal.arguments_to_use.length > command.linearHandledCount) {
+            String badPrefix = null;
+            for (ScriptEntry.InternalArgument arg : scriptEntry.internal.arguments_to_use) {
+                if (arg.prefix != null) {
+                    badPrefix = arg.prefix.fullOriginalRawValue;
+                    break;
+                }
+            }
+            if (badPrefix == null) {
+                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many linear arguments - did you forget to use quotes, or forget a prefix?\nUsage: " + command.getUsageHint());
+            }
+            else {
+                Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too many linear arguments... Prefix '" + badPrefix + "' given is unrecognized. Possible typo?\nUsage: " + command.getUsageHint());
+            }
         }
         else {
             Debug.echoError(scriptEntry, scriptEntry + " cannot be executed! Too few arguments - did you forget a required input?\nUsage: " + command.getUsageHint());
