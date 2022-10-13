@@ -34,17 +34,16 @@ public class LogCommand extends AbstractCommand implements Holdable {
     //
     // @Description
     // This is a quick and simple way to store debugging information for admins to read.
-    // You just input a file name and some text, and it will store that information in the file
-    // with a date/time stamp and the chosen type ('INFO' by default). If you don't want the
-    // date/time stamp and type, you can set the type to 'none' and it will only add the
-    // message text.
-    // Regardless of type, each usage of the log command will add a new line to the file, you can't
-    // just keep adding to one line.
-    // You might choose to use this to record some important things, for example, every time a player
-    // uses a dangerous command you might log the player's name and their location, so you'll know
-    // who to blame if you find something damaged.
-    // Remember that the file location is inside the server's primary folder. You most likely want to prefix
-    // file names with a folder name, For example: 'file:logs/security.log'
+    //
+    // You just input a file name and some text, and it will store that information in the file with a date/time stamp and the chosen type ('INFO' by default).
+    // If you don't want the date/time stamp and type, you can set the type to 'none' and it will only add the message text.
+    //
+    // Regardless of type, each usage of the log command will add a new line to the file, you can't just keep adding to one line.
+    //
+    // You might choose to use this to record some important things,
+    // for example, every time a player uses a dangerous command you might log the player's name and their location, so you'll know who to blame if you find something damaged.
+    //
+    // Remember that the file location is inside the server's primary folder. You most likely want to prefix file names with a folder name, For example: 'file:logs/security.log'
     //
     // If the file or folder path you input do not already exist, they will be automatically created.
     //

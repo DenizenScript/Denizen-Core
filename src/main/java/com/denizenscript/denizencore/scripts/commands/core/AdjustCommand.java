@@ -40,9 +40,9 @@ public class AdjustCommand extends AbstractCommand {
     // @Guide https://guide.denizenscript.com/guides/basics/mechanisms.html
     //
     // @Description
-    // Many object tag types contains options and properties that need to be adjusted. Denizen employs a mechanism
-    // interface to deal with those adjustments. To easily accomplish this, use this command with a valid object
-    // mechanism, and sometimes accompanying value.
+    // Many object tag types contains options and properties that need to be adjusted.
+    // Denizen employs a mechanism interface to deal with those adjustments.
+    // To easily accomplish this, use this command with a valid object mechanism, and sometimes accompanying value.
     //
     // Specify "def:<name>" as an input to adjust a definition and automatically save the result back to the definition.
     //
