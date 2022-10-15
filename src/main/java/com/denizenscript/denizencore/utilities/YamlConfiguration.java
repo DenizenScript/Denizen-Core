@@ -126,6 +126,28 @@ public class YamlConfiguration {
         }
     }
 
+    public static List reverseList(List vals, boolean patchLines) {
+        List output = new ArrayList<>(vals.size());
+        for (Object val : vals) {
+            if (val == null) {
+                continue;
+            }
+            if (val instanceof Map) {
+                output.add(reverse((Map) val, patchLines));
+            }
+            else if (val instanceof List) {
+                output.add(reverseList((List) val, patchLines));
+            }
+            else if (patchLines) {
+                output.add(ScriptBuilder.stripLinePrefix(val.toString()));
+            }
+            else {
+                output.add(val);
+            }
+        }
+        return output;
+    }
+
     public static Map<String, Object> reverse(Map<StringHolder, Object> objs, boolean patchLines) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         for (Map.Entry<StringHolder, Object> obj : objs.entrySet()) {
@@ -134,22 +156,7 @@ public class YamlConfiguration {
             }
             else if (obj.getValue() instanceof List) {
                 List vals = (List) obj.getValue();
-                List output = new ArrayList<>(vals.size());
-                for (Object val : vals) {
-                    if (val == null) {
-                        continue;
-                    }
-                    if (val instanceof Map) {
-                        output.add(reverse((Map) val, patchLines));
-                    }
-                    else if (patchLines) {
-                        output.add(ScriptBuilder.stripLinePrefix(val.toString()));
-                    }
-                    else {
-                        output.add(val);
-                    }
-                }
-                map.put(obj.getKey().str, output);
+                map.put(obj.getKey().str, reverseList(vals, patchLines));
             }
             else {
                 map.put(obj.getKey().str, obj.getValue());
