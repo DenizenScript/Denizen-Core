@@ -164,8 +164,10 @@ public abstract class AbstractFlagTracker {
             attribute.fulfill(1);
             return new DurationTag((time.millis() - TimeTag.now().millis()) / 1000.0);
         }
-        ObjectTag retVal = getFlagValue(attribute.getParam());
+        String flagName = attribute.getParam();
+        ObjectTag retVal = getFlagValue(flagName);
         if (retVal == null) {
+            attribute.echoError("No flag named '" + flagName + "' (did you forget to set it, or has it already expired? Or did you forget a 'has_flag' check?)");
             return null;
         }
         return retVal.refreshState();
@@ -176,7 +178,17 @@ public abstract class AbstractFlagTracker {
             attribute.echoError("The flag_expiration[...] tag must have an input!");
             return null;
         }
-        return getFlagExpirationTime(attribute.getParam());
+        String flagName = attribute.getParam();
+        TimeTag result = getFlagExpirationTime(flagName);
+        if (result == null) {
+            if (hasFlag(flagName)) {
+                attribute.echoError("Flag '" + flagName + "' exists but has no expiration set (did you forget to specify the 'expire:' time when setting the flag?)");
+            }
+            else {
+                attribute.echoError("No flag named '" + flagName + "' (did you forget to set it, or has it already expired?)");
+            }
+        }
+        return result;
     }
 
     public static Warning listFlagsTagWarning = new SlowWarning("listFlagsTagWarning", "The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
