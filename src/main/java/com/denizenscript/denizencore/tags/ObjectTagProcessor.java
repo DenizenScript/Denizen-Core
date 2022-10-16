@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.ObjectType;
+import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.codegen.TagNamer;
@@ -206,6 +207,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         data.allowProperty = allowProperty;
         data.name = name;
         data.runner = runner;
+        PropertyParser.allMechanismsEver.add(name);
         registeredMechanisms.put(name, data);
     }
 
