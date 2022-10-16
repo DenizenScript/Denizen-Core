@@ -711,7 +711,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 return null;
             }
             if (gotten instanceof Enum) {
-                return (T) new ElementTag(((Enum) gotten).name());
+                return (T) new ElementTag(((Enum) gotten));
             }
             return (T) gotten;
         }

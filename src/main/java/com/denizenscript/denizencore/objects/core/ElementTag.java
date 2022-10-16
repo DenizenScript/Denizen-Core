@@ -151,6 +151,11 @@ public class ElementTag implements ObjectTag {
         this.isPlainText = isPlain;
     }
 
+    public ElementTag(Enum<?> enumVal) {
+        this(enumVal.name());
+        this.isPlainText = true;
+    }
+
     public ElementTag(String string) {
         this.prefix = "element";
         if (string == null) {

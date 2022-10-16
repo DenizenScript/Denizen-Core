@@ -271,7 +271,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the name of the month of this TimeTag, like 'JANUARY'.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "month_name", (attribute, object) -> {
-            return new ElementTag(Month.of(object.month()).name());
+            return new ElementTag(Month.of(object.month()));
         });
 
         // <--[tag]
@@ -321,7 +321,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns the name of the day-of-week of this TimeTag, like 'MONDAY'.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "day_of_week_name", (attribute, object) -> {
-            return new ElementTag(DayOfWeek.of(object.instant.get(ChronoField.DAY_OF_WEEK)).name());
+            return new ElementTag(DayOfWeek.of(object.instant.get(ChronoField.DAY_OF_WEEK)));
         });
 
         // <--[tag]
