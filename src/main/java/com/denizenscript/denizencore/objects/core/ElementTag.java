@@ -1257,7 +1257,6 @@ public class ElementTag implements ObjectTag {
                     attribute.fulfill(1);
                 }
             }
-
             if (replace.startsWith("regex:")) {
                 return new ElementTag(object.element.replaceAll(replace.substring("regex:".length()), replacement));
             }

@@ -17,6 +17,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
@@ -145,6 +146,7 @@ public class DenizenCore {
         TagManager.registerCoreTags();
         commandRegistry.registerCoreCommands();
         DebugSubmitter.init();
+        ReflectionHelper.hasInitialized = true;
     }
 
     /**

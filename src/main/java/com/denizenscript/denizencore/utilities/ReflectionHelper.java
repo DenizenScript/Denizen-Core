@@ -15,16 +15,36 @@ import java.util.stream.Collectors;
 
 public class ReflectionHelper {
 
+    public static boolean hasInitialized = false;
+
     private static final Map<Class, CheckingFieldMap> cachedFields = new HashMap<>();
 
     private static final Map<Class, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
+
+    public static void echoError(String message) {
+        if (hasInitialized) {
+            Debug.echoError("[ReflectionHelper]" + message);
+        }
+        else {
+            System.err.println("[Denizen] [ReflectionHelper]: " + message);
+        }
+    }
+
+    public static void echoError(Throwable ex) {
+        if (hasInitialized) {
+            Debug.echoError(ex);
+        }
+        else {
+            ex.printStackTrace();
+        }
+    }
 
     public static void setFieldValue(Class clazz, String fieldName, Object object, Object value) {
         try {
             getFields(clazz).get(fieldName).set(object, value);
         }
         catch (Throwable ex) {
-            Debug.echoError(ex);
+            echoError(ex);
         }
     }
 
@@ -37,8 +57,8 @@ public class ReflectionHelper {
             }
             return (T) field.get(object);
         }
-        catch (Exception ex) {
-            Debug.echoError(ex);
+        catch (Throwable ex) {
+            echoError(ex);
             return null;
         }
     }
@@ -57,9 +77,7 @@ public class ReflectionHelper {
                     return f;
                 }
             }
-            String err = "Reflection field missing - Tried to find field of type '" + fieldClazz.getCanonicalName() + "' of class '" + clazz.getCanonicalName() + "'.";
-            System.err.println("[Denizen] [ReflectionHelper]: " + err);
-            Debug.echoError(err);
+            echoError("Reflection field missing - Tried to find field of type '" + fieldClazz.getCanonicalName() + "' of class '" + clazz.getCanonicalName() + "'.");
             return null;
         }
 
@@ -67,9 +85,7 @@ public class ReflectionHelper {
         public Field get(Object name) {
             Field f = super.get(name);
             if (f == null) {
-                String err = "Reflection field missing - Tried to read field '" + name + "' of class '" + clazz.getCanonicalName() + "'.";
-                System.err.println("[Denizen] [ReflectionHelper]: " + err);
-                Debug.echoError(err);
+                echoError("Reflection field missing - Tried to read field '" + name + "' of class '" + clazz.getCanonicalName() + "'.");
             }
             return f;
         }
@@ -80,9 +96,7 @@ public class ReflectionHelper {
                 return null;
             }
             if (f.getType() != expected) {
-                String err = "Reflection field incorrect type - read field '" + name + "' from class '" + clazz.getCanonicalName() + "', expected type '" + expected.getCanonicalName() + "' but is type '" + f.getType().getCanonicalName() + "'";
-                System.err.println("[Denizen] [ReflectionHelper]: " + err);
-                Debug.echoError(err);
+                echoError("Reflection field incorrect type - read field '" + name + "' from class '" + clazz.getCanonicalName() + "', expected type '" + expected.getCanonicalName() + "' but is type '" + f.getType().getCanonicalName() + "'");
             }
             return f;
         }
@@ -123,12 +137,10 @@ public class ReflectionHelper {
             }
         }
         catch (Exception ex) {
-            Debug.echoError(ex);
+            echoError(ex);
         }
         if (f == null) {
-            String err = "Reflection method missing - Tried to read method '" + method + "' of class '" + clazz.getCanonicalName() + "'.";
-            System.err.println("[Denizen] [ReflectionHelper]: " + err);
-            Debug.echoError(err);
+            echoError("Reflection method missing - Tried to read method '" + method + "' of class '" + clazz.getCanonicalName() + "'.");
         }
         return f;
     }
@@ -142,13 +154,11 @@ public class ReflectionHelper {
                 return result;
             }
         }
-        catch (Exception ex) {
-            Debug.echoError(ex);
+        catch (Throwable ex) {
+            echoError(ex);
         }
-        String err = "[ReflectionHelper]: Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
-                + Arrays.stream(params).map(Class::getCanonicalName).collect(Collectors.joining(", ")) + "]";
-        System.err.println("[Denizen] " + err);
-        Debug.echoError(err);
+        echoError("[ReflectionHelper]: Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
+                + Arrays.stream(params).map(Class::getCanonicalName).collect(Collectors.joining(", ")) + "]");
         return null;
     }
 
@@ -156,8 +166,8 @@ public class ReflectionHelper {
         try {
             return LOOKUP.unreflect(getMethod(clazz, method, params));
         }
-        catch (Exception ex) {
-            Debug.echoError(ex);
+        catch (Throwable ex) {
+            echoError(ex);
         }
         return null;
     }
@@ -183,11 +193,11 @@ public class ReflectionHelper {
         }
         Field f = getFields(clazz).get(field);
         if (f == null) {
-            Debug.echoError("Create get final setter for unknown field '" + field + "' (for class '" + clazz.getName() + "')");
+            echoError("Create get final setter for unknown field '" + field + "' (for class '" + clazz.getName() + "')");
             return null;
         }
         if (expected != null && f.getType() != expected) {
-            Debug.echoError("[ReflectionHelper] field type mismatch in getFinalSetter: field '" + field + "' in class '" + clazz.getName() + "' returns type '" + f.getType().getCanonicalName() + "' but expected '" + expected.getCanonicalName() + "'");
+            echoError("[ReflectionHelper] field type mismatch in getFinalSetter: field '" + field + "' in class '" + clazz.getName() + "' returns type '" + f.getType().getCanonicalName() + "' but expected '" + expected.getCanonicalName() + "'");
         }
         int mod = f.getModifiers();
         try {
@@ -213,7 +223,7 @@ public class ReflectionHelper {
                         method = UNSAFE_PUT_BOOL;
                     }
                     else {
-                        Debug.echoError("Cannot create a setter for primitive type '" + f.getType().getName() + "'");
+                        echoError("Cannot create a setter for primitive type '" + f.getType().getName() + "'");
                         return null;
                     }
                 }
@@ -228,7 +238,7 @@ public class ReflectionHelper {
             }
         }
         catch (Throwable ex) {
-            Debug.echoError(ex);
+            echoError(ex);
             return null;
         }
         if (result == null) {
@@ -244,7 +254,7 @@ public class ReflectionHelper {
                 UNSAFE = getFields(Class.forName("sun.misc.Unsafe")).get("theUnsafe").get(null);
             }
             catch (Throwable ex) {
-                Debug.echoError(ex);
+                echoError(ex);
             }
             UNSAFE_STATIC_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", Field.class).bindTo(UNSAFE);
             UNSAFE_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", Field.class).bindTo(UNSAFE);
