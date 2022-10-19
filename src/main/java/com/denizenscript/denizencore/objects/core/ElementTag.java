@@ -124,7 +124,7 @@ public class ElementTag implements ObjectTag {
      */
     public static <T extends ObjectTag> T handleNull(String tag, T object, String type, boolean has_fallback) {
         if (object == null) {
-            if (!has_fallback) {
+            if (!has_fallback && !TagManager.isStaticParsing) {
                 Debug.echoError("'" + tag + "' is an invalid " + type + "!");
             }
             return null;

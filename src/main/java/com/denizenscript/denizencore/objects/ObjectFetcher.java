@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.objects;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.tags.CoreObjectTags;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -94,8 +95,7 @@ public class ObjectFetcher {
         // Returns a duration object constructed from the input value.
         // Refer to <@link ObjectType DurationTag>.
         // -->
-        // non-static because there is a randomized constructor option
-        TYPE_DURATION = registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor).setAsNOtherCode().generateBaseTag(); // d@
+        TYPE_DURATION = registerWithObjectFetcher(DurationTag.class, DurationTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // d@
 
         // <--[tag]
         // @attribute <element[<element>]>
@@ -123,7 +123,7 @@ public class ObjectFetcher {
         TYPE_LIST.typeConverter = ListTag::getListFor;
 
         // Tag generated externally as input is optional
-        TYPE_MAP = registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor); // map@
+        TYPE_MAP = registerWithObjectFetcher(MapTag.class, MapTag.tagProcessor).setCanConvertStatic(); // map@
         TYPE_MAP.typeConverter = MapTag::getMapFor;
         TYPE_MAP.typeChecker = (inp) -> {
             if (inp == null) {
@@ -430,7 +430,7 @@ public class ObjectFetcher {
         if (CoreUtilities.contains(value, '@')) {
             String type = value.split("@", 2)[0];
             ObjectType<? extends ObjectTag> toFetch = objectsByPrefix.get(type);
-            if (toFetch != null) {
+            if (toFetch != null && (toFetch.canConvertStatic || !TagManager.isStaticParsing)) {
                 ObjectTag fetched = getObjectFrom(toFetch, value, context);
                 if (fetched != null) {
                     return fetched;

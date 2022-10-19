@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 
 public class TagManager {
 
+    /** If true: a static tag parsing is occurring. Tags should return null if non-static output. */
+    public static boolean isStaticParsing = false;
+
     public static void registerCoreTags() {
         // Objects
         new ListTagBase();
@@ -88,7 +91,9 @@ public class TagManager {
             ObjectTag param = attribute.getParamObject();
             P result = param.asType(paramType, attribute.context);
             if (result == null) {
-                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
+                if (!TagManager.isStaticParsing) {
+                    attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
+                }
                 return null;
             }
             return run.run(attribute, result);

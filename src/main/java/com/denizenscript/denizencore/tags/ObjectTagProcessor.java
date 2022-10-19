@@ -98,14 +98,20 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     }
 
     public <R extends ObjectTag, P extends ObjectTag> void registerTagInternal(Class<R> returnType, Class<P> paramType, String name, TagRunnable.ObjectWithParamInterface<T, R, P> runnable, boolean isStatic, String[] deprecatedVariants) {
+        ObjectType<P> paramObjType = ObjectFetcher.getType(paramType);
         registerTagInternal(returnType, name, (Attribute attribute, T obj) -> {
             if (!attribute.hasParam()) {
                 return null;
             }
             ObjectTag param = attribute.getParamObject();
+            if (TagManager.isStaticParsing && paramObjType != null && !paramObjType.canConvertStatic) {
+                return null;
+            }
             P result = param.asType(paramType, attribute.context);
             if (result == null) {
-                attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
+                if (!TagManager.isStaticParsing) {
+                    attribute.echoError("Tag '<Y>" + name + "<W>' requires input of type '<Y>" + DebugInternals.getClassNameOpti(paramType) + "<W>' but received input '<LR>" + param + "<W>'.");
+                }
                 return null;
             }
             return runnable.run(attribute, obj, result);

@@ -63,41 +63,54 @@ public class TagCodeGenerator {
             try {
                 ReplaceableTagEvent staticParseEvent = new ReplaceableTagEvent(data, toParse.content, genContext);
                 Attribute staticParseAttrib = staticParseEvent.getAttributes();
+                TagManager.isStaticParsing = true;
                 staticParseResult = data.tagBase.baseForm.run(staticParseAttrib);
-                if (staticParseResult != null) {
+                TagManager.isStaticParsing = false;
+                if (staticParseResult == null) {
+                    staticParts = 0;
+                }
+                else {
                     staticParseAttrib.fulfillOne(staticParseResult);
                     for (int i = 1; i < staticParts; i++) {
                         TagRunnable.ObjectInterface<ObjectTag, ObjectTag> runner = (TagRunnable.ObjectInterface<ObjectTag, ObjectTag>) pieces[i].data.runner;
-                        staticParseResult = runner.run(staticParseAttrib, staticParseResult);
-                        if (staticParseResult != null) {
+                        TagManager.isStaticParsing = true;
+                        ObjectTag newResult = runner.run(staticParseAttrib, staticParseResult);
+                        TagManager.isStaticParsing = false;
+                        if (newResult != null) {
+                            staticParseResult = newResult;
                             staticParseAttrib.fulfillOne(staticParseResult);
                         }
-                    }
-                    if (staticParseResult != null) {
-                        if (staticParts == pieces.length) {
-                            if (genContext.shouldDebug()) {
-                                Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult + "<G>', and cached result.");
-                            }
-                            toParse.rawObject = staticParseResult;
-                            toParse.tagData.rawObject = staticParseResult;
-                            toParse.content = staticParseResult.toString();
-                            toParse.isTag = false;
-                            return null;
+                        else {
+                            staticParts = i;
+                            break;
                         }
+                    }
+                    if (staticParts == pieces.length) {
                         if (genContext.shouldDebug()) {
-                            StringBuilder piecesText = new StringBuilder("<");
-                            for (int i = 0; i < staticParts; i++) {
-                                piecesText.append(pieces[i].toString()).append(".");
-                            }
-                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult + "<G>', and cached result.");
+                            Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled tag <<W>" + toParse.content + "<G>> with '<W>" + staticParseResult + "<G>', and cached result.");
                         }
-                        data.skippable = staticParts;
+                        toParse.rawObject = staticParseResult;
+                        toParse.tagData.rawObject = staticParseResult;
+                        toParse.content = staticParseResult.toString();
+                        toParse.isTag = false;
+                        return null;
                     }
+                    if (genContext.shouldDebug()) {
+                        StringBuilder piecesText = new StringBuilder("<");
+                        for (int i = 0; i < staticParts; i++) {
+                            piecesText.append(pieces[i].toString()).append(".");
+                        }
+                        Debug.echoDebug(genContext, "<Y>+> [Static Tag Processing] <G>Pre-Filled partial tag '<W>" + piecesText + "..<G>' with '<W>" + staticParseResult + "<G>', and cached result.");
+                    }
+                    data.skippable = staticParts;
                 }
             }
             catch (Throwable ex) {
                 Debug.echoError("Static tag pre-parse failed for: " + toParse.content);
                 Debug.echoError(ex);
+            }
+            finally {
+                TagManager.isStaticParsing = false;
             }
         }
         if (applicableParts == 0 && staticParts == 0) {
