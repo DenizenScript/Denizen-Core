@@ -67,7 +67,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     // TODO: When opening a connection, Mongo will output a lot of data to the console. There currently is not a way to turn this off.
     //
     // The mongo command is merely a wrapper, and further usage details should be gathered from an official MongoDB command reference rather than from Denizen command help.
-    // You can view the official redis documentation and the supported commands here: <@link url https://www.mongodb.com/docs/manual/introduction/>
+    // You can view the official mongo documentation here: <@link url https://www.mongodb.com/docs/manual/introduction/>.
+    // You can view a list of commands that MongoDB supports here: <@link url https://www.mongodb.com/docs/manual/reference/command/>.
     //
     // @Tags
     // <util.mongo_connections> returns a ListTag of all the current Mongo connections.
@@ -171,7 +172,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                                    @ArgPrefixed @ArgDefaultNull @ArgName("connect") SecretTag uri,
                                    @ArgPrefixed @ArgDefaultNull @ArgName("database") String database,
                                    @ArgPrefixed @ArgDefaultNull @ArgName("collection") String collection,
-                                   // This is a boolean because it will let me check if it is present without using a prefix.
+                                   // This is a boolean because it will let the command check if it is present without using a prefix.
                                    @ArgName("disconnect") boolean disconnect,
                                    @ArgPrefixed @ArgDefaultNull @ArgName("command") MapTag command,
                                    @ArgPrefixed @ArgDefaultNull @ArgName("find") MapTag findQuery,
@@ -191,7 +192,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
         Runnable runnable = () -> {
             try {
                 if (uri != null) {
-                    if (mongoConnections.containsKey(connectionId)) {
+                    if (connection != null) {
                         Debug.echoError(scriptEntry, "Already connected to a server with ID '" + id + "'!");
                         scriptEntry.setFinished(true);
                         return;
@@ -212,9 +213,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                             conStr = "mongodb://" + conStr;
                         }
                         Debug.echoDebug(scriptEntry, "Connecting to Mongo server...");
-                        MongoClient con = null;
-                        MongoDatabase db = null;
-                        MongoCollection<Document> col = null;
+                        MongoClient con;
+                        MongoDatabase db;
+                        MongoCollection<Document> col;
                         try {
                             con = MongoClients.create(conStr);
                             db = con.getDatabase(database);
@@ -223,50 +224,33 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         catch (final Exception e) {
                             DenizenCore.runOnMainThread(() -> {
                                 Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                                Debug.echoError(scriptEntry, e);
                                 scriptEntry.setFinished(true);
-                                if (CoreConfiguration.debugVerbose) {
-                                    Debug.echoError(scriptEntry, e);
-                                }
                             });
-                        }
-                        if (CoreConfiguration.debugVerbose) {
-                            Debug.echoDebug(scriptEntry, "Connection did not error.");
+                            return;
                         }
                         final MongoClient conn = con;
                         final MongoDatabase connDB = db;
                         final MongoCollection<Document> coll = col;
-                        if (con != null) {
-                            DenizenCore.runOnMainThread(() -> {
-                                Connection mongoConnection = new Connection();
-                                mongoConnection.connection = conn;
-                                mongoConnection.database = connDB;
-                                mongoConnection.collection = coll;
-                                mongoConnections.put(connectionId, mongoConnection);
-                                Debug.echoDebug(scriptEntry, "Successfully connected to Mongo server.");
-                                scriptEntry.setFinished(true);
-                            });
-                        }
-                        else {
-                            DenizenCore.runOnMainThread(() -> {
-                                Debug.echoDebug(scriptEntry, "Connecting errored!");
-                                scriptEntry.setFinished(true);
-                            });
-                        }
+                        DenizenCore.runOnMainThread(() -> {
+                            Connection mongoConnection = new Connection();
+                            mongoConnection.connection = conn;
+                            mongoConnection.database = connDB;
+                            mongoConnection.collection = coll;
+                            mongoConnections.put(connectionId, mongoConnection);
+                            Debug.echoDebug(scriptEntry, "Successfully connected to Mongo server.");
+                            scriptEntry.setFinished(true);
+                        });
                     }, 0)));
                     return;
                 }
+                if (connection == null) {
+                    Debug.echoError(scriptEntry, "There is no open connection with ID: '" + id + "'! Has it been disconnected?");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
                 if (connection.connection == null) {
-                    Debug.echoError(scriptEntry, "Not connected to server with ID: '" + id + "'!");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-                if (connection.database == null) {
-                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-                if (connection.collection == null) {
-                    Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
+                    Debug.echoError(scriptEntry, "The connection is null! Has it been disconnected?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -280,8 +264,14 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         Debug.echoError(e);
                     }
                     Debug.echoDebug(scriptEntry, "Disconnected from '" + id + "'.");
+                    return;
                 }
-                else if (command != null) {
+                if (connection.database == null) {
+                    Debug.echoError(scriptEntry, "Not connected to database! Was it dropped?");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (command != null) {
                     try {
                         Debug.echoDebug(scriptEntry, "Running commands: " + command);
                         HashMap<String, Object> finalCommand = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(command, false, true);
@@ -295,14 +285,34 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
                             scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
                         });
                     }
+                    return;
                 }
-                else if (findQuery != null) {
+                else if (newDatabase != null) {
+                    try {
+                        MongoDatabase newDB = connection.connection.getDatabase(newDatabase);
+                        Debug.echoDebug(scriptEntry, "Using new Database: '" + newDatabase + "'.");
+                        connection.database = newDB;
+                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
+                    }
+                    catch (final Exception e) {
+                        DenizenCore.runOnMainThread(() -> {
+                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
+                            scriptEntry.setFinished(true);
+                        });
+                    }
+                    return;
+                }
+                if (connection.collection == null) {
+                    Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (findQuery != null) {
                     try {
                         HashMap<String, Object> query = (HashMap<String, Object>) CoreUtilities.objectTagToJavaForm(findQuery, false, true);
                         if (findByID != null) {
@@ -320,10 +330,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
                             scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
                         });
                     }
                 }
@@ -343,10 +351,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
                             scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
                         });
                     }
                 }
@@ -379,27 +385,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
                             scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
-                        });
-                    }
-                }
-                else if (newDatabase != null) {
-                    try {
-                        MongoDatabase newDB = connection.connection.getDatabase(newDatabase);
-                        Debug.echoDebug(scriptEntry, "Using new Database: '" + newDatabase + "'.");
-                        connection.database = newDB;
-                        DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
-                    }
-                    catch (final Exception e) {
-                        DenizenCore.runOnMainThread(() -> {
-                            Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
                         });
                     }
                 }
@@ -413,10 +400,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
+                            Debug.echoError(scriptEntry, e);
                             scriptEntry.setFinished(true);
-                            if (CoreConfiguration.debugVerbose) {
-                                Debug.echoError(scriptEntry, e);
-                            }
                         });
                     }
                 }
@@ -427,9 +412,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             }
             catch (Exception e) {
                 Debug.echoError("Mongo Exception: " + e.getMessage());
-                if (CoreConfiguration.debugVerbose) {
-                    Debug.echoError(scriptEntry, e);
-                }
+                Debug.echoError(scriptEntry, e);
             }
         };
         if (!scriptEntry.shouldWaitFor()) {
