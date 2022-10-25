@@ -1332,7 +1332,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns a new ListTag excluding the items at the specified index.
         // Note the index input options described at <@link objecttype listtag>
         // @Example
-        // # Narrates a list of "two|three|four"
+        // # Narrates a list of "one|three|four"
         // - narrate <list[one|two|three|four].remove[2]>
         // -->
         tagProcessor.registerTag(ListTag.class, ListTag.class, "remove", (attribute, object, indices) -> { // non-static due to hacked sub-tag

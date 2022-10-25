@@ -71,6 +71,8 @@ public class SecretTag implements ObjectTag {
     //
     // There is intentionally no tag that can read the value of a secret.
     //
+    // You can reload the secrets file via "/denizen reload config"
+    //
     // -->
 
     @Fetchable("secret")

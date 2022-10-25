@@ -168,14 +168,16 @@ public class RedisHelper {
                         });
                     }
                 }, scriptEntry);
+                return;
             }
-            else if (action.asString().equalsIgnoreCase("disconnect")) {
+            Jedis con = connections.get(redisID);
+            if (con == null) {
+                Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                 scriptEntry.setFinished(true);
-                if (!connections.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
-                    return;
-                }
-                Jedis con = connections.remove(redisID);
+                return;
+            }
+            if (action.asString().equalsIgnoreCase("disconnect")) {
+                scriptEntry.setFinished(true);
                 JedisPubSub pubSub = subscriptions.remove(redisID);
                 if (pubSub != null) {
                     try {
@@ -195,12 +197,6 @@ public class RedisHelper {
                 Debug.echoDebug(scriptEntry, "Disconnected from '" + redisID + "'.");
             }
             else if (action.asString().equalsIgnoreCase("subscribe")) {
-                Jedis con = connections.get(redisID);
-                if (con == null) {
-                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
                 if (subscriptions.containsKey(redisID)) {
                     Debug.echoError(scriptEntry, "Already subscribed to a channel on redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
@@ -216,10 +212,6 @@ public class RedisHelper {
             }
             else if (action.asString().equalsIgnoreCase("unsubscribe")) {
                 scriptEntry.setFinished(true);
-                if (!connections.containsKey(redisID)) {
-                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
-                    return;
-                }
                 if (!subscriptions.containsKey(redisID)) {
                     Debug.echoError(scriptEntry, "Not subscribed to redis server with ID '" + redisID + "'!");
                     return;
@@ -235,12 +227,6 @@ public class RedisHelper {
             else if (action.asString().equalsIgnoreCase("publish")) {
                 if (message == null) {
                     Debug.echoError(scriptEntry, "Must specify a valid message to publish!");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-                final Jedis con = connections.get(redisID);
-                if (con == null) {
-                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -276,12 +262,6 @@ public class RedisHelper {
             else if (action.asString().equalsIgnoreCase("command")) {
                 if (command == null) {
                     Debug.echoError(scriptEntry, "Must specify a valid redis command!");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-                final Jedis con = connections.get(redisID);
-                if (con == null) {
-                    Debug.echoError(scriptEntry, "Not connected to redis server with ID '" + redisID + "'!");
                     scriptEntry.setFinished(true);
                     return;
                 }
