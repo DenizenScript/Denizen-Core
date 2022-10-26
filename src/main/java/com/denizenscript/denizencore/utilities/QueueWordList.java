@@ -84,17 +84,19 @@ public class QueueWordList {
             "Paper", "Spigot", "Bukkit", // Server software
             "Citizens", "Denizen", "Sentinel", // Plugins
             "Aufdemrand", "Jeebiss", "Mcmonkey", "Mergu", "Fortifier", "Fullwall", "Morphan", "Acikek", "Aya", // Dev contributors
-            "Anthony", "Ricky", "Xeane", // Veterans list
-            "Behr", "Hydra", "Calico", "Icecapade", "Maxime", "Mwthorn", "Wahrheit", "Zozer", "Jumpsplat", "Inquisitor" // Helpers list
+            "Breadcrumb", "0Tick", "cinthesize", "TheHusseler", "MiniKiwi", "KitKatOD", // Non-helper-ranked dev contributors
+            "Anthony", "Ricky", "Xeane", "Maxime", // Veterans list
+            "Behr", "Calico", "Icecapade", "Mwthorn", "Wahrheit", "Zozer", "Jumpsplat", "Inquisitor" // Helpers list
     };
 
     public static final String[] donorList = new String[] {
-            "Goma", "Crckdns", "Berufeng", "Greenleeuw", "Pirateera", "Mrmango", "Aikovdp", "Declancaff", "Reph3x",
-            "Lasersrgb", "Sirbandersnatch", "Misquoth", "Bawb", "Slyyjacob", "Jcg4678", "Darwin", "Chrismwiggs",
-            "Unsubfromnimsy", "Tdvne", "Ms2221", "Xarieste", "Cloudshadow", "Voxlltv", "Rsnfreud", "Adw123", "Bullesta",
-            "Bredy", "Universum", "Tornix", "Inventorist", "Deadadm1n", "Mervinb", "Miamablue", "Hades", "Shadymac",
-            "Nurfuis", "Facundo", "Cowbilet", "Mistergank", "Noiknez", "Criticalmc", "New2pc", "Possumthecreator",
-            "Nestesio", "Insilvon", "Psycholynx", "Keiferhawk", "Gominecraft", "Andarius", "Zarazor", "Rainpelt"
+            "DeclanCaff", "Greenleeuw", "Apademide", "BredyAK", "Nomadjimbob", "Baivo", "Darwin1546", "Aikovdp", "Jumpsplat", "N1msy", "Ms2221", "Xarieste", "JonatanLaMerce",
+            "1thebeast", "Voxlltv", "RSNFreud", "Adw123", "Bullesta", "BehrRiley", "Jaminb2030", "TornixNoVega", "TheInventorist", "Deadadm1n", "Mervinvb", "Miamibluerecords",
+            "Hades5514", "Ph4i1ur3", "Questercraft", "Nurfuis", "Facundo-Barbera", "Cowbilet", "Fortifier42", "MisterGank", "Noiknez", "CriticalMC", "New2pc", "Possumthecreator",
+            "Nestesio", "Insilvon", "PsychoLynx", "Blockcraftteam", "Gominecraft", "NextoEsKawii", "MrMaleficus", "RlGoma", "SXRWahrheit", "Mergu", "Zozer", "Creaturesofhabit",
+            "Crckdns", "Berufeng", "PirateEra", "The-Mr-Mango", "RepH3x", "Lasers-rgb", "Sirbandersnatch", "Misquoth", "GoDieBawb", "SlyyJacob", "AnthonyAMC", "Chrismwiggs",
+            "Mwthorn", "Rainpelt29", "FutureMaximus", "Kalebbroo", "ZARazor91", "Andarius68", "Mrhonbon", "Moepius", "XIdentified", "Jcg4678", "Srl4n", "Circenn5130"
+            // Note: excludes 1 unidentified donor and 1 self-advertising username
     };
 
     static {
@@ -108,7 +110,7 @@ public class QueueWordList {
         for (String donor : donorList) {
             repeatAdd(donor, 10);
         }
-        // Total word count is approximately 10,000 + 25 + (28 * 20) + (48 * 10) = 11,065
+        // Total word count is approximately 10,000 + 25 + (36 * 20) + (73 * 10) = 11,475
     }
 
     static void repeatAdd(String str, int times) {
