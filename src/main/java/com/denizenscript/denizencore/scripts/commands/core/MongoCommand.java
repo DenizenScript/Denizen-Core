@@ -224,7 +224,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         catch (final Exception e) {
                             DenizenCore.runOnMainThread(() -> {
                                 Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                                Debug.echoError(scriptEntry, e);
+                                if (CoreConfiguration.debugVerbose) {
+                                    Debug.echoError(scriptEntry, e);
+                                }
                                 scriptEntry.setFinished(true);
                             });
                             return;
@@ -246,11 +248,6 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                 }
                 if (connection == null) {
                     Debug.echoError(scriptEntry, "There is no open connection with ID: '" + id + "'! Has it been disconnected?");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-                if (connection.connection == null) {
-                    Debug.echoError(scriptEntry, "The connection is null! Has it been disconnected?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -285,7 +282,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -301,14 +300,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
                     return;
                 }
                 if (connection.collection == null) {
-                    Debug.echoError(scriptEntry, "You need to specify a Collection to find Documents in!");
+                    Debug.echoError(scriptEntry, "Not connected to Collection! Was it dropped?");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -330,7 +331,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -351,7 +354,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -385,7 +390,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -400,7 +407,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                     catch (final Exception e) {
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoError(scriptEntry, "Mongo Exception: " + e.getMessage());
-                            Debug.echoError(scriptEntry, e);
+                            if (CoreConfiguration.debugVerbose) {
+                                Debug.echoError(scriptEntry, e);
+                            }
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -412,7 +421,9 @@ public class MongoCommand extends AbstractCommand implements Holdable {
             }
             catch (Exception e) {
                 Debug.echoError("Mongo Exception: " + e.getMessage());
-                Debug.echoError(scriptEntry, e);
+                if (CoreConfiguration.debugVerbose) {
+                    Debug.echoError(scriptEntry, e);
+                }
             }
         };
         if (!scriptEntry.shouldWaitFor()) {
