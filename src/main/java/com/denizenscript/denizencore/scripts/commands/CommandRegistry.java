@@ -93,6 +93,7 @@ public class CommandRegistry {
         // Intentionally do not register the DebugInvalidCommand
         registerCommand(EventCommand.class);
         registerCommand(FlagCommand.class);
+        registerCommand(MongoCommand.class);
         registerCommand(NoteCommand.class);
         registerCommand(RedisCommand.class);
         registerCommand(ReflectionSetCommand.class);
