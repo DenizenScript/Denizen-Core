@@ -85,6 +85,25 @@ public class CommandRegistry {
     //
     // -->
 
+    public static HashMap<String, Boolean> checkedClassNames = new HashMap<>();
+
+    public static boolean shouldRegisterByClass(String loaded, String name) {
+        Boolean b = checkedClassNames.get(name);
+        if (b != null) {
+            return b;
+        }
+        try {
+            Class.forName(name);
+            checkedClassNames.put(name, true);
+            return true;
+        }
+        catch (Throwable ignore) {
+            checkedClassNames.put(name, false);
+            Debug.log("Not loading " + loaded + " as its dependency is not present.");
+            return false;
+        }
+    }
+
     public void registerCoreCommands() {
         // core
         registerCommand(AdjustCommand.class);
@@ -93,9 +112,13 @@ public class CommandRegistry {
         // Intentionally do not register the DebugInvalidCommand
         registerCommand(EventCommand.class);
         registerCommand(FlagCommand.class);
-        registerCommand(MongoCommand.class);
+        if (shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
+            registerCommand(MongoCommand.class);
+        }
         registerCommand(NoteCommand.class);
-        registerCommand(RedisCommand.class);
+        if (shouldRegisterByClass("Redis command", "redis.clients.jedis.Jedis")) {
+            registerCommand(RedisCommand.class);
+        }
         registerCommand(ReflectionSetCommand.class);
         registerCommand(ReloadCommand.class);
         registerCommand(SQLCommand.class);

@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
+import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.core.MongoCommand;
 import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
@@ -876,13 +877,15 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @description
         // Returns a list of all Redis connections opened by <@link command redis>.
         // -->
-        tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (String entry : RedisHelper.connections.keySet()) {
-                list.addObject(new ElementTag(entry, true));
-            }
-            return list;
-        });
+        if (CommandRegistry.shouldRegisterByClass("Redis command", "redis.clients.jedis.Jedis")) {
+            tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
+                ListTag list = new ListTag();
+                for (String entry : RedisHelper.connections.keySet()) {
+                    list.addObject(new ElementTag(entry, true));
+                }
+                return list;
+            });
+        }
 
         // <--[tag]
         // @attribute <util.mongo_connections>
@@ -890,13 +893,15 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @description
         // Returns a list of all Mongo connections opened by <@link command mongo>.
         // -->
-        tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (String entry : MongoCommand.mongoConnections.keySet()) {
-                list.addObject(new ElementTag(entry, true));
-            }
-            return list;
-        });
+        if (CommandRegistry.shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
+            tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
+                ListTag list = new ListTag();
+                for (String entry : MongoCommand.mongoConnections.keySet()) {
+                    list.addObject(new ElementTag(entry, true));
+                }
+                return list;
+            });
+        }
 
         // <--[tag]
         // @attribute <util.scripts>
