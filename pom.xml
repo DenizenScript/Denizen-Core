@@ -73,6 +73,7 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -84,6 +85,7 @@
                     <artifactId>bson-record-codec</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
