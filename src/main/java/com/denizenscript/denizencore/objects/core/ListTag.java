@@ -1793,43 +1793,76 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
-        // @attribute <ListTag.first>
+        // @attribute <ListTag.first[(<#>)]>
         // @returns ObjectTag
         // @description
         // Returns the first element in the list.
         // If the list is empty, returns null instead.
         // Effectively equivalent to .get[1]
+        // Optionally, specify a number of entries to get, which will return the # first entries, equivalent to .get[1].to[#]
+        //
         // @Example
         // # Narrates "one"
         // - narrate <list[one|two|three].first>
+        // @Example
+        // # Narrates a list of "one" and "two"
+        // - narrate <list[one|two|three].first[2]>
+        // @Example
+        // # Narrates a list of "one", "two", and "three"
+        // - narrate <list[one|two|three].first[5]>
+        // @Example
+        // # Causes an error, as the list is empty.
+        // - narrate <list.first>
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, "first", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }
-            else {
-                return object.objectForms.get(0);
+            if (attribute.hasParam()) {
+                int size = attribute.getIntParam();
+                ListTag result = new ListTag(size);
+                for (int i = 0; i < size && i < object.size(); i++) {
+                    result.addObject(object.getObject(i));
+                }
+                return result;
             }
+            return object.objectForms.get(0);
         });
 
         // <--[tag]
-        // @attribute <ListTag.last>
+        // @attribute <ListTag.last[(<#>)]>
         // @returns ObjectTag
         // @description
         // Returns the last element in the list.
         // If the list is empty, returns null instead.
         // Effectively equivalent to .get[<[list].size>]
+        // Optionally, specify a number of entries to get, which will return the # first entries, equivalent to .get[<[size].sub[#]>].to[last]
         // @Example
         // # Narrates "three"
         // - narrate <list[one|two|three].last>
+        // @Example
+        // # Narrates a list of "two" and "three"
+        // - narrate <list[one|two|three].last[2]>
+        // @Example
+        // # Narrates a list of "one", "two", and "three"
+        // - narrate <list[one|two|three].last[5]>
+        // @Example
+        // # Causes an error, as the list is empty.
+        // - narrate <list.last>
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, "last", (attribute, object) -> {
             if (object.isEmpty()) {
                 return null;
             }
-            else {
-                return object.objectForms.get(object.size() - 1);
+            if (attribute.hasParam()) {
+                int size = attribute.getIntParam();
+                ListTag result = new ListTag(size);
+                for (int i = Math.max(0, object.size() - size); i < object.size(); i++) {
+                    result.addObject(object.getObject(i));
+                }
+                return result;
             }
+            return object.objectForms.get(object.size() - 1);
         });
 
         // <--[tag]
