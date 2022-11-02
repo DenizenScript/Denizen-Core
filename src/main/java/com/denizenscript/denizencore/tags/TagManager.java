@@ -39,6 +39,7 @@ public class TagManager {
         new EscapeTagBase();
         new ListSingleTagBase();
         new ProcedureScriptTagBase();
+        new StaticTagBase();
         new TernaryTagBase();
         UtilTagBase.register();
     }
@@ -54,6 +55,8 @@ public class TagManager {
         public Class<? extends ObjectTag> returnType;
 
         public ObjectTagProcessor<? extends ObjectTag> processor;
+
+        public boolean doesStaticOverride;
 
         /**
          * Indicates that static input to this tag base yields static output (for tag optimization usage).

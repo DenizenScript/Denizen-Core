@@ -40,7 +40,7 @@ public class TagCodeGenerator {
             return data.compiledStart;
         }
         Attribute.AttributeComponent[] pieces = data.attribs.attributes;
-        boolean canBeStatic = data.tagBase.isStatic && hasStaticContext(pieces[0], genContext);
+        boolean canBeStatic = data.tagBase.isStatic && (hasStaticContext(pieces[0], genContext) || data.tagBase.doesStaticOverride);
         int staticParts = canBeStatic ? 1 : 0;
         int applicableParts = 0;
         for (int i = 1; i < pieces.length; i++) {
