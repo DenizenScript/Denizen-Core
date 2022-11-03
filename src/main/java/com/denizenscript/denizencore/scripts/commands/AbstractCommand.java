@@ -154,6 +154,8 @@ public abstract class AbstractCommand {
 
     public int linearHandledCount = 0;
 
+    public boolean generatorInfiniteArgs = false;
+
     public boolean generateDebug = true;
 
     public void addRemappedPrefixes(String realName, String... alts) {
@@ -252,12 +254,7 @@ public abstract class AbstractCommand {
     }
 
     public void execute(ScriptEntry scriptEntry) {
-        if (generatedExecutor != null) {
-            generatedExecutor.execute(scriptEntry);
-        }
-        else {
-            Debug.echoError("Something went wrong! Command '" + name + "' has no executor?");
-        }
+        Debug.echoError("Something went wrong! Command '" + name + "' has no executor (or called wrongly)?");
     }
 
     /**

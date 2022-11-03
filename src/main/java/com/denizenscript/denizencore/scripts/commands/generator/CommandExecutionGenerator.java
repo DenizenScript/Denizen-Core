@@ -22,29 +22,41 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandExecutionGenerator {
 
-    public interface CommandExecutor {
-        void execute(ScriptEntry scriptEntry);
+    public static abstract class CommandExecutor {
+        public ArgData[] args;
+
+        public CommandExecutor() {
+            // Placeholder for default-constructor gen stability.
+        }
+
+        public abstract void execute(ScriptEntry scriptEntry);
     }
 
     public static long totalGenerated = 0;
 
-    public static final String COMMAND_EXECUTOR_INTERFACE_PATH = Type.getInternalName(CommandExecutor.class);
-    public static final Method COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class);
-    public static final String COMMAND_EXECUTORINTERFACE_EXECUTE_DESCRIPTOR = Type.getMethodDescriptor(COMMAND_EXECUTOR_NTERFACE_EXECUTE_METHOD);
-    public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEntryArg", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_BOOLEAN_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperBooleanArg", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_ENUM_ARG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperEnumArg", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_STRING_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixString", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_ELEMENT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixElement", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_BOOLEAN_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixBoolean", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_INTEGER_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixInteger", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_LONG_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixLong", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_FLOAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixFloat", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_DOUBLE_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixDouble", ScriptEntry.class, ArgData.class);
-    public static final Method HELPER_PREFIX_ENUM_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperPrefixEnum", ScriptEntry.class, ArgData.class);
+    public static Method getArgHelperMethod(String name) {
+        return ReflectionHelper.getMethod(CommandExecutionGenerator.class, name, ScriptEntry.class, ArgData.class);
+    }
+
+    public static final String COMMAND_EXECUTOR_PATH = Type.getInternalName(CommandExecutor.class);
+    public static final Method COMMAND_EXECUTOR_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class);
+    public static final String COMMAND_EXECUTOR_EXECUTE_DESCRIPTOR = Type.getMethodDescriptor(COMMAND_EXECUTOR_EXECUTE_METHOD);
+    public static final Method HELPER_GET_UNPARSED_ARG_LIST = getArgHelperMethod("helperGetUnparsedArgList");
+    public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = getArgHelperMethod("helperPrefixEntryArg");
+    public static final Method HELPER_BOOLEAN_ARG_METHOD = getArgHelperMethod("helperBooleanArg");
+    public static final Method HELPER_ENUM_ARG_METHOD = getArgHelperMethod("helperEnumArg");
+    public static final Method HELPER_PREFIX_STRING_METHOD = getArgHelperMethod("helperPrefixString");
+    public static final Method HELPER_PREFIX_ELEMENT_METHOD = getArgHelperMethod("helperPrefixElement");
+    public static final Method HELPER_PREFIX_BOOLEAN_METHOD = getArgHelperMethod("helperPrefixBoolean");
+    public static final Method HELPER_PREFIX_INTEGER_METHOD = getArgHelperMethod("helperPrefixInteger");
+    public static final Method HELPER_PREFIX_LONG_METHOD = getArgHelperMethod("helperPrefixLong");
+    public static final Method HELPER_PREFIX_FLOAT_METHOD = getArgHelperMethod("helperPrefixFloat");
+    public static final Method HELPER_PREFIX_DOUBLE_METHOD = getArgHelperMethod("helperPrefixDouble");
+    public static final Method HELPER_PREFIX_ENUM_METHOD = getArgHelperMethod("helperPrefixEnum");
     public static final Method HELPER_DEBUG_FORMAT_METHOD = ReflectionHelper.getMethod(CommandExecutionGenerator.class, "helperDebugFormat", Object.class, ArgData.class);
     public static final Method SCRIPTENTRY_SHOULDDEBUG_METHOD = ReflectionHelper.getMethod(ScriptEntry.class, "dbCallShouldDebug");
     public static final Method DEBUG_REPORT_METHOD = ReflectionHelper.getMethod(Debug.class, "report", Debuggable.class, String.class, Object[].class);
@@ -58,6 +70,8 @@ public class CommandExecutionGenerator {
         public int index;
         public boolean isLinear;
         public boolean getRaw;
+        public boolean shouldDebug;
+        public boolean shouldParse;
     }
 
     public static Argument getArgumentFor(ScriptEntry entry, ArgData arg) {
@@ -80,6 +94,15 @@ public class CommandExecutionGenerator {
             }
             return entry.argAtIndex(false, index);
         }
+    }
+
+    /** Used for generated calls. */
+    public static List<ScriptEntry.InternalArgument> helperGetUnparsedArgList(ScriptEntry scriptEntry, ArgData arg) {
+        List<ScriptEntry.InternalArgument> result = Arrays.asList(scriptEntry.internal.arguments_to_use);
+        if (arg.index != 0) {
+            result = result.subList(arg.index, result.size());
+        }
+        return result;
     }
 
     /** Used for generated calls. */
@@ -251,14 +274,14 @@ public class CommandExecutionGenerator {
             }
             String className = CodeGenUtil.COMMAND_GEN_PACKAGE + "Cmd" + (totalGenerated++) + "_" + cmdCleanName;
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", new String[]{COMMAND_EXECUTOR_INTERFACE_PATH});
+            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, COMMAND_EXECUTOR_PATH, new String[]{});
             cw.visitSource("GENERATED_CMD_EXEC", null);
-            MethodGenerator.genDefaultConstructor(cw, className);
+            MethodGenerator.genDefaultConstructor(cw, className, COMMAND_EXECUTOR_PATH);
             // ====== Gen 'execute' method ======
             ArrayList<ArgData> args = new ArrayList<>();
             ArrayList<MethodGenerator.Local> argLocals = new ArrayList<>();
             {
-                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "execute", COMMAND_EXECUTORINTERFACE_EXECUTE_DESCRIPTOR);
+                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "execute", COMMAND_EXECUTOR_EXECUTE_DESCRIPTOR);
                 MethodGenerator.Local scriptEntryLocal = gen.addLocal("scriptEntry", ScriptEntry.class);
                 boolean hasScriptEntry = false;
                 for (Parameter param : method.getParameters()) {
@@ -276,7 +299,9 @@ public class CommandExecutionGenerator {
                         return null;
                     }
                     ArgData argData = new ArgData();
+                    argData.shouldDebug = !param.isAnnotationPresent(ArgNoDebug.class);
                     argData.getRaw = param.isAnnotationPresent(ArgRaw.class);
+                    argData.shouldParse = !param.isAnnotationPresent(ArgUnparsed.class);
                     argData.type = paramType;
                     argData.name = argName.value();
                     if (!param.isAnnotationPresent(ArgDefaultNull.class)) {
@@ -311,10 +336,18 @@ public class CommandExecutionGenerator {
                             argData.index = cmd.setPrefixHandled(argData.name);
                         }
                         else {
+                            if (cmd.generatorInfiniteArgs) {
+                                Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name + "' which is linear, after an unlimited linear arg.");
+                                return null;
+                            }
                             argData.index = cmd.linearHandledCount++;
                             argData.isLinear = true;
                         }
-                        if (paramType == ElementTag.class) {
+                        if (argData.isLinear && paramType == List.class && !argData.shouldParse) {
+                            cmd.generatorInfiniteArgs = true;
+                            argMethod = HELPER_GET_UNPARSED_ARG_LIST;
+                        }
+                        else if (paramType == ElementTag.class) {
                             argMethod = HELPER_PREFIX_ELEMENT_METHOD;
                         }
                         else if (ObjectTag.class.isAssignableFrom(paramType)) {
@@ -382,14 +415,17 @@ public class CommandExecutionGenerator {
                     gen.loadInt(args.size());
                     gen.createArray(Object.class);
                     for (int i = 0; i < argLocals.size(); i++) {
-                        MethodGenerator.Local local = argLocals.get(i);
-                        gen.stackDuplicate();
-                        gen.loadInt(i);
-                        gen.loadLocal(local);
-                        gen.autoBox(local.descriptor);
-                        gen.loadStaticField(className, local.name, args.get(i).getClass());
-                        gen.invokeStatic(HELPER_DEBUG_FORMAT_METHOD);
-                        gen.arrayStore(Object.class);
+                        ArgData arg = args.get(i);
+                        if (arg.shouldDebug) {
+                            MethodGenerator.Local local = argLocals.get(i);
+                            gen.stackDuplicate();
+                            gen.loadInt(i);
+                            gen.loadLocal(local);
+                            gen.autoBox(local.descriptor);
+                            gen.loadStaticField(className, local.name, arg.getClass());
+                            gen.invokeStatic(HELPER_DEBUG_FORMAT_METHOD);
+                            gen.arrayStore(Object.class);
+                        }
                     }
                     gen.invokeStatic(DEBUG_REPORT_METHOD);
                     gen.advanceAndLabel(afterDebugLabel);
@@ -415,8 +451,9 @@ public class CommandExecutionGenerator {
             for (int i = 0; i < argLocals.size(); i++) {
                 ReflectionHelper.setFieldValue(generatedClass, argLocals.get(i).name, null, args.get(i));
             }
-            Object result = generatedClass.getConstructors()[0].newInstance();
-            return (CommandExecutor) result;
+            CommandExecutor result = (CommandExecutor) generatedClass.getConstructors()[0].newInstance();
+            result.args = args.toArray(new ArgData[0]);
+            return result;
         }
         catch (Throwable ex) {
             Debug.echoError(ex);

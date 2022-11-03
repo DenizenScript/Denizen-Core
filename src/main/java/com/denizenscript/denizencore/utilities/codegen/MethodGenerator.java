@@ -17,9 +17,14 @@ public final class MethodGenerator {
 
     /** Generates a default empty object constructor impl. */
     public static void genDefaultConstructor(ClassWriter cw, String className) {
+        genDefaultConstructor(cw, className, "java/lang/Object");
+    }
+
+    /** Generates a default empty object constructor impl. */
+    public static void genDefaultConstructor(ClassWriter cw, String className, String superTypePath) {
         MethodGenerator gen = generateMethod(className, cw, Opcodes.ACC_PUBLIC, "<init>", "()V");
         gen.loadThis();
-        gen.invokeSpecial("java/lang/Object", "<init>", "()V");
+        gen.invokeSpecial(superTypePath, "<init>", "()V");
         gen.returnNone();
         gen.end();
     }

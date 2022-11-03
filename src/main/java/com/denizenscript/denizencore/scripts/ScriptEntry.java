@@ -11,6 +11,7 @@ import com.denizenscript.denizencore.scripts.commands.BracedCommand;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.core.DebugInvalidCommand;
+import com.denizenscript.denizencore.scripts.commands.generator.CommandExecutionGenerator;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.ParseableTag;
@@ -123,7 +124,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
         public Argument aHArg = null;
 
-        public boolean shouldProcess = false;
+        public boolean shouldParse = false;
 
         public boolean hadColon = false;
 
@@ -169,7 +170,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         InternalArgument internalArg = argSet[index];
         Argument arg = internalArg.aHArg;
         arg.scriptEntry = this;
-        if (internalArg.shouldProcess) {
+        if (internalArg.shouldParse) {
             TagManager.fillArgumentObjects(internalArg, arg, context);
             if (internalArg.hadColon && arg.prefix == null && arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput) {
                 arg.fillStr(arg.object.toString());
@@ -498,7 +499,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
                 }
                 crunchInto(argVal, arg, refContext);
                 if ((argVal.value.hasTag || argVal.prefix != null) && (internal.actualCommand == null || internal.actualCommand.shouldPreParse())) {
-                    argVal.shouldProcess = true;
+                    argVal.shouldParse = true;
                 }
                 if (argVal.value.rawObject != null && argVal.prefix == null && internal.actualCommand != null) {
                     String raw = CoreUtilities.toLowerCase(argVal.value.rawObject.toString());
@@ -585,7 +586,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         if (internal.actualCommand != null) {
             int argCount = getOriginalArguments().size();
             if (argCount < internal.actualCommand.minimumArguments || (!hasBraces && argCount > internal.actualCommand.maximumArguments)
-                    || (internal.actualCommand.generatedExecutor != null && internal.arguments_to_use.length > internal.actualCommand.linearHandledCount)) {
+                    || (internal.actualCommand.generatedExecutor != null && !internal.actualCommand.generatorInfiniteArgs && internal.arguments_to_use.length > internal.actualCommand.linearHandledCount)) {
                 internal.brokenArgs = true;
                 DebugInvalidCommand.informBrokenArgs(internal.actualCommand, this);
                 internal.actualCommand = CommandRegistry.debugInvalidCommand;
@@ -593,12 +594,21 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
             if (internal.actualCommand instanceof BracedCommand) {
                 BracedCommand.getBracedCommands(this);
             }
+            if (internal.actualCommand.generatedExecutor != null) {
+                for (CommandExecutionGenerator.ArgData arg : internal.actualCommand.generatedExecutor.args) {
+                    if (arg.isLinear) {
+                        if (arg.index < internal.arguments_to_use.length) {
+                            internal.arguments_to_use[arg.index].shouldParse = arg.shouldParse;
+                        }
+                    }
+                }
+            }
         }
         else {
             internal.actualCommand = CommandRegistry.debugInvalidCommand;
         }
         internal.argumentIterator = new ArgumentIterator(this);
-        internal.defObjects = internal.actualCommand != null && internal.actualCommand.generatedExecutor != null ? 0 : 8;
+        internal.defObjects = internal.actualCommand.generatedExecutor != null ? 0 : 8;
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
-import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
+import com.denizenscript.denizencore.scripts.commands.generator.*;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
@@ -22,10 +22,9 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         setName("waituntil");
         setSyntax("waituntil (rate:<duration>) (max:<duration>) [<comparisons>]");
         setRequiredArguments(1, -1);
-        setParseArgs(false);
-        setPrefixesHandled("rate", "max");
         forceHold = true;
         isProcedural = false; // A procedure can't wait
+        autoCompile();
     }
 
     // <--[command]
@@ -43,7 +42,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // The update rate controls how often the tag will be checked. This generally doesn't need to be set, unless you're concerned about script efficiency.
     // Never set this to faster than queue update rate.
     //
-    // Optionally specify a maximum duration to wait for.
+    // Optionally specify a maximum duration to wait for (delta time).
     //
     // @Tags
     // <QueueTag.speed>
@@ -57,23 +56,17 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // - waituntil rate:1s <player.health> > 15
     // -->
 
-    @Override
-    public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
-    }
-
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        List<ScriptEntry.InternalArgument> comparisons = Arrays.asList(scriptEntry.internal.arguments_to_use);
-        DurationTag rate = scriptEntry.argForPrefix("rate", DurationTag.class, true);
-        DurationTag max = scriptEntry.argForPrefix("max", DurationTag.class, true);
+    public static void autoExecute(ScriptEntry scriptEntry,
+                                   @ArgUnparsed @ArgNoDebug @ArgRaw @ArgLinear @ArgName("if_comparisons") List<ScriptEntry.InternalArgument> comparisons,
+                                   @ArgPrefixed @ArgName("rate") @ArgDefaultNull DurationTag rate,
+                                   @ArgPrefixed @ArgName("max") @ArgDefaultNull DurationTag max) {
         boolean run = new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry);
-        if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), db("run_first_check", run), rate, max);
-        }
         if (run) {
+            Debug.echoDebug(scriptEntry, "WaitUntil first check already <A>true<W>, not waiting.");
             scriptEntry.setFinished(true);
             return;
         }
+        Debug.echoDebug(scriptEntry, "WaitUntil first check <A>false<W>, will wait...");
         if (rate == null) {
             if (scriptEntry.getResidingQueue() instanceof TimedQueue) {
                 rate = ((TimedQueue) scriptEntry.getResidingQueue()).getSpeed();
@@ -99,12 +92,12 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                     schedulable.cancel();
                 }
                 if (new IfCommand.ArgComparer().compare(new ArrayList<>(comparisons), scriptEntry)) {
-                    Debug.echoDebug(scriptEntry, "WaitUntil completed after " + counter + " re-checks.");
+                    Debug.echoDebug(scriptEntry, "WaitUntil completed after <A>" + counter + "<W> re-checks.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();
                 }
-                else if (endTime != -1 && endTime < DenizenCore.serverTimeMillis) {
-                    Debug.echoDebug(scriptEntry, "WaitUntil completed due to time out.");
+                else if (endTime != -1 && endTime <= DenizenCore.serverTimeMillis) {
+                    Debug.echoDebug(scriptEntry, "WaitUntil stopping early due to time out.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();
                 }
