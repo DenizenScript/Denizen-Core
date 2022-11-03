@@ -178,6 +178,7 @@ public class RedisHelper {
             }
             if (action.asString().equalsIgnoreCase("disconnect")) {
                 scriptEntry.setFinished(true);
+                connections.remove(redisID);
                 JedisPubSub pubSub = subscriptions.remove(redisID);
                 if (pubSub != null) {
                     try {
