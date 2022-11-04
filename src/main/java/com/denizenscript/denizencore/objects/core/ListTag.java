@@ -1820,6 +1820,10 @@ public class ListTag implements List<String>, ObjectTag {
             }
             if (attribute.hasParam()) {
                 int size = attribute.getIntParam();
+                if (size < 0) {
+                    attribute.echoError("Invalid 'first' size, cannot be negative.");
+                    return null;
+                }
                 ListTag result = new ListTag(size);
                 for (int i = 0; i < size && i < object.size(); i++) {
                     result.addObject(object.getObject(i));
@@ -1856,6 +1860,10 @@ public class ListTag implements List<String>, ObjectTag {
             }
             if (attribute.hasParam()) {
                 int size = attribute.getIntParam();
+                if (size < 0) {
+                    attribute.echoError("Invalid 'last' size, cannot be negative.");
+                    return null;
+                }
                 ListTag result = new ListTag(size);
                 for (int i = Math.max(0, object.size() - size); i < object.size(); i++) {
                     result.addObject(object.getObject(i));
@@ -1908,6 +1916,10 @@ public class ListTag implements List<String>, ObjectTag {
             // -->
             if (attribute.startsWith("count", 2) && attribute.hasContext(2)) {
                 int count = Math.min(attribute.getIntContext(2), object.size());
+                if (count < 0) {
+                    attribute.echoError("Invalid 'lowest' count, cannot be negative.");
+                    return null;
+                }
                 attribute.fulfill(1);
                 int[] indices = new int[count];
                 BigDecimal[] values = new BigDecimal[count];
@@ -2005,6 +2017,10 @@ public class ListTag implements List<String>, ObjectTag {
             // -->
             if (attribute.startsWith("count", 2) && attribute.hasContext(2)) {
                 int count = Math.min(attribute.getIntContext(2), object.size());
+                if (count < 0) {
+                    attribute.echoError("Invalid 'highest' count, cannot be negative.");
+                    return null;
+                }
                 attribute.fulfill(1);
                 int[] indices = new int[count];
                 BigDecimal[] values = new BigDecimal[count];
@@ -2625,6 +2641,10 @@ public class ListTag implements List<String>, ObjectTag {
         tagProcessor.registerTag(ObjectTag.class, "random", (attribute, object) -> {
             if (attribute.hasParam()) {
                 int count = Integer.parseInt(attribute.getParam());
+                if (count < 0) {
+                    attribute.echoError("Invalid 'random' count, cannot be negative.");
+                    return null;
+                }
                 int times = 0;
                 ArrayList<ObjectTag> available = new ArrayList<>(object.objectForms);
                 ListTag toReturn = new ListTag();
