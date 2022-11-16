@@ -328,6 +328,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of years in the duration.
+        // @example
+        // # Narrates "3"
+        // - narrate <duration[94608000s].in_years>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_years", (attribute, object) -> {
             return new ElementTag(object.seconds / (86400 * 365));
@@ -338,6 +341,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of weeks in the duration.
+        // @example
+        // # Narrates "2"
+        // - narrate <duration[14d].in_weeks>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_weeks", (attribute, object) -> {
             return new ElementTag(object.seconds / 604800);
@@ -348,6 +354,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of days in the duration.
+        // @example
+        // # Narrates "2"
+        // - narrate <duration[48h].in_days>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_days", (attribute, object) -> {
             return new ElementTag(object.seconds / 86400);
@@ -358,6 +367,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of hours in the duration.
+        // @example
+        // # Narrates "5"
+        // - narrate <duration[300m].in_hours>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_hours", (attribute, object) -> {
             return new ElementTag(object.seconds / 3600);
@@ -368,6 +380,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of minutes in the duration.
+        // @example
+        // # Narrates "5"
+        // - narrate <duration[300s].in_minutes>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_minutes", (attribute, object) -> {
             return new ElementTag(object.seconds / 60);
@@ -378,6 +393,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of seconds in the duration.
+        // @example
+        // # Narrates "5"
+        // - narrate <duration[100t].in_seconds>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_seconds", (attribute, object) -> {
             return new ElementTag(object.seconds);
@@ -388,6 +406,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Decimal)
         // @description
         // Returns the number of milliseconds in the duration.
+        // @example
+        // # Narrates "5000"
+        // - narrate <duration[5s].in_milliseconds>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_milliseconds", (attribute, object) -> {
             return new ElementTag(object.seconds * 1000);
@@ -398,6 +419,9 @@ public class DurationTag implements ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns the number of ticks in the duration. (20t/second)
+        // @example
+        // # Narrates "100"
+        // - narrate <duration[5s].in_ticks>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "in_ticks", (attribute, object) -> {
             return new ElementTag((long) (object.seconds * 20L));
@@ -408,6 +432,9 @@ public class DurationTag implements ObjectTag {
         // @returns DurationTag
         // @description
         // Returns this duration minus another.
+        // @example
+        // # Narrates "d@1h"
+        // - narrate <duration[2h].sub[1h]>
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "sub", (attribute, object, secondVal) -> {
             return new DurationTag(object.getTicks() - secondVal.getTicks());
@@ -418,6 +445,9 @@ public class DurationTag implements ObjectTag {
         // @returns DurationTag
         // @description
         // Returns this duration plus another.
+        // @example
+        // # Narrates "d@3h"
+        // - narrate <duration[2h].add[1h]>
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "add", (attribute, object, secondVal) -> {
             return new DurationTag(object.getTicks() + secondVal.getTicks());
@@ -487,6 +517,9 @@ public class DurationTag implements ObjectTag {
         // Returns the value of the duration in an easily readable format like 2h 30m,
         // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
         // Will show seconds, minutes, hours, days, and/or years.
+        // @example
+        // # Narrates "3h 20m"
+        // - narrate <duration[200m].formatted>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "formatted", (attribute, object) -> {
             return new ElementTag(object.formatted(false));
@@ -499,6 +532,9 @@ public class DurationTag implements ObjectTag {
         // Returns the value of the duration in an easily readable format like "2 hours 30 minutes",
         // where minutes are only shown if there is less than a day left and seconds are only shown if there are less than 10 minutes left.
         // Will show seconds, minutes, hours, days, and/or years.
+        // @example
+        // # Narrates "3 hours 20 minutes"
+        // - narrate <duration[200m].formatted_words>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "formatted_words", (attribute, object) -> {
             return new ElementTag(object.formatted(true));

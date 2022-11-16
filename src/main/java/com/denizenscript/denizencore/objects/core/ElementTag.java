@@ -520,6 +520,11 @@ public class ElementTag implements ObjectTag {
         // @group comparison
         // @description
         // Returns whether the element is an integer number (a number without a decimal point), within the limits of a Java "long" (64-bit signed integer).
+        // @example
+        // # Returns true.
+        // - narrate <element[1234567890123456789].is_integer>
+        // # Returns false, as it has decimal points.
+        // - narrate <element[3.1415926].is_integer>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_integer", (attribute, object) -> {
             if (!ArgumentHelper.matchesInteger(object.element)) {
@@ -540,6 +545,13 @@ public class ElementTag implements ObjectTag {
         // @group comparison
         // @description
         // Returns whether the element is a valid decimal number (the decimal point is optional).
+        // @example
+        // # Returns true.
+        // - narrate <element[3.1415926].is_decimal>
+        // # Returns true.
+        // - narrate <element[1234567890123456789].is_decimal>
+        // # Returns false, as it has letters.
+        // - narrate <element[1.23abc].is_decimal>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_decimal", (attribute, object) -> {
             if (!ArgumentHelper.matchesDouble(object.element)) {
@@ -559,6 +571,9 @@ public class ElementTag implements ObjectTag {
         // @group comparison
         // @description
         // Returns whether the element is an odd-valued decimal number. Returns 'false' for non-numbers.
+        // @example
+        // # Returns true.
+        // - narrate <element[3].is_odd>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_odd", (attribute, object) -> {
             String element = object.element;
@@ -571,6 +586,9 @@ public class ElementTag implements ObjectTag {
         // @group comparison
         // @description
         // Returns whether the element is an even-valued decimal number. Returns 'false' for non-numbers.
+        // @example
+        // # Returns true.
+        // - narrate <element[4].is_even>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_even", (attribute, object) -> {
             String element = object.element;
@@ -667,6 +685,9 @@ public class ElementTag implements ObjectTag {
         // @group conversion
         // @description
         // Returns the element as a number with two decimal places.
+        // @example
+        // # Returns 1.23.
+        // - narrate <element[1.234].as_money>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "as_money", (attribute, object) -> {
             String element = object.element;
@@ -814,6 +835,11 @@ public class ElementTag implements ObjectTag {
         // Returns the element, with any contained tags parsed.
         // WARNING: THIS TAG IS DANGEROUS TO USE, DO NOT USE IT UNLESS
         // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
+        // @example
+        // # This takes an input from chat and sets the player's health to it, and parses any tags in it.
+        // # For example, if the player were to type "<player.max_health.sub[1]>" in chat, their health would be set to their max health - 1.
+        // - define value <[input].parsed>
+        // - adjust <player> health:<[input]>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "parsed", (attribute, object) -> {
             return TagManager.tagObject(object.element, attribute.context);
@@ -829,6 +855,9 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns a number representing the difference between the two elements. (Uses Levenshtein logic).
+        // @example
+        // # Returns "2".
+        // - narrate <element[Hello world].difference[Helo wold]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "difference", (attribute, object, compareVal) -> {
             return new ElementTag(CoreUtilities.getLevenshteinDistance(object.asString(), compareVal.asString()));
@@ -840,6 +869,11 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element contains any of a list of specified elements, case sensitive.
+        // @example
+        // # Returns "true".
+        // - narrate <element[Hello world].contains_any_case_sensitive_text[Hello|Goodbye]>
+        // # Returns "false".
+        // - narrate <element[Hello world].contains_any_case_sensitive_text[hello|goodbye]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_case_sensitive_text", (attribute, object, list) -> {
             String element = object.element;
@@ -858,6 +892,9 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element contains any of a list of specified elements, case insensitive.
+        // @example
+        // # Returns "true".
+        // - narrate <element[Hello world].contains_any_text[hello|goodbye]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_text", (attribute, object, list) -> {
             String low = object.asLowerString();
@@ -889,6 +926,9 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element contains a specified element, case insensitive.
         // Can use regular expression by prefixing the element with 'regex:'.
+        // @example
+        // Returns "true", as this regex matches the date.
+        // - narrate <element[It will happen on 3/4/2022.].contains_text[regex:(\d{1,2})\/(\d{1,2})\/(\d{4})]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_text", (attribute, object, contains) -> {
             String contLow = contains.asLowerString();
@@ -941,6 +981,9 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element ends with a specified element.
+        // @example
+        // # Returns "true".
+        // - narrate <element[Hello world].ends_with[world]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "ends_with", (attribute, object, compare) -> {
             return new ElementTag(CoreUtilities.toLowerCase(object.element).
@@ -953,6 +996,11 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element matches another element, case-sensitive.
+        // @example
+        // # Returns "true".
+        // - narrate <element[Hello world].equals_case_sensitive[Hello world]>
+        // # Returns "false".
+        // - narrate <element[Hello world].equals_case_sensitive[hello world]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "equals_case_sensitive", (attribute, object, compare) -> {
             return new ElementTag(object.element.equals(compare.asString()));
@@ -964,6 +1012,11 @@ public class ElementTag implements ObjectTag {
         // @group element checking
         // @description
         // Returns whether the element matches a regex input.
+        // @example
+        // # Returns "true".
+        // - narrate <element[Hello world].regex_matches[Hello.*]>
+        // # Returns "true", this regex matches any valid email address.
+        // - narrate <element[hello@world.foo].regex_matches[^(?:\w+\.?)*\w+@(?:\w+\.?)*\w+\.(?:[a-z]{2,})$]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "regex_matches", (attribute, object, regex) -> {
             return new ElementTag(object.element.matches(regex.asString()));
