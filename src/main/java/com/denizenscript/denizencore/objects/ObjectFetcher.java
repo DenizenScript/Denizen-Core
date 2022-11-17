@@ -251,9 +251,10 @@ public class ObjectFetcher {
             }
             newType.matches = getMatchesFor(objectTag);
             newType.valueOf = getValueOfFor(objectTag);
-            for (Method registerMethod: objectTag.getDeclaredMethods()) {
-                if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
+            for (Method registerMethod : objectTag.getDeclaredMethods()) {
+                if ((registerMethod.getName().equals("register") || registerMethod.getName().equals("registerTags")) && registerMethod.getParameterCount() == 0) {
                     registerMethod.invoke(null);
+                    break;
                 }
             }
         }
