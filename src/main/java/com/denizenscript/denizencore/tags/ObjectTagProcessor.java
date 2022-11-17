@@ -208,16 +208,26 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         mechData.runner.run(object, mechanism);
     }
 
-    public void registerMechanism(String name, boolean allowProperty, Mechanism.GenericMechRunnerInterface<T> runner) {
+    public void registerMechanism(String name, boolean allowProperty, Mechanism.GenericMechRunnerInterface<T> runner, String... deprecatedVariants) {
         MechanismData<T> data = new MechanismData<>();
         data.allowProperty = allowProperty;
         data.name = name;
         data.runner = runner;
         PropertyParser.allMechanismsEver.add(name);
         registeredMechanisms.put(name, data);
+        for (String variant : deprecatedVariants) {
+            MechanismData<T> variantData = new MechanismData<>();
+            variantData.allowProperty = allowProperty;
+            variantData.name = variant;
+            variantData.runner = (object, mechanism) -> {
+                mechanism.echoError("Using deprecated form of mechanism '" + name + "': '" + variant + "'.");
+                runner.run(object, mechanism);
+            };
+            registeredMechanisms.put(variant, variantData);
+        }
     }
 
-    public <P extends ObjectTag> void registerMechanism(String name, boolean allowProperty, Class<P> paramType, Mechanism.ObjectInputMechRunnerInterface<T, P> runner) {
+    public <P extends ObjectTag> void registerMechanism(String name, boolean allowProperty, Class<P> paramType, Mechanism.ObjectInputMechRunnerInterface<T, P> runner, String... deprecatedVariants) {
         registerMechanism(name, allowProperty, (object, mechanism) -> {
             if (mechanism.value == null) {
                 mechanism.echoError("Error: mechanism '" + name + "' must have input of type '" + DebugInternals.getClassNameOpti(paramType) + "', but none was given.");
@@ -229,6 +239,6 @@ public class ObjectTagProcessor<T extends ObjectTag> {
                 return;
             }
             runner.run(object, mechanism, input);
-        });
+        }, deprecatedVariants);
     }
 }
