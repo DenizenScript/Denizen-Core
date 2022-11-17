@@ -100,21 +100,41 @@ public class PropertyParser {
     }
 
     @FunctionalInterface
+    public interface PropertyMechanism<T extends Property> {
+        void run(T prop, Mechanism mechanism);
+    }
+
+    @FunctionalInterface
     public interface PropertyMechanismWithParam<T extends Property, P extends ObjectTag> {
         void run(T prop, Mechanism mechanism, P param);
     }
 
-    public static <T extends Property, P extends ObjectTag> void registerMechanism(Class<T> propType, Class<P> paramType, String name, PropertyMechanismWithParam<T, P> runner) {
+    public static <T extends Property> void registerMechanism(Class<T> propType, String name, PropertyMechanism<T> runner, String... deprecatedVariants) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
         ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
-        tagProcessor.registerMechanism(name, true, paramType, (object, mechanism, param) -> {
+        tagProcessor.registerMechanism(name, true, (object, mechanism) -> {
             Property prop = getter.get(object);
             if (prop == null) {
                 mechanism.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object.");
                 return;
             }
-            runner.run((T) prop, mechanism, param);
-        });
+            runner.run((T) prop, mechanism);
+        }, deprecatedVariants);
+    }
+
+    public static <T extends Property, P extends ObjectTag> void registerMechanism(Class<T> propType, Class<P> paramType, String name, PropertyMechanismWithParam<T, P> runner, String... deprecatedVariants) {
+        registerMechanism(propType, name, (object, mechanism) -> {
+            if (mechanism.value == null) {
+                mechanism.echoError("Error: mechanism '" + name + "' must have input of type '" + DebugInternals.getClassNameOpti(paramType) + "', but none was given.");
+                return;
+            }
+            P input = mechanism.value.asType(paramType, mechanism.context);
+            if (input == null) {
+                mechanism.echoError("Error: mechanism '" + name + "' must have input of type '" + DebugInternals.getClassNameOpti(paramType) + "', but value '" + mechanism.value + "' cannot be converted to the required type.");
+                return;
+            }
+            runner.run(object, mechanism, input);
+        }, deprecatedVariants);
     }
 
     public static Class currentlyRegisteringPropertyClass;
