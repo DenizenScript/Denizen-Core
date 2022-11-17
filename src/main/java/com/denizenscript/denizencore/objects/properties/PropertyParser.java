@@ -149,8 +149,9 @@ public class PropertyParser {
         currentlyRegisteringObjectType = ObjectFetcher.getType(object);
         try {
             for (Method registerMethod : property.getDeclaredMethods()) {
-                if (registerMethod.getName().equals("registerTags") && registerMethod.getParameterCount() == 0) {
+                if ((registerMethod.getName().equals("register") || registerMethod.getName().equals("registerTags")) && registerMethod.getParameterCount() == 0) {
                     registerMethod.invoke(null);
+                    break;
                 }
             }
         }
