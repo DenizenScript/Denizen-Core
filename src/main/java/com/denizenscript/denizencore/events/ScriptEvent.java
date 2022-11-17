@@ -552,7 +552,12 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
         if (path.switch_serverFlagged != null) {
             for (String flag : path.switch_serverFlagged) {
-                if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
+                if (flag.startsWith("!")) {
+                    if (DenizenCore.serverFlagMap.hasFlag(flag.substring(1))) {
+                        return false;
+                    }
+                }
+                else if (!DenizenCore.serverFlagMap.hasFlag(flag)) {
                     return false;
                 }
             }
