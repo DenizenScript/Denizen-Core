@@ -433,8 +433,10 @@ public class DurationTag implements ObjectTag {
         // @description
         // Returns this duration minus another.
         // @example
-        // # Narrates "d@1h"
-        // - narrate <duration[2h].sub[1h]>
+        // # Sends the first message, then waits an hour, and finally sends the second message.
+        // - narrate "Started the timer!"
+        // - wait <duration[2h].sub[1h]>
+        // - narrate "It's been an hour! Time's up!"
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "sub", (attribute, object, secondVal) -> {
             return new DurationTag(object.getTicks() - secondVal.getTicks());
@@ -446,8 +448,10 @@ public class DurationTag implements ObjectTag {
         // @description
         // Returns this duration plus another.
         // @example
-        // # Narrates "d@3h"
+        // # Sends the first message, then waits for three hours, and finally sends the second message.
+        // - narrate "Started the timer!"
         // - narrate <duration[2h].add[1h]>
+        // - narrate "It's been three hours! Time's up!"
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "add", (attribute, object, secondVal) -> {
             return new DurationTag(object.getTicks() + secondVal.getTicks());
