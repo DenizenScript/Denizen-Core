@@ -523,6 +523,7 @@ public class ElementTag implements ObjectTag {
         // @example
         // # Returns true.
         // - narrate <element[1234567890123456789].is_integer>
+        // @example
         // # Returns false, as it has decimal points.
         // - narrate <element[3.1415926].is_integer>
         // -->
@@ -548,8 +549,10 @@ public class ElementTag implements ObjectTag {
         // @example
         // # Returns true.
         // - narrate <element[3.1415926].is_decimal>
+        // @example
         // # Returns true.
         // - narrate <element[1234567890123456789].is_decimal>
+        // @example
         // # Returns false, as it has letters.
         // - narrate <element[1.23abc].is_decimal>
         // -->
@@ -572,8 +575,9 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is an odd-valued decimal number. Returns 'false' for non-numbers.
         // @example
-        // # Returns true.
-        // - narrate <element[3].is_odd>
+        // # Narrates true, false, true, false, true, false, true, false, true, false.
+        // - foreach <util.list_numbers_to[10]> as:number:
+        //     - narrate <[number].is_odd>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_odd", (attribute, object) -> {
             String element = object.element;
@@ -587,8 +591,9 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is an even-valued decimal number. Returns 'false' for non-numbers.
         // @example
-        // # Returns true.
-        // - narrate <element[4].is_even>
+        // # Narrates false, true, false, true, false, true, false, true, false, true.
+        // - foreach <util.list_numbers_to[10]> as:number:
+        //     - narrate <[number].is_even>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_even", (attribute, object) -> {
             String element = object.element;
@@ -836,10 +841,10 @@ public class ElementTag implements ObjectTag {
         // WARNING: THIS TAG IS DANGEROUS TO USE, DO NOT USE IT UNLESS
         // YOU KNOW WHAT YOU ARE DOING. USE AT YOUR OWN RISK.
         // @example
-        // # This takes an input from chat and sets the player's health to it, and parses any tags in it.
-        // # For example, if the player were to type "<player.max_health.sub[1]>" in chat, their health would be set to their max health - 1.
-        // - define value <[input].parsed>
-        // - adjust <player> health:<[input]>
+        // # This takes an input from a command and sets the player's health to it, and parses any tags in it.
+        // # For example, if the player were to type "/sethealth <player.max_health.sub[1]>" in chat, their health would be set to their max health - 1.
+        // - define value <context.args.first.parsed>
+        // - adjust <player> health:<[value]>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "parsed", (attribute, object) -> {
             return TagManager.tagObject(object.element, attribute.context);
