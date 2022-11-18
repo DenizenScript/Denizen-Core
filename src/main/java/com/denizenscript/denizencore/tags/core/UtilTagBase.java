@@ -29,14 +29,13 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
 
     public static UtilTagBase instance;
 
-    public static void register() {
-        instance = new UtilTagBase();
+    public UtilTagBase() {
+        instance = this;
         TagManager.registerStaticTagBaseHandler(UtilTagBase.class, "util", (t) -> instance);
     }
 
     @Override
-    public void registerTags() {
-
+    public void register() {
         tagProcessor.registerTag(ElementTag.class, "random", (attribute, object) -> {
             attribute.fulfill(1);
 

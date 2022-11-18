@@ -199,7 +199,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     }
 
     public static void webGet(final ScriptEntry scriptEntry, final ElementTag data, Method method, String urlText, DurationTag timeout, MapTag headers, String saveFile, boolean hideFailure, boolean urlIsSecret) {
-        BufferedReader buffIn = null;
         HttpURLConnection uc = null;
         try {
             long timeStart = CoreUtilities.monotonicMillis();
@@ -333,23 +332,6 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     return false;
                 }
             });
-        }
-        finally {
-            try {
-                if (buffIn != null) {
-                    buffIn.close();
-                }
-            }
-            catch (Exception e) {
-                if (!hideFailure) {
-                    if (urlIsSecret) {
-                        Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
-                    }
-                    else {
-                        Debug.echoError(e);
-                    }
-                }
-            }
         }
     }
 }

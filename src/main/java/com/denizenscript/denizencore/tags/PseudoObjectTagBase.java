@@ -47,7 +47,7 @@ public abstract class PseudoObjectTagBase<T extends PseudoObjectTagBase> impleme
 
     public ObjectType<T> type = new ObjectType<>();
 
-    public abstract void registerTags();
+    public abstract void register();
 
     @Override
     public ObjectTag getObjectAttribute(Attribute attribute) {
@@ -60,6 +60,6 @@ public abstract class PseudoObjectTagBase<T extends PseudoObjectTagBase> impleme
         type.clazz = tagProcessor.type;
         type.longName = DebugInternals.getClassNameOpti(getClass());
         ObjectFetcher.objectsByClass.put(type.clazz, type);
-        registerTags();
+        register();
     }
 }

@@ -152,7 +152,7 @@ public class JavaReflectedObjectTag implements ObjectTag {
         return object;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         // <--[tag]
         // @attribute <JavaReflectedObjectTag.simple_class_name>

@@ -317,7 +317,7 @@ public class MapTag implements ObjectTag {
         return result;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         // <--[tag]
         // @attribute <MapTag.size>

@@ -149,7 +149,7 @@ public class BinaryTag implements ObjectTag {
         return data;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         // <--[tag]
         // @attribute <BinaryTag.length>

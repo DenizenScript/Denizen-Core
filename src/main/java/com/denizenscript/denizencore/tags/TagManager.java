@@ -41,7 +41,7 @@ public class TagManager {
         new ProcedureScriptTagBase();
         new StaticTagBase();
         new TernaryTagBase();
-        UtilTagBase.register();
+        new UtilTagBase();
     }
 
     public static class TagBaseData {

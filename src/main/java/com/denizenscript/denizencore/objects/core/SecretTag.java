@@ -153,7 +153,7 @@ public class SecretTag implements ObjectTag {
         return true;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         // <--[tag]
         // @attribute <SecretTag.key>

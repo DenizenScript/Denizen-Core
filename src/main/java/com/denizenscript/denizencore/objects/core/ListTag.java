@@ -733,7 +733,7 @@ public class ListTag implements List<String>, ObjectTag {
         return integerIndex - 1;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         // <--[tag]
         // @attribute <ListTag.combine>
