@@ -29,7 +29,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Source: https://github.com/eugenp/tutorials/tree/master/algorithms-miscellaneous-3/src/main/java/com/baeldung/algorithms/romannumerals
+// Source: https://github.com/eugenp/tutorials/tree/master/algorithms-modules/algorithms-miscellaneous-3/src/main/java/com/baeldung/algorithms/romannumerals
 
 public class RomanNumerals {
 

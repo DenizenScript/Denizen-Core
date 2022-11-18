@@ -304,11 +304,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     }
                 }
                 catch (Exception e2) {
-                    if (urlIsSecret) {
-                        Debug.echoError("WebGet encountered an exception of type '" + e2.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
-                    }
-                    else {
-                        Debug.echoError(e2);
+                    if (!hideFailure) {
+                        if (urlIsSecret) {
+                            Debug.echoError("WebGet encountered an exception of type '" + e2.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                        }
+                        else {
+                            Debug.echoError(e2);
+                        }
                     }
                 }
             }
@@ -339,11 +341,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 }
             }
             catch (Exception e) {
-                if (urlIsSecret) {
-                    Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
-                }
-                else {
-                    Debug.echoError(e);
+                if (!hideFailure) {
+                    if (urlIsSecret) {
+                        Debug.echoError("WebGet encountered an exception of type '" + e.getClass().getCanonicalName() + "' but hid the exception text due to secret URL presence.");
+                    }
+                    else {
+                        Debug.echoError(e);
+                    }
                 }
             }
         }
