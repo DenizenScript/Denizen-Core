@@ -527,20 +527,20 @@ public class CoreUtilities {
 
     public static String toUpperCase(String input) {
         int len = input.length();
-        boolean any = false;
         char c;
+        int first = -1;
         for (int i = 0; i < len; i++) {
             c = input.charAt(i);
             if (c >= 'a' && c <= 'z') {
-                any = true;
+                first = i;
                 break;
             }
         }
-        if (!any) {
+        if (first == -1) {
             return input;
         }
         char[] data = input.toCharArray();
-        for (int i = 0; i < data.length; i++) {
+        for (int i = first; i < data.length; i++) {
             if (data[i] >= 'a' && data[i] <= 'z') {
                 data[i] -= 'a' - 'A';
             }
@@ -550,20 +550,20 @@ public class CoreUtilities {
 
     public static String toLowerCase(String input) {
         int len = input.length();
-        boolean any = false;
         char c;
+        int first = -1;
         for (int i = 0; i < len; i++) {
             c = input.charAt(i);
             if (c >= 'A' && c <= 'Z') {
-                any = true;
+                first = i;
                 break;
             }
         }
-        if (!any) {
+        if (first == -1) {
             return input;
         }
         char[] data = input.toCharArray();
-        for (int i = 0; i < data.length; i++) {
+        for (int i = first; i < data.length; i++) {
             if (data[i] >= 'A' && data[i] <= 'Z') {
                 data[i] -= 'A' - 'a';
             }
