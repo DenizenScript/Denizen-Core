@@ -877,7 +877,8 @@ public class ElementTag implements ObjectTag {
         // @example
         // # Returns "true".
         // - narrate <element[Hello world].contains_any_case_sensitive_text[Hello|Goodbye]>
-        // # Returns "false".
+        // @example
+        // # Returns "false" as "H" does not equal "h" in case-sensitive checks.
         // - narrate <element[Hello world].contains_any_case_sensitive_text[hello|goodbye]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_case_sensitive_text", (attribute, object, list) -> {
@@ -1004,7 +1005,8 @@ public class ElementTag implements ObjectTag {
         // @example
         // # Returns "true".
         // - narrate <element[Hello world].equals_case_sensitive[Hello world]>
-        // # Returns "false".
+        // @example
+        // # Returns "false", as "H" does not equal "h" in case-sensitive checks.
         // - narrate <element[Hello world].equals_case_sensitive[hello world]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "equals_case_sensitive", (attribute, object, compare) -> {

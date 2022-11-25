@@ -450,7 +450,7 @@ public class DurationTag implements ObjectTag {
         // @example
         // # Sends the first message, then waits for three hours, and finally sends the second message.
         // - narrate "Started the timer!"
-        // - narrate <duration[2h].add[1h]>
+        // - wait <duration[2h].add[1h]>
         // - narrate "It's been three hours! Time's up!"
         // -->
         tagProcessor.registerStaticTag(DurationTag.class, DurationTag.class, "add", (attribute, object, secondVal) -> {
