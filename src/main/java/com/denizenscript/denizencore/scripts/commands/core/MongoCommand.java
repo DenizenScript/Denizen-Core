@@ -88,7 +88,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Run a simple command.
-    // - ~mongo id:name command:<map[dbStats=1]>
+    // - ~mongo id:name command:[dbStats=1]
     //
     // @Usage
     // Run more complex commands.
@@ -99,7 +99,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Simple find query.
-    // - ~mongo id:name find:<map[name=Bob]>
+    // - ~mongo id:name find:[name=Bob]
     //
     // @Usage
     // Complex find query with query filters.

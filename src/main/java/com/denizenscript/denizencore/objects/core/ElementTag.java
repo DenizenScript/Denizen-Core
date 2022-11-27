@@ -2113,7 +2113,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.UP));
+            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.CEILING));
         });
 
         // <--[tag]
@@ -2128,7 +2128,7 @@ public class ElementTag implements ObjectTag {
                 attribute.echoError("Element '" + ele + "' is not a valid decimal number!");
                 return null;
             }
-            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.DOWN));
+            return new ElementTag(ele.asBigDecimal().setScale(0, RoundingMode.FLOOR));
         });
 
         // <--[tag]

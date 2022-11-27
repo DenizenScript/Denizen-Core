@@ -92,11 +92,11 @@ public class QueueWordList {
     public static final String[] donorList = new String[] {
             "DeclanCaff", "Greenleeuw", "Apademide", "BredyAK", "Nomadjimbob", "Baivo", "Darwin1546", "Aikovdp", "Jumpsplat", "N1msy", "Ms2221", "Xarieste", "JonatanLaMerce",
             "1thebeast", "Voxlltv", "RSNFreud", "Adw123", "Bullesta", "BehrRiley", "Jaminb2030", "TornixNoVega", "TheInventorist", "Deadadm1n", "Mervinvb", "Miamibluerecords",
-            "Hades5514", "Ph4i1ur3", "Questercraft", "Nurfuis", "Facundo-Barbera", "Cowbilet", "Fortifier42", "MisterGank", "Noiknez", "CriticalMC", "New2pc", "Possumthecreator",
+            "Hades5514", "Ph4i1ur3", "Nurfuis", "Facundo-Barbera", "Cowbilet", "Fortifier42", "MisterGank", "Noiknez", "CriticalMC", "New2pc", "Possumthecreator",
             "Nestesio", "Insilvon", "PsychoLynx", "Blockcraftteam", "Gominecraft", "NextoEsKawii", "MrMaleficus", "RlGoma", "SXRWahrheit", "Mergu", "Zozer", "Creaturesofhabit",
             "Crckdns", "Berufeng", "PirateEra", "The-Mr-Mango", "RepH3x", "Lasers-rgb", "Sirbandersnatch", "Misquoth", "GoDieBawb", "SlyyJacob", "AnthonyAMC", "Chrismwiggs",
             "Mwthorn", "Rainpelt29", "FutureMaximus", "Kalebbroo", "ZARazor91", "Andarius68", "Mrhonbon", "Moepius", "XIdentified", "Jcg4678", "Srl4n", "Circenn5130"
-            // Note: excludes 1 unidentified donor and 1 self-advertising username
+            // Note: excludes 1 unidentified donor and 2 self-advertising usernames
     };
 
     static {
