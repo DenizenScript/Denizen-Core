@@ -17,8 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.*;
 
 public class BinaryTag implements ObjectTag {
 
@@ -296,6 +295,40 @@ public class BinaryTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <BinaryTag.zlib_compress>
+        // @returns BinaryTag
+        // @description
+        // Returns the binary data, compressed via zlib.
+        // See also <@link tag BinaryTag.zlib_decompress>
+        // @example
+        // - define data <binary[48454c4c4f20574f524c44]>
+        // - define compressed <[data].zlib_compress>
+        // - define decompressed <[data].zlib_decompress>
+        // - if <[decompressed].to_hex> == <[data].to_hex>:
+        //     - narrate "Everything works!"
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "zlib_compress", (attribute, object) -> {
+            return new BinaryTag(compressZlib(object.data));
+        });
+
+        // <--[tag]
+        // @attribute <BinaryTag.zlib_decompress>
+        // @returns BinaryTag
+        // @description
+        // Returns the binary data, compressed via zlib.
+        // See also <@link tag BinaryTag.zlib_compress>
+        // @example
+        // - define data <binary[48454c4c4f20574f524c44]>
+        // - define compressed <[data].zlib_compress>
+        // - define decompressed <[data].zlib_decompress>
+        // - if <[decompressed].to_hex> == <[data].to_hex>:
+        //     - narrate "Everything works!"
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, "zlib_decompress", (attribute, object) -> {
+            return new BinaryTag(decompressZlib(object.data));
+        });
+
+        // <--[tag]
         // @attribute <BinaryTag.hash[<format>]>
         // @returns BinaryTag
         // @description
@@ -316,6 +349,45 @@ public class BinaryTag implements ObjectTag {
             }
             return null;
         });
+    }
+
+    private static byte[] decompressZlib(byte[] data) {
+        try {
+            ByteArrayInputStream bytesIn = new ByteArrayInputStream(data);
+            InflaterInputStream zlibIn = new InflaterInputStream(bytesIn);
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream(data.length);
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = zlibIn.read(buffer, 0, 1024)) != -1) {
+                bytesOut.write(buffer, 0, len);
+            }
+            byte[] result = bytesOut.toByteArray();
+            zlibIn.close();
+            bytesIn.close();
+            bytesOut.close();
+            return result;
+        }
+        catch (IOException ex) {
+            Debug.echoError(ex);
+            return null;
+        }
+    }
+
+    private static byte[] compressZlib(byte[] data) {
+        try {
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream(data.length);
+            DeflaterOutputStream zlibOut = new DeflaterOutputStream(bytesOut);
+            zlibOut.write(data);
+            zlibOut.flush();
+            zlibOut.close();
+            byte[] result = bytesOut.toByteArray();
+            bytesOut.close();
+            return result;
+        }
+        catch (IOException ex) {
+            Debug.echoError(ex);
+            return null;
+        }
     }
 
     private static byte[] decompressGzip(byte[] data) {
