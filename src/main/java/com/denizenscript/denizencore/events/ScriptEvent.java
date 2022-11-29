@@ -280,6 +280,13 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             return obj.tryAdvancedMatcher(val);
         }
 
+        public boolean tryArgObject(int argIndex, ObjectTag obj) {
+            if (obj == null) {
+                return false;
+            }
+            return obj.tryAdvancedMatcher(eventArgAt(argIndex));
+        }
+
         // <--[data]
         // @name not_switches
         // @values regex
