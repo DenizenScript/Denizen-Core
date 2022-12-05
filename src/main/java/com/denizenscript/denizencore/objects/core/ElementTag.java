@@ -1699,11 +1699,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.add_int[<#>]>
         // @returns ElementTag(Number)
         // @group math
+        // @deprecated This tag hasn't conferred any real benefit for years.
         // @description
-        // Returns the element plus a number, using integer math.
-        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
+        // Don't use this, just use "add".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "add_int", (attribute, ele, second) -> {
+            Deprecations.intTagVariants.warn(attribute.context);
             if (!ele.isDouble() || !second.isDouble()) {
                 attribute.echoError("Element '" + ele + "' or '" + second + "' is not a valid decimal number!");
                 return null;
@@ -1731,11 +1732,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.mul_int[<#>]>
         // @returns ElementTag(Number)
         // @group math
+        // @deprecated This tag hasn't conferred any real benefit for years.
         // @description
-        // Returns the element multiplied by a number.
-        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
+        // Don't use this, just use "mul".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "mul_int", (attribute, ele, second) -> {
+            Deprecations.intTagVariants.warn(attribute.context);
             if (!ele.isDouble() || !second.isDouble()) {
                 attribute.echoError("Element '" + ele + "' or '" + second + "' is not a valid decimal number!");
                 return null;
@@ -1747,11 +1749,12 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.sub_int[<#>]>
         // @returns ElementTag(Number)
         // @group math
+        // @deprecated This tag hasn't conferred any real benefit for years.
         // @description
-        // Returns the element minus a number.
-        // This is a special-case Java Long Integer logic tag, and generally you should use the variant without "_int" instead.
+        // Don't use this, just use "sub".
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "sub_int", (attribute, ele, second) -> {
+            Deprecations.intTagVariants.warn(attribute.context);
             if (!ele.isDouble() || !second.isDouble()) {
                 attribute.echoError("Element '" + ele + "' or '" + second + "' is not a valid decimal number!");
                 return null;

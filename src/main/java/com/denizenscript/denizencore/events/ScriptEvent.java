@@ -349,6 +349,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     // (for example "<context.location.material>" might now show a different block type, or the original one, if the event was changed,
     // or another thing happened right after the event but before the 'after' event ran).
     // This also means you cannot affect the outcome of the event at all (you can't cancel it or anything else - the "determine" command does nothing).
+    //
+    // See also <@link language Safety In Events>
     // -->
 
     public static void reload() {
