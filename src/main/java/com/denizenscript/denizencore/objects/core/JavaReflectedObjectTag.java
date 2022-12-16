@@ -159,6 +159,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the simple/short class name of the reflected object, such as "JavaReflectedObjectTag".
+        // @example
+        // # Returns "CraftPlayer".
+        // - narrate <player.reflected_internal_object.simple_class_name>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "simple_class_name", (attribute, object) -> {
             return new ElementTag(DebugInternals.getClassNameOpti(object.object.getClass()));
@@ -169,6 +172,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ListTag
         // @description
         // Returns the list of super classes of this object, in order, starting with its primary class's super, down to Object, as a ListTag of full class names.
+        // @example
+        // # Returns "java.util.AbstractList, java.util.AbstractCollection, java.lang.Object"
+        // - narrate <list[1|2|3].reflected_internal_object.super_classes.comma_separated>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "super_classes", (attribute, object) -> {
             ListTag classes = new ListTag();
@@ -185,6 +191,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the full class name of the reflected object with package info included, such as "com.denizenscript.denizencore.objects.core.JavaReflectedObjectTag"
+        // @example
+        // # Returns "org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer"
+        // - narrate <player.reflected_internal_object.full_class_name>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "full_class_name", (attribute, object) -> {
             return new ElementTag(object.object.getClass().getName());
@@ -195,6 +204,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ObjectTag
         // @description
         // Interprets the object to Denizen object format.
+        // @example
+        // # Returns the linked player.
+        // - narrate <player.reflected_internal_object.interpret>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "interpret", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
@@ -209,6 +221,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the result of the Java toString() call on the object.
+        // @example
+        // # Returns "CraftPlayer{name=mcmonkey4eva}".
+        // - narrate <player.reflected_internal_object.to_string>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "to_string", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
@@ -223,6 +238,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns the result of the Java hashCode() call on the object.
+        // @example
+        // # Returns "3329".
+        // - narrate <element[hi].reflected_internal_object.hash_code>
         // -->
         tagProcessor.registerTag(ObjectTag.class, "hash_code", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
@@ -237,6 +255,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns the result of the Java equals(<object>) call on the object with another JavaReflectedObjectTag.
+        // @example
+        // # Returns "true".
+        // - narrate <element[hi].reflected_internal_object.java_equals[<element[hi].reflected_internal_object>]>
         // -->
         tagProcessor.registerTag(ObjectTag.class, JavaReflectedObjectTag.class, "java_equals", (attribute, object, compareTo) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
@@ -251,6 +272,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns the result of the Java "==" exact memory equality call on the object with another JavaReflectedObjectTag.
+        // @example
+        // # Returns "false".
+        // - narrate <element[hi].reflected_internal_object.memory_equals[<element[hello].reflected_internal_object>]>
         // -->
         tagProcessor.registerStaticTag(ObjectTag.class, JavaReflectedObjectTag.class, "memory_equals", (attribute, object, compareTo) -> {
             if (!CoreConfiguration.allowReflectedCoreMethods) {
@@ -265,6 +289,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ListTag
         // @description
         // Returns a list of all field names on the object (in its current class or any super classes).
+        // @example
+        // # Returns "DATA_TYPE_REGISTRY, server, persistentDataContainer, biomeProvider, generator, spawnCategoryLimit, REGEN_CHUNK_STATUSES, adventure$pointers, CUSTOM_DIMENSION_OFFSET, blockMetadata, rand, environment, world, populators, gameruleDefinitions, spigot, gamerules, worldBorder".
+        // - narrate <world[world].reflected_internal_object.field_names.comma_separated>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "field_names", (attribute, object) -> {
             if (!CoreConfiguration.allowReflectionFieldReads) {
@@ -285,6 +312,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the field for the given name on this object is a public field.
+        // @example
+        // # Returns "false".
+        // - narrate <world[world].reflected_internal_object.field_is_public[environment]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_public", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -302,6 +332,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the field for the given name on this object is a private field.
+        // @example
+        // # Returns "true".
+        // - narrate <world[world].reflected_internal_object.field_is_private[environment]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_private", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -319,6 +352,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the field for the given name on this object is a protected field.
+        // @example
+        // # Returns "false".
+        // - narrate <world[world].reflected_internal_object.field_is_protected[environment]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_protected", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -336,6 +372,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the field for the given name on this object is a static field.
+        // @example
+        // # Returns "false".
+        // - narrate <world[world].reflected_internal_object.field_is_static[environment]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_static", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -353,6 +392,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the field for the given name on this object is a final field.
+        // @example
+        // # Returns "true".
+        // - narrate <world[world].reflected_internal_object.field_is_final[server]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_is_final", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -370,6 +412,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the full class name of the field of the given name on this object.
+        // @example
+        // # Returns "org.bukkit.craftbukkit.v1_19_R1.CraftServer".
+        // - narrate <world[world].reflected_internal_object.field_class_type[server]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "field_class_type", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -388,6 +433,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Reads the field of the given name on the object and returns the value in its Denizen-valid format.
         // See also <@link tag JavaReflectedObjectTag.reflect_field>
+        // @example
+        // # Returns "CraftServer{serverName=Paper,serverVersion=git-Paper-278,minecraftVersion=1.19.2" (the versions change over time, so if you run this, this might not be an exact match).
+        // - narrate <world[world].reflected_internal_object.read_field[server]>
         // -->
         tagProcessor.registerTag(ObjectTag.class, ElementTag.class, "read_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
@@ -406,6 +454,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
         // @description
         // Reads the field of the given name on the object and returns the value as another reflected tag.
         // See also <@link tag JavaReflectedObjectTag.read_field>
+        // @example
+        // # Returns the player's name.
+        // - narrate <player.reflected_internal_object.reflect_field[entity].read_field[displayName]>
         // -->
         tagProcessor.registerTag(JavaReflectedObjectTag.class, ElementTag.class, "reflect_field", (attribute, object, fieldName) -> {
             if (denyFieldTag(attribute)) {
