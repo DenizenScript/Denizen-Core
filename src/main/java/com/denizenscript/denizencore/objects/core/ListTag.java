@@ -740,6 +740,10 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag
         // @description
         // Returns a list containing the contents of all sublists within this list.
+        // @example
+        // # Returns "a, b, c, d, e, f".
+        // - define list <list[a|b|c].include_single[<list[d|e|f]>]>
+        // - narrate <[list].combine>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "combine", (attribute, object) -> {
             ListTag output = new ListTag();
@@ -754,7 +758,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag(ListTag)
         // @description
         // Returns a list containing sublists of this list capped to a specific length.
-        // @Example
+        // @example
         // # Narrates "a|b", then "c|d", then "e|f"
         // - foreach <list[a|b|c|d|e|f].sub_lists[2]> as:sublist:
         //     - narrate <[sublist]>
@@ -781,7 +785,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the list in a cleaner format, separated by spaces.
-        // @Example
+        // @example
         // # Narrates "one two three"
         // - narrate <list[one|two|three].space_separated>
         // -->
@@ -797,7 +801,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the list formatted, with each item separated by the defined text.
-        // @Example
+        // @example
         // # Narrates "bob and joe and john"
         // - narrate "<list[bob|joe|john].separated_by[ and ]>"
         // -->
@@ -813,7 +817,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the list in a cleaner format, separated by commas.
-        // @Example
+        // @example
         // # Narrates "one, two, three"
         // - narrate <list[one|two|three].comma_separated>
         // -->
@@ -829,7 +833,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag
         // @description
         // Returns the list in a less clean format, separated by nothing.
-        // @Example
+        // @example
         // # Narrates "onetwothree"
         // - narrate <list[one|two|three].unseparated>
         // -->
@@ -846,7 +850,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a list of the specified sub items in the list, as split by the
         // forward-slash character (/).
-        // @Example
+        // @example
         // # Narrates a list of "one|two"
         // - narrate <list[one/alpha|two/beta].get_sub_items[1]>
         // -->
@@ -863,7 +867,7 @@ public class ListTag implements List<String>, ObjectTag {
             // Returns a list of the specified sub item in the list, allowing you to specify a
             // character in which to split the sub items by. WARNING: When setting your own split
             // character, make note that it is CASE SENSITIVE.
-            // @Example
+            // @example
             // # Narrates a list of "one|two"
             // - narrate <list[one-alpha|two-beta].get_sub_items[1].split_by[-]>
             // -->
@@ -957,7 +961,10 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // If this list is a list of MapTags, returns a single MapTag of all the maps combined together.
         // So a list that contains map of [a=1;b=2] and a map of [x=3;y=4] will return a single map of [a=1;b;=2;x=3;y=4]
-        // Duplicate keys will have the the last value that appears in the list.
+        // Duplicate keys will have the last value that appears in the list.
+        // @example
+        // # This example will return a map of [a=1;b=2;c=3;d=4]
+        // - narrate <list[<map[a=1;b=2]>].include[<map[c=3;d=4]>].merge_maps>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "merge_maps", (attribute, object) -> {
             MapTag map = new MapTag();
@@ -979,6 +986,9 @@ public class ListTag implements List<String>, ObjectTag {
         // Interprets a list of "key/value" pairs as a map, and returns the resulting MapTag.
         // Optionally specify the map separator symbol, by default '/'.
         // Inverted by <@link tag MapTag.to_list>
+        // @example
+        // # This example will return a map of [a=1;b=2;c=3;d=4]
+        // - narrate <list[a/1|b/2|c/3|d/4].to_map>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "to_map", (attribute, object) -> {
             String symbol = "/";
@@ -1005,7 +1015,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Interprets this list as a list of keys, and the input as a list of values,
         // and forms a mapping from keys to values based on list index.
         // Both lists must have the same size.
-        // @Example
+        // @example
         // # Narrates a map of "[a=1;b=2;c=3]"
         // - narrate <list[a|b|c].map_with[1|2|3|]>
         // -->
@@ -1026,7 +1036,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag(Number)
         // @description
         // Returns the size of the list.
-        // @Example
+        // @example
         // # Narrates '3'
         // - narrate <list[one|two|three].size>
         // -->
@@ -1039,12 +1049,12 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the list is empty.
-        // @Example
+        // @example
         // - if <list[something].is_empty>:
         //     - narrate "never shows"
         // - else:
         //     - narrate "it ain't empty!"
-        // @Example
+        // @example
         // - if <list.is_empty>:
         //     - narrate "it empty!"
         // -->
@@ -1057,12 +1067,12 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ElementTag(Boolean)
         // @description
         // Returns whether the list is not empty.
-        // @Example
+        // @example
         // - if <list.any>:
         //     - narrate "never shows"
         // - else:
         //     - narrate "ain't got any"
-        // @Example
+        // @example
         // - if <list[something].any>:
         //     - narrate "something's here!"
         // -->
@@ -1076,7 +1086,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag with the items specified inserted to the specified location.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list of "one|two|three|four"
         // - narrate <list[one|four].insert[two|three].at[2]>
         // -->
@@ -1109,7 +1119,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag with the single item specified inserted to the specified location.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list with 3 values: "one", "two|alsotwo", "three"
         // - narrate <list[one|three].insert_single[two|alsotwo].at[2]>
         // -->
@@ -1140,10 +1150,10 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag with the items specified inserted to the specified location, replacing the object already at that location.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list of "one|potato|three"
         // - narrate <list[one|two|three].set[potato].at[2]>
-        // @Example
+        // @example
         // # Narrates a list of "one|potato|taco|hotdog|three"
         // - narrate <list[one|two|three].set[potato|taco|hotdog].at[2]>
         // -->
@@ -1179,7 +1189,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag with the single item specified inserted to the specified location, replacing the object already at that location.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list with 3 values: "one", "potato|taco", "three"
         // - narrate <list[one|two|three].set_single[potato|taco].at[2]>
         // -->
@@ -1214,10 +1224,10 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns a new ListTag with the index specified and beyond replaced with the input list.
         // The result list will be the same size as the original list, unless (input_list.size + at_index) is greater than the original list size.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list of "one|potato|taco|four"
         // - narrate <list[one|two|three|four].overwrite[potato|taco].at[2]>
-        // @Example
+        // @example
         // # Narrates a list of "one|potato|taco|hotdog|cheeseburger"
         // - narrate <list[one|two|three].overwrite[potato|taco|hotdog|cheeseburger].at[2]>
         // -->
@@ -1258,6 +1268,9 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag including the value specified as a new entry.
         // If the value input is a list, that list becomes a list-within-a-list, still only occupying one space in the outer list.
+        // @example
+        // # Narrates "one, two, three, and li@ (Size 2): potato | tomato".
+        // - narrate <list[one|two|three].include_single[<list[potato|tomato]>].formatted>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, ObjectTag.class, "include_single", (attribute, object, val) -> {
             ListTag copy = new ListTag(object);
@@ -1270,7 +1283,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag
         // @description
         // Returns a new ListTag including the items specified.
-        // @Example
+        // @example
         // # Narrates a list of "one|two|three|four"
         // - narrate <list[one|two].include[three|four]>
         // -->
@@ -1285,7 +1298,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @returns ListTag
         // @description
         // Returns a new ListTag excluding the items specified.
-        // @Example
+        // @example
         // # Narrates a list of "one|three"
         // - narrate <list[one|two|three|four|two].exclude[two|four]>
         // -->
@@ -1301,7 +1314,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @description
             // Returns a new ListTag excluding the items specified. Specify a maximum number of items to remove from the list.
             // Max must be an integer >= 1.
-            // @Example
+            // @example
             // # Narrates a list of "taco|taco|taco|potato"
             // - narrate <list[taco|potato|taco|potato|taco|potato].exclude[potato].max[2]>
             // -->
@@ -1331,7 +1344,7 @@ public class ListTag implements List<String>, ObjectTag {
         // @description
         // Returns a new ListTag excluding the items at the specified index.
         // Note the index input options described at <@link objecttype listtag>
-        // @Example
+        // @example
         // # Narrates a list of "one|three|four"
         // - narrate <list[one|two|three|four].remove[2]>
         // -->
@@ -1344,7 +1357,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @description
             // Returns a new ListTag excluding the items in the specified index range.
             // Note the index input options described at <@link objecttype listtag>
-            // @Example
+            // @example
             // # Narrates a list of "one|five"
             // - narrate <list[one|two|three|four|five].remove[2].to[4]>
             // -->
@@ -1389,7 +1402,7 @@ public class ListTag implements List<String>, ObjectTag {
         // Returns a list of only items that appear in both this list and the input one.
         // This will also inherently deduplicate the output as part of processing.
         // This will retain the list order of the list object the tag is on (so, for example "a|b|c" .shared_contents[c|b] returns "b|c").
-        // @Example
+        // @example
         // # Narrates a list of "two|four"
         // - narrate <list[one|two|three|four].shared_contents[two|four|five|six]>
         // -->

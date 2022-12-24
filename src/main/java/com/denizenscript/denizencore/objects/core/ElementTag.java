@@ -521,10 +521,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is an integer number (a number without a decimal point), within the limits of a Java "long" (64-bit signed integer).
         // @example
-        // # Returns true.
+        // # Narrates true.
         // - narrate <element[1234567890123456789].is_integer>
         // @example
-        // # Returns false, as it has decimal points.
+        // # Narrates false, as it has decimal points.
         // - narrate <element[3.1415926].is_integer>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_integer", (attribute, object) -> {
@@ -547,13 +547,13 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is a valid decimal number (the decimal point is optional).
         // @example
-        // # Returns true.
+        // # Narrates true.
         // - narrate <element[3.1415926].is_decimal>
         // @example
-        // # Returns true.
+        // # Narrates true.
         // - narrate <element[1234567890123456789].is_decimal>
         // @example
-        // # Returns false, as it has letters.
+        // # Narrates false, as it has letters.
         // - narrate <element[1.23abc].is_decimal>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_decimal", (attribute, object) -> {
@@ -691,7 +691,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element as a number with two decimal places.
         // @example
-        // # Returns 1.23.
+        // # Narrates 1.23.
         // - narrate <element[1.234].as_money>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "as_money", (attribute, object) -> {
@@ -861,7 +861,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns a number representing the difference between the two elements. (Uses Levenshtein logic).
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[Hello world].difference[Helo wold]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "difference", (attribute, object, compareVal) -> {
@@ -875,10 +875,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element contains any of a list of specified elements, case sensitive.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].contains_any_case_sensitive_text[Hello|Goodbye]>
         // @example
-        // # Returns "false" as "H" does not equal "h" in case-sensitive checks.
+        // # Narrates "false" as "H" does not equal "h" in case-sensitive checks.
         // - narrate <element[Hello world].contains_any_case_sensitive_text[hello|goodbye]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_case_sensitive_text", (attribute, object, list) -> {
@@ -899,7 +899,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element contains any of a list of specified elements, case insensitive.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].contains_any_text[hello|goodbye]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_any_text", (attribute, object, list) -> {
@@ -920,10 +920,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element contains a specified element, case sensitive.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].contains_case_sensitive_text[Hello]>
         // @example
-        // # Returns "false" as "H" does not equal "h" in case-sensitive checks.
+        // # Narrates "false" as "H" does not equal "h" in case-sensitive checks.
         // - narrate <element[Hello world].contains_case_sensitive_text[hello]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "contains_case_sensitive_text", (attribute, object, contains) -> {
@@ -976,10 +976,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element contains all the specified elements, case sensitive.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].contains_all_case_sensitive_text[Hello|world]>
         // @example
-        // # Returns "false" as "W" does not equal "w" in case-sensitive checks.
+        // # Narrates "false" as "W" does not equal "w" in case-sensitive checks.
         // - narrate <element[Hello world].contains_all_case_sensitive_text[Hello|World]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "contains_all_case_sensitive_text", (attribute, object, list) -> {
@@ -1000,7 +1000,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element ends with a specified element.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].ends_with[world]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "ends_with", (attribute, object, compare) -> {
@@ -1015,10 +1015,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element matches another element, case-sensitive.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].equals_case_sensitive[Hello world]>
         // @example
-        // # Returns "false", as "H" does not equal "h" in case-sensitive checks.
+        // # Narrates "false", as "H" does not equal "h" in case-sensitive checks.
         // - narrate <element[Hello world].equals_case_sensitive[hello world]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "equals_case_sensitive", (attribute, object, compare) -> {
@@ -1032,10 +1032,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element matches a regex input.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[Hello world].regex_matches[Hello.*]>
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[Hello world].regex_matches[Hello.*!]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "regex_matches", (attribute, object, regex) -> {
@@ -1051,7 +1051,7 @@ public class ElementTag implements ObjectTag {
         // Specify group 0 for the whole match.
         // For example, <element[hello5world].regex[.*(\d).*].group[1]> returns '5'.
         // @example
-        // # Returns "world".
+        // # Narrates "world".
         // - narrate <element[Hello world].regex[Hello (.*?)]group[1]>
         // -->
         tagProcessor.registerTag(ElementTag.class, "regex", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1082,7 +1082,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element is contained by a list.
         // Essentially equivalent to <@link tag ListTag.contains_single>, but with input order reversed.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[coffee].is_in[coffee|tea|water]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ListTag.class, "is_in", (attribute, object, list) -> {
@@ -1101,7 +1101,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the length of the element.
         // @example
-        // # Returns "11".
+        // # Narrates "11".
         // - narrate <element[Hello world].length>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "length", (attribute, object) -> {
@@ -1117,7 +1117,7 @@ public class ElementTag implements ObjectTag {
         // IE, true returns false and false returns true.
         // You should never ever use this tag inside any 'if', 'while', etc. command (instead, use the '!' negation prefix).
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[true].not>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "not", (attribute, object) -> {
@@ -1194,7 +1194,7 @@ public class ElementTag implements ObjectTag {
         // Returns the index of the first occurrence of a specified element.
         // Returns 0 if the element never occurs within the element.
         // @example
-        // # Returns "4".
+        // # Narrates "4".
         // - narrate <element[Hello world].index_of[lo]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "index_of", (attribute, object, compare) -> {
@@ -1210,7 +1210,7 @@ public class ElementTag implements ObjectTag {
         // Returns the index of the last occurrence of a specified element.
         // Returns 0 if the element never occurs within the element.
         // @example
-        // # Returns "8".
+        // # Narrates "8".
         // - narrate <element[Hello world].last_index_of[o]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "last_index_of", (attribute, object, compare) -> {
@@ -1226,7 +1226,7 @@ public class ElementTag implements ObjectTag {
         // Returns the character at a specified index.
         // Returns null if the index is outside the range of the element.
         // @example
-        // # Returns "H".
+        // # Narrates "H".
         // - narrate <element[Hello world].char_at[1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
@@ -1252,7 +1252,7 @@ public class ElementTag implements ObjectTag {
         // For example, "hello" .repeat[3] returns "hellohellohello"
         // An input value or zero or a negative number will result in an empty element.
         // @example
-        // # Returns a horizontal line using strikethroughed spaces.
+        // # Narrates a horizontal line using strikethroughed spaces.
         // - narrate <element[ ].repeat[80].strikethrough>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "repeat", (attribute, object, countText) -> {
@@ -1272,7 +1272,7 @@ public class ElementTag implements ObjectTag {
         // Returns the portion of an element after the last occurrence of a specified element.
         // For example: abcabc .after_last[b] returns c.
         // @example
-        // # Returns "world".
+        // # Narrates "world".
         // - narrate <element[Hello world].after_last[ ]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "after_last", (attribute, object, delimiter) -> {
@@ -1293,7 +1293,7 @@ public class ElementTag implements ObjectTag {
         // Returns the portion of an element after the first occurrence of a specified element.
         // For example: HelloWorld .after[Hello] returns World.
         // @example
-        // # Returns " world".
+        // # Narrates " world".
         // - narrate <element[Hello world].after[o]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "after", (attribute, object, delimiter) -> {
@@ -1314,7 +1314,7 @@ public class ElementTag implements ObjectTag {
         // Returns the portion of an element before the last occurrence of a specified element.
         // For example: abcabc .before_last[b] returns abca.
         // @example
-        // # Returns "Hello Denizen and".
+        // # Narrates "Hello Denizen and".
         // - narrate <element[Hello Denizen and Citizens].before_last[ ]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "before_last", (attribute, object, delimiter) -> {
@@ -1335,7 +1335,7 @@ public class ElementTag implements ObjectTag {
         // Returns the portion of an element before the first occurrence of specified element.
         // For example: abcd .before[c] returns ab.
         // @example
-        // # Returns "Hello".
+        // # Narrates "Hello".
         // - narrate <element[Hello Denizen and Citizens].before[ ]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "before", (attribute, object, delimiter) -> {
@@ -1368,7 +1368,7 @@ public class ElementTag implements ObjectTag {
         // Specify regex: at the start of the replace element to use Regex replacement.
         // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
         // @example
-        // # Returns "The best plugin is Denizen".
+        // # Narrates "The best plugin is Denizen".
         // - narrate <element[The best plugin is Citizens].replace_text[Citizens].with[Denizen]>
         // -->
         tagProcessor.registerTag(ElementTag.class, "replace_text", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1410,7 +1410,7 @@ public class ElementTag implements ObjectTag {
         // Optionally, specify a standard number format code to instead use that.
         // For information on that optional input, refer to <@link url https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html>.
         // @example
-        // # Returns "1,234,567".
+        // # Narrates "1,234,567".
         // - narrate <element[1234567].format_number>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "format_number", (attribute, object) -> {
@@ -1454,7 +1454,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns a ListTag of each letter in the element.
         // @example
-        // # Returns "a, b, c, d".
+        // # Narrates "a, b, c, d".
         // - narrate <element[abcd].to_list.comma_separated>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
@@ -1472,7 +1472,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value of an element minus any leading or trailing whitespace.
         // @example
-        // # Returns "abc".
+        // # Narrates "abc".
         // - narrate <element[   abc   ].trim>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "trim", (attribute, object) -> {
@@ -1488,7 +1488,7 @@ public class ElementTag implements ObjectTag {
         // This does not account for character width, so for example 20 "W"s and 20 "i"s will be treated as the same number of characters.
         // Spaces will be preferred to become newlines, unless a line does not contain any spaces.
         // @example
-        // # Returns "abc\ndef".
+        // # Narrates "abc\ndef".
         // - narrate <element[abcdef].split_lines[3]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "split_lines", (attribute, object, countText) -> {
@@ -1504,13 +1504,13 @@ public class ElementTag implements ObjectTag {
         // Returns whether all characters in the element are uppercase letters.
         // Numbers and symbols will return false.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[ABC].is_uppercase>
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[Abc].is_uppercase>
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[123].is_uppercase>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_uppercase", (attribute, object) -> {
@@ -1530,13 +1530,13 @@ public class ElementTag implements ObjectTag {
         // Returns whether all characters in the element are lowercase.
         // Numbers and symbols will return false.
         // @example
-        // # Returns "true".
+        // # Narrates "true".
         // - narrate <element[abc].is_lowercase>
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[Abc].is_lowercase>
         // @example
-        // # Returns "false".
+        // # Narrates "false".
         // - narrate <element[123].is_lowercase>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_lowercase", (attribute, object) -> {
@@ -1555,7 +1555,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value of an element in all uppercase letters.
         // @example
-        // # Returns "ABC".
+        // # Narrates "ABC".
         // - narrate <element[abc].to_uppercase>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_uppercase", (attribute, object) -> {
@@ -1570,7 +1570,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value of an element in all lowercase letters.
         // @example
-        // # Returns "abc".
+        // # Narrates "abc".
         // - narrate <element[ABC].to_lowercase>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_lowercase", (attribute, object) -> {
@@ -1585,7 +1585,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns The Value Of An ElementTag In Title Case.
         // @example
-        // # Returns "The Value Of An Element In Title Case".
+        // # Narrates "The Value Of An Element In Title Case".
         // - narrate <element[the value of an element in title case].to_titlecase>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_titlecase", (attribute, object) -> {
@@ -1615,7 +1615,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value in sentence case (the first letter capitalized, the rest lowercase).
         // @example
-        // # Returns "The value in sentence case".
+        // # Narrates "The value in sentence case".
         // - narrate <element[the value in sentence case].to_sentence_case>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_sentence_case", (attribute, object) -> {
@@ -1633,7 +1633,7 @@ public class ElementTag implements ObjectTag {
         // Returns the element in roman numeral form. Must be in the range of 1 and 4000 (inclusive).
         // For example: <element[1169].to_roman_numerals> returns MCLXIX.
         // @example
-        // # Returns "MLXX".
+        // # Narrates "MLXX".
         // - narrate <element[1070].to_roman_numerals>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_roman_numerals", (attribute, object) -> {
@@ -1657,7 +1657,7 @@ public class ElementTag implements ObjectTag {
         // Returns the roman numeral string in integer form.
         // For example: <element[MCLXIX].from_roman_numerals> returns 1169.
         // @example
-        // # Returns "1070".
+        // # Narrates "1070".
         // - narrate <element[MLXX].from_roman_numerals>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "from_roman_numerals", (attribute, object) -> {
@@ -1678,7 +1678,7 @@ public class ElementTag implements ObjectTag {
         // If no second index is specified, it will return the portion of an
         // element after the specified index.
         // @example
-        // # Returns "ello".
+        // # Narrates "ello".
         // - narrate <element[hello].substring[2]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "substring", (attribute, object, indices) -> {
@@ -1714,7 +1714,7 @@ public class ElementTag implements ObjectTag {
         // Returns a list of portions of this element, split the same way command arguments are split.
         // That is, split by spaces but respecting the use of "quotes" to contain spaces within a single argument.
         // @example
-        // # Returns "one, two three, four".
+        // # Narrates "one, two three, four".
         // - narrate <element[one "two three" four].split_args.comma_separated>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "split_args", (attribute, object) -> {
@@ -1729,7 +1729,7 @@ public class ElementTag implements ObjectTag {
         // Returns a list of portions of this element, split by the specified string.
         // If a split string is unspecified, splits by space.
         // @example
-        // # Returns "one, two, three, four".
+        // # Narrates "one, two, three, four".
         // - narrate <element[one two three four].split.comma_separated>
         // -->
         tagProcessor.registerTag(ListTag.class, "split", (attribute, object) -> { // non-static due to hacked sub-tag
@@ -1772,7 +1772,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value of an element extended to reach a minimum specified length by adding spaces to the left side.
         // @example
-        // # Returns "  hello".
+        // # Narrates "  hello".
         // - narrate <element[hello].pad_left[7]>
         // -->
         tagProcessor.registerTag(ElementTag.class, ElementTag.class, "pad_left", (attribute, object, lengthText) -> { // non-static due to hacked sub-tag
@@ -1810,7 +1810,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the value of an element extended to reach a minimum specified length by adding spaces to the right side.
         // @example
-        // # Returns "hello  ".
+        // # Narrates "hello  ".
         // - narrate <element[hello].pad_right[7]>
         // -->
         tagProcessor.registerTag(ElementTag.class, ElementTag.class, "pad_right", (attribute, object, lengthText) -> { // non-static due to hacked sub-tag
@@ -1850,7 +1850,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the absolute value of the element.
         // @example
-        // # Returns "5".
+        // # Narrates "5".
         // - narrate <element[-5].abs>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "abs", (attribute, ele) -> {
@@ -1869,7 +1869,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the higher number: this element or the specified one.
         // @example
-        // # Returns "10".
+        // # Narrates "10".
         // - narrate <element[5].max[10]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "max", (attribute, ele, second) -> {
@@ -1888,7 +1888,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the lower number: this element or the specified one.
         // @example
-        // # Returns 5
+        // # Narrates 5
         // - narrate <element[5].min[10]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "min", (attribute, ele, second) -> {
@@ -1971,7 +1971,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element plus a number.
         // @example
-        // # Returns "10".
+        // # Narrates "10".
         // - narrate <element[5].add[5]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> addRunnable = (attribute, object, second) -> {
@@ -1997,7 +1997,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element divided by a number.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[10].div[5]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> divRunnable = (attribute, object, second) -> {
@@ -2023,7 +2023,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the remainder of the element divided by a number.
         // @example
-        // # Returns "1".
+        // # Narrates "1".
         // - narrate <element[10].mod[3]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> modRunnable = (attribute, object, second) -> {
@@ -2051,7 +2051,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element multiplied by a number.
         // @example
-        // # Returns "25".
+        // # Narrates "25".
         // - narrate <element[5].mul[5]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> mulRunnable = (attribute, object, second) -> {
@@ -2077,7 +2077,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element minus a number.
         // @example
-        // # Returns "0".
+        // # Narrates "0".
         // - narrate <element[5].sub[5]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> subRunnable = (attribute, object, second) -> {
@@ -2104,7 +2104,7 @@ public class ElementTag implements ObjectTag {
         // Returns the square root of the element.
         // Null for negative numbers.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[4].sqrt>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "sqrt", (attribute, ele) -> {
@@ -2127,7 +2127,7 @@ public class ElementTag implements ObjectTag {
         // Returns the logarithm of the element, with the base of the specified number.
         // Null for negative numbers.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[100].log[10]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "log", (attribute, object, base) -> {
@@ -2146,7 +2146,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the natural logarithm of the element.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[7.38905609893065].ln>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "ln", (attribute, ele) -> {
@@ -2164,7 +2164,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the element to the power of a number.
         // @example
-        // # Returns "25".
+        // # Narrates "25".
         // - narrate <element[5].power[2]>
         // -->
         TagRunnable.ObjectWithParamInterface<ElementTag, ElementTag, ElementTag> powerRunnable = (attribute, object, factor) -> {
@@ -2184,7 +2184,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-sine of the element in radians.
         // @example
-        // # Returns "1.5707963267948966".
+        // # Narrates "1.5707963267948966".
         // - narrate <element[1].asin>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "asin", (attribute, ele) -> {
@@ -2202,7 +2202,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-cosine of the element in radians.
         // @example
-        // # Returns "0".
+        // # Narrates "0".
         // - narrate <element[1].acos>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "acos", (attribute, ele) -> {
@@ -2220,7 +2220,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the arc-tangent of the element in radians.
         // @example
-        // # Returns "0.7853981633974483".
+        // # Narrates "0.7853981633974483".
         // - narrate <element[1].atan>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "atan", (attribute, ele) -> {
@@ -2239,7 +2239,7 @@ public class ElementTag implements ObjectTag {
         // Interprets the element to be a Y value and the input value to be an X value (meaning: <Y.atan2[X]>),
         // and returns an angle in radians representing the vector of (X,Y).
         // @example
-        // # Returns "0.7853981633974483".
+        // # Narrates "0.7853981633974483".
         // - narrate <element[1].atan2[1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "atan2", (attribute, object, second) -> {
@@ -2257,7 +2257,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the cosine of the input radian angle.
         // @example
-        // # Returns "0.5403023058681398".
+        // # Narrates "0.5403023058681398".
         // - narrate <element[1].cos>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "cos", (attribute, ele) -> {
@@ -2275,7 +2275,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the sine of the input radian angle.
         // @example
-        // # Returns "0.8414709848078965".
+        // # Narrates "0.8414709848078965".
         // - narrate <element[1].sin>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "sin", (attribute, ele) -> {
@@ -2293,7 +2293,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the tangent of the input radian angle.
         // @example
-        // # Returns "1.5574077246549023".
+        // # Narrates "1.5574077246549023".
         // - narrate <element[1].tan>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "tan", (attribute, ele) -> {
@@ -2311,7 +2311,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns the factorial of the element. This should only be used for small values (generally: less than 20), and will become ridiculous/unusable at larger values.
         // @example
-        // # Returns "120".
+        // # Narrates "120".
         // - narrate <element[5].factorial>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "factorial", (attribute, ele) -> {
@@ -2334,7 +2334,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the element from radians to degrees.
         // @example
-        // # Returns "57.29577951308232".
+        // # Narrates "57.29577951308232".
         // - narrate <element[1].to_degrees>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_degrees", (attribute, ele) -> {
@@ -2352,7 +2352,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Converts the element from degrees to radians.
         // @example
-        // # Returns "1".
+        // # Narrates "1".
         // - narrate <element[57.29577951308232].to_radians>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_radians", (attribute, ele) -> {
@@ -2370,7 +2370,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal upward.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[1.5].round_up>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_up", (attribute, ele) -> {
@@ -2388,7 +2388,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal downward.
         // @example
-        // # Returns "1".
+        // # Narrates "1".
         // - narrate <element[1.5].round_down>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round_down", (attribute, ele) -> {
@@ -2406,7 +2406,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal to the specified place.
         // @example
-        // # Returns "0.123".
+        // # Narrates "0.123".
         // - narrate <element[0.12345].round_to[3]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "round_to", (attribute, object, to) -> {
@@ -2428,7 +2428,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal to the specified precision.
         // @example
-        // # Returns "0.125".
+        // # Narrates "0.125".
         // - narrate <element[0.12345].round_to_precision[0.005]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "round_to_precision", (attribute, object, precText) -> {
@@ -2448,7 +2448,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal downward to the specified precision.
         // @example
-        // # Returns "0.1".
+        // # Narrates "0.1".
         // - narrate <element[0.12345].round_down_to_precision[0.1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "round_down_to_precision", (attribute, object, precText) -> {
@@ -2468,7 +2468,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal upward to the specified precision.
         // @example
-        // # Returns "0.2".
+        // # Narrates "0.2".
         // - narrate <element[0.12345].round_up_to_precision[0.1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "round_up_to_precision", (attribute, object, precText) -> {
@@ -2488,7 +2488,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Rounds a decimal.
         // @example
-        // # Returns "2".
+        // # Narrates "2".
         // - narrate <element[1.5].round>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "round", (attribute, ele) -> {
@@ -2508,7 +2508,7 @@ public class ElementTag implements ObjectTag {
         // See also <@link tag ElementTag.hex_to_number>
         // Consider instead <@link tag ElementTag.integer_to_binary>
         // @example
-        // # Returns "F".
+        // # Narrates "F".
         // - narrate <element[15].number_to_hex>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "number_to_hex", (attribute, object) -> {
@@ -2528,7 +2528,7 @@ public class ElementTag implements ObjectTag {
         // See also <@link tag ElementTag.number_to_hex>
         // Consider instead <@link tag BinaryTag.decode_integer>
         // @example
-        // # Returns "15".
+        // # Narrates "15".
         // - narrate <element[F].hex_to_number>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "hex_to_number", (attribute, object) -> {
@@ -2563,7 +2563,7 @@ public class ElementTag implements ObjectTag {
         // Encodes some text to UTF-8 Base64.
         // Equivalent to using <@link tag ElementTag.utf8_encode> and then <@link tag BinaryTag.to_base64>.
         // @example
-        // # Returns "SGVsbG8gV29ybGQh".
+        // # Narrates "SGVsbG8gV29ybGQh".
         // - narrate <element[Hello World!].base64_encode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_encode", (attribute, object) -> {
@@ -2579,7 +2579,7 @@ public class ElementTag implements ObjectTag {
         // Decodes a Base64 UTF-8 encoded text to its original text.
         // Equivalent to using <@link tag ElementTag.base64_to_binary> and then <@link tag BinaryTag.utf8_decode>.
         // @example
-        // # Returns "Hello World!".
+        // # Narrates "Hello World!".
         // - narrate <element[SGVsbG8gV29ybGQh].base64_decode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "base64_decode", (attribute, object) -> {
@@ -2678,7 +2678,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Encodes the element using URL encoding.
         // @example
-        // # Returns "Hello+World%21"
+        // # Narrates "Hello+World%21"
         // - narrate <element[Hello World!].url_encode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "url_encode", (attribute, object) -> {
@@ -2699,7 +2699,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Decodes the element using URL encoding. Must be valid URL-encoded input.
         // @example
-        // # Returns "Hello World!"
+        // # Narrates "Hello World!"
         // - narrate <element[Hello+World%21].url_decode>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "url_decode", (attribute, object) -> {
@@ -2726,10 +2726,10 @@ public class ElementTag implements ObjectTag {
         // "Alphabet" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "false" because it has a capital "A",
         // and "alphabet1" .matches_character_set[abcdefghijklmnopqrstuvwxyz]> returns "false" because it has a "1".
         // @example
-        // # Returns "true"
+        // # Narrates "true"
         // - narrate <element[alphabet].matches_character_set[abcdefghijklmnopqrstuvwxyz]>
         // @example
-        // # Returns "false"
+        // # Narrates "false"
         // - narrate <element[Alphabet].matches_character_set[abcdefghijklmnopqrstuvwxyz]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "matches_character_set", (attribute, object, set) -> {
@@ -2749,7 +2749,7 @@ public class ElementTag implements ObjectTag {
         // "Alphabet" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "lphabet" without the capital "A".
         // and "alphabet1" .trim_to_character_set[abcdefghijklmnopqrstuvwxyz]> returns "alphabet" without the "1".
         // @example
-        // # Returns "alphabet"
+        // # Narrates "alphabet"
         // - narrate <element[a1l2p3h4a5b6e7t8].trim_to_character_set[abcdefghijklmnopqrstuvwxyz]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "trim_to_character_set", (attribute, object, set) -> {
@@ -2786,7 +2786,7 @@ public class ElementTag implements ObjectTag {
         // @description
         // Parses the input YAML or JSON text into a MapTag.
         // @example
-        // # Returns "one"
+        // # Narrates "one"
         // - narrate <element[one: 1].parse_yaml.get[one]>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "parse_yaml", (attribute, object) -> {
