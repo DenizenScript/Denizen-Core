@@ -317,7 +317,7 @@ public class DurationTag implements ObjectTag {
         return getSeconds();
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         /////////////////////
         //   CONVERSION ATTRIBUTES

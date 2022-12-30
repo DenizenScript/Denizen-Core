@@ -38,7 +38,7 @@ public class SystemTimeScriptEvent extends ScriptEvent {
     // on system time 03:00:
     // - announce "Daily restart in 5 minutes!"
     // - wait 5m
-    // - adjust <server> restart
+    // - adjust server restart
     //
     // -->
 

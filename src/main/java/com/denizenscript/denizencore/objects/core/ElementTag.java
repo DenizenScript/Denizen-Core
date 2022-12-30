@@ -432,7 +432,7 @@ public class ElementTag implements ObjectTag {
         return true;
     }
 
-    public static void registerTags() {
+    public static void register() {
 
         /////////////////////
         //   CONVERSION ATTRIBUTES
@@ -1036,7 +1036,17 @@ public class ElementTag implements ObjectTag {
         // You should never ever use this tag inside any 'if', 'while', etc. command (instead, use the '!' negation prefix).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "not", (attribute, object) -> {
-            return new ElementTag(!object.element.equalsIgnoreCase("true"));
+            String elem = object.asLowerString();
+            if (elem.equals("true")) {
+                return new ElementTag(false);
+            }
+            else if (elem.equals("false")) {
+                return new ElementTag(true);
+            }
+            else {
+                attribute.echoError("Invalid input to 'not' tag, '" + elem + "' is neither 'true' nor 'false'");
+                return new ElementTag(true); // treat invalid as though it were 'false', so !invalid = true
+            }
         });
 
         // <--[tag]
