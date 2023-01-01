@@ -575,9 +575,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is an odd-valued decimal number. Returns 'false' for non-numbers.
         // @example
-        // # Narrates true, false, true, false, true, false, true, false, true, false.
+        // # Narrates 1, 3, 5, 7, 9
         // - foreach <util.list_numbers_to[10]> as:number:
-        //     - narrate <[number].is_odd>
+        //     - if <[number].is_odd>:
+        //         - narrate <[number]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_odd", (attribute, object) -> {
             String element = object.element;
@@ -591,9 +592,10 @@ public class ElementTag implements ObjectTag {
         // @description
         // Returns whether the element is an even-valued decimal number. Returns 'false' for non-numbers.
         // @example
-        // # Narrates false, true, false, true, false, true, false, true, false, true.
+        // # Narrates 2, 4, 6, 8, 10
         // - foreach <util.list_numbers_to[10]> as:number:
-        //     - narrate <[number].is_even>
+        //     - if <[number].is_even>:
+        //         - narrate <[number]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_even", (attribute, object) -> {
             String element = object.element;
