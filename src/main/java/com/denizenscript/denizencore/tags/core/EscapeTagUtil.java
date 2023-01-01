@@ -1,31 +1,9 @@
 package com.denizenscript.denizencore.tags.core;
 
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.Deprecations;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.tags.TagManager;
 
-public class EscapeTagBase {
-
-    public EscapeTagBase() {
-        // Intentionally no docs due to deprecation
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                escapeTags(event);
-            }
-        }, "escape");
-        TagManager.registerTagHandler(new TagRunnable.RootForm() {
-            @Override
-            public void run(ReplaceableTagEvent event) {
-                unEscapeTags(event);
-            }
-        }, "unescape");
-    }
+public class EscapeTagUtil {
 
     // <--[language]
     // @name Escaping System
@@ -146,27 +124,5 @@ public class EscapeTagBase {
         input = CoreUtilities.replace(input, "&sp", CoreUtilities.NBSP);
         input = CoreUtilities.replace(input, "&amp", "&");
         return input;
-    }
-
-    public void escapeTags(ReplaceableTagEvent event) {
-        Deprecations.oldEscapeTags.warn(event.getScriptEntry());
-        if (event.matches("escape")) {
-            if (!event.hasValue()) {
-                Debug.echoError("Escape tag '" + event.raw_tag + "' does not have a value!");
-                return;
-            }
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(escape(event.getValue())), event.getAttributes().fulfill(1)));
-        }
-    }
-
-    public void unEscapeTags(ReplaceableTagEvent event) {
-        Deprecations.oldEscapeTags.warn(event.getScriptEntry());
-        if (event.matches("unescape")) {
-            if (!event.hasValue()) {
-                Debug.echoError("Unescape tag '" + event.raw_tag + "' does not have a value!");
-                return;
-            }
-            event.setReplacedObject(CoreUtilities.autoAttrib(new ElementTag(unEscape(event.getValue())), event.getAttributes().fulfill(1)));
-        }
     }
 }

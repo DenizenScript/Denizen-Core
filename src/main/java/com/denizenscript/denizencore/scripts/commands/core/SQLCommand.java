@@ -14,7 +14,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 
 import java.io.File;
 import java.sql.*;
@@ -328,7 +328,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             StringBuilder current = new StringBuilder();
                             ListTag subList = new ListTag();
                             for (int i = 0; i < columns; i++) {
-                                current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
+                                current.append(EscapeTagUtil.escape(set.getString(i + 1))).append("/");
                                 subList.addObject(new ElementTag(set.getString(i + 1)));
                             }
                             rows.add(current.toString());
@@ -386,7 +386,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             StringBuilder current = new StringBuilder();
                             ListTag subList = new ListTag();
                             for (int i = 0; i < columns; i++) {
-                                current.append(EscapeTagBase.escape(set.getString(i + 1))).append("/");
+                                current.append(EscapeTagUtil.escape(set.getString(i + 1))).append("/");
                                 subList.addObject(new ElementTag(set.getString(i + 1)));
                             }
                             rows.add(current.toString());

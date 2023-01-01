@@ -17,7 +17,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -2515,7 +2515,7 @@ public class ListTag implements List<String>, ObjectTag {
             Deprecations.listEscapeContents.warn(attribute.context);
             ListTag escaped = new ListTag();
             for (String entry : object) {
-                escaped.add(EscapeTagBase.escape(entry));
+                escaped.add(EscapeTagUtil.escape(entry));
             }
             return escaped;
         });
@@ -2524,7 +2524,7 @@ public class ListTag implements List<String>, ObjectTag {
             Deprecations.listEscapeContents.warn(attribute.context);
             ListTag escaped = new ListTag();
             for (String entry : object) {
-                escaped.add(EscapeTagBase.unEscape(entry));
+                escaped.add(EscapeTagUtil.unEscape(entry));
             }
             return escaped;
         });

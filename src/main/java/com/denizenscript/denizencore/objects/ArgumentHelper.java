@@ -4,6 +4,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.util.*;
@@ -114,6 +115,12 @@ public class ArgumentHelper {
             else {
                 return debuggable("[" + sb.substring(0, sb.length() - "<G>, ".length()) + "<Y>]");
             }
+        }
+        else if (value instanceof Double) {
+            value = CoreUtilities.doubleToString((Double) value);
+        }
+        else if (value instanceof Float) {
+            value = CoreUtilities.doubleToString((Float) value);
         }
         return (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null");
     }

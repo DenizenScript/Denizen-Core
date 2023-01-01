@@ -3,7 +3,7 @@ package com.denizenscript.denizencore.objects.core;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
 import com.denizenscript.denizencore.tags.*;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
@@ -625,20 +625,6 @@ public class ElementTag implements ObjectTag {
             }
         }, "as_double", "asdouble");
 
-        tagProcessor.registerStaticTag(ElementTag.class, "as_int", (attribute, object) -> {
-            Deprecations.elementAsIntTag.warn(attribute.context);
-            String element = object.element;
-            try {
-                return new ElementTag(Double.valueOf(element).longValue());
-            }
-            catch (NumberFormatException e) {
-                if (!attribute.hasAlternative()) {
-                    attribute.echoError("'" + element + "' is not a valid decimal number.");
-                }
-                return null;
-            }
-        }, "asint");
-
         // <--[tag]
         // @attribute <ElementTag.truncate>
         // @returns ElementTag(Number)
@@ -777,7 +763,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "escaped", (attribute, object) -> {
             String element = object.element;
-            return new ElementTag(EscapeTagBase.escape(element));
+            return new ElementTag(EscapeTagUtil.escape(element));
         });
 
         // <--[tag]
@@ -803,7 +789,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "unescaped", (attribute, object) -> {
             String element = object.element;
-            return new ElementTag(EscapeTagBase.unEscape(element));
+            return new ElementTag(EscapeTagUtil.unEscape(element));
         });
 
         // <--[tag]

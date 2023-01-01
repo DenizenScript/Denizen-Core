@@ -24,7 +24,7 @@ public class ElseCommand extends AbstractCommand {
     // @Guide https://guide.denizenscript.com/guides/basics/if-command.html
     //
     // @Description
-    // A helper command for ':' syntax if commands.
+    // A helper command to use with if commands.
     // See <@link command if> command documentation.
     //
     // @Tags

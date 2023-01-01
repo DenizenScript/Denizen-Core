@@ -5,7 +5,7 @@ import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
-import com.denizenscript.denizencore.tags.core.EscapeTagBase;
+import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
@@ -88,7 +88,7 @@ public class NoteManager {
             }
             for (StringHolder noteNameHolder : section.getKeys(false)) {
                 String noteName = noteNameHolder.str;
-                String note = EscapeTagBase.unEscape(noteName.replace("DOT", "."));
+                String note = EscapeTagUtil.unEscape(noteName.replace("DOT", "."));
                 String objText;
                 String flagText = null;
                 Object rawPart = section.get(noteName);
@@ -124,7 +124,7 @@ public class NoteManager {
         }
         for (Map.Entry<String, Notable> note : nameToObject.entrySet()) {
             try {
-                saveConfig.set(typesToNames.get(getClass(note.getValue())) + "." + EscapeTagBase.escape(CoreUtilities.toLowerCase(note.getKey())), note.getValue().getSaveObject());
+                saveConfig.set(typesToNames.get(getClass(note.getValue())) + "." + EscapeTagUtil.escape(CoreUtilities.toLowerCase(note.getKey())), note.getValue().getSaveObject());
             }
             catch (Exception e) {
                 Debug.echoError("Notable '" + note.getKey() + "' failed to save!");

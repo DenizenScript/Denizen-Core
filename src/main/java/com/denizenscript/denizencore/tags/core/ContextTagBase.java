@@ -27,7 +27,7 @@ public class ContextTagBase {
             public void run(ReplaceableTagEvent event) {
                 savedEntryTags(event);
             }
-        }, "entry", "e");
+        }, "entry");
     }
 
     public void contextTags(ReplaceableTagEvent event) {
@@ -50,16 +50,13 @@ public class ContextTagBase {
     }
 
     public void savedEntryTags(ReplaceableTagEvent event) {
-        if (!event.matches("entry", "e")
+        if (!event.matches("entry")
                 || event.getScriptEntry() == null) {
             return;
         }
         Attribute attribute = event.getAttributes();
         if (!attribute.hasParam()) {
             return;
-        }
-        if (event.matches("e")) {
-            Deprecations.entryShorthand.warn(event.getScriptEntry());
         }
         if (event.getScriptEntry().getResidingQueue() != null) {
             String id = attribute.getParam();
