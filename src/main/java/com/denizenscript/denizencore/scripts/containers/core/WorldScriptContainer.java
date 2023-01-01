@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.containers.core;
 
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
-import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
 
 public class WorldScriptContainer extends ScriptContainer {
@@ -42,7 +41,6 @@ public class WorldScriptContainer extends ScriptContainer {
 
     public WorldScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
-        OldEventManager.world_scripts.put(getName(), this);
         ScriptEvent.worldContainers.add(this);
     }
 }

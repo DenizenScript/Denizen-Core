@@ -18,10 +18,6 @@ public class Deprecations {
     // ==================== STRONG deprecations ====================
     // These show up every time, and warn any online ops. These are made clear they need to be fixed ASAP.
 
-    // Added 2020/03/14, moved from future to current 2021/11/12, moved to strong 2022/04/04.
-    // Should be rapidly advanced through deprecation levels: removing this allows for a significant amount of legacy code removal.
-    public static Warning eventCommand = new StrongWarning("eventCommand", "The event command is deprecated: use 'customevent' instead. The 'event' command represents an outdated idea of how events should function inside.");
-
     // Added on 2019/02/06
     // Bad candidate for functionality remove - 'c' was used often.
     // Recommend removal 2023 or later.

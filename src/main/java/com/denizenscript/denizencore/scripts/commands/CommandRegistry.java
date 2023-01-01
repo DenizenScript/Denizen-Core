@@ -110,7 +110,6 @@ public class CommandRegistry {
         registerCommand(CustomEventCommand.class);
         registerCommand(DebugCommand.class);
         // Intentionally do not register the DebugInvalidCommand
-        registerCommand(EventCommand.class);
         registerCommand(FlagCommand.class);
         if (shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
             registerCommand(MongoCommand.class);

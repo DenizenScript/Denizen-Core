@@ -1,6 +1,5 @@
 package com.denizenscript.denizencore;
 
-import com.denizenscript.denizencore.events.OldEventManager;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.flags.SavableMapFlagTracker;
@@ -206,7 +205,6 @@ public class DenizenCore {
             for (ScriptContainer container : ScriptRegistry.scriptContainers.values()) {
                 container.postCheck();
             }
-            OldEventManager.scanWorldEvents();
             ScriptEvent.reload();
             implementation.onScriptReload();
             lastReloadTime = CoreUtilities.monotonicMillis();

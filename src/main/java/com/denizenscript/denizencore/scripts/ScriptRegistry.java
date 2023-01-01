@@ -9,7 +9,6 @@ import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.events.OldEventManager;
 
 import java.lang.invoke.MethodHandle;
 import java.util.*;
@@ -93,8 +92,6 @@ public class ScriptRegistry {
 
     public static void buildCoreYamlScriptContainers(List<YamlConfiguration> yamlScripts) {
         scriptContainers.clear();
-        OldEventManager.world_scripts.clear();
-        OldEventManager.events.clear();
         DenizenCore.implementation.refreshScriptContainers();
         if (yamlScripts == null) {
             return;
