@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ScriptBuilder {
 
-    public static char LINE_PREFIX_CHAR = '^'; // This would be an invisible special character... if SnakeYAML allowed them!
+    public static final char LINE_PREFIX_CHAR = '^'; // This would be an invisible special character... if SnakeYAML allowed them!
 
     public static String stripLinePrefix(String rawLine) {
         if (!rawLine.startsWith(String.valueOf(LINE_PREFIX_CHAR))) {

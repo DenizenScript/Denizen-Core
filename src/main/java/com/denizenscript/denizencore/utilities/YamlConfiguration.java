@@ -30,7 +30,7 @@ public class YamlConfiguration {
         }
     }
 
-    private static boolean hasModernYaml = true;
+    private static volatile boolean hasModernYaml = true; // Note: can be called async
 
     public static Yaml createBaseYaml(boolean useCustomResolver) {
         DumperOptions options = new DumperOptions();
@@ -69,7 +69,7 @@ public class YamlConfiguration {
     /**
      * Loads a raw object into a YamlConfiguration. For internal use.
      */
-    public static YamlConfiguration loadRaw(Object obj) {
+    public static YamlConfiguration loadRaw(Object obj) { // Note: can be called async
         YamlConfiguration config = new YamlConfiguration();
         if (obj == null) {
             return null;
@@ -82,7 +82,7 @@ public class YamlConfiguration {
             config.contents = (Map<StringHolder, Object>) obj;
         }
         else {
-            Debug.echoError("Invalid YAML object type: " + obj + " is " + DebugInternals.getClassNameOpti(obj.getClass()));
+            Debug.echoError("Invalid YAML object type: " + obj + " is " + obj.getClass().getSimpleName()); // Note: intentionally no opti classname call (async safety)
             return null;
         }
         switchKeys(config.contents);

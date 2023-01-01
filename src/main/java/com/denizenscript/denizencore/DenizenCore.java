@@ -17,10 +17,7 @@ import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
-import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
-import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
-import com.denizenscript.denizencore.utilities.debugging.LogInterceptor;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.*;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
@@ -177,14 +174,22 @@ public class DenizenCore {
     /**
      * Call postLoadScripts after.
      */
-    public static void preloadScripts() {
+    public static void preloadScripts(boolean delayable, Runnable onFinished) {
         try {
             reloads++;
+            final long start = CoreUtilities.monotonicMillis();
             PreScriptReloadScriptEvent.instance.fire();
             ScriptEvent.worldContainers.clear();
             implementation.preScriptReload();
             ScriptHelper.resetError();
-            ScriptHelper.reloadScripts();
+            final long part2 = CoreUtilities.monotonicMillis();
+            ScriptHelper.reloadScripts(delayable, (midpoint) -> {
+                long completion = CoreUtilities.monotonicMillis();
+                Debug.log("Scripts loaded! Pre-init <A>" + (part2 - start) + "<W>ms, file load <A>" + (midpoint - part2) + "<W>ms, processing <A>" + (completion - midpoint) + "<W>ms.");
+                if (onFinished != null) {
+                    onFinished.run();
+                }
+            });
         }
         catch (Exception ex) {
             Debug.echoError("Error loading scripts:");
@@ -220,12 +225,15 @@ public class DenizenCore {
     /**
      * Call when a script reload is required (EG, requested by user command).
      */
-    public static void reloadScripts() {
-        preloadScripts();
-        postLoadScripts();
-        ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
-        ReloadScriptsScriptEvent.instance.fire();
-        Debug.log("Scripts reloaded.");
+    public static void reloadScripts(boolean delayable, Runnable onFinished) {
+        preloadScripts(delayable, () -> {
+            postLoadScripts();
+            ReloadScriptsScriptEvent.instance.hadError = ScriptHelper.hadError();
+            ReloadScriptsScriptEvent.instance.fire();
+            if (onFinished != null) {
+                onFinished.run();
+            }
+        });
     }
 
     /**

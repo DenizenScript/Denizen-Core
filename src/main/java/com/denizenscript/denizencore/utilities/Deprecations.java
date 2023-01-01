@@ -2,7 +2,7 @@ package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.utilities.debugging.*;
 
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is a special class to contain all deprecation warnings, ordered by date they were added.
@@ -13,7 +13,7 @@ public class Deprecations {
     /**
      * Tracker of deprecation messages that were triggered recently (since last count).
      */
-    public static HashSet<String> firedRecently = new HashSet<>();
+    public static ConcurrentHashMap<String, Boolean> firedRecently = new ConcurrentHashMap<>(); // Note: can be called async
 
     // ==================== STRONG deprecations ====================
     // These show up every time, and warn any online ops. These are made clear they need to be fixed ASAP.

@@ -1,10 +1,10 @@
 package com.denizenscript.denizencore.utilities.debugging;
 
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class StrongWarning extends Warning {
+public class StrongWarning extends Warning { // Note: can be called async
 
-    public static HashSet<StrongWarning> recentWarnings = new HashSet<>();
+    public static ConcurrentHashMap<StrongWarning, Boolean> recentWarnings = new ConcurrentHashMap<>();
 
     public StrongWarning(String id, String message) {
         super(id, message);
@@ -12,7 +12,7 @@ public class StrongWarning extends Warning {
 
     @Override
     public boolean testShouldWarn() {
-        recentWarnings.add(this);
+        recentWarnings.put(this, true);
         return true;
     }
 }

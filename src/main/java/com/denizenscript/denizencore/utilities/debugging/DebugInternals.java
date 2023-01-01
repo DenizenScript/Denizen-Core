@@ -248,6 +248,9 @@ public class DebugInternals {
         }
     }
 
+    /** A sender to use if there isn't a current queue, for limited contexts like the 'reload' command. */
+    public static volatile Consumer<String> specialBackupSender = null;
+
     /** Gets an extra path to send debug to, if relevant. */
     public static Consumer<String> getDebugSender(Debuggable caller) {
         if (caller == null) {
@@ -265,6 +268,9 @@ public class DebugInternals {
         }
         if (caller instanceof ScriptQueue) {
             return ((ScriptQueue) caller).debugOutput;
+        }
+        if (specialBackupSender != null) {
+            return specialBackupSender;
         }
         // ScriptContainer can't be traced to a queue
         return null;

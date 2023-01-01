@@ -18,6 +18,7 @@ public interface DenizenImplementation {
 
     /**
      * Return a list of all folders that the implementation has scripts within.
+     * Note: can be called async
      */
     File getScriptFolder();
 
@@ -90,4 +91,8 @@ public interface DenizenImplementation {
     void doFinalDebugOutput(String rawText);
 
     String stripColor(String message);
+
+    void reloadConfig();
+
+    void reloadSaves();
 }

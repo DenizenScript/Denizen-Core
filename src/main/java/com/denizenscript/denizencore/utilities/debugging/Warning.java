@@ -6,7 +6,7 @@ import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.Deprecations;
 
-public class Warning {
+public class Warning { // Note: can be called async
 
     public String id;
 
@@ -26,7 +26,7 @@ public class Warning {
     }
 
     public void warn(ScriptEntry entry) {
-        Deprecations.firedRecently.add(id);
+        Deprecations.firedRecently.put(id, true);
         if (!testShouldWarn()) {
             return;
         }
@@ -42,7 +42,7 @@ public class Warning {
     }
 
     public void warn(ScriptContainer script) {
-        Deprecations.firedRecently.add(id);
+        Deprecations.firedRecently.put(id, true);
         if (!testShouldWarn()) {
             return;
         }

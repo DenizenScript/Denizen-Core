@@ -9,12 +9,13 @@ import com.denizenscript.denizencore.DenizenCore;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Reloads and retrieves information from the scripts folder.
  */
 public class ScriptHelper {
-    public static ArrayList<YamlConfiguration> _yamlScripts;
+    public static volatile ArrayList<YamlConfiguration> _yamlScripts;
 
     /**
      * Add additional script file references here as wanted/needed. Use like:
@@ -23,21 +24,43 @@ public class ScriptHelper {
      */
     public static ArrayList<YamlConfiguration> additionalScripts = new ArrayList<>();
 
-    public static void reloadScripts() {
-        try {
-            _yamlScripts = buildScriptList();
-        }
-        catch (Exception ex) {
-            hadError = true;
-            Debug.echoError("Could not load scripts!");
-            Debug.echoError(ex);
-            _yamlScripts = new ArrayList<>();
-        }
-        _yamlScripts.addAll(additionalScripts);
-        ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
+    private static void reloadFailed(Throwable ex) {
+        hadError = true;
+        Debug.echoError("Could not load scripts!");
+        Debug.echoError(ex);
+        _yamlScripts = new ArrayList<>();
     }
 
-    private static boolean hadError = false;
+    public static void reloadScripts(boolean delayable, Consumer<Long> onFinished) {
+        Runnable afterLoad = () -> {
+            long midPoint = CoreUtilities.monotonicMillis();
+            _yamlScripts.addAll(additionalScripts);
+            ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
+            onFinished.accept(midPoint);
+        };
+        if (delayable) {
+            DenizenCore.runAsync(() -> {
+                try {
+                    _yamlScripts = buildScriptList();
+                    DenizenCore.runOnMainThread(afterLoad);
+                }
+                catch (Throwable ex) {
+                    reloadFailed(ex);
+                }
+            });
+        }
+        else {
+            try {
+                _yamlScripts = buildScriptList();
+                afterLoad.run();
+            }
+            catch (Throwable ex) {
+                reloadFailed(ex);
+            }
+        }
+    }
+
+    private static volatile boolean hadError = false; // Note: can be called async
 
     public static boolean hadError() {
         return hadError;
@@ -51,8 +74,11 @@ public class ScriptHelper {
         hadError = true;
     }
 
-    private static HashMap<String, String> scriptSources = new HashMap<>();
-    private static HashMap<String, String> scriptOriginalNames = new HashMap<>();
+    private static volatile HashMap<String, String> scriptSources = new HashMap<>();
+    private static volatile HashMap<String, String> scriptOriginalNames = new HashMap<>();
+
+    private static volatile HashMap<String, String> scriptSourcesInprogress;
+    private static volatile HashMap<String, String> scriptOriginalNamesInprogress;
 
     public static String getSource(String script) {
         return scriptSources.get(CoreUtilities.toLowerCase(script));
@@ -71,8 +97,8 @@ public class ScriptHelper {
             String trimStart = lines[lineNum].replaceAll("^[\\s]+", "");
             if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == lines[lineNum].length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
                 String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
-                scriptSources.put(CoreUtilities.toLowerCase(name), filename);
-                scriptOriginalNames.put(CoreUtilities.toLowerCase(name), name);
+                scriptSourcesInprogress.put(CoreUtilities.toLowerCase(name), filename);
+                scriptOriginalNamesInprogress.put(CoreUtilities.toLowerCase(name), name);
                 result.append(CoreUtilities.toUpperCase(name)).append(":\n");
                 hasAnyScript = true;
             }
@@ -81,38 +107,32 @@ public class ScriptHelper {
                     Debug.echoError("Script '<Y>" + filename + "<W>' is broken: script container title has spaces in front.");
                     hasAnyScript = true;
                 }
-                if ((trimmedLine.startsWith("}") || trimmedLine.startsWith("{") || trimmedLine.startsWith("else")) && !trimmedLine.endsWith(":")) {
-                    result.append(' ').append(lines[lineNum].replace('\0', ' ')
-                            .replace(": ", "<&co>").replace("#", "<&ns>")).append("\n");
+                String curLine = lines[lineNum].replace('\0', ' ');
+                boolean endsColon = trimmedLine.endsWith(":");
+                boolean startsDash = trimmedLine.startsWith("-");
+                if (!endsColon && startsDash) {
+                    curLine = curLine.replace(": ", "<&co> ");
+                    curLine = curLine.replace("#", "<&ns>");
                 }
-                else {
-                    String curLine = lines[lineNum].replace('\0', ' ');
-                    boolean endsColon = trimmedLine.endsWith(":");
-                    boolean startsDash = trimmedLine.startsWith("-");
-                    if (!endsColon && startsDash) {
-                        curLine = curLine.replace(": ", "<&co> ");
-                        curLine = curLine.replace("#", "<&ns>");
+                else if (endsColon && !startsDash) {
+                    if (curLine.contains(".")) {
+                        curLine = CoreUtilities.replace(curLine, "&", "&amp");
+                        curLine = CoreUtilities.replace(curLine, ".", "&dot");
                     }
-                    else if (endsColon && !startsDash) {
-                        if (curLine.contains(".")) {
-                            curLine = CoreUtilities.replace(curLine, "&", "&amp");
-                            curLine = CoreUtilities.replace(curLine, ".", "&dot");
-                        }
-                    }
-                    else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *") || trimmedLine.contains(": !"))) {
-                        int colon = curLine.indexOf(':');
-                        curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + "\"";
-                    }
-                    else if (!endsColon) {
-                        int colon = curLine.indexOf(':');
-                        curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
-                    }
-                    if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
-                        int dashIndex = curLine.indexOf('-');
-                        curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
-                    }
-                    result.append(curLine).append("\n");
                 }
+                else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *") || trimmedLine.contains(": !"))) {
+                    int colon = curLine.indexOf(':');
+                    curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + "\"";
+                }
+                else if (!endsColon) {
+                    int colon = curLine.indexOf(':');
+                    curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
+                }
+                if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
+                    int dashIndex = curLine.indexOf('-');
+                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
+                }
+                result.append(curLine).append("\n");
             }
             else {
                 result.append("\n");
@@ -138,7 +158,7 @@ public class ScriptHelper {
         return s.hasNext() ? s.next() : "";
     }
 
-    public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException {
+    public static YamlConfiguration loadConfig(String filename, InputStream resource) throws IOException { // Note: can be called async
         try {
             String script = clearComments(filename, convertStreamToString(resource, filename.endsWith(".dsc")), true);
             return YamlConfiguration.load(script);
@@ -148,8 +168,9 @@ public class ScriptHelper {
         }
     }
 
-    private static ArrayList<YamlConfiguration> buildScriptList() {
-        scriptSources.clear();
+    private static ArrayList<YamlConfiguration> buildScriptList() { // Note: can be called async
+        scriptSourcesInprogress = new HashMap<>();
+        scriptOriginalNamesInprogress = new HashMap<>();
         try {
             File file = DenizenCore.implementation.getScriptFolder();
             // Check if the directory exists
@@ -162,7 +183,6 @@ public class ScriptHelper {
             List<File> files = CoreUtilities.listDScriptFiles(file);
             if (files.size() > 0) {
                 ArrayList<YamlConfiguration> outList = new ArrayList<>();
-                List<String> scriptNames = new ArrayList<>(files.size() * 2);
                 YamlConfiguration yaml;
                 for (File f : files) {
                     String fileName = f.getAbsolutePath().substring(file.getAbsolutePath().length());
@@ -202,5 +222,10 @@ public class ScriptHelper {
             Debug.echoError(e);
         }
         return new ArrayList<>();
+    }
+
+    public static void postLoad() {
+        scriptSources = scriptSourcesInprogress;
+        scriptOriginalNames = scriptOriginalNamesInprogress;
     }
 }

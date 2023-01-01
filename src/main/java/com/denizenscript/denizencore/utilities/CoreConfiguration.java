@@ -9,7 +9,9 @@ public class CoreConfiguration {
 
     public static boolean futureWarningsEnabled = false;
 
-    public static boolean debugVerbose = false, debugUltraVerbose = false, debugExtraInfo = false, debugLoadingInfo = false,
+    public static volatile boolean debugLoadingInfo = false;
+
+    public static boolean debugVerbose = false, debugUltraVerbose = false, debugExtraInfo = false,
             debugOverride = false, debugStackTraces = true,
             debugScriptBuilder = false, debugShowSources = false, debugShouldTrim = true,
             debugRecordingAllowed = false;
@@ -30,7 +32,7 @@ public class CoreConfiguration {
 
     public static double scriptQueueSpeed = 0;
 
-    public static CharsetDecoder scriptEncoding;
+    public static volatile CharsetDecoder scriptEncoding;
 
     public static boolean skipAllFlagCleanings = false;
 

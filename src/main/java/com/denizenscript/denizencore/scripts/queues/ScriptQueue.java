@@ -387,7 +387,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         callback = r;
     }
 
-    private final void stopSilent() {
+    private void stopSilent() {
         is_stopping = true;
         allQueues.remove(id);
         is_started = false;
@@ -398,7 +398,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (is_stopping) {
             return;
         }
-        is_stopping = true;
         if (CoreConfiguration.verifyThreadMatches && !DenizenCore.isMainThread()) {
             try {
                 throw new RuntimeException("Invalid thread access - stopping queue from thread " + Thread.currentThread());

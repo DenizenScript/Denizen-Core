@@ -425,11 +425,10 @@ public class CoreUtilities {
         return df.format(input);
     }
 
-    static boolean isScriptFilename(String fileName) {
+    static boolean isScriptFilename(String fileName) { // Note: can be called async
         if (fileName.startsWith(".")) {
             return false;
         }
-
         String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
         if (ext.equalsIgnoreCase("DSCRIPT")) {
             Debug.echoError("Script '" + fileName + "' has invalid '.dscript' file extension.");
@@ -444,7 +443,7 @@ public class CoreUtilities {
         return ext.equalsIgnoreCase("dsc");
     }
 
-    public static List<File> listDScriptFiles(File dir) {
+    public static List<File> listDScriptFiles(File dir) { // Note: can be called async
         List<File> files = new ArrayList<>();
         for (File file : dir.listFiles()) {
             if (isScriptFilename(file.getName())) {
