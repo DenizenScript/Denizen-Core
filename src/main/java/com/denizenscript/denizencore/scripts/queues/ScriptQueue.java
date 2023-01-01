@@ -261,11 +261,12 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
      * @return the newly created queue.
      */
     public final TimedQueue forceToTimed(TimedQueue.DelayTracker delay) {
+        queueDebug("Forcing queue '<QUEUE>' into a timed queue...");
         Runnable r = callback;
         callback = null;
         TimedQueue newQueue = new TimedQueue("FORCE:" + id, 0);
         replacementQueue = newQueue;
-        stop();
+        stopSilent();
         newQueue.id = id;
         newQueue.debugId = debugId;
         newQueue.debugOutput = this.debugOutput;
@@ -340,14 +341,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
             script = script_entries.get(0).getScript();
             startTime = System.nanoTime();
             startTimeMilli = CoreUtilities.monotonicMillis();
-        }
-        String name = getName();
-        if (queueNeedsToDebug()) {
-            if (is_delayed) {
-                queueDebug("Delaying " + name + " '<QUEUE>'" + " for '" + new DurationTag(((double) delay) / 1000f).identify() + "'...");
-            }
-            else {
-                queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.implementation.queueHeaderInfo(script_entries.get(0)) + "...");
+            String name = getName();
+            if (queueNeedsToDebug()) {
+                if (is_delayed) {
+                    queueDebug("Delaying " + name + " '<QUEUE>'" + " for '" + new DurationTag(((double) delay) / 1000f).identify() + "'...");
+                }
+                else {
+                    queueDebug("Starting " + name + " '<QUEUE>'" + DenizenCore.implementation.queueHeaderInfo(script_entries.get(0)) + "...");
+                }
             }
         }
         if (is_delayed) {
@@ -386,6 +387,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         callback = r;
     }
 
+    private final void stopSilent() {
+        is_stopping = true;
+        allQueues.remove(id);
+        is_started = false;
+        isStopped = true;
+    }
+
     public final void stop() {
         if (is_stopping) {
             return;
@@ -399,15 +407,13 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
                 Debug.echoError(ex);
             }
         }
-        allQueues.remove(id);
         if (queueNeedsToDebug()) {
             queueDebug("Completing queue '<QUEUE>' in <A>" + ((System.nanoTime() - startTime) / 1000000) + "<O>ms.");
         }
         if (callback != null) {
             callback.run();
         }
-        is_started = false;
-        isStopped = true;
+        stopSilent();
     }
 
     public final void setLastEntryExecuted(ScriptEntry entry) {

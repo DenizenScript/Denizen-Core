@@ -16,7 +16,6 @@ public class ScriptEngine {
             return false;
         }
         if (!(scriptQueue instanceof TimedQueue)) {
-            Debug.echoDebug(last, "Forcing queue " + scriptQueue.id + " into a timed queue...");
             scriptQueue.forceToTimed(null);
         }
         return true;

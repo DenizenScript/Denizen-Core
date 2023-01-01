@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.commands.generator.*;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.DurationTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
@@ -83,9 +82,6 @@ public class WaitCommand extends AbstractCommand {
         }
         else {
             scriptEntry.setInstant(false);
-            if (scriptEntry.dbCallShouldDebug()) {
-                Debug.echoDebug(scriptEntry, "Forcing queue " + queue.queue.id + " into a timed queue...");
-            }
             queue.queue.forceToTimed(tracker);
         }
     }
