@@ -12,7 +12,7 @@ public class InstantQueue extends ScriptQueue {
     @Override
     public void onStart() {
         while (is_started) {
-            if (script_entries.isEmpty()) {
+            if (script_entries.isEmpty() && holdingOn == null) {
                 stop();
                 return;
             }

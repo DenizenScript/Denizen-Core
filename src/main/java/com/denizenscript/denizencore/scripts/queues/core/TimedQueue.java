@@ -105,7 +105,7 @@ public class TimedQueue extends ScriptQueue {
     @Override
     public void onStart() {
         revolve();
-        if (script_entries.isEmpty()) {
+        if (script_entries.isEmpty() && holdingOn == null) {
             return;
         }
         DenizenCore.timedQueues.add(this);
@@ -127,7 +127,7 @@ public class TimedQueue extends ScriptQueue {
     }
 
     public void revolve() {
-        if (script_entries.isEmpty()) {
+        if (script_entries.isEmpty() && holdingOn == null) {
             if (!waitWhenEmpty) {
                 stop();
             }
@@ -137,7 +137,7 @@ public class TimedQueue extends ScriptQueue {
             return;
         }
         ScriptEngine.revolve(this);
-        if (script_entries.isEmpty() && !waitWhenEmpty) {
+        if (script_entries.isEmpty() && holdingOn == null && !waitWhenEmpty) {
             stop();
         }
     }

@@ -295,7 +295,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.script = script;
         newQueue.holdingOn = holdingOn;
         newQueue.callBack(r);
-        if (newQueue.script_entries.isEmpty()) {
+        if (newQueue.script_entries.isEmpty() && newQueue.holdingOn == null) {
             newQueue.stop();
         }
         else {
@@ -322,7 +322,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         if (is_started) {
             return;
         }
-        if (script_entries.isEmpty()) {
+        if (script_entries.isEmpty() && holdingOn == null) {
             return;
         }
         if (CoreConfiguration.verifyThreadMatches && !DenizenCore.isMainThread()) {
@@ -418,6 +418,9 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public final void setLastEntryExecuted(ScriptEntry entry) {
         lastEntryExecuted = entry;
+        if (entry != null) {
+            entry.queue = this;
+        }
     }
 
     public final ScriptEntry getNext() {
