@@ -5,6 +5,7 @@ import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -49,6 +50,8 @@ public class CommandExecutionGenerator {
     public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = getArgHelperMethod("helperPrefixEntryArg");
     public static final Method HELPER_BOOLEAN_ARG_METHOD = getArgHelperMethod("helperBooleanArg");
     public static final Method HELPER_ENUM_ARG_METHOD = getArgHelperMethod("helperEnumArg");
+    public static final Method HELPER_PREFIX_LIST_OBJECT_METHOD = getArgHelperMethod("helperPrefixListObject");
+    public static final Method HELPER_PREFIX_LIST_ENUM_METHOD = getArgHelperMethod("helperPrefixListEnum");
     public static final Method HELPER_PREFIX_STRING_METHOD = getArgHelperMethod("helperPrefixString");
     public static final Method HELPER_PREFIX_ELEMENT_METHOD = getArgHelperMethod("helperPrefixElement");
     public static final Method HELPER_PREFIX_BOOLEAN_METHOD = getArgHelperMethod("helperPrefixBoolean");
@@ -63,6 +66,7 @@ public class CommandExecutionGenerator {
 
     public static class ArgData {
         public Class type;
+        public Class subType;
         public boolean required;
         public String name;
         public String defaultValue;
@@ -159,6 +163,51 @@ public class CommandExecutionGenerator {
             throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.name + "' argument. Did you forget an argument? Check meta docs!");
         }
         return (Enum) arg.defaultObject;
+    }
+
+    public static ListTag getListFor(ScriptEntry entry, ArgData arg) {
+        Argument givenArg = getArgumentFor(entry, arg);
+        ListTag list;
+        if (givenArg == null) {
+            if (arg.defaultObject == null) {
+                return null;
+            }
+            list = (ListTag) arg.defaultObject;
+        }
+        else {
+            list = givenArg.asType(ListTag.class);
+        }
+        if (list == null) {
+            throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + givenArg.getValue() + "': not a valid ListTag");
+        }
+        return list;
+    }
+
+    /** Used for generated calls. */
+    public static List<? extends ObjectTag> helperPrefixListObject(ScriptEntry entry, ArgData arg) {
+        ListTag list = getListFor(entry, arg);
+        if (list == null) {
+            return null;
+        }
+        return list.filter(arg.subType, entry);
+    }
+
+    /** Used for generated calls. */
+    public static List<? extends Enum> helperPrefixListEnum(ScriptEntry entry, ArgData arg) {
+        ListTag list = getListFor(entry, arg);
+        if (list == null) {
+            return null;
+        }
+        List output = new ArrayList(list.size());
+        for (String str : list) {
+            Enum val = ElementTag.asEnum(arg.subType, str);
+            if (val == null) {
+                throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + str + "': not a valid "
+                        + DebugInternals.getClassNameOpti(arg.subType) + ", must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
+            }
+            output.add(val);
+        }
+        return output;
     }
 
     public static ElementTag getElementForPrefix(ScriptEntry entry, ArgData arg) {
@@ -294,6 +343,7 @@ public class CommandExecutionGenerator {
                     ArgPrefixed argPrefixed = param.getAnnotation(ArgPrefixed.class);
                     ArgDefaultText argDefaultText = param.getAnnotation(ArgDefaultText.class);
                     ArgLinear argLinear = param.getAnnotation(ArgLinear.class);
+                    ArgSubType argSubType = param.getAnnotation(ArgSubType.class);
                     if (argName == null) {
                         Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + param.getName() + "' which lacks a proper naming parameter.");
                         return null;
@@ -302,6 +352,7 @@ public class CommandExecutionGenerator {
                     argData.shouldDebug = !param.isAnnotationPresent(ArgNoDebug.class);
                     argData.getRaw = param.isAnnotationPresent(ArgRaw.class);
                     argData.shouldParse = !param.isAnnotationPresent(ArgUnparsed.class);
+                    argData.subType = argSubType == null ? null : argSubType.value();
                     argData.type = paramType;
                     argData.name = argName.value();
                     if (!param.isAnnotationPresent(ArgDefaultNull.class)) {
@@ -310,21 +361,23 @@ public class CommandExecutionGenerator {
                         }
                         else {
                             argData.defaultValue = argDefaultText.value();
+                            boolean needsConvert = true;
                             if (ObjectTag.class.isAssignableFrom(argData.type)) {
                                 argData.defaultObject = new ElementTag(argData.defaultValue).asType(argData.type, CoreUtilities.noDebugContext);
-                                if (argData.defaultObject == null) {
-                                    Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
-                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");
-                                    return null;
-                                }
                             }
                             else if (Enum.class.isAssignableFrom(argData.type)) {
                                 argData.defaultObject = EnumHelper.get(argData.type).valuesMapLower.get(EnumHelper.cleanKey(argData.defaultValue));
-                                if (argData.defaultObject == null) {
-                                    Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
-                                            + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");
-                                    return null;
-                                }
+                            }
+                            else if (argData.type == List.class && argData.subType != null) {
+                                argData.defaultObject = ListTag.valueOf(argData.defaultValue, CoreUtilities.noDebugContext);
+                            }
+                            else {
+                                needsConvert = false;
+                            }
+                            if (needsConvert && argData.defaultObject == null) {
+                                Debug.echoError("Cannot generate executor for command '" + cmdClass.getName() + "': autoExecute method has param '" + argData.name
+                                        + "' which specifies default value '" + argData.defaultValue + "' which is a not a valid '" + DebugInternals.getClassNameOpti(argData.type) + "'");
+                                return null;
                             }
                         }
                     }
@@ -343,9 +396,15 @@ public class CommandExecutionGenerator {
                             argData.index = cmd.linearHandledCount++;
                             argData.isLinear = true;
                         }
-                        if (argData.isLinear && paramType == List.class && !argData.shouldParse) {
+                        if (argData.isLinear && paramType == List.class && !argData.shouldParse && argData.subType == null) {
                             cmd.generatorInfiniteArgs = true;
                             argMethod = HELPER_GET_UNPARSED_ARG_LIST;
+                        }
+                        else if (paramType == List.class && argData.subType != null && ObjectTag.class.isAssignableFrom(argData.subType)) {
+                            argMethod = HELPER_PREFIX_LIST_OBJECT_METHOD;
+                        }
+                        else if (paramType == List.class && argData.subType != null && Enum.class.isAssignableFrom(argData.subType)) {
+                            argMethod = HELPER_PREFIX_LIST_ENUM_METHOD;
                         }
                         else if (paramType == ElementTag.class) {
                             argMethod = HELPER_PREFIX_ELEMENT_METHOD;
