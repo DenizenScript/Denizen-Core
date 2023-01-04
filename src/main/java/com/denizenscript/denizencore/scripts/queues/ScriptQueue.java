@@ -111,7 +111,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public boolean isStopped = false;
 
-    public ScriptEntry holdingOn = null;
+    public volatile ScriptEntry holdingOn = null;
 
     /**
      * If set true, the queue will simply freeze and wait when it's empty.

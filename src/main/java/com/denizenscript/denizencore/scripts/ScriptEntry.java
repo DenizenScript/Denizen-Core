@@ -795,6 +795,9 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         if (!finished) {
             throw new RuntimeException("setFinished called weird");
         }
+        if (!internal.waitfor) {
+            return;
+        }
         if (queue.holdingOn == this) {
             queue.holdingOn = null;
         }
