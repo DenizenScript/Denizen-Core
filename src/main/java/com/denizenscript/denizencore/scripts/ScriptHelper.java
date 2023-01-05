@@ -17,12 +17,15 @@ import java.util.function.Consumer;
 public class ScriptHelper {
     public static volatile ArrayList<YamlConfiguration> _yamlScripts;
 
+    @Deprecated
+    public static ArrayList<YamlConfiguration> additionalScripts = new ArrayList<>();
+
     /**
      * Add additional script file references here as wanted/needed. Use like:
      *
-     * ScriptHelper.additionalScripts.add(YamlConfiguration.load(ScriptHelper.clearComments(MY_FILENAME, MY_FILE_TEXT, true)));
+     * (scripts) -> scripts.add(YamlConfiguration.load(ScriptHelper.clearComments(MY_FILENAME, MY_FILE_TEXT, true)));
      */
-    public static ArrayList<YamlConfiguration> additionalScripts = new ArrayList<>();
+    public static List<Consumer<List<YamlConfiguration>>> buildAdditionalScripts = new ArrayList<>();
 
     private static void reloadFailed(Throwable ex) {
         hadError = true;
@@ -205,6 +208,16 @@ public class ScriptHelper {
                         Debug.echoError("Error parsing '<Y>" + fileName + "<W>'!");
                         hadError = true;
                         Debug.echoError(e);
+                    }
+                }
+                for (Consumer<List<YamlConfiguration>> additional : buildAdditionalScripts) {
+                    try {
+                        additional.accept(outList);
+                    }
+                    catch (Exception ex) {
+                        Debug.echoError("Error parsing additional script!");
+                        hadError = true;
+                        Debug.echoError(ex);
                     }
                 }
                 if (CoreConfiguration.debugLoadingInfo) {
