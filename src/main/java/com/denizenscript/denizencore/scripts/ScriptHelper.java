@@ -24,6 +24,8 @@ public class ScriptHelper {
      * Add additional script file references here as wanted/needed. Use like:
      *
      * (scripts) -> scripts.add(YamlConfiguration.load(ScriptHelper.clearComments(MY_FILENAME, MY_FILE_TEXT, true)));
+     *
+     * Warning: can be called async.
      */
     public static List<Consumer<List<YamlConfiguration>>> buildAdditionalScripts = new ArrayList<>();
 
@@ -185,7 +187,7 @@ public class ScriptHelper {
             }
             // Get files using script directory
             List<File> files = CoreUtilities.listDScriptFiles(file);
-            if (files.size() > 0) {
+            if (files.size() > 0 || buildAdditionalScripts.size() > 0) {
                 ArrayList<YamlConfiguration> outList = new ArrayList<>();
                 YamlConfiguration yaml;
                 for (File f : files) {
