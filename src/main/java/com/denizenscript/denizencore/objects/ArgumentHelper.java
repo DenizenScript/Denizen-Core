@@ -120,7 +120,7 @@ public class ArgumentHelper {
             value = CoreUtilities.doubleToString((Double) value);
         }
         else if (value instanceof Float) {
-            value = CoreUtilities.doubleToString((Float) value);
+            value = CoreUtilities.floatToCleanString((Float) value);
         }
         return (value != null ? (value instanceof ObjectTag ? ((ObjectTag) value).debuggable() : value.toString()) : "null");
     }

@@ -16,6 +16,7 @@ import com.denizenscript.denizencore.utilities.text.StringHolder;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -393,10 +394,25 @@ public class CoreUtilities {
 
     public static DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     public static DecimalFormat floatFormat = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    static final BigDecimal floatScale = new BigDecimal("0.000001");
 
     static {
         df.setMaximumFractionDigits(340);
         floatFormat.setMaximumFractionDigits(8);
+    }
+
+    public static String floatToCleanString(float input) {
+        if (Float.isNaN(input)) {
+            return "NaN";
+        }
+        else if (Float.isInfinite(input)) {
+            if (input < 0) {
+                return "-infinity";
+            }
+            return "infinity";
+        }
+        BigDecimal dec = new BigDecimal(input).divide(floatScale, RoundingMode.HALF_UP).setScale(0, RoundingMode.HALF_UP).multiply(floatScale);
+        return bigDecToString(dec);
     }
 
     public static String doubleToString(float input) {
