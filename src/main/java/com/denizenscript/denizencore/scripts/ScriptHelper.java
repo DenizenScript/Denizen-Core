@@ -36,10 +36,13 @@ public class ScriptHelper {
         _yamlScripts = new ArrayList<>();
     }
 
-    public static void reloadScripts(boolean delayable, Consumer<Long> onFinished) {
+    public static void reloadScripts(boolean delayable, Runnable preReload, Consumer<Long> onFinished) {
         Runnable afterLoad = () -> {
-            postLoad();
             long midPoint = CoreUtilities.monotonicMillis();
+            if (preReload != null) {
+                preReload.run();
+            }
+            postLoad();
             _yamlScripts.addAll(additionalScripts);
             ScriptRegistry.buildCoreYamlScriptContainers(_yamlScripts);
             onFinished.accept(midPoint);

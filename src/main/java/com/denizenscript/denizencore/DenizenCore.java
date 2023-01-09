@@ -178,14 +178,14 @@ public class DenizenCore {
         try {
             reloads++;
             final long start = CoreUtilities.monotonicMillis();
-            PreScriptReloadScriptEvent.instance.fire();
-            ScriptEvent.worldContainers.clear();
-            implementation.preScriptReload();
             ScriptHelper.resetError();
-            final long part2 = CoreUtilities.monotonicMillis();
-            ScriptHelper.reloadScripts(delayable, (midpoint) -> {
+            ScriptHelper.reloadScripts(delayable, () -> {
+                PreScriptReloadScriptEvent.instance.fire();
+                ScriptEvent.worldContainers.clear();
+                implementation.preScriptReload();
+            }, (midpoint) -> {
                 long completion = CoreUtilities.monotonicMillis();
-                Debug.log("Scripts loaded! Pre-init <A>" + (part2 - start) + "<W>ms, file load <A>" + (midpoint - part2) + "<W>ms, processing <A>" + (completion - midpoint) + "<W>ms.");
+                Debug.log("Scripts loaded! File load took <A>" + (midpoint - start) + "<W>ms, processing <A>" + (completion - midpoint) + "<W>ms.");
                 if (onFinished != null) {
                     onFinished.run();
                 }
