@@ -93,6 +93,10 @@ public class ScriptUtilities {
             int x = 1;
             for (ObjectTag definition : definitions.objectForms) {
                 String name = definition_names != null && definition_names.size() >= x ? definition_names.get(x - 1).trim() : String.valueOf(x);
+                int squareBracket = name.indexOf('[');
+                if (squareBracket != -1) {
+                    name = name.substring(0, squareBracket).trim();
+                }
                 queue.addDefinition(name, definition);
                 if (debugDefinitions != null && debugDefinitions.shouldDebug()) {
                     Debug.echoDebug(debugDefinitions, "Adding definition '" + name + "' as " + definition);

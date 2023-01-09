@@ -2275,6 +2275,10 @@ public class ListTag implements List<String>, ObjectTag {
                     for (String definition : definitions) {
                         String name = definition_names != null && definition_names.length >= x ?
                                 definition_names[x - 1].trim() : String.valueOf(x);
+                        int squareBracket = name.indexOf('[');
+                        if (squareBracket != -1) {
+                            name = name.substring(0, squareBracket).trim();
+                        }
                         queue.addDefinition(name, definition);
                         Debug.echoDebug(entries.get(0), "Adding definition '" + name + "' as " + definition);
                         x++;
