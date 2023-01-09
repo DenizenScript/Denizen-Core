@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -248,14 +249,21 @@ public class ReflectionHelper {
         return result;
     }
 
-    private static void validateUnsafe() {
+    private static void enableUnsafe() {
         if (UNSAFE == null) {
             try {
-                UNSAFE = getFields(Class.forName("sun.misc.Unsafe")).get("theUnsafe").get(null);
+                UNSAFE = (Unsafe) getFields(sun.misc.Unsafe.class).get("theUnsafe").get(null);
             }
             catch (Throwable ex) {
                 echoError(ex);
             }
+        }
+    }
+
+    private static void validateUnsafe() {
+        if (!haveLoadedUnsafeMethods) {
+            haveLoadedUnsafeMethods = true;
+            enableUnsafe();
             UNSAFE_STATIC_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", Field.class).bindTo(UNSAFE);
             UNSAFE_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", Field.class).bindTo(UNSAFE);
             UNSAFE_PUT_OBJECT = getMethodHandle(UNSAFE.getClass(), "putObject", Object.class, long.class, Object.class).bindTo(UNSAFE);
@@ -267,16 +275,19 @@ public class ReflectionHelper {
         }
     }
 
-    public static void giveReflectiveAccess(Class<?> from, Class<?> to) {
+    public static void giveReflectiveAccess(Class<?> targetClass, Class<?> ourClass) {
         try {
             if (GET_MODULE == null) {
+                enableUnsafe();
                 Class<?> module = Class.forName("java.lang.Module");
                 GET_MODULE = Class.class.getMethod("getModule");
-                ADD_OPENS = module.getMethod("addOpens", String.class, module);
+                ADD_OPENS = module.getDeclaredMethod("implAddOpens", String.class, module);
+                UNSAFE.putBoolean(ADD_OPENS, OVERRIDE_OFFSET, true);
             }
-            ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
+            ADD_OPENS.invoke(GET_MODULE.invoke(targetClass), targetClass.getPackage().getName(), GET_MODULE.invoke(ourClass));
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            echoError(ex);
         }
     }
 
@@ -285,10 +296,12 @@ public class ReflectionHelper {
         MODIFIERS_FIELD = getFields(Field.class).getNoCheck("modifiers");
     }
 
+    private static final long OVERRIDE_OFFSET = 12; // Field offset of 'override' AKA 'setAccessible'. May change arbitrarily from JDK updates. Required for reflection, so we can't use reflection to read it.
     private static Method ADD_OPENS;
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
-    private static Object UNSAFE;
+    private static Unsafe UNSAFE;
+    private static boolean haveLoadedUnsafeMethods = false;
     private static MethodHandle UNSAFE_FIELD_OFFSET, UNSAFE_PUT_OBJECT, UNSAFE_PUT_FLOAT, UNSAFE_PUT_DOUBLE, UNSAFE_PUT_INT, UNSAFE_PUT_LONG, UNSAFE_PUT_BOOL, UNSAFE_STATIC_FIELD_OFFSET;
 }

@@ -191,11 +191,17 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             return;
         }
         patchAlreadyPatched = true;
-        String[] methods = ReflectionHelper.getFieldValue(HttpURLConnection.class, "methods", null);
-        String[] outMethods = new String[methods.length + 1];
-        System.arraycopy(methods, 0, outMethods, 0, methods.length);
-        outMethods[methods.length] = "PATCH";
-        ReflectionHelper.setFieldValue(HttpURLConnection.class, "methods", null, outMethods);
+        try {
+            ReflectionHelper.giveReflectiveAccess(HttpURLConnection.class, WebGetCommand.class);
+            String[] methods = ReflectionHelper.getFieldValue(HttpURLConnection.class, "methods", null);
+            String[] outMethods = new String[methods.length + 1];
+            System.arraycopy(methods, 0, outMethods, 0, methods.length);
+            outMethods[methods.length] = "PATCH";
+            ReflectionHelper.getFinalSetter(HttpURLConnection.class, "methods").invoke(outMethods);
+        }
+        catch (Throwable ex) {
+            Debug.echoError(ex);
+        }
     }
 
     public static void webGet(final ScriptEntry scriptEntry, final ElementTag data, Method method, String urlText, DurationTag timeout, MapTag headers, String saveFile, boolean hideFailure, boolean urlIsSecret) {
