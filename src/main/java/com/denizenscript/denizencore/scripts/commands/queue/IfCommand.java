@@ -352,17 +352,17 @@ public class IfCommand extends BracedCommand {
             return arg.toString();
         }
 
-        public boolean tagbool(int arg) {
+        public boolean tagbool(int arg, boolean canNegate) {
             if (argstemp_parsed[arg] != null) {
                 return argstemp_parsed[arg].boolify();
             }
             Object argObj = argstemp.get(arg);
             if (argObj instanceof String) {
-                return tagify((String) argObj).boolify();
+                return tagify((String) argObj, canNegate).boolify();
             }
             else if (argObj instanceof ScriptEntry.InternalArgument) {
                 // TODO: Special case tag parsing
-                return tagify(((ScriptEntry.InternalArgument) argObj).fullOriginalRawValue).boolify();
+                return tagify(((ScriptEntry.InternalArgument) argObj).fullOriginalRawValue, canNegate).boolify();
             }
             else if (argObj instanceof ArgInternal) {
                 return ((ArgInternal) argObj).boolify();
@@ -373,12 +373,12 @@ public class IfCommand extends BracedCommand {
             else if (argObj instanceof Boolean) {
                 return ((Boolean) argObj);
             }
-            return tagify(argObj.toString()).boolify();
+            return tagify(argObj.toString(), canNegate).boolify();
         }
 
-        public ArgInternal tagify(String arg) {
+        public ArgInternal tagify(String arg, boolean canNegate) {
             ArgInternal toRet = new ArgInternal();
-            if (arg.startsWith("!")) {
+            if (arg.startsWith("!") && canNegate) {
                 toRet.negative = true;
                 arg = arg.substring(1);
             }
@@ -386,11 +386,11 @@ public class IfCommand extends BracedCommand {
             return toRet;
         }
 
-        public ArgInternal tagme(int arg) {
+        public ArgInternal tagme(int arg, boolean canNegate) {
             if (argstemp_parsed[arg] != null) {
                 return argstemp_parsed[arg];
             }
-            ArgInternal got = tagify(procString(argstemp.get(arg)));
+            ArgInternal got = tagify(procString(argstemp.get(arg)), canNegate);
             argstemp_parsed[arg] = got;
             return got;
         }
@@ -432,7 +432,7 @@ public class IfCommand extends BracedCommand {
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
-                return tagbool(0);
+                return tagbool(0, true);
             }
             for (int i = 0; i < args.size(); i++) {
                 String arg = procStringNoTag(args.get(i));
@@ -496,7 +496,7 @@ public class IfCommand extends BracedCommand {
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
-                return tagbool(0);
+                return tagbool(0, true);
             }
             for (int i = 0; i < args.size(); i++) {
                 String arg = procStringNoTag(args.get(i));
@@ -550,14 +550,14 @@ public class IfCommand extends BracedCommand {
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning comparison for " + args.get(0));
                 }
-                return tagbool(0);
+                return tagbool(0, true);
             }
             if (args.size() == 2) {
                 if (CoreUtilities.toLowerCase(procStringNoTag(args.get(0))).equals("not")) {
                     if (CoreConfiguration.debugVerbose) {
                         Debug.log("Returning negative comparison for " + args.get(0));
                     }
-                    return !tagbool(1);
+                    return !tagbool(1, false);
                 }
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("Returning false because two args only (non-processable)");
@@ -587,8 +587,8 @@ public class IfCommand extends BracedCommand {
                     Debug.echoError(scriptEntry, "If command syntax invalid - invalid operator '" + operatorArg + "'");
                     return false;
                 }
-                ObjectTag first = tagme(0).value;
-                ObjectTag second = tagme(args.size() - 1).value;
+                ObjectTag first = tagme(0, false).value;
+                ObjectTag second = tagme(args.size() - 1, false).value;
                 boolean outcome = Comparable.compare(first, second, operator, negative, scriptEntry.context);
                 if (scriptEntry.dbCallShouldDebug()) {
                     Debug.echoDebug(scriptEntry, "Comparing if " + first + (negative ? " not " : " ") + operator.name() + " " + second + " ... " + outcome);
