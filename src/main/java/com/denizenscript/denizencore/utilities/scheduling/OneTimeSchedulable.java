@@ -2,9 +2,9 @@ package com.denizenscript.denizencore.utilities.scheduling;
 
 public class OneTimeSchedulable extends Schedulable {
 
-    public OneTimeSchedulable(Runnable runnable, float fireTime) {
+    public OneTimeSchedulable(Runnable runnable, float fireAfterSeconds) {
         run = runnable;
-        secondsLeft = fireTime;
+        secondsLeft = fireAfterSeconds;
     }
 
     @Override
