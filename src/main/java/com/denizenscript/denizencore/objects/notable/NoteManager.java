@@ -91,27 +91,33 @@ public class NoteManager {
                 String note = EscapeTagUtil.unEscape(noteName.replace("DOT", "."));
                 String objText;
                 String flagText = null;
-                Object rawPart = section.get(noteName);
-                if (rawPart instanceof YamlConfiguration || rawPart instanceof Map) {
-                    objText = section.getConfigurationSection(noteName).getString("object");
-                    flagText = section.getConfigurationSection(noteName).getString("flags");
-                }
-                else {
-                    objText = section.getString(noteName);
-                }
-                Notable obj = (Notable) ObjectFetcher.getObjectFrom(clazz, objText, CoreUtilities.errorButNoDebugContext);
-                if (obj != null) {
-                    obj.makeUnique(note);
-                    if (flagText != null && obj instanceof FlaggableObject) {
-                        SavableMapFlagTracker tracker = new SavableMapFlagTracker(flagText);
-                        if (!CoreConfiguration.skipAllFlagCleanings) {
-                            tracker.doTotalClean();
+                try {
+                    Object rawPart = section.get(noteName);
+                    if (rawPart instanceof YamlConfiguration || rawPart instanceof Map) {
+                        objText = section.getConfigurationSection(noteName).getString("object");
+                        flagText = section.getConfigurationSection(noteName).getString("flags");
+                    }
+                    else {
+                        objText = section.getString(noteName);
+                    }
+                    Notable obj = (Notable) ObjectFetcher.getObjectFrom(clazz, objText, CoreUtilities.errorButNoDebugContext);
+                    if (obj != null) {
+                        obj.makeUnique(note);
+                        if (flagText != null && obj instanceof FlaggableObject) {
+                            SavableMapFlagTracker tracker = new SavableMapFlagTracker(flagText);
+                            if (!CoreConfiguration.skipAllFlagCleanings) {
+                                tracker.doTotalClean();
+                            }
+                            ((FlaggableObject) getSavedObject(note)).reapplyTracker(tracker);
                         }
-                        ((FlaggableObject) getSavedObject(note)).reapplyTracker(tracker);
+                    }
+                    else {
+                        Debug.echoError("Note '" + note + "' failed to load!");
                     }
                 }
-                else {
-                    Debug.echoError("Note '" + note + "' failed to load!");
+                catch (Throwable ex) {
+                    Debug.echoError("Note '" + note + "' failed to load due to an exception:");
+                    Debug.echoError(ex);
                 }
             }
         }
@@ -127,7 +133,7 @@ public class NoteManager {
                 saveConfig.set(typesToNames.get(getClass(note.getValue())) + "." + EscapeTagUtil.escape(CoreUtilities.toLowerCase(note.getKey())), note.getValue().getSaveObject());
             }
             catch (Exception e) {
-                Debug.echoError("Notable '" + note.getKey() + "' failed to save!");
+                Debug.echoError("Note '" + note.getKey() + "' failed to save!");
                 Debug.echoError(e);
             }
         }
