@@ -172,7 +172,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         arg.scriptEntry = this;
         if (internalArg.shouldParse) {
             TagManager.fillArgumentObjects(internalArg, arg, context);
-            if (internalArg.hadColon && arg.prefix == null && arg.object instanceof ElementTag && ((ElementTag) arg.object).isRawInput) {
+            if (internalArg.hadColon && arg.prefix == null && arg.object instanceof ElementTag element && element.isRawInput) {
                 arg.fillStr(arg.object.toString());
                 if (arg.prefix != null && !internal.actualCommand.allowedDynamicPrefixes) {
                     arg.prefixWasDynamic = true;

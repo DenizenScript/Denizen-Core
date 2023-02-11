@@ -61,7 +61,7 @@ public class Mechanism {
         if (value == null) {
             return false;
         }
-        if (value instanceof ElementTag && ((ElementTag) value).asString().isEmpty()) {
+        if (value instanceof ElementTag element && element.asString().isEmpty()) {
             return false;
         }
         return true;

@@ -250,7 +250,7 @@ public class CoreUtilities {
     }
 
     public static ObjectTag fixType(ObjectTag input, TagContext context) {
-        if (input instanceof ElementTag && !((ElementTag) input).isPlainText) {
+        if (input instanceof ElementTag element && !element.isPlainText) {
             return ObjectFetcher.pickObjectFor(input.toString(), context);
         }
         return input.refreshState();
