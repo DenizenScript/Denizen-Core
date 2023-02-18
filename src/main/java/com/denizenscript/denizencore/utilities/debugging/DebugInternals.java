@@ -16,11 +16,9 @@ import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -106,35 +104,35 @@ public class DebugInternals {
             }
             DenizenCore.implementation.addExtraErrorHeaders(headerBuilder, source);
         }
-        HashSet<Object> duplicatePrevention = new HashSet<>();
+        Set<Object> duplicatePrevention = new HashSet<>();
         for (Object context : Debug.errorContextStack) {
-            if (context instanceof ScriptTag) {
-                context = ((ScriptTag) context).getContainer();
+            if (context instanceof ScriptTag scriptTag) {
+                context = scriptTag.getContainer();
             }
-            else if (context instanceof QueueTag) {
-                context = ((QueueTag) context).getQueue();
+            else if (context instanceof QueueTag queueTag) {
+                context = queueTag.getQueue();
             }
-            else if (context instanceof Supplier<?>) {
-                context = ((Supplier<?>) context).get();
+            else if (context instanceof Supplier<?> supplier) {
+                context = supplier.get();
             }
             if (!duplicatePrevention.add(context)) {
                 continue;
             }
-            if (context instanceof ScriptContainer) {
+            if (context instanceof ScriptContainer container) {
                 if (sourceScript == null || context != sourceScript.getContainer()) {
-                    headerBuilder.append(" in script '<A>").append(((ScriptContainer) context).getName()).append("<LR>'");
+                    headerBuilder.append(" in script '<A>").append(container.getName()).append("<LR>'");
                 }
             }
-            else if (context instanceof ScriptQueue) {
+            else if (context instanceof ScriptQueue queue) {
                 if (context != sourceQueue) {
-                    headerBuilder.append(" in queue '").append(((ScriptQueue) context).debugId).append("<LR>'");
+                    headerBuilder.append(" in queue '").append(queue.debugId).append("<LR>'");
                 }
             }
-            else if (context instanceof String) {
-                headerBuilder.append(" ").append((String) context);
+            else if (context instanceof String str) {
+                headerBuilder.append(" ").append(str);
             }
-            else if (context instanceof ObjectTag) {
-                headerBuilder.append(((ObjectTag) context).getErrorHeaderContext());
+            else if (context instanceof ObjectTag objectTag) {
+                headerBuilder.append(objectTag.getErrorHeaderContext());
             }
             else if (context != null) {
                 headerBuilder.append("\n<FORCE_ALIGN>With non-context-valid object '<A>").append(context).append("<LR>'");
@@ -191,9 +189,9 @@ public class DebugInternals {
             if (!first) {
                 errorMessage.append("Caused by: ");
             }
-            errorMessage.append(ex).append("\n");
+            errorMessage.append(ex).append('\n');
             for (StackTraceElement ste : ex.getStackTrace()) {
-                errorMessage.append(prefix).append("  ").append(ste.toString()).append("\n");
+                errorMessage.append(prefix).append("  ").append(ste).append('\n');
             }
             if (ex.getCause() == ex) {
                 break;
@@ -256,18 +254,14 @@ public class DebugInternals {
         if (caller == null) {
             caller = CommandExecutor.currentQueue;
         }
-        if (caller instanceof TagContext) {
-            if (((TagContext) caller).entry != null) {
-                caller = ((TagContext) caller).entry;
-            }
+        if (caller instanceof TagContext context && context.entry != null) {
+            caller = context.entry;
         }
-        if (caller instanceof ScriptEntry) {
-            if (((ScriptEntry) caller).getResidingQueue() != null) {
-                caller = ((ScriptEntry) caller).getResidingQueue();
-            }
+        if (caller instanceof ScriptEntry entry && entry.getResidingQueue() != null) {
+            caller = entry.getResidingQueue();
         }
-        if (caller instanceof ScriptQueue) {
-            return ((ScriptQueue) caller).debugOutput;
+        if (caller instanceof ScriptQueue queue) {
+            return queue.debugOutput;
         }
         if (specialBackupSender != null) {
             return specialBackupSender;
@@ -286,28 +280,28 @@ public class DebugInternals {
             return;
         }
         String callerId;
-        if (caller instanceof ScriptContainer) {
-            callerId = "Script:" + ((ScriptContainer) caller).getName();
+        if (caller instanceof ScriptContainer container) {
+            callerId = "Script:" + container.getName();
         }
-        else if (caller instanceof ScriptEntry) {
-            if (((ScriptEntry) caller).getScript() != null) {
-                callerId = "Command:" + ((ScriptEntry) caller).getCommandName() + " in Script:" + ((ScriptEntry) caller).getScript().getName();
+        else if (caller instanceof ScriptEntry entry) {
+            if (entry.getScript() != null) {
+                callerId = "Command:" + entry.getCommandName() + " in Script:" + entry.getScript().getName();
             }
             else {
-                callerId = "Command:" + ((ScriptEntry) caller).getCommandName();
+                callerId = "Command:" + entry.getCommandName();
             }
         }
-        else if (caller instanceof ScriptQueue) {
-            if (((ScriptQueue) caller).script != null) {
-                callerId = "Queue:" + ((ScriptQueue) caller).id + " running Script:" + ((ScriptQueue) caller).script.getName();
+        else if (caller instanceof ScriptQueue queue) {
+            if (queue.script != null) {
+                callerId = "Queue:" + queue.id + " running Script:" + queue.script.getName();
             }
             else {
-                callerId = "Queue:" + ((ScriptQueue) caller).id;
+                callerId = "Queue:" + queue.id;
             }
         }
-        else if (caller instanceof TagContext) {
-            if (((TagContext) caller).entry != null) {
-                ScriptEntry sent = ((TagContext) caller).entry;
+        else if (caller instanceof TagContext context) {
+            if (context.entry != null) {
+                ScriptEntry sent = context.entry;
                 if (sent.getScript() != null) {
                     callerId = "Tag in Command:" + sent.getCommandName() + " in Script:" + sent.getScript().getName();
                 }
@@ -315,8 +309,8 @@ public class DebugInternals {
                     callerId = "Tag in Command:" + sent.getCommandName();
                 }
             }
-            else if (((TagContext) caller).script != null) {
-                callerId = "Tag in Script:" + ((TagContext) caller).script.getName();
+            else if (context.script != null) {
+                callerId = "Tag in Script:" + context.script.getName();
             }
             else {
                 callerId = "Tag:" + caller;
@@ -357,8 +351,7 @@ public class DebugInternals {
         else {
             skipFooter = false;
         }
-        message = DenizenCore.implementation.applyDebugColors(message);
-        internalFinalOutputPath(message, caller, reformat);
+        internalFinalOutputPath(DenizenCore.implementation.applyDebugColors(message), caller, reformat);
     }
 
     /** Internal final debug output called. Should generally not be called directly - instead use echoDebug, log, echoError, ... */
@@ -392,7 +385,7 @@ public class DebugInternals {
             try {
                 //                                                         "HH:mm:ss"
                 String toRecord = " " + formatted.replace("<FORCE_ALIGN>", "        ")+ "\n";
-                Debug.debugRecording.append(URLEncoder.encode(debugRecordDateFormat.format(new Date()) + toRecord, "UTF-8"));
+                Debug.debugRecording.append(URLEncoder.encode(debugRecordDateFormat.format(new Date()) + toRecord, StandardCharsets.UTF_8));
             }
             catch (Throwable ex) {
                 Debug.echoError(ex);
@@ -424,61 +417,35 @@ public class DebugInternals {
     /** Used for "log" to get class names. */
     public static final Map<Class<?>, String> classNameCache = new WeakHashMap<>();
 
-    /** Used for "log" to get class names. This class janks access to SecurityManager to be open to the DebugInternals class.
-     * Note: the format of this code is extremely unstable and jank as it relates to Java security internals stuff, do not touch unless you 100% know what you're doing. */
-    public static class SecurityManagerTrick extends SecurityManager {
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected Class[] getClassContext() {
-            return super.getClassContext();
-        }
-    }
-
-    /** Helper to get the current class context. */
-    public static Class[] getClassContext() {
-        return new SecurityManagerTrick().getClassContext();
-    }
-
     /** Used for "log" to get class names. */
     public static boolean canGetClass = true;
 
     /** Helper to get a class name with less JVM overhead using a cache. */
     public static String getClassNameOpti(Class<?> clazz) {
-        String className = classNameCache.get(clazz);
-        if (className == null) {
-            classNameCache.put(clazz, className = clazz.getSimpleName());
-        }
-        return className;
+        return classNameCache.computeIfAbsent(clazz, k -> clazz.getSimpleName());
     }
 
-    /** Helper to get the calling class for a 'log' message. */
-    public static Class<?> getCallerClass() {
+    /** Helper to get the caller for a 'log' message. */
+    public static StackWalker.StackFrame getCallerStackFrame() {
         if (!canGetClass) {
             return null;
         }
         try {
-            if (canGetClass) {
-                Class[] classes = new SecurityManagerTrick().getClassContext();
-                for (int i = 2; i < classes.length; i++) {
-                    if (classes[i] != DebugInternals.class && classes[i] != Debug.class) {
-                        return classes[i];
-                    }
-                }
-            }
+            return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(stackFrameStream -> stackFrameStream.skip(3).findFirst().orElse(null));
         }
         catch (Throwable ex) {
             canGetClass = false;
+            return null;
         }
-        return null;
     }
 
     /** Helper to get the name of the calling class for a 'log' message. */
     public static String getCaller() {
-        Class<?> caller = getCallerClass();
-        if (caller == null) {
+        StackWalker.StackFrame callerStackFrame = getCallerStackFrame();
+        if (callerStackFrame == null) {
             return "<JVM-Block>";
         }
-        String callerName = getClassNameOpti(caller);
+        String callerName = getClassNameOpti(callerStackFrame.getDeclaringClass());
         return callerName.length() > 16 ? callerName.substring(0, 12) + "..." : callerName;
     }
 
