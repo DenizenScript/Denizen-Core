@@ -1,7 +1,10 @@
 package com.denizenscript.denizencore.tags.core;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.core.TickScriptEvent;
-import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.Mechanism;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
@@ -12,10 +15,10 @@ import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.tags.*;
+import com.denizenscript.denizencore.tags.PseudoObjectTagBase;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.io.File;
@@ -984,11 +987,8 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Class names may appear multiple times in a row if that class contains methods that call each other.
         // -->
         tagProcessor.registerTag(ListTag.class, "java_class_context", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (Class<?> clazz : DebugInternals.getClassContext()) {
-                list.addObject(new ElementTag(clazz.getName(), true));
-            }
-            return list;
+            return new ListTag((Collection<? extends ObjectTag>) StackWalker.getInstance(StackWalker.Option.SHOW_HIDDEN_FRAMES).walk(stackFrameStream ->
+                    stackFrameStream.map(stackFrame -> new ElementTag(stackFrame.getClassName(), true)).toList()));
         });
     }
 
