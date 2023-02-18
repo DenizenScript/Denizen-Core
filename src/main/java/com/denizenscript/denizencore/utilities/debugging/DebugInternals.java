@@ -434,7 +434,11 @@ public class DebugInternals {
             return null;
         }
         try {
-            return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(stackFrameStream -> stackFrameStream.skip(3).findFirst().orElse(null));
+            return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(stackFrameStream -> stackFrameStream.skip(2)
+                    .dropWhile(stackFrame -> {
+                        Class<?> declaringClass = stackFrame.getDeclaringClass();
+                        return declaringClass == DebugInternals.class || declaringClass == Debug.class;
+                    }).findFirst().orElse(null));
         }
         catch (Throwable ex) {
             canGetClass = false;
