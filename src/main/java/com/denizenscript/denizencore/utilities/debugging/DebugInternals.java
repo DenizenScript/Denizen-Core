@@ -18,7 +18,10 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -104,7 +107,7 @@ public class DebugInternals {
             }
             DenizenCore.implementation.addExtraErrorHeaders(headerBuilder, source);
         }
-        Set<Object> duplicatePrevention = new HashSet<>();
+        HashSet<Object> duplicatePrevention = new HashSet<>();
         for (Object context : Debug.errorContextStack) {
             if (context instanceof ScriptTag scriptTag) {
                 context = scriptTag.getContainer();
