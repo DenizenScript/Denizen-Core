@@ -97,8 +97,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     public ListTag determinations = null;
 
-    private HashMap<String, ScriptEntry> held_entries;
-
     public ScriptTag script;
 
     public ContextSource contextSource = null;
@@ -133,21 +131,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         numericId = total_queues++;
         this.id = id;
         generateId(id, numericId, 0);
-    }
-
-    public final ScriptEntry getHeldScriptEntry(String id) {
-        if (held_entries == null) {
-            return null;
-        }
-        return held_entries.get(CoreUtilities.toLowerCase(id));
-    }
-
-    public final ScriptQueue holdScriptEntry(String id, ScriptEntry entry) {
-        if (held_entries == null) {
-            held_entries = new HashMap<>();
-        }
-        held_entries.put(CoreUtilities.toLowerCase(id), entry);
-        return this;
     }
 
     public final void setContextSource(ContextSource source) {
@@ -282,11 +265,6 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
         newQueue.definitions = definitions.duplicate();
         newQueue.setContextSource(contextSource);
         newQueue.determinationTarget = determinationTarget;
-        if (held_entries != null) {
-            for (Map.Entry<String, ScriptEntry> entry : held_entries.entrySet()) {
-                newQueue.holdScriptEntry(entry.getKey(), entry.getValue());
-            }
-        }
         newQueue.setLastEntryExecuted(getLastEntryExecuted());
         clear();
         newQueue.delay = delay;

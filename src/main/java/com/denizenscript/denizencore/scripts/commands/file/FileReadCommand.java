@@ -88,7 +88,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
                 FileInputStream stream = new FileInputStream(file);
                 byte[] data = stream.readAllBytes();
                 stream.close();
-                scriptEntry.addObject("data", new BinaryTag(data));
+                scriptEntry.saveObject("data", new BinaryTag(data));
                 scriptEntry.setFinished(true);
             }
             catch (Exception e) {

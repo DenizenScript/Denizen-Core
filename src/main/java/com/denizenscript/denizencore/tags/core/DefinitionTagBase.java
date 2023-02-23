@@ -33,7 +33,7 @@ public class DefinitionTagBase {
         TagRunnable.BaseWithParamInterface<ObjectTag, ElementTag> defTag = (attribute, defName) -> {
             DefinitionProvider definitionProvider = attribute.context.definitionProvider;
             if (definitionProvider == null) {
-                Debug.echoError("No definitions are provided in this tag's context!");
+                attribute.echoError("No definitions are provided in this tag's context!");
                 return null;
             }
             ObjectTag def = definitionProvider.getDefinitionObject(defName.asLowerString());

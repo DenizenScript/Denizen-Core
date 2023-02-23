@@ -215,7 +215,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 }
             }
             // Save the queue for script referencing
-            scriptEntry.addObject("created_queue", new QueueTag(queue));
+            scriptEntry.saveObject("created_queue", new QueueTag(queue));
             // Preserve procedural status
             queue.procedural = scriptEntry.getResidingQueue().procedural;
         };

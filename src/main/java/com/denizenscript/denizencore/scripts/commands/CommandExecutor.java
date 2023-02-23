@@ -79,7 +79,6 @@ public class CommandExecutor {
             Debug.echoError("Command " + command.name + " is not accepted within a procedure. Procedures may not produce a change in the world, they may only process logic.");
             return false;
         }
-        String saveName = null;
         TagContext lastContext = Debug.currentContext;
         try {
             TagContext context = scriptEntry.getContext();
@@ -101,9 +100,9 @@ public class CommandExecutor {
                     }
                 }
                 else if (arg.matchesPrefix("save")) {
-                    saveName = TagManager.tag(arg.getValue(), context);
+                    scriptEntry.saveName = TagManager.tag(arg.getValue(), context);
                     if (scriptEntry.dbCallShouldDebug()) {
-                        Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + saveName + "'!");
+                        Debug.echoDebug(scriptEntry, "...remembering this script entry as '" + scriptEntry.saveName + "'!");
                     }
                 }
             }
@@ -113,9 +112,6 @@ public class CommandExecutor {
             else {
                 command.parseArgs(scriptEntry);
                 command.execute(scriptEntry);
-            }
-            if (saveName != null) {
-                scriptEntry.getResidingQueue().holdScriptEntry(saveName, scriptEntry);
             }
             currentQueue = null;
             return true;

@@ -334,8 +334,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             rows.add(current.toString());
                             resultList.addObject(subList);
                         }
-                        scriptEntry.addObject("result", rows);
-                        scriptEntry.addObject("result_list", resultList);
+                        scriptEntry.saveObject("result", rows);
+                        scriptEntry.saveObject("result_list", resultList);
                         final int finalCount = count;
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
@@ -376,7 +376,7 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                     try {
                         Statement statement = con.createStatement();
                         int affected = statement.executeUpdate(query.asString(), Statement.RETURN_GENERATED_KEYS);
-                        scriptEntry.addObject("affected_rows", new ElementTag(affected));
+                        scriptEntry.saveObject("affected_rows", new ElementTag(affected));
                         ResultSet set = statement.getGeneratedKeys();
                         ResultSetMetaData rsmd = set.getMetaData();
                         int columns = rsmd.getColumnCount();
@@ -392,8 +392,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             rows.add(current.toString());
                             resultList.addObject(subList);
                         }
-                        scriptEntry.addObject("result", rows);
-                        scriptEntry.addObject("result_list", resultList);
+                        scriptEntry.saveObject("result", rows);
+                        scriptEntry.saveObject("result_list", resultList);
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns");
                             Debug.echoDebug(scriptEntry, "Updated " + affected + " rows");

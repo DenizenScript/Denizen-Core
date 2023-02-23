@@ -61,7 +61,7 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                                    @ArgName("overwrite") final boolean overwrite) {
         if (!CoreConfiguration.allowFileCopy) {
             Debug.echoError(scriptEntry, "File copy disabled by server administrator (refer to command documentation).");
-            scriptEntry.addObject("success", new ElementTag("false"));
+            scriptEntry.saveObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
@@ -71,25 +71,25 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
         boolean disdir = d.isDirectory() || destination.endsWith("/");
         if (!DenizenCore.implementation.canReadFile(o)) {
             Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
-            scriptEntry.addObject("success", new ElementTag("false"));
+            scriptEntry.saveObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
         if (!o.exists()) {
             Debug.echoError(scriptEntry, "File copy failed, origin does not exist!");
-            scriptEntry.addObject("success", new ElementTag("false"));
+            scriptEntry.saveObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
         if (!DenizenCore.implementation.canWriteToFile(d)) {
             Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
-            scriptEntry.addObject("success", new ElementTag("false"));
+            scriptEntry.saveObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
         if (dexists && !disdir && !overwrite) {
             Debug.echoDebug(scriptEntry, "File copy ignored, destination file already exists!");
-            scriptEntry.addObject("success", new ElementTag("false"));
+            scriptEntry.saveObject("success", new ElementTag("false"));
             scriptEntry.setFinished(true);
             return;
         }
@@ -110,12 +110,12 @@ public class FileCopyCommand extends AbstractCommand implements Holdable {
                 else {
                     Files.copy(o.toPath(), (disdir ? d.toPath().resolve(o.toPath().getFileName()) : d.toPath()));
                 }
-                scriptEntry.addObject("success", new ElementTag("true"));
+                scriptEntry.saveObject("success", new ElementTag("true"));
                 scriptEntry.setFinished(true);
             }
             catch (Exception e) {
                 Debug.echoError(scriptEntry, e);
-                scriptEntry.addObject("success", new ElementTag("false"));
+                scriptEntry.saveObject("success", new ElementTag("false"));
                 scriptEntry.setFinished(true);
             }
         };

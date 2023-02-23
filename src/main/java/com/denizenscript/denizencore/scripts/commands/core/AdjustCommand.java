@@ -204,10 +204,10 @@ public class AdjustCommand extends AbstractCommand {
                 object = adjust(object, mechanism.asString(), value, scriptEntry);
             }
             if (objects.size() == 1) {
-                scriptEntry.addObject("result", object);
+                scriptEntry.saveObject("result", object);
             }
             result.addObject(object);
         }
-        scriptEntry.addObject("result_list", result);
+        scriptEntry.saveObject("result_list", result);
     }
 }

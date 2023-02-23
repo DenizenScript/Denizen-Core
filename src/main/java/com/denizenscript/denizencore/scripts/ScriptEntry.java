@@ -291,6 +291,8 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     private ScriptEntry owner = null;
 
+    public String saveName = null;
+
     public List<BracedCommand.BracedData> getBracedSet() {
         return internal.bracedSet;
     }
@@ -611,14 +613,14 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         internal.defObjects = internal.actualCommand.generatedExecutor != null ? 0 : 8;
     }
 
-    /**
-     * Adds a context object to the script entry. Just provide a key and an object.
-     * Technically any type of object can be stored, however providing ObjectTags
-     * is preferred.
-     *
-     * @param key    the name of the object
-     * @param object the object, preferably a ObjectTag
-     */
+    public ScriptEntry saveObject(String key, ObjectTag object) {
+        if (saveName != null) {
+            queue.addDefinition("__save_entries." + saveName + "." + key, object);
+        }
+        return this;
+    }
+
+    @Deprecated
     public ScriptEntry addObject(String key, Object object) {
         if (object == null) {
             return this;
@@ -630,12 +632,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return this;
     }
 
-    /**
-     * If the scriptEntry lacks the object corresponding to the key, set it to the first non-null argument
-     *
-     * @param key The key of the object to check
-     * @return The scriptEntry
-     */
+    @Deprecated
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
         if (!this.objects.containsKey(key)) {
             for (Object obj : objects) {

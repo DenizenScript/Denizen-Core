@@ -118,8 +118,8 @@ public class RandomCommand extends BracedCommand {
         previous3 = previous2;
         previous2 = previous;
         previous = selected;
-        scriptEntry.addObject("possibilities", new ElementTag(possibilities));
-        scriptEntry.addObject("selected", new ElementTag(selected));
+        scriptEntry.saveObject("possibilities", new ElementTag(possibilities));
+        scriptEntry.saveObject("selected", new ElementTag(selected));
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), db("possibilities", possibilities), db("choice", selected + 1));
         }

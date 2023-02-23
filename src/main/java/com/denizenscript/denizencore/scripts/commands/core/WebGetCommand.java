@@ -261,16 +261,16 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
-                    scriptEntry.addObject("status", new ElementTag(status));
-                    scriptEntry.addObject("failed", new ElementTag(status >= 200 && status < 400 ? "false" : "true"));
+                    scriptEntry.saveObject("status", new ElementTag(status));
+                    scriptEntry.saveObject("failed", new ElementTag(status >= 200 && status < 400 ? "false" : "true"));
                     if (saveFile == null) {
                         if (outResult != null) {
-                            scriptEntry.addObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
-                            scriptEntry.addObject("result_binary", new BinaryTag(outResult));
+                            scriptEntry.saveObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
+                            scriptEntry.saveObject("result_binary", new BinaryTag(outResult));
                         }
-                        scriptEntry.addObject("result_headers", resultHeaders);
+                        scriptEntry.saveObject("result_headers", resultHeaders);
                     }
-                    scriptEntry.addObject("time_ran", new DurationTag((timeDone - timeStart) / 1000.0));
+                    scriptEntry.saveObject("time_ran", new DurationTag((timeDone - timeStart) / 1000.0));
                     scriptEntry.setFinished(true);
                     return false;
                 }
@@ -324,13 +324,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             DenizenCore.schedule(new Schedulable() {
                 @Override
                 public boolean tick(float seconds) {
-                    scriptEntry.addObject("failed", new ElementTag("true"));
+                    scriptEntry.saveObject("failed", new ElementTag("true"));
                     if (status != -1) {
-                        scriptEntry.addObject("status", new ElementTag(status));
+                        scriptEntry.saveObject("status", new ElementTag(status));
                         if (saveFile == null) {
                             if (outResult != null) {
-                                scriptEntry.addObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
-                                scriptEntry.addObject("result_binary", new BinaryTag(outResult));
+                                scriptEntry.saveObject("result", new ElementTag(new String(outResult, StandardCharsets.UTF_8)));
+                                scriptEntry.saveObject("result_binary", new BinaryTag(outResult));
                             }
                         }
                     }

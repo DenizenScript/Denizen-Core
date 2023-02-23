@@ -145,7 +145,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                             }
                             else {
                                 Debug.echoDebug(scriptEntry, "Submitted to " + s);
-                                scriptEntry.addObject("submitted", new ElementTag(s));
+                                scriptEntry.saveObject("submitted", new ElementTag(s));
                             }
                             scriptEntry.setFinished(true);
                         });

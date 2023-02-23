@@ -240,7 +240,7 @@ public class RedisHelper {
                 Runnable doQuery = () -> {
                     try {
                         ElementTag result = new ElementTag(con.publish(channel.asLowerString(), message.asString()));
-                        scriptEntry.addObject("result", result);
+                        scriptEntry.saveObject("result", result);
                         scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {
@@ -286,7 +286,7 @@ public class RedisHelper {
                             redisArgs = args.toArray(new String[0]);
                         }
                         ObjectTag result = processResponse(con.sendCommand(() -> SafeEncoder.encode(redisCommand), redisArgs));
-                        scriptEntry.addObject("result", result);
+                        scriptEntry.saveObject("result", result);
                         scriptEntry.setFinished(true);
                     }
                     catch (final Exception ex) {

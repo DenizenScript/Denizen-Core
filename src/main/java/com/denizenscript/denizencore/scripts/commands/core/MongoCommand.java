@@ -275,8 +275,8 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         Document commandResult = connection.database.runCommand(new Document(finalCommand));
                         ElementTag okResult = new ElementTag(commandResult.get("ok").toString());
                         ElementTag resultRaw = new ElementTag(commandResult.toJson());
-                        scriptEntry.addObject("result", resultRaw);
-                        scriptEntry.addObject("ok", okResult);
+                        scriptEntry.saveObject("result", resultRaw);
+                        scriptEntry.saveObject("ok", okResult);
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
@@ -325,7 +325,7 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         for (Document doc : findResult) {
                             result.addObject(new ElementTag(doc.toJson()));
                         }
-                        scriptEntry.addObject("result", result);
+                        scriptEntry.saveObject("result", result);
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
@@ -344,10 +344,10 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         Debug.echoDebug(scriptEntry, "Inserting data into Collection: '" + connection.collection.getNamespace() + "'...");
                         InsertOneResult result = connection.collection.insertOne(new Document(insertData));
                         if (result.getInsertedId() != null) {
-                            scriptEntry.addObject("inserted_id", new ElementTag(result.getInsertedId().asObjectId().getValue().toString()));
+                            scriptEntry.saveObject("inserted_id", new ElementTag(result.getInsertedId().asObjectId().getValue().toString()));
                         }
                         else {
-                            scriptEntry.addObject("inserted_id", null);
+                            scriptEntry.saveObject("inserted_id", null);
                         }
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
@@ -375,16 +375,16 @@ public class MongoCommand extends AbstractCommand implements Holdable {
                         if (upsert) {
                             result = connection.collection.updateMany(new Document(updateMap), new Document(newMap), new UpdateOptions().upsert(true));
                             if (result.getUpsertedId() != null) {
-                                scriptEntry.addObject("upserted_id", new ElementTag(result.getUpsertedId().asObjectId().getValue().toString()));
+                                scriptEntry.saveObject("upserted_id", new ElementTag(result.getUpsertedId().asObjectId().getValue().toString()));
                             }
                             else {
-                                scriptEntry.addObject("upserted_id", null);
+                                scriptEntry.saveObject("upserted_id", null);
                             }
                         }
                         else {
                             result = connection.collection.updateMany(new Document(updateMap), new Document(newMap));
                         }
-                        scriptEntry.addObject("updated_count", new ElementTag(result.getModifiedCount()));
+                        scriptEntry.saveObject("updated_count", new ElementTag(result.getModifiedCount()));
                         DenizenCore.runOnMainThread(() -> scriptEntry.setFinished(true));
                     }
                     catch (final Exception e) {
