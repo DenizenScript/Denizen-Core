@@ -86,12 +86,11 @@ public class RepeatCommand extends BracedCommand {
         enumHack.valuesMapLower.put("\0callback", Action.CALLBACK);
     }
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue queue,
                                    @ArgLinear @ArgName("quantity") @ArgDefaultText("-1") int quantity,
                                    @ArgName("action") @ArgDefaultText("run") Action action,
                                    @ArgPrefixed @ArgName("from") @ArgDefaultText("1") int from,
                                    @ArgPrefixed @ArgName("as") @ArgDefaultText("value") String asName) {
-        ScriptQueue queue = scriptEntry.getResidingQueue();
         if (action == Action.STOP) {
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, "repeat", db("instruction", "stop"));

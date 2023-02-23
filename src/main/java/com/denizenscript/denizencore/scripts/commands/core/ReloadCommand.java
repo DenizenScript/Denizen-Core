@@ -7,6 +7,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.util.function.Consumer;
@@ -52,11 +53,11 @@ public class ReloadCommand extends AbstractCommand implements Holdable {
 
     public enum ReloadType { SCRIPTS, SCRIPTS_NOW, CONFIG, SAVES, NOTES }
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue queue,
                                    @ArgName("type") @ArgDefaultText("scripts") ReloadType type) {
         switch (type) {
             case SCRIPTS:
-                Consumer<String> altDebug = scriptEntry.getResidingQueue().debugOutput;
+                Consumer<String> altDebug = queue.debugOutput;
                 if (altDebug != null) {
                     DebugInternals.specialBackupSender = (s) -> DenizenCore.runOnMainThread(() -> altDebug.accept(s));
                 }

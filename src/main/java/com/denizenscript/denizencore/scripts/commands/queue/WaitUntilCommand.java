@@ -1,8 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.objects.core.DurationTag;
-import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.commands.generator.*;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.RepeatingSchedulable;
@@ -55,7 +55,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // - waituntil rate:1s <player.health> > 15
     // -->
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue queue,
                                    @ArgUnparsed @ArgNoDebug @ArgRaw @ArgLinear @ArgName("if_comparisons") List<ScriptEntry.InternalArgument> comparisons,
                                    @ArgPrefixed @ArgName("rate") @ArgDefaultNull DurationTag rate,
                                    @ArgPrefixed @ArgName("max") @ArgDefaultNull DurationTag max) {
@@ -67,8 +67,8 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         }
         Debug.echoDebug(scriptEntry, "WaitUntil first check <A>false<W>, will wait...");
         if (rate == null) {
-            if (scriptEntry.getResidingQueue() instanceof TimedQueue) {
-                rate = ((TimedQueue) scriptEntry.getResidingQueue()).getSpeed();
+            if (queue instanceof TimedQueue) {
+                rate = ((TimedQueue) queue).getSpeed();
             }
             else {
                 rate = new DurationTag((long) 1);
@@ -76,7 +76,6 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         }
         long endTime = max == null ? -1 : DenizenCore.serverTimeMillis + max.getMillis();
         final RepeatingSchedulable schedulable = new RepeatingSchedulable(null, (float) rate.getSeconds());
-        QueueTag queue = new QueueTag(scriptEntry.getResidingQueue());
         schedulable.run = new Runnable() {
             public int counter = 0;
             @Override
@@ -85,7 +84,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("WaitUntil looping: " + counter);
                 }
-                if (queue.getQueue().getEntries().isEmpty()) {
+                if (queue.getEntries().isEmpty()) {
                     Debug.echoDebug(scriptEntry, "WaitUntil stopping early: queue is empty or was externally stopped.");
                     scriptEntry.setFinished(true);
                     schedulable.cancel();

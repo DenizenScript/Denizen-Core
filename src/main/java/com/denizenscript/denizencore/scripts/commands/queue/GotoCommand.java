@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgRaw;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
@@ -47,11 +48,11 @@ public class GotoCommand extends AbstractCommand {
     // - goto potato
     // -->
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptQueue queue,
                                    @ArgRaw @ArgLinear @ArgName("mark_name") String markName) {
         boolean hasmark = false;
-        for (int i = 0; i < scriptEntry.getResidingQueue().getQueueSize(); i++) {
-            ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(i);
+        for (int i = 0; i < queue.getQueueSize(); i++) {
+            ScriptEntry entry = queue.getEntry(i);
             List<String> args = entry.getOriginalArguments();
             if (CoreUtilities.equalsIgnoreCase(entry.getCommandName(), "mark") && args.size() > 0 && CoreUtilities.equalsIgnoreCase(args.get(0), markName)) {
                 hasmark = true;
@@ -59,17 +60,17 @@ public class GotoCommand extends AbstractCommand {
             }
         }
         if (hasmark) {
-            while (scriptEntry.getResidingQueue().getQueueSize() > 0) {
-                ScriptEntry entry = scriptEntry.getResidingQueue().getEntry(0);
+            while (queue.getQueueSize() > 0) {
+                ScriptEntry entry = queue.getEntry(0);
                 List<String> args = entry.getOriginalArguments();
                 if (CoreUtilities.equalsIgnoreCase(entry.getCommandName(), "mark") && args.size() > 0 && CoreUtilities.equalsIgnoreCase(args.get(0), markName)) {
                     break;
                 }
-                scriptEntry.getResidingQueue().removeFirst();
+                queue.removeFirst();
             }
         }
         else {
-            Debug.echoError(scriptEntry, "Cannot go to that location - doesn't seem to exist!");
+            Debug.echoError("Cannot go to that location - doesn't seem to exist!");
         }
     }
 }

@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.commands.generator.*;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.objects.core.DurationTag;
@@ -63,12 +64,12 @@ public class WaitCommand extends AbstractCommand {
 
     public enum Mode {SYSTEM, DELTA}
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue backingQueue,
                                    @ArgLinear @ArgName("delay") DurationTag delay,
                                    @ArgName("mode") @ArgDefaultText("delta") Mode mode,
                                    @ArgPrefixed @ArgName("queue") @ArgDefaultNull QueueTag queue) {
         if (queue == null) {
-            queue = new QueueTag(scriptEntry.getResidingQueue());
+            queue = new QueueTag(backingQueue);
         }
         TimedQueue.DelayTracker tracker;
         if (mode == Mode.SYSTEM) {

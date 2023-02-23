@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.queue;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgLinear;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgRaw;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.objects.core.ElementTag;
@@ -74,7 +75,7 @@ public class ChooseCommand extends BracedCommand {
     //
     // -->
 
-    public static void autoExecute(ScriptEntry scriptEntry,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue queue,
                                    @ArgRaw @ArgLinear @ArgName("choice") ElementTag choice) {
         List<BracedData> bdlist = getBracedCommands(scriptEntry, false);
         if (bdlist == null || bdlist.isEmpty()) {
@@ -132,6 +133,6 @@ public class ChooseCommand extends BracedCommand {
             newEntry.entryData.scriptEntry = newEntry;
         }
         scriptEntry.setInstant(true);
-        scriptEntry.getResidingQueue().injectEntriesAtStart(new_command_list);
+        queue.injectEntriesAtStart(new_command_list);
     }
 }

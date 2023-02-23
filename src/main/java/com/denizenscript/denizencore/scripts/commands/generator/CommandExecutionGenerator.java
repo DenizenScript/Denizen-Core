@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.EnumHelper;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
@@ -34,7 +35,7 @@ public class CommandExecutionGenerator {
             // Placeholder for default-constructor gen stability.
         }
 
-        public abstract void execute(ScriptEntry scriptEntry);
+        public abstract void execute(ScriptEntry scriptEntry, ScriptQueue queue);
     }
 
     public static long totalGenerated = 0;
@@ -44,7 +45,7 @@ public class CommandExecutionGenerator {
     }
 
     public static final String COMMAND_EXECUTOR_PATH = Type.getInternalName(CommandExecutor.class);
-    public static final Method COMMAND_EXECUTOR_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class);
+    public static final Method COMMAND_EXECUTOR_EXECUTE_METHOD = ReflectionHelper.getMethod(CommandExecutor.class, "execute", ScriptEntry.class, ScriptQueue.class);
     public static final String COMMAND_EXECUTOR_EXECUTE_DESCRIPTOR = Type.getMethodDescriptor(COMMAND_EXECUTOR_EXECUTE_METHOD);
     public static final Method HELPER_GET_UNPARSED_ARG_LIST = getArgHelperMethod("helperGetUnparsedArgList");
     public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = getArgHelperMethod("helperPrefixEntryArg");
@@ -332,11 +333,16 @@ public class CommandExecutionGenerator {
             {
                 MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "execute", COMMAND_EXECUTOR_EXECUTE_DESCRIPTOR);
                 MethodGenerator.Local scriptEntryLocal = gen.addLocal("scriptEntry", ScriptEntry.class);
-                boolean hasScriptEntry = false;
+                MethodGenerator.Local queueLocal = gen.addLocal("queue", ScriptQueue.class);
+                boolean hasScriptEntry = false, hasQueue = false;
                 for (Parameter param : method.getParameters()) {
                     Class<?> paramType = param.getType();
                     if (paramType == ScriptEntry.class && !hasScriptEntry) {
                         hasScriptEntry = true;
+                        continue;
+                    }
+                    if (paramType == ScriptQueue.class && !hasQueue) {
+                        hasQueue = true;
                         continue;
                     }
                     ArgName argName = param.getAnnotation(ArgName.class);
@@ -491,6 +497,9 @@ public class CommandExecutionGenerator {
                 }
                 if (hasScriptEntry) {
                     gen.loadLocal(scriptEntryLocal);
+                }
+                if (hasQueue) {
+                    gen.loadLocal(queueLocal);
                 }
                 for (MethodGenerator.Local local : argLocals) {
                     gen.loadLocal(local);

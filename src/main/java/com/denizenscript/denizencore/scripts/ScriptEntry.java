@@ -283,7 +283,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
 
     public TagContext context;
 
-    private Map<String, Object> objects = new HashMap<>(8);
+    private Map<String, Object> objects = null;
 
     private Object data;
 
@@ -323,7 +323,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     public ScriptEntry clone() {
         try {
             ScriptEntry se = (ScriptEntry) super.clone();
-            se.objects = new HashMap<>(internal.defObjects);
+            se.objects = internal.defObjects == 0 ? null : new HashMap<>(internal.defObjects);
             se.entryData = entryData.clone();
             se.entryData.scriptEntry = se;
             se.updateContext();
@@ -628,13 +628,16 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         if (object instanceof ObjectTag) {
             ((ObjectTag) object).setPrefix(key);
         }
+        if (objects == null) {
+            objects = new HashMap<>(internal.defObjects);
+        }
         objects.put(key, object);
         return this;
     }
 
     @Deprecated
     public ScriptEntry defaultObject(String key, Object... objects) throws InvalidArgumentsException {
-        if (!this.objects.containsKey(key)) {
+        if (this.objects == null || !this.objects.containsKey(key)) {
             for (Object obj : objects) {
                 if (obj != null) {
                     this.addObject(key, obj);
@@ -694,12 +697,12 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
     // SCRIPTENTRY CONTEXT
     //////////////
 
-    public Map<String, Object> getObjects() {
-        return objects;
-    }
-
+    @Deprecated
     public Object getObject(String key) {
         try {
+            if (objects == null) {
+                return null;
+            }
             return objects.get(key);
         }
         catch (Exception ex) {
@@ -710,7 +713,7 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         }
     }
 
-    // TODO: Rename this method
+    @Deprecated
     public <T> T getObjectTag(String key) {
         try {
             Object gotten = objects.get(key);
@@ -730,8 +733,12 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         }
     }
 
+    @Deprecated
     public ElementTag getElement(String key) {
         try {
+            if (objects == null) {
+                return null;
+            }
             Object gotten = objects.get(key);
             if (gotten == null) {
                 return null;
@@ -746,8 +753,9 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         }
     }
 
+    @Deprecated
     public boolean hasObject(String key) {
-        return objects.containsKey(key);
+        return objects != null && objects.containsKey(key);
     }
 
     /////////////

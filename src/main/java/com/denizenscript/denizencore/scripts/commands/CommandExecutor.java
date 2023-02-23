@@ -107,7 +107,7 @@ public class CommandExecutor {
                 }
             }
             if (command.generatedExecutor != null) {
-                command.generatedExecutor.execute(scriptEntry);
+                command.generatedExecutor.execute(scriptEntry, scriptEntry.getResidingQueue());
             }
             else {
                 command.parseArgs(scriptEntry);
