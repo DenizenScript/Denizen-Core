@@ -2627,6 +2627,23 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.contains_match[<matcher>]>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether the list contains an object that matches the specified matcher,
+        // using the system behind <@link language Advanced Object Matching>.
+        // -->
+        tagProcessor.registerTag(ElementTag.class, ElementTag.class, "contains_match", (attribute, object, input) -> {
+            String matcher = input.asString();
+            for (ObjectTag objectTag : object.objectForms) {
+                if (objectTag.tryAdvancedMatcher(matcher)) {
+                    return new ElementTag(true);
+                }
+            }
+            return new ElementTag(false);
+        });
+
+        // <--[tag]
         // @attribute <ListTag.random[(<#>)]>
         // @returns ObjectTag
         // @description
