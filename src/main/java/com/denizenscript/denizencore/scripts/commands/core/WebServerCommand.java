@@ -80,11 +80,11 @@ public class WebServerCommand extends AbstractCommand {
         public boolean ignoreErrors;
 
         public void handleRequest(HttpExchange exchange) {
-            WebserverWebRequestScriptEvent.fire(this, exchange);
+            DenizenCore.runOnMainThread(() -> WebserverWebRequestScriptEvent.fire(this, exchange));
         }
 
         public void executor(Runnable command) {
-            DenizenCore.runOnMainThread(command);
+            DenizenCore.runAsync(command);
         }
 
         public void start() throws IOException {
