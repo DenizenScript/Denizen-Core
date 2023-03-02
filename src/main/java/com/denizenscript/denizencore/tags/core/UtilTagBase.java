@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.TickScriptEvent;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
 import com.denizenscript.denizencore.objects.Mechanism;
@@ -10,6 +11,7 @@ import com.denizenscript.denizencore.objects.notable.Notable;
 import com.denizenscript.denizencore.objects.notable.NoteManager;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.CommandRegistry;
+import com.denizenscript.denizencore.scripts.commands.core.AdjustCommand;
 import com.denizenscript.denizencore.scripts.commands.core.MongoCommand;
 import com.denizenscript.denizencore.scripts.commands.core.SQLCommand;
 import com.denizenscript.denizencore.scripts.commands.queue.RunLaterCommand;
@@ -35,6 +37,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
     public UtilTagBase() {
         instance = this;
         TagManager.registerStaticTagBaseHandler(UtilTagBase.class, "util", (t) -> instance);
+        AdjustCommand.specialAdjustables.put("system", UtilTagBase::adjustSystem);
     }
 
     @Override
@@ -990,6 +993,16 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
             return new ListTag((Collection<? extends ObjectTag>) StackWalker.getInstance(StackWalker.Option.SHOW_HIDDEN_FRAMES).walk(stackFrameStream ->
                     stackFrameStream.map(stackFrame -> new ElementTag(stackFrame.getClassName(), true)).toList()));
         });
+
+        // <--[tag]
+        // @attribute <util.debug_enabled>
+        // @returns ElementTag(Boolean)
+        // @description
+        // Returns whether script debug is currently globally enabled.
+        // -->
+        tagProcessor.registerTag(ElementTag.class, "debug_enabled", (attribute, object) -> {
+            return new ElementTag(CoreConfiguration.shouldShowDebug);
+        });
     }
 
     public static final long serverStartTimeMillis = CoreUtilities.monotonicMillis();
@@ -1018,11 +1031,10 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Note that this redirects *all console output* not just Denizen output.
         // Note: don't enable /denizen debug -e while this is active.
         // Requires config file setting "Debug.Allow console redirection"!
-        // For example: - adjust system redirect_logging:true
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
             if (!CoreConfiguration.allowConsoleRedirection) {
-                Debug.echoError("Console redirection disabled by administrator (refer to mechanism documentation).");
+                mechanism.echoError("Console redirection disabled by administrator (refer to mechanism documentation).");
                 return;
             }
             if (mechanism.getValue().asBoolean()) {
@@ -1043,14 +1055,78 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Use <@link tag util.runlater_ids> to check whether there is already a scheduled task with the given ID.
         // -->
         if (mechanism.matches("cancel_runlater") && mechanism.hasValue()) {
-            RunLaterCommand.FutureRunData runner = RunLaterCommand.trackedById.remove(CoreUtilities.toLowerCase(mechanism.getValue().asString()));
+            RunLaterCommand.FutureRunData runner = RunLaterCommand.trackedById.remove(mechanism.getValue().asLowerString());
             if (runner != null) {
                 runner.cancelled = true;
             }
         }
 
-        if (!mechanism.fulfilled()) {
-            mechanism.reportInvalid();
+        // <--[mechanism]
+        // @object system
+        // @name reset_event_stats
+        // @input None
+        // @description
+        // Resets the statistics on events used for <@link tag util.event_stats>
+        // @tags
+        // <util.event_stats>
+        // <util.event_stats_data>
+        // -->
+        if (mechanism.matches("reset_event_stats")) {
+            for (ScriptEvent scriptEvent : ScriptEvent.events) {
+                scriptEvent.eventData.stats_fires = 0;
+                scriptEvent.eventData.stats_scriptFires = 0;
+                scriptEvent.eventData.stats_nanoTimes = 0;
+            }
         }
+
+        // <--[mechanism]
+        // @object system
+        // @name cleanmem
+        // @input None
+        // @description
+        // Suggests to the internal systems that it's a good time to clean the memory.
+        // Does NOT force a memory cleaning.
+        // This should generally not be used unless you have a very good specific reason to use it.
+        // @tags
+        // <util.ram_free>
+        // -->
+        if (mechanism.matches("cleanmem")) {
+            System.gc();
+        }
+
+        // <--[mechanism]
+        // @object system
+        // @name delete_file
+        // @input ElementTag
+        // @description
+        // Deletes the given file from the server.
+        // File path starts in the Denizen folder.
+        // Require config file setting "Commands.Delete.Allow file deletion".
+        // @example
+        // - adjust system delete_file:data/logs/latest.txt
+        // @tags
+        // <util.has_file[<file>]>
+        // -->
+        if (mechanism.matches("delete_file") && mechanism.hasValue()) {
+            if (!CoreConfiguration.allowFileDeletion) {
+                mechanism.echoError("File deletion disabled by administrator (refer to mechanism documentation).");
+                return;
+            }
+            File file = new File(DenizenCore.implementation.getDataFolder(), mechanism.getValue().asString());
+            if (!DenizenCore.implementation.canWriteToFile(file)) {
+                mechanism.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
+                return;
+            }
+            try {
+                if (!file.delete()) {
+                    mechanism.echoError("Failed to delete file: returned false");
+                }
+            }
+            catch (Exception e) {
+                mechanism.echoError("Failed to delete file: " + e.getMessage());
+            }
+        }
+
+        mechanism.autoReport();
     }
 }
