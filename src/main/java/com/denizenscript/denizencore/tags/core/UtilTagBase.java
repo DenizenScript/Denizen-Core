@@ -1031,6 +1031,8 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Note that this redirects *all console output* not just Denizen output.
         // Note: don't enable /denizen debug -e while this is active.
         // Requires config file setting "Debug.Allow console redirection"!
+        // @example
+        // - adjust system redirect_logging:true
         // -->
         if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
             if (!CoreConfiguration.allowConsoleRedirection) {
