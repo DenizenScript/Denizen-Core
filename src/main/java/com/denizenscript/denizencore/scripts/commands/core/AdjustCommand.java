@@ -12,7 +12,6 @@ import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.tags.core.UtilTagBase;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.HashMap;
@@ -132,7 +131,13 @@ public class AdjustCommand extends AbstractCommand {
             String lowerObjectString = CoreUtilities.toLowerCase(objectString);
             Consumer<Mechanism> specialAdjustable = specialAdjustables.get(lowerObjectString);
             if (specialAdjustable != null) {
+                mechanism.adjusting = null;
+                mechanism.isProperty = false;
+                if (mechanism.shouldDebug()) {
+                    Debug.echoDebug(mechanism.context, "Adjust mechanism '" + mechanism.getName() + "' on special adjustable '" + lowerObjectString + "'...");
+                }
                 specialAdjustable.accept(mechanism);
+                mechanism.autoReport();
                 return object;
             }
             if (lowerObjectString.startsWith("def:")) {
