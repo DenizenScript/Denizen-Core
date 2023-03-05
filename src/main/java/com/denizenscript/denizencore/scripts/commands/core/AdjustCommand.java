@@ -117,10 +117,6 @@ public class AdjustCommand extends AbstractCommand {
 
     public static HashMap<String, Consumer<Mechanism>> specialAdjustables = new HashMap<>();
 
-    static {
-        specialAdjustables.put("system", UtilTagBase::adjustSystem);
-    }
-
     public ObjectTag adjust(ObjectTag object, String mechanismName, ObjectTag value, ScriptEntry entry) {
         Mechanism mechanism = new Mechanism(mechanismName, value, entry.entryData.getTagContext());
         return adjust(object, mechanism, entry);
