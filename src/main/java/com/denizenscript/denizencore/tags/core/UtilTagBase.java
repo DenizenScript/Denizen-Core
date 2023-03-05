@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.events.core.TickScriptEvent;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.objects.notable.Notable;
@@ -32,12 +31,25 @@ import java.util.*;
 
 public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
 
+    // <--[ObjectType]
+    // @name system
+    // @prefix None
+    // @base None
+    // @ExampleAdjustObject system
+    // @format
+    // N/A
+    //
+    // @description
+    // "system" is an internal pseudo-ObjectType that is used as a mechanism adjust target for some core mechanisms.
+    //
+    // -->
+
     public static UtilTagBase instance;
 
     public UtilTagBase() {
         instance = this;
         TagManager.registerStaticTagBaseHandler(UtilTagBase.class, "util", (t) -> instance);
-        AdjustCommand.specialAdjustables.put("system", UtilTagBase::adjustSystem);
+        AdjustCommand.specialAdjustables.put("system", mechanism -> tagProcessor.processMechanism(instance, mechanism));
     }
 
     @Override
@@ -1003,25 +1015,6 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         tagProcessor.registerTag(ElementTag.class, "debug_enabled", (attribute, object) -> {
             return new ElementTag(CoreConfiguration.shouldShowDebug);
         });
-    }
-
-    public static final long serverStartTimeMillis = CoreUtilities.monotonicMillis();
-
-    // <--[ObjectType]
-    // @name system
-    // @prefix None
-    // @base None
-    // @ExampleAdjustObject system
-    // @format
-    // N/A
-    //
-    // @description
-    // "system" is an internal pseudo-ObjectType that is used as a mechanism adjust target for some core mechanisms.
-    //
-    // -->
-
-    public static void adjustSystem(Mechanism mechanism) {
-
         // <--[mechanism]
         // @object system
         // @name redirect_logging
@@ -1034,18 +1027,18 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @example
         // - adjust system redirect_logging:true
         // -->
-        if (mechanism.matches("redirect_logging") && mechanism.hasValue()) {
+        tagProcessor.registerMechanism("redirect_logging", false, ElementTag.class, (object, mechanism, input) -> {
             if (!CoreConfiguration.allowConsoleRedirection) {
                 mechanism.echoError("Console redirection disabled by administrator (refer to mechanism documentation).");
                 return;
             }
-            if (mechanism.getValue().asBoolean()) {
+            if (input.asBoolean()) {
                 DenizenCore.logInterceptor.redirectOutput();
             }
             else {
                 DenizenCore.logInterceptor.standardOutput();
             }
-        }
+        });
 
         // <--[mechanism]
         // @object system
@@ -1056,12 +1049,12 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // If the ID isn't in use, will silently do nothing.
         // Use <@link tag util.runlater_ids> to check whether there is already a scheduled task with the given ID.
         // -->
-        if (mechanism.matches("cancel_runlater") && mechanism.hasValue()) {
-            RunLaterCommand.FutureRunData runner = RunLaterCommand.trackedById.remove(mechanism.getValue().asLowerString());
+        tagProcessor.registerMechanism("cancel_runlater", false, ElementTag.class, (object, mechanism, input) -> {
+            RunLaterCommand.FutureRunData runner = RunLaterCommand.trackedById.remove(input.asLowerString());
             if (runner != null) {
                 runner.cancelled = true;
             }
-        }
+        });
 
         // <--[mechanism]
         // @object system
@@ -1073,13 +1066,13 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // <util.event_stats>
         // <util.event_stats_data>
         // -->
-        if (mechanism.matches("reset_event_stats")) {
+        tagProcessor.registerMechanism("reset_event_stats", false, (object, mechanism) -> {
             for (ScriptEvent scriptEvent : ScriptEvent.events) {
                 scriptEvent.eventData.stats_fires = 0;
                 scriptEvent.eventData.stats_scriptFires = 0;
                 scriptEvent.eventData.stats_nanoTimes = 0;
             }
-        }
+        });
 
         // <--[mechanism]
         // @object system
@@ -1092,9 +1085,9 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @tags
         // <util.ram_free>
         // -->
-        if (mechanism.matches("cleanmem")) {
+        tagProcessor.registerMechanism("cleanmem", false, (object, mechanism) -> {
             System.gc();
-        }
+        });
 
         // <--[mechanism]
         // @object system
@@ -1109,12 +1102,12 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // @tags
         // <util.has_file[<file>]>
         // -->
-        if (mechanism.matches("delete_file") && mechanism.hasValue()) {
+        tagProcessor.registerMechanism("delete_file", false, ElementTag.class, (object, mechanism, input) -> {
             if (!CoreConfiguration.allowFileDeletion) {
                 mechanism.echoError("File deletion disabled by administrator (refer to mechanism documentation).");
                 return;
             }
-            File file = new File(DenizenCore.implementation.getDataFolder(), mechanism.getValue().asString());
+            File file = new File(DenizenCore.implementation.getDataFolder(), input.asString());
             if (!DenizenCore.implementation.canWriteToFile(file)) {
                 mechanism.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
                 return;
@@ -1127,8 +1120,8 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
             catch (Exception e) {
                 mechanism.echoError("Failed to delete file: " + e.getMessage());
             }
-        }
-
-        mechanism.autoReport();
+        });
     }
+
+    public static final long serverStartTimeMillis = CoreUtilities.monotonicMillis();
 }
