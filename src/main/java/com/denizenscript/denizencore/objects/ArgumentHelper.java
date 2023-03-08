@@ -53,9 +53,10 @@ public class ArgumentHelper {
         int len = stringArgs.length();
         char currentQuote = 0;
         int inTags = 0, inTagParams = 0;
+        boolean currentTagHasFallback = false;
         for (int i = 0; i < len; i++) {
             char c = stringArgs.charAt(i);
-            if (c == ' ' && currentQuote == 0 && inTagParams == 0) {
+            if (c == ' ' && currentQuote == 0 && inTagParams == 0 && !currentTagHasFallback) {
                 if (i > start) {
                     matchList.add(stringArgs.substring(start, i));
                 }
@@ -68,12 +69,18 @@ public class ArgumentHelper {
             }
             else if (c == '>' && inTags > 0) {
                 inTags--;
+                if (inTags == 0) {
+                    currentTagHasFallback = false;
+                }
             }
             else if (c == '[' && inTags > 0) {
                 inTagParams++;
             }
             else if (c == ']' && inTagParams > 0) {
                 inTagParams--;
+            }
+            else if (c == '|' && i > 0 && stringArgs.charAt(i - 1) == '|' && inTags == 1) {
+                currentTagHasFallback = true;
             }
             else if (c == '"' || c == '\'') {
                 if (currentQuote == 0 && inTagParams == 0) {
