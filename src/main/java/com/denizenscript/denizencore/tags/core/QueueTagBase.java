@@ -49,11 +49,7 @@ public class QueueTagBase {
         }
         if (attribute.startsWith("list", 2)) {
             Deprecations.queueStats.warn(attribute.context);
-            ListTag list = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                list.addObject(new QueueTag(queue));
-            }
-            event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(2)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(ScriptQueue.getQueues(), QueueTag::new), attribute.fulfill(2)));
             return;
         }
         // Modern tag:

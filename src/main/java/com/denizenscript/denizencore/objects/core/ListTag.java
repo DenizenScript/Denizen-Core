@@ -22,7 +22,10 @@ import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ListTag implements List<String>, ObjectTag {
@@ -359,11 +362,6 @@ public class ListTag implements List<String>, ObjectTag {
         return result.refreshState();
     }
 
-    @Deprecated
-    public static ListTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
     @Fetchable("li")
     public static ListTag valueOf(String string, TagContext context) {
         if (string == null) {
@@ -413,8 +411,8 @@ public class ListTag implements List<String>, ObjectTag {
     //   Constructors
     //////////
 
-    public ListTag(Collection<? extends ObjectTag> objectTagList) {
-        objectForms = new ArrayList<>(objectTagList);
+    public ListTag(Collection<? extends ObjectTag> objectTagCollection) {
+        objectForms = new ArrayList<>(objectTagCollection);
     }
 
     public ListTag(ObjectTag... objects) {
@@ -485,39 +483,37 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public ListTag(ListTag input) {
-        objectForms = new ArrayList<>(input.objectForms);
+        this(input.objectForms);
     }
 
     public ListTag(List<String> items, boolean isPlainText) {
-        objectForms = new ArrayList<>(items.size());
-        for (String str : items) {
-            objectForms.add(new ElementTag(str, isPlainText));
-        }
+        this(items, str -> new ElementTag(str, isPlainText));
     }
 
     public ListTag(List<String> items) {
-        objectForms = new ArrayList<>(items.size());
-        for (String str : items) {
-            objectForms.add(new ElementTag(str));
-        }
+        this(items, ElementTag::new);
     }
 
     // A Set<Object> of items
     public ListTag(Set<?> items) {
-        objectForms = new ArrayList<>(items.size());
-        for (Object o : items) {
-            if (o instanceof ObjectTag) {
-                objectForms.add((ObjectTag) o);
-            }
-            else {
-                objectForms.add(new ElementTag(o.toString()));
-            }
-        }
+        this(items, object -> object instanceof ObjectTag objectTag ? objectTag : new ElementTag(object.toString()));
     }
 
     public ListTag(Stream<String> items) {
-        objectForms = new ArrayList<>();
-        items.forEach(s -> objectForms.add(new ElementTag(s)));
+        objectForms = items.map(ElementTag::new).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public <T> ListTag(Collection<T> objects, Function<T, ObjectTag> convertor) {
+        this(objects, null, convertor);
+    }
+
+    public <T> ListTag(Collection<T> objects, Predicate<T> filter, Function<T, ObjectTag> convertor) {
+        this(objects.size());
+        for (T object : objects) {
+            if (filter == null || filter.test(object)) {
+                addObject(convertor.apply(object));
+            }
+        }
     }
 
     /////////////
@@ -2211,7 +2207,7 @@ public class ListTag implements List<String>, ObjectTag {
                         return 0;
                     }
                 });
-                return new ListTag(newlist.objectForms);
+                return new ListTag(newlist);
             }
             catch (Exception ex) {
                 Debug.echoError(ex);
@@ -2447,7 +2443,7 @@ public class ListTag implements List<String>, ObjectTag {
             if (!attribute.hasParam()) {
                 return null;
             }
-            ListTag newlist = new ListTag();
+            ListTag newlist = new ListTag(object.size());
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
                 for (ObjectTag obj : object.objectForms) {

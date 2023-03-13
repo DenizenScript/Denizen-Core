@@ -42,18 +42,14 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
     }
 
     public static ListTag getStatsRawData() {
-        ListTag result = new ListTag();
-        for (ScriptEvent event : ScriptEvent.events) {
-            if (event.eventData.stats_fires > 0) {
-                MapTag map = new MapTag();
-                map.putObject("name", new ElementTag(event.getName()));
-                map.putObject("total_fires", new ElementTag(event.eventData.stats_fires));
-                map.putObject("script_fires", new ElementTag(event.eventData.stats_scriptFires));
-                map.putObject("total_time", new DurationTag(event.eventData.stats_nanoTimes / 1000000.0));
-                result.addObject(map);
-            }
-        }
-        return result;
+        return new ListTag(ScriptEvent.events, event -> event.eventData.stats_fires > 0, event -> {
+            MapTag map = new MapTag();
+            map.putObject("name", new ElementTag(event.getName(), true));
+            map.putObject("total_fires", new ElementTag(event.eventData.stats_fires));
+            map.putObject("script_fires", new ElementTag(event.eventData.stats_scriptFires));
+            map.putObject("total_time", new DurationTag(event.eventData.stats_nanoTimes / 1000000.0));
+            return map;
+        });
     }
 
     public static ScriptQueue getExistingQueue(String id) {

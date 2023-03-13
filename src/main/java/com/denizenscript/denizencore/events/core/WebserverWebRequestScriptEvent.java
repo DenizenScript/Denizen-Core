@@ -276,11 +276,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             case "headers": {
                 MapTag output = new MapTag();
                 for (Map.Entry<String, List<String>> header : exchange.getRequestHeaders().entrySet()) {
-                    ListTag list = new ListTag();
-                    for (String str : header.getValue()) {
-                        list.addObject(new ElementTag(str, true));
-                    }
-                    output.putObject(header.getKey(), list);
+                    output.putObject(header.getKey(), new ListTag(header.getValue(), ElementTag::fromPlainText));
                 }
                 return output;
             }

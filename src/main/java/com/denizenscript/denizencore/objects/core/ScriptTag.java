@@ -295,16 +295,8 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (obj == null) {
                 return null;
             }
-            if (obj instanceof List) {
-                ListTag list = new ListTag();
-                for (Object each : (List<Object>) obj) {
-                    if (each == null) {
-                        each = "null";
-                    }
-                    list.add(TagManager.tag(each.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
-                }
-                return list;
-
+            if (obj instanceof List<?> list) {
+                return new ListTag(list, each -> new ElementTag(TagManager.tag(String.valueOf(each), DenizenCore.implementation.getTagContext(attribute.getScriptEntry()))));
             }
             else {
                 return new ElementTag(TagManager.tag(obj.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
@@ -375,7 +367,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (conf == null) {
                 return null;
             }
-            return new ListTag(conf.getKeys(false));
+            return new ListTag(conf.getKeys(false), stringHolder -> new ElementTag(stringHolder.str, true));
         });
 
         // <--[tag]
@@ -389,7 +381,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (conf == null) {
                 return null;
             }
-            return new ListTag(conf.getKeys(true));
+            return new ListTag(conf.getKeys(true), stringHolder -> new ElementTag(stringHolder.str, true));
         });
 
         // <--[tag]
@@ -427,13 +419,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns all queues which are running for this script.
         // -->
         tagProcessor.registerTag(ListTag.class, "queues", (attribute, object) -> {
-            ListTag queues = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                if (queue.script != null && queue.script.getName().equals(object.getName())) {
-                    queues.addObject(new QueueTag(queue));
-                }
-            }
-            return queues;
+            return new ListTag(ScriptQueue.getQueues(), queue -> queue.script != null && queue.script.getName().equals(object.getName()), QueueTag::new);
         }, "list_queues");
     }
 

@@ -161,14 +161,8 @@ public class AdjustCommand extends AbstractCommand {
                 object = altObject;
             }
         }
-        if (object instanceof ListTag) {
-            ListTag subList = (ListTag) object;
-            ListTag result = new ListTag();
-            for (ObjectTag listObject : subList.objectForms) {
-                listObject = adjust(listObject, mechanism, entry);
-                result.addObject(listObject);
-            }
-            return result;
+        if (object instanceof ListTag subList) {
+            return new ListTag(subList.objectForms, obj -> adjust(obj, mechanism, entry));
         }
         if (!object.isUnique()) {
             object = ObjectFetcher.pickObjectFor(object.identify(), mechanism.context); // Create duplicate of object, instead of adjusting original
@@ -194,8 +188,7 @@ public class AdjustCommand extends AbstractCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), objects, value, mechanism, mechanismMap);
         }
-        ListTag result = new ListTag();
-        for (ObjectTag object : objects.objectForms) {
+        ListTag result = new ListTag(objects.objectForms, object -> {
             if (mechanismMap != null) {
                 for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
                     object = adjust(object, entry.getKey().str, entry.getValue(), scriptEntry);
@@ -207,8 +200,8 @@ public class AdjustCommand extends AbstractCommand {
             if (objects.size() == 1) {
                 scriptEntry.saveObject("result", object);
             }
-            result.addObject(object);
-        }
+            return object;
+        });
         scriptEntry.saveObject("result_list", result);
     }
 }

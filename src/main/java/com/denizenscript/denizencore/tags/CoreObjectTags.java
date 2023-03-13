@@ -251,7 +251,7 @@ public class CoreObjectTags {
                 return null;
             }
             int repeatTimes = attribute.getIntParam();
-            ListTag result = new ListTag();
+            ListTag result = new ListTag(repeatTimes);
             for (int i = 0; i < repeatTimes; i++) {
                 result.addObject(object.duplicate());
             }

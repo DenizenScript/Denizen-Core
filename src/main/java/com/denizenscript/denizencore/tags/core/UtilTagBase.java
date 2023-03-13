@@ -307,9 +307,9 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "list_numbers_to", (attribute, object, toElement) -> {
             int to = toElement.asInt();
-            ListTag result = new ListTag();
+            ListTag result = new ListTag(to);
             for (int i = 1; i <= to; i++) {
-                result.add(String.valueOf(i));
+                result.addObject(new ElementTag(i));
             }
             return result;
         });
@@ -322,9 +322,9 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, ElementTag.class, "empty_list_entries", (attribute, object, toElement) -> {
             int to = toElement.asInt();
-            ListTag result = new ListTag();
+            ListTag result = new ListTag(to);
             for (int i = 1; i <= to; i++) {
-                result.add("");
+                result.addObject(new ElementTag("", true));
             }
             return result;
         });
@@ -426,7 +426,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all currently loaded Denizen commands.
         // -->
         tagProcessor.registerTag(ListTag.class, "list_denizen_commands", (attribute, object) -> {
-            return new ListTag(DenizenCore.commandRegistry.instances.keySet());
+            return new ListTag(DenizenCore.commandRegistry.instances.keySet(), ElementTag::fromPlainText);
         });
 
         // <--[tag]
@@ -436,7 +436,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all currently loaded Denizen tag bases (including "player", "context", "util", "server", etc).
         // -->
         tagProcessor.registerTag(ListTag.class, "list_tag_bases", (attribute, object) -> {
-            return new ListTag(TagManager.baseTags.keySet());
+            return new ListTag(TagManager.baseTags.keySet(), ElementTag::fromPlainText);
         });
 
         tagProcessor.registerTag(TimeTag.class, "time_at", (attribute, object) -> {
@@ -572,11 +572,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all currently running queues on the server.
         // -->
         tagProcessor.registerTag(ListTag.class, "queues", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                list.addObject(new QueueTag(queue));
-            }
-            return list;
+            return new ListTag(ScriptQueue.getQueues(), QueueTag::new);
         });
 
         // <--[tag]
@@ -617,7 +613,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Note that usages of runlater that didn't specify an ID will not show up here.
         // -->
         tagProcessor.registerTag(ListTag.class, "runlater_ids", (attribute, object) -> {
-            return new ListTag(new ArrayList<>(RunLaterCommand.trackedById.keySet()), true);
+            return new ListTag(RunLaterCommand.trackedById.keySet(), ElementTag::fromPlainText);
         });
 
         // <--[tag]
@@ -677,11 +673,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
             if (files == null) {
                 return null;
             }
-            ListTag list = new ListTag();
-            for (File file : files) {
-                list.add(file.getName());
-            }
-            return list;
+            return new ListTag(Arrays.asList(files), file -> new ElementTag(file.getName(), true));
         });
 
         // <--[tag]
@@ -844,24 +836,18 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // This is primarily intended for debugging purposes, and it's best to avoid using this in a live script if possible.
         // -->
         tagProcessor.registerTag(ListTag.class, "notes", (attribute, object) -> {
-            ListTag allNotables = new ListTag();
             if (attribute.hasParam()) {
                 String type = CoreUtilities.toLowerCase(attribute.getParam());
                 for (Map.Entry<String, Class> typeClass : NoteManager.namesToTypes.entrySet()) {
                     if (type.equals(CoreUtilities.toLowerCase(typeClass.getKey()))) {
-                        for (Object notable : NoteManager.getAllType(typeClass.getValue())) {
-                            allNotables.addObject((ObjectTag) notable);
-                        }
-                        break;
+                        return new ListTag(NoteManager.getAllType(typeClass.getValue()), notable -> (ObjectTag) notable);
                     }
                 }
             }
             else {
-                for (Notable notable : NoteManager.nameToObject.values()) {
-                    allNotables.addObject((ObjectTag) notable);
-                }
+                return new ListTag(NoteManager.nameToObject.values(), notable -> (ObjectTag) notable);
             }
-            return allNotables;
+            return new ListTag();
         });
 
         // <--[tag]
@@ -896,11 +882,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         if (CommandRegistry.shouldRegisterByClass("Redis command", "redis.clients.jedis.Jedis")) {
             tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
-                ListTag list = new ListTag();
-                for (String entry : RedisHelper.connections.keySet()) {
-                    list.addObject(new ElementTag(entry, true));
-                }
-                return list;
+                return new ListTag(RedisHelper.connections.keySet(), ElementTag::fromPlainText);
             });
         }
 
@@ -912,11 +894,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         if (CommandRegistry.shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
             tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
-                ListTag list = new ListTag();
-                for (String entry : MongoCommand.mongoConnections.keySet()) {
-                    list.addObject(new ElementTag(entry, true));
-                }
-                return list;
+                return new ListTag(MongoCommand.mongoConnections.keySet(), ElementTag::fromPlainText);
             });
         }
 
@@ -927,11 +905,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Gets a list of all scripts currently loaded into Denizen.
         // -->
         tagProcessor.registerTag(ListTag.class, "scripts", (attribute, object) -> {
-            ListTag scripts = new ListTag();
-            for (ScriptContainer script : ScriptRegistry.scriptContainers.values()) {
-                scripts.addObject(new ScriptTag(script));
-            }
-            return scripts;
+            return new ListTag(ScriptRegistry.scriptContainers.values(), ScriptTag::new);
         });
 
         // <--[tag]

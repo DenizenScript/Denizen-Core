@@ -50,19 +50,14 @@ public class RedisHelper {
     }
 
     public static ObjectTag processResponse(Object response) {
-        if (response instanceof List) {
-            ListTag list = new ListTag();
-            for (Object o : (List) response) {
-                ObjectTag resp = processResponse(o);
-                if (resp == null) {
-                    resp = new ElementTag("null");
-                }
-                list.addObject(resp);
-            }
-            return list;
+        if (response instanceof List<?> responseList) {
+            return new ListTag(responseList, object -> {
+                ObjectTag resp = processResponse(object);
+                return resp == null ? new ElementTag("null", true) : resp;
+            });
         }
-        else if (response instanceof byte[]) {
-            return new ElementTag(new String((byte[]) response));
+        else if (response instanceof byte[] responseBytes) {
+            return new ElementTag(new String(responseBytes));
         }
         else if (response instanceof Long) {
             return new ElementTag((long) response);

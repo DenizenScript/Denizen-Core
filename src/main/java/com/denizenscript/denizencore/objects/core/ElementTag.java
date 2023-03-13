@@ -18,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -130,6 +132,17 @@ public class ElementTag implements ObjectTag {
             return null;
         }
         return object;
+    }
+
+    /**
+     * Constructs a plain-text {@link ElementTag} from the input {@link String}.
+     * This method is a util for {@link ListTag#ListTag(Collection, Function)} and it's variants, should usually use the constructor instead.
+     *
+     * @param plainText The plain-text {@link String} to construct an ElementTag from.
+     * @return A plain-text {@link ElementTag} constructed from {@code plainText}.
+     */
+    public static ElementTag fromPlainText(String plainText) {
+        return new ElementTag(plainText, true);
     }
 
     private final String element;
@@ -1318,9 +1331,9 @@ public class ElementTag implements ObjectTag {
         // Returns a ListTag of each letter in the element.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
-            ListTag list = new ListTag();
+            ListTag list = new ListTag(object.element.length());
             for (int i = 0; i < object.element.length(); i++) {
-                list.add(String.valueOf(object.element.charAt(i)));
+                list.addObject(new ElementTag(String.valueOf(object.element.charAt(i)), true));
             }
             return list;
         });

@@ -255,7 +255,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 if (key == null) {
                     key = "null";
                 }
-                resultHeaders.putObject(key, new ListTag(header.getValue()));
+                resultHeaders.putObject(key, new ListTag(header.getValue(), true));
             }
             final long timeDone = CoreUtilities.monotonicMillis();
             DenizenCore.schedule(new Schedulable() {
