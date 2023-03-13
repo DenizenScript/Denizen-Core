@@ -64,6 +64,9 @@ public class IfCommand extends BracedCommand {
     // You can also use keyword "not" as its own argument to negate a boolean or an operator.
     // For example, "if not <[a]>:" will require a to be false, and "if <[a]> not equals <[b]>:" will require that 'a' does not equal 'b'.
     //
+    // When not using a specific comparison operator, true vs false will be determined by Truthiness, see <@link tag ObjectTag.is_truthy> for details.
+    // For example, "- if <player||null>:" will pass if a player is linked, valid, and online.
+    //
     // @Tags
     // <ObjectTag.is[<operator>].to[<element>]>
     // <ObjectTag.is[<operator>].than[<element>]>
@@ -295,17 +298,7 @@ public class IfCommand extends BracedCommand {
             ObjectTag value;
 
             boolean boolify() {
-                String rawValue = value.toString();
-                if (CoreUtilities.equalsIgnoreCase(rawValue, "true")) {
-                    return !negative;
-                }
-                else if (CoreUtilities.equalsIgnoreCase(rawValue, "false")) {
-                    return negative;
-                }
-                else {
-                    Debug.echoError(scriptEntry, "Invalid if comparison boolean '" + rawValue + "' - defaulting to false.");
-                    return false;
-                }
+                return value.isTruthy() != negative;
             }
 
             @Override
