@@ -1,16 +1,16 @@
 package com.denizenscript.denizencore.scripts.queues;
 
-import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.*;
-import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
-import com.denizenscript.denizencore.utilities.*;
-import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
-import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.ScriptEvent;
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
+import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.Debuggable;
+import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
+import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
 
 import java.util.*;
 import java.util.function.Consumer;
