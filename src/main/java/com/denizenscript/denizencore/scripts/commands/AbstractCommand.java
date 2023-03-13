@@ -63,7 +63,7 @@ public abstract class AbstractCommand {
 
         public ArrayList<String> completions = new ArrayList<>();
 
-        public final void addWithPrefix(String prefix, Set<String> values) {
+        public final void addWithPrefix(String prefix, Iterable<String> values) {
             if (arg.startsWith(prefix)) {
                 for (String val : values) {
                     add(prefix + val);
@@ -98,7 +98,7 @@ public abstract class AbstractCommand {
             }
         }
 
-        public final void add(Set<String> values) {
+        public final void add(Iterable<String> values) {
             for (String val : values) {
                 add(val);
             }
