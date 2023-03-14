@@ -411,8 +411,8 @@ public class ListTag implements List<String>, ObjectTag {
     //   Constructors
     //////////
 
-    public ListTag(Collection<? extends ObjectTag> objectTagCollection) {
-        objectForms = new ArrayList<>(objectTagCollection);
+    public ListTag(Collection<? extends ObjectTag> objectTagList) {
+        objectForms = new ArrayList<>(objectTagList);
     }
 
     public ListTag(ObjectTag... objects) {
@@ -483,20 +483,29 @@ public class ListTag implements List<String>, ObjectTag {
     }
 
     public ListTag(ListTag input) {
-        this(input.objectForms);
+        objectForms = new ArrayList<>(input.objectForms);
     }
 
     public ListTag(List<String> items, boolean isPlainText) {
-        this(items, str -> new ElementTag(str, isPlainText));
+        objectForms = new ArrayList<>(items.size());
+        for (String str : items) {
+            objectForms.add(new ElementTag(str, isPlainText));
+        }
     }
 
     public ListTag(List<String> items) {
-        this(items, ElementTag::new);
+        objectForms = new ArrayList<>(items.size());
+        for (String str : items) {
+            objectForms.add(new ElementTag(str));
+        }
     }
 
     // A Set<Object> of items
     public ListTag(Set<?> items) {
-        this(items, object -> object instanceof ObjectTag objectTag ? objectTag : new ElementTag(object.toString()));
+        objectForms = new ArrayList<>(items.size());
+        for (Object o : items) {
+            objectForms.add(o instanceof ObjectTag objectTag ? objectTag : new ElementTag(o.toString()));
+        }
     }
 
     public ListTag(Stream<String> items) {
