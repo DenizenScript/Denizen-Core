@@ -199,7 +199,7 @@ public abstract class AbstractFlagTracker {
                 listFlagsTagWarning.warn(attribute.context);
             }
         }
-        return new ListTag(listAllFlags(), ElementTag::fromPlainText);
+        return new ListTag(listAllFlags(), true);
     }
 
     public MapTag getFlagMap() {

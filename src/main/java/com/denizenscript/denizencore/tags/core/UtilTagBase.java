@@ -424,7 +424,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all currently loaded Denizen commands.
         // -->
         tagProcessor.registerTag(ListTag.class, "list_denizen_commands", (attribute, object) -> {
-            return new ListTag(DenizenCore.commandRegistry.instances.keySet(), ElementTag::fromPlainText);
+            return new ListTag(DenizenCore.commandRegistry.instances.keySet(), true);
         });
 
         // <--[tag]
@@ -434,7 +434,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all currently loaded Denizen tag bases (including "player", "context", "util", "server", etc).
         // -->
         tagProcessor.registerTag(ListTag.class, "list_tag_bases", (attribute, object) -> {
-            return new ListTag(TagManager.baseTags.keySet(), ElementTag::fromPlainText);
+            return new ListTag(TagManager.baseTags.keySet(), true);
         });
 
         tagProcessor.registerTag(TimeTag.class, "time_at", (attribute, object) -> {
@@ -611,7 +611,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Note that usages of runlater that didn't specify an ID will not show up here.
         // -->
         tagProcessor.registerTag(ListTag.class, "runlater_ids", (attribute, object) -> {
-            return new ListTag(RunLaterCommand.trackedById.keySet(), ElementTag::fromPlainText);
+            return new ListTag(RunLaterCommand.trackedById.keySet(), true);
         });
 
         // <--[tag]
@@ -880,7 +880,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         if (CommandRegistry.shouldRegisterByClass("Redis command", "redis.clients.jedis.Jedis")) {
             tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
-                return new ListTag(RedisHelper.connections.keySet(), ElementTag::fromPlainText);
+                return new ListTag(RedisHelper.connections.keySet(), true);
             });
         }
 
@@ -892,7 +892,7 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         if (CommandRegistry.shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
             tagProcessor.registerTag(ListTag.class, "mongo_connections", (attribute, object) -> {
-                return new ListTag(MongoCommand.mongoConnections.keySet(), ElementTag::fromPlainText);
+                return new ListTag(MongoCommand.mongoConnections.keySet(), true);
             });
         }
 

@@ -707,7 +707,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns a list of all currently loaded YAML ID's.
         // -->
         if (attribute.startsWith("list")) {
-            return new ListTag(yamlDocuments.keySet(), ElementTag::fromPlainText);
+            return new ListTag(yamlDocuments.keySet(), true);
         }
         if (id == null) {
             attribute.echoError("yaml[...] tag must specify a YAML id.");
