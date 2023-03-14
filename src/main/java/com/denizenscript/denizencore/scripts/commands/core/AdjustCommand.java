@@ -188,7 +188,8 @@ public class AdjustCommand extends AbstractCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), objects, value, mechanism, mechanismMap);
         }
-        ListTag result = new ListTag(objects.objectForms, object -> {
+        ListTag result = new ListTag(objects.size());
+        for (ObjectTag object : objects.objectForms) {
             if (mechanismMap != null) {
                 for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
                     object = adjust(object, entry.getKey().str, entry.getValue(), scriptEntry);
@@ -200,8 +201,8 @@ public class AdjustCommand extends AbstractCommand {
             if (objects.size() == 1) {
                 scriptEntry.saveObject("result", object);
             }
-            return object;
-        });
+            result.addObject(object);
+        };
         scriptEntry.saveObject("result_list", result);
     }
 }
