@@ -107,11 +107,6 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
     // Object Fetcher
     /////////////
 
-    @Deprecated
-    public static ScriptTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
     @Fetchable("s")
     public static ScriptTag valueOf(String string, TagContext context) {
         if (string.startsWith("s@")) {

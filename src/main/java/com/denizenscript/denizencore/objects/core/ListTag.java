@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 public class ListTag implements List<String>, ObjectTag {
 
-    // NOTE: Explicitly not example value
+    // NOTE: Explicitly no example value
     // <--[ObjectType]
     // @name ListTag
     // @prefix li

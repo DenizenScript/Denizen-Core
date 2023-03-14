@@ -39,11 +39,6 @@ public class QueueTag implements ObjectTag, Adjustable, FlaggableObject {
     //
     // -->
 
-    @Deprecated
-    public static QueueTag valueOf(String string) {
-        return valueOf(string, null);
-    }
-
     @Fetchable("q")
     public static QueueTag valueOf(String string, TagContext context) {
         if (string == null) {

@@ -25,28 +25,6 @@ public interface ObjectTag {
     //
     // -->
 
-    /*
-     * ObjectTags should contain these two static methods, of which valueOf contains a valid
-     * annotation for ObjectFetcher
-     *
-     * public static ObjectTag valueOf(String string);
-     *
-     * valueOf() should take a string representation of the object, preferably with a valid object
-     * notation (x@), and turn it into a new instance of the ObjectTag. Care has to be taken to
-     * ensure that it is compatible with the tag system (ie. no periods (.) outside of square brackets),
-     * and other parts of Denizen.
-     *
-     * Since your object may be using the ObjectTag Attributes System, valueOf should take that into
-     * account as well.
-     *
-     *
-     * public static boolean matches()
-     *
-     * matches() should use some logic to determine if a string is in the proper format to possibly
-     * return a non-null valueOf() call.
-     *
-     */
-
     /**
      * Retrieves the dScript argument prefix. ObjectTags should provide a default
      * prefix if nothing else has been specified.
