@@ -202,7 +202,7 @@ public class AdjustCommand extends AbstractCommand {
                 scriptEntry.saveObject("result", object);
             }
             result.addObject(object);
-        };
+        }
         scriptEntry.saveObject("result_list", result);
     }
 }
