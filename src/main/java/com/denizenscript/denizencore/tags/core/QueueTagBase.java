@@ -1,14 +1,14 @@
 package com.denizenscript.denizencore.tags.core;
 
 import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.tags.TagRunnable;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.tags.TagRunnable;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 
 public class QueueTagBase {
@@ -49,11 +49,7 @@ public class QueueTagBase {
         }
         if (attribute.startsWith("list", 2)) {
             Deprecations.queueStats.warn(attribute.context);
-            ListTag list = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                list.addObject(new QueueTag(queue));
-            }
-            event.setReplacedObject(CoreUtilities.autoAttrib(list, attribute.fulfill(2)));
+            event.setReplacedObject(CoreUtilities.autoAttrib(new ListTag(ScriptQueue.getQueues(), QueueTag::new), attribute.fulfill(2)));
             return;
         }
         // Modern tag:

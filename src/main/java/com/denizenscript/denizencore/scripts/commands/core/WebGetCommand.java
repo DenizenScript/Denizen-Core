@@ -1,7 +1,9 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
-import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.generator.*;
@@ -10,11 +12,12 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.scheduling.Schedulable;
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -255,7 +258,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 if (key == null) {
                     key = "null";
                 }
-                resultHeaders.putObject(key, new ListTag(header.getValue()));
+                resultHeaders.putObject(key, new ListTag(header.getValue(), true));
             }
             final long timeDone = CoreUtilities.monotonicMillis();
             DenizenCore.schedule(new Schedulable() {

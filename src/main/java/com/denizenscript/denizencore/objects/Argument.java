@@ -181,8 +181,8 @@ public class Argument implements Cloneable {
     }
 
     public ListTag getList(TagContext context) {
-        if (object instanceof ListTag) {
-            return (ListTag) object;
+        if (object instanceof ListTag listTag) {
+            return listTag;
         }
         if (object instanceof ElementTag) {
             if (context == null && scriptEntry != null) {

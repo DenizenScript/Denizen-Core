@@ -1,18 +1,24 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.flags.RedirectionFlagTracker;
-import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.Adjustable;
+import com.denizenscript.denizencore.objects.Fetchable;
+import com.denizenscript.denizencore.objects.Mechanism;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.tags.*;
+import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -295,16 +301,8 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (obj == null) {
                 return null;
             }
-            if (obj instanceof List) {
-                ListTag list = new ListTag();
-                for (Object each : (List<Object>) obj) {
-                    if (each == null) {
-                        each = "null";
-                    }
-                    list.add(TagManager.tag(each.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
-                }
-                return list;
-
+            if (obj instanceof List<?> list) {
+                return new ListTag(list, each -> new ElementTag(TagManager.tag(String.valueOf(each), DenizenCore.implementation.getTagContext(attribute.getScriptEntry()))));
             }
             else {
                 return new ElementTag(TagManager.tag(obj.toString(), DenizenCore.implementation.getTagContext(attribute.getScriptEntry())));
@@ -375,7 +373,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (conf == null) {
                 return null;
             }
-            return new ListTag(conf.getKeys(false));
+            return new ListTag(conf.getKeys(false), stringHolder -> new ElementTag(stringHolder.str, true));
         });
 
         // <--[tag]
@@ -389,7 +387,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
             if (conf == null) {
                 return null;
             }
-            return new ListTag(conf.getKeys(true));
+            return new ListTag(conf.getKeys(true), stringHolder -> new ElementTag(stringHolder.str, true));
         });
 
         // <--[tag]
@@ -427,13 +425,7 @@ public class ScriptTag implements ObjectTag, Adjustable, FlaggableObject {
         // Returns all queues which are running for this script.
         // -->
         tagProcessor.registerTag(ListTag.class, "queues", (attribute, object) -> {
-            ListTag queues = new ListTag();
-            for (ScriptQueue queue : ScriptQueue.getQueues()) {
-                if (queue.script != null && queue.script.getName().equals(object.getName())) {
-                    queues.addObject(new QueueTag(queue));
-                }
-            }
-            return queues;
+            return new ListTag(ScriptQueue.getQueues(), queue -> queue.script != null && queue.script.getName().equals(object.getName()), QueueTag::new);
         }, "list_queues");
     }
 

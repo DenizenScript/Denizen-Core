@@ -199,9 +199,7 @@ public abstract class AbstractFlagTracker {
                 listFlagsTagWarning.warn(attribute.context);
             }
         }
-        ListTag list = new ListTag();
-        list.addAll(listAllFlags());
-        return list;
+        return new ListTag(listAllFlags(), true);
     }
 
     public MapTag getFlagMap() {

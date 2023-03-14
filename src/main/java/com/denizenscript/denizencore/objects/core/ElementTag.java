@@ -1318,9 +1318,9 @@ public class ElementTag implements ObjectTag {
         // Returns a ListTag of each letter in the element.
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
-            ListTag list = new ListTag();
+            ListTag list = new ListTag(object.element.length());
             for (int i = 0; i < object.element.length(); i++) {
-                list.add(String.valueOf(object.element.charAt(i)));
+                list.addObject(new ElementTag(String.valueOf(object.element.charAt(i)), true));
             }
             return list;
         });

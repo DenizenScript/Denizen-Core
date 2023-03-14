@@ -8,10 +8,10 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.HashMap;
@@ -161,14 +161,8 @@ public class AdjustCommand extends AbstractCommand {
                 object = altObject;
             }
         }
-        if (object instanceof ListTag) {
-            ListTag subList = (ListTag) object;
-            ListTag result = new ListTag();
-            for (ObjectTag listObject : subList.objectForms) {
-                listObject = adjust(listObject, mechanism, entry);
-                result.addObject(listObject);
-            }
-            return result;
+        if (object instanceof ListTag subList) {
+            return new ListTag(subList.objectForms, obj -> adjust(obj, mechanism, entry));
         }
         if (!object.isUnique()) {
             object = ObjectFetcher.pickObjectFor(object.identify(), mechanism.context); // Create duplicate of object, instead of adjusting original
@@ -194,7 +188,7 @@ public class AdjustCommand extends AbstractCommand {
         if (scriptEntry.dbCallShouldDebug()) {
             Debug.report(scriptEntry, getName(), objects, value, mechanism, mechanismMap);
         }
-        ListTag result = new ListTag();
+        ListTag result = new ListTag(objects.size());
         for (ObjectTag object : objects.objectForms) {
             if (mechanismMap != null) {
                 for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {

@@ -1,13 +1,17 @@
 package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.exceptions.TagProcessingException;
-import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.Fetchable;
+import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagRunnable;
-import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.NaturalOrderComparator;
+import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 import org.json.JSONObject;
@@ -310,11 +314,7 @@ public class MapTag implements ObjectTag {
     }
 
     public ListTag keys() {
-        ListTag result = new ListTag();
-        for (StringHolder entry : map.keySet()) {
-            result.add(entry.str);
-        }
-        return result;
+        return new ListTag(map.keySet(), stringHolder -> new ElementTag(stringHolder.str, true));
     }
 
     public static void register() {
@@ -543,12 +543,7 @@ public class MapTag implements ObjectTag {
                 return null;
             }
             if (attribute.getParam().contains("|")) {
-                ListTag keyList = attribute.getParamObject().asType(ListTag.class, attribute.context);
-                ListTag valList = new ListTag();
-                for (String key : keyList) {
-                    valList.addObject(object.getObject(key));
-                }
-                return valList;
+                return new ListTag(attribute.paramAsType(ListTag.class), object::getObject);
             }
             return object.getObject(attribute.getParam());
         });
@@ -577,12 +572,7 @@ public class MapTag implements ObjectTag {
                 return null;
             }
             if (attribute.getParam().contains("|")) {
-                ListTag keyList = attribute.getParamObject().asType(ListTag.class, attribute.context);
-                ListTag valList = new ListTag();
-                for (String key : keyList) {
-                    valList.addObject(object.getDeepObject(key));
-                }
-                return valList;
+                return new ListTag(attribute.paramAsType(ListTag.class), object::getDeepObject);
             }
             return object.getDeepObject(attribute.getParam());
         };
@@ -866,11 +856,7 @@ public class MapTag implements ObjectTag {
         // - narrate <map[a=1;b=2;c=3].values>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "values", (attribute, object) -> {
-            ListTag result = new ListTag();
-            for (ObjectTag entry : object.map.values()) {
-                result.addObject(entry);
-            }
-            return result;
+            return new ListTag(object.map.values());
         }, "list_values");
 
         // <--[tag]
@@ -884,14 +870,12 @@ public class MapTag implements ObjectTag {
         //     - narrate "<[pair].get[1]> is set to <[pair].get[2]>"
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_pair_lists", (attribute, object) -> {
-            ListTag result = new ListTag();
-            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                ListTag pair = new ListTag();
-                pair.add(entry.getKey().str);
+            return new ListTag(object.map.entrySet(), entry -> {
+                ListTag pair = new ListTag(2);
+                pair.addObject(new ElementTag(entry.getKey().str, true));
                 pair.addObject(entry.getValue());
-                result.addObject(pair);
-            }
-            return result;
+                return pair;
+            });
         });
 
         // <--[tag]
@@ -908,11 +892,7 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
             String separator = attribute.hasParam() ? attribute.getParam() : "/";
-            ListTag result = new ListTag();
-            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                result.add(entry.getKey().str + separator + entry.getValue().identify());
-            }
-            return result;
+            return new ListTag(object.map.entrySet(), entry -> new ElementTag(entry.getKey().str + separator + entry.getValue().identify(), true));
         });
 
         // <--[tag]

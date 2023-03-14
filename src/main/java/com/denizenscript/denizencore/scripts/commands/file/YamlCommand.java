@@ -1,12 +1,19 @@
 package com.denizenscript.denizencore.scripts.commands.file;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.objects.Argument;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
+import com.denizenscript.denizencore.tags.Attribute;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
@@ -16,11 +23,6 @@ import com.denizenscript.denizencore.utilities.data.DataAction;
 import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.scripts.ScriptHelper;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.TagManager;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -705,9 +707,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
         // Returns a list of all currently loaded YAML ID's.
         // -->
         if (attribute.startsWith("list")) {
-            ListTag list = new ListTag();
-            list.addAll(yamlDocuments.keySet());
-            return list;
+            return new ListTag(yamlDocuments.keySet(), true);
         }
         if (id == null) {
             attribute.echoError("yaml[...] tag must specify a YAML id.");
@@ -796,7 +796,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                return new ListTag(keys);
+                return new ListTag(keys, stringHolder -> new ElementTag(stringHolder.str, true));
             }
         }
 
@@ -825,7 +825,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
 
             }
             else {
-                return new ListTag(keys);
+                return new ListTag(keys, stringHolder -> new ElementTag(stringHolder.str, true));
             }
         }
 
