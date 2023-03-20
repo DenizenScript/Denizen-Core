@@ -560,7 +560,12 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Parses the input YAML or JSON text into a MapTag.
         // -->
         tagProcessor.registerStaticTag(MapTag.class, ElementTag.class, "parse_yaml", (attribute, object, rawYaml) -> {
-            return (MapTag) CoreUtilities.objectToTagForm(YamlConfiguration.load(rawYaml.asString()).contents, attribute.context);
+            YamlConfiguration yaml = YamlConfiguration.load(rawYaml.asString());
+            if (yaml == null) {
+                attribute.echoError("Could not load input parameter as YAML.");
+                return null;
+            }
+            return (MapTag) CoreUtilities.objectToTagForm(yaml.contents, attribute.context);
         });
 
         // <--[tag]

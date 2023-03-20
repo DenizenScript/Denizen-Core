@@ -55,7 +55,7 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
     // - waituntil rate:1s <player.health> > 15
     // -->
 
-    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue queue,
+    public static void autoExecute(ScriptEntry scriptEntry, ScriptQueue origQueue,
                                    @ArgUnparsed @ArgNoDebug @ArgRaw @ArgLinear @ArgName("if_comparisons") List<ScriptEntry.InternalArgument> comparisons,
                                    @ArgPrefixed @ArgName("rate") @ArgDefaultNull DurationTag rate,
                                    @ArgPrefixed @ArgName("max") @ArgDefaultNull DurationTag max) {
@@ -67,15 +67,19 @@ public class WaitUntilCommand extends AbstractCommand implements Holdable {
         }
         Debug.echoDebug(scriptEntry, "WaitUntil first check <A>false<W>, will wait...");
         if (rate == null) {
-            if (queue instanceof TimedQueue) {
-                rate = ((TimedQueue) queue).getSpeed();
+            if (origQueue instanceof TimedQueue) {
+                rate = ((TimedQueue) origQueue).getSpeed();
             }
             else {
                 rate = new DurationTag((long) 1);
             }
         }
+        if (!(origQueue instanceof TimedQueue)) {
+            origQueue = origQueue.forceToTimed(null);
+        }
         long endTime = max == null ? -1 : DenizenCore.serverTimeMillis + max.getMillis();
         final RepeatingSchedulable schedulable = new RepeatingSchedulable(null, (float) rate.getSeconds());
+        final ScriptQueue queue = origQueue;
         schedulable.run = new Runnable() {
             public int counter = 0;
             @Override
