@@ -48,7 +48,7 @@ public class TaskScriptContainer extends ScriptContainer {
     @Override
     public void postCheck() {
         // Trigger load + cache
-        if (contains("script")) {
+        if (shouldEnable() && contains("script")) {
             getBaseEntries(DenizenCore.implementation.getEmptyScriptEntryData());
         }
     }
