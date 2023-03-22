@@ -16,7 +16,10 @@ import com.denizenscript.denizencore.utilities.data.DataActionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class FlagCommand extends AbstractCommand {
 
@@ -152,8 +155,9 @@ public class FlagCommand extends AbstractCommand {
     // - flag server myflag[3]:HelloWorld
     // -->
 
-    @Override
-    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+    public static List<Consumer<TabCompletionsBuilder>> flagTabCompleters = new ArrayList<>();
+
+    public static void tabCompleteFlag(TabCompletionsBuilder tab) {
         if (tab.arg.contains(":")) {
             return;
         }
@@ -162,6 +166,14 @@ public class FlagCommand extends AbstractCommand {
                 tab.add(flagName);
             }
         }
+        for (Consumer<TabCompletionsBuilder> consumer : flagTabCompleters) {
+            consumer.accept(tab);
+        }
+    }
+
+    @Override
+    public void addCustomTabCompletions(TabCompletionsBuilder tab) {
+        tabCompleteFlag(tab);
     }
 
     @Override

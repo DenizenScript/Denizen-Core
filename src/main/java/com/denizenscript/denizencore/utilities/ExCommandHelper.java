@@ -8,14 +8,15 @@ import com.denizenscript.denizencore.objects.ObjectType;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.commands.core.FlagCommand;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -81,7 +82,7 @@ public class ExCommandHelper {
         return queue != null && !queue.isStopped;
     }
 
-    public static List<String> buildTabCompletions(String[] rawArgs, BiConsumer<AbstractCommand, AbstractCommand.TabCompletionsBuilder> commandExtras) {
+    public static List<String> buildTabCompletions(String[] rawArgs, TagContext context) {
         String entry = String.join(" ", rawArgs);
         if (entry.length() > 3 && entry.startsWith("-q ")) {
             entry = entry.substring("-q ".length());
@@ -102,6 +103,10 @@ public class ExCommandHelper {
             }
             return output;
         }
+        String lowArg = CoreUtilities.toLowerCase(rawArgs[rawArgs.length - 1]);
+        AbstractCommand.TabCompletionsBuilder completionsBuilder = new AbstractCommand.TabCompletionsBuilder();
+        completionsBuilder.arg = lowArg;
+        completionsBuilder.context = context;
         if (!isNewArg) {
             String lastArg = rawArgs[rawArgs.length - 1];
             int argStart = 0;
@@ -198,19 +203,30 @@ public class ExCommandHelper {
                         return output;
                     }
                     String subComponent = fullTag.substring(lastDot);
-                    if (lastDot > 0 && !CoreUtilities.contains(subComponent, '[')) {
-                        ArrayList<String> output = new ArrayList<>();
-                        for (Class<? extends ObjectTag> possibleType : typesApplicable) {
-                            ObjectType<? extends ObjectTag> typeData = ObjectFetcher.getType(possibleType);
-                            if (typeData != null && typeData.tagProcessor != null) {
-                                for (String tag : typeData.tagProcessor.registeredObjectTags.keySet()) {
-                                    if (tag.startsWith(subComponent)) {
-                                        output.add(beforeDot + tag);
+                    if (lastDot > 0) {
+                        int squareBracket = subComponent.indexOf('[');
+                        if (squareBracket == -1) {
+                            ArrayList<String> output = new ArrayList<>();
+                            for (Class<? extends ObjectTag> possibleType : typesApplicable) {
+                                ObjectType<? extends ObjectTag> typeData = ObjectFetcher.getType(possibleType);
+                                if (typeData != null && typeData.tagProcessor != null) {
+                                    for (String tag : typeData.tagProcessor.registeredObjectTags.keySet()) {
+                                        if (tag.startsWith(subComponent)) {
+                                            output.add(beforeDot + tag);
+                                        }
                                     }
                                 }
                             }
+                            return output;
                         }
-                        return output;
+                        else {
+                            String tagPiece = subComponent.substring(0, squareBracket);
+                            if (tagPiece.startsWith("flag") || tagPiece.equals("has_flag")) {
+                                completionsBuilder.arg = subComponent.substring(squareBracket + 1);
+                                FlagCommand.tabCompleteFlag(completionsBuilder);
+                                return completionsBuilder.completions;
+                            }
+                        }
                     }
                 }
             }
@@ -224,9 +240,6 @@ public class ExCommandHelper {
         if (dcmd == null) {
             return null;
         }
-        String lowArg = CoreUtilities.toLowerCase(rawArgs[rawArgs.length - 1]);
-        AbstractCommand.TabCompletionsBuilder completionsBuilder = new AbstractCommand.TabCompletionsBuilder();
-        completionsBuilder.arg = lowArg;
         for (String flat : dcmd.docFlagArgs) {
             completionsBuilder.add(flat);
         }
@@ -234,9 +247,6 @@ public class ExCommandHelper {
             completionsBuilder.add(prefix + ":");
         }
         dcmd.addCustomTabCompletions(completionsBuilder);
-        if (commandExtras != null) {
-            commandExtras.accept(dcmd, completionsBuilder);
-        }
         return completionsBuilder.completions;
     }
 }

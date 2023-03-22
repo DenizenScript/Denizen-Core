@@ -8,6 +8,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.commands.generator.CommandExecutionGenerator;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.EnumHelper;
@@ -62,6 +63,8 @@ public abstract class AbstractCommand {
         public String arg;
 
         public ArrayList<String> completions = new ArrayList<>();
+
+        public TagContext context;
 
         public final void addWithPrefix(String prefix, Iterable<String> values) {
             if (arg.startsWith(prefix)) {
