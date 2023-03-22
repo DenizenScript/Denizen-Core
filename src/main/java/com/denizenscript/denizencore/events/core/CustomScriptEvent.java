@@ -30,7 +30,7 @@ public class CustomScriptEvent extends ScriptEvent {
     // <context.(key)> returns the value of the input data key, if available.
     //
     // @Determine
-    // "OUTPUT:" + Anything, to add that value to the output list (note this is an ADD, not a SET).
+    // "OUTPUT:<Anything>" to add that value to the output list (note this is an ADD, not a SET).
     //
     // @Player When the command is used with a player link.
     // @NPC When the command is used with an NPC link.

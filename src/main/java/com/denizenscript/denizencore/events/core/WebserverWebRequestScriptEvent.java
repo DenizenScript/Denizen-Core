@@ -53,14 +53,14 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
     // <context.has_response> returns true if a response body determination (raw_text_content, file, or cached_file) was applied, or false if not.
     //
     // @Determine
-    // "CODE:" + Element(Number), to set a standard web response code, such as 'code:200' for 'OK', or 'code:404' for 'File Not Found'
+    // "CODE:<Element(Number)>" to set a standard web response code, such as 'code:200' for 'OK', or 'code:404' for 'File Not Found'
     // "HEADERS": + MapTag to set a map of headers, where map keys are the header name and map values are the text of the value, for example headers:[Content-Type=text/html] ... note that header are sometimes case-sensitive.
-    // "RAW_TEXT_CONTENT:" + ElementTag to set a raw text content body in response. You may determine only one response - raw text, raw binary, a file, or a cached file. You cannot use multiple.
-    // "RAW_BINARY_CONTENT:" + BinaryTag to set a raw binary content body in response.
-    // "FILE:" + ElementTag to set a path to a file to send in response. File path must be within the web-root path configured in Denizen/config.yml. Files will be read async.
-    // "CACHED_FILE:" + ElementTag to set a path to a file to send in response. The content of the file will be cached in RAM until the server restarts. This is useful for files that definitely won't change. First file read will be sync, all others are instant.
-    // "PARSED_FILE:" + ElementTag - like "FILE:", but this file will be parsed for tags using syntax like "<{util.pi}>" to separate tags from HTML entries.
-    // "CACHED_PARSED_FILE:" + ElementTag - like "PARSED_FILE" and "CACHED_FILE" combined. Note that the file will be cached, but the results of tags will be handled at runtime still.
+    // "RAW_TEXT_CONTENT:<ElementTag>" to set a raw text content body in response. You may determine only one response - raw text, raw binary, a file, or a cached file. You cannot use multiple.
+    // "RAW_BINARY_CONTENT:<BinaryTag>" to set a raw binary content body in response.
+    // "FILE:<ElementTag>" to set a path to a file to send in response. File path must be within the web-root path configured in Denizen/config.yml. Files will be read async.
+    // "CACHED_FILE:<ElementTag>" to set a path to a file to send in response. The content of the file will be cached in RAM until the server restarts. This is useful for files that definitely won't change. First file read will be sync, all others are instant.
+    // "PARSED_FILE:<ElementTag>" - like "FILE:", but this file will be parsed for tags using syntax like "<{util.pi}>" to separate tags from HTML entries.
+    // "CACHED_PARSED_FILE:<ElementTag>" - like "PARSED_FILE" and "CACHED_FILE" combined. Note that the file will be cached, but the results of tags will be handled at runtime still.
     //
     // @Example
     // # This example supplies a manual response to any of the "/", "/index", or "/index.html" paths.
