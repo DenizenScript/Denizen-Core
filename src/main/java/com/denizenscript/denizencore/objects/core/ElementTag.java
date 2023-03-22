@@ -767,6 +767,22 @@ public class ElementTag implements ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ElementTag.html_escaped>
+        // @returns ElementTag
+        // @group conversion
+        // @description
+        // Returns the element, escaped for safe use in HTML.
+        // -->
+        AsciiMatcher htmlEscapable = new AsciiMatcher("&<>'\"");
+        tagProcessor.registerStaticTag(ElementTag.class, "html_escaped", (attribute, object) -> {
+            if (!htmlEscapable.containsAnyMatch(object.element)) {
+                return object;
+            }
+            return new ElementTag(object.element.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&apos;"));
+
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.sql_escaped>
         // @returns ElementTag
         // @group conversion

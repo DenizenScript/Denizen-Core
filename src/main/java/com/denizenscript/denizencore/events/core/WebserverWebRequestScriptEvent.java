@@ -8,7 +8,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.scripts.commands.core.WebServerCommand;
+import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
@@ -57,6 +59,8 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
     // "RAW_BINARY_CONTENT:" + BinaryTag to set a raw binary content body in response.
     // "FILE:" + ElementTag to set a path to a file to send in response. File path must be within the web-root path configured in Denizen/config.yml. Files will be read async.
     // "CACHED_FILE:" + ElementTag to set a path to a file to send in response. The content of the file will be cached in RAM until the server restarts. This is useful for files that definitely won't change. First file read will be sync, all others are instant.
+    // "PARSED_FILE:" + ElementTag - like "FILE:", but this file will be parsed for tags using syntax like "<{util.pi}>" to separate tags from HTML entries.
+    // "CACHED_PARSED_FILE:" + ElementTag - like "PARSED_FILE" and "CACHED_FILE" combined. Note that the file will be cached, but the results of tags will be handled at runtime still.
     //
     // @Example
     // # This example supplies a manual response to any of the "/", "/index", or "/index.html" paths.
@@ -136,6 +140,14 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
 
     public static HashMap<String, byte[]> responseFileCache = new HashMap<>();
 
+    public static HashMap<String, ParseableTag> responseParseableCache = new HashMap<>();
+
+    @Override
+    public void destroy() {
+        responseFileCache.clear();
+        responseParseableCache.clear();
+    }
+
     public WebserverWebRequestScriptEvent() {
         instance = this;
         registerCouldMatcher("webserver web request");
@@ -171,78 +183,110 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         if (determinationObj instanceof ElementTag) {
             String determination = determinationObj.toString();
             String determinationLow = CoreUtilities.toLowerCase(determination);
-            if (determinationLow.startsWith("code:")) {
-                String codeStr = determination.substring("code:".length());
-                if (!new ElementTag(codeStr).isInt()) {
-                    Debug.echoError("Invalid code '" + determination + "': not a number.");
+            int colon = determination.indexOf(':');
+            if (colon == -1) {
+                return super.applyDetermination(path, determinationObj);
+            }
+            String prefix = determinationLow.substring(0, colon);
+            String data = determination.substring(colon + 1);
+            switch (prefix) {
+                case "code" -> {
+                    if (!new ElementTag(data).isInt()) {
+                        Debug.echoError("Invalid code '" + data + "': not a number.");
+                        return true;
+                    }
+                    response.code = new ElementTag(data).asInt();
                     return true;
                 }
-                response.code = new ElementTag(codeStr).asInt();
-                return true;
-            }
-            else if (determinationLow.startsWith("headers:")) {
-                TagContext context = getTagContext(path);
-                MapTag map = MapTag.valueOf(determination.substring("headers:".length()), context);
-                if (map == null) {
-                    Debug.echoError("Invalid headers map input (not a MapTag)");
+                case "headers" -> {
+                    TagContext context = getTagContext(path);
+                    MapTag map = MapTag.valueOf(data, context);
+                    if (map == null) {
+                        Debug.echoError("Invalid headers map input (not a MapTag)");
+                        return true;
+                    }
+                    for (Map.Entry<StringHolder, ObjectTag> header : map.map.entrySet()) {
+                        exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
+                    }
                     return true;
                 }
-                for (Map.Entry<StringHolder, ObjectTag> header : map.map.entrySet()) {
-                    exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
-                }
-                return true;
             }
-            else if (determinationLow.startsWith("raw_text_content:") && !response.hasResponse) {
-                response.hasResponse = true;
-                response.rawContent = determination.substring("raw_text_content:".length()).getBytes(StandardCharsets.UTF_8);
-                return true;
-            }
-            else if (determinationLow.startsWith("raw_binary_content:") && !response.hasResponse) {
-                response.hasResponse = true;
-                response.rawContent = BinaryTag.valueOf(determination.substring("raw_binary_content:".length()), getTagContext(path)).data;
-                return true;
-            }
-            else if ((determinationLow.startsWith("file:") || determinationLow.startsWith("cached_file:")) && !response.hasResponse) {
-                response.hasResponse = true;
-                File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);
-                boolean isCaching = determinationLow.startsWith("cached_file:");
-                String filePathName = determination.substring((isCaching ? "cached_file:" : "file:").length());
-                if (isCaching) {
-                    byte[] cached = responseFileCache.get(filePathName);
-                    if (cached != null) {
-                        response.cachedFile = cached;
+            if (!response.hasResponse) {
+                switch (prefix) {
+                    case "raw_text_content" -> {
+                        response.hasResponse = true;
+                        response.rawContent = data.getBytes(StandardCharsets.UTF_8);
+                        return true;
+                    }
+                    case "raw_binary_content" -> {
+                        response.hasResponse = true;
+                        response.rawContent = BinaryTag.valueOf(data, getTagContext(path)).data;
+                        return true;
+                    }
+                    case "file", "parsed_file", "cached_parsed_file", "parsed_cached_file", "cached_file" -> {
+                        response.hasResponse = true;
+                        File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);
+                        boolean isCaching = prefix.contains("cached_");
+                        boolean isParsing = prefix.contains("parsed_");
+                        if (isCaching) {
+                            if (isParsing) {
+                                ParseableTag tag = responseParseableCache.get(data);
+                                if (tag != null) {
+                                    response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
+                                    return true;
+                                }
+                            }
+                            byte[] cached = responseFileCache.get(data);
+                            response.cachedFile = cached;
+                            if (cached != null) {
+                                if (isParsing) {
+                                    ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), getTagContext(path), true);
+                                    responseParseableCache.put(data, tag);
+                                    response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
+                                }
+                                return true;
+                            }
+                        }
+                        File file = new File(root, data);
+                        if (!DenizenCore.implementation.canReadFile(file)) {
+                            Debug.echoError("File path '" + data + "' is not permitted for access by the Denizen config file.");
+                            return true;
+                        }
+                        try {
+                            if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
+                                Debug.echoError("File path '" + data + "' is not within the web root.");
+                                return true;
+                            }
+                        }
+                        catch (IOException ex) {
+                            Debug.echoError(ex);
+                            return true;
+                        }
+                        if (isCaching || isParsing) {
+                            try {
+                                response.cachedFile = readFileContent(file);
+                            }
+                            catch (IOException ex) {
+                                Debug.echoError(ex);
+                                return true;
+                            }
+                            if (isCaching) {
+                                responseFileCache.put(data, response.cachedFile);
+                            }
+                            if (isParsing) {
+                                ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), getTagContext(path), true);
+                                if (isCaching) {
+                                    responseParseableCache.put(data, tag);
+                                }
+                                response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
+                            }
+                        }
+                        else {
+                            response.fileResponse = file;
+                        }
                         return true;
                     }
                 }
-                File file = new File(root,  filePathName);
-                if (!DenizenCore.implementation.canReadFile(file)) {
-                    Debug.echoError("File path '" + determination + "' is not permitted for access by the Denizen config file.");
-                    return true;
-                }
-                try {
-                    if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
-                        Debug.echoError("File path '" + determination + "' is not within the web root.");
-                        return true;
-                    }
-                }
-                catch (IOException ex) {
-                    Debug.echoError(ex);
-                    return true;
-                }
-                if (isCaching) {
-                    try {
-                        response.cachedFile = readFileContent(file);
-                    }
-                    catch (IOException ex) {
-                        Debug.echoError(ex);
-                        return true;
-                    }
-                    responseFileCache.put(filePathName, response.cachedFile);
-                }
-                else {
-                    response.fileResponse = file;
-                }
-                return true;
             }
         }
         return super.applyDetermination(path, determinationObj);
@@ -250,45 +294,36 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
 
     @Override
     public ObjectTag getContext(String name) {
-        switch (name) {
-            case "method": return new ElementTag(exchange.getRequestMethod(), true);
-            case "path": return new ElementTag(exchange.getRequestURI().getPath(), true);
-            case "port": return new ElementTag(server.port);
-            case "remote_address": return new ElementTag(exchange.getRemoteAddress().toString(), true);
-            case "query": {
+        return switch (name) {
+            case "method" -> new ElementTag(exchange.getRequestMethod(), true);
+            case "path" -> new ElementTag(exchange.getRequestURI().getPath(), true);
+            case "port" -> new ElementTag(server.port);
+            case "remote_address" -> new ElementTag(exchange.getRemoteAddress().toString(), true);
+            case "query" -> {
                 MapTag output = new MapTag();
                 String query = exchange.getRequestURI().getRawQuery();
                 if (query != null) {
                     for (String pair : CoreUtilities.split(query, '&')) {
                         List<String> parts = CoreUtilities.split(pair, '=', 2);
-                        try {
-                            output.putObject(URLDecoder.decode(parts.get(0), "UTF-8"), new ElementTag(URLDecoder.decode(parts.get(1), "UTF-8"), true));
-                        }
-                        catch (UnsupportedEncodingException ex) {
-                            Debug.echoError(ex);
-                        }
+                        output.putObject(URLDecoder.decode(parts.get(0), StandardCharsets.UTF_8), new ElementTag(URLDecoder.decode(parts.get(1), StandardCharsets.UTF_8), true));
                     }
                 }
-                return output;
+                yield output;
             }
-            case "raw_query": return exchange.getRequestURI().getRawQuery() == null ? null : new ElementTag(exchange.getRequestURI().getRawQuery(), true);
-            case "raw_user_info": return exchange.getRequestURI().getRawUserInfo() == null ? null : new ElementTag(exchange.getRequestURI().getRawUserInfo(), null);
-            case "headers": {
+            case "raw_query" -> exchange.getRequestURI().getRawQuery() == null ? null : new ElementTag(exchange.getRequestURI().getRawQuery(), true);
+            case "raw_user_info" -> exchange.getRequestURI().getRawUserInfo() == null ? null : new ElementTag(exchange.getRequestURI().getRawUserInfo(), null);
+            case "headers" -> {
                 MapTag output = new MapTag();
                 for (Map.Entry<String, List<String>> header : exchange.getRequestHeaders().entrySet()) {
                     output.putObject(header.getKey(), new ListTag(header.getValue(), true));
                 }
-                return output;
+                yield output;
             }
-            case "has_response": return new ElementTag(response.hasResponse);
-            case "body": {
-                return new ElementTag(new String(getBody(), StandardCharsets.UTF_8));
-            }
-            case "body_binary": {
-                return new BinaryTag(getBody());
-            }
-        }
-        return super.getContext(name);
+            case "has_response" -> new ElementTag(response.hasResponse);
+            case "body" -> new ElementTag(new String(getBody(), StandardCharsets.UTF_8));
+            case "body_binary" -> new BinaryTag(getBody());
+            default -> super.getContext(name);
+        };
     }
 
     public static void fire(WebServerCommand.WebserverInstance server, final HttpExchange exchange) {

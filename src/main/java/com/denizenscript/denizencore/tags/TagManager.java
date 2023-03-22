@@ -352,17 +352,17 @@ public class TagManager {
         if (preParsed != null) {
             return preParsed;
         }
-        ParseableTag result = parseTextToTagInternal(arg, context);
+        ParseableTag result = parseTextToTagInternal(arg, context, false);
         preCalced.put(arg, result);
         return result;
     }
 
-    public static ParseableTag parseTextToTagInternal(String arg, TagContext context) {
+    public static ParseableTag parseTextToTagInternal(String arg, TagContext context, boolean useBrace) {
         if (CoreConfiguration.debugVerbose) {
             Debug.echoError("(Verbose) Parse text to tag: " + arg);
         }
         List<ParseableTagPiece> pieces = new ArrayList<>(1);
-        if (arg.indexOf('>') == -1 || arg.length() < 3) {
+        if (!arg.contains(useBrace ? "}>" : ">") || arg.length() < 3) {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;
             pieces.add(txt);
@@ -372,7 +372,7 @@ public class TagManager {
         }
         int[] positions = new int[2];
         positions[0] = -1;
-        locateTag(arg, positions, 0);
+        locateTag(arg, positions, 0, useBrace);
         if (positions[0] == -1) {
             ParseableTagPiece txt = new ParseableTagPiece();
             txt.content = arg;
@@ -389,7 +389,7 @@ public class TagManager {
                 preText.content = arg.substring(0, positions[0]);
                 pieces.add(preText);
             }
-            String tagToProc = arg.substring(positions[0] + 1, positions[1]);
+            String tagToProc = arg.substring(positions[0] + (useBrace ? 2 : 1), positions[1] - (useBrace ? 1 : 0));
             ParseableTagPiece midTag = new ParseableTagPiece();
             midTag.content = tagToProc;
             midTag.isTag = true;
@@ -417,9 +417,9 @@ public class TagManager {
                 pieces.add(errorNote);
             }
             arg = arg.substring(positions[1] + 1);
-            locateTag(arg, positions, 0);
+            locateTag(arg, positions, 0, useBrace);
         }
-        if (arg.indexOf('<') != -1 && !arg.contains(":<-")) {
+        if (arg.contains(useBrace ? "<{" : "<") && !arg.contains(":<-")) {
             ParseableTagPiece errorNote = new ParseableTagPiece();
             errorNote.isError = true;
             errorNote.content = "Potential issue: inconsistent tag marks in command! (issue snippet: " + arg + "; from: " + orig + ")";
@@ -477,24 +477,24 @@ public class TagManager {
 
     public static AsciiMatcher validTagFirstCharacter = new AsciiMatcher(AsciiMatcher.LETTERS_LOWER + AsciiMatcher.LETTERS_UPPER + AsciiMatcher.DIGITS + "&_[");
 
-    private static void locateTag(String arg, int[] holder, int start) {
-        int first = arg.indexOf('<', start);
+    private static void locateTag(String arg, int[] holder, int start, boolean useBrace) {
+        int first = arg.indexOf(useBrace ? "<{" : "<", start);
         holder[0] = first;
         if (first == -1) {
             return;
         }
         int len = arg.length();
         // Handle "<-" for the flag command
-        if (first + 1 < len && !validTagFirstCharacter.isMatch(arg.charAt(first + 1))) {
-            locateTag(arg, holder, first + 1);
+        if (!useBrace && first + 1 < len && !validTagFirstCharacter.isMatch(arg.charAt(first + 1))) {
+            locateTag(arg, holder, first + 1, false);
             return;
         }
         int bracks = 1;
         for (int i = first + 1; i < len; i++) {
-            if (arg.charAt(i) == '<') {
+            if (arg.charAt(i) == '<' && (!useBrace || i + 1 < len && arg.charAt(i + 1) == '{')) {
                 bracks++;
             }
-            else if (arg.charAt(i) == '>') {
+            else if (arg.charAt(i) == '>' && (!useBrace || arg.charAt(i - 1) == '}')) {
                 bracks--;
                 if (bracks == 0) {
                     holder[1] = i;
