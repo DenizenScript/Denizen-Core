@@ -428,6 +428,16 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         });
 
         // <--[tag]
+        // @attribute <util.color_names>
+        // @returns ListTag
+        // @description
+        // Returns a list of all color names recognized by <@link objecttype ColorTag>.
+        // -->
+        tagProcessor.registerTag(ListTag.class, "color_names", (attribute, object) -> {
+            return new ListTag(ColorTag.colorNames, true);
+        });
+
+        // <--[tag]
         // @attribute <util.list_tag_bases>
         // @returns ListTag
         // @description

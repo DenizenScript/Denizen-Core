@@ -57,6 +57,7 @@ public class ObjectFetcher {
     }
 
     public static ObjectType<BinaryTag> TYPE_BINARY;
+    public static ObjectType<ColorTag> TYPE_COLOR;
     public static ObjectType<CustomObjectTag> TYPE_CUSTOM;
     public static ObjectType<DurationTag> TYPE_DURATION;
     public static ObjectType<ElementTag> TYPE_ELEMENT;
@@ -78,6 +79,15 @@ public class ObjectFetcher {
         // Refer to <@link objecttype BinaryTag>.
         // -->
         TYPE_BINARY = registerWithObjectFetcher(BinaryTag.class, BinaryTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // binary@
+
+        // <--[tag]
+        // @attribute <color[<color>]>
+        // @returns ColorTag
+        // @description
+        // Returns a color object constructed from the input value.
+        // Refer to <@link objecttype ColorTag>.
+        // -->
+        TYPE_COLOR = ObjectFetcher.registerWithObjectFetcher(ColorTag.class, ColorTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // co@
 
         // <--[tag]
         // @attribute <custom_object[<custom-object>]>
