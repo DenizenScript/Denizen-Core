@@ -319,10 +319,7 @@ public class CommandExecutionGenerator {
             }
             // ====== Gen class ======
             String cmdCleanName = CodeGenUtil.cleanName(DebugInternals.getClassNameOpti(cmdClass).replace('.', '_'));
-            if (cmdCleanName.length() > 50) {
-                cmdCleanName = cmdCleanName.substring(0, 50);
-            }
-            String className = CodeGenUtil.COMMAND_GEN_PACKAGE + "Cmd" + (totalGenerated++) + "_" + cmdCleanName;
+            String className = CodeGenUtil.CORE_GEN_PACKAGE + "Commands/Cmd" + (totalGenerated++) + "_" + cmdCleanName;
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
             cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, COMMAND_EXECUTOR_PATH, new String[]{});
             cw.visitSource("GENERATED_CMD_EXEC", null);

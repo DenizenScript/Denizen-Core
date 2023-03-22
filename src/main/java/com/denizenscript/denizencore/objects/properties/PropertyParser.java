@@ -7,24 +7,34 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
+import com.denizenscript.denizencore.utilities.codegen.CodeGenUtil;
+import com.denizenscript.denizencore.utilities.codegen.MethodGenerator;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
-import java.lang.invoke.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class PropertyParser {
 
     @FunctionalInterface
-    public interface PropertyGetter {
+    public interface PropertyGetter<T extends ObjectTag> {
 
-        Property get(ObjectTag obj);
+        Property get(T obj);
     }
 
     public static class ClassPropertiesInfo {
+
+        public ObjectType<? extends ObjectTag> objectType;
 
         public List<PropertyGetter> allProperties = new ArrayList<>();
 
@@ -86,7 +96,7 @@ public class PropertyParser {
 
     public static <T extends Property, R extends ObjectTag> void registerTagInternal(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String[] variants, boolean isStatic) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
-        ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
+        ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringPropertyInfo.objectType.tagProcessor;
         tagProcessor.registerTagInternal(returnType, name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
@@ -110,8 +120,9 @@ public class PropertyParser {
     }
 
     public static <T extends Property> void registerMechanism(Class<T> propType, String name, PropertyMechanism<T> runner, String... deprecatedVariants) {
-        final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
-        ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringObjectType.tagProcessor;
+        final PropertyParser.PropertyGetter getter = currentlyRegisteringProperty;
+        currentlyRegisteringPropertyInfo.propertiesByMechanism.put(name, getter);
+        ObjectTagProcessor<?> tagProcessor = currentlyRegisteringPropertyInfo.objectType.tagProcessor;
         tagProcessor.registerMechanism(name, true, (object, mechanism) -> {
             Property prop = getter.get(object);
             if (prop == null) {
@@ -137,16 +148,19 @@ public class PropertyParser {
         }, deprecatedVariants);
     }
 
-    public static Class currentlyRegisteringPropertyClass;
+    public static PropertyGetter<? extends ObjectTag> currentlyRegisteringProperty;
 
-    public static PropertyGetter currentlyRegisteringProperty;
+    public static ClassPropertiesInfo currentlyRegisteringPropertyInfo;
 
-    public static ObjectType currentlyRegisteringObjectType;
-
-    public static void registerPropertyGetter(PropertyGetter getter, Class<? extends ObjectTag> object, String[] tags, String[] mechs, Class property) {
-        currentlyRegisteringPropertyClass = property;
+    public static <T extends ObjectTag> void registerPropertyGetter(PropertyGetter<T> getter, Class<T> objectType, String[] tags, String[] mechs, Class<? extends Property> property) {
+        ClassPropertiesInfo propInfo = propertiesByClass.get(objectType);
+        if (propInfo == null) {
+            propInfo = new ClassPropertiesInfo();
+            propInfo.objectType = ObjectFetcher.getType(objectType);
+            propertiesByClass.put(objectType, propInfo);
+        }
+        currentlyRegisteringPropertyInfo = propInfo;
         currentlyRegisteringProperty = getter;
-        currentlyRegisteringObjectType = ObjectFetcher.getType(object);
         try {
             for (Method registerMethod : property.getDeclaredMethods()) {
                 if ((registerMethod.getName().equals("register") || registerMethod.getName().equals("registerTags")) && registerMethod.getParameterCount() == 0) {
@@ -159,13 +173,7 @@ public class PropertyParser {
             Debug.echoError(ex);
         }
         currentlyRegisteringProperty = null;
-        currentlyRegisteringObjectType = null;
-        currentlyRegisteringPropertyClass = null;
-        ClassPropertiesInfo propInfo = propertiesByClass.get(object);
-        if (propInfo == null) {
-            propInfo = new ClassPropertiesInfo();
-            propertiesByClass.put(object, propInfo);
-        }
+        currentlyRegisteringPropertyInfo = null;
         propInfo.allProperties.add(getter);
         // TODO: warn/remove legacy name-based tag/mechanism registrations
         if (tags != null) {
@@ -198,20 +206,64 @@ public class PropertyParser {
         return null;
     }
 
-    public static void registerProperty(final Class property, Class<? extends ObjectTag> object, PropertyGetter getter) {
-        registerPropertyGetter(getter, object, getStringField(property, "handledTags"), getStringField(property, "handledMechs"), property);
+    public static <T extends ObjectTag> void registerProperty(final Class<? extends Property> property, Class<T> objectType, PropertyGetter<T> getter) {
+        registerPropertyGetter(getter, objectType, getStringField(property, "handledTags"), getStringField(property, "handledMechs"), property);
     }
 
-    public static void registerProperty(final Class property, Class<? extends ObjectTag> object) {
+    public static long totalGenerated = 0;
+    public static final String GETTER_PATH = Type.getInternalName(PropertyGetter.class);
+    public static final Method GETTER_GET_METHOD = ReflectionHelper.getMethod(PropertyGetter.class, "get", ObjectTag.class);
+    public static final String GETTER_GET_DESCRIPTOR = Type.getMethodDescriptor(GETTER_GET_METHOD);
+    public static final  Field OBJECT_PROPERTY_OBJECT_FIELD = ReflectionHelper.getFields(ObjectProperty.class).get("object", ObjectTag.class);
+
+    public static <T extends ObjectTag> void registerProperty(final Class<? extends Property> property, Class<T> objectType) {
         try {
-            final MethodHandles.Lookup lookup = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(lookup, "get", // PropertyGetter#get
-                    MethodType.methodType(PropertyGetter.class), // Signature of invoke method
-                    MethodType.methodType(Property.class, ObjectTag.class), // signature of PropertyGetter#get
-                    lookup.findStatic(property, "getFrom", MethodType.methodType(property, ObjectTag.class)), // signature of getFrom
-                    MethodType.methodType(property, ObjectTag.class)); // Signature of getFrom again
-            PropertyGetter getter = (PropertyGetter) site.getTarget().invoke();
-            registerProperty(property, object, getter);
+            Method describesMethod = Arrays.stream(property.getMethods()).filter(m -> m.getName().equals("describes") && (m.getModifiers() & Modifier.STATIC) != 0).findFirst().get();
+            // Gen mini-class
+            String cleanName = CodeGenUtil.cleanName(DebugInternals.getClassNameOpti(property).replace('.', '_'));
+            String className = CodeGenUtil.CORE_GEN_PACKAGE + "Properties/Prop" + (totalGenerated++) + "_" + cleanName;
+            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+            cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", new String[] {GETTER_PATH});
+            cw.visitSource("GENERATED_PROP_GETTER", null);
+            MethodGenerator.genDefaultConstructor(cw, className);
+            // ====== Gen 'get' method ======
+            {
+                MethodGenerator gen = MethodGenerator.generateMethod(className, cw, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, "get", GETTER_GET_DESCRIPTOR);
+                MethodGenerator.Local objectLocal = gen.addLocal("object", ObjectTag.class);
+                Label returnLabel = new Label();
+                gen.loadLocal(objectLocal);
+                gen.cast(objectType);
+                gen.invokeStatic(describesMethod);
+                gen.jumpIfFalseTo(returnLabel);
+                // Construct new
+                Constructor<?> constructor = property.getDeclaredConstructors()[0];
+                gen.constructNew(property);
+                gen.stackDuplicate();
+                if (constructor.getParameters().length == 1) {
+                    gen.loadLocal(objectLocal);
+                    gen.cast(objectType);
+                }
+                constructor.setAccessible(true);
+                gen.invokeSpecial(constructor);
+                if (ObjectProperty.class.isAssignableFrom(property)) {
+                    gen.stackDuplicate();
+                    gen.loadLocal(objectLocal);
+                    gen.setInstanceField(OBJECT_PROPERTY_OBJECT_FIELD);
+                }
+                gen.returnValue(ObjectTag.class);
+                // Not described so return null
+                gen.advanceAndLabel(returnLabel);
+                gen.loadNull();
+                gen.returnValue(ObjectTag.class);
+                gen.end();
+            }
+            // ====== Compile and register the result ======
+            cw.visitEnd();
+            byte[] compiled = cw.toByteArray();
+            Class<?> generatedClass = CodeGenUtil.loader.define(className.replace('/', '.'), compiled);
+            Object result = generatedClass.getConstructors()[0].newInstance();
+            PropertyGetter<T> getter = (PropertyGetter<T>) result;
+            registerProperty(property, objectType, getter);
         }
         catch (Throwable e) {
             Debug.echoError("Unable to register property '" + DebugInternals.getClassNameOpti(property) + "'!");

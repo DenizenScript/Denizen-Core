@@ -36,7 +36,7 @@ public class TagNamer {
     public static Object nameInternal(String fullTagName, Object tag, String typePath, String typeDescription, boolean hasObject, String runDescriptor) {
         try {
             // ====== Gen class ======
-            String className = CodeGenUtil.TAG_GEN_PACKAGE + "Tag" + (tagsGenerated++) + "_" + CodeGenUtil.cleanName(fullTagName);
+            String className = CodeGenUtil.CORE_GEN_PACKAGE + "Tags/Tag" + (tagsGenerated++) + "_" + CodeGenUtil.cleanName(fullTagName);
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
             cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", new String[] { typePath });
             cw.visitSource("GENERATED_TAG", null);

@@ -176,6 +176,16 @@ public final class MethodGenerator {
         }
     }
 
+    /** Sets the value given instance field from the value on top of the stack to the object next on stack. */
+    public void setInstanceField(Field f) {
+        setInstanceField(Type.getInternalName(f.getDeclaringClass()), f.getName(), Type.getDescriptor(f.getType()));
+    }
+
+    /** Sets the value given instance field from the value on top of the stack to the object next on stack. */
+    public void setInstanceField(String className, String field, String descriptor) {
+        mv.visitFieldInsn(Opcodes.PUTFIELD, className, field, descriptor);
+    }
+
     /** Loads the given instance field from the object on top of the stack. */
     public void loadInstanceField(Field f) {
         loadInstanceField(Type.getInternalName(f.getDeclaringClass()), f.getName(), Type.getDescriptor(f.getType()));
@@ -204,6 +214,11 @@ public final class MethodGenerator {
     /** Internal usage - finalizes a local variable at the end. */
     public void finalizeLocalVar(String name, String descriptor, int index) {
         mv.visitLocalVariable(name, descriptor, null, startLabel, curLabel, index);
+    }
+
+    /** Invokes the given constructor. */
+    public void constructNew(Class<?> type) {
+        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(type));
     }
 
     /** Invokes the given constructor. */
@@ -259,6 +274,11 @@ public final class MethodGenerator {
     /** Loads a raw (short) integer directly into the stack. */
     public void loadInt(int intVal) {
         mv.visitIntInsn(Opcodes.SIPUSH, intVal);
+    }
+
+    /** Loads a null value directly into the stack. */
+    public void loadNull() {
+        mv.visitInsn(Opcodes.ACONST_NULL);
     }
 
     /** Duplicates the value on top of the stack. */
