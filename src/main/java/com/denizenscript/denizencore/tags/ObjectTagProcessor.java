@@ -141,14 +141,14 @@ public class ObjectTagProcessor<T extends ObjectTag> {
     public final ObjectTag getObjectAttribute(T object, Attribute attribute) {
         if (attribute == null) {
             if (CoreConfiguration.debugVerbose) {
-                Debug.log("TagProcessor - Attribute null!");
+                Debug.verboseLog("TagProcessor - Attribute null!");
             }
             return null;
         }
         attribute.lastValid = object;
         if (attribute.isComplete()) {
             if (CoreConfiguration.debugVerbose) {
-                Debug.log("TagProcessor - Attribute complete! Self return!");
+                Debug.verboseLog("TagProcessor - Attribute complete! Self return!");
             }
             return object;
         }
@@ -160,12 +160,12 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         }
         if (data != null) {
             if (CoreConfiguration.debugVerbose) {
-                Debug.log("TagProcessor - Sub-tag found for " + nextComponent.key);
+                Debug.verboseLog("TagProcessor - Sub-tag found for " + nextComponent.key);
             }
             returned = data.runner.run(attribute, object);
             if (returned == null) {
                 if (CoreConfiguration.debugVerbose) {
-                    Debug.log("TagProcessor - result was null");
+                    Debug.verboseLog("TagProcessor - result was null");
                 }
                 attribute.trackLastTagFailure();
                 return null;

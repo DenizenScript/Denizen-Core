@@ -13,10 +13,7 @@ public interface Property {
     }
 
     @Deprecated
-    default String getPropertyString() {
-        ObjectTag res = getPropertyValue();
-        return res == null ? null : getPropertyValue().identify();
-    }
+    String getPropertyString();
 
     String getPropertyId();
 
