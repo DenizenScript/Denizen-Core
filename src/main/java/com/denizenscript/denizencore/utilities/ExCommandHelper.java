@@ -224,6 +224,8 @@ public class ExCommandHelper {
                             if (tagPiece.startsWith("flag") || tagPiece.equals("has_flag")) {
                                 completionsBuilder.arg = subComponent.substring(squareBracket + 1);
                                 FlagCommand.tabCompleteFlag(completionsBuilder);
+                                String argUntilParam = arg.substring(0, relevantTagStart) + fullTag.substring(0, lastDot + squareBracket + 1);
+                                completionsBuilder.completions.replaceAll(argUntilParam::concat);
                                 return completionsBuilder.completions;
                             }
                         }
