@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Function;
 
 public class PropertyParser {
 
@@ -97,10 +98,18 @@ public class PropertyParser {
     public static <T extends Property, R extends ObjectTag> void registerTagInternal(Class<T> propType, Class<R> returnType, String name, PropertyTagWithReturn<T, R> runnable, String[] variants, boolean isStatic) {
         final PropertyParser.PropertyGetter getter = PropertyParser.currentlyRegisteringProperty;
         ObjectTagProcessor<?> tagProcessor = PropertyParser.currentlyRegisteringPropertyInfo.objectType.tagProcessor;
+        Function reasonGetter = getPropertyReasonMethod(propType);
         tagProcessor.registerTagInternal(returnType, name, (attribute, object) -> {
             Property prop = getter.get(object);
             if (prop == null) {
                 if (!attribute.hasAlternative()) {
+                    if (reasonGetter != null) {
+                        String reason = (String) reasonGetter.apply(object);
+                        if (reason != null) {
+                            attribute.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object, because " + reason);
+                            return null;
+                        }
+                    }
                     attribute.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object.");
                 }
                 return null;
@@ -119,13 +128,32 @@ public class PropertyParser {
         void run(T prop, Mechanism mechanism, P param);
     }
 
+    public static Function<? extends ObjectTag, String> getPropertyReasonMethod(Class<?> propType) {
+        while (propType != null && propType != Property.class && propType != Object.class) {
+            Method method = Arrays.stream(propType.getDeclaredMethods()).filter(m -> m.getName().equals("getReasonNotDescribed") && (m.getModifiers() & Modifier.STATIC) != 0).findFirst().orElse(null);
+            if (method != null) {
+                return (Function<? extends ObjectTag, String>) ReflectionHelper.getStaticLambda(Function.class, "apply", propType, "getReasonNotDescribed");
+            }
+            propType = propType.getSuperclass();
+        }
+        return null;
+    }
+
     public static <T extends Property> void registerMechanism(Class<T> propType, String name, PropertyMechanism<T> runner, String... deprecatedVariants) {
         final PropertyParser.PropertyGetter getter = currentlyRegisteringProperty;
         currentlyRegisteringPropertyInfo.propertiesByMechanism.put(name, getter);
         ObjectTagProcessor<?> tagProcessor = currentlyRegisteringPropertyInfo.objectType.tagProcessor;
+        Function reasonGetter = getPropertyReasonMethod(propType);
         tagProcessor.registerMechanism(name, true, (object, mechanism) -> {
             Property prop = getter.get(object);
             if (prop == null) {
+                if (reasonGetter != null) {
+                    String reason = (String) reasonGetter.apply(object);
+                    if (reason != null) {
+                        mechanism.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object, because " + reason);
+                        return;
+                    }
+                }
                 mechanism.echoError("Property '" + DebugInternals.getClassNameOpti(propType) + "' does not describe the input object.");
                 return;
             }
