@@ -3,8 +3,7 @@ package com.denizenscript.denizencore.utilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import sun.misc.Unsafe;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import java.lang.invoke.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -289,6 +288,26 @@ public class ReflectionHelper {
         catch (Exception ex) {
             echoError(ex);
         }
+    }
+
+    public static <T> T getStaticLambda(Class<T> lambdaType, String lambdaName, Class<?> type, String methodName) {
+        Method targetMethod = Arrays.stream(type.getDeclaredMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
+        return getStaticLambda(lambdaType, lambdaName, type, methodName, targetMethod);
+    }
+
+    public static <T> T getStaticLambda(Class<T> lambdaType, String lambdaName, Class<?> type, String methodName, Method targetMethod) {
+        try {
+            Method funcMethod = Arrays.stream(lambdaType.getDeclaredMethods()).filter(m -> m.getName().equals(lambdaName)).findFirst().get();
+            MethodType funcMethodType = MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()).unwrap();
+            MethodType targetMethodType = MethodType.methodType(targetMethod.getReturnType(), targetMethod.getParameterTypes()).unwrap();
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(lookup, lambdaName, MethodType.methodType(lambdaType), funcMethodType, lookup.findStatic(type, methodName, targetMethodType), targetMethodType);
+            return (T) site.getTarget().invoke();
+        }
+        catch (Throwable ex) {
+            echoError(ex);
+        }
+        return null;
     }
 
     static {

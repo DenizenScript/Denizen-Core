@@ -5,14 +5,11 @@ import com.denizenscript.denizencore.tags.CoreObjectTags;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -182,40 +179,32 @@ public class ObjectFetcher {
         TYPE_TIME = registerWithObjectFetcher(TimeTag.class, TimeTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // time@
     }
 
-    public static ObjectType.MatchesInterface getMatchesFor(Class clazz) {
+    public static <T extends ObjectTag> ObjectType.MatchesInterface getMatchesFor(Class<T> clazz) {
         try {
-            final MethodHandles.Lookup lookup = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(lookup, "matches", // MatchesInterface#matches
-                    MethodType.methodType(ObjectType.MatchesInterface.class), // Signature of invoke method
-                    MethodType.methodType(Boolean.class, String.class).unwrap(), // signature of MatchesInterface#matches
-                    lookup.findStatic(clazz, "matches", MethodType.methodType(Boolean.class, String.class).unwrap()), // signature of original matches method
-                    MethodType.methodType(Boolean.class, String.class).unwrap()); // Signature of original matches again
-            return (ObjectType.MatchesInterface) site.getTarget().invoke();
+            ObjectType.MatchesInterface result = ReflectionHelper.getStaticLambda(ObjectType.MatchesInterface.class, "matches", clazz, "matches", clazz.getDeclaredMethod("matches", String.class));
+            if (result == null) {
+                ReflectionHelper.echoError("Failed to get matches for " + clazz.getCanonicalName());
+            }
+            return result;
         }
         catch (Throwable ex) {
-            System.err.println("Failed to get matches for " + clazz.getCanonicalName());
-            ex.printStackTrace();
-            Debug.echoError(ex);
-            return null;
+            ReflectionHelper.echoError(ex);
         }
+        return null;
     }
 
-    public static ObjectType.ValueOfInterface getValueOfFor(Class clazz) {
+    public static <T extends ObjectTag> ObjectType.ValueOfInterface<T> getValueOfFor(Class<T> clazz) {
         try {
-            final MethodHandles.Lookup lookup = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(lookup, "valueOf", // ValueOfInterface#valueOf
-                    MethodType.methodType(ObjectType.ValueOfInterface.class), // Signature of invoke method
-                    MethodType.methodType(ObjectTag.class, String.class, TagContext.class), // signature of ValueOfInterface#valueOf
-                    lookup.findStatic(clazz, "valueOf", MethodType.methodType(clazz, String.class, TagContext.class)), // signature of original valueOf method
-                    MethodType.methodType(clazz, String.class, TagContext.class)); // Signature of original valueOf again
-            return (ObjectType.ValueOfInterface) site.getTarget().invoke();
+            ObjectType.ValueOfInterface<T> result = ReflectionHelper.getStaticLambda(ObjectType.ValueOfInterface.class, "valueOf", clazz, "valueOf", clazz.getDeclaredMethod("valueOf", String.class, TagContext.class));
+            if (result == null) {
+                ReflectionHelper.echoError("Failed to get valueOf for " + clazz.getCanonicalName());
+            }
+            return result;
         }
         catch (Throwable ex) {
-            System.err.println("Failed to get valueOf for " + clazz.getCanonicalName());
-            ex.printStackTrace();
-            Debug.echoError(ex);
-            return null;
+            ReflectionHelper.echoError(ex);
         }
+        return null;
     }
 
     @Deprecated
