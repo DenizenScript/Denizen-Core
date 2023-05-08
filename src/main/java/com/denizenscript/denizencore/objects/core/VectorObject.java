@@ -25,6 +25,8 @@ public interface VectorObject extends ObjectTag {
     //
     // -->
 
+    VectorObject duplicate();
+
     double getX();
 
     double getY();
@@ -44,6 +46,30 @@ public interface VectorObject extends ObjectTag {
 
     default double length() {
         return Math.sqrt(lengthSquared());
+    }
+
+    default double dot(VectorObject other) {
+        return getX() * other.getX() + getY() * other.getY() + getZ() * other.getZ();
+    }
+
+    default VectorObject crossProduct(VectorObject other) {
+        VectorObject obj = duplicate();
+        obj.setX(getY() * other.getZ() - other.getY() * getZ());
+        obj.setY(other.getX() * getZ() - getX() * other.getZ());
+        obj.setZ(getX() * other.getY() - getY() * other.getX());
+        return obj;
+    }
+
+    default VectorObject multipliedBy(double scale) {
+        VectorObject obj = duplicate();
+        obj.setX(getX() * scale);
+        obj.setY(getY() * scale);
+        obj.setZ(getZ() * scale);
+        return obj;
+    }
+
+    default VectorObject project(VectorObject other) {
+        return other.multipliedBy(dot(other) / other.lengthSquared());
     }
 
     static <T extends VectorObject> void register(Class<T> type,  ObjectTagProcessor<T> processor) {
@@ -180,12 +206,7 @@ public interface VectorObject extends ObjectTag {
         // Returns a copy of this object multiplied by the specified length.
         // -->
         processor.registerTag(type, ElementTag.class, "mul", (attribute, object, length) -> {
-            T other = (T) object.duplicate();
-            double len = length.asDouble();
-            other.setX(object.getX() * len);
-            other.setY(object.getY() * len);
-            other.setZ(object.getZ() * len);
-            return other;
+            return (T) object.multipliedBy(length.asDouble());
         });
 
         // <--[tag]
@@ -227,7 +248,7 @@ public interface VectorObject extends ObjectTag {
         // <--[tag]
         // @attribute <VectorObject.vector_length_squared>
         // @returns ElementTag(Decimal)
-        // @synonyms VectorObject.magnitude
+        // @synonyms VectorObject.magnitude_squared
         // @group VectorObject
         // @description
         // Returns the square of the 3D length of the vector.
@@ -246,6 +267,53 @@ public interface VectorObject extends ObjectTag {
         // -->
         processor.registerTag(ElementTag.class, "vector_length", (attribute, object) -> {
             return new ElementTag(object.length());
+        });
+
+        // <--[tag]
+        // @attribute <VectorObject.to_axis_angle_quaternion[<angle>]>
+        // @returns QuaternionTag
+        // @group VectorObject
+        // @description
+        // Returns a quaternion that is a rotation around this vector as an axis, by the given angle input.
+        // -->
+        processor.registerTag(QuaternionTag.class, ElementTag.class, "to_axis_angle_quaternion", (attribute, object, angle) -> {
+            double a = angle.asDouble();
+            double s = Math.sin(a * 0.5);
+            return new QuaternionTag(object.getX() * s, object.getY() * s, object.getZ() * s, Math.cos(a * 0.5));
+        });
+
+        // <--[tag]
+        // @attribute <VectorObject.quaternion_between_vectors[<vector>]>
+        // @returns QuaternionTag
+        // @group VectorObject
+        // @description
+        // Returns a quaternion that represents the rotation from this vector to another.
+        // -->
+        processor.registerTag(QuaternionTag.class, type, "quaternion_between_vectors", (attribute, object, other) -> {
+            double dot = object.dot(other);
+            if (dot < -0.9999f)
+            {
+                double absX = Math.abs(object.getX());
+                double absY = Math.abs(object.getY());
+                double absZ = Math.abs(object.getZ());
+                if (absX < absY && absX < absZ)
+                {
+                    return new QuaternionTag(0, -object.getZ(), object.getY(), 0).normalized();
+                }
+                else if (absY < absZ)
+                {
+                    return new QuaternionTag(-object.getZ(), 0, object.getX(), 0).normalized();
+                }
+                else
+                {
+                    return new QuaternionTag(-object.getY(), object.getX(), 0, 0).normalized();
+                }
+            }
+            else
+            {
+                VectorObject axis = object.crossProduct(other);
+                return new QuaternionTag(axis.getX(), axis.getY(), axis.getZ(), dot + 1).normalized();
+            }
         });
     }
 }

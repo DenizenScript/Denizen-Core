@@ -98,4 +98,6 @@ public interface DenizenImplementation {
     void reloadSaves();
 
     VectorObject getVector(double x, double y, double z);
+
+    VectorObject vectorize(ObjectTag input, TagContext context);
 }

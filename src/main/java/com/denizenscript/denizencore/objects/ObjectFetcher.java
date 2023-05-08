@@ -61,6 +61,7 @@ public class ObjectFetcher {
     public static ObjectType<JavaReflectedObjectTag> TYPE_REFLECTEDOBJECT;
     public static ObjectType<ListTag> TYPE_LIST;
     public static ObjectType<MapTag> TYPE_MAP;
+    public static ObjectType<QuaternionTag> TYPE_QUATERNION;
     public static ObjectType<QueueTag> TYPE_QUEUE;
     public static ObjectType<ScriptTag> TYPE_SCRIPT;
     public static ObjectType<SecretTag> TYPE_SECRET;
@@ -151,6 +152,15 @@ public class ObjectFetcher {
             }
             return false;
         };
+
+        // <--[tag]
+        // @attribute <quaternion[<quaternion>]>
+        // @returns QuaternionTag
+        // @description
+        // Returns a QuaternionTag object constructed from the input value.
+        // Refer to <@link ObjectType QuaternionTag>.
+        // -->
+        TYPE_QUATERNION = registerWithObjectFetcher(QuaternionTag.class, QuaternionTag.tagProcessor).setAsNOtherCode().setCanConvertStatic().generateBaseTag(); // quaternion@
 
         // Tag generated externally as input is optional
         TYPE_QUEUE = registerWithObjectFetcher(QueueTag.class, QueueTag.tagProcessor).setAsNOtherCode(); // q@
