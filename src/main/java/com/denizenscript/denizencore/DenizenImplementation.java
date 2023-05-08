@@ -3,6 +3,7 @@ package com.denizenscript.denizencore;
 import com.denizenscript.denizencore.flags.FlaggableObject;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.VectorObject;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
@@ -95,4 +96,6 @@ public interface DenizenImplementation {
     void reloadConfig();
 
     void reloadSaves();
+
+    VectorObject getVector(double x, double y, double z);
 }
