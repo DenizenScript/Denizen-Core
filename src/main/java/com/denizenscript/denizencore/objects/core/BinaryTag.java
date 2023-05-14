@@ -9,6 +9,8 @@ import com.denizenscript.denizencore.utilities.AsciiMatcher;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -343,6 +345,45 @@ public class BinaryTag implements ObjectTag {
                 MessageDigest md = MessageDigest.getInstance(format.asString());
                 md.update(object.data, 0, object.data.length);
                 return new BinaryTag(md.digest());
+            }
+            catch (Throwable ex) {
+                attribute.echoError(ex);
+            }
+            return null;
+        });
+
+        // <--[tag]
+        // @attribute <BinaryTag.hmac[type=<type>;key=<secret>]>
+        // @returns BinaryTag
+        // @description
+        // Returns the raw binary HMAC ("hash-based message authentication code") of the binary data, using the given HMAC algorithm and key.
+        // Type can be "HmacMD5", "HmacSHA1", "HmacSHA256", or any other algorithm supported by your Java runtime environment per <@link url https://docs.oracle.com/javase/8/docs/api/javax/crypto/Mac.html>.
+        // Key can be a SecretTag, BinaryTag, or ElementTag.
+        // @example
+        // # Narrates "f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8".
+        // - narrate <element[The quick brown fox jumps over the lazy dog].utf8_encode.hmac[type=HmacSHA256;key=key].to_hex>
+        // -->
+        tagProcessor.registerStaticTag(BinaryTag.class, MapTag.class, "hmac", (attribute, object, data) -> {
+            try {
+                ElementTag macType = data.getRequiredObjectAs("type", ElementTag.class, attribute);
+                ObjectTag keyObj = data.getRequiredObjectAs("key", ObjectTag.class, attribute);
+                if (macType == null || keyObj == null) {
+                    return null;
+                }
+                byte[] key;
+                if (keyObj.shouldBeType(SecretTag.class)) {
+                    key = ((SecretTag) keyObj).key.getBytes(StandardCharsets.UTF_8);
+                }
+                else if (keyObj.shouldBeType(BinaryTag.class)) {
+                    key = ((BinaryTag) keyObj).data;
+                }
+                else {
+                    key = keyObj.toString().getBytes(StandardCharsets.UTF_8);
+                }
+                Mac hmac = Mac.getInstance(macType.asString());
+                SecretKeySpec secret_key = new SecretKeySpec(key, macType.asString());
+                hmac.init(secret_key);
+                return new BinaryTag(hmac.doFinal(object.data));
             }
             catch (Throwable ex) {
                 attribute.echoError(ex);
