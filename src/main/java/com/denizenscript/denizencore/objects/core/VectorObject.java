@@ -274,7 +274,7 @@ public interface VectorObject extends ObjectTag {
         // @returns QuaternionTag
         // @group VectorObject
         // @description
-        // Returns a quaternion that is a rotation around this vector as an axis, by the given angle input.
+        // Returns a quaternion that is a rotation around this vector as an axis, by the given angle input (in radians).
         // -->
         processor.registerTag(QuaternionTag.class, ElementTag.class, "to_axis_angle_quaternion", (attribute, object, angle) -> {
             double a = angle.asDouble();

@@ -544,12 +544,20 @@ public class CoreUtilities {
         int len = input.length();
         char c;
         int first = -1;
+        boolean mustUseString = false;
         for (int i = 0; i < len; i++) {
             c = input.charAt(i);
             if (c >= 'a' && c <= 'z') {
                 first = i;
                 break;
             }
+            else if (c > 128 && Character.isLowerCase(c)) {
+                mustUseString = true;
+                break;
+            }
+        }
+        if (mustUseString) {
+            return input.toUpperCase();
         }
         if (first == -1) {
             return input;
@@ -567,12 +575,20 @@ public class CoreUtilities {
         int len = input.length();
         char c;
         int first = -1;
+        boolean mustUseString = false;
         for (int i = 0; i < len; i++) {
             c = input.charAt(i);
             if (c >= 'A' && c <= 'Z') {
                 first = i;
                 break;
             }
+            else if (c > 128 && Character.isUpperCase(c)) {
+                mustUseString = true;
+                break;
+            }
+        }
+        if (mustUseString) {
+            return input.toLowerCase();
         }
         if (first == -1) {
             return input;

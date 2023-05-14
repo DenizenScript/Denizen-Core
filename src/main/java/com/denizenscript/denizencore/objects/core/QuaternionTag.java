@@ -319,7 +319,7 @@ public class QuaternionTag implements ObjectTag {
         // @attribute <QuaternionTag.axis_angle_for[<vector>]>
         // @returns ElementTag(Decimal)
         // @description
-        // Returns the angle around the specified axis vector created by this quaternion.
+        // Returns the angle (in radians) around the specified axis vector created by this quaternion.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ObjectTag.class, "axis_angle_for", (attribute, object, param) -> {
             VectorObject axis = DenizenCore.implementation.vectorize(param, attribute.context);
@@ -347,7 +347,8 @@ public class QuaternionTag implements ObjectTag {
         // @attribute <QuaternionTag.represented_angle>
         // @returns ElementTag(Decimal)
         // @description
-        // Returns the angle represented by this quaternion.
+        // Returns the angle (in radians) represented by this quaternion.
+        // Pairs with <@link tag QuaternionTag.represented_axis>.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "represented_angle", (attribute, object) -> {
             return new ElementTag(object.representedAngle());
@@ -358,6 +359,7 @@ public class QuaternionTag implements ObjectTag {
         // @returns VectorObject
         // @description
         // Returns the axis represented by this quaternion, as a vector.
+        // Pairs with <@link tag QuaternionTag.represented_angle>.
         // -->
         tagProcessor.registerStaticTag(VectorObject.class, "represented_axis", (attribute, object) -> {
             return object.representedAxis();
