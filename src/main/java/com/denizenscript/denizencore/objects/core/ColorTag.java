@@ -482,7 +482,7 @@ public class ColorTag implements ObjectTag {
         // - narrate <color[fuchsia].with_alpha[150].rgba>
         // -->
         tagProcessor.registerStaticTag(ColorTag.class, "with_alpha", (attribute, object) -> {
-            return new ColorTag(object.red, object.green, object.alpha, attribute.getIntParam());
+            return new ColorTag(object.red, object.green, object.blue, attribute.getIntParam());
         });
 
         // <--[tag]
