@@ -22,9 +22,9 @@ public class ScriptHelper {
 
     /**
      * Add additional script file references here as wanted/needed. Use like:
-     *
+     * <pre>
      * (scripts) -> scripts.add(YamlConfiguration.load(ScriptHelper.clearComments(MY_FILENAME, MY_FILE_TEXT, true)));
-     *
+     * </pre>
      * Warning: can be called async.
      */
     public static List<Consumer<List<YamlConfiguration>>> buildAdditionalScripts = new ArrayList<>();

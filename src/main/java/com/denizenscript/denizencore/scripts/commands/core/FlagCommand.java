@@ -143,10 +143,6 @@ public class FlagCommand extends AbstractCommand {
     // - flag server cool_people:<-:<[someplayer]>
     //
     // @Usage
-    // Use to clear a flag and fill it with a new list of values.
-    // - flag server cool_people:!|:<[player]>|<[someplayer]>|<[aplayer]>
-    //
-    // @Usage
     // Use to completely remove a flag.
     // - flag server cool_people:!
     //

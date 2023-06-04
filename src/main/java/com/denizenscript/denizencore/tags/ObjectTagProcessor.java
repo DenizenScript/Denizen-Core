@@ -51,7 +51,7 @@ public class ObjectTagProcessor<T extends ObjectTag> {
         /**
          * Try a custom advanced matcher.
          * Return 'true' to match, 'false' to strictly not match, or 'null' if this matcher doesn't apply.
-         *
+         * <p>
          * Example usage:
          * <pre>
          * // NOTE: REGISTER NOT-SWITCHES WITH CAUTION. "notSwitches" is a temporary hack and has side effects! Make sure your matcher name is definitely never a switch!

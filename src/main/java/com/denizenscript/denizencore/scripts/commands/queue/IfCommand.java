@@ -291,7 +291,7 @@ public class IfCommand extends BracedCommand {
             return "[ArgComp: " + argstemp + " res " + result + "]";
         }
 
-        public class ArgInternal {
+        public static class ArgInternal {
 
             boolean negative;
 

@@ -13,6 +13,7 @@ import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class NoteCommand extends AbstractCommand {
+
     public NoteCommand() {
         setName("note");
         setSyntax("note [<object>/remove] [as:<name>]");
