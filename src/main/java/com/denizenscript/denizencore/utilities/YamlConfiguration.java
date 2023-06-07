@@ -36,6 +36,8 @@ public class YamlConfiguration {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         LoaderOptions loaderOptions = new LoaderOptions();
+        SafeConstructor safeCtor;
+        Representer reper;
         try {
             if (hasModernYaml) {
                 loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
@@ -44,7 +46,15 @@ public class YamlConfiguration {
         catch (NoSuchMethodError ignored) {
             hasModernYaml = false; // pre-1.32 snakeyaml
         }
-        return new Yaml(new SafeConstructor(), new Representer(), options, loaderOptions, useCustomResolver ? new CustomResolver() : new Resolver());
+        try {
+            safeCtor = new SafeConstructor(loaderOptions);
+            reper = new Representer(options);
+        }
+        catch (NoSuchMethodError ignored) {
+            safeCtor = new SafeConstructor();
+            reper = new Representer();
+        }
+        return new Yaml(safeCtor, reper, options, loaderOptions, useCustomResolver ? new CustomResolver() : new Resolver());
     }
 
     public static YamlConfiguration load(String data) {
