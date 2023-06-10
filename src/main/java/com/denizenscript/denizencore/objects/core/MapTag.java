@@ -930,6 +930,63 @@ public class MapTag implements ObjectTag {
             output.contents = (Map) CoreUtilities.objectTagToJavaForm(object.duplicate(), true, false);
             return new ElementTag(output.saveToString(false));
         });
+
+        // <--[tag]
+        // @attribute <MapTag.parse_value[<tag>]>
+        // @returns MapTag
+        // @description
+        // Returns a copy of the map with all its values updated through the given tag.
+        // One should generally prefer <@link tag MapTag.parse_value_tag>.
+        // @Example
+        // # Narrates a list of 'alpha=ONE;beta=TWO'
+        // - narrate <map[alpha=one;bravo=two].parse[to_uppercase]>
+        // -->
+        tagProcessor.registerTag(MapTag.class, "parse_value", (attribute, object) -> {
+           MapTag newMap = new MapTag();
+           String tag = attribute.getRawParam();
+           String defaultValue = "null";
+           boolean fallback = false;
+           if (tag.contains("||")) {
+               int marks = 0;
+               int lengthLimit = tag.length() - 1;
+               for (int i = 0; i < lengthLimit; i++) {
+                   char c = tag.charAt(i);
+                   if (c == '<') {
+                       marks++;
+                   }
+                   else if (c == '>') {
+                       marks--;
+                   }
+                   else if (marks == 0 && c == '|' && tag.charAt(i + 1) == '|') {
+                       fallback = true;
+                       defaultValue = tag.substring(i + 2);
+                       tag = tag.substring(0, i);
+                       break;
+                   }
+               }
+           }
+           Attribute subAttribute;
+           try {
+               subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
+           } catch (TagProcessingException ex) {
+               attribute.echoError("Tag processing failed: " + ex.getMessage());
+               return null;
+           }
+           try {
+               for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                   Attribute tempAttrib = new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context);
+                   tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
+                   ObjectTag objs = CoreUtilities.autoAttribTyped(entry.getValue(), tempAttrib);
+                   if (objs == null) {
+                       objs = new ElementTag(defaultValue);
+                   }
+                   newMap.putObject(entry.getKey().toString(), objs);
+               }
+           } catch (Exception ex) {
+               Debug.echoError(ex);
+           }
+           return newMap;
+        });
     }
 
     public void appendDeepKeys(String path, ListTag result) {
