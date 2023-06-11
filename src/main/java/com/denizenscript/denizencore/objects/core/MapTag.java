@@ -939,7 +939,7 @@ public class MapTag implements ObjectTag {
         // One should generally prefer <@link tag MapTag.parse_value_tag>.
         // @Example
         // # Narrates a map of '[alpha=ONE;beta=TWO]'
-        // - narrate <map[alpha=one;bravo=two].parse[to_uppercase]>
+        // - narrate <map[alpha=one;bravo=two].parse_value[to_uppercase]>
         // -->
         tagProcessor.registerTag(MapTag.class, "parse_value", (attribute, object) -> {
            MapTag newMap = new MapTag();
