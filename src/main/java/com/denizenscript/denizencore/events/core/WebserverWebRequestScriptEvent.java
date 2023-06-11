@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class WebserverWebRequestScriptEvent extends ScriptEvent {
 
@@ -152,6 +153,34 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("webserver web request");
         registerSwitches("port", "path", "method", "has_response");
+        registerDetermination("code", ElementTag.class, (context, code) -> {
+            if (!code.isInt()) {
+                Debug.echoError("Invalid code '" + code + "': not an number");
+                return;
+            }
+            response.code = code.asInt();
+        });
+        registerDetermination("headers", MapTag.class, (context, headers) -> {
+            for (Map.Entry<StringHolder, ObjectTag> header : headers.map.entrySet()) {
+                exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
+            }
+        });
+        registerResponseDetermination("raw_text_content", ElementTag.class, (context, rawText) -> response.rawContent = rawText.asString().getBytes(StandardCharsets.UTF_8));
+        registerResponseDetermination("raw_binary_content", BinaryTag.class, (context, rawBinary) -> response.rawContent = rawBinary.data);
+        registerResponseDetermination("file", ElementTag.class, (context, file) -> handleFileDetermination(false, false, file.asString(), context));
+        registerResponseDetermination("parsed_file", ElementTag.class, (context, file) -> handleFileDetermination(false, true, file.asString(), context));
+        registerResponseDetermination("cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, false, file.asString(), context));
+        registerResponseDetermination("cached_parsed_file", ElementTag.class, (context, file) -> handleFileDetermination(true, true, file.asString(), context));
+        registerResponseDetermination("parsed_cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, true, file.asString(), context));
+    }
+    
+    public <T extends ObjectTag> void registerResponseDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
+        registerDetermination(prefix, inputType, (context, determination) -> {
+            if (!response.hasResponse) {
+                handler.accept(context, determination);
+                response.hasResponse = true;
+            }
+        });
     }
 
     @Override
@@ -177,119 +206,66 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         input.close();
         return result;
     }
-
-    @Override
-    public boolean applyDetermination(ScriptPath path, ObjectTag determinationObj) {
-        if (determinationObj instanceof ElementTag) {
-            String determination = determinationObj.toString();
-            String determinationLow = CoreUtilities.toLowerCase(determination);
-            int colon = determination.indexOf(':');
-            if (colon == -1) {
-                return super.applyDetermination(path, determinationObj);
-            }
-            String prefix = determinationLow.substring(0, colon);
-            String data = determination.substring(colon + 1);
-            switch (prefix) {
-                case "code" -> {
-                    if (!new ElementTag(data).isInt()) {
-                        Debug.echoError("Invalid code '" + data + "': not a number.");
-                        return true;
-                    }
-                    response.code = new ElementTag(data).asInt();
-                    return true;
-                }
-                case "headers" -> {
-                    TagContext context = getTagContext(path);
-                    MapTag map = MapTag.valueOf(data, context);
-                    if (map == null) {
-                        Debug.echoError("Invalid headers map input (not a MapTag)");
-                        return true;
-                    }
-                    for (Map.Entry<StringHolder, ObjectTag> header : map.map.entrySet()) {
-                        exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
-                    }
-                    return true;
+    
+    public void handleFileDetermination(boolean cache, boolean parse, String determination, TagContext context) {
+        response.hasResponse = true;
+        File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);
+        if (cache) {
+            if (parse) {
+                ParseableTag tag = responseParseableCache.get(determination);
+                if (tag != null) {
+                    response.cachedFile = tag.parse(context).identify().getBytes(StandardCharsets.UTF_8);
+                    return;
                 }
             }
-            if (!response.hasResponse) {
-                switch (prefix) {
-                    case "raw_text_content" -> {
-                        response.hasResponse = true;
-                        response.rawContent = data.getBytes(StandardCharsets.UTF_8);
-                        return true;
-                    }
-                    case "raw_binary_content" -> {
-                        response.hasResponse = true;
-                        response.rawContent = BinaryTag.valueOf(data, getTagContext(path)).data;
-                        return true;
-                    }
-                    case "file", "parsed_file", "cached_parsed_file", "parsed_cached_file", "cached_file" -> {
-                        response.hasResponse = true;
-                        File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);
-                        boolean isCaching = prefix.contains("cached_");
-                        boolean isParsing = prefix.contains("parsed_");
-                        if (isCaching) {
-                            if (isParsing) {
-                                ParseableTag tag = responseParseableCache.get(data);
-                                if (tag != null) {
-                                    response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
-                                    return true;
-                                }
-                            }
-                            byte[] cached = responseFileCache.get(data);
-                            response.cachedFile = cached;
-                            if (cached != null) {
-                                if (isParsing) {
-                                    ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), getTagContext(path), true);
-                                    responseParseableCache.put(data, tag);
-                                    response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
-                                }
-                                return true;
-                            }
-                        }
-                        File file = new File(root, data);
-                        if (!DenizenCore.implementation.canReadFile(file)) {
-                            Debug.echoError("File path '" + data + "' is not permitted for access by the Denizen config file.");
-                            return true;
-                        }
-                        try {
-                            if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
-                                Debug.echoError("File path '" + data + "' is not within the web root.");
-                                return true;
-                            }
-                        }
-                        catch (IOException ex) {
-                            Debug.echoError(ex);
-                            return true;
-                        }
-                        if (isCaching || isParsing) {
-                            try {
-                                response.cachedFile = readFileContent(file);
-                            }
-                            catch (IOException ex) {
-                                Debug.echoError(ex);
-                                return true;
-                            }
-                            if (isCaching) {
-                                responseFileCache.put(data, response.cachedFile);
-                            }
-                            if (isParsing) {
-                                ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), getTagContext(path), true);
-                                if (isCaching) {
-                                    responseParseableCache.put(data, tag);
-                                }
-                                response.cachedFile = tag.parse(getTagContext(path)).identify().getBytes(StandardCharsets.UTF_8);
-                            }
-                        }
-                        else {
-                            response.fileResponse = file;
-                        }
-                        return true;
-                    }
+            byte[] cached = responseFileCache.get(determination);
+            response.cachedFile = cached;
+            if (cached != null) {
+                if (parse) {
+                    ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), context, true);
+                    responseParseableCache.put(determination, tag);
+                    response.cachedFile = tag.parse(context).identify().getBytes(StandardCharsets.UTF_8);
                 }
+                return;
             }
         }
-        return super.applyDetermination(path, determinationObj);
+        File file = new File(root, determination);
+        if (!DenizenCore.implementation.canReadFile(file)) {
+            Debug.echoError("File path '" + determination + "' is not permitted for access by the Denizen config file.");
+            return;
+        }
+        try {
+            if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
+                Debug.echoError("File path '" + determination + "' is not within the web root.");
+                return;
+            }
+        }
+        catch (IOException ex) {
+            Debug.echoError(ex);
+            return;
+        }
+        if (cache || parse) {
+            try {
+                response.cachedFile = readFileContent(file);
+            }
+            catch (IOException ex) {
+                Debug.echoError(ex);
+                return;
+            }
+            if (cache) {
+                responseFileCache.put(determination, response.cachedFile);
+            }
+            if (parse) {
+                ParseableTag tag = TagManager.parseTextToTagInternal(new String(response.cachedFile, StandardCharsets.UTF_8), context, true);
+                if (cache) {
+                    responseParseableCache.put(determination, tag);
+                }
+                response.cachedFile = tag.parse(context).identify().getBytes(StandardCharsets.UTF_8);
+            }
+        }
+        else {
+            response.fileResponse = file;
+        }
     }
 
     @Override

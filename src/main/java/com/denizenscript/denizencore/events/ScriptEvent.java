@@ -1,17 +1,18 @@
 package com.denizenscript.denizencore.events;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.events.core.*;
 import com.denizenscript.denizencore.flags.AbstractFlagTracker;
 import com.denizenscript.denizencore.objects.ArgumentHelper;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
-import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
-import com.denizenscript.denizencore.scripts.queues.ContextSource;
-import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.ScriptEntrySet;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.scripts.containers.core.WorldScriptContainer;
+import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -23,9 +24,9 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
-import com.denizenscript.denizencore.DenizenCore;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,18 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             Debug.echoError("Clone not supported for script events?!");
             return this;
         }
+    }
+
+    public ScriptEvent() {
+        registerDetermination("cancelled", ElementTag.class, (context, cancelled) -> {
+            if (!cancelled.isBoolean()) {
+                Debug.echoError("Invalid input '" + cancelled + "' to 'cancelled' determination: must be a boolean.");
+                return;
+            }
+            this.cancelled = cancelled.asBoolean();
+            Debug.echoDebug(context, this.cancelled ? "Event cancelled!" : "Event uncancelled!");
+            cancellationChanged();
+        });
     }
 
     /**
@@ -149,6 +162,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
          * Cached name.
          */
         public String name;
+
+        /**
+         * Determination handlers, mapped by prefix
+         */
+        public final Map<String, BiConsumer<TagContext, ObjectTag>> determinations = new HashMap<>();
     }
 
     /**
@@ -295,7 +313,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         /**
          * List of all prefixed keys that should not be interpreted as switches.
          */
-        public static HashSet<String> notSwitches = new HashSet<>(Collections.singleton("regex"));
+        public static HashSet<String> notSwitches = new HashSet<>(List.of("regex"));
 
 
         public ScriptPath(ScriptContainer container, String event, String rawContainerPath) {
@@ -632,32 +650,46 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
+    public final <T extends ObjectTag> void registerDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
+        eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (context, objectTag) -> {
+            T converted = objectTag.asType(inputType, context);
+            if (converted == null) {
+                Debug.echoError("Invalid input to '" + prefix + "' determination: '" + objectTag.debuggable() + "<W>' isn't a valid " + DebugInternals.getClassNameOpti(inputType) + '.');
+                return;
+            }
+            handler.accept(context, converted);
+        });
+    }
+
+    public final void registerTextDetermination(String determination, Runnable handler) {
+        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
+    }
+
+    @Deprecated(forRemoval = true)
     public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
         Debug.echoError("Unknown determination '" + determination + "'");
         return false;
     }
 
-    public boolean handleBaseDetermination(ScriptPath path, ObjectTag determination) {
-        if (determination instanceof ElementTag) {
-            String text = determination.toString();
-            if (text.length() <= "cancelled:false".length()) {
-                String low = CoreUtilities.toLowerCase(text);
-                switch (low) {
-                    case "cancelled:true":
-                    case "cancelled":
-                        Debug.echoDebug(path.container, "Event cancelled!");
-                        cancelled = true;
-                        cancellationChanged();
-                        return true;
-                    case "cancelled:false":
-                        Debug.echoDebug(path.container, "Event uncancelled!");
-                        cancelled = false;
-                        cancellationChanged();
-                        return true;
-                }
-            }
+    public void handleDetermination(ScriptPath path, String prefix, ObjectTag value) {
+        ObjectTag modifiedValue = value;
+        String modifiedPrefix = prefix;
+        if (modifiedPrefix == null && modifiedValue instanceof ElementTag) {
+            modifiedPrefix = value.toString();
+            modifiedValue = new ElementTag(true);
         }
-        return applyDetermination(path, determination);
+        if (modifiedPrefix != null) {
+            modifiedPrefix = CoreUtilities.toLowerCase(modifiedPrefix);
+        }
+        BiConsumer<TagContext, ObjectTag> determinationHandler = eventData.determinations.get(modifiedPrefix);
+        if (determinationHandler == null) {
+            determinationHandler = eventData.determinations.get(null);
+        }
+        if (determinationHandler != null) {
+            determinationHandler.accept(getTagContext(path), modifiedValue);
+            return;
+        }
+        applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value, true) : value);
     }
 
     public ScriptEntryData getScriptEntryData() {
@@ -798,7 +830,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             queue.addEntries(entries);
             queue.setContextSource(this);
             if (!path.fireAfter) {
-                queue.determinationTarget = (o) -> handleBaseDetermination(path, o);
+                queue.determinationTarget = (prefix, value) -> handleDetermination(path, prefix, value);
             }
             queue.start(true);
             eventData.stats_nanoTimes += System.nanoTime() - queue.startTime;
@@ -828,13 +860,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
 
     @Override
     public ObjectTag getContext(String name) {
-        switch (name) {
-            case "cancelled":
-                return new ElementTag(cancelled);
-            case "event_name": // Intentionally undocumented, can be removed without harm
-                return new ElementTag(getName());
-        }
-        return null;
+        return switch (name) {
+            case "cancelled" -> new ElementTag(cancelled);
+            case "event_name" -> new ElementTag(getName(), true); // Intentionally undocumented, can be removed without harm
+            default -> null;
+        };
     }
 
     @Override
