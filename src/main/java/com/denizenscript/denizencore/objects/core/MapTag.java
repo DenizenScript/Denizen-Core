@@ -938,7 +938,7 @@ public class MapTag implements ObjectTag {
         // Returns a copy of the map with all its values updated through the given tag.
         // One should generally prefer <@link tag MapTag.parse_value_tag>.
         // @Example
-        // # Narrates a map of 'alpha=ONE;beta=TWO'
+        // # Narrates a map of '[alpha=ONE;beta=TWO]'
         // - narrate <map[alpha=one;bravo=two].parse[to_uppercase]>
         // -->
         tagProcessor.registerTag(MapTag.class, "parse_value", (attribute, object) -> {
