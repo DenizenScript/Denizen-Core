@@ -153,20 +153,27 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("webserver web request");
         registerSwitches("port", "path", "method", "has_response");
-        registerDetermination("code", ElementTag.class, (context, code) -> {
+        registerOptionalDetermination("code", ElementTag.class, (context, code) -> {
             if (!code.isInt()) {
                 Debug.echoError("Invalid code '" + code + "': not an number");
-                return;
+                return false;
             }
             response.code = code.asInt();
+            return true;
         });
         registerDetermination("headers", MapTag.class, (context, headers) -> {
             for (Map.Entry<StringHolder, ObjectTag> header : headers.map.entrySet()) {
                 exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
             }
         });
-        registerResponseDetermination("raw_text_content", ElementTag.class, (context, rawText) -> response.rawContent = rawText.asString().getBytes(StandardCharsets.UTF_8));
-        registerResponseDetermination("raw_binary_content", BinaryTag.class, (context, rawBinary) -> response.rawContent = rawBinary.data);
+        registerResponseDetermination("raw_text_content", ElementTag.class, (context, rawText) -> {
+            response.rawContent = rawText.asString().getBytes(StandardCharsets.UTF_8);
+            return true;
+        });
+        registerResponseDetermination("raw_binary_content", BinaryTag.class, (context, rawBinary) -> {
+            response.rawContent = rawBinary.data;
+            return true;
+        });
         registerResponseDetermination("file", ElementTag.class, (context, file) -> handleFileDetermination(false, false, file.asString(), context));
         registerResponseDetermination("parsed_file", ElementTag.class, (context, file) -> handleFileDetermination(false, true, file.asString(), context));
         registerResponseDetermination("cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, false, file.asString(), context));
@@ -174,12 +181,13 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         registerResponseDetermination("parsed_cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, true, file.asString(), context));
     }
     
-    public <T extends ObjectTag> void registerResponseDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
-        registerDetermination(prefix, inputType, (context, determination) -> {
+    public <T extends ObjectTag> void registerResponseDetermination(String prefix, Class<T> inputType, DeterminationHandler<T> handler) {
+        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
             if (!response.hasResponse) {
-                handler.accept(context, determination);
                 response.hasResponse = true;
+                return handler.handle(context, determination);
             }
+            return false;
         });
     }
 
@@ -207,7 +215,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         return result;
     }
     
-    public void handleFileDetermination(boolean cache, boolean parse, String determination, TagContext context) {
+    public boolean handleFileDetermination(boolean cache, boolean parse, String determination, TagContext context) {
         response.hasResponse = true;
         File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);
         if (cache) {
@@ -215,7 +223,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
                 ParseableTag tag = responseParseableCache.get(determination);
                 if (tag != null) {
                     response.cachedFile = tag.parse(context).identify().getBytes(StandardCharsets.UTF_8);
-                    return;
+                    return true;
                 }
             }
             byte[] cached = responseFileCache.get(determination);
@@ -226,23 +234,23 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
                     responseParseableCache.put(determination, tag);
                     response.cachedFile = tag.parse(context).identify().getBytes(StandardCharsets.UTF_8);
                 }
-                return;
+                return true;
             }
         }
         File file = new File(root, determination);
         if (!DenizenCore.implementation.canReadFile(file)) {
             Debug.echoError("File path '" + determination + "' is not permitted for access by the Denizen config file.");
-            return;
+            return true;
         }
         try {
             if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
                 Debug.echoError("File path '" + determination + "' is not within the web root.");
-                return;
+                return true;
             }
         }
         catch (IOException ex) {
             Debug.echoError(ex);
-            return;
+            return true;
         }
         if (cache || parse) {
             try {
@@ -250,7 +258,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             }
             catch (IOException ex) {
                 Debug.echoError(ex);
-                return;
+                return true;
             }
             if (cache) {
                 responseFileCache.put(determination, response.cachedFile);
@@ -266,6 +274,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         else {
             response.fileResponse = file;
         }
+        return true;
     }
 
     @Override

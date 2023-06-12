@@ -48,14 +48,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public ScriptEvent() {
-        registerDetermination("cancelled", ElementTag.class, (context, cancelled) -> {
+        registerOptionalDetermination("cancelled", ElementTag.class, (context, cancelled) -> {
             if (!cancelled.isBoolean()) {
                 Debug.echoError("Invalid input '" + cancelled + "' to 'cancelled' determination: must be a boolean.");
-                return;
+                return false;
             }
             this.cancelled = cancelled.asBoolean();
             Debug.echoDebug(context, this.cancelled ? "Event cancelled!" : "Event uncancelled!");
             cancellationChanged();
+            return true;
         });
     }
 
@@ -166,7 +167,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         /**
          * Determination handlers, mapped by prefix
          */
-        public final Map<String, BiConsumer<TagContext, ObjectTag>> determinations = new HashMap<>();
+        public final Map<String, DeterminationHandler<ObjectTag>> determinations = new HashMap<>();
     }
 
     /**
@@ -650,19 +651,26 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
+    public final void registerTextDetermination(String determination, Runnable handler) {
+        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
+    }
+
     public final <T extends ObjectTag> void registerDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
+        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
+            handler.accept(context, determination);
+            return true;
+        });
+    }
+
+    public final <T extends ObjectTag> void registerOptionalDetermination(String prefix, Class<T> inputType, DeterminationHandler<T> handler) {
         eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (context, objectTag) -> {
             T converted = objectTag.asType(inputType, context);
             if (converted == null) {
                 Debug.echoError("Invalid input to '" + prefix + "' determination: '" + objectTag.debuggable() + "<W>' isn't a valid " + DebugInternals.getClassNameOpti(inputType) + '.');
-                return;
+                return false;
             }
-            handler.accept(context, converted);
+            return handler.handle(context, converted);
         });
-    }
-
-    public final void registerTextDetermination(String determination, Runnable handler) {
-        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
     }
 
     @Deprecated(forRemoval = true)
@@ -671,7 +679,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
-    public void handleDetermination(ScriptPath path, String prefix, ObjectTag value) {
+    public boolean handleDetermination(ScriptPath path, String prefix, ObjectTag value) {
         ObjectTag modifiedValue = value;
         String modifiedPrefix = prefix;
         if (modifiedPrefix == null && modifiedValue instanceof ElementTag) {
@@ -679,18 +687,22 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             modifiedValue = new ElementTag(true);
         }
         if (modifiedPrefix != null) {
-            BiConsumer<TagContext, ObjectTag> determinationHandler = eventData.determinations.get(CoreUtilities.toLowerCase(modifiedPrefix));
+            DeterminationHandler<ObjectTag> determinationHandler = eventData.determinations.get(CoreUtilities.toLowerCase(modifiedPrefix));
             if (determinationHandler != null) {
-                determinationHandler.accept(getTagContext(path), modifiedValue);
-                return;
+                return determinationHandler.handle(getTagContext(path), modifiedValue);
             }
         }
-        BiConsumer<TagContext, ObjectTag> defaultHandler = eventData.determinations.get(null);
+        DeterminationHandler<ObjectTag> defaultHandler = eventData.determinations.get(null);
         if (defaultHandler != null) {
-            defaultHandler.accept(getTagContext(path), value);
-            return;
+            return defaultHandler.handle(getTagContext(path), value);
         }
         return applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value) : value);
+    }
+
+    @FunctionalInterface
+    public interface DeterminationHandler<T extends ObjectTag> {
+
+        boolean handle(TagContext context, T value);
     }
 
     public ScriptEntryData getScriptEntryData() {
