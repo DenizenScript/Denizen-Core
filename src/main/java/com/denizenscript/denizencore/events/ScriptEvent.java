@@ -679,14 +679,15 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             modifiedValue = new ElementTag(true);
         }
         if (modifiedPrefix != null) {
-            modifiedPrefix = CoreUtilities.toLowerCase(modifiedPrefix);
+            BiConsumer<TagContext, ObjectTag> determinationHandler = eventData.determinations.get(CoreUtilities.toLowerCase(modifiedPrefix));
+            if (determinationHandler != null) {
+                determinationHandler.accept(getTagContext(path), modifiedValue);
+                return;
+            }
         }
-        BiConsumer<TagContext, ObjectTag> determinationHandler = eventData.determinations.get(modifiedPrefix);
-        if (determinationHandler == null) {
-            determinationHandler = eventData.determinations.get(null);
-        }
-        if (determinationHandler != null) {
-            determinationHandler.accept(getTagContext(path), modifiedValue);
+        BiConsumer<TagContext, ObjectTag> defaultHandler = eventData.determinations.get(null);
+        if (defaultHandler != null) {
+            defaultHandler.accept(getTagContext(path), value);
             return;
         }
         applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value, true) : value);
