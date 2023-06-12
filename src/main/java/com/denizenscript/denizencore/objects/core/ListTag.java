@@ -2310,7 +2310,7 @@ public class ListTag implements List<String>, ObjectTag {
         // One should generally prefer <@link tag ListTag.filter_tag>.
         // @Example
         // # Narrates a list of '3|4|5'
-        // - narrate "<list[1|2|3|4|5].filter[is_more_than[3]]>
+        // - narrate <list[1|2|3|4|5].filter[is_more_than[3]]>
         // -->
         tagProcessor.registerTag(ListTag.class, "filter", (attribute, object) -> {
             String tag = attribute.getRawParam();
@@ -2351,7 +2351,7 @@ public class ListTag implements List<String>, ObjectTag {
         // One should generally prefer <@link tag ListTag.parse_tag>.
         // @Example
         // # Narrates a list of 'ONE|TWO'
-        // - narrate "<list[one|two].parse[to_uppercase]>
+        // - narrate <list[one|two].parse[to_uppercase]>
         // -->
         tagProcessor.registerTag(ListTag.class, "parse", (attribute, object) -> {
             ListTag newlist = new ListTag();
@@ -2410,10 +2410,10 @@ public class ListTag implements List<String>, ObjectTag {
         // This requires a fully formed tag as input, making use of the 'filter_value' definition.
         // @Example
         // # Narrates a list of '3|4|5'
-        // - narrate "<list[1|2|3|4|5].filter_tag[<[filter_value].is_more_than[3]>]>
+        // - narrate <list[1|2|3|4|5].filter_tag[<[filter_value].is_more_than[3]>]>
         // @Example
         // # Narrates a list of '4|5'
-        // - narrate "<list[1|2|3|4|5].filter_tag[<list[4|5].contains[<[filter_value]>]>]>
+        // - narrate <list[1|2|3|4|5].filter_tag[<list[4|5].contains[<[filter_value]>]>]>
         // -->
         tagProcessor.registerTag(ListTag.class, "filter_tag", (attribute, object) -> {
             if (!attribute.hasParam()) {
@@ -2443,10 +2443,10 @@ public class ListTag implements List<String>, ObjectTag {
         // This requires a fully formed tag as input, making use of the 'parse_value' definition.
         // @Example
         // # Narrates a list of 'ONE|TWO'
-        // - narrate "<list[one|two].parse_tag[<[parse_value].to_uppercase>]>
+        // - narrate <list[one|two].parse_tag[<[parse_value].to_uppercase>]>
         // @Example
         // # Narrates a list of 'charlie|alpha|bravo'
-        // - narrate "<list[3|1|2].parse_tag[<list[alpha|bravo|charlie].get[<[parse_value]>]>]>
+        // - narrate <list[3|1|2].parse_tag[<list[alpha|bravo|charlie].get[<[parse_value]>]>]>
         // -->
         tagProcessor.registerTag(ListTag.class, "parse_tag", (attribute, object) -> {
             if (!attribute.hasParam()) {
