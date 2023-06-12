@@ -968,7 +968,8 @@ public class MapTag implements ObjectTag {
            Attribute subAttribute;
            try {
                subAttribute = new Attribute(tag, attribute.getScriptEntry(), attribute.context);
-           } catch (TagProcessingException ex) {
+           }
+           catch (TagProcessingException ex) {
                attribute.echoError("Tag processing failed: " + ex.getMessage());
                return null;
            }
@@ -982,7 +983,8 @@ public class MapTag implements ObjectTag {
                    }
                    newMap.putObject(entry.getKey().toString(), objs);
                }
-           } catch (Exception ex) {
+           }
+           catch (Exception ex) {
                Debug.echoError(ex);
            }
            return newMap;
