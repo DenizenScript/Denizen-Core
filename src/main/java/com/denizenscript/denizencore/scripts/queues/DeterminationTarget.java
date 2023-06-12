@@ -4,5 +4,5 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 
 public interface DeterminationTarget {
 
-    void applyDetermination(ObjectTag determination);
+    void applyDetermination(String prefix, ObjectTag value);
 }

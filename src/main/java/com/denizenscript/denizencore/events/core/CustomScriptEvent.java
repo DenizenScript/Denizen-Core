@@ -55,6 +55,7 @@ public class CustomScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("custom event");
         registerSwitches("id", "data");
+        registerDetermination("output", ObjectTag.class, (context, output) -> determinations.addObject(output));
     }
 
     @Override
@@ -104,15 +105,6 @@ public class CustomScriptEvent extends ScriptEvent {
             }
         }
         return super.getContext(name);
-    }
-
-    @Override
-    public boolean applyDetermination(ScriptPath path, ObjectTag determination) {
-        if (determination instanceof ElementTag && CoreUtilities.toLowerCase(determination.toString()).startsWith("output:")) {
-            determinations.add(determination.toString().substring("output:".length()));
-            return true;
-        }
-        return super.applyDetermination(path, determination);
     }
 
     boolean enabled = false;

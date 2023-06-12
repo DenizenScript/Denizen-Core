@@ -1,14 +1,14 @@
 package com.denizenscript.denizencore.scripts.commands.queue;
 
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
-import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException;
+import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.core.QueueTag;
-import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
+import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class DetermineCommand extends AbstractCommand {
 
@@ -17,7 +17,7 @@ public class DetermineCommand extends AbstractCommand {
         setSyntax("determine (passively) [<value>]");
         setRequiredArguments(1, 2);
         isProcedural = true;
-        setBooleansHandled("passively", "passive");
+        setBooleanHandled("passively");
     }
 
     // <--[command]
@@ -46,7 +46,7 @@ public class DetermineCommand extends AbstractCommand {
     //
     // @Usage
     // Use to modify the result of an event.
-    // - determine <context.message.substring[5]>
+    // - determine message:<context.message.to_lowercase>
     //
     // @Usage
     // Use to cancel an event, but continue running script commands.
@@ -54,28 +54,27 @@ public class DetermineCommand extends AbstractCommand {
     //
     // -->
 
-    public static String DETERMINE_NONE = "none";
-
     @Override
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
         for (Argument arg : scriptEntry) {
             if (!scriptEntry.hasObject("outcome")) {
-                scriptEntry.addObject("outcome", arg.hasPrefix() ? arg.getRawElement() : arg.object);
+                scriptEntry.addObject("outcome", arg);
             }
             else {
                 arg.reportUnhandled();
             }
         }
-        scriptEntry.defaultObject("passively", new ElementTag(false));
-        scriptEntry.defaultObject("outcome", new ElementTag(DETERMINE_NONE));
     }
 
     @Override
     public void execute(ScriptEntry scriptEntry) {
-        ObjectTag outcomeObj = scriptEntry.getObjectTag("outcome");
+        Argument outcomeArg = (Argument) scriptEntry.getObject("outcome");
+        if (outcomeArg == null) {
+            throw new InvalidArgumentsRuntimeException("Must specify a value to determine.");
+        }
         boolean passively = scriptEntry.argAsBoolean("passively");
         if (scriptEntry.dbCallShouldDebug()) {
-            Debug.report(scriptEntry, getName(), outcomeObj, db("passively", passively), new QueueTag(scriptEntry.getResidingQueue()));
+            Debug.report(scriptEntry, getName(), db("outcome", outcomeArg), db("passively", passively), new QueueTag(scriptEntry.getResidingQueue()));
         }
         ScriptQueue queue = scriptEntry.getResidingQueue();
         ListTag determines = queue.determinations;
@@ -83,9 +82,9 @@ public class DetermineCommand extends AbstractCommand {
             determines = new ListTag();
             queue.determinations = determines;
         }
-        determines.addObject(outcomeObj);
+        determines.addObject(outcomeArg.hasPrefix() ? outcomeArg.getRawElement() : outcomeArg.object);
         if (queue.determinationTarget != null) {
-            queue.determinationTarget.applyDetermination(outcomeObj);
+            queue.determinationTarget.applyDetermination(outcomeArg.prefix, outcomeArg.object);
         }
 
         if (!passively) {
