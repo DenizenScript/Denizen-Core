@@ -690,7 +690,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             defaultHandler.accept(getTagContext(path), value);
             return;
         }
-        applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value, true) : value);
+        return applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value) : value);
     }
 
     public ScriptEntryData getScriptEntryData() {
