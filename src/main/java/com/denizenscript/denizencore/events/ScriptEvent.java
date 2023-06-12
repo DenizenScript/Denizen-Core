@@ -651,17 +651,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
-    public final void registerTextDetermination(String determination, Runnable handler) {
-        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
-    }
-
-    public final <T extends ObjectTag> void registerDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
-        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
-            handler.accept(context, determination);
-            return true;
-        });
-    }
-
     public final <T extends ObjectTag> void registerOptionalDetermination(String prefix, Class<T> inputType, DeterminationHandler<T> handler) {
         eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (context, objectTag) -> {
             T converted = objectTag.asType(inputType, context);
@@ -671,6 +660,17 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             }
             return handler.handle(context, converted);
         });
+    }
+
+    public final <T extends ObjectTag> void registerDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
+        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
+            handler.accept(context, determination);
+            return true;
+        });
+    }
+
+    public final void registerTextDetermination(String determination, Runnable handler) {
+        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
     }
 
     @Deprecated(forRemoval = true)
