@@ -26,8 +26,8 @@ import com.denizenscript.denizencore.utilities.scheduling.OneTimeSchedulable;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -48,14 +48,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public ScriptEvent() {
-        registerOptionalDetermination("cancelled", ElementTag.class, (context, cancelled) -> {
+        registerOptionalDetermination("cancelled", ElementTag.class, (event, context, cancelled) -> {
             if (!cancelled.isBoolean()) {
                 Debug.echoError("Invalid input '" + cancelled + "' to 'cancelled' determination: must be a boolean.");
                 return false;
             }
-            this.cancelled = cancelled.asBoolean();
-            Debug.echoDebug(context, this.cancelled ? "Event cancelled!" : "Event uncancelled!");
-            cancellationChanged();
+            event.cancelled = cancelled.asBoolean();
+            Debug.echoDebug(context, event.cancelled ? "Event cancelled!" : "Event uncancelled!");
+            event.cancellationChanged();
             return true;
         });
     }
@@ -167,7 +167,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         /**
          * Determination handlers, mapped by prefix
          */
-        public final Map<String, DeterminationHandler<ObjectTag>> determinations = new HashMap<>();
+        public final Map<String, OptionalDeterminationHandler<? extends ScriptEvent, ObjectTag>> determinations = new HashMap<>();
     }
 
     /**
@@ -651,26 +651,26 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         return false;
     }
 
-    public final <T extends ObjectTag> void registerOptionalDetermination(String prefix, Class<T> inputType, DeterminationHandler<T> handler) {
-        eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (context, objectTag) -> {
-            T converted = objectTag.asType(inputType, context);
+    public final <TEvent extends ScriptEvent, TType extends ObjectTag> void registerOptionalDetermination(String prefix, Class<TType> inputType, OptionalDeterminationHandler<TEvent, TType> handler) {
+        eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (evt, context, objectTag) -> {
+            TType converted = objectTag.asType(inputType, context);
             if (converted == null) {
                 Debug.echoError("Invalid input to '" + prefix + "' determination: '" + objectTag.debuggable() + "<W>' isn't a valid " + DebugInternals.getClassNameOpti(inputType) + '.');
                 return false;
             }
-            return handler.handle(context, converted);
+            return handler.handle((TEvent) evt, context, converted);
         });
     }
 
-    public final <T extends ObjectTag> void registerDetermination(String prefix, Class<T> inputType, BiConsumer<TagContext, T> handler) {
-        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
-            handler.accept(context, determination);
+    public final <TEvent extends ScriptEvent, TType extends ObjectTag> void registerDetermination(String prefix, Class<TType> inputType, DeterminationHandler<TEvent, TType> handler) {
+        this.<TEvent, TType>registerOptionalDetermination(prefix, inputType, (evt, context, determination) -> {
+            handler.handle(evt, context, determination);
             return true;
         });
     }
 
-    public final void registerTextDetermination(String determination, Runnable handler) {
-        registerDetermination(determination, ObjectTag.class, (context, objectTag) -> handler.run());
+    public final <TEvent extends ScriptEvent> void registerTextDetermination(String determination, Consumer<TEvent> handler) {
+        this.<TEvent, ObjectTag>registerDetermination(determination, ObjectTag.class, (evt, context, objectTag) -> handler.accept(evt));
     }
 
     @Deprecated(forRemoval = true)
@@ -687,22 +687,28 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             modifiedValue = new ElementTag(true);
         }
         if (modifiedPrefix != null) {
-            DeterminationHandler<ObjectTag> determinationHandler = eventData.determinations.get(CoreUtilities.toLowerCase(modifiedPrefix));
+            OptionalDeterminationHandler determinationHandler = eventData.determinations.get(CoreUtilities.toLowerCase(modifiedPrefix));
             if (determinationHandler != null) {
-                return determinationHandler.handle(getTagContext(path), modifiedValue);
+                return determinationHandler.handle(this, getTagContext(path), modifiedValue);
             }
         }
-        DeterminationHandler<ObjectTag> defaultHandler = eventData.determinations.get(null);
+        OptionalDeterminationHandler defaultHandler = eventData.determinations.get(null);
         if (defaultHandler != null) {
-            return defaultHandler.handle(getTagContext(path), value);
+            return defaultHandler.handle(this, getTagContext(path), value);
         }
         return applyDetermination(path, prefix != null ? new ElementTag(prefix + ':' + value) : value);
     }
 
     @FunctionalInterface
-    public interface DeterminationHandler<T extends ObjectTag> {
+    public interface OptionalDeterminationHandler<TEvent extends ScriptEvent, TType extends ObjectTag> {
 
-        boolean handle(TagContext context, T value);
+        boolean handle(TEvent event, TagContext context, TType value);
+    }
+
+    @FunctionalInterface
+    public interface DeterminationHandler<TEvent extends ScriptEvent, TType extends ObjectTag> {
+
+        void handle(TEvent event, TagContext context, TType value);
     }
 
     public ScriptEntryData getScriptEntryData() {

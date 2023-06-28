@@ -153,39 +153,39 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("webserver web request");
         registerSwitches("port", "path", "method", "has_response");
-        registerOptionalDetermination("code", ElementTag.class, (context, code) -> {
+        this.<WebserverWebRequestScriptEvent, ElementTag>registerOptionalDetermination("code", ElementTag.class, (evt, context, code) -> {
             if (!code.isInt()) {
                 Debug.echoError("Invalid code '" + code + "': not an number");
                 return false;
             }
-            response.code = code.asInt();
+            evt.response.code = code.asInt();
             return true;
         });
-        registerDetermination("headers", MapTag.class, (context, headers) -> {
+        this.<WebserverWebRequestScriptEvent, MapTag>registerDetermination("headers", MapTag.class, (evt, context, headers) -> {
             for (Map.Entry<StringHolder, ObjectTag> header : headers.map.entrySet()) {
-                exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
+                evt.exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
             }
         });
-        registerResponseDetermination("raw_text_content", ElementTag.class, (context, rawText) -> {
-            response.rawContent = rawText.asString().getBytes(StandardCharsets.UTF_8);
+        registerResponseDetermination("raw_text_content", ElementTag.class, (evt, context, rawText) -> {
+            evt.response.rawContent = rawText.asString().getBytes(StandardCharsets.UTF_8);
             return true;
         });
-        registerResponseDetermination("raw_binary_content", BinaryTag.class, (context, rawBinary) -> {
-            response.rawContent = rawBinary.data;
+        registerResponseDetermination("raw_binary_content", BinaryTag.class, (evt, context, rawBinary) -> {
+            evt.response.rawContent = rawBinary.data;
             return true;
         });
-        registerResponseDetermination("file", ElementTag.class, (context, file) -> handleFileDetermination(false, false, file.asString(), context));
-        registerResponseDetermination("parsed_file", ElementTag.class, (context, file) -> handleFileDetermination(false, true, file.asString(), context));
-        registerResponseDetermination("cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, false, file.asString(), context));
-        registerResponseDetermination("cached_parsed_file", ElementTag.class, (context, file) -> handleFileDetermination(true, true, file.asString(), context));
-        registerResponseDetermination("parsed_cached_file", ElementTag.class, (context, file) -> handleFileDetermination(true, true, file.asString(), context));
+        registerResponseDetermination("file", ElementTag.class, (evt, context, file) -> evt.handleFileDetermination(false, false, file.asString(), context));
+        registerResponseDetermination("parsed_file", ElementTag.class, (evt, context, file) -> evt.handleFileDetermination(false, true, file.asString(), context));
+        registerResponseDetermination("cached_file", ElementTag.class, (evt, context, file) -> evt.handleFileDetermination(true, false, file.asString(), context));
+        registerResponseDetermination("cached_parsed_file", ElementTag.class, (evt, context, file) -> evt.handleFileDetermination(true, true, file.asString(), context));
+        registerResponseDetermination("parsed_cached_file", ElementTag.class, (evt, context, file) -> evt.handleFileDetermination(true, true, file.asString(), context));
     }
-    
-    public <T extends ObjectTag> void registerResponseDetermination(String prefix, Class<T> inputType, DeterminationHandler<T> handler) {
-        registerOptionalDetermination(prefix, inputType, (context, determination) -> {
-            if (!response.hasResponse) {
-                response.hasResponse = true;
-                return handler.handle(context, determination);
+
+    public <T extends ObjectTag> void registerResponseDetermination(String prefix, Class<T> inputType, OptionalDeterminationHandler<WebserverWebRequestScriptEvent, T> handler) {
+        this.<WebserverWebRequestScriptEvent, T>registerOptionalDetermination(prefix, inputType, (event, context, determination) -> {
+            if (!event.response.hasResponse) {
+                event.response.hasResponse = true;
+                return handler.handle(event, context, determination);
             }
             return false;
         });
@@ -214,7 +214,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
         input.close();
         return result;
     }
-    
+
     public boolean handleFileDetermination(boolean cache, boolean parse, String determination, TagContext context) {
         response.hasResponse = true;
         File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.webserverRoot);

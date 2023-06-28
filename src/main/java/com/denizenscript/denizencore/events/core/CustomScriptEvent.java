@@ -55,7 +55,7 @@ public class CustomScriptEvent extends ScriptEvent {
         instance = this;
         registerCouldMatcher("custom event");
         registerSwitches("id", "data");
-        registerDetermination("output", ObjectTag.class, (context, output) -> determinations.addObject(output));
+        this.<CustomScriptEvent, ObjectTag>registerDetermination("output", ObjectTag.class, (evt, context, output) -> evt.determinations.addObject(output));
     }
 
     @Override
