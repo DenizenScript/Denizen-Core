@@ -527,7 +527,7 @@ public class PropertyParser {
                 return null;
             }
             T instance = (T) object.duplicate();
-            for (Map.Entry<StringHolder, ObjectTag> pair : properties.map.entrySet()) {
+            for (Map.Entry<StringHolder, ObjectTag> pair : properties.entrySet()) {
                 instance.safeApplyProperty(new Mechanism(pair.getKey().low, pair.getValue(), attribute.context));
             }
             return instance;

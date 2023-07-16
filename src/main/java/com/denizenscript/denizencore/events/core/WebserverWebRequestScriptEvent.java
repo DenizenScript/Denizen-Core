@@ -162,7 +162,7 @@ public class WebserverWebRequestScriptEvent extends ScriptEvent {
             return true;
         });
         this.<WebserverWebRequestScriptEvent, MapTag>registerDetermination("headers", MapTag.class, (evt, context, headers) -> {
-            for (Map.Entry<StringHolder, ObjectTag> header : headers.map.entrySet()) {
+            for (Map.Entry<StringHolder, ObjectTag> header : headers.entrySet()) {
                 evt.exchange.getResponseHeaders().set(header.getKey().str, header.getValue().toString());
             }
         });

@@ -32,7 +32,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
                 }
                 else {
                     map = new MapTag();
-                    map.map.put(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.noDebugContext));
+                    map.putObject(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.noDebugContext));
                 }
             }
             return map;
@@ -40,11 +40,11 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
 
         public String getString() {
             if (string == null) {
-                if (map.map.containsKey(expirationString) || map.map.get(valueString) instanceof MapTag) {
+                if (map.containsKey(expirationString) || map.getObject(valueString) instanceof MapTag) {
                     string = map.savable();
                 }
                 else {
-                    string = map.map.get(valueString).savable();
+                    string = map.getObject(valueString).savable();
                 }
             }
             return string;
@@ -97,23 +97,23 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             TimeTag expireTime = null;
             boolean hasSubMap = false;
             if (val.map != null) {
-                expireTime = (TimeTag) val.map.map.get(expirationString);
-                hasSubMap = val.map.map.get(valueString).canBeType(MapTag.class);
+                expireTime = (TimeTag) val.map.getObject(expirationString);
+                hasSubMap = val.map.getObject(valueString).canBeType(MapTag.class);
             }
             else if (val.string.startsWith("map@")) {
                 MapTag quickMap = MapTag.valueOf(val.string, CoreUtilities.noDebugContext, false);
-                ObjectTag time = quickMap.map.get(expirationString);
+                ObjectTag time = quickMap.getObject(expirationString);
                 if (time != null) {
                     expireTime = TimeTag.valueOf(time.toString(), CoreUtilities.noDebugContext);
                 }
-                hasSubMap = quickMap.map.get(valueString).canBeType(MapTag.class);
+                hasSubMap = quickMap.getObject(valueString).canBeType(MapTag.class);
             }
             if (isExpired(expireTime)) {
                 toRemove.add(entry.getKey());
                 modified = true;
             }
             else if (hasSubMap) {
-                ObjectTag subValue = val.getMap().map.get(valueString);
+                ObjectTag subValue = val.getMap().getObject(valueString);
                 if (subValue instanceof MapTag) {
                     if (doClean((MapTag) subValue)) {
                         val.string = null;
@@ -149,7 +149,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
         SaveOptimizedFlag flag = new SaveOptimizedFlag();
         flag.map = value;
         flag.string = null;
-        if (value.map.containsKey(expirationString) || value.map.get(valueString) instanceof MapTag) {
+        if (value.containsKey(expirationString) || value.getObject(valueString) instanceof MapTag) {
             flag.canExpire = true;
         }
         map.put(new StringHolder(key), flag);

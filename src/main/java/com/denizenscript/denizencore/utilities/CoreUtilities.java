@@ -136,7 +136,7 @@ public class CoreUtilities {
         }
         else if (obj instanceof MapTag) {
             Map<Object, Object> output = new LinkedHashMap<>();
-            for (Map.Entry<StringHolder, ObjectTag> entry : ((MapTag) obj).map.entrySet()) {
+            for (Map.Entry<StringHolder, ObjectTag> entry : ((MapTag) obj).entrySet()) {
                 output.put(stringHolder ? entry.getKey() : entry.getKey().str, objectTagToJavaForm(entry.getValue(), stringHolder, nativeTypes));
             }
             return output;
@@ -799,12 +799,12 @@ public class CoreUtilities {
 
     public static Collection<ObjectTag> objectToList(ObjectTag list, TagContext context) {
         if (list instanceof MapTag) {
-            for (StringHolder key : ((MapTag) list).map.keySet()) {
+            for (StringHolder key : ((MapTag) list).keySet()) {
                 if (!ArgumentHelper.matchesInteger(key.str)) {
                     return Collections.singletonList(list);
                 }
             }
-            return ((MapTag) list).map.values();
+            return ((MapTag) list).values();
         }
         else if (list instanceof ListTag) {
             return ((ListTag) list).objectForms;
@@ -814,12 +814,12 @@ public class CoreUtilities {
             if (raw.startsWith("map@") || raw.startsWith("[")) {
                 MapTag map = MapTag.valueOf(raw, context);
                 if (map != null) {
-                    for (StringHolder key : map.map.keySet()) {
+                    for (StringHolder key : map.keySet()) {
                         if (!ArgumentHelper.matchesInteger(key.str)) {
                             return Collections.singletonList(list);
                         }
                     }
-                    return map.map.values();
+                    return map.values();
                 }
             }
             return ListTag.valueOf(raw, context).objectForms;

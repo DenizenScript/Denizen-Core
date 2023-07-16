@@ -228,7 +228,7 @@ public class FlagCommand extends AbstractCommand {
                         }
                     }
                 }
-                for (Map.Entry<StringHolder, ObjectTag> mapData : toSetMap.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> mapData : toSetMap.entrySet()) {
                     if (!mapData.getKey().low.equals("__clear")) {
                         tracker.setRootMap(mapData.getKey().str, (MapTag) mapData.getValue());
                     }

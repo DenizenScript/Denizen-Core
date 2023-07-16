@@ -29,7 +29,7 @@ public class RedirectionFlagTracker extends AbstractFlagTracker {
             return null;
         }
         for (int i = 1; i < parts.size(); i++) {
-            target = (MapTag) target.map.get(MapTagBasedFlagTracker.valueString);
+            target = (MapTag) target.getObject(MapTagBasedFlagTracker.valueString);
             if (target == null) {
                 return null;
             }

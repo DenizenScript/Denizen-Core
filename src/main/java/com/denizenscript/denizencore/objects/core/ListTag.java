@@ -972,7 +972,7 @@ public class ListTag implements List<String>, ObjectTag {
                     attribute.echoError("Invalid map '" + entry + "' for merge_maps tag.");
                     return null;
                 }
-                map.map.putAll(subMap.map);
+                map.putAll(subMap);
             }
             return map;
         });

@@ -31,8 +31,8 @@ public class MapTagFlagTracker extends MapTagBasedFlagTracker {
 
     @Override
     public Collection<String> listAllFlags() {
-        ArrayList<String> keys = new ArrayList<>(map.map.size());
-        for (StringHolder string : map.map.keySet()) {
+        ArrayList<String> keys = new ArrayList<>(map.size());
+        for (StringHolder string : map.keySet()) {
             keys.add(string.str);
         }
         return keys;
@@ -48,18 +48,18 @@ public class MapTagFlagTracker extends MapTagBasedFlagTracker {
             return (MapTag) subObj;
         }
         MapTag toReturn = new MapTag();
-        toReturn.map.put(valueString, subObj);
+        toReturn.putObject(valueString, subObj);
         return toReturn;
     }
 
     @Override
     public void setRootMap(String key, MapTag value) {
         if (value == null) {
-            map.map.remove(new StringHolder(key));
+            map.remove(key);
         }
         else {
-            ObjectTag subValue = value.map.get(valueString);
-            if (value.map.containsKey(expirationString) || subValue instanceof MapTag) {
+            ObjectTag subValue = value.getObject(valueString);
+            if (value.containsKey(expirationString) || subValue instanceof MapTag) {
                 map.putObject(key, value);
             }
             else {

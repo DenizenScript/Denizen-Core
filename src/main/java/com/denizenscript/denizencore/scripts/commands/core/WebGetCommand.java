@@ -143,7 +143,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         MapTag newHeaders = null;
         if (headers != null) {
             newHeaders = new MapTag();
-            for (Map.Entry<StringHolder, ObjectTag> entry : headers.map.entrySet()) {
+            for (Map.Entry<StringHolder, ObjectTag> entry : headers.entrySet()) {
                 ObjectTag value = entry.getValue();
                 if (value.canBeType(SecretTag.class)) {
                     SecretTag secret = value.asType(SecretTag.class, scriptEntry.context);
@@ -153,7 +153,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                     }
                     value = new ElementTag(secret.getValue(), true);
                 }
-                newHeaders.map.put(entry.getKey(), value);
+                newHeaders.putObject(entry.getKey(), value);
             }
         }
         final MapTag headersFinal = newHeaders;
@@ -225,7 +225,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
                 uc.setRequestMethod("POST");
             }
             if (headers != null) {
-                for (Map.Entry<StringHolder, ObjectTag> pair : headers.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> pair : headers.entrySet()) {
                     uc.setRequestProperty(pair.getKey().str, pair.getValue().toString());
                 }
             }

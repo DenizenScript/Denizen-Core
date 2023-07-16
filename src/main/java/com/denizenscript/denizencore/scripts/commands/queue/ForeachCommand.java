@@ -232,7 +232,7 @@ public class ForeachCommand extends BracedCommand {
             if (scriptEntry.dbCallShouldDebug()) {
                 Debug.report(scriptEntry, getName(), map, map == null ? null : key_as, list, as_name);
             }
-            int target = list == null ? map.map.size() : list.size();
+            int target = list == null ? map.size() : list.size();
             if (target <= 0) {
                 if (scriptEntry.dbCallShouldDebug()) {
                     Debug.echoDebug(scriptEntry, "Empty list, not looping...");
@@ -241,9 +241,9 @@ public class ForeachCommand extends BracedCommand {
             }
             ForeachData datum = new ForeachData();
             if (list == null) {
-                datum.keys = new ArrayList<>(map.map.size());
-                datum.list = new ListTag(map.map.size());
-                for (Map.Entry<StringHolder, ObjectTag> entry : map.map.entrySet()) {
+                datum.keys = new ArrayList<>(map.size());
+                datum.list = new ListTag(map.size());
+                for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
                     datum.keys.add(entry.getKey().str);
                     datum.list.addObject(entry.getValue());
                 }

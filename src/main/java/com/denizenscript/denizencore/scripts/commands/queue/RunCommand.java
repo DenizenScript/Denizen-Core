@@ -112,7 +112,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
             }
             else if (arg.matchesPrefix("defmap")
                     && arg.matchesArgumentType(MapTag.class)) {
-                defMap.map.putAll(arg.asType(MapTag.class).map);
+                defMap.putAll(arg.asType(MapTag.class));
             }
             else if (arg.matches("instant", "instantly")) {
                 scriptEntry.addObject("instant", new ElementTag(true));
@@ -170,7 +170,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
         if (!scriptEntry.hasObject("script")) {
             throw new InvalidArgumentsException("Must define a SCRIPT to be run.");
         }
-        if (!defMap.map.isEmpty()) {
+        if (!defMap.isEmpty()) {
             scriptEntry.addObject("def_map", defMap);
         }
     }
@@ -210,7 +210,7 @@ public class RunCommand extends AbstractCommand implements Holdable {
                 queue.callBack(() -> scriptEntry.setFinished(true));
             }
             if (defMap != null) {
-                for (Map.Entry<StringHolder, ObjectTag> val : defMap.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> val : defMap.entrySet()) {
                     queue.addDefinition(val.getKey().str, val.getValue());
                 }
             }

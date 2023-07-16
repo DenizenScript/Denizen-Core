@@ -191,7 +191,7 @@ public class AdjustCommand extends AbstractCommand {
         ListTag result = new ListTag(objects.size());
         for (ObjectTag object : objects.objectForms) {
             if (mechanismMap != null) {
-                for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> entry : mechanismMap.entrySet()) {
                     object = adjust(object, entry.getKey().str, entry.getValue(), scriptEntry);
                 }
             }

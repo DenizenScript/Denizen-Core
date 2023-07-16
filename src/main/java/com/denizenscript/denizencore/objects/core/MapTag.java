@@ -145,8 +145,8 @@ public class MapTag implements ObjectTag {
     @Override
     public MapTag duplicate() {
         MapTag newMap = new MapTag();
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
-            newMap.map.put(entry.getKey(), entry.getValue().duplicate());
+        for (Map.Entry<StringHolder, ObjectTag> entry : entrySet()) {
+            newMap.putObject(entry.getKey(), entry.getValue().duplicate());
         }
         return newMap;
     }
@@ -171,17 +171,37 @@ public class MapTag implements ObjectTag {
 
     @Override
     public boolean isTruthy() {
-        return !map.isEmpty();
+        return !isEmpty();
+    }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    public int size() {
+        return map.size();
+    }
+
+    public Set<StringHolder> keySet() {
+        return map.keySet();
+    }
+
+    public Set<Map.Entry<StringHolder, ObjectTag>> entrySet() {
+        return map.entrySet();
+    }
+
+    public Collection<ObjectTag> values() {
+        return map.values();
     }
 
     @Override
     public String debuggable() {
-        if (map.isEmpty()) {
+        if (isEmpty()) {
             return "map@";
         }
         StringBuilder debugText = new StringBuilder();
         debugText.append("<LG>map@[<Y>");
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> entry : entrySet()) {
             debugText.append(entry.getKey().str).append(" <LG>=<Y> ").append(entry.getValue().debuggable()).append("<LG>;<Y> ");
         }
         debugText.setLength(debugText.length() - "<LG>;<Y> ".length());
@@ -191,12 +211,12 @@ public class MapTag implements ObjectTag {
 
     @Override
     public String identify() {
-        if (map.isEmpty()) {
+        if (isEmpty()) {
             return "map@[]";
         }
         StringBuilder output = new StringBuilder();
         output.append("map@[");
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> entry : entrySet()) {
             output.append(PropertyParser.escapePropertyKey(entry.getKey().str)).append("=").append(PropertyParser.escapePropertyValue(entry.getValue().savable())).append(";");
         }
         output.setLength(output.length() - 1);
@@ -217,7 +237,7 @@ public class MapTag implements ObjectTag {
     @Override
     public Object getJavaObject() {
         LinkedHashMap<String, Object> result = new LinkedHashMap<>();
-        for (Map.Entry<StringHolder, ObjectTag> pair : map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> pair : entrySet()) {
             result.put(pair.getKey().str, pair.getValue().getJavaObject());
         }
         return result;
@@ -283,6 +303,18 @@ public class MapTag implements ObjectTag {
         return map.get(new StringHolder(key));
     }
 
+    public ObjectTag getObject(StringHolder key) {
+        return map.get(key);
+    }
+
+    public boolean containsKey(String key) {
+        return map.containsKey(new StringHolder(key));
+    }
+
+    public boolean containsKey(StringHolder key) {
+        return map.containsKey(key);
+    }
+
     public void putDeepObject(String key, ObjectTag value) {
         if (!CoreUtilities.contains(key, '.')) {
             putObject(key, value);
@@ -306,15 +338,36 @@ public class MapTag implements ObjectTag {
 
     public void putObject(String key, ObjectTag value) {
         if (value == null) {
-            map.remove(new StringHolder(key));
+            remove(key);
         }
         else {
             map.put(new StringHolder(key), value);
         }
     }
 
+    public void putObject(StringHolder key, ObjectTag value) {
+        if (value == null) {
+            remove(key);
+        }
+        else {
+            map.put(key, value);
+        }
+    }
+
+    public void remove(String key) {
+        map.remove(new StringHolder(key));
+    }
+
+    public void remove(StringHolder key) {
+        map.remove(key);
+    }
+
     public ListTag keys() {
         return new ListTag(map.keySet(), stringHolder -> new ElementTag(stringHolder.str, true));
+    }
+
+    public void putAll(MapTag otherMap) {
+        map.putAll(otherMap.map);
     }
 
     public static void register() {
@@ -329,7 +382,7 @@ public class MapTag implements ObjectTag {
         // - narrate <map[a=1;b=2].size>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "size", (attribute, object) -> {
-            return new ElementTag(object.map.size());
+            return new ElementTag(object.size());
         });
 
         // <--[tag]
@@ -349,7 +402,7 @@ public class MapTag implements ObjectTag {
         //     - narrate "This won't show"
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "is_empty", (attribute, object) -> {
-            return new ElementTag(object.map.isEmpty());
+            return new ElementTag(object.isEmpty());
         });
 
         // <--[tag]
@@ -369,7 +422,7 @@ public class MapTag implements ObjectTag {
         //     - narrate "This will show! That map is empty!"
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "any", (attribute, object) -> {
-            return new ElementTag(!object.map.isEmpty());
+            return new ElementTag(!object.isEmpty());
         });
 
         // <--[tag]
@@ -389,7 +442,7 @@ public class MapTag implements ObjectTag {
         // - narrate <map[c=3;a=1;b=2].sort_by_value[mul[-1]]>
         // -->
         tagProcessor.registerTag(MapTag.class, "sort_by_value", (attribute, object) -> {
-            ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.map.entrySet());
+            ArrayList<Map.Entry<StringHolder, ObjectTag>> entryList = new ArrayList<>(object.entrySet());
             final NaturalOrderComparator comparator = new NaturalOrderComparator();
             final String tag = attribute.hasParam() ? attribute.getRawParam() : null;
             Attribute subAttribute;
@@ -416,7 +469,7 @@ public class MapTag implements ObjectTag {
             }
             MapTag output = new MapTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : entryList) {
-                output.map.put(entry.getKey(), entry.getValue());
+                output.putObject(entry.getKey(), entry.getValue());
             }
             return output;
         });
@@ -439,11 +492,11 @@ public class MapTag implements ObjectTag {
             MapTag newMap = new MapTag();
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
-                for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> entry : object.entrySet()) {
                     provider.altDefs.putObject("filter_key", new ElementTag(entry.getKey().str));
                     provider.altDefs.putObject("filter_value", entry.getValue());
                     if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicParam(provider).toString(), "true")) {
-                        newMap.map.put(entry.getKey(), entry.getValue());
+                        newMap.putObject(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -471,10 +524,10 @@ public class MapTag implements ObjectTag {
             MapTag newMap = new MapTag();
             Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
             try {
-                for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+                for (Map.Entry<StringHolder, ObjectTag> entry : object.entrySet()) {
                     provider.altDefs.putObject("parse_key", new ElementTag(entry.getKey().str));
                     provider.altDefs.putObject("parse_value", entry.getValue());
-                    newMap.map.put(entry.getKey(), attribute.parseDynamicParam(provider));
+                    newMap.putObject(entry.getKey(), attribute.parseDynamicParam(provider));
                 }
             }
             catch (Exception ex) {
@@ -593,9 +646,9 @@ public class MapTag implements ObjectTag {
             MapTag output = new MapTag();
             for (String key : keys) {
                 StringHolder keyHolder = new StringHolder(key);
-                ObjectTag value = object.map.get(keyHolder);
+                ObjectTag value = object.getObject(keyHolder);
                 if (value != null) {
-                    output.map.put(keyHolder, value);
+                    output.putObject(keyHolder, value);
                 }
             }
             return output;
@@ -630,7 +683,7 @@ public class MapTag implements ObjectTag {
                 attribute.echoError("The tag 'MapTag.default.as' must have an input value for 'as'.");
                 return null;
             }
-            if (object.map.containsKey(new StringHolder(key))) {
+            if (object.containsKey(key)) {
                 return object;
             }
             ObjectTag value = attribute.getParamObject();
@@ -720,8 +773,8 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "invert", (attribute, object) -> {
             MapTag result = new MapTag();
-            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
-                result.map.put(new StringHolder(entry.getValue().identify()), new ElementTag(entry.getKey().str));
+            for (Map.Entry<StringHolder, ObjectTag> entry : object.entrySet()) {
+                result.putObject(new StringHolder(entry.getValue().identify()), new ElementTag(entry.getKey().str));
             }
             return result;
         });
@@ -737,11 +790,11 @@ public class MapTag implements ObjectTag {
         // - narrate <map[a=1;b=2;c=3].reverse>
         // -->
         tagProcessor.registerStaticTag(MapTag.class, "reverse", (attribute, object) -> {
-            ArrayList<Map.Entry<StringHolder, ObjectTag>> entries = new ArrayList<>(object.map.entrySet());
+            ArrayList<Map.Entry<StringHolder, ObjectTag>> entries = new ArrayList<>(object.entrySet());
             Collections.reverse(entries);
             MapTag result = new MapTag();
             for (Map.Entry<StringHolder, ObjectTag> entry : entries) {
-                result.map.put(entry.getKey(), entry.getValue());
+                result.putObject(entry.getKey(), entry.getValue());
             }
             return result;
         });
@@ -781,7 +834,7 @@ public class MapTag implements ObjectTag {
         tagProcessor.registerStaticTag(MapTag.class, ListTag.class, "exclude", (attribute, object, list) -> {
             MapTag result = object.duplicate();
             for (String key : list) {
-                result.map.remove(new StringHolder(key));
+                result.remove(key);
             }
             return result;
         });
@@ -801,7 +854,7 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(MapTag.class, MapTag.class, "include", (attribute, object, second) -> {
             MapTag result = object.duplicate();
-            result.map.putAll(second.duplicate().map);
+            result.putAll(second.duplicate());
             return result;
         });
 
@@ -822,7 +875,7 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "deep_keys", (attribute, object) -> {
             ListTag result = new ListTag();
-            for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+            for (Map.Entry<StringHolder, ObjectTag> entry : object.entrySet()) {
                 if (entry.getValue() instanceof MapTag) {
                     ((MapTag) entry.getValue()).appendDeepKeys(entry.getKey().str, result);
                 }
@@ -856,7 +909,7 @@ public class MapTag implements ObjectTag {
         // - narrate <map[a=1;b=2;c=3].values>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "values", (attribute, object) -> {
-            return new ListTag(object.map.values());
+            return new ListTag(object.values());
         }, "list_values");
 
         // <--[tag]
@@ -870,7 +923,7 @@ public class MapTag implements ObjectTag {
         //     - narrate "<[pair].get[1]> is set to <[pair].get[2]>"
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_pair_lists", (attribute, object) -> {
-            return new ListTag(object.map.entrySet(), entry -> {
+            return new ListTag(object.entrySet(), entry -> {
                 ListTag pair = new ListTag(2);
                 pair.addObject(new ElementTag(entry.getKey().str, true));
                 pair.addObject(entry.getValue());
@@ -892,7 +945,7 @@ public class MapTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "to_list", (attribute, object) -> {
             String separator = attribute.hasParam() ? attribute.getParam() : "/";
-            return new ListTag(object.map.entrySet(), entry -> new ElementTag(entry.getKey().str + separator + entry.getValue().identify(), true));
+            return new ListTag(object.entrySet(), entry -> new ElementTag(entry.getKey().str + separator + entry.getValue().identify(), true));
         });
 
         // <--[tag]
@@ -974,7 +1027,7 @@ public class MapTag implements ObjectTag {
                return null;
            }
            try {
-               for (Map.Entry<StringHolder, ObjectTag> entry : object.map.entrySet()) {
+               for (Map.Entry<StringHolder, ObjectTag> entry : object.entrySet()) {
                    Attribute tempAttrib = new Attribute(subAttribute, attribute.getScriptEntry(), attribute.context);
                    tempAttrib.setHadAlternative(attribute.hasAlternative() || fallback);
                    ObjectTag objs = CoreUtilities.autoAttribTyped(entry.getValue(), tempAttrib);
@@ -992,7 +1045,7 @@ public class MapTag implements ObjectTag {
     }
 
     public void appendDeepKeys(String path, ListTag result) {
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> entry : entrySet()) {
             if (entry.getValue() instanceof MapTag) {
                 ((MapTag) entry.getValue()).appendDeepKeys(path + "." + entry.getKey().str, result);
             }

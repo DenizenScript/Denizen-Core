@@ -94,7 +94,7 @@ public class RunLaterCommand extends AbstractCommand {
             }
             else if (arg.matchesPrefix("defmap")
                     && arg.matchesArgumentType(MapTag.class)) {
-                defMap.map.putAll(arg.asType(MapTag.class).map);
+                defMap.putAll(arg.asType(MapTag.class));
             }
             else if (arg.matchesPrefix("delay")
                     && arg.matchesArgumentType(DurationTag.class)) {
@@ -136,7 +136,7 @@ public class RunLaterCommand extends AbstractCommand {
         if (!scriptEntry.hasObject("delay")) {
             throw new InvalidArgumentsException("Must specify a DELAY.");
         }
-        if (!defMap.map.isEmpty()) {
+        if (!defMap.isEmpty()) {
             scriptEntry.addObject("def_map", defMap);
         }
     }
@@ -251,7 +251,7 @@ public class RunLaterCommand extends AbstractCommand {
                 }
                 Consumer<ScriptQueue> configure = (queue) -> {
                     if (defMap != null) {
-                        for (Map.Entry<StringHolder, ObjectTag> val : defMap.map.entrySet()) {
+                        for (Map.Entry<StringHolder, ObjectTag> val : defMap.entrySet()) {
                             queue.addDefinition(val.getKey().str, val.getValue());
                         }
                     }

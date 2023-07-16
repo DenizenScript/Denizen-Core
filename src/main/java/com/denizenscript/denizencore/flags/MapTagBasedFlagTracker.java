@@ -34,17 +34,17 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         if (map == null) {
             return null;
         }
-        if (isExpired(map.map.get(expirationString))) {
+        if (isExpired(map.getObject(expirationString))) {
             return null;
         }
         if (splitKey.size() == 1) {
-            ObjectTag returnValue = map.map.get(type);
+            ObjectTag returnValue = map.getObject(type);
             if (returnValue instanceof MapTag) {
                 return deflaggedSubMap((MapTag) returnValue);
             }
             return returnValue;
         }
-        ObjectTag rootValue = map.map.get(valueString);
+        ObjectTag rootValue = map.getObject(valueString);
         if (!(rootValue instanceof MapTag)) {
             return null;
         }
@@ -55,10 +55,10 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
             if (subMap == null) {
                 return null;
             }
-            if (isExpired(subMap.map.get(expirationString))) {
+            if (isExpired(subMap.getObject(expirationString))) {
                 return null;
             }
-            ObjectTag subValue = subMap.map.get(valueString);
+            ObjectTag subValue = subMap.getObject(valueString);
             if (!(subValue instanceof MapTag)) {
                 return null;
             }
@@ -68,11 +68,11 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         if (obj == null) {
             return null;
         }
-        ObjectTag value = obj.map.get(type);
+        ObjectTag value = obj.getObject(type);
         if (value == null) {
             return null;
         }
-        if (isExpired(obj.map.get(expirationString))) {
+        if (isExpired(obj.getObject(expirationString))) {
             return null;
         }
         if (value instanceof MapTag) {
@@ -88,16 +88,16 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
 
     public MapTag deflaggedSubMap(MapTag map) {
         MapTag toReturn = new MapTag();
-        for (Map.Entry<StringHolder, ObjectTag> pair : map.map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> pair : map.entrySet()) {
             MapTag subMap = (MapTag) pair.getValue();
-            if (isExpired(subMap.map.get(expirationString))) {
+            if (isExpired(subMap.getObject(expirationString))) {
                 continue;
             }
-            ObjectTag subValue = subMap.map.get(valueString);
+            ObjectTag subValue = subMap.getObject(valueString);
             if (subValue instanceof MapTag) {
                 subValue = deflaggedSubMap((MapTag) subValue);
             }
-            toReturn.map.put(pair.getKey(), subValue);
+            toReturn.putObject(pair.getKey(), subValue);
         }
         return toReturn;
     }
@@ -113,16 +113,16 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
         }
         boolean anyCleaned = false;
         ArrayList<StringHolder> toRemove = new ArrayList<>();
-        for (Map.Entry<StringHolder, ObjectTag> entry : map.map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> entry : map.entrySet()) {
             if (!(entry.getValue() instanceof MapTag)) {
                 continue;
             }
-            if (isExpired(((MapTag) entry.getValue()).map.get(expirationString))) {
+            if (isExpired(((MapTag) entry.getValue()).getObject(expirationString))) {
                 toRemove.add(entry.getKey());
                 anyCleaned = true;
             }
             else {
-                ObjectTag subValue = ((MapTag) entry.getValue()).map.get(valueString);
+                ObjectTag subValue = ((MapTag) entry.getValue()).getObject(valueString);
                 if (subValue instanceof MapTag) {
                     boolean didClean = doClean((MapTag) subValue);
                     anyCleaned = anyCleaned || didClean;
@@ -130,22 +130,22 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
             }
         }
         for (StringHolder str : toRemove) {
-            map.map.remove(str);
+            map.remove(str);
         }
         return anyCleaned;
     }
 
     public MapTag flaggifyMapTag(MapTag map) {
         MapTag toReturn = new MapTag();
-        for (Map.Entry<StringHolder, ObjectTag> pair : map.map.entrySet()) {
+        for (Map.Entry<StringHolder, ObjectTag> pair : map.entrySet()) {
             MapTag flagMap = new MapTag();
             if (pair.getValue() instanceof MapTag) {
-                flagMap.map.put(valueString, flaggifyMapTag((MapTag) pair.getValue()));
+                flagMap.putObject(valueString, flaggifyMapTag((MapTag) pair.getValue()));
             }
             else {
-                flagMap.map.put(valueString, pair.getValue());
+                flagMap.putObject(valueString, pair.getValue());
             }
-            toReturn.map.put(pair.getKey(), flagMap);
+            toReturn.putObject(pair.getKey(), flagMap);
         }
         return toReturn;
     }
@@ -172,16 +172,16 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
                     map.putObject(splitKey.get(i), flagMap);
                 }
             }
-            ObjectTag innerMapTag = flagMap.map.get(valueString);
-            flagMap.map.remove(expirationString);
+            ObjectTag innerMapTag = flagMap.getObject(valueString);
+            flagMap.remove(expirationString);
             if (!(innerMapTag instanceof MapTag)) {
                 innerMapTag = new MapTag();
-                flagMap.map.put(valueString, innerMapTag);
+                flagMap.putObject(valueString, innerMapTag);
             }
             map = (MapTag) innerMapTag;
         }
         if (value == null) {
-            map.map.remove(new StringHolder(endKey));
+            map.remove(endKey);
             setRootMap(splitKey.get(0), rootMap);
         }
         else {
@@ -197,9 +197,9 @@ public abstract class MapTagBasedFlagTracker extends AbstractFlagTracker {
                         value = flaggifyMapTag(mappified);
                     }
                 }
-                resultMap.map.put(valueString, value);
+                resultMap.putObject(valueString, value);
                 if (expiration != null) {
-                    resultMap.map.put(expirationString, expiration);
+                    resultMap.putObject(expirationString, expiration);
                 }
             }
             if (splitKey.size() != 1) {
