@@ -11,6 +11,9 @@ import com.denizenscript.denizencore.scripts.queues.ContextSource;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import com.denizenscript.denizencore.scripts.queues.core.TimedQueue;
+import com.denizenscript.denizencore.tags.ParseableTag;
+import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
 
@@ -18,6 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * General central API class for simple Denizen calls from external sources.
+ * Generally, external addons should register events/tags/commands/etc. instead of using this, but it serves as a 'good enough' entry point for lazy/basic usages.
+ */
 public class ScriptUtilities {
 
     /**
@@ -136,5 +143,22 @@ public class ScriptUtilities {
         }
         queue.start(true);
         return queue;
+    }
+
+    /**
+     * Takes a string with tags in it, and the context to use, and returns a string with any/all tags within parsed.
+     * If no context is available, use `CoreUtilities.basicContext` or  `CoreUtilities.noDebugContext`.
+     */
+    public static ObjectTag tagObject(String taggedText, TagContext context) {
+        return TagManager.tagObject(taggedText, context);
+    }
+
+    /**
+     * Takes a string with tags in it, and the context to use, and returns an object representing a pre-parsed reusable tag-holding object that can be used to quickly read tags.
+     * Do not store instances past a script reload event.
+     * If no context is available, use `CoreUtilities.basicContext` or  `CoreUtilities.noDebugContext`.
+     */
+    public static ParseableTag textToTag(String taggedText, TagContext context) {
+        return TagManager.parseTextToTag(taggedText, context);
     }
 }

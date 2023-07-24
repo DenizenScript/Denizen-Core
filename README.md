@@ -7,6 +7,10 @@ To be implemented and extended by separate DenizenScript projects.
 
 Please posts issues to the [Denizen Repo](https://github.com/DenizenScript/Denizen/issues).
 
+For API usage, refer to the [Denizen README](https://github.com/DenizenScript/Denizen).
+
+If you are implementing your own version of Denizen using this core, this topic is not yet fully documented, but talk to us on [Discord](https://discord.gg/Q6pZGSR).
+
 ### Licensing pre-note:
 
 This is an open source project, provided entirely freely, for everyone to use and contribute to.

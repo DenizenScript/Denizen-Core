@@ -6,6 +6,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 
 import java.util.List;
 
+/**
+ * Simple core representation of a section of user input that may contain tags, with methods to parse the tags inside.
+ */
 public class ParseableTag {
 
     public ObjectTag rawObject;
@@ -16,6 +19,10 @@ public class ParseableTag {
 
     public boolean hasTag;
 
+    /**
+     * Get the object represented by this tag.
+     * If the user input was plaintext (ie not a tag, or text mixed with a tag), with return an ElementTag.
+     */
     public final ObjectTag parse(TagContext context) {
         if (rawObject != null) {
             return rawObject;
