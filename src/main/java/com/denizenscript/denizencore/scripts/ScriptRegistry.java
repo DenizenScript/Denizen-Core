@@ -114,7 +114,7 @@ public class ScriptRegistry {
         try {
             ScriptContainer container = scriptContainers.get(CoreUtilities.toLowerCase(name));
             if (container != null) {
-                return type.cast(container);
+                return (T) container;
             }
             else {
                 return null;

@@ -136,7 +136,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 return queue.determinations;
             }
             Debug.echoDebug(this, "[CustomObject] Grabbing parent of " + csc.getName());
-            csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
+            csc = ScriptRegistry.getScriptContainer(csc.inherit);
         }
         Debug.echoDebug(this, "Unable to find tag handler for " + path + " for " + this.getName());
         return null;
@@ -156,7 +156,7 @@ public class CustomScriptContainer extends ScriptContainer {
                 queue.start();
                 return queue.determinations;
             }
-            csc = ScriptRegistry.getScriptContainerAs(csc.inherit, CustomScriptContainer.class);
+            csc = ScriptRegistry.getScriptContainer(csc.inherit);
         }
         return null;
     }

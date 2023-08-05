@@ -35,7 +35,7 @@ public class CommandRegistry {
     public <T extends AbstractCommand> T get(Class<T> clazz) {
         String command = classes.get(clazz);
         if (command != null) {
-            return clazz.cast(instances.get(command));
+            return (T) instances.get(command);
         }
         else {
             return null;
