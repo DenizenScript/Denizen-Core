@@ -32,7 +32,7 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
         void autoRegisterNullable(String name, Class<TProp> propClass, Class<TData> dataClass, boolean isStatic, String... deprecatedVariants) {
         PropertyParser.registerTagInternal(propClass, dataClass, name, (attribute, prop) -> prop.getPropertyValue(), deprecatedVariants, isStatic);
         PropertyParser.registerMechanism(propClass, name, (prop, mechanism) -> {
-            if (mechanism.value == null) {
+            if (!mechanism.hasValue()) {
                 prop.setPropertyValue(null, mechanism);
                 return;
             }
