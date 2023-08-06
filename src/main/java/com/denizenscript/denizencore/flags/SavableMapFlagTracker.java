@@ -60,6 +60,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     }
 
     public SavableMapFlagTracker(String input) {
+        input = input.replace("\r", "");
         map = new HashMap<>(input.length() / 50);
         int eol = input.indexOf('\n');
         int startOfLine = 0;
@@ -77,6 +78,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
                 flag.canExpire = expirable;
                 flag.string = value;
                 map.put(new StringHolder(key), flag);
+                if (CoreConfiguration.debugVerbose) {
+                    Debug.log("Verbose: MapFlagTracker, loading flag " + key + " as " + value);
+                }
             }
             startOfLine = eol + 1;
             eol = input.indexOf('\n', eol + 1);
@@ -102,6 +106,9 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             }
             else if (val.string.startsWith("map@")) {
                 MapTag quickMap = MapTag.valueOf(val.string, CoreUtilities.noDebugContext, false);
+                if (CoreConfiguration.debugVerbose) {
+                    Debug.log("Verbose: MapFlagTracker, quickMap = " + quickMap.debuggable());
+                }
                 ObjectTag time = quickMap.getObject(expirationString);
                 if (time != null) {
                     expireTime = TimeTag.valueOf(time.toString(), CoreUtilities.noDebugContext);
