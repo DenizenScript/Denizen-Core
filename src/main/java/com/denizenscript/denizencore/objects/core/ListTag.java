@@ -2014,7 +2014,7 @@ public class ListTag implements List<String>, ObjectTag {
             // Optionally specify a tag to run on each list entry that returns the numeric value for that entry.
             // Note: if you want to sort the entire list, rather than just getting a few values, use a sort tag like <@link tag listtag.sort_by_number>
             // @Example
-            // # Narrates a list of '10|5'
+            // # Narrates a list of '10|3'
             // - narrate "<list[3|2|1|10].highest.count[2]>
             // @Example
             // # Narrates the names of the 5 players with the most money currently online
