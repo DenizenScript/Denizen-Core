@@ -313,9 +313,6 @@ public class CoreUtilities {
         return inp.getObjectAttribute(attribute);
     }
 
-    static {
-    }
-
     public static void deleteDirectory(File directory) throws IOException {
         Files.walkFileTree(directory.toPath(),
                 new SimpleFileVisitor<Path>() {
