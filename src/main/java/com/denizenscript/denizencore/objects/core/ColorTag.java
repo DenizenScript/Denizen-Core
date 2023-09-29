@@ -588,8 +588,16 @@ public class ColorTag implements ObjectTag {
         return red << 16 | green << 8 | blue;
     }
 
+    public int asARGB() {
+        return alpha << 24 | red << 16 | green << 8 | blue;
+    }
+
     public static ColorTag fromRGB(int rgb) {
         return new ColorTag(rgb >> 16 & 255, rgb >> 8 & 255, rgb & 255);
+    }
+
+    public static ColorTag fromARGB(int argb) {
+        return new ColorTag(argb >> 16 & 255, argb >> 8 & 255, argb & 255, argb >> 24 & 255);
     }
 
     public static ColorTag fromHSB(int[] hsv) {

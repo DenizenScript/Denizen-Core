@@ -57,10 +57,7 @@ public class BinaryTag implements ObjectTag {
         if (string.isEmpty()) {
             return new BinaryTag(EMPTY);
         }
-        if (!VALID_HEX.isOnlyMatches(string)) {
-            return null;
-        }
-        if (string.length() % 2 == 1) {
+        if (!isValidHex(string)) {
             return null;
         }
         return new BinaryTag(CoreUtilities.hexDecode(string));
@@ -73,17 +70,15 @@ public class BinaryTag implements ObjectTag {
             if (string.startsWith("binary@")) {
                 return true;
             }
-            if (!VALID_HEX.isOnlyMatches(string)) {
-                return false;
-            }
-            if (string.length() % 2 == 1) {
-                return false;
-            }
-            return true;
+            return isValidHex(string);
         }
         catch (Exception e) {
             return false;
         }
+    }
+
+    public static boolean isValidHex(String string) {
+        return string.length() % 2 != 1 && VALID_HEX.isOnlyMatches(string);
     }
 
     public byte[] data;
