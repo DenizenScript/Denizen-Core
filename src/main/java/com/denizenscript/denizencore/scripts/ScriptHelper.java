@@ -142,14 +142,14 @@ public class ScriptHelper {
                     curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
                 }
                 if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
+                    int dashIndex = curLine.indexOf('-');
+                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + lineNum + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                     int nextLine = i + 1;
                     if (nextLine < lines.size() && lines.get(nextLine).stripLeading().startsWith(".")) {
                         int lineCountBefore = lines.size();
                         curLine = inlineTagsForCommand(curLine, i, lines);
                         lineNum += lineCountBefore - lines.size();
                     }
-                    int dashIndex = curLine.indexOf('-');
-                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + lineNum + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                 }
                 result.append(curLine).append("\n");
             }
