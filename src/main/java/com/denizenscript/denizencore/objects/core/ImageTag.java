@@ -18,9 +18,11 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class ImageTag implements Adjustable {
@@ -38,6 +40,26 @@ public class ImageTag implements Adjustable {
             }
         }
         if (!BinaryTag.isValidHex(stringLower)) {
+            MapTag map = MapTag.valueOf(string, CoreUtilities.noDebugContext);
+            if (map != null) {
+                ElementTag width = map.getElement("width");
+                ElementTag height = map.getElement("height");
+                ElementTag type = map.getElement("type", "png");
+                ColorTag background = map.getObjectAs("background", ColorTag.class, context);
+                if (width == null || height == null || !width.isInt() || !height.isInt()) {
+                    if ((context == null || context.showErrors()) && !TagManager.isStaticParsing) {
+                        Debug.echoError("valueOf ImageTag returning null: must specify valid width/height.");
+                    }
+                    return null;
+                }
+                ImageTag image = new ImageTag(new BufferedImage(width.asInt(), height.asInt(), BufferedImage.TYPE_INT_ARGB), type.asString());
+                if (background != null) {
+                    // Optimization hack, since the internal data structure is guaranteed here
+                    int[] data = ((DataBufferInt) image.image.getRaster().getDataBuffer()).getData();
+                    Arrays.fill(data, background.asARGB());
+                }
+                return image;
+            }
             if ((context == null || context.showErrors()) && !TagManager.isStaticParsing) {
                 Debug.echoError("valueOf ImageTag returning null: invalid binary data: " + string);
             }
