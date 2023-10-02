@@ -104,6 +104,7 @@ public class ScriptHelper {
         boolean hasAnyScript = false;
         int lineNum = 0;
         for (int i = 0; i < lines.size(); i++) {
+            lineNum++;
             String line = lines.get(i);
             String trimmedLine = line.trim();
             String trimStart = line.replaceAll("^[\\s]+", "");
@@ -141,21 +142,20 @@ public class ScriptHelper {
                     curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
                 }
                 if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
-                    int nextLine = lineNum + 1;
+                    int nextLine = i + 1;
                     if (nextLine < lines.size() && lines.get(nextLine).stripLeading().startsWith(".")) {
-                        int linesBefore = lines.size();
-                        curLine = inlineTagsForCommand(curLine, lineNum, lines);
-                        lineNum += linesBefore - lines.size();
+                        int lineCountBefore = lines.size();
+                        curLine = inlineTagsForCommand(curLine, i, lines);
+                        lineNum += lineCountBefore - lines.size();
                     }
                     int dashIndex = curLine.indexOf('-');
-                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
+                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + lineNum + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                 }
                 result.append(curLine).append("\n");
             }
             else {
                 result.append("\n");
             }
-            lineNum++;
         }
         result.append("\n");
         return result.toString();
