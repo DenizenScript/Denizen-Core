@@ -131,6 +131,14 @@ public class ImageTag implements Adjustable {
             return ColorTag.fromARGB(object.image.getRGB(x.asInt(), y.asInt()));
         });
 
+        tagProcessor.registerTag(ElementTag.class, "width", (attribute, object) -> {
+            return new ElementTag(object.image.getWidth());
+        });
+
+        tagProcessor.registerTag(ElementTag.class, "height", (attribute, object) -> {
+            return new ElementTag(object.image.getHeight());
+        });
+
         tagProcessor.registerTag(ElementTag.class, "type", (attribute, object) -> {
             return new ElementTag(object.imageType, true);
         });
