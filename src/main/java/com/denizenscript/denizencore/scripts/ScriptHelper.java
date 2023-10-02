@@ -102,8 +102,9 @@ public class ScriptHelper {
         String[] linesArray = input.replace("\t", "    ").replace("\r", "").split("\n");
         List<String> lines = new ArrayList<>(Arrays.asList(linesArray));
         boolean hasAnyScript = false;
-        for (int lineNum = 0; lineNum < lines.size(); lineNum++) {
-            String line = lines.get(lineNum);
+        int lineNum = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
             String trimmedLine = line.trim();
             String trimStart = line.replaceAll("^[\\s]+", "");
             if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == line.length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
@@ -142,7 +143,9 @@ public class ScriptHelper {
                 if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
                     int nextLine = lineNum + 1;
                     if (nextLine < lines.size() && lines.get(nextLine).stripLeading().startsWith(".")) {
+                        int linesBefore = lines.size();
                         curLine = inlineTagsForCommand(curLine, lineNum, lines);
+                        lineNum += linesBefore - lines.size();
                     }
                     int dashIndex = curLine.indexOf('-');
                     curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
@@ -152,6 +155,7 @@ public class ScriptHelper {
             else {
                 result.append("\n");
             }
+            lineNum++;
         }
         result.append("\n");
         return result.toString();
