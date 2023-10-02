@@ -99,12 +99,14 @@ public class ScriptHelper {
 
     public static String clearComments(String filename, String input, boolean trackSources) {
         StringBuilder result = new StringBuilder(input.length());
-        String[] lines = input.replace("\t", "    ").replace("\r", "").split("\n");
+        String[] linesArray = input.replace("\t", "    ").replace("\r", "").split("\n");
+        List<String> lines = new ArrayList<>(Arrays.asList(linesArray));
         boolean hasAnyScript = false;
-        for (int lineNum = 0; lineNum < lines.length; lineNum++) {
-            String trimmedLine = lines[lineNum].trim();
-            String trimStart = lines[lineNum].replaceAll("^[\\s]+", "");
-            if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == lines[lineNum].length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
+        for (int lineNum = 0; lineNum < lines.size(); lineNum++) {
+            String line = lines.get(lineNum);
+            String trimmedLine = line.trim();
+            String trimStart = line.replaceAll("^[\\s]+", "");
+            if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == line.length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
                 String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
                 scriptSourcesInprogress.put(CoreUtilities.toLowerCase(name), filename);
                 scriptOriginalNamesInprogress.put(CoreUtilities.toLowerCase(name), name);
@@ -116,7 +118,7 @@ public class ScriptHelper {
                     Debug.echoError("Script '<Y>" + filename + "<W>' is broken: script container title has spaces in front.");
                     hasAnyScript = true;
                 }
-                String curLine = lines[lineNum].replace('\0', ' ');
+                String curLine = line.replace('\0', ' ');
                 boolean endsColon = trimmedLine.endsWith(":");
                 boolean startsDash = trimmedLine.startsWith("-");
                 if (!endsColon && startsDash) {
@@ -138,6 +140,10 @@ public class ScriptHelper {
                     curLine = curLine.substring(0, colon + 1) + CoreUtilities.replace(curLine.substring(colon + 1), ":", "<&co>");
                 }
                 if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
+                    int nextLine = lineNum + 1;
+                    if (nextLine < lines.size() && lines.get(nextLine).stripLeading().startsWith(".")) {
+                        curLine = inlineTagsForCommand(curLine, lineNum, lines);
+                    }
                     int dashIndex = curLine.indexOf('-');
                     curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + (lineNum + 1) + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                 }
@@ -149,6 +155,20 @@ public class ScriptHelper {
         }
         result.append("\n");
         return result.toString();
+    }
+
+    public static String inlineTagsForCommand(String command, int commandLine, List<String> lines) {
+        StringBuilder inlinedCommand = new StringBuilder(command);
+        ListIterator<String> iterator = lines.listIterator(commandLine + 1);
+        while (iterator.hasNext()) {
+            String nextPart = iterator.next().trim();
+            if (!nextPart.startsWith(".")) {
+                break;
+            }
+            inlinedCommand.append(nextPart);
+            iterator.remove();
+        }
+        return inlinedCommand.toString();
     }
 
     public static String convertStreamToString(InputStream is) {
