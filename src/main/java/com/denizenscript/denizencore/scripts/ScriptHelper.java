@@ -99,8 +99,7 @@ public class ScriptHelper {
 
     public static String clearComments(String filename, String input, boolean trackSources) {
         StringBuilder result = new StringBuilder(input.length());
-        String[] linesArray = input.replace("\t", "    ").replace("\r", "").split("\n");
-        List<String> lines = new ArrayList<>(Arrays.asList(linesArray));
+        List<String> lines = new ArrayList<>(Arrays.asList(input.replace("\t", "    ").replace("\r", "").split("\n")));
         boolean hasAnyScript = false;
         int lineNum = 0;
         for (int i = 0; i < lines.size(); i++) {
