@@ -109,7 +109,7 @@ public class ScriptHelper {
             String trimmedLine = line.trim();
             String trimStart = line.replaceAll("^[\\s]+", "");
             if (trackSources && !trimmedLine.startsWith("#") && trimStart.length() == line.length() && trimmedLine.endsWith(":") && trimmedLine.length() > 1) {
-                String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('\"', '\'').replace("'", "");
+                String name = trimmedLine.substring(0, trimmedLine.length() - 1).replace('"', '\'').replace("'", "");
                 scriptSourcesInprogress.put(CoreUtilities.toLowerCase(name), filename);
                 scriptOriginalNamesInprogress.put(CoreUtilities.toLowerCase(name), name);
                 result.append(CoreUtilities.toUpperCase(name)).append(":\n");
@@ -135,7 +135,7 @@ public class ScriptHelper {
                 }
                 else if (!startsDash && (trimmedLine.contains(": &") || trimmedLine.contains(": *") || trimmedLine.contains(": !"))) {
                     int colon = curLine.indexOf(':');
-                    curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + "\"";
+                    curLine = curLine.substring(0, colon) + ": \"" + curLine.substring(colon + 2).replace("\"", "<&dq>") + '"';
                 }
                 else if (!endsColon) {
                     int colon = curLine.indexOf(':');
@@ -143,7 +143,7 @@ public class ScriptHelper {
                 }
                 if (trimmedLine.startsWith("- ") && !trimmedLine.startsWith("- \"") && !trimmedLine.startsWith("- '")) {
                     int dashIndex = curLine.indexOf('-');
-                    curLine = curLine.substring(0, dashIndex + 1) + " " + ScriptBuilder.LINE_PREFIX_CHAR + lineNum + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
+                    curLine = curLine.substring(0, dashIndex + 1) + ' ' + ScriptBuilder.LINE_PREFIX_CHAR + lineNum + ScriptBuilder.LINE_PREFIX_CHAR + curLine.substring(dashIndex + 1);
                     int nextLine = i + 1;
                     if (nextLine < lines.size() && lines.get(nextLine).stripLeading().startsWith(".")) {
                         int lineCountBefore = lines.size();
@@ -151,10 +151,10 @@ public class ScriptHelper {
                         lineNum += lineCountBefore - lines.size();
                     }
                 }
-                result.append(curLine).append("\n");
+                result.append(curLine).append('\n');
             }
             else {
-                result.append("\n");
+                result.append('\n');
             }
         }
         result.append("\n");
