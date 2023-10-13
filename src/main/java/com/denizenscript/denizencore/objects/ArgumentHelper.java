@@ -56,7 +56,7 @@ public class ArgumentHelper {
         boolean currentTagHasFallback = false;
         for (int i = 0; i < len; i++) {
             char c = stringArgs.charAt(i);
-            if (c == ' ' && currentQuote == 0 && inTagParams == 0 && !currentTagHasFallback) {
+            if (c == ' ' && currentQuote == 0 && inTags == 0 && !currentTagHasFallback) {
                 if (i > start) {
                     matchList.add(stringArgs.substring(start, i));
                 }

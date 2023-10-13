@@ -36,7 +36,7 @@ public class Attribute {
                 rawKey = inp;
                 rawParam = null;
             }
-            key = CoreUtilities.toLowerCase(rawKey);
+            key = CoreUtilities.toLowerCase(rawKey).trim();
         }
 
         @Override
