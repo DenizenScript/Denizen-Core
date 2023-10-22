@@ -1286,6 +1286,31 @@ public class ListTag implements List<String>, ObjectTag {
         });
 
         // <--[tag]
+        // @attribute <ListTag.exclude_single[<value>]>
+        // @returns ListTag
+        // @description
+        // Returns a new ListTag excluding the items specified.
+        // If your list contains sub-lists, this tag can cleanly remove them.
+        // Note that the "_single" refers to not taking a list of removables, it does still remove more than once instance of the value if present in the list.
+        // @Example
+        // # Narrates a list of "one|two|three|four", note how it does not remove anything here, as "two|three" does not appear as a *single* value in the list.
+        // - narrate <list[one|two|three|four].exclude_single[two|three]>
+        // @Example
+        // # Narrates a list of "three|four", with the single-entry "one|two" value removed.
+        // - narrate <list_single[one|two].include[three|four].exclude_single[one|two]>
+        // -->
+        tagProcessor.registerStaticTag(ListTag.class, ObjectTag.class, "exclude_single", (attribute, object, val) -> {
+            ListTag copy = new ListTag(object);
+            String toRemove = CoreUtilities.toLowerCase(val.toString());
+            for (int i = 0; i < copy.size(); i++) {
+                if (toRemove.contains(CoreUtilities.toLowerCase(copy.get(i)))) {
+                    copy.removeObject(i--);
+                }
+            }
+            return copy;
+        });
+
+        // <--[tag]
         // @attribute <ListTag.exclude[...|...]>
         // @returns ListTag
         // @description
