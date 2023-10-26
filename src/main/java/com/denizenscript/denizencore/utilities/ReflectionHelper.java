@@ -123,17 +123,22 @@ public class ReflectionHelper {
     public static Method getMethod(Class<?> clazz, String method, Class<?>... params) {
         Method f = null;
         try {
-            if (method == null) {
-                for (Method possible : clazz.getDeclaredMethods()) {
-                    if (possible.getParameterCount() == params.length && Arrays.equals(possible.getParameterTypes(), params)) {
-                        f = possible;
-                        break;
+            mainLoop:
+            for (Method possible : clazz.getDeclaredMethods()) {
+                if (method != null && !method.equals(possible.getName())) {
+                    continue;
+                }
+                if (possible.getParameterCount() != params.length) {
+                    continue;
+                }
+                Class<?>[] paramTypes = possible.getParameterTypes();
+                for (int i = 0; i < params.length; i++) {
+                    if (params[i] != null && !params[i].equals(paramTypes[i])) {
+                        continue mainLoop;
                     }
                 }
-            }
-            else {
-                f = clazz.getDeclaredMethod(method, params);
-                f.setAccessible(true);
+                f = possible;
+                break;
             }
         }
         catch (Exception ex) {
@@ -141,7 +146,9 @@ public class ReflectionHelper {
         }
         if (f == null) {
             echoError("Reflection method missing - Tried to read method '" + method + "' of class '" + clazz.getCanonicalName() + "'.");
+            return null;
         }
+        f.setAccessible(true);
         return f;
     }
 
