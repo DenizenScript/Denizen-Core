@@ -97,6 +97,7 @@ public class ImageTag implements Adjustable {
                 }
                 return null;
             }
+            image.hexEncodedBytesCache = stringLower;
             return image;
         }
         catch (IOException e) {
@@ -272,6 +273,7 @@ public class ImageTag implements Adjustable {
             graphics.drawImage(object.image, 0, 0, width, height, null);
             graphics.dispose();
             object.image = rescaled;
+            object.markChanged();
         });
     }
 
@@ -304,9 +306,18 @@ public class ImageTag implements Adjustable {
         }
     }
 
+    String hexEncodedBytesCache;
+
+    public void markChanged() {
+        hexEncodedBytesCache = null;
+    }
+
     @Override
     public String identify() {
-        return "image@" + BinaryTag.hexEncode(getRawBytes(), false);
+        if (hexEncodedBytesCache == null) {
+            hexEncodedBytesCache = BinaryTag.hexEncode(getRawBytes(), false);
+        }
+        return "image@" + hexEncodedBytesCache;
     }
 
     @Override
@@ -316,7 +327,11 @@ public class ImageTag implements Adjustable {
 
     @Override
     public String debuggable() {
-        return "<LG>image@<Y>" + BinaryTag.hexEncode(getRawBytes(), true);
+        MapTag imageData = new MapTag();
+        imageData.putObject("width", new ElementTag(image.getWidth()));
+        imageData.putObject("height", new ElementTag(image.getHeight()));
+        imageData.putObject("type", new ElementTag(imageType, true));
+        return "<LG>image@<Y>" + imageData.debuggable().substring("<LG>map@".length());
     }
 
     @Override
@@ -336,7 +351,9 @@ public class ImageTag implements Adjustable {
         graphics.setComposite(AlphaComposite.Src);
         graphics.drawImage(image, 0, 0, null);
         graphics.dispose();
-        return new ImageTag(clone, imageType);
+        ImageTag duplicate = new ImageTag(clone, imageType);
+        duplicate.hexEncodedBytesCache = hexEncodedBytesCache;
+        return duplicate;
     }
 
     @Override
