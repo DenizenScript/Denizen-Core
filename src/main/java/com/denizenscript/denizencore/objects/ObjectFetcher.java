@@ -118,6 +118,13 @@ public class ObjectFetcher {
         TYPE_ELEMENT.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
         TYPE_ELEMENT.typeConverter = (obj, c) -> obj.asElement();
 
+        // <--[tag]
+        // @attribute <image[<image>]>
+        // @returns ImageTag
+        // @description
+        // Returns an ImageTag constructed from the input value.
+        // Refer to <@link ObjectType ImageTag>.
+        // -->
         TYPE_IMAGE = registerWithObjectFetcher(ImageTag.class, ImageTag.tagProcessor).setCanConvertStatic().generateBaseTag(); // image@
 
         // <--[tag]
