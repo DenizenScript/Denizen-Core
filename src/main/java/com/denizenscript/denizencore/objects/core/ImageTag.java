@@ -151,7 +151,7 @@ public class ImageTag implements Adjustable {
         // @returns ColorTag
         // @description
         // Returns the color of a specific pixel in an image.
-        // "x" and "y" are the position of the pixel, relative to the top left corner of the image (with that corner being 0,0).
+        // "x" and "y" are the position of the pixel, see <@link language Image positions>.
         // @example
         // Get the color of the pixel in 43,21
         // - narrate "The color is: <[image].pixel_at[x=43;y=21]>."
@@ -226,7 +226,7 @@ public class ImageTag implements Adjustable {
         // @returns ImageTag
         // @description
         // Returns a part of the image.
-        // "x" and "y" are the position of the upper left corner of the image part.
+        // "x" and "y" are the position of the upper left corner of the image part, see <@link language Image positions>.
         // "width" and "height" are the size of the part that should be returned.
         // @example
         // Gets the top right corner of a 100x100 image.

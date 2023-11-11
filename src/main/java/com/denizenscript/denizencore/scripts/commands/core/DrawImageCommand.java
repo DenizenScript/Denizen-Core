@@ -24,8 +24,7 @@ public class DrawImageCommand extends AbstractCommand {
     //
     // "id:" is the id of the image to draw on, see <@link command image>.
     // "draw:" is the image to draw.
-    // "x:" and "y:" are the position in the image the second image should be drawn on.
-    // They're the position of the top left corner of the image being drawn, relative to the top left corner of the image being drawn on (with that corner being 0,0).
+    // "x:" and "y:" are the position in the image the second image should be drawn on, see <@link language Image positions>.
     // "width:" and "height:" are optional, and will rescale the image being drawn.
     //
     // @Tags

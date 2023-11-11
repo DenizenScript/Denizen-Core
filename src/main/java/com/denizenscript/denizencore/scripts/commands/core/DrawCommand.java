@@ -27,8 +27,7 @@ public class DrawCommand extends AbstractCommand {
     //
     // "id:" is the id of the image to draw on, see <@link command image>.
     // "color:" is the color to draw in.
-    // "x:" and "y:" are the position that should be drawn on.
-    // They're the position of the pixel/top left corner of the shape being drawn, relative to the top left corner of the image being drawn on (with that corner being 0,0).
+    // "x:" and "y:" are the position that should be drawn on, see <@link language Image positions>.
     //
     // If you are drawing a shape (not a pixel), you can also use:
     // "width:" and "height:" - the size of the shape being drawn, required.
@@ -44,6 +43,16 @@ public class DrawCommand extends AbstractCommand {
     // @Usage
     // Use to draw a purple filled 100x100 circle in the top left of an image.
     // - draw id:image oval x:0 y:0 width:100 height:100 color:purple filled
+    // -->
+
+    // <--[language]
+    // @name Image positions
+    // @group image
+    // @description
+    // Some image-related features take in x and y values, which represent a point on the image.
+    // The values are relative to the upper left corner of the image, which acts as 0,0.
+    // If the values are meant to represent the position of a larger object (a shape, an image being drawn onto another image, etc.),
+    // they represent the position of that object's upper left corner.
     // -->
 
     public DrawCommand() {
