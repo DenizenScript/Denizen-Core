@@ -13,18 +13,17 @@ public class DrawImageCommand extends AbstractCommand {
 
     public DrawImageCommand() {
         setName("drawimage");
-        setSyntax("drawimage [id:<id>/image:<image>] [draw:<image>] [x:<x>] [y:<y>] [width:<width>] [height:<height>]");
+        setSyntax("drawimage [id:<id>] [draw:<image>] [x:<x>] [y:<y>] [width:<width>] [height:<height>]");
         autoCompile();
     }
 
-    public static void autoExecute(@ArgName("id") @ArgPrefixed @ArgDefaultNull String id,
-                                   @ArgName("image") @ArgPrefixed @ArgDefaultNull ImageTag image,
+    public static void autoExecute(@ArgName("id") @ArgPrefixed String id,
                                    @ArgName("draw") @ArgPrefixed ImageTag toDraw,
                                    @ArgName("x") @ArgPrefixed int x,
                                    @ArgName("y") @ArgPrefixed int y,
                                    @ArgName("width") @ArgPrefixed @ArgDefaultText("-1") int width,
                                    @ArgName("height") @ArgPrefixed @ArgDefaultText("-1") int height) {
-        image = DrawCommand.getImageFrom(image, id);
+        ImageTag image = DrawCommand.getImageFrom(id);
         if (width == -1) {
             width = toDraw.image.getWidth();
         }

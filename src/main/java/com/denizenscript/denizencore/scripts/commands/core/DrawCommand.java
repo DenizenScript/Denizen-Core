@@ -16,27 +16,21 @@ public class DrawCommand extends AbstractCommand {
 
     public DrawCommand() {
         setName("draw");
-        setSyntax("draw [id:<id>/image:<image>] [PIXEL/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)]] [x:<x>] [y:<y>] [color:<color>]");
+        setSyntax("draw [id:<id>] [PIXEL]/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]");
         autoCompile();
     }
 
     public enum Drawable {PIXEL, RECTANGLE, OVAL}
 
-    public static ImageTag getImageFrom(ImageTag image, String id) {
+    public static ImageTag getImageFrom(String id) {
+        ImageTag image = ImageCommand.loadedImages.get(CoreUtilities.toLowerCase(id));
         if (image == null) {
-            if (id == null) {
-                throw new InvalidArgumentsRuntimeException("Must specify either an image or an id.");
-            }
-            image = ImageCommand.loadedImages.get(CoreUtilities.toLowerCase(id));
-            if (image == null) {
-                throw new InvalidArgumentsRuntimeException("No loaded image with id '" + id + "'.");
-            }
+            throw new InvalidArgumentsRuntimeException("No loaded image with id '" + id + "'.");
         }
         return image;
     }
 
-    public static void autoExecute(@ArgName("id") @ArgPrefixed @ArgDefaultNull String id,
-                                   @ArgName("image") @ArgPrefixed @ArgDefaultNull ImageTag image,
+    public static void autoExecute(@ArgName("id") @ArgPrefixed String id,
                                    @ArgName("draw") Drawable drawable,
                                    @ArgName("x") @ArgPrefixed int x,
                                    @ArgName("y") @ArgPrefixed int y,
@@ -44,7 +38,7 @@ public class DrawCommand extends AbstractCommand {
                                    @ArgName("height") @ArgPrefixed @ArgDefaultText("-1") int height,
                                    @ArgName("color") @ArgPrefixed ColorTag color,
                                    @ArgName("filled") boolean filled) {
-        image = getImageFrom(image, id);
+        ImageTag image = getImageFrom(id);
         if (drawable == Drawable.PIXEL) {
             image.image.setRGB(x, y, color.asARGB());
             return;

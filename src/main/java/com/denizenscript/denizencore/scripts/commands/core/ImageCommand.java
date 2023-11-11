@@ -26,7 +26,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
 
     public ImageCommand() {
         setName("image");
-        setSyntax("image [id:<id>] [load/save [path:<path>]]/[unload]");
+        setSyntax("image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>]]/[unload]");
         setRequiredArguments(2, 3);
         autoCompile();
     }
@@ -36,15 +36,21 @@ public class ImageCommand extends AbstractCommand implements Holdable {
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgName("operation") Operation operation,
                                    @ArgName("id") @ArgPrefixed String id,
-                                   @ArgName("path") @ArgPrefixed @ArgDefaultNull String path) {
+                                   @ArgName("path") @ArgPrefixed @ArgDefaultNull String path,
+                                   @ArgName("image") @ArgPrefixed @ArgDefaultNull ImageTag toLoad) {
         String idLower = CoreUtilities.toLowerCase(id);
         switch (operation) {
             case LOAD -> {
-                if (path == null) {
-                    throw new InvalidArgumentsRuntimeException("Must specify a path.");
+                if (toLoad == null && path == null) {
+                    throw new InvalidArgumentsRuntimeException("Must specify a path or image to load.");
                 }
                 if (loadedImages.containsKey(idLower)) {
-                    Debug.echoError("Id '" + id + "' is already in use.");
+                    Debug.echoError(scriptEntry, "Id '" + id + "' is already in use.");
+                    scriptEntry.setFinished(true);
+                    return;
+                }
+                if (toLoad != null) {
+                    loadedImages.put(idLower, toLoad.duplicate());
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -56,7 +62,8 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     try {
                         ImageTag image = ImageTag.read(imageFile);
                         if (image == null) {
-                            Debug.echoError("Failed to recognize image format for image.");
+                            Debug.echoError(scriptEntry, "Failed to recognize image format for image.");
+                            scriptEntry.setFinished(true);
                             return;
                         }
                         DenizenCore.runOnMainThread(() -> {
@@ -65,8 +72,8 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                         });
                     }
                     catch (IOException e) {
-                        Debug.echoError("An error occurred while trying to load image, see stacktrace below:");
-                        Debug.echoError(e);
+                        Debug.echoError(scriptEntry, "An error occurred while trying to load image, see stacktrace below:");
+                        Debug.echoError(scriptEntry, e);
                         scriptEntry.setFinished(true);
                     }
                 };
@@ -83,7 +90,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                 }
                 ImageTag image = loadedImages.get(idLower);
                 if (image == null) {
-                    Debug.echoError("No loaded image with id '" + id + "'.");
+                    Debug.echoError(scriptEntry, "No loaded image with id '" + id + "'.");
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -96,8 +103,8 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                         ImageIO.write(image.image, image.imageType, imageFile);
                     }
                     catch (IOException e) {
-                        Debug.echoError("An error occurred while trying to save image, see stacktrace below:");
-                        Debug.echoError(e);
+                        Debug.echoError(scriptEntry, "An error occurred while trying to save image, see stacktrace below:");
+                        Debug.echoError(scriptEntry, e);
                     }
                     scriptEntry.setFinished(true);
                 };
