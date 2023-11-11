@@ -4,11 +4,9 @@ import com.denizenscript.denizencore.exceptions.InvalidArgumentsRuntimeException
 import com.denizenscript.denizencore.objects.core.ColorTag;
 import com.denizenscript.denizencore.objects.core.ImageTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultNull;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 
 import java.awt.*;
 
@@ -25,8 +23,8 @@ public class DrawCommand extends AbstractCommand {
     // @Description
     // Draws onto an image, potentially with certain predetermined shapes.
     //
-    // "id:" is the id of the image to draw on, see <@link command image>.
-    // "color:" is the color to draw in.
+    // "id:" is the id of the image to draw on, see <@link command Image>.
+    // "color:" is a <@link ObjectType ColorTag> of the color to draw in.
     // "x:" and "y:" are the position that should be drawn on, see <@link language Image positions>.
     //
     // If you are drawing a shape (not a pixel), you can also use:
@@ -41,7 +39,7 @@ public class DrawCommand extends AbstractCommand {
     // - draw id:image pixel x:0 y:0 color:red
     //
     // @Usage
-    // Use to draw a purple filled 100x100 circle in the top left of an image.
+    // Use to draw a purple 100x100 filled circle in the top left of an image.
     // - draw id:image oval x:0 y:0 width:100 height:100 color:purple filled
     // -->
 
@@ -64,14 +62,6 @@ public class DrawCommand extends AbstractCommand {
 
     public enum Drawable {PIXEL, RECTANGLE, OVAL}
 
-    public static ImageTag getImageFrom(String id) {
-        ImageTag image = ImageCommand.loadedImages.get(CoreUtilities.toLowerCase(id));
-        if (image == null) {
-            throw new InvalidArgumentsRuntimeException("No loaded image with id '" + id + "'.");
-        }
-        return image;
-    }
-
     public static void autoExecute(@ArgName("id") @ArgPrefixed String id,
                                    @ArgName("draw") Drawable drawable,
                                    @ArgName("x") @ArgPrefixed int x,
@@ -80,7 +70,7 @@ public class DrawCommand extends AbstractCommand {
                                    @ArgName("height") @ArgPrefixed @ArgDefaultText("-1") int height,
                                    @ArgName("color") @ArgPrefixed ColorTag color,
                                    @ArgName("filled") boolean filled) {
-        ImageTag image = getImageFrom(id);
+        ImageTag image = ImageCommand.getImageFrom(id);
         if (drawable == Drawable.PIXEL) {
             image.image.setRGB(x, y, color.asARGB());
             image.markChanged();

@@ -153,12 +153,15 @@ public class ImageTag implements Adjustable {
         // Returns the color of a specific pixel in an image.
         // "x" and "y" are the position of the pixel, see <@link language Image positions>.
         // @example
-        // Get the color of the pixel in 43,21
+        // Get the color of the pixel at 43,21
         // - narrate "The color is: <[image].pixel_at[x=43;y=21]>."
         // -->
         tagProcessor.registerTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
             ElementTag x = param.getRequiredObjectAs("x", ElementTag.class, attribute);
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
+            if (x == null || y == null) {
+                return null;
+            }
             if (!x.isInt() || !y.isInt()) {
                 attribute.echoError("Invalid x/y '" + x + '/' + y + "' specified: must be valid numbers.");
                 return null;
@@ -171,7 +174,7 @@ public class ImageTag implements Adjustable {
         // @returns ElementTag(Number)
         // @mechanism ImageTag.scale
         // @description
-        // Returns image's width (in pixels).
+        // Returns the image's width (in pixels).
         // @example
         // Narrates an image's width.
         // - narrate "The image is <[image].width> wide."
@@ -185,7 +188,7 @@ public class ImageTag implements Adjustable {
         // @returns ElementTag(Number)
         // @mechanism ImageTag.scale
         // @description
-        // Returns image's height (in pixels).
+        // Returns the image's height (in pixels).
         // @example
         // Narrates an image's height.
         // - narrate "The image is <[image].height> tall."
@@ -198,7 +201,7 @@ public class ImageTag implements Adjustable {
         // @attribute <ImageTag.type>
         // @returns ElementTag
         // @description
-        // Returns image's type ("png", "jpg", "webp", etc.).
+        // Returns the image's type ("png", "jpg", "webp", etc.).
         // @example
         // Checks if an image is a png.
         // - if <[image].type> == png:
@@ -212,10 +215,10 @@ public class ImageTag implements Adjustable {
         // @attribute <ImageTag.to_binary>
         // @returns BinaryTag
         // @description
-        // Returns a <@link ObjectType BinaryTag> of the image's raw binary data.
+        // Returns a BinaryTag of the image's raw binary data.
         // @example
         // Gets a base64 string of the image, sometimes used in web APIs.
-        // - define encoded <[image].to_binary.to_base64>
+        // - define base64_encoded <[image].to_binary.to_base64>
         // -->
         tagProcessor.registerTag(BinaryTag.class, "to_binary", (attribute, object) -> {
             return new BinaryTag(object.getRawBytes());
@@ -227,7 +230,7 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns a part of the image.
         // "x" and "y" are the position of the upper left corner of the image part, see <@link language Image positions>.
-        // "width" and "height" are the size of the part that should be returned.
+        // "width" and "height" are the size of the image part.
         // @example
         // Gets the top right corner of a 100x100 image.
         // - define corner <[image].sub_image[x=50;y=0;with=50;height=50]>
@@ -237,6 +240,9 @@ public class ImageTag implements Adjustable {
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
             ElementTag width = param.getRequiredObjectAs("width", ElementTag.class, attribute);
             ElementTag height = param.getRequiredObjectAs("height", ElementTag.class, attribute);
+            if (x == null || y == null || width == null || height == null) {
+                return null;
+            }
             if (!x.isInt() || !y.isInt() || !width.isInt() || !height.isInt()) {
                 attribute.echoError("Invalid x/y/width/height '" + x + '/' + y + '/' + width  + '/' + height + "' specified: must be valid numbers.");
                 return null;
@@ -250,10 +256,14 @@ public class ImageTag implements Adjustable {
         // @input MapTag
         // @description
         // Rescales an image.
-        // The input is a <@link ObjectType MapTag> with "width" and "height" keys
+        // The input is a <@link ObjectType MapTag> with "width" and "height" keys.
+        // Both are optional, and default to the image's current respective value.
         // @example
         // Rescales an image to be 50x50
         // - adjust def:image scale:[width=50;height=50]
+        // @example
+        // Makes an image taller, keeping its existing width.
+        // - adjust def:short_image scale:[height=100]
         // @tags
         // <ImageTag.width>
         // <ImageTag.height>

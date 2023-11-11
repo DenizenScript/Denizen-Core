@@ -2,7 +2,6 @@ package com.denizenscript.denizencore.scripts.commands.core;
 
 import com.denizenscript.denizencore.objects.core.ImageTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
-import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultNull;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
@@ -23,7 +22,7 @@ public class DrawImageCommand extends AbstractCommand {
     // Draws an image onto another image, optionally rescaling it.
     //
     // "id:" is the id of the image to draw on, see <@link command image>.
-    // "draw:" is the image to draw.
+    // "draw:" is a <@link ObjectType ImageTag> of the image to draw.
     // "x:" and "y:" are the position in the image the second image should be drawn on, see <@link language Image positions>.
     // "width:" and "height:" are optional, and will rescale the image being drawn.
     //
@@ -52,7 +51,7 @@ public class DrawImageCommand extends AbstractCommand {
                                    @ArgName("y") @ArgPrefixed int y,
                                    @ArgName("width") @ArgPrefixed @ArgDefaultText("-1") int width,
                                    @ArgName("height") @ArgPrefixed @ArgDefaultText("-1") int height) {
-        ImageTag image = DrawCommand.getImageFrom(id);
+        ImageTag image = ImageCommand.getImageFrom(id);
         if (width == -1) {
             width = toDraw.image.getWidth();
         }

@@ -53,7 +53,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(final ScriptEntry scriptEntry,
                                    @ArgPrefixed @ArgName("path") final String path) {
-        File file = canReadFile(path, scriptEntry);
+        File file = canRead(path, scriptEntry);
         if (file == null) {
             return;
         }
@@ -78,7 +78,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public static File canReadFile(String path, ScriptEntry scriptEntry) {
+    public static File canRead(String path, ScriptEntry scriptEntry) {
         if (!CoreConfiguration.allowFileRead) {
             Debug.echoError(scriptEntry, "FileRead disabled in configuration (refer to command documentation).");
             scriptEntry.setFinished(true);

@@ -33,7 +33,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
     // @Description
     // Loads, saves, and unloads images.
     //
-    // With "load", specify either a file path to read from or an image object load.
+    // With "load", specify either a file path to read from or an image object to load.
     // With "save", specify a file path to save the image to.
     // For both of these the starting path is "plugins/Denizen".
     // Use waitable syntax ("- ~image") when loading or saving from a file to avoid locking up the server during file IO, refer to <@link language ~waitable>.
@@ -50,7 +50,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
     // - ~image id:image load path:data/image.png
     //
     // @Usage
-    // Use to load an image object, draw on it, then get it back as an image object.
+    // Use to load an image object from a definition, draw on it, then store it back into the definition.
     // - define image <image[width=50;height=50;background=blue]>
     // - image id:to_edit load image:<[image]>
     // - draw id:to_edit oval x:0 y:0 width:50 height:50 color:green
@@ -69,6 +69,14 @@ public class ImageCommand extends AbstractCommand implements Holdable {
         setSyntax("image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>]]/[unload]");
         setRequiredArguments(2, 3);
         autoCompile();
+    }
+
+    public static ImageTag getImageFrom(String id) {
+        ImageTag image = loadedImages.get(CoreUtilities.toLowerCase(id));
+        if (image == null) {
+            throw new InvalidArgumentsRuntimeException("No loaded image with id '" + id + "'.");
+        }
+        return image;
     }
 
     public enum Operation {LOAD, SAVE, UNLOAD}
@@ -94,7 +102,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                File imageFile = FileReadCommand.canReadFile(path, scriptEntry);
+                File imageFile = FileReadCommand.canRead(path, scriptEntry);
                 if (imageFile == null) {
                     return;
                 }
@@ -128,12 +136,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                 if (path == null) {
                     throw new InvalidArgumentsRuntimeException("Must specify a path.");
                 }
-                ImageTag image = loadedImages.get(idLower);
-                if (image == null) {
-                    Debug.echoError(scriptEntry, "No loaded image with id '" + id + "'.");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
+                ImageTag image = getImageFrom(idLower);
                 File imageFile = FileWriteCommand.canWrite(path, scriptEntry);
                 if (imageFile == null) {
                     return;
