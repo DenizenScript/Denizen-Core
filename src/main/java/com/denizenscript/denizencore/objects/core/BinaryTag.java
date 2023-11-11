@@ -33,7 +33,7 @@ public class BinaryTag implements ObjectTag {
     // - filewrite path:data/mypath.dat data:%VALUE%
     // @format
     // The identity format for BinaryTag is a hex encoding of the byte set, in order.
-    // Each byte is encoding as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
+    // Each byte is encoded as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
     //
     // @description
     // BinaryTags represent raw binary data in Denizen.

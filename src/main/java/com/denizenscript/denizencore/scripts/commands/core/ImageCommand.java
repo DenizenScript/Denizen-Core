@@ -22,6 +22,46 @@ import java.util.Map;
 
 public class ImageCommand extends AbstractCommand implements Holdable {
 
+    // <--[command]
+    // @Name Image
+    // @Syntax image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>]]/[unload]
+    // @Required 2
+    // @Maximum 3
+    // @Short Loads, saves, and unloads images.
+    // @Group image
+    //
+    // @Description
+    // Loads, saves, and unloads images.
+    //
+    // With "load", specify either a file path to read from or an image object load.
+    // With "save", specify a file path to save the image to.
+    // For both of these the starting path is "plugins/Denizen".
+    // Use waitable syntax ("- ~image") when loading or saving from a file to avoid locking up the server during file IO, refer to <@link language ~waitable>.
+    //
+    // All uses of the image command must include the "id:" argument. This is any arbitrary name, as plaintext or from a tag,
+    // to uniquely and globally identify the image object in memory. This ID can only be used by one image object at a time.
+    // IDs are stored when "load" is used, and only removed when "unload" is used.
+    //
+    // @Tags
+    // None
+    //
+    // @Usage
+    // Use to load an image from a file into memory under the id "image".
+    // - ~image id:image load path:data/image.png
+    //
+    // @Usage
+    // Use to load an image object, draw on it, then get it back as an image object.
+    // - define image <image[width=50;height=50;background=blue]>
+    // - image id:to_edit load image:<[image]>
+    // - draw id:to_edit oval x:0 y:0 width:50 height:50 color:green
+    // - define image <image[to_edit]>
+    //
+    // @Usage
+    // Use to save an image into file and unload it.
+    // - ~image id:image save path:data/image.png
+    // - image id:image unload
+    // -->
+
     public static final Map<String, ImageTag> loadedImages = new HashMap<>();
 
     public ImageCommand() {

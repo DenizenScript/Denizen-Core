@@ -14,9 +14,42 @@ import java.awt.*;
 
 public class DrawCommand extends AbstractCommand {
 
+    // <--[command]
+    // @Name Draw
+    // @Syntax draw [id:<id>] [PIXEL]/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]
+    // @Required 5
+    // @Maximum 8
+    // @Short Draws on an image.
+    // @Group image
+    //
+    // @Description
+    // Draws onto an image, potentially with certain predetermined shapes.
+    //
+    // "id:" is the id of the image to draw on, see <@link command image>.
+    // "color:" is the color to draw in.
+    // "x:" and "y:" are the position that should be drawn on.
+    // They're the position of the pixel/top left corner of the shape being drawn, relative to the top left corner of the image being drawn on (with that corner being 0,0).
+    //
+    // If you are drawing a shape (not a pixel), you can also use:
+    // "width:" and "height:" - the size of the shape being drawn, required.
+    // "filled" - whether the shape should be filled or just a border. optional, defaults to false.
+    //
+    // @Tags
+    // None
+    //
+    // @Usage
+    // Use to draw a single red pixel in the top left corner of an image.
+    // - draw id:image pixel x:0 y:0 color:red
+    //
+    // @Usage
+    // Use to draw a purple filled 100x100 circle in the top left of an image.
+    // - draw id:image oval x:0 y:0 width:100 height:100 color:purple filled
+    // -->
+
     public DrawCommand() {
         setName("draw");
         setSyntax("draw [id:<id>] [PIXEL]/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]");
+        setRequiredArguments(5, 8);
         autoCompile();
     }
 
