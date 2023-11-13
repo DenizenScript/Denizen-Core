@@ -385,6 +385,32 @@ public class BinaryTag implements ObjectTag {
             }
             return null;
         });
+
+        // <--[tag]
+        // @attribute <BinaryTag.to_image>
+        // @returns ImageTag
+        // @description
+        // Returns an ImageTag of the image represented by the binary data, or null if the binary data doesn't represent an image.
+        // @example
+        // Converts a base64 encoded string into an ImageTag, commonly used in web APIs.
+        // - define image <[base64].base64_to_binary.to_image>
+        // -->
+        tagProcessor.registerStaticTag(ImageTag.class, "to_image", (attribute, object) -> {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(object.data);
+            try {
+                ImageTag image = ImageTag.read(inputStream);
+                if (image == null) {
+                    attribute.echoError("Couldn't recognize image format from BinaryTag.");
+                    return null;
+                }
+                return image;
+            }
+            catch (IOException e) {
+                attribute.echoError("BinaryTag couldn't be converted to image, see stacktrace below:");
+                attribute.echoError(e);
+                return null;
+            }
+        });
     }
 
     private static byte[] decompressZlib(byte[] data) {

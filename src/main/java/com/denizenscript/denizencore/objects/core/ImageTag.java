@@ -217,8 +217,8 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns a BinaryTag of the image's raw binary data.
         // @example
-        // Gets a base64 string of the image, sometimes used in web APIs.
-        // - define base64_encoded <[image].to_binary.to_base64>
+        // Gets a base64 encoded string of the image, commonly used in web APIs.
+        // - define base64 <[image].to_binary.to_base64>
         // -->
         tagProcessor.registerTag(BinaryTag.class, "to_binary", (attribute, object) -> {
             return new BinaryTag(object.getRawBytes());
