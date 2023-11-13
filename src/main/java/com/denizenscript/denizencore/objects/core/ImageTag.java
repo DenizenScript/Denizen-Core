@@ -156,7 +156,7 @@ public class ImageTag implements Adjustable {
         // Get the color of the pixel at 43,21
         // - narrate "The color is: <[image].pixel_at[x=43;y=21]>."
         // -->
-        tagProcessor.registerTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
+        tagProcessor.registerStaticTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
             ElementTag x = param.getRequiredObjectAs("x", ElementTag.class, attribute);
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
             if (x == null || y == null) {
@@ -179,7 +179,7 @@ public class ImageTag implements Adjustable {
         // Narrates an image's width.
         // - narrate "The image is <[image].width> wide."
         // -->
-        tagProcessor.registerTag(ElementTag.class, "width", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "width", (attribute, object) -> {
             return new ElementTag(object.image.getWidth());
         });
 
@@ -193,7 +193,7 @@ public class ImageTag implements Adjustable {
         // Narrates an image's height.
         // - narrate "The image is <[image].height> tall."
         // -->
-        tagProcessor.registerTag(ElementTag.class, "height", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "height", (attribute, object) -> {
             return new ElementTag(object.image.getHeight());
         });
 
@@ -207,7 +207,7 @@ public class ImageTag implements Adjustable {
         // - if <[image].type> == png:
         //   - narrate "It's a png!"
         // -->
-        tagProcessor.registerTag(ElementTag.class, "type", (attribute, object) -> {
+        tagProcessor.registerStaticTag(ElementTag.class, "type", (attribute, object) -> {
             return new ElementTag(object.imageType, true);
         });
 
@@ -220,7 +220,7 @@ public class ImageTag implements Adjustable {
         // Gets a base64 encoded string of the image, commonly used in web APIs.
         // - define base64 <[image].to_binary.to_base64>
         // -->
-        tagProcessor.registerTag(BinaryTag.class, "to_binary", (attribute, object) -> {
+        tagProcessor.registerStaticTag(BinaryTag.class, "to_binary", (attribute, object) -> {
             return new BinaryTag(object.getRawBytes());
         });
 
@@ -235,7 +235,7 @@ public class ImageTag implements Adjustable {
         // Gets the top right corner of a 100x100 image.
         // - define corner <[image].sub_image[x=50;y=0;with=50;height=50]>
         // -->
-        tagProcessor.registerTag(ImageTag.class, MapTag.class, "sub_image", (attribute, object, param) -> {
+        tagProcessor.registerStaticTag(ImageTag.class, MapTag.class, "sub_image", (attribute, object, param) -> {
             ElementTag x = param.getRequiredObjectAs("x", ElementTag.class, attribute);
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
             ElementTag width = param.getRequiredObjectAs("width", ElementTag.class, attribute);
