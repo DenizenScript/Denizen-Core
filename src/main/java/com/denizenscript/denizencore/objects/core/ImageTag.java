@@ -74,8 +74,6 @@ public class ImageTag implements Adjustable {
             if (map != null) {
                 ElementTag width = map.getElement("width");
                 ElementTag height = map.getElement("height");
-                ElementTag type = map.getElement("type", "png");
-                ColorTag background = map.getObjectAs("background", ColorTag.class, context);
                 if (width == null || height == null || !width.isInt() || !height.isInt()) {
                     if ((context == null || context.showErrors()) && !TagManager.isStaticParsing) {
                         Debug.echoError("valueOf ImageTag returning null: must specify valid width/height.");
@@ -83,6 +81,7 @@ public class ImageTag implements Adjustable {
                     return null;
                 }
                 ImageTag image = new ImageTag(new BufferedImage(width.asInt(), height.asInt(), BufferedImage.TYPE_INT_ARGB));
+                ColorTag background = map.getObjectAs("background", ColorTag.class, context);
                 if (background != null) {
                     // Optimization hack, since the internal data structure is guaranteed here
                     int[] data = ((DataBufferInt) image.image.getRaster().getDataBuffer()).getData();
