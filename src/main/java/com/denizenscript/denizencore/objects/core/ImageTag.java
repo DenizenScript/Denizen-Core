@@ -38,15 +38,23 @@ public class ImageTag implements Adjustable {
     // @format
     // The identity format for ImageTag is a hex encoding of the image's raw bytes, in order.
     // Each byte is encoded as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
+    // Alternatively, an image's identity format can be an image id (from images loaded in with <@link command Image>), see description for more information.
     //
     // @description
     // ImageTags represent an image of any supported format.
-    // They are represented using a hex encoding of their bytes, but new images can also be created by providing a MapTag with the following keys:
+    // They are represented by either a hex encoding of their bytes or their image id, but new images can also be created by providing a MapTag with the following keys:
     // - "width": the new image's width, required.
     // - "height": the new image's height, required.
     // - "background": a <@link ObjectType ColorTag> for the new image's background, optional.
     // - "type": the image's format/encoding ("png", "jpg", "webp", etc.). optional, defaults to "png".
-    // Alternatively, specific an id from <@link command Image> to get the image loaded in under that id.
+    //
+    // For id-based images, the image will directly reference the image loaded in under that id, so for example:
+    // <code>
+    // - define image <image[drawing]>
+    // - draw id:drawing pixel x:0 y:0 color:red
+    // # The "image" definition has changed as well, since it's an id-based image and the image under that id was edited.
+    // </code>
+    // See <@link tag ImageTag.copy> for getting normal image objects from id-based ones.
     //
     // -->
 
@@ -59,7 +67,7 @@ public class ImageTag implements Adjustable {
         if (!TagManager.isStaticParsing) {
             ImageTag imageById = ImageCommand.loadedImages.get(stringLower);
             if (imageById != null) {
-                return imageById.duplicate();
+                return imageById;
             }
         }
         if (!BinaryTag.isValidHex(stringLower)) {
@@ -137,6 +145,7 @@ public class ImageTag implements Adjustable {
     }
 
     public BufferedImage image;
+    public String id;
     public String imageType;
 
     public ImageTag(BufferedImage image, String imageType) {
@@ -153,10 +162,10 @@ public class ImageTag implements Adjustable {
         // Returns the color of a specific pixel in an image.
         // "x" and "y" are the position of the pixel, see <@link language Image positions>.
         // @example
-        // Get the color of the pixel at 43,21
+        // Gets the color of the pixel at 43,21
         // - narrate "The color is: <[image].pixel_at[x=43;y=21]>."
         // -->
-        tagProcessor.registerStaticTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
+        tagProcessor.registerTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
             ElementTag x = param.getRequiredObjectAs("x", ElementTag.class, attribute);
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
             if (x == null || y == null) {
@@ -179,7 +188,7 @@ public class ImageTag implements Adjustable {
         // Narrates an image's width.
         // - narrate "The image is <[image].width> wide."
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "width", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "width", (attribute, object) -> {
             return new ElementTag(object.image.getWidth());
         });
 
@@ -193,7 +202,7 @@ public class ImageTag implements Adjustable {
         // Narrates an image's height.
         // - narrate "The image is <[image].height> tall."
         // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "height", (attribute, object) -> {
+        tagProcessor.registerTag(ElementTag.class, "height", (attribute, object) -> {
             return new ElementTag(object.image.getHeight());
         });
 
@@ -220,8 +229,28 @@ public class ImageTag implements Adjustable {
         // Gets a base64 encoded string of the image, commonly used in web APIs.
         // - define base64 <[image].to_binary.to_base64>
         // -->
-        tagProcessor.registerStaticTag(BinaryTag.class, "to_binary", (attribute, object) -> {
+        tagProcessor.registerTag(BinaryTag.class, "to_binary", (attribute, object) -> {
             return new BinaryTag(object.getRawBytes());
+        });
+
+        // <--[tag]
+        // @attribute <ImageTag.copy>
+        // @returns ImageTag
+        // @description
+        // Returns a copy of the image, useful for getting normal images from id-based ones (see <@link command Image>).
+        // @example
+        // Gets a normal image object from an id-based one.
+        // - define image <image[drawing].copy>
+        // # The "image" definition won't change.
+        // - draw id:drawing pixel x:0 y:0 color:red
+        // -->
+        tagProcessor.registerTag(ImageTag.class, "copy", (attribute, object) -> {
+            // Duplicate of the image as if it didn't have an id
+            String id = object.id;
+            object.id = null;
+            ImageTag copy = object.duplicate();
+            object.id = id;
+            return copy;
         });
 
         // <--[tag]
@@ -235,7 +264,7 @@ public class ImageTag implements Adjustable {
         // Gets the top right corner of a 100x100 image.
         // - define corner <[image].sub_image[x=50;y=0;with=50;height=50]>
         // -->
-        tagProcessor.registerStaticTag(ImageTag.class, MapTag.class, "sub_image", (attribute, object, param) -> {
+        tagProcessor.registerTag(ImageTag.class, MapTag.class, "sub_image", (attribute, object, param) -> {
             ElementTag x = param.getRequiredObjectAs("x", ElementTag.class, attribute);
             ElementTag y = param.getRequiredObjectAs("y", ElementTag.class, attribute);
             ElementTag width = param.getRequiredObjectAs("width", ElementTag.class, attribute);
@@ -324,6 +353,9 @@ public class ImageTag implements Adjustable {
 
     @Override
     public String identify() {
+        if (id != null) {
+            return "image@" + id;
+        }
         if (hexEncodedBytesCache == null) {
             hexEncodedBytesCache = BinaryTag.hexEncode(getRawBytes(), false);
         }
@@ -337,6 +369,9 @@ public class ImageTag implements Adjustable {
 
     @Override
     public String debuggable() {
+        if (id != null) {
+            return "<LG>image@<Y>" + id;
+        }
         MapTag imageData = new MapTag();
         imageData.putObject("width", new ElementTag(image.getWidth()));
         imageData.putObject("height", new ElementTag(image.getHeight()));
@@ -346,7 +381,7 @@ public class ImageTag implements Adjustable {
 
     @Override
     public boolean isUnique() {
-        return false;
+        return id != null;
     }
 
     @Override
@@ -356,6 +391,9 @@ public class ImageTag implements Adjustable {
 
     @Override
     public ImageTag duplicate() {
+        if (isUnique()) {
+            return this;
+        }
         BufferedImage clone = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         Graphics2D graphics = clone.createGraphics();
         graphics.setComposite(AlphaComposite.Src);

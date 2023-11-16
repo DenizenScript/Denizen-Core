@@ -98,7 +98,9 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (toLoad != null) {
-                    loadedImages.put(idLower, toLoad.duplicate());
+                    ImageTag toLoadCopy = toLoad.duplicate();
+                    toLoadCopy.id = idLower;
+                    loadedImages.put(idLower, toLoadCopy);
                     scriptEntry.setFinished(true);
                     return;
                 }
@@ -115,6 +117,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                             return;
                         }
                         DenizenCore.runOnMainThread(() -> {
+                            image.id = idLower;
                             loadedImages.put(idLower, image);
                             scriptEntry.setFinished(true);
                         });
