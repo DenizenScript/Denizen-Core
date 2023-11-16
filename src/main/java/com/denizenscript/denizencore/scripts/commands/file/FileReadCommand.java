@@ -53,7 +53,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(final ScriptEntry scriptEntry,
                                    @ArgPrefixed @ArgName("path") final String path) {
-        File file = canRead(path, scriptEntry);
+        File file = getFileIfSafe(path, scriptEntry);
         if (file == null) {
             return;
         }
@@ -78,15 +78,15 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public static File canRead(String path, ScriptEntry scriptEntry) {
+    public static File getFileIfSafe(String path, ScriptEntry scriptEntry) {
         if (!CoreConfiguration.allowFileRead) {
-            Debug.echoError(scriptEntry, "FileRead disabled in configuration (refer to command documentation).");
+            Debug.echoError(scriptEntry, "FileRead disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);
             return null;
         }
         File file = new File(DenizenCore.implementation.getDataFolder(), path);
         if (!DenizenCore.implementation.canReadFile(file)) {
-            Debug.echoError("Cannot read from that file path due to security settings in configuration.");
+            Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
             scriptEntry.setFinished(true);
             return null;
         }

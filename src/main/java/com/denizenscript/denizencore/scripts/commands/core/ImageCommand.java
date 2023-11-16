@@ -107,7 +107,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     scriptEntry.setFinished(true);
                     return;
                 }
-                File imageFile = FileReadCommand.canRead(path, scriptEntry);
+                File imageFile = FileReadCommand.getFileIfSafe(path, scriptEntry);
                 if (imageFile == null) {
                     return;
                 }
@@ -144,7 +144,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     throw new InvalidArgumentsRuntimeException("Must specify a path.");
                 }
                 ImageTag image = getImageFrom(idLower);
-                File imageFile = FileWriteCommand.canWrite(path, scriptEntry);
+                File imageFile = FileWriteCommand.getFileIfSafe(path, scriptEntry);
                 if (imageFile == null) {
                     return;
                 }

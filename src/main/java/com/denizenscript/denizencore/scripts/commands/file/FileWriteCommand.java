@@ -56,7 +56,7 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
     public static void autoExecute(final ScriptEntry scriptEntry,
                                    @ArgPrefixed @ArgName("path") final String path,
                                    @ArgPrefixed @ArgName("data") BinaryTag data) {
-        File file = canWrite(path, scriptEntry);
+        File file = getFileIfSafe(path, scriptEntry);
         if (file == null) {
             return;
         }
@@ -83,15 +83,15 @@ public class FileWriteCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public static File canWrite(String path, ScriptEntry scriptEntry) {
+    public static File getFileIfSafe(String path, ScriptEntry scriptEntry) {
         if (!CoreConfiguration.allowFileWrite) {
-            Debug.echoError(scriptEntry, "File write disabled in configuration (refer to command documentation).");
+            Debug.echoError(scriptEntry, "File write disabled in Denizen/config.yml (refer to command documentation).");
             scriptEntry.setFinished(true);
             return null;
         }
         File file = new File(DenizenCore.implementation.getDataFolder(), path);
         if (!DenizenCore.implementation.canWriteToFile(file)) {
-            Debug.echoError("Cannot write to that file path due to security settings in configuration.");
+            Debug.echoError("Cannot write to that file path due to security settings in Denizen/config.yml.");
             scriptEntry.setFinished(true);
             return null;
         }
