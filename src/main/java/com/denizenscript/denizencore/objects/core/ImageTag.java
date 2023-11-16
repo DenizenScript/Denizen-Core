@@ -105,7 +105,7 @@ public class ImageTag implements Adjustable {
                 return null;
             }
             ImageTag imageTag = new ImageTag(image);
-            imageTag.hexEncodedBytesCache = stringLower;
+            imageTag.setHexEncodedBytesCache(stringLower);
             return imageTag;
         }
         catch (IOException e) {
@@ -356,6 +356,10 @@ public class ImageTag implements Adjustable {
 
     String hexEncodedBytesCache;
 
+    public void setHexEncodedBytesCache(String hexEncodedBytes) {
+        hexEncodedBytesCache = "image@" + hexEncodedBytes;
+    }
+
     public void markChanged() {
         hexEncodedBytesCache = null;
     }
@@ -366,9 +370,9 @@ public class ImageTag implements Adjustable {
             return "image@" + id;
         }
         if (hexEncodedBytesCache == null) {
-            hexEncodedBytesCache = BinaryTag.hexEncode(getRawBytes("png"), false);
+            setHexEncodedBytesCache(BinaryTag.hexEncode(getRawBytes("png"), false));
         }
-        return "image@" + hexEncodedBytesCache;
+        return hexEncodedBytesCache;
     }
 
     @Override

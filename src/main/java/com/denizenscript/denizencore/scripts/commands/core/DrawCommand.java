@@ -73,7 +73,6 @@ public class DrawCommand extends AbstractCommand {
         ImageTag image = ImageCommand.getImageFrom(id);
         if (drawable == Drawable.PIXEL) {
             image.image.setRGB(x, y, color.asARGB());
-            image.markChanged();
             return;
         }
         if (width == -1 || height == -1) {
@@ -100,6 +99,5 @@ public class DrawCommand extends AbstractCommand {
             }
         }
         graphics.dispose();
-        image.markChanged();
     }
 }

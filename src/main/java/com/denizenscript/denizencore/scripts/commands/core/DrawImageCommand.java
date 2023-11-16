@@ -61,6 +61,5 @@ public class DrawImageCommand extends AbstractCommand {
         Graphics2D graphics = image.image.createGraphics();
         graphics.drawImage(toDraw.image, x, y, width, height, null);
         graphics.dispose();
-        toDraw.markChanged();
     }
 }
