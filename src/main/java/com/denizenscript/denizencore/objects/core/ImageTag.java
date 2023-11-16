@@ -13,9 +13,9 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -46,7 +46,6 @@ public class ImageTag implements Adjustable {
     // - "width": the new image's width, required.
     // - "height": the new image's height, required.
     // - "background": a <@link ObjectType ColorTag> for the new image's background, optional.
-    // - "type": the image's format/encoding ("png", "jpg", "webp", etc.). optional, defaults to "png".
     //
     // For id-based images, the image will directly reference the image loaded in under that id, so for example:
     // <code>
@@ -83,7 +82,7 @@ public class ImageTag implements Adjustable {
                     }
                     return null;
                 }
-                ImageTag image = new ImageTag(new BufferedImage(width.asInt(), height.asInt(), BufferedImage.TYPE_INT_ARGB), type.asString());
+                ImageTag image = new ImageTag(new BufferedImage(width.asInt(), height.asInt(), BufferedImage.TYPE_INT_ARGB));
                 if (background != null) {
                     // Optimization hack, since the internal data structure is guaranteed here
                     int[] data = ((DataBufferInt) image.image.getRaster().getDataBuffer()).getData();
@@ -98,15 +97,16 @@ public class ImageTag implements Adjustable {
         }
         byte[] rawBytes = CoreUtilities.hexDecode(stringLower);
         try {
-            ImageTag image = read(new ByteArrayInputStream(rawBytes));
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(rawBytes));
             if (image == null) {
                 if (context == null || context.showErrors()) {
                     Debug.echoError("valueOf ImageTag returning null: could not recognize image format for binary: " + string);
                 }
                 return null;
             }
-            image.hexEncodedBytesCache = stringLower;
-            return image;
+            ImageTag imageTag = new ImageTag(image);
+            imageTag.hexEncodedBytesCache = stringLower;
+            return imageTag;
         }
         catch (IOException e) {
             if (context == null || context.showErrors()) {
@@ -115,26 +115,6 @@ public class ImageTag implements Adjustable {
             }
             return null;
         }
-    }
-
-    // Copied from ImageIO and modified to preserve the image type
-    public static ImageTag read(Object input) throws IOException {
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
-        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
-        if (!iter.hasNext()) {
-            return null;
-        }
-        ImageReader reader = iter.next();
-        ImageReadParam param = reader.getDefaultReadParam();
-        reader.setInput(stream, true, true);
-        BufferedImage bi;
-        try {
-            bi = reader.read(0, param);
-        } finally {
-            reader.dispose();
-            stream.close();
-        }
-        return new ImageTag(bi, reader.getFormatName());
     }
 
     public static boolean matches(String string) {
@@ -146,11 +126,9 @@ public class ImageTag implements Adjustable {
 
     public BufferedImage image;
     public String id;
-    public String imageType;
 
-    public ImageTag(BufferedImage image, String imageType) {
+    public ImageTag(BufferedImage image) {
         this.image = image;
-        this.imageType = imageType;
     }
 
     public static void register() {
@@ -207,30 +185,21 @@ public class ImageTag implements Adjustable {
         });
 
         // <--[tag]
-        // @attribute <ImageTag.type>
-        // @returns ElementTag
-        // @description
-        // Returns the image's type ("png", "jpg", "webp", etc.).
-        // @example
-        // Checks if an image is a png.
-        // - if <[image].type> == png:
-        //   - narrate "It's a png!"
-        // -->
-        tagProcessor.registerStaticTag(ElementTag.class, "type", (attribute, object) -> {
-            return new ElementTag(object.imageType, true);
-        });
-
-        // <--[tag]
-        // @attribute <ImageTag.to_binary>
+        // @attribute <ImageTag.to_binary[<image_format>]>
         // @returns BinaryTag
         // @description
-        // Returns a BinaryTag of the image's raw binary data.
+        // Returns a BinaryTag of the image's raw binary data, in the specified image format.
         // @example
         // Gets a base64 encoded string of the image, commonly used in web APIs.
-        // - define base64 <[image].to_binary.to_base64>
+        // - define base64 <[image].to_binary[png].to_base64>
         // -->
-        tagProcessor.registerTag(BinaryTag.class, "to_binary", (attribute, object) -> {
-            return new BinaryTag(object.getRawBytes());
+        tagProcessor.registerTag(BinaryTag.class, ElementTag.class, "to_binary", (attribute, object, imageFormat) -> {
+            ImageTag corrected = object.correctType(imageFormat.asString());
+            if (corrected == null) {
+                attribute.echoError("Invalid/unfitting image format specified: " + imageFormat + '.');
+                return null;
+            }
+            return new BinaryTag(corrected.getRawBytes(imageFormat.asString()));
         });
 
         // <--[tag]
@@ -276,7 +245,7 @@ public class ImageTag implements Adjustable {
                 attribute.echoError("Invalid x/y/width/height '" + x + '/' + y + '/' + width  + '/' + height + "' specified: must be valid numbers.");
                 return null;
             }
-            return new ImageTag(object.image.getSubimage(x.asInt(), y.asInt(), width.asInt(), height.asInt()), object.imageType).duplicate();
+            return new ImageTag(object.image.getSubimage(x.asInt(), y.asInt(), width.asInt(), height.asInt())).duplicate();
         });
 
         // <--[mechanism]
@@ -333,16 +302,56 @@ public class ImageTag implements Adjustable {
         mechanism.echoError("Cannot apply properties to an ImageTag.");
     }
 
-    public byte[] getRawBytes() {
+    public byte[] getRawBytes(String imageFormat) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            ImageIO.write(image, imageType, outputStream);
+            ImageIO.write(image, imageFormat, outputStream);
             return outputStream.toByteArray();
         }
         catch (IOException e) {
             Debug.echoError("Exception when converting image to bytes:");
             throw new RuntimeException(e);
         }
+    }
+
+    public ImageTag correctType(String imageFormat) {
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(imageFormat);
+        if (!iter.hasNext()) {
+            return null;
+        }
+        ImageWriterSpi imageWriterSpi = iter.next().getOriginatingProvider();
+        if (imageWriterSpi.canEncodeImage(image)) {
+            return this;
+        }
+        int correctType = -1;
+        if (isSupportedType(imageWriterSpi, BufferedImage.TYPE_INT_ARGB)) { // Preferred type
+            correctType = BufferedImage.TYPE_INT_ARGB;
+        }
+        else if (isSupportedType(imageWriterSpi, BufferedImage.TYPE_INT_RGB)) { // Next preferred type
+            correctType = BufferedImage.TYPE_INT_RGB;
+        }
+        else { // Find the type it wants
+            for (int type = BufferedImage.TYPE_INT_ARGB_PRE; type <= BufferedImage.TYPE_BYTE_INDEXED; type++) {
+                if (isSupportedType(imageWriterSpi, type)) {
+                    correctType = type;
+                    break;
+                }
+            }
+        }
+        if (correctType == -1) {
+            Debug.echoError("Image format '" + imageFormat + "' doesn't allow any type?");
+            return null;
+        }
+        BufferedImage correctedImage = new BufferedImage(image.getWidth(), image.getHeight(), correctType);
+        Graphics2D graphics = correctedImage.createGraphics();
+        graphics.setComposite(AlphaComposite.Src);
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+        return new ImageTag(correctedImage);
+    }
+
+    private static boolean isSupportedType(ImageWriterSpi imageWriterSpi, int type) {
+        return imageWriterSpi.canEncodeImage(ImageTypeSpecifier.createFromBufferedImageType(type));
     }
 
     String hexEncodedBytesCache;
@@ -357,7 +366,7 @@ public class ImageTag implements Adjustable {
             return "image@" + id;
         }
         if (hexEncodedBytesCache == null) {
-            hexEncodedBytesCache = BinaryTag.hexEncode(getRawBytes(), false);
+            hexEncodedBytesCache = BinaryTag.hexEncode(getRawBytes("png"), false);
         }
         return "image@" + hexEncodedBytesCache;
     }
@@ -375,7 +384,6 @@ public class ImageTag implements Adjustable {
         MapTag imageData = new MapTag();
         imageData.putObject("width", new ElementTag(image.getWidth()));
         imageData.putObject("height", new ElementTag(image.getHeight()));
-        imageData.putObject("type", new ElementTag(imageType, true));
         return "<LG>image@<Y>" + imageData.debuggable().substring("<LG>map@".length());
     }
 
@@ -399,7 +407,7 @@ public class ImageTag implements Adjustable {
         graphics.setComposite(AlphaComposite.Src);
         graphics.drawImage(image, 0, 0, null);
         graphics.dispose();
-        ImageTag duplicate = new ImageTag(clone, imageType);
+        ImageTag duplicate = new ImageTag(clone);
         duplicate.hexEncodedBytesCache = hexEncodedBytesCache;
         return duplicate;
     }

@@ -9,12 +9,14 @@ import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.file.FileReadCommand;
 import com.denizenscript.denizencore.scripts.commands.file.FileWriteCommand;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultNull;
+import com.denizenscript.denizencore.scripts.commands.generator.ArgDefaultText;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgName;
 import com.denizenscript.denizencore.scripts.commands.generator.ArgPrefixed;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,9 +26,9 @@ public class ImageCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Image
-    // @Syntax image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>]]/[unload]
+    // @Syntax image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>] [format:<format>]]/[unload]
     // @Required 2
-    // @Maximum 3
+    // @Maximum 4
     // @Short Loads, saves, and unloads images.
     // @Group image
     //
@@ -34,7 +36,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
     // Loads, saves, and unloads images.
     //
     // With "load", specify either a file path to read from or an image object to load.
-    // With "save", specify a file path to save the image to.
+    // With "save", specify a file path to save the image to and a format to save the image in (e.g. "png", "jpg", "bmp"...), defaults to "png".
     // For both of these the starting path is "plugins/Denizen".
     // Use waitable syntax ("- ~image") when loading or saving from a file to avoid locking up the server during file IO, refer to <@link language ~waitable>.
     //
@@ -66,8 +68,8 @@ public class ImageCommand extends AbstractCommand implements Holdable {
 
     public ImageCommand() {
         setName("image");
-        setSyntax("image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>]]/[unload]");
-        setRequiredArguments(2, 3);
+        setSyntax("image [id:<id>] [load [image:<image>/path:<path>]]/[save [path:<path>] [format:<format>]]/[unload]");
+        setRequiredArguments(2, 4);
         autoCompile();
     }
 
@@ -85,6 +87,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                                    @ArgName("operation") Operation operation,
                                    @ArgName("id") @ArgPrefixed String id,
                                    @ArgName("path") @ArgPrefixed @ArgDefaultNull String path,
+                                   @ArgName("format") @ArgPrefixed @ArgDefaultText("png") String format,
                                    @ArgName("image") @ArgPrefixed @ArgDefaultNull ImageTag toLoad) {
         String idLower = CoreUtilities.toLowerCase(id);
         switch (operation) {
@@ -110,15 +113,16 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                 }
                 Runnable readImage = () -> {
                     try {
-                        ImageTag image = ImageTag.read(imageFile);
+                        BufferedImage image = ImageIO.read(imageFile);
                         if (image == null) {
                             Debug.echoError(scriptEntry, "Failed to recognize image format for image.");
                             scriptEntry.setFinished(true);
                             return;
                         }
                         DenizenCore.runOnMainThread(() -> {
-                            image.id = idLower;
-                            loadedImages.put(idLower, image);
+                            ImageTag imageTag = new ImageTag(image);
+                            imageTag.id = idLower;
+                            loadedImages.put(idLower, imageTag);
                             scriptEntry.setFinished(true);
                         });
                     }
@@ -146,13 +150,20 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                 }
                 Runnable saveImage = () -> {
                     try {
-                        ImageIO.write(image.image, image.imageType, imageFile);
+                        ImageTag corrected = image.correctType(format);
+                        if (corrected == null) {
+                            Debug.echoError(scriptEntry, "Invalid/unfitting image format specified: " + format + '.');
+                            scriptEntry.setFinished(true);
+                            return;
+                        }
+                        ImageIO.write(corrected.image, format, imageFile);
+                        scriptEntry.setFinished(true);
                     }
                     catch (IOException e) {
                         Debug.echoError(scriptEntry, "An error occurred while trying to save image, see stacktrace below:");
                         Debug.echoError(scriptEntry, e);
+                        scriptEntry.setFinished(true);
                     }
-                    scriptEntry.setFinished(true);
                 };
                 if (scriptEntry.shouldWaitFor()) {
                     DenizenCore.runAsync(saveImage);

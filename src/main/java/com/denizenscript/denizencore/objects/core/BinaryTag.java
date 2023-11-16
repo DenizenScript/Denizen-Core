@@ -11,6 +11,8 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,7 +21,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.zip.*;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.InflaterInputStream;
 
 public class BinaryTag implements ObjectTag {
 
@@ -398,12 +403,12 @@ public class BinaryTag implements ObjectTag {
         tagProcessor.registerStaticTag(ImageTag.class, "to_image", (attribute, object) -> {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(object.data);
             try {
-                ImageTag image = ImageTag.read(inputStream);
+                BufferedImage image = ImageIO.read(inputStream);
                 if (image == null) {
                     attribute.echoError("Couldn't recognize image format from BinaryTag.");
                     return null;
                 }
-                return image;
+                return new ImageTag(image);
             }
             catch (IOException e) {
                 attribute.echoError("BinaryTag couldn't be converted to image, see stacktrace below:");
