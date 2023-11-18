@@ -27,7 +27,7 @@ public class DrawCommand extends AbstractCommand {
     // "color:" is a <@link ObjectType ColorTag> of the color to draw in.
     // "x:" and "y:" are the position that should be drawn on, see <@link language Image positions>.
     //
-    // If you are drawing a shape (not a pixel), you can also use:
+    // If you are drawing a shape (not a pixel), you must also specify:
     // "width:" and "height:" - the size of the shape being drawn, required.
     // "filled" - whether the shape should be filled or just a border. optional, defaults to false.
     //
