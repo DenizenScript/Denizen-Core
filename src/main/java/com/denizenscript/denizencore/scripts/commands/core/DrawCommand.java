@@ -14,7 +14,7 @@ public class DrawCommand extends AbstractCommand {
 
     // <--[command]
     // @Name Draw
-    // @Syntax draw [id:<id>] [PIXEL]/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]
+    // @Syntax draw [id:<id>] [pixel]/[rectangle/oval [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]
     // @Required 5
     // @Maximum 8
     // @Short Draws on an image.
