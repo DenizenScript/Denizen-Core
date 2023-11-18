@@ -55,7 +55,7 @@ public class DrawCommand extends AbstractCommand {
 
     public DrawCommand() {
         setName("draw");
-        setSyntax("draw [id:<id>] [PIXEL]/[RECTANGLE/OVAL [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]");
+        setSyntax("draw [id:<id>] [pixel]/[rectangle/oval [width:<width>] [height:<height>] (filled)] [x:<x>] [y:<y>] [color:<color>]");
         setRequiredArguments(5, 8);
         autoCompile();
     }
