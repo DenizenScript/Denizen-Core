@@ -105,7 +105,7 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
                 return null;
             }
         }
-        catch (IOException e) {
+        catch (Exception e) {
             Debug.echoError(scriptEntry, e);
             scriptEntry.setFinished(true);
             return null;
