@@ -56,7 +56,8 @@ public class ImageCommand extends AbstractCommand implements Holdable {
     // - define image <image[width=50;height=50;background=blue]>
     // - image id:to_edit load image:<[image]>
     // - draw id:to_edit oval x:0 y:0 width:50 height:50 color:green
-    // - define image <image[to_edit]>
+    // # Copy the image to avoid it auto-updating with the image loaded in under that id, can skip '.copy' if this doesn't matter for your use case.
+    // - define image <image[to_edit].copy>
     //
     // @Usage
     // Use to save an image into file and unload it.
