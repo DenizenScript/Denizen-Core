@@ -213,12 +213,7 @@ public class ImageTag implements Adjustable {
         // - draw id:drawing pixel x:0 y:0 color:red
         // -->
         tagProcessor.registerTag(ImageTag.class, "copy", (attribute, object) -> {
-            // Duplicate of the image as if it didn't have an id
-            String id = object.id;
-            object.id = null;
-            ImageTag copy = object.duplicate();
-            object.id = id;
-            return copy;
+            return object.duplicateIgnoreId();
         });
 
         // <--[tag]
@@ -405,6 +400,10 @@ public class ImageTag implements Adjustable {
         if (isUnique()) {
             return this;
         }
+        return duplicateIgnoreId();
+    }
+
+    public ImageTag duplicateIgnoreId() {
         BufferedImage clone = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         Graphics2D graphics = clone.createGraphics();
         graphics.setComposite(AlphaComposite.Src);

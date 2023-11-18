@@ -102,7 +102,7 @@ public class ImageCommand extends AbstractCommand implements Holdable {
                     return;
                 }
                 if (toLoad != null) {
-                    ImageTag toLoadCopy = toLoad.duplicate();
+                    ImageTag toLoadCopy = toLoad.duplicateIgnoreId();
                     toLoadCopy.id = idLower;
                     loadedImages.put(idLower, toLoadCopy);
                     scriptEntry.setFinished(true);
