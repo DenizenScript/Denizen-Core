@@ -34,7 +34,7 @@ public class ImageTag implements Adjustable {
     // @ExampleTagBase image[width=100;height=100;background=blue]
     // @ExampleValues width=100;height=100;background=blue,width=5;height=5,loaded_image_id
     // @ExampleForReturns
-    // - drawimage id:artwork draw:%VALUE% x:5 y:5
+    // - draw id:artwork image:%VALUE% x:5 y:5
     // @format
     // The identity format for ImageTag is a hex encoding of the image's raw bytes, in order.
     // Each byte is encoded as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.

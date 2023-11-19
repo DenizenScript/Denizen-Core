@@ -111,7 +111,6 @@ public class CommandRegistry {
         registerCommand(DebugCommand.class);
         // Intentionally do not register the DebugInvalidCommand
         registerCommand(DrawCommand.class);
-        registerCommand(DrawImageCommand.class);
         registerCommand(FlagCommand.class);
         registerCommand(ImageCommand.class);
         if (shouldRegisterByClass("Mongo command", "com.mongodb.client.MongoClient")) {
