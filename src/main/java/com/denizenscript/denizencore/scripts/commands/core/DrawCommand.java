@@ -15,8 +15,8 @@ public class DrawCommand extends AbstractCommand {
 
     // <--[command]
     // @Name Draw
-    // @Syntax draw [id:<id>] [pixel/rectangle/oval/image:<image>] (width:<width>) (height:<height>) (filled) [x:<x>] [y:<y>] [color:<color>]
-    // @Required 5
+    // @Syntax draw [id:<id>] [pixel/rectangle/oval/image:<image>] (width:<width>) (height:<height>) (filled) [x:<x>] [y:<y>] (color:<color>)
+    // @Required 4
     // @Maximum 8
     // @Short Draws on an image.
     // @Group image
@@ -66,8 +66,8 @@ public class DrawCommand extends AbstractCommand {
 
     public DrawCommand() {
         setName("draw");
-        setSyntax("draw [id:<id>] [pixel/rectangle/oval/image:<image>] (width:<width>) (height:<height>) (filled) [x:<x>] [y:<y>] [color:<color>]");
-        setRequiredArguments(5, 8);
+        setSyntax("draw [id:<id>] [pixel/rectangle/oval/image:<image>] (width:<width>) (height:<height>) (filled) [x:<x>] [y:<y>] (color:<color>)");
+        setRequiredArguments(4, 8);
         autoCompile();
     }
 
