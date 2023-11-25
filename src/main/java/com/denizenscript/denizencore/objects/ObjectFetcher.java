@@ -58,6 +58,8 @@ public class ObjectFetcher {
     public static ObjectType<CustomObjectTag> TYPE_CUSTOM;
     public static ObjectType<DurationTag> TYPE_DURATION;
     public static ObjectType<ElementTag> TYPE_ELEMENT;
+
+    public static ObjectType<ImageTag> TYPE_IMAGE;
     public static ObjectType<JavaReflectedObjectTag> TYPE_REFLECTEDOBJECT;
     public static ObjectType<ListTag> TYPE_LIST;
     public static ObjectType<MapTag> TYPE_MAP;
@@ -115,6 +117,15 @@ public class ObjectFetcher {
         TYPE_ELEMENT = registerWithObjectFetcher(ElementTag.class, ElementTag.tagProcessor).setCanConvertStatic().generateBaseTag(); // el@
         TYPE_ELEMENT.typeChecker = ObjectType.TypeComparisonRunnable.trueAlways;
         TYPE_ELEMENT.typeConverter = (obj, c) -> obj.asElement();
+
+        // <--[tag]
+        // @attribute <image[<image>]>
+        // @returns ImageTag
+        // @description
+        // Returns an ImageTag constructed from the input value.
+        // Refer to <@link ObjectType ImageTag>.
+        // -->
+        TYPE_IMAGE = registerWithObjectFetcher(ImageTag.class, ImageTag.tagProcessor).setCanConvertStatic().generateBaseTag(); // image@
 
         // <--[tag]
         // @attribute <reflected[<reflected-tag>]>

@@ -12,6 +12,7 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 public class FileReadCommand extends AbstractCommand implements Holdable {
 
@@ -52,35 +53,8 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(final ScriptEntry scriptEntry,
                                    @ArgPrefixed @ArgName("path") final String path) {
-        if (!CoreConfiguration.allowFileRead) {
-            Debug.echoError(scriptEntry, "FileRead disabled in Denizen/config.yml (refer to command documentation).");
-            scriptEntry.setFinished(true);
-            return;
-        }
-        File file = new File(DenizenCore.implementation.getDataFolder(), path);
-        if (!DenizenCore.implementation.canReadFile(file)) {
-            Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
-            scriptEntry.setFinished(true);
-            return;
-        }
-        try {
-            if (!CoreConfiguration.filePathLimit.equals("none")) {
-                File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.filePathLimit);
-                if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
-                    Debug.echoError("File path '" + path + "' is not within the config's restricted data file path.");
-                    scriptEntry.setFinished(true);
-                    return;
-                }
-            }
-            if (!file.exists()) {
-                Debug.echoError(scriptEntry, "File read failed, file does not exist!");
-                scriptEntry.setFinished(true);
-                return;
-            }
-        }
-        catch (Exception ex) {
-            Debug.echoError(ex);
-            scriptEntry.setFinished(true);
+        File file = getFileIfSafe(path, scriptEntry);
+        if (file == null) {
             return;
         }
         Runnable runme = () -> {
@@ -102,5 +76,40 @@ public class FileReadCommand extends AbstractCommand implements Holdable {
         else {
             runme.run();
         }
+    }
+
+    public static File getFileIfSafe(String path, ScriptEntry scriptEntry) {
+        if (!CoreConfiguration.allowFileRead) {
+            Debug.echoError(scriptEntry, "FileRead disabled in Denizen/config.yml (refer to command documentation).");
+            scriptEntry.setFinished(true);
+            return null;
+        }
+        File file = new File(DenizenCore.implementation.getDataFolder(), path);
+        if (!DenizenCore.implementation.canReadFile(file)) {
+            Debug.echoError("Cannot read from that file path due to security settings in Denizen/config.yml.");
+            scriptEntry.setFinished(true);
+            return null;
+        }
+        try {
+            if (!CoreConfiguration.filePathLimit.equals("none")) {
+                File root = new File(DenizenCore.implementation.getDataFolder(), CoreConfiguration.filePathLimit);
+                if (!file.getCanonicalPath().startsWith(root.getCanonicalPath())) {
+                    Debug.echoError("File path '" + path + "' is not within the config's restricted data file path.");
+                    scriptEntry.setFinished(true);
+                    return null;
+                }
+            }
+            if (!file.exists()) {
+                Debug.echoError(scriptEntry, "File read failed, file does not exist!");
+                scriptEntry.setFinished(true);
+                return null;
+            }
+        }
+        catch (Exception e) {
+            Debug.echoError(scriptEntry, e);
+            scriptEntry.setFinished(true);
+            return null;
+        }
+        return file;
     }
 }

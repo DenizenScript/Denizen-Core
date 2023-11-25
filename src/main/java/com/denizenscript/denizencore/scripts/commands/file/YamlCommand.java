@@ -78,7 +78,7 @@ public class YamlCommand extends AbstractCommand implements Holdable {
     // Note that the '.yml' extension is not automatically appended, and you will have to include that in filenames.
     //
     // All usages of the YAML command must include the "id:" argument. This is any arbitrary name, as plaintext or from a tag,
-    // to uniquely and globally identify the YAML object in memory. This ID can only be used by one YAML object at a type.
+    // to uniquely and globally identify the YAML object in memory. This ID can only be used by one YAML object at a time.
     // IDs are stored when "create" or "load" arguments are used, and only removed when "unload" is used.
     // If, for example, you have a unique YAML data container per-player, you might use something like "id:myscript_<player>".
     //

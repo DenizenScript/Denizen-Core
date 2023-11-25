@@ -11,6 +11,8 @@ import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,7 +21,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.zip.*;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.InflaterInputStream;
 
 public class BinaryTag implements ObjectTag {
 
@@ -33,7 +38,7 @@ public class BinaryTag implements ObjectTag {
     // - filewrite path:data/mypath.dat data:%VALUE%
     // @format
     // The identity format for BinaryTag is a hex encoding of the byte set, in order.
-    // Each byte is encoding as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
+    // Each byte is encoded as an individual big-endian hexadecimal pair, like "FF" for byte=255, "00" for byte=0, "0F" for 15, "F0" for 240, ... etc.
     //
     // @description
     // BinaryTags represent raw binary data in Denizen.
@@ -57,10 +62,7 @@ public class BinaryTag implements ObjectTag {
         if (string.isEmpty()) {
             return new BinaryTag(EMPTY);
         }
-        if (!VALID_HEX.isOnlyMatches(string)) {
-            return null;
-        }
-        if (string.length() % 2 == 1) {
+        if (!isValidHex(string)) {
             return null;
         }
         return new BinaryTag(CoreUtilities.hexDecode(string));
@@ -73,17 +75,15 @@ public class BinaryTag implements ObjectTag {
             if (string.startsWith("binary@")) {
                 return true;
             }
-            if (!VALID_HEX.isOnlyMatches(string)) {
-                return false;
-            }
-            if (string.length() % 2 == 1) {
-                return false;
-            }
-            return true;
+            return isValidHex(string);
         }
         catch (Exception e) {
             return false;
         }
+    }
+
+    public static boolean isValidHex(String string) {
+        return string.length() % 2 != 1 && VALID_HEX.isOnlyMatches(string);
     }
 
     public byte[] data;
@@ -389,6 +389,32 @@ public class BinaryTag implements ObjectTag {
                 attribute.echoError(ex);
             }
             return null;
+        });
+
+        // <--[tag]
+        // @attribute <BinaryTag.to_image>
+        // @returns ImageTag
+        // @description
+        // Returns an ImageTag of the image represented by the binary data, or null if the binary data doesn't represent an image.
+        // @example
+        // Converts a base64 encoded string into an ImageTag, commonly used in web APIs.
+        // - define image <[base64].base64_to_binary.to_image>
+        // -->
+        tagProcessor.registerStaticTag(ImageTag.class, "to_image", (attribute, object) -> {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(object.data);
+            try {
+                BufferedImage image = ImageIO.read(inputStream);
+                if (image == null) {
+                    attribute.echoError("Couldn't recognize image format from BinaryTag.");
+                    return null;
+                }
+                return new ImageTag(image);
+            }
+            catch (IOException e) {
+                attribute.echoError("BinaryTag couldn't be converted to image, see stacktrace below:");
+                attribute.echoError(e);
+                return null;
+            }
         });
     }
 
