@@ -20,7 +20,6 @@ public class Quaternion {
         return new Quaternion(axis.x * s, axis.y * s, axis.z * s, Math.cos(angle * 0.5));
     }
 
-
     public static Quaternion getQuaternionBetween(Vector3 v1, Vector3 v2) {
         double dot = v1.dot(v2);
         if (dot < -0.9999f) {

@@ -14,6 +14,12 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
         return false;
     }
 
+    @Override
+    public TData getPropertyValueNoDefault() {
+        TData res = getPropertyValue();
+        return res == null || isDefaultValue(res) ? null : getPropertyValue();
+    }
+
     @Deprecated @Override
     public String getPropertyString() {
         TData res = getPropertyValue();

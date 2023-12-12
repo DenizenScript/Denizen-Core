@@ -12,6 +12,10 @@ public interface Property {
         return str == null ? null : new ElementTag(str);
     }
 
+    default ObjectTag getPropertyValueNoDefault() {
+        return getPropertyValue();
+    }
+
     @Deprecated
     String getPropertyString();
 

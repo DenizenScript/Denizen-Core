@@ -356,9 +356,9 @@ public class PropertyParser {
         for (PropertyGetter getter : properties.propertiesWithMechs) {
             Property property = getter.get(object);
             if (property != null) {
-                String description = property.getPropertyString();
+                ObjectTag description = property.getPropertyValueNoDefault();
                 if (description != null) {
-                    prop_string.append(property.getPropertyId()).append(" <LG>=<Y> ").append(description).append("<LG>; <Y>");
+                    prop_string.append(property.getPropertyId()).append(" <LG>=<Y> ").append(description.debuggable()).append("<LG>; <Y>");
                 }
             }
         }
@@ -379,9 +379,9 @@ public class PropertyParser {
         for (PropertyGetter getter : properties.propertiesWithMechs) {
             Property property = getter.get(object);
             if (property != null) {
-                String description = property.getPropertyString();
+                ObjectTag description = property.getPropertyValueNoDefault();
                 if (description != null) {
-                    prop_string.append(property.getPropertyId()).append('=').append(escapePropertyValue(description)).append(';');
+                    prop_string.append(property.getPropertyId()).append('=').append(escapePropertyValue(description.savable())).append(';');
                 }
             }
         }
@@ -402,9 +402,9 @@ public class PropertyParser {
         for (PropertyGetter getter : properties.propertiesWithMechs) {
             Property property = getter.get(object);
             if (property != null) {
-                String description = property.getPropertyString();
+                ObjectTag description = property.getPropertyValueNoDefault();
                 if (description != null) {
-                    map.putObject(property.getPropertyId(), new ElementTag(description));
+                    map.putObject(property.getPropertyId(), description);
                 }
             }
         }
