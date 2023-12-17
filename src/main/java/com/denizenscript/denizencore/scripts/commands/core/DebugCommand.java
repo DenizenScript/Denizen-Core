@@ -59,6 +59,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to record a debug log of a certain script.
+    // # NOTICE: Spamming debug recordings to the official Denizen Paste instance will result in you being blocked from the paste service.
     // - debug record start
     // - run myscript
     // - ~debug record submit save:mylog
