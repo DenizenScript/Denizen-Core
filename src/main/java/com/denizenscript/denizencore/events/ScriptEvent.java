@@ -945,6 +945,8 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
      */
     public static abstract class MatchHelper {
 
+        public String raw;
+
         public abstract boolean doesMatch(String input);
 
         @FunctionalInterface
@@ -953,7 +955,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
 
         public boolean doesMatch(String input, ExactCheckerInterface exactChecker) {
-            return doesMatch(input) || exactChecker.check(input);
+            return doesMatch(input) || exactChecker.check(raw);
         }
     }
 
@@ -1075,7 +1077,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     return true;
                 }
             }
-            return checker.check(input);
+            return checker.check(raw);
         }
     }
 
@@ -1147,6 +1149,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             result = new ExactMatchHelper(input);
         }
         knownMatchers.put(input, result);
+        result.raw = input;
         return result;
     }
 
