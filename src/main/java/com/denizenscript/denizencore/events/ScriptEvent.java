@@ -953,7 +953,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         }
 
         public boolean doesMatch(String input, ExactCheckerInterface exactChecker) {
-            return doesMatch(input);
+            return doesMatch(input) || exactChecker.check(input);
         }
     }
 
@@ -976,11 +976,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         @Override
         public boolean doesMatch(String input) {
             return CoreUtilities.equalsIgnoreCase(text, input);
-        }
-
-        @Override
-        public boolean doesMatch(String input, ExactCheckerInterface exactChecker) {
-            return CoreUtilities.equalsIgnoreCase(text, input) || exactChecker.check(text);
         }
     }
 
@@ -1080,7 +1075,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     return true;
                 }
             }
-            return false;
+            return checker.check(input);
         }
     }
 
