@@ -379,9 +379,9 @@ public class PropertyParser {
         for (PropertyGetter getter : properties.propertiesWithMechs) {
             Property property = getter.get(object);
             if (property != null) {
-                ObjectTag description = property.getPropertyValueNoDefault();
+                String description = property.getPropertySavableValue();
                 if (description != null) {
-                    prop_string.append(property.getPropertyId()).append('=').append(escapePropertyValue(description.savable())).append(';');
+                    prop_string.append(property.getPropertyId()).append('=').append(escapePropertyValue(description)).append(';');
                 }
             }
         }

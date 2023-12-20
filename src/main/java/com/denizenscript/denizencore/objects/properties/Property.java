@@ -16,6 +16,11 @@ public interface Property {
         return getPropertyValue();
     }
 
+    @Deprecated // TODO: This is for legacy compatibility, can be removed when getPropertyString is
+    default String getPropertySavableValue() {
+        return getPropertyString();
+    }
+
     @Deprecated
     String getPropertyString();
 

@@ -20,6 +20,12 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
         return res == null || isDefaultValue(res) ? null : getPropertyValue();
     }
 
+    @Override
+    public String getPropertySavableValue() {
+        TData res = getPropertyValue();
+        return res == null || isDefaultValue(res) ? null : getPropertyValue().savable();
+    }
+
     @Deprecated @Override
     public String getPropertyString() {
         TData res = getPropertyValue();
