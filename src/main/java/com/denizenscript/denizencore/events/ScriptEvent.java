@@ -168,6 +168,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
          * Determination handlers, mapped by prefix
          */
         public final Map<String, OptionalDeterminationHandler<? extends ScriptEvent, ObjectTag>> determinations = new HashMap<>();
+
+        /**
+         * If true, the ScriptEvent is enabled (ie some script is listening to it).
+         */
+        public boolean isEnabled;
     }
 
     /**
@@ -409,6 +414,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     private static void reloadPreClear() {
         for (ScriptEvent event : events) {
             try {
+                event.eventData.isEnabled = false;
                 event.destroy();
                 event.eventPaths.clear();
             }
@@ -513,6 +519,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                     continue;
                 }
                 event.sort();
+                event.eventData.isEnabled = true;
                 event.init();
             }
             catch (Throwable ex) {

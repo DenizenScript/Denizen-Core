@@ -50,16 +50,4 @@ public class TickScriptEvent extends ScriptEvent {
         }
         return super.matches(path);
     }
-
-    public boolean enabled = false;
-
-    @Override
-    public void init() {
-        enabled = true;
-    }
-
-    @Override
-    public void destroy() {
-        enabled = false;
-    }
 }

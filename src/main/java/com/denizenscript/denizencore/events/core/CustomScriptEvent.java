@@ -109,20 +109,8 @@ public class CustomScriptEvent extends ScriptEvent {
         return super.getContext(name);
     }
 
-    boolean enabled = false;
-
-    @Override
-    public void init() {
-        enabled = true;
-    }
-
-    @Override
-    public void destroy() {
-        enabled = false;
-    }
-
     public static CustomScriptEvent runCustomEvent(ScriptEntryData data, String id, MapTag contextData) {
-        if (!instance.enabled) {
+        if (!instance.eventData.isEnabled) {
             return null;
         }
         instance.cancelled = false;

@@ -290,7 +290,7 @@ public class DenizenCore {
         currentTimeMillis = System.currentTimeMillis();
         currentTimeMonotonicMillis = CoreUtilities.monotonicMillis();
         TickScriptEvent.instance.ticks++;
-        if (TickScriptEvent.instance.enabled) {
+        if (TickScriptEvent.instance.eventData.isEnabled) {
             TickScriptEvent.instance.fire();
         }
         RunLaterCommand.tickFutureRuns();

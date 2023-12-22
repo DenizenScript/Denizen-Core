@@ -79,20 +79,8 @@ public class DeltaTimeScriptEvent extends ScriptEvent {
         return super.getContext(name);
     }
 
-    boolean enabled = false;
-
-    @Override
-    public void init() {
-        enabled = true;
-    }
-
-    @Override
-    public void destroy() {
-        enabled = false;
-    }
-
     public void checkTime() {
-        if (!enabled) {
+        if (!eventData.isEnabled) {
             return;
         }
         second = new ElementTag(DenizenCore.serverTimeMillis / 1000);
