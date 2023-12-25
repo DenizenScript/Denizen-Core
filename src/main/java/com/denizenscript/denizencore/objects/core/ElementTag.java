@@ -1156,6 +1156,9 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "repeat", (attribute, object, countText) -> {
             int repeatTimes = countText.asInt();
+            if (repeatTimes <= 0) {
+                return new ElementTag("");
+            }
             StringBuilder result = new StringBuilder(object.element.length() * repeatTimes);
             for (int i = 0; i < repeatTimes; i++) {
                 result.append(object.element);
