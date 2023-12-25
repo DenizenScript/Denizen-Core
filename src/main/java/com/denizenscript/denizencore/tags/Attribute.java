@@ -87,7 +87,7 @@ public class Attribute {
                 if (x2 <= x1) {
                     throw new TagProcessingException("The tag '" + attributes + "' is invalid, likely due to double dots '..' somewhere. Did you forget a sub-tag, or accidentally double-tap the dot key?");
                 }
-                AttributeComponent component = new AttributeComponent(attributes.substring(x1, x2));
+                AttributeComponent component = new AttributeComponent(attributes.substring(x1, x2).trim());
                 if (matches.size() == 0) {
                     TagManager.TagBaseData baseTag = TagManager.baseTags.get(component.key);
                     if (baseTag != null && baseTag.processor != null) {
