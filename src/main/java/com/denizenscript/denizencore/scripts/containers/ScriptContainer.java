@@ -1,6 +1,9 @@
 package com.denizenscript.denizencore.scripts.containers;
 
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.scripts.*;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
@@ -70,6 +73,15 @@ public class ScriptContainer implements Debuggable {
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
     }
 
+    public <T extends ObjectTag> T tagObject(String text, Class<T> type) {
+        TagContext context = DenizenCore.implementation.getTagContext(this);
+        return TagManager.tagObject(text, context).asType(type, context);
+    }
+
+    public String tag(String text) {
+        return TagManager.tag(text, DenizenCore.implementation.getTagContext(this));
+    }
+
     public Boolean enabledCache = null;
 
     public boolean shouldEnable() {
@@ -80,7 +92,7 @@ public class ScriptContainer implements Debuggable {
         if (enabledText == null) {
             return enabledCache = true;
         }
-        String result = TagManager.tag(enabledText, DenizenCore.implementation.getTagContext(this));
+        String result = tag(enabledText);
         return enabledCache = (result == null || CoreUtilities.equalsIgnoreCase(result, "true"));
     }
 
@@ -243,16 +255,36 @@ public class ScriptContainer implements Debuggable {
         return contents.getString(path, def);
     }
 
+    public String getString(String path, String def, boolean parseTags) {
+        String str = contents.getString(path);
+        if (str == null) {
+            return def;
+        }
+        return parseTags ? tag(str) : str;
+    }
+
     public List<String> getStringList(String path) {
-        List<String> strs = contents.getStringList(path);
-        if (strs == null) {
-            return null;
+        return getStringList(path, false);
+    }
+
+    public List<String> getStringList(String path, boolean parseTags) {
+        Object obj = contents.get(path);
+        if (obj instanceof List list) {
+            List<String> strs = YamlConfiguration.patchListNonsense(list);
+            ArrayList<String> output = new ArrayList<>(strs.size());
+            for (String str : strs) {
+                 str = ScriptBuilder.stripLinePrefix(str);
+                if (parseTags) {
+                    str = tag(str);
+                }
+                output.add(str);
+            }
+            return output;
         }
-        ArrayList<String> output = new ArrayList<>(strs.size());
-        for (String str : strs) {
-            output.add(ScriptBuilder.stripLinePrefix(str));
+        else if (parseTags) {
+            return tagObject(obj.toString(), ListTag.class);
         }
-        return output;
+        return null;
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
