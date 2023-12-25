@@ -54,6 +54,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
     // You may want to use the <@link tag ElementTag.url_encode> tag for this.
     //
     // Optionally, use "data:<data>" to specify a set of data to send to the server (changes the default method from GET to POST).
+    // A BinaryTag input will be used directly - any other input will be treated as a String and encoded as UTF-8.
     //
     // Optionally, use "method:<method>" to specify the HTTP method to use in your request.
     // Can be: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, PATCH.
@@ -106,7 +107,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgLinear @ArgName("url") @ArgRaw ElementTag originalUrl,
-                                   @ArgPrefixed @ArgName("data") @ArgDefaultNull ElementTag data,
+                                   @ArgPrefixed @ArgName("data") @ArgDefaultNull ObjectTag data,
                                    @ArgPrefixed @ArgName("method") @ArgDefaultNull Method method,
                                    @ArgName("hide_failure") boolean hideFailure,
                                    @ArgPrefixed @ArgName("timeout") @ArgDefaultText("10s") DurationTag timeout,
@@ -128,6 +129,15 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         if (!CoreConfiguration.allowWebget) {
             Debug.echoError(scriptEntry, "WebGet disabled in config.yml!");
             return;
+        }
+        byte[] actualData = null;
+        if (data != null) {
+            if (data.shouldBeType(BinaryTag.class)) {
+                actualData = data.asType(BinaryTag.class, scriptEntry.context).data;
+            }
+            else {
+                actualData = data.identify().getBytes(StandardCharsets.UTF_8);
+            }
         }
         // Secrets processing
         String urlText = originalUrl.asString();
@@ -158,12 +168,13 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
         final MapTag headersFinal = newHeaders;
         final String urlFinal = urlText;
+        final byte[] finalData = actualData;
         // Actual execution
         if (!urlFinal.startsWith("http://") && !urlFinal.startsWith("https://")) {
             Debug.echoError("Must have a valid (HTTP/HTTPS) URL! Attempted: " + originalUrl.asString()); // Note: use original url for error, in case of secret input
             return;
         }
-        Thread thr = new Thread(() -> webGet(scriptEntry, data, method, urlFinal, timeout, headersFinal, saveFile, hideFailure, urlIsSecret));
+        Thread thr = new Thread(() -> webGet(scriptEntry, finalData, method, urlFinal, timeout, headersFinal, saveFile, hideFailure, urlIsSecret));
         thr.start();
     }
 
@@ -207,7 +218,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
         }
     }
 
-    public static void webGet(final ScriptEntry scriptEntry, final ElementTag data, Method method, String urlText, DurationTag timeout, MapTag headers, String saveFile, boolean hideFailure, boolean urlIsSecret) {
+    public static void webGet(final ScriptEntry scriptEntry, final byte[] data, Method method, String urlText, DurationTag timeout, MapTag headers, String saveFile, boolean hideFailure, boolean urlIsSecret) {
         HttpURLConnection uc = null;
         try {
             long timeStart = CoreUtilities.monotonicMillis();
@@ -232,7 +243,7 @@ public class WebGetCommand extends AbstractCommand implements Holdable {
             uc.setConnectTimeout((int) timeout.getMillis());
             uc.connect();
             if (data != null) {
-                uc.getOutputStream().write(data.asString().getBytes(StandardCharsets.UTF_8));
+                uc.getOutputStream().write(data);
             }
             final int status = uc.getResponseCode();
             byte[] result = null;
