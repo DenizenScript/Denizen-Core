@@ -1657,6 +1657,23 @@ public class ElementTag implements ObjectTag {
         /////////////////
 
         // <--[tag]
+        // @attribute <ElementTag.discord_id_to_time>
+        // @returns TimeTag
+        // @group math
+        // @description
+        // Each discord ID (for channels, users, guilds, ect) stores the exact time it was created.
+        // Returns the TimeTag of when the given ID was created.
+        // -->
+        tagProcessor.registerStaticTag(TimeTag.class, "discord_id_to_time", (attribute, id) -> {
+            if (!id.isInt()) {
+                attribute.echoError("Element '" + id + "' is not a valid id!");
+                return null;
+            }
+            long timestamp = (id.asLong() >> 22) + 1420070400000L;
+            return new TimeTag(timestamp);
+        });
+
+        // <--[tag]
         // @attribute <ElementTag.abs>
         // @returns ElementTag(Decimal)
         // @synonyms ElementTag.absolute_value
