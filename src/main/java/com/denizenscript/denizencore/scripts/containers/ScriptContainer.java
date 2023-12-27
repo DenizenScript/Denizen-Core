@@ -269,6 +269,9 @@ public class ScriptContainer implements Debuggable {
 
     public List<String> getStringList(String path, boolean parseTags) {
         Object obj = contents.get(path);
+        if (obj == null) {
+            return null;
+        }
         if (obj instanceof List list) {
             List<String> strs = YamlConfiguration.patchListNonsense(list);
             ArrayList<String> output = new ArrayList<>(strs.size());
