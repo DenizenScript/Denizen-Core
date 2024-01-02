@@ -6,7 +6,6 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.Deprecations;
-import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
 import com.denizenscript.denizencore.utilities.debugging.Warning;
 
 import java.util.Collection;
@@ -191,7 +190,7 @@ public abstract class AbstractFlagTracker {
         return result;
     }
 
-    public static Warning listFlagsTagWarning = new SlowWarning("listFlagsTagWarning", "The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
+    public static Warning listFlagsTagWarning = new Warning("listFlagsTagWarning", "The list_flags and flag_map tags are meant for testing/debugging only. Do not use it in scripts (ignore this warning if using for testing reasons).");
 
     public ListTag doListFlagsTag(Attribute attribute) {
         if (attribute.getScriptEntry() != null && attribute.getScriptEntry().getScript() != null) { // don't warn in '/ex'
