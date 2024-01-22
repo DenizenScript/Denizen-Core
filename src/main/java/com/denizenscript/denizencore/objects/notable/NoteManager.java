@@ -170,7 +170,7 @@ public class NoteManager {
         return saveConfig;
     }
 
-    public static void save() {
+    public static void save(boolean lockUntilDone) {
         if (saveConfig == null || saveFilePath == null) {
             return;
         }
@@ -181,7 +181,14 @@ public class NoteManager {
             }
         }
         else {
-            CoreUtilities.journallingFileSave(saveFilePath, saveConfig.saveToString(false));
+            String data = saveConfig.saveToString(false);
+            Runnable run = () -> CoreUtilities.journallingFileSave(saveFilePath, data);
+            if (lockUntilDone) {
+                run.run();
+            }
+            else {
+                DenizenCore.runAsync(run);
+            }
         }
     }
 

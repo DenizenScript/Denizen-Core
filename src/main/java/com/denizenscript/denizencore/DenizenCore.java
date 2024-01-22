@@ -156,9 +156,9 @@ public class DenizenCore {
     /**
      * Call to save anything that needs to be saved, especially before shutdown.
      */
-    public static void saveAll() {
-        NoteManager.save();
-        serverFlagMap.saveToFile(new File(implementation.getDataFolder(), "server_flags").getPath());
+    public static void saveAll(boolean lockUntilDone) {
+        NoteManager.save(lockUntilDone);
+        serverFlagMap.saveToFile(new File(implementation.getDataFolder(), "server_flags").getPath(), lockUntilDone);
     }
 
     /**
@@ -166,7 +166,7 @@ public class DenizenCore {
      */
     public static void shutdown() {
         ShutdownScriptEvent.instance.fire();
-        saveAll();
+        saveAll(true);
         logInterceptor.standardOutput();
         commandRegistry.disableCoreMembers();
     }

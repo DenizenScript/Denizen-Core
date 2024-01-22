@@ -1,5 +1,6 @@
 package com.denizenscript.denizencore.flags;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectFetcher;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.MapTag;
@@ -249,6 +250,17 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
     }
 
     public void saveToFile(String filePath) {
-        CoreUtilities.journallingFileSave(filePath + ".dat", toString());
+        saveToFile(filePath, true);
+    }
+
+    public void saveToFile(String filePath, boolean lockUntilDone) {
+        String data = toString();
+        Runnable run = () -> CoreUtilities.journallingFileSave(filePath + ".dat", data);
+        if (lockUntilDone) {
+            run.run();
+        }
+        else {
+            DenizenCore.runAsync(run);
+        }
     }
 }
