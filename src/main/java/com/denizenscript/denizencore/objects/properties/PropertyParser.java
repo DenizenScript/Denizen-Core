@@ -481,7 +481,7 @@ public class PropertyParser {
                     Debug.echoError("Invalid property string '" + properties.get(i) + "'!");
                 }
                 else {
-                    instance.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(data.get(1)), attribute.context));
+                    instance.safeApplyProperty(new Mechanism(data.get(0), ObjectFetcher.pickObjectFor(data.get(1), attribute.context), attribute.context));
                 }
             }
             return instance;
@@ -505,7 +505,7 @@ public class PropertyParser {
                 Debug.echoError("Invalid property string '" + attribute.getParam() + "'!");
             }
             else {
-                instance.safeApplyProperty(new Mechanism(data.get(0), new ElementTag(data.get(1)), attribute.context));
+                instance.safeApplyProperty(new Mechanism(data.get(0), ObjectFetcher.pickObjectFor(data.get(1), attribute.context), attribute.context));
             }
             return instance;
         });
