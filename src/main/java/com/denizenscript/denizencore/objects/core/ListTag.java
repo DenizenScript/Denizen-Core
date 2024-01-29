@@ -9,15 +9,13 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
-import com.denizenscript.denizencore.tags.Attribute;
-import com.denizenscript.denizencore.tags.ObjectTagProcessor;
-import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.tags.TagRunnable;
+import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
+import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -2445,17 +2443,26 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag newlist = new ListTag();
-            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
+            TagContext context = attribute.context;
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(context.definitionProvider);
+            DefinitionProvider originalProvider = context.definitionProvider;
+            context.definitionProvider = provider;
             try {
+                String raw = attribute.getRawParam();
+                ParseableTag parseable = TagManager.parseTextToTag(raw, context);
+                StringHolder filterValueStr = new StringHolder("filter_value");
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefs.putObject("filter_value", obj);
-                    if (CoreUtilities.equalsIgnoreCase(attribute.parseDynamicParam(provider).toString(), "true")) {
+                    provider.altDefs.map.put(filterValueStr, obj);
+                    if (CoreUtilities.equalsIgnoreCase(parseable.parse(context).toString(), "true")) {
                         newlist.addObject(obj);
                     }
                 }
             }
             catch (Exception ex) {
                 Debug.echoError(ex);
+            }
+            finally {
+                context.definitionProvider = originalProvider;
             }
             return newlist;
         });
@@ -2478,15 +2485,24 @@ public class ListTag implements List<String>, ObjectTag {
                 return null;
             }
             ListTag newlist = new ListTag(object.size());
-            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(attribute.context.definitionProvider);
+            TagContext context = attribute.context;
+            Attribute.OverridingDefinitionProvider provider = new Attribute.OverridingDefinitionProvider(context.definitionProvider);
+            DefinitionProvider originalProvider = context.definitionProvider;
+            context.definitionProvider = provider;
             try {
+                String raw = attribute.getRawParam();
+                ParseableTag parseable = TagManager.parseTextToTag(raw, context);
+                StringHolder parseValueStr = new StringHolder("parse_value");
                 for (ObjectTag obj : object.objectForms) {
-                    provider.altDefs.putObject("parse_value", obj);
-                    newlist.addObject(attribute.parseDynamicParam(provider));
+                    provider.altDefs.map.put(parseValueStr, obj);
+                    newlist.addObject(parseable.parse(context));
                 }
             }
             catch (Exception ex) {
                 Debug.echoError(ex);
+            }
+            finally {
+                context.definitionProvider = originalProvider;
             }
             return newlist;
         });
