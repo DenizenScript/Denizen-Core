@@ -2501,6 +2501,7 @@ public class ElementTag implements ObjectTag {
         // <--[tag]
         // @attribute <ElementTag.millis_to_time>
         // @returns TimeTag
+        // @group conversion
         // @description
         // Returns a TimeTag from the number of milliseconds since Jan 1, 1970.
         // -->
