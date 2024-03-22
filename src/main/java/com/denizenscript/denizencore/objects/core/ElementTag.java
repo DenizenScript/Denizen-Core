@@ -2497,6 +2497,16 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(MapTag.class, "parse_yaml", (attribute, object) -> {
             return (MapTag) CoreUtilities.objectToTagForm(YamlConfiguration.load(object.asString()).contents, attribute.context);
         });
+
+        // <--[tag]
+        // @attribute <ElementTag.millis_to_time>
+        // @returns TimeTag
+        // @description
+        // Returns a TimeTag from the number of milliseconds since Jan 1, 1970.
+        // -->
+        tagProcessor.registerStaticTag(TimeTag.class, "millis_to_time", (attribute, object) -> {
+            return new TimeTag(object.asLong());
+        });
     }
 
     public static ObjectTagProcessor<ElementTag> tagProcessor = new ObjectTagProcessor<>();
