@@ -2503,7 +2503,11 @@ public class ElementTag implements ObjectTag {
         // @returns TimeTag
         // @group conversion
         // @description
-        // Returns a TimeTag from the number of milliseconds since Jan 1, 1970.
+        // Returns a TimeTag constructed from the number of milliseconds after the Unix Epoch (Jan. 1st 1970).
+        // See also <@link tag util.current_time_millis> and <@link tag TimeTag.epoch_millis>.
+        // @example
+        // # Narrates '2024/03/22 02:41:19'.
+        // - narrate <element[1711075279797].millis_to_time.format>
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "millis_to_time", (attribute, object) -> {
             return new TimeTag(object.asLong());
