@@ -2503,7 +2503,7 @@ public class ElementTag implements ObjectTag {
         // @returns TimeTag
         // @group conversion
         // @description
-        // Returns a TimeTag constructed from the number of milliseconds after the Unix Epoch (Jan. 1st 1970).
+        // Returns a TimeTag constructed from the given number of milliseconds after the Unix Epoch (Jan. 1st 1970).
         // See also <@link tag util.current_time_millis> and <@link tag TimeTag.epoch_millis>.
         // @example
         // # Takes an arbitrary unix timestamp from an external source, and formats it for a user-friendly date/time display message.
