@@ -2497,6 +2497,22 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(MapTag.class, "parse_yaml", (attribute, object) -> {
             return (MapTag) CoreUtilities.objectToTagForm(YamlConfiguration.load(object.asString()).contents, attribute.context);
         });
+
+        // <--[tag]
+        // @attribute <ElementTag.millis_to_time>
+        // @returns TimeTag
+        // @group conversion
+        // @description
+        // Returns a TimeTag constructed from the given number of milliseconds after the Unix Epoch (Jan. 1st 1970).
+        // See also <@link tag util.current_time_millis> and <@link tag TimeTag.epoch_millis>.
+        // @example
+        // # Takes an arbitrary unix timestamp from an external source, and formats it for a user-friendly date/time display message.
+        // - define some_unix_timestamp <util.time_now.epoch_millis>
+        // - narrate "The timestamp was <[some_unix_timestamp].millis_to_time.format>"
+        // -->
+        tagProcessor.registerStaticTag(TimeTag.class, "millis_to_time", (attribute, object) -> {
+            return new TimeTag(object.asLong());
+        });
     }
 
     public static ObjectTagProcessor<ElementTag> tagProcessor = new ObjectTagProcessor<>();
