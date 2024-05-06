@@ -274,7 +274,9 @@ public class JavaReflectedObjectTag implements ObjectTag {
             ListTag fields = new ListTag();
             Class<?> clazz = object.object.getClass();
             while (clazz != Object.class) {
-                fields.addAll(ReflectionHelper.getFields(clazz).keySet());
+                for (Field field : ReflectionHelper.getFields(clazz).getAllFields()) {
+                    fields.add(field.getName());
+                }
                 clazz = clazz.getSuperclass();
             }
             return fields;
