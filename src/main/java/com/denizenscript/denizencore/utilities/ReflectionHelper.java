@@ -17,7 +17,7 @@ public class ReflectionHelper {
 
     public static boolean hasInitialized = false;
 
-    private static final Map<Class, CheckingFieldMap> cachedFields = new HashMap<>();
+    private static final Map<Class, FieldCache> cachedFields = new HashMap<>();
 
     private static final Map<Class, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
 
@@ -49,7 +49,7 @@ public class ReflectionHelper {
     }
 
     public static <T> T getFieldValue(Class clazz, String fieldName, Object object) {
-        Map<String, Field> cache = getFields(clazz);
+        FieldCache cache = getFields(clazz);
         try {
             Field field = cache.get(fieldName);
             if (field == null) {
@@ -63,16 +63,28 @@ public class ReflectionHelper {
         }
     }
 
-    public static class CheckingFieldMap extends HashMap<String, Field> {
+    public static class FieldCache {
 
         public Class<?> clazz;
+        public Field[] allFields;
+        public Map<String, Field> fieldCache = new HashMap<>();
 
-        public CheckingFieldMap(Class<?> clazz) {
+        public FieldCache(Class<?> clazz) {
             this.clazz = clazz;
         }
 
+        public Field[] getAllFields() {
+            if (allFields == null) {
+                allFields = clazz.getDeclaredFields();
+                for (Field field : allFields) {
+                    field.setAccessible(true);
+                }
+            }
+            return allFields;
+        }
+
         public Field getFirstOfType(Class fieldClazz) {
-            for (Field f : super.values()) {
+            for (Field f : getAllFields()) {
                 if (f.getType().equals(fieldClazz)) {
                     return f;
                 }
@@ -81,9 +93,8 @@ public class ReflectionHelper {
             return null;
         }
 
-        @Override
         public Field get(Object name) {
-            Field f = super.get(name);
+            Field f = getNoCheck(name.toString());
             if (f == null) {
                 echoError("Reflection field missing - Tried to read field '" + name + "' of class '" + clazz.getCanonicalName() + "'.");
             }
@@ -102,44 +113,27 @@ public class ReflectionHelper {
         }
 
         public Field getNoCheck(String name) {
-            return super.get(name);
+            return fieldCache.computeIfAbsent(name, fieldName -> {
+                try {
+                    Field found = clazz.getDeclaredField(fieldName);
+                    found.setAccessible(true);
+                    return found;
+                }
+                catch (NoSuchFieldException ignored) {
+                    return null;
+                }
+            });
         }
     }
 
-    public static CheckingFieldMap getFields(Class clazz) {
-        CheckingFieldMap fields = cachedFields.get(clazz);
-        if (fields != null) {
-            return fields;
-        }
-        fields = new CheckingFieldMap(clazz);
-        for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true);
-            fields.put(field.getName(), field);
-        }
-        cachedFields.put(clazz, fields);
-        return fields;
+    public static FieldCache getFields(Class clazz) {
+        return cachedFields.computeIfAbsent(clazz, FieldCache::new);
     }
 
     public static Method getMethod(Class<?> clazz, String method, Class<?>... params) {
         Method f = null;
         try {
-            mainLoop:
-            for (Method possible : clazz.getDeclaredMethods()) {
-                if (method != null && !method.equals(possible.getName())) {
-                    continue;
-                }
-                if (possible.getParameterCount() != params.length) {
-                    continue;
-                }
-                Class<?>[] paramTypes = possible.getParameterTypes();
-                for (int i = 0; i < params.length; i++) {
-                    if (params[i] != null && !params[i].equals(paramTypes[i])) {
-                        continue mainLoop;
-                    }
-                }
-                f = possible;
-                break;
-            }
+            f = clazz.getDeclaredMethod(method, params);
         }
         catch (Exception ex) {
             echoError(ex);
