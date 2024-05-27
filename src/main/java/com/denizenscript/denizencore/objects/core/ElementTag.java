@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -2512,6 +2513,20 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(TimeTag.class, "millis_to_time", (attribute, object) -> {
             return new TimeTag(object.asLong());
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.unaccented>
+        // @returns ElementTag
+        // @description
+        // Returns a modified version of the input text but with all the accents removed and replaced with their normalized counterparts.
+        // Note that not all characters have a normalized form, such as "æ", and will be unchanged.
+        // @example
+        // # Narrates "TqaaCwIMæ"
+        // - narrate <element[ⓉⓠäắÇẘℑℳæ].unaccented>
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "unaccented", (attribute, object) -> {
+            return new ElementTag(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD).replaceAll("[\\u0300-\\u036f]", ""));
         });
     }
 
