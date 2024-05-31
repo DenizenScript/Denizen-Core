@@ -2519,7 +2519,7 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.unaccented>
         // @returns ElementTag
         // @description
-        // Returns the input text with any the accented characters replaced with their base counterparts.
+        // Returns the input text with any accented characters replaced with their base counterparts.
         // Note that not all characters have a normalized form, such as "æ", and will be unchanged.
         // @example
         // # Narrates "TqaaCwIMæ"
