@@ -2519,14 +2519,17 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.unaccented>
         // @returns ElementTag
         // @description
-        // Returns a modified version of the input text but with all the accents removed and replaced with their normalized counterparts.
+        // Returns the input text with any the accented characters replaced with their base counterparts.
         // Note that not all characters have a normalized form, such as "æ", and will be unchanged.
         // @example
         // # Narrates "TqaaCwIMæ"
         // - narrate <element[ⓉⓠäắÇẘℑℳæ].unaccented>
+        // @example
+        // # Narrates "these characters have diacritics: eac"
+        // - narrate <element[these characters have diacritics: éàç].unaccented>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "unaccented", (attribute, object) -> {
-            return new ElementTag(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD).replaceAll("[\\u0300-\\u036f]", ""));
+            return new ElementTag(unaccentedPattern.matcher(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD)).replaceAll(""), true);
         });
     }
 
@@ -2599,4 +2602,6 @@ public class ElementTag implements ObjectTag {
         }
         return ScriptEvent.runGenericCheck(matcher, element);
     }
+
+    public static Pattern unaccentedPattern = Pattern.compile("[\\u0300-\\u036f]");
 }
