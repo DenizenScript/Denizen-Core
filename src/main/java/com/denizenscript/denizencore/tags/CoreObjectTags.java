@@ -204,7 +204,7 @@ public class CoreObjectTags {
             // @description
             // Takes an operator, and compares the first object to the given second object.
             // Returns the outcome of the comparable, either true or false. For information on operators, see <@link language operator>.
-            // Equivalent to <@link tag ObjectTag.is[<operator>].than[<element>]>
+            // Equivalent to <@link tag ObjectTag.is.than>
             // -->
 
             // <--[tag]
@@ -214,7 +214,7 @@ public class CoreObjectTags {
             // @description
             // Takes an operator, and compares the first object to the given second object.
             // Returns the outcome of the comparable, either true or false. For information on operators, see <@link language operator>.
-            // Equivalent to <@link tag ObjectTag.is[<operator>].to[<element>]>
+            // Equivalent to <@link tag ObjectTag.is.to>
             // -->
             if (attribute.hasParam() && (attribute.startsWith("to", 2) || attribute.startsWith("than", 2)) && attribute.hasContext(2)) {
                 boolean negative = false;

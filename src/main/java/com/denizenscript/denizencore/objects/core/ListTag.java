@@ -2273,7 +2273,7 @@ public class ListTag implements List<String>, ObjectTag {
             // @attribute <ListTag.sort[<procedure>].context[<context>]>
             // @returns ListTag
             // @description
-            // Sort a list, with context. See <@link tag ListTag.sort[<procedure>]> for general sort details.
+            // Sort a list, with context. See <@link tag ListTag.sort> for general sort details.
             // -->
             ListTag context = new ListTag();
             if (attribute.startsWith("context", 2)) {
