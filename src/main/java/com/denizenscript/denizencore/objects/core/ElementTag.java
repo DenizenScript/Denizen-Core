@@ -1132,13 +1132,12 @@ public class ElementTag implements ObjectTag {
         // Returns null if the index is outside the range of the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
-            int index = indexText.asInt() - 1;
-            if (index < 0 || index >= object.element.length()) {
+            int index = indexText.asInt();
+            String element = object.element;
+            if (Math.abs(index) > element.length() || index == 0) {
                 return null;
             }
-            else {
-                return new ElementTag(String.valueOf(object.element.charAt(index)));
-            }
+            return new ElementTag(String.valueOf(element.charAt(index < 0 ? element.length() + index : index - 1)));
         });
 
         /////////////////////
