@@ -1128,7 +1128,7 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element checking
         // @description
-        // Returns the character at a specified index.
+        // Returns the character at a specified index, supporting negative indexes to count from the end.
         // Returns null if the index is outside the range of the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
