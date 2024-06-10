@@ -1134,7 +1134,7 @@ public class ElementTag implements ObjectTag {
         // Narrates 'l'.
         // - narrate <element[apple].char_at[-2]>
         // Narrates 'a'.
-        // - narrate <element[apple].chat_at[1]>
+        // - narrate <element[apple].char_at[1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
             int index = indexText.asInt();
