@@ -1128,17 +1128,21 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element checking
         // @description
-        // Returns the character at a specified index.
+        // Returns the character at a specified index, supporting negative indexes to count from the end.
         // Returns null if the index is outside the range of the element.
+        // @example
+        // Narrates 'l'.
+        // - narrate <element[apple].char_at[-2]>
+        // Narrates 'a'.
+        // - narrate <element[apple].char_at[1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
-            int index = indexText.asInt() - 1;
-            if (index < 0 || index >= object.element.length()) {
+            int index = indexText.asInt();
+            String element = object.element;
+            if (Math.abs(index) > element.length() || index == 0) {
                 return null;
             }
-            else {
-                return new ElementTag(String.valueOf(object.element.charAt(index)));
-            }
+            return new ElementTag(String.valueOf(element.charAt(index < 0 ? element.length() + index : index - 1)));
         });
 
         /////////////////////
