@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -2517,6 +2518,23 @@ public class ElementTag implements ObjectTag {
         tagProcessor.registerStaticTag(TimeTag.class, "millis_to_time", (attribute, object) -> {
             return new TimeTag(object.asLong());
         });
+
+        // <--[tag]
+        // @attribute <ElementTag.unaccented>
+        // @returns ElementTag
+        // @description
+        // Returns the input text with any accented characters replaced with their base counterparts.
+        // Note that not all characters have a normalized form, such as "æ", and will be unchanged.
+        // @example
+        // # Narrates "TqaaCwIMæ"
+        // - narrate <element[ⓉⓠäắÇẘℑℳæ].unaccented>
+        // @example
+        // # Narrates "these characters have diacritics: eac"
+        // - narrate <element[these characters have diacritics: éàç].unaccented>
+        // -->
+        tagProcessor.registerStaticTag(ElementTag.class, "unaccented", (attribute, object) -> {
+            return new ElementTag(unaccentedPattern.matcher(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD)).replaceAll(""), true);
+        });
     }
 
     public static ObjectTagProcessor<ElementTag> tagProcessor = new ObjectTagProcessor<>();
@@ -2588,4 +2606,6 @@ public class ElementTag implements ObjectTag {
         }
         return ScriptEvent.runGenericCheck(matcher, element);
     }
+
+    public static Pattern unaccentedPattern = Pattern.compile("[\\u0300-\\u036f]");
 }
