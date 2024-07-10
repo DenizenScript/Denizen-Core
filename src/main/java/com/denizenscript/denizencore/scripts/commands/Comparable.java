@@ -149,7 +149,7 @@ public class Comparable {
                 outcome = listContains(objB, objA, context);
                 break;
             case MATCHES:
-                outcome = objA.tryAdvancedMatcher(objB.toString());
+                outcome = objA.tryAdvancedMatcher(objB.toString(), context);
                 break;
             default:
                 // Impossible to reach

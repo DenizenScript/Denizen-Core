@@ -1644,7 +1644,7 @@ public class ListTag implements List<String>, ObjectTag {
             String matcher = matchText.asString();
             for (int i = 0; i < list.size(); i++) {
                 ObjectTag object = list.getObject(i);
-                if (object != null && object.tryAdvancedMatcher(matcher)) {
+                if (object != null && object.tryAdvancedMatcher(matcher, attribute.context)) {
                     positions.add(String.valueOf(i + 1));
                 }
             }
@@ -1706,7 +1706,7 @@ public class ListTag implements List<String>, ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "find_match", (attribute, list, matcher) -> {
             for (int i = 0; i < list.size(); i++) {
                 ObjectTag object = list.getObject(i);
-                if (object != null && object.tryAdvancedMatcher(matcher.asString())) {
+                if (object != null && object.tryAdvancedMatcher(matcher.asString(), attribute.context)) {
                     return new ElementTag(i + 1);
                 }
             }
@@ -1767,7 +1767,7 @@ public class ListTag implements List<String>, ObjectTag {
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "count_matches", (attribute, list, matcher) -> {
             int count = 0;
             for (ObjectTag object : list.objectForms) {
-                if (object != null && object.tryAdvancedMatcher(matcher.asString())) {
+                if (object != null && object.tryAdvancedMatcher(matcher.asString(), attribute.context)) {
                     count++;
                 }
             }
@@ -2682,7 +2682,7 @@ public class ListTag implements List<String>, ObjectTag {
         tagProcessor.registerTag(ElementTag.class, ElementTag.class, "contains_match", (attribute, object, input) -> {
             String matcher = input.asString();
             for (ObjectTag objectTag : object.objectForms) {
-                if (objectTag.tryAdvancedMatcher(matcher)) {
+                if (objectTag.tryAdvancedMatcher(matcher, attribute.context)) {
                     return new ElementTag(true);
                 }
             }

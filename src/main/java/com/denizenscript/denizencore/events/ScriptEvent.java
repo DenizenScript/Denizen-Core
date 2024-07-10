@@ -214,6 +214,7 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
         public List<String> matchFailReasons = null;
         public double switch_chance;
         public List<String> switch_serverFlagged;
+        public TagContext context;
 
         public String rawEventArgAt(int index) {
             return index < rawEventArgs.length ? rawEventArgs[index] : "";
@@ -301,14 +302,14 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
             if (obj == null) {
                 return false;
             }
-            return obj.tryAdvancedMatcher(val);
+            return obj.tryAdvancedMatcher(val, context);
         }
 
         public boolean tryArgObject(int argIndex, ObjectTag obj) {
             if (obj == null) {
                 return false;
             }
-            return obj.tryAdvancedMatcher(eventArgAt(argIndex));
+            return obj.tryAdvancedMatcher(eventArgAt(argIndex), context);
         }
 
         // <--[data]
@@ -607,7 +608,10 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
                 return false;
             }
         }
-        return sEvent.matches(path);
+        path.context = sEvent.getTagContext(path);
+        boolean matches = sEvent.matches(path);
+        path.context = null;
+        return matches;
     }
 
     /**

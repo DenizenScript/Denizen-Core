@@ -2533,7 +2533,7 @@ public class ElementTag implements ObjectTag {
         // - narrate <element[these characters have diacritics: éàç].unaccented>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "unaccented", (attribute, object) -> {
-            return new ElementTag(unaccentedPattern.matcher(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD)).replaceAll(""), true);
+            return new ElementTag(UNACCENTED_PATTERN.matcher(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD)).replaceAll(""), true);
         });
     }
 
@@ -2597,15 +2597,14 @@ public class ElementTag implements ObjectTag {
     }
 
     @Override
-    public boolean advancedMatches(String matcher) {
-        String matcherLow = CoreUtilities.toLowerCase(matcher);
-        switch (matcherLow) {
-            case "integer": return isInt();
-            case "decimal": return isDouble();
-            case "boolean": return isBoolean();
-        }
-        return ScriptEvent.runGenericCheck(matcher, element);
+    public boolean advancedMatches(String matcher, TagContext context) {
+        return switch (CoreUtilities.toLowerCase(matcher)) {
+            case "integer" -> isInt();
+            case "decimal" -> isDouble();
+            case "boolean" -> isBoolean();
+            default -> ScriptEvent.runGenericCheck(matcher, element);
+        };
     }
 
-    public static Pattern unaccentedPattern = Pattern.compile("[\\u0300-\\u036f]");
+    public static final Pattern UNACCENTED_PATTERN = Pattern.compile("[\\u0300-\\u036f]");
 }
