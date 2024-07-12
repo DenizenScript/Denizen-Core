@@ -260,6 +260,14 @@ public interface ObjectTag {
      * Used for objects to override, should not be called externally. Call 'tryAdvancedMatcher' instead.
      */
     default boolean advancedMatches(String matcher, TagContext context) {
+        return advancedMatches(matcher);
+    }
+
+    /**
+     * @deprecated {@link #advancedMatches(String, TagContext)} should be implemented instead.
+     */
+    @Deprecated(forRemoval = true)
+    default boolean advancedMatches(String matcher) {
         return ScriptEvent.runGenericCheck(matcher, identify());
     }
 
@@ -288,6 +296,14 @@ public interface ObjectTag {
             }
         }
         return advancedMatches(matcher, context);
+    }
+
+    /**
+     * @deprecated Use {@link #tryAdvancedMatcher(String, TagContext)} and pass in the relevant context for where the matcher is being checked.
+     */
+    @Deprecated(forRemoval = true)
+    default boolean tryAdvancedMatcher(String matcher) {
+        return tryAdvancedMatcher(matcher, Debug.currentContext != null ? Debug.currentContext : CoreUtilities.noDebugContext);
     }
 
     /**
