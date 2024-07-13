@@ -80,7 +80,7 @@ public class CustomScriptEvent extends ScriptEvent {
                 if (val == null) {
                     return false;
                 }
-                if (!val.tryAdvancedMatcher(parts.get(1))) {
+                if (!val.tryAdvancedMatcher(parts.get(1), path.context)) {
                     return false;
                 }
             }

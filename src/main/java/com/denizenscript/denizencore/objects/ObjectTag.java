@@ -259,6 +259,14 @@ public interface ObjectTag {
     /**
      * Used for objects to override, should not be called externally. Call 'tryAdvancedMatcher' instead.
      */
+    default boolean advancedMatches(String matcher, TagContext context) {
+        return advancedMatches(matcher);
+    }
+
+    /**
+     * @deprecated {@link #advancedMatches(String, TagContext)} should be implemented instead.
+     */
+    @Deprecated(forRemoval = true)
     default boolean advancedMatches(String matcher) {
         return ScriptEvent.runGenericCheck(matcher, identify());
     }
@@ -267,7 +275,7 @@ public interface ObjectTag {
      * Returns whether this object matches the specified input using 'advanced matcher' logic.
      * Do not override.
      */
-    default boolean tryAdvancedMatcher(String matcher) {
+    default boolean tryAdvancedMatcher(String matcher, TagContext context) {
         if (CoreConfiguration.debugVerbose) {
             Debug.verboseLog("Trying advanced matcher '" + matcher + "' on object '" + identify() + "'");
         }
@@ -275,7 +283,7 @@ public interface ObjectTag {
             return false;
         }
         if (matcher.startsWith("!")) {
-            return !tryAdvancedMatcher(matcher.substring(1));
+            return !tryAdvancedMatcher(matcher.substring(1), context);
         }
         ObjectType<? extends ObjectTag> thisType = getDenizenObjectType();
         if (thisType != null && thisType.tagProcessor != null) {
@@ -287,7 +295,15 @@ public interface ObjectTag {
                 return result;
             }
         }
-        return advancedMatches(matcher);
+        return advancedMatches(matcher, context);
+    }
+
+    /**
+     * @deprecated Use {@link #tryAdvancedMatcher(String, TagContext)} and pass in the relevant context for where the matcher is being checked.
+     */
+    @Deprecated(forRemoval = true)
+    default boolean tryAdvancedMatcher(String matcher) {
+        return tryAdvancedMatcher(matcher, Debug.currentContext != null ? Debug.currentContext : CoreUtilities.noDebugContext);
     }
 
     /**

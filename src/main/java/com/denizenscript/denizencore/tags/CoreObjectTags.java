@@ -268,7 +268,7 @@ public class CoreObjectTags {
             if (!attribute.hasParam()) {
                 return null;
             }
-            return new ElementTag(object.tryAdvancedMatcher(attribute.getParam()));
+            return new ElementTag(object.tryAdvancedMatcher(attribute.getParam(), attribute.context));
         }, "advanced_matches_text");
 
         // <--[tag]
@@ -278,10 +278,10 @@ public class CoreObjectTags {
         // Returns the reflected internal Java object for a given ObjectTag.
         // -->
         tagProcessor.registerTag(JavaReflectedObjectTag.class, "reflected_internal_object", (attribute, object) -> {
-            Object obj = object.getJavaObject();
             if (!CoreConfiguration.allowReflectionFieldReads) {
                 return null;
             }
+            Object obj = object.getJavaObject();
             if (obj == null) {
                 return null;
             }
