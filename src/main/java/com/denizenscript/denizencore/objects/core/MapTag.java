@@ -893,7 +893,7 @@ public class MapTag implements ObjectTag {
         // Returns a list of all keys in this map.
         // @example
         // # Narrates a list of 'a|b|c|'
-        // - narrate <map[a=1;b=2;c=3].key>
+        // - narrate <map[a=1;b=2;c=3].keys>
         // -->
         tagProcessor.registerStaticTag(ListTag.class, "keys", (attribute, object) -> {
             return object.keys();
