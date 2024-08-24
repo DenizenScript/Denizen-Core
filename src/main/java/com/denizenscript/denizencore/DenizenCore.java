@@ -16,6 +16,7 @@ import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.ReplaceableTagEvent;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.PropertyMatchHelper;
 import com.denizenscript.denizencore.utilities.ReflectionHelper;
 import com.denizenscript.denizencore.utilities.debugging.*;
 import com.denizenscript.denizencore.utilities.scheduling.AsyncSchedulable;
@@ -182,6 +183,7 @@ public class DenizenCore {
             ScriptHelper.reloadScripts(delayable, () -> {
                 PreScriptReloadScriptEvent.instance.fire();
                 ScriptEvent.worldContainers.clear();
+                PropertyMatchHelper.matchHelperCache.clear();
                 implementation.preScriptReload();
             }, (midpoint) -> {
                 long completion = CoreUtilities.monotonicMillis();
