@@ -10,6 +10,9 @@ import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ReflectionRefuse;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
+import org.yaml.snakeyaml.error.Mark;
+import org.yaml.snakeyaml.error.MarkedYAMLException;
 
 import java.io.File;
 
@@ -28,7 +31,16 @@ public class SecretTag implements ObjectTag {
                 return;
             }
             fileContent = fileContent.substring("!SECRETS_FILE".length());
-            secretsFile = YamlConfiguration.load(fileContent);
+            try {
+                secretsFile = YamlConfiguration.load(fileContent);
+            }
+            catch (MarkedYAMLException mye) {
+                Mark problem = mye.getProblemMark();
+                Debug.echoError("Error occurred while loading secrets file, on line " + (problem.getLine() + 1) + ", column " + (problem.getColumn() + 1) + ": " + mye.getProblem());
+            }
+            catch (Exception e) {
+                Debug.echoError("Unknown error occurred while loading secrets file (" + DebugInternals.getClassNameOpti(e.getClass()) + "), hidden for security reasons; try deleting the secrets file to regenerate it.");
+            }
         }
         else {
             secretsFile = new YamlConfiguration();
