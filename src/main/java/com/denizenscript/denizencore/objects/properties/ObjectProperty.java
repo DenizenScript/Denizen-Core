@@ -10,6 +10,10 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
 
     public abstract TData getPropertyValue();
 
+    public TData getTagValue() {
+        return getPropertyValue();
+    }
+
     public boolean isDefaultValue(TData data) {
         return false;
     }
@@ -36,13 +40,13 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
 
     public static <TObj extends ObjectTag, TData extends ObjectTag, TProp extends ObjectProperty<TObj, TData>>
         void autoRegister(String name, Class<TProp> propClass, Class<TData> dataClass, boolean isStatic, String... deprecatedVariants) {
-        PropertyParser.registerTagInternal(propClass, dataClass, name, (attribute, prop) -> prop.getPropertyValue(), deprecatedVariants, isStatic);
+        PropertyParser.registerTagInternal(propClass, dataClass, name, (attribute, prop) -> prop.getTagValue(), deprecatedVariants, isStatic);
         PropertyParser.registerMechanism(propClass, dataClass, name, (prop, mechanism, param) -> prop.setPropertyValue(param, mechanism), deprecatedVariants);
     }
 
     public static <TObj extends ObjectTag, TData extends ObjectTag, TProp extends ObjectProperty<TObj, TData>>
         void autoRegisterNullable(String name, Class<TProp> propClass, Class<TData> dataClass, boolean isStatic, String... deprecatedVariants) {
-        PropertyParser.registerTagInternal(propClass, dataClass, name, (attribute, prop) -> prop.getPropertyValue(), deprecatedVariants, isStatic);
+        PropertyParser.registerTagInternal(propClass, dataClass, name, (attribute, prop) -> prop.getTagValue(), deprecatedVariants, isStatic);
         PropertyParser.registerMechanism(propClass, name, (prop, mechanism) -> {
             if (!mechanism.hasValue()) {
                 prop.setPropertyValue(null, mechanism);
