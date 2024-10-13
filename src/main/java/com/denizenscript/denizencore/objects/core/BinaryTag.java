@@ -397,7 +397,7 @@ public class BinaryTag implements ObjectTag {
         // @description
         // Returns an ImageTag of the image represented by the binary data, or null if the binary data doesn't represent an image.
         // @example
-        // Converts a base64 encoded string into an ImageTag, commonly used in web APIs.
+        // # Converts a base64 encoded string into an ImageTag, commonly used in web APIs.
         // - define image <[base64].base64_to_binary.to_image>
         // -->
         tagProcessor.registerStaticTag(ImageTag.class, "to_image", (attribute, object) -> {
