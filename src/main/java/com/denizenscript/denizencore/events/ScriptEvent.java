@@ -656,12 +656,6 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     public void cancellationChanged() {
     }
 
-    @Deprecated
-    public static boolean isDefaultDetermination(ObjectTag determination) {
-        Debug.echoError("VERSION MISMATCH, UPDATE ALL DENIZEN-RELATED SUBPROJECTS.");
-        return false;
-    }
-
     public final <TEvent extends ScriptEvent, TType extends ObjectTag> void registerOptionalDetermination(String prefix, Class<TType> inputType, OptionalDeterminationHandler<TEvent, TType> handler) {
         eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (evt, context, objectTag) -> {
             TType converted = objectTag.asType(inputType, context);

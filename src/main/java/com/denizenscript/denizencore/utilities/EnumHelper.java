@@ -6,11 +6,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
-public class EnumHelper<T extends Enum> {
+public class EnumHelper<T> {
 
-    public static HashMap<Class<? extends Enum>, EnumHelper<?>> helpers = new HashMap<>();
+    public static HashMap<Class<?>, EnumHelper<?>> helpers = new HashMap<>();
 
-    public static <T extends Enum> EnumHelper<T> get(Class<T> enumClass) {
+    public static <T> EnumHelper<T> get(Class<T> enumClass) {
         return (EnumHelper<T>) helpers.computeIfAbsent(enumClass, EnumHelper::new);
     }
 

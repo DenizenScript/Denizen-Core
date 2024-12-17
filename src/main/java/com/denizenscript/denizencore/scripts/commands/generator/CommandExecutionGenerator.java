@@ -144,7 +144,7 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static Enum helperEnumArg(ScriptEntry entry, ArgData arg) {
+    public static Object helperEnumArg(ScriptEntry entry, ArgData arg) {
         ScriptEntry.EnumArg givenArg = entry.internal.enumVals[arg.index];
         if (givenArg != null) {
             if (givenArg.rawValue != null) {
@@ -153,7 +153,7 @@ public class CommandExecutionGenerator {
             Argument dynamicArg = entry.argAtIndex(false, givenArg.argIndex);
             ElementTag value = dynamicArg.asElement();
             if (value != null) {
-                Enum enumVal = value.asEnum(arg.type);
+                Object enumVal = value.asEnum(arg.type);
                 if (enumVal == null) {
                     throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
                 }
@@ -163,7 +163,7 @@ public class CommandExecutionGenerator {
         if (arg.required) {
             throw new InvalidArgumentsRuntimeException("Must specify input to '" + arg.name + "' argument. Did you forget an argument? Check meta docs!");
         }
-        return (Enum) arg.defaultObject;
+        return arg.defaultObject;
     }
 
     public static ListTag getListFor(ScriptEntry entry, ArgData arg) {
@@ -194,14 +194,14 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static List<? extends Enum> helperPrefixListEnum(ScriptEntry entry, ArgData arg) {
+    public static List<?> helperPrefixListEnum(ScriptEntry entry, ArgData arg) {
         ListTag list = getListFor(entry, arg);
         if (list == null) {
             return null;
         }
         List output = new ArrayList(list.size());
         for (String str : list) {
-            Enum val = ElementTag.asEnum(arg.subType, str);
+            Object val = ElementTag.asEnum(arg.subType, str);
             if (val == null) {
                 throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "': '" + str + "': not a valid "
                         + DebugInternals.getClassNameOpti(arg.subType) + ", must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
@@ -238,16 +238,16 @@ public class CommandExecutionGenerator {
     }
 
     /** Used for generated calls. */
-    public static Enum helperPrefixEnum(ScriptEntry entry, ArgData arg) {
+    public static Object helperPrefixEnum(ScriptEntry entry, ArgData arg) {
         ElementTag value = getElementForPrefix(entry, arg);
         if (value != null) {
-            Enum result = value.asEnum(arg.type);
+            Object result = value.asEnum(arg.type);
             if (result == null) {
                 throw new InvalidArgumentsRuntimeException("Invalid input to '" + arg.name + "' argument. Does not match enum of value options. Must be one of: " + String.join(", ", EnumHelper.get(arg.type).valuesMapLower.keySet()));
             }
             return result;
         }
-        return (Enum) arg.defaultObject;
+        return arg.defaultObject;
     }
 
     /** Used for generated calls. */

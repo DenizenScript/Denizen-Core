@@ -201,32 +201,6 @@ public class Argument implements Cloneable {
         return EnumHelper.get(clazz).valuesMapLower.containsKey(EnumHelper.cleanKey(value));
     }
 
-    @Deprecated
-    public boolean matchesEnum(Enum<?>[] values) {
-        if (!canBeElement) {
-            return false;
-        }
-        requireValue();
-        String upper = value.replace("_", "").toUpperCase();
-        for (Enum<?> value : values) {
-            if (value.name().replace("_", "").equals(upper)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean matchesEnumList(Class<? extends Enum> clazz) {
-        ListTag list = getList(CoreUtilities.noDebugContext);
-        EnumHelper helper = EnumHelper.get(clazz);
-        for (String string : list) {
-            if (helper.valuesMapLower.containsKey(EnumHelper.cleanKey(string))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean limitToOnlyPrefix(String value) {
         if (!hasPrefix()) {
             return true;
