@@ -423,9 +423,17 @@ public class DebugInternals {
     /** Used for "log" to get class names. */
     public static boolean canGetClass = true;
 
-    /** Helper to get a class name with less JVM overhead using a cache. */
+    /** Helper to get a class simple name with less JVM overhead using a cache. */
     public static String getClassNameOpti(Class<?> clazz) {
         return classNameCache.computeIfAbsent(clazz, k -> clazz.getSimpleName());
+    }
+
+    /** Used for "log" to get class names. */
+    public static final Map<Class<?>, String> classFullNameCache = new WeakHashMap<>();
+
+    /** Helper to get a class full name with less JVM overhead using a cache. */
+    public static String getFullClassNameOpti(Class<?> clazz) {
+        return classFullNameCache.computeIfAbsent(clazz, k -> clazz.getName());
     }
 
     /** Helper to get the caller for a 'log' message. */
