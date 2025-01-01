@@ -1132,9 +1132,9 @@ public class ElementTag implements ObjectTag {
         // Returns the character at a specified index, supporting negative indexes to count from the end.
         // Returns null if the index is outside the range of the element.
         // @example
-        // Narrates 'l'.
+        // # Narrates 'l'.
         // - narrate <element[apple].char_at[-2]>
-        // Narrates 'a'.
+        // # Narrates 'a'.
         // - narrate <element[apple].char_at[1]>
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "char_at", (attribute, object, indexText) -> {
