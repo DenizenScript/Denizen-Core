@@ -657,10 +657,11 @@ public abstract class ScriptEvent implements ContextSource, Cloneable {
     }
 
     public final <TEvent extends ScriptEvent, TType extends ObjectTag> void registerOptionalDetermination(String prefix, Class<TType> inputType, OptionalDeterminationHandler<TEvent, TType> handler) {
+        final String errorPrefix = prefix != null ? "Invalid input to '" + prefix + "' determination" : "Invalid determination input";
         eventData.determinations.put(prefix != null ? CoreUtilities.toLowerCase(prefix) : null, (evt, context, objectTag) -> {
             TType converted = objectTag.asType(inputType, context);
             if (converted == null) {
-                Debug.echoError("Invalid input to '" + prefix + "' determination: '" + objectTag.debuggable() + "<W>' isn't a valid " + DebugInternals.getClassNameOpti(inputType) + '.');
+                Debug.echoError(errorPrefix + ": '" + objectTag.debuggable() + "<W>' isn't a valid " + DebugInternals.getClassNameOpti(inputType) + '.');
                 return false;
             }
             return handler.handle((TEvent) evt, context, converted);
