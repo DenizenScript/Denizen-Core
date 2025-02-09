@@ -74,7 +74,7 @@ public class Deprecations {
 
     // Added 2020/05/24, made slow 2022/12/31, made normal 2024/01/02, made strong 2025/01/15.
     // Safe to remove now.
-    private static final String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
+    public static final String pointlessSubtagPrefix = "Most pointless sub-tags are deprecated in favor of explicit unique tags. ";
     public static Warning flagIsExpiredTag = new StrongWarning("flagIsExpiredTag", pointlessSubtagPrefix + "'flag[...].is_expired' is deprecated: use 'has_flag[...]' instead.");
     public static Warning flagExpirationTag = new StrongWarning("flagExpirationTag", pointlessSubtagPrefix + "'flag[...].expiration' is deprecated: use 'flag_expiration[...]' instead.");
 
