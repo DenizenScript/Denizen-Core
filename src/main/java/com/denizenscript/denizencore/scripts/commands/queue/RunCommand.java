@@ -121,6 +121,14 @@ public class RunCommand extends AbstractCommand implements Holdable {
                     && arg.matchesArgumentType(DurationTag.class)) {
                 scriptEntry.addObject("delay", arg.asType(DurationTag.class));
             }
+            else if (arg.hasPrefix()
+                    && arg.getPrefix().getRawValue().startsWith("def.")) {
+                defMap.putObject(arg.getPrefix().getRawValue().substring("def.".length()), arg.object);
+            }
+            else if (!arg.hasPrefix() && arg.getRawValue().startsWith("def.") && arg.getRawValue().contains(":")) {
+                int colon = arg.getRawValue().indexOf(':');
+                defMap.putObject(arg.getRawValue().substring("def.".length(), colon), new ElementTag(arg.getRawValue().substring(colon + 1)));
+            }
             else if (arg.matches("local", "locally")) {
                 Deprecations.locallyArgument.warn(scriptEntry);
                 scriptEntry.addObject("script", scriptEntry.getScript());
@@ -130,18 +138,10 @@ public class RunCommand extends AbstractCommand implements Holdable {
                     && arg.matchesArgumentType(DurationTag.class)) {
                 scriptEntry.addObject("speed", arg.asType(DurationTag.class));
             }
-            else if (arg.hasPrefix()
-                    && arg.getPrefix().getRawValue().startsWith("def.")) {
-                defMap.putObject(arg.getPrefix().getRawValue().substring("def.".length()), arg.object);
-            }
             else if (!scriptEntry.hasObject("script")
                     && arg.matchesArgumentType(ScriptTag.class)
                     && arg.limitToOnlyPrefix("script")) {
                 scriptEntry.addObject("script", arg.asType(ScriptTag.class));
-            }
-            else if (!arg.hasPrefix() && arg.getRawValue().startsWith("def.") && arg.getRawValue().contains(":")) {
-                int colon = arg.getRawValue().indexOf(':');
-                defMap.putObject(arg.getRawValue().substring("def.".length(), colon), new ElementTag(arg.getRawValue().substring(colon + 1)));
             }
             else if (!scriptEntry.hasObject("script") && !scriptEntry.hasObject("path")
                     && !arg.hasPrefix() && arg.asElement().asString().contains(".")) {
