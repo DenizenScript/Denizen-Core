@@ -139,7 +139,7 @@ public class ImageTag implements Adjustable {
         // Returns the color of a specific pixel in an image.
         // "x" and "y" are the position of the pixel, see <@link language Image positions>.
         // @example
-        // Gets the color of the pixel at 43,21
+        // # Gets the color of the pixel at 43,21
         // - narrate "The color is: <[image].pixel_at[x=43;y=21]>."
         // -->
         tagProcessor.registerTag(ColorTag.class, MapTag.class, "pixel_at", (attribute, object, param) -> {
@@ -162,7 +162,7 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns the image's width (in pixels).
         // @example
-        // Narrates an image's width.
+        // # Narrates an image's width.
         // - narrate "The image is <[image].width> wide."
         // -->
         tagProcessor.registerTag(ElementTag.class, "width", (attribute, object) -> {
@@ -176,7 +176,7 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns the image's height (in pixels).
         // @example
-        // Narrates an image's height.
+        // # Narrates an image's height.
         // - narrate "The image is <[image].height> tall."
         // -->
         tagProcessor.registerTag(ElementTag.class, "height", (attribute, object) -> {
@@ -189,7 +189,7 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns a BinaryTag of the image's raw binary data, in the specified image format.
         // @example
-        // Gets a base64 encoded string of the image, commonly used in web APIs.
+        // # Gets a base64 encoded string of the image, commonly used in web APIs.
         // - define base64 <[image].to_binary[png].to_base64>
         // -->
         tagProcessor.registerTag(BinaryTag.class, ElementTag.class, "to_binary", (attribute, object, imageFormat) -> {
@@ -207,7 +207,7 @@ public class ImageTag implements Adjustable {
         // @description
         // Returns a copy of the image, useful for getting normal images from id-based ones (see <@link command Image>).
         // @example
-        // Gets a normal image object from an id-based one.
+        // # Gets a normal image object from an id-based one.
         // - define image <image[drawing].copy>
         // # The "image" definition won't change.
         // - draw id:drawing pixel x:0 y:0 color:red
@@ -224,7 +224,7 @@ public class ImageTag implements Adjustable {
         // "x" and "y" are the position of the upper left corner of the image part, see <@link language Image positions>.
         // "width" and "height" are the size of the image part.
         // @example
-        // Gets the top right corner of a 100x100 image.
+        // # Gets the top right corner of a 100x100 image.
         // - define corner <[image].sub_image[x=50;y=0;with=50;height=50]>
         // -->
         tagProcessor.registerTag(ImageTag.class, MapTag.class, "sub_image", (attribute, object, param) -> {
@@ -251,10 +251,10 @@ public class ImageTag implements Adjustable {
         // The input is a <@link ObjectType MapTag> with "width" and "height" keys.
         // Both are optional, and default to the image's current respective value.
         // @example
-        // Rescales an image to be 50x50
+        // # Rescales an image to be 50x50
         // - adjust def:image scale:[width=50;height=50]
         // @example
-        // Makes an image taller, keeping its existing width.
+        // # Makes an image taller, keeping its existing width.
         // - adjust def:short_image scale:[height=100]
         // @tags
         // <ImageTag.width>
