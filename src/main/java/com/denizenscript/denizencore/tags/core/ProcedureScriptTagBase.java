@@ -64,10 +64,10 @@ public class ProcedureScriptTagBase {
             else if (attribute.startsWith("context_map", 2)) {
                 mappedDefinitions = attribute.contextAsType(2, MapTag.class);
                 attribute.fulfill(1);
-            } else {
+            }
+            else {
                 mappedDefinitions = null;
             }
-
             ScriptQueue queue = ScriptUtilities.createAndStartQueue(script.getContainer(), path, attribute.context.getScriptEntryData(), null, (q) -> {
                 if (mappedDefinitions != null) {
                     for (Map.Entry<StringHolder, ObjectTag> val : mappedDefinitions.entrySet()) {
@@ -76,7 +76,6 @@ public class ProcedureScriptTagBase {
                 }
                 q.procedural = true;
             }, new DurationTag(0), null, definitions, script.getContainer());
-
             if (queue == null) {
                 attribute.echoError("Procedure queue start failed.");
                 return null;
