@@ -4,7 +4,6 @@ import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.*;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.containers.core.ProcedureScriptContainer;
-import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.ScriptUtilities;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
@@ -80,12 +79,11 @@ public class ProcedureScriptTagBase {
                 attribute.echoError("Procedure queue start failed.");
                 return null;
             }
-            attribute.fulfill(1);
             if (queue.determinations == null || queue.determinations.isEmpty()) {
                 attribute.echoError("Procedure call did not determine any value.");
                 return null;
             }
-            return CoreUtilities.autoAttribTyped(queue.determinations.getObject(0), attribute);
+            return queue.determinations.getObject(0);
         });
 
     }
