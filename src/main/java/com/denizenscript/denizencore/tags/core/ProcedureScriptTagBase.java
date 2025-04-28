@@ -24,15 +24,15 @@ public class ProcedureScriptTagBase {
             ScriptTag script;
             String path = null;
             if (object.asString().indexOf('.') > 0) {
-                String[] split = attribute.getParam().split("\\.", 2);
+                String[] split = object.asString().split("\\.", 2);
                 path = split[1];
                 script = ScriptTag.valueOf(split[0], attribute.context);
             }
             else {
-                script = attribute.paramAsType(ScriptTag.class);
+                script = object.asType(ScriptTag.class, attribute.context);
             }
             if (script == null) {
-                attribute.echoError("Missing script for procedure script tag '" + attribute.getParam() + "'!");
+                attribute.echoError("Missing script for procedure script tag '" + object.asString() + "'!");
                 return null;
             }
             if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
