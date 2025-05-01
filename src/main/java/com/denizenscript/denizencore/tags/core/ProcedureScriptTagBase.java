@@ -20,19 +20,19 @@ public class ProcedureScriptTagBase {
         // @description
         // Returns the 'determine' result of a procedure script.
         // -->
-        TagManager.registerTagHandler(ObjectTag.class, ElementTag.class, "proc", (attribute, object) -> {
+        TagManager.registerTagHandler(ObjectTag.class, ElementTag.class, "proc", (attribute, param) -> {
             ScriptTag script;
             String path = null;
-            if (object.asString().indexOf('.') > 0) {
-                String[] split = object.asString().split("\\.", 2);
+            if (param.asString().indexOf('.') > 0) {
+                String[] split = param.asString().split("\\.", 2);
                 path = split[1];
                 script = ScriptTag.valueOf(split[0], attribute.context);
             }
             else {
-                script = object.asType(ScriptTag.class, attribute.context);
+                script = param.asType(ScriptTag.class, attribute.context);
             }
             if (script == null) {
-                attribute.echoError("Missing script for procedure script tag '" + object.asString() + "'!");
+                attribute.echoError("Missing script for procedure script tag '" + param.asString() + "'!");
                 return null;
             }
             if (!(script.getContainer() instanceof ProcedureScriptContainer)) {
