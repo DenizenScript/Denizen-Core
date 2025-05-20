@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.core;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
@@ -323,19 +324,24 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         int count = 0;
                         ListTag rows = new ListTag();
                         ListTag resultList = new ListTag();
+                        ListTag resultMap = new ListTag();
                         while (set.next()) {
                             count++;
                             StringBuilder current = new StringBuilder();
                             ListTag subList = new ListTag();
+                            MapTag subMap = new MapTag();
                             for (int i = 0; i < columns; i++) {
                                 current.append(EscapeTagUtil.escape(set.getString(i + 1))).append("/");
                                 subList.addObject(new ElementTag(set.getString(i + 1)));
+                                subMap.putObject(rsmd.getColumnLabel(i + 1), new ElementTag(set.getString(i + 1)));
                             }
                             rows.add(current.toString());
                             resultList.addObject(subList);
+                            resultMap.addObject(subMap);
                         }
                         scriptEntry.saveObject("result", rows);
                         scriptEntry.saveObject("result_list", resultList);
+                        scriptEntry.saveObject("result_map", resultMap);
                         final int finalCount = count;
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
