@@ -332,9 +332,10 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                             ListTag subList = new ListTag();
                             MapTag subMap = new MapTag();
                             for (int i = 0; i < columns; i++) {
-                                current.append(EscapeTagUtil.escape(set.getString(i + 1))).append("/");
-                                subList.addObject(new ElementTag(set.getString(i + 1)));
-                                subMap.putObject(rsmd.getColumnLabel(i + 1), new ElementTag(set.getString(i + 1)));
+                                String value = set.getString(i + 1);
+                                current.append(EscapeTagUtil.escape(value)).append("/");
+                                subList.addObject(new ElementTag(value));
+                                subMap.putObject(rsmd.getColumnLabel(i + 1), new ElementTag(value));
                             }
                             rows.add(current.toString());
                             resultList.addObject(subList);
