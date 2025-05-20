@@ -66,8 +66,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // If you have an SQL database server other than MySQL, be sure to include the driver prefix (defaults to "mysql://" when unspecified).
     //
     // @Tags
-    // <entry[saveName].result_list> returns a ListTag of all row ListTags from a query or update command. That's a ListTag of ListTags, so for example to get the second entry of the first row you'd use "result_list.get[1].get[2]"
-    // <entry[saveName].result_map> returns a ListTag of all row MapTags from a query or update command. That's a ListTag of MapTags, so for example to get the UUID column of the first row you'd use "result_map.get[1].get[UUID]"
+    // <entry[saveName].result_list> returns a ListTag with (for each row retrieved) another ListTag. So if you would want to get the second column of the first row, you'd use <entry[saveName].result_list.get[1].get[2]>."
+    // <entry[saveName].result_map> returns a ListTag with (for each row retrieved) a MapTag. So for example <entry[saveName].result_map.get[1].get[UUID]> for the UUID column of the first row."
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
     // <util.sql_connections>
     //
