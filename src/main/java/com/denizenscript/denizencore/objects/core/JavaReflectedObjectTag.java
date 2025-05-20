@@ -10,7 +10,9 @@ import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class JavaReflectedObjectTag implements ObjectTag {
@@ -50,13 +52,8 @@ public class JavaReflectedObjectTag implements ObjectTag {
             return null;
         }
         clearOldRefs();
-        try {
-            UUID uuid = UUID.fromString(id);
-            return persistedReferences.get(uuid);
-        }
-        catch (IllegalArgumentException ex) {
-            return null;
-        }
+        UUID uuid = CoreUtilities.tryParseUUID(id);
+        return uuid != null ? persistedReferences.get(uuid) : null;
     }
 
     public static boolean matches(String string) {
