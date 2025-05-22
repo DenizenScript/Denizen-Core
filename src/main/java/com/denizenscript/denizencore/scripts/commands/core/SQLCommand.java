@@ -3,6 +3,7 @@ package com.denizenscript.denizencore.scripts.commands.core;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
 import com.denizenscript.denizencore.objects.Argument;
 import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.core.SecretTag;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
@@ -65,7 +66,8 @@ public class SQLCommand extends AbstractCommand implements Holdable {
     // If you have an SQL database server other than MySQL, be sure to include the driver prefix (defaults to "mysql://" when unspecified).
     //
     // @Tags
-    // <entry[saveName].result_list> returns a ListTag of all row ListTags from a query or update command. That's a ListTag of ListTags, so for example to get the second entry of the first row you'd use "result_list.get[1].get[2]"
+    // <entry[saveName].result_list> returns a ListTag with (for each row retrieved) another ListTag. So if you would want to get the second column of the first row, you'd use <entry[saveName].result_list.get[1].get[2]>.
+    // <entry[saveName].result_map> returns a ListTag with (for each row retrieved) a MapTag. So for example <entry[saveName].result_map.get[1].get[UUID]> for the UUID column of the first row.
     // <entry[saveName].affected_rows> returns how many rows were affected by an update command.
     // <util.sql_connections>
     //
@@ -323,19 +325,25 @@ public class SQLCommand extends AbstractCommand implements Holdable {
                         int count = 0;
                         ListTag rows = new ListTag();
                         ListTag resultList = new ListTag();
+                        ListTag resultMap = new ListTag();
                         while (set.next()) {
                             count++;
                             StringBuilder current = new StringBuilder();
                             ListTag subList = new ListTag();
+                            MapTag subMap = new MapTag();
                             for (int i = 0; i < columns; i++) {
-                                current.append(EscapeTagUtil.escape(set.getString(i + 1))).append("/");
-                                subList.addObject(new ElementTag(set.getString(i + 1)));
+                                String value = set.getString(i + 1);
+                                current.append(EscapeTagUtil.escape(value)).append("/");
+                                subList.addObject(new ElementTag(value));
+                                subMap.putObject(rsmd.getColumnLabel(i + 1), new ElementTag(value));
                             }
                             rows.add(current.toString());
                             resultList.addObject(subList);
+                            resultMap.addObject(subMap);
                         }
                         scriptEntry.saveObject("result", rows);
                         scriptEntry.saveObject("result_list", resultList);
+                        scriptEntry.saveObject("result_map", resultMap);
                         final int finalCount = count;
                         DenizenCore.runOnMainThread(() -> {
                             Debug.echoDebug(scriptEntry, "Got a query result of " + columns + " columns and " + finalCount + " rows");
