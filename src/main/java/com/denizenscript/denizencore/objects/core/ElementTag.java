@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1437,26 +1438,26 @@ public class ElementTag implements ObjectTag {
         // @returns ElementTag
         // @group element manipulation
         // @description
-        // Returns The Value Of An ElementTag In Title Case.
+        // Returns The Value Of An ElementTag In Title Case (The First Letter Of Each Word Is Capitalized, Based On Spaces).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_titlecase", (attribute, object) -> {
-            if (object.element.length() == 0) {
+            if (object.element.isEmpty()) {
                 return new ElementTag("");
             }
-            StringBuilder TitleCase = new StringBuilder(object.element.length());
+            StringBuilder titleCase = new StringBuilder(object.element.length());
             // Intentionally do not use CoreUtilities here as users may expect multi-language compat.
-            String Upper = object.element.toUpperCase();
-            String Lower = object.element.toLowerCase();
-            TitleCase.append(Upper.charAt(0));
-            for (int i = 1; i < object.element.length(); i++) {
-                if (object.element.charAt(i - 1) == ' ') {
-                    TitleCase.append(Upper.charAt(i));
-                }
-                else {
-                    TitleCase.append(Lower.charAt(i));
+            List<String> words = CoreUtilities.split(object.element, ' ');
+            for (int i = 0; i < words.size(); i++) {
+                String word = words.get(i);
+                if (!word.isEmpty()) {
+                    titleCase.append(Character.toUpperCase(word.charAt(0)));
+                    titleCase.append(word.substring(1).toLowerCase());
+                    if (i < words.size() - 1) {
+                        titleCase.append(" ");
+                    }
                 }
             }
-            return new ElementTag(TitleCase.toString());
+            return new ElementTag(titleCase.toString());
         }, "totitlecase");
 
         // <--[tag]

@@ -23,7 +23,7 @@ public class ReflectionHelper {
 
     public static void echoError(String message) {
         if (hasInitialized) {
-            Debug.echoError("[ReflectionHelper]" + message);
+            Debug.echoError("[ReflectionHelper] " + message);
         }
         else {
             System.err.println("[Denizen] [ReflectionHelper]: " + message);
@@ -158,9 +158,29 @@ public class ReflectionHelper {
         catch (Throwable ex) {
             echoError(ex);
         }
-        echoError("[ReflectionHelper]: Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
+        echoError("Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
                 + Arrays.stream(params).map(Class::getCanonicalName).collect(Collectors.joining(", ")) + "]");
         return null;
+    }
+
+    public static Class<?> getClass(String className) {
+        try {
+            return Class.forName(className);
+        }
+        catch (ClassNotFoundException e) {
+            echoError("Reflection class missing - Tried to find class '" + className + "'.");
+            return null;
+        }
+    }
+
+    public static Class<?> getClassOrThrow(String className) {
+        try {
+            return Class.forName(className);
+        }
+        catch (ClassNotFoundException e) {
+            echoError("Reflection class missing - Tried to find class '" + className + "'.");
+            throw new TypeNotPresentException(className, e);
+        }
     }
 
     public static MethodHandle getMethodHandle(Class<?> clazz, String method, Class<?>... params) {
@@ -198,7 +218,7 @@ public class ReflectionHelper {
             return null;
         }
         if (expected != null && f.getType() != expected) {
-            echoError("[ReflectionHelper] field type mismatch in getFinalSetter: field '" + field + "' in class '" + clazz.getName() + "' returns type '" + f.getType().getCanonicalName() + "' but expected '" + expected.getCanonicalName() + "'");
+            echoError("field type mismatch in getFinalSetter: field '" + field + "' in class '" + clazz.getName() + "' returns type '" + f.getType().getCanonicalName() + "' but expected '" + expected.getCanonicalName() + "'");
         }
         int mod = f.getModifiers();
         try {

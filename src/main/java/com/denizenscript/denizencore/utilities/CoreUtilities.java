@@ -1,16 +1,21 @@
 package com.denizenscript.denizencore.utilities;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.*;
-import com.denizenscript.denizencore.objects.core.*;
-import com.denizenscript.denizencore.scripts.ScriptBuilder;
-import com.denizenscript.denizencore.scripts.ScriptHelper;
-import com.denizenscript.denizencore.tags.TagManager;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
+import com.denizenscript.denizencore.objects.ArgumentHelper;
+import com.denizenscript.denizencore.objects.Mechanism;
+import com.denizenscript.denizencore.objects.ObjectFetcher;
+import com.denizenscript.denizencore.objects.ObjectTag;
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.MapTag;
 import com.denizenscript.denizencore.objects.properties.Property;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
+import com.denizenscript.denizencore.scripts.ScriptBuilder;
+import com.denizenscript.denizencore.scripts.ScriptHelper;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.tags.TagManager;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.text.StringHolder;
 
 import java.io.*;
@@ -475,7 +480,7 @@ public class CoreUtilities {
 
     public static String concat(List<String> str, String split) {
         StringBuilder sb = new StringBuilder();
-        if (str.size() > 0) {
+        if (!str.isEmpty()) {
             sb.append(str.get(0));
         }
         for (int i = 1; i < str.size(); i++) {
@@ -597,6 +602,15 @@ public class CoreUtilities {
             }
         }
         return new String(data);
+    }
+
+    public static UUID tryParseUUID(String uuid) {
+        try {
+            return UUID.fromString(uuid);
+        }
+        catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     public static String getXthArg(int argc, String args) {
