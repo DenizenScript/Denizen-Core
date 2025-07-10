@@ -17,9 +17,9 @@ public class ReflectionHelper {
 
     public static boolean hasInitialized = false;
 
-    private static final Map<Class, FieldCache> cachedFields = new HashMap<>();
+    private static final Map<Class<?>, FieldCache> cachedFields = new HashMap<>();
 
-    private static final Map<Class, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
+    private static final Map<Class<?>, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
 
     public static void echoError(String message) {
         if (hasInitialized) {
@@ -39,7 +39,7 @@ public class ReflectionHelper {
         }
     }
 
-    public static void setFieldValue(Class clazz, String fieldName, Object object, Object value) {
+    public static void setFieldValue(Class<?> clazz, String fieldName, Object object, Object value) {
         try {
             getFields(clazz).get(fieldName).set(object, value);
         }
@@ -48,7 +48,7 @@ public class ReflectionHelper {
         }
     }
 
-    public static <T> T getFieldValue(Class clazz, String fieldName, Object object) {
+    public static <T> T getFieldValue(Class<?> clazz, String fieldName, Object object) {
         FieldCache cache = getFields(clazz);
         try {
             Field field = cache.get(fieldName);
@@ -83,7 +83,7 @@ public class ReflectionHelper {
             return allFields;
         }
 
-        public Field getFirstOfType(Class fieldClazz) {
+        public Field getFirstOfType(Class<?> fieldClazz) {
             for (Field f : getAllFields()) {
                 if (f.getType().equals(fieldClazz)) {
                     return f;
@@ -93,15 +93,57 @@ public class ReflectionHelper {
             return null;
         }
 
-        public Field get(Object name) {
-            Field f = getNoCheck(name.toString());
+        public MethodHandle getGetter(String name) {
+            return toHandleGetter(get(name));
+        }
+
+        public MethodHandle getGetter(String name, Class<?> expected) {
+            return toHandleGetter(get(name, expected));
+        }
+
+        public static MethodHandle toHandleGetter(Field f) {
+            if (f == null) {
+                return null;
+            }
+            try {
+                return LOOKUP.unreflectGetter(f);
+            }
+            catch (IllegalAccessException e) {
+                echoError(e);
+                return null;
+            }
+        }
+
+        public MethodHandle getSetter(String name) {
+            return toHandleSetter(get(name));
+        }
+
+        public MethodHandle getSetter(String name, Class<?> expected) {
+            return toHandleSetter(get(name, expected));
+        }
+
+        public static MethodHandle toHandleSetter(Field f) {
+            if (f == null) {
+                return null;
+            }
+            try {
+                return LOOKUP.unreflectSetter(f);
+            }
+            catch (IllegalAccessException e) {
+                echoError(e);
+                return null;
+            }
+        }
+
+        public Field get(String name) {
+            Field f = getNoCheck(name);
             if (f == null) {
                 echoError("Reflection field missing - Tried to read field '" + name + "' of class '" + clazz.getCanonicalName() + "'.");
             }
             return f;
         }
 
-        public Field get(String name, Class expected) {
+        public Field get(String name, Class<?> expected) {
             Field f = get(name);
             if (f == null) {
                 return null;
@@ -126,7 +168,7 @@ public class ReflectionHelper {
         }
     }
 
-    public static FieldCache getFields(Class clazz) {
+    public static FieldCache getFields(Class<?> clazz) {
         return cachedFields.computeIfAbsent(clazz, FieldCache::new);
     }
 
@@ -161,6 +203,16 @@ public class ReflectionHelper {
         echoError("Cannot find constructor for class '" + clazz.getCanonicalName() + "' with params: ["
                 + Arrays.stream(params).map(Class::getCanonicalName).collect(Collectors.joining(", ")) + "]");
         return null;
+    }
+
+    public static boolean classExists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        }
+        catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static Class<?> getClass(String className) {
@@ -206,7 +258,7 @@ public class ReflectionHelper {
         return getFinalSetter(clazz, field, null);
     }
 
-    public static MethodHandle getFinalSetter(Class<?> clazz, String field, Class expected) {
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field, Class<?> expected) {
         Map<String, MethodHandle> map = cachedFieldSetters.computeIfAbsent(clazz, k -> new HashMap<>());
         MethodHandle result = map.get(field);
         if (result != null) {
