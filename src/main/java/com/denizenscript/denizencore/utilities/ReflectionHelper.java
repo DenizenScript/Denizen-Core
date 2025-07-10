@@ -17,9 +17,9 @@ public class ReflectionHelper {
 
     public static boolean hasInitialized = false;
 
-    private static final Map<Class, FieldCache> cachedFields = new HashMap<>();
+    private static final Map<Class<?>, FieldCache> cachedFields = new HashMap<>();
 
-    private static final Map<Class, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
+    private static final Map<Class<?>, Map<String, MethodHandle>> cachedFieldSetters = new HashMap<>();
 
     public static void echoError(String message) {
         if (hasInitialized) {
@@ -39,7 +39,7 @@ public class ReflectionHelper {
         }
     }
 
-    public static void setFieldValue(Class clazz, String fieldName, Object object, Object value) {
+    public static void setFieldValue(Class<?> clazz, String fieldName, Object object, Object value) {
         try {
             getFields(clazz).get(fieldName).set(object, value);
         }
@@ -48,7 +48,7 @@ public class ReflectionHelper {
         }
     }
 
-    public static <T> T getFieldValue(Class clazz, String fieldName, Object object) {
+    public static <T> T getFieldValue(Class<?> clazz, String fieldName, Object object) {
         FieldCache cache = getFields(clazz);
         try {
             Field field = cache.get(fieldName);
@@ -101,7 +101,7 @@ public class ReflectionHelper {
             return toHandleGetter(get(name, expected));
         }
 
-        private MethodHandle toHandleGetter(Field f) {
+        public static MethodHandle toHandleGetter(Field f) {
             if (f == null) {
                 return null;
             }
@@ -122,7 +122,7 @@ public class ReflectionHelper {
             return toHandleSetter(get(name, expected));
         }
 
-        private MethodHandle toHandleSetter(Field f) {
+        public static MethodHandle toHandleSetter(Field f) {
             if (f == null) {
                 return null;
             }
