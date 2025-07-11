@@ -125,6 +125,9 @@ public class Deprecations {
     // Safe to remove now.
     public static Warning prebinaryTags = new SlowWarning("prebinaryTags", "Tags and tools related to binary processing that predate the BinaryTag feature are deprecated in favor of using BinaryTag. This includes 'ElementTag.base64_encode/decode', 'hex_encode/decode', ... refer to meta-docs for specifics");
 
+    // Added 2025/07/11
+    public static Warning optionalPrefixedArgs = new SlowWarning("optionalPrefixedArgs", "Optional prefixed arguments are deprecated in favor of just using proper prefixes (refer to documentation).");
+
     // ==================== VERY SLOW deprecations ====================
     // These are only shown minimally, so server owners are aware of them but not bugged by them. Only servers with active scripters (using 'ex reload') will see them often.
 
