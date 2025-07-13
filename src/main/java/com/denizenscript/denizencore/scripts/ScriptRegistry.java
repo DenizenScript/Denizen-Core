@@ -29,6 +29,7 @@ public class ScriptRegistry {
         _registerType("world", WorldScriptContainer.class);
         _registerType("data", DataScriptContainer.class);
         _registerType("yaml data", DataScriptContainer.class);
+        _registerType("format", FormatScriptContainer.class);
     }
 
     public static boolean containsScript(String id, Class scriptContainerType) {
