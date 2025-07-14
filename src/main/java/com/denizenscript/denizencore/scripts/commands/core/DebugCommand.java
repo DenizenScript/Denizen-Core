@@ -94,36 +94,20 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
         }
         switch (dbType) {
-            case DEBUG:
-                Debug.echoDebug(scriptEntry, debug);
-                break;
-            case HEADER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
-                break;
-            case FOOTER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
-                break;
-            case SPACER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
-                break;
-            case LOG:
-                Debug.log(debug);
-                break;
-            case APPROVAL:
-                Debug.echoApproval(debug);
-                break;
-            case ERROR:
-                Debug.echoError(scriptEntry, debug);
-                break;
-            case REPORT:
+            case DEBUG -> Debug.echoDebug(scriptEntry, debug);
+            case HEADER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
+            case FOOTER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
+            case SPACER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
+            case LOG -> Debug.log(debug);
+            case APPROVAL -> Debug.echoApproval(debug);
+            case ERROR -> Debug.echoError(scriptEntry, debug);
+            case REPORT -> {
                 if (scriptEntry.dbCallShouldDebug()) {
                     Debug.report(scriptEntry, name, debug);
                 }
-                break;
-            case EXCEPTION:
-                Debug.echoError(scriptEntry, new RuntimeException(debug));
-                break;
-            case RECORD:
+            }
+            case EXCEPTION -> Debug.echoError(scriptEntry, new RuntimeException(debug));
+            case RECORD -> {
                 String form = CoreUtilities.toLowerCase(debug);
                 switch (form) {
                     case "start":
@@ -156,7 +140,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                         scriptEntry.setFinished(true);
                         break;
                 }
-                break;
+            }
         }
     }
 }
