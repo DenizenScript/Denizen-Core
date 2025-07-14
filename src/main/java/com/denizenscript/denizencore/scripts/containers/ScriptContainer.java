@@ -1,18 +1,19 @@
 package com.denizenscript.denizencore.scripts.containers;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.*;
+import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,11 @@ public class ScriptContainer implements Debuggable {
 
     public String tag(String text) {
         return TagManager.tag(text, DenizenCore.implementation.getTagContext(this));
+    }
+
+    public ParseableTag getCachedTag(String path) {
+        String rawString = getString(path);
+        return rawString != null ? TagManager.parseTextToTag(rawString, DenizenCore.implementation.getTagContext(this)) : null;
     }
 
     public Boolean enabledCache = null;

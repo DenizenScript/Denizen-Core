@@ -1,14 +1,13 @@
 package com.denizenscript.denizencore.scripts.containers.core;
 
 import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.tags.TagContext;
-import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.SimpleDefinitionProvider;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 public class FormatScriptContainer extends ScriptContainer {
 
@@ -33,9 +32,15 @@ public class FormatScriptContainer extends ScriptContainer {
     public FormatScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         super(configurationSection, scriptContainerName);
         canRunScripts = false;
+        this.formatTag = getCachedTag("format");
+        if (this.formatTag == null) {
+            Debug.echoError(this, "Invalid format script: must have a 'format' key.");
+        }
     }
 
-    public String getFormat() {
+    ParseableTag formatTag;
+
+    public String getRawFormat() {
         return getString("format", "<[text]>");
     }
 
@@ -44,11 +49,14 @@ public class FormatScriptContainer extends ScriptContainer {
     }
 
     public String getFormattedText(String textToReplace, TagContext context) {
+        if (this.formatTag == null) {
+            return textToReplace;
+        }
         TagContext changedContext = context.clone();
-        changedContext.script = new ScriptTag(this);
+        changedContext.script = getAsScriptArg();
         changedContext.definitionProvider = new SimpleDefinitionProvider(changedContext.definitionProvider);
-        context.definitionProvider.addDefinition("text", textToReplace);
+        changedContext.definitionProvider.addDefinition("text", textToReplace);
         DenizenCore.implementation.addFormatScriptDefinitions(changedContext.definitionProvider, changedContext);
-        return TagManager.tag(getFormat(), context);
+        return this.formatTag.parse(changedContext).identify();
     }
 }
