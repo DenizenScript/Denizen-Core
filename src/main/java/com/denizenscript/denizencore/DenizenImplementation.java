@@ -9,6 +9,7 @@ import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.tags.TagContext;
+import com.denizenscript.denizencore.utilities.DefinitionProvider;
 
 import java.io.File;
 
@@ -90,6 +91,8 @@ public interface DenizenImplementation {
     String applyDebugColors(String uncolored);
 
     void doFinalDebugOutput(String rawText);
+
+    void addFormatScriptDefinitions(DefinitionProvider provider, TagContext context);
 
     String stripColor(String message);
 
