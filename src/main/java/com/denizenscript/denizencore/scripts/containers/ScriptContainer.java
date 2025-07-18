@@ -60,7 +60,7 @@ public class ScriptContainer implements Debuggable {
     //
     // -->
 
-    ScriptLoggingContext loggingContext;
+    public ScriptLoggingContext loggingContext;
 
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {

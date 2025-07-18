@@ -9,15 +9,15 @@ public class SimpleDefinitionProvider implements DefinitionProvider {
     private final MapTag definitions;
 
     public SimpleDefinitionProvider(MapTag map) {
-        this.definitions = map;
+        this.definitions = new MapTag(map);
     }
 
     public SimpleDefinitionProvider() {
-        this(new MapTag());
+        this.definitions = new MapTag();
     }
 
     public SimpleDefinitionProvider(DefinitionProvider definitionProvider) {
-        this(new MapTag(definitionProvider.getAllDefinitions().map));
+        this(definitionProvider.getAllDefinitions());
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SimpleDefinitionProvider implements DefinitionProvider {
 
     @Override
     public void addDefinition(String definition, String value) {
-        addDefinition(definition, new ElementTag(value, true));
+        addDefinition(definition, new ElementTag(value));
     }
 
     @Override

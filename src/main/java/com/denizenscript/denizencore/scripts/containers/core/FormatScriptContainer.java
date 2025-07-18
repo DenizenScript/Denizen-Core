@@ -1,6 +1,7 @@
 package com.denizenscript.denizencore.scripts.containers.core;
 
 import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptLoggingContext;
@@ -73,7 +74,7 @@ public class FormatScriptContainer extends ScriptContainer {
         TagContext changedContext = context.clone();
         changedContext.script = source;
         changedContext.definitionProvider = new SimpleDefinitionProvider(changedContext.definitionProvider);
-        changedContext.definitionProvider.addDefinition("text", rawText);
+        changedContext.definitionProvider.addDefinition("text", new ElementTag(rawText, true));
         DenizenCore.implementation.addFormatScriptDefinitions(changedContext.definitionProvider, changedContext);
         return formatTag.parse(changedContext).identify();
     }

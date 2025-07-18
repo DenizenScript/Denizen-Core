@@ -172,7 +172,7 @@ public abstract class ScriptQueue implements Debuggable, DefinitionProvider {
 
     @Override
     public void addDefinition(String definition, String value) {
-        addDefinition(definition, new ElementTag(value, true));
+        addDefinition(definition, new ElementTag(value));
     }
 
     @Override

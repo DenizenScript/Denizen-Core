@@ -14,7 +14,7 @@ public record ScriptLoggingContext(ParseableTag debugFormat, ParseableTag errorF
     // @name Script Logging Format
     // @group Script Container System
     // @description
-    // Script logging contexts provide the format certain commands will use for their texts.
+    // Script logging contexts provide the format certain commands will use for their texts. Most notably, this includes <@link command debug>.
     // The formats are specified under a 'logging_format' key, and can be either a <@link language Format Script Containers> or a direct format with the same syntax as format scripts.
     // <code>
     // my_project_task:

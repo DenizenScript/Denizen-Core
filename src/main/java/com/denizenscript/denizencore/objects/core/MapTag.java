@@ -142,6 +142,10 @@ public class MapTag implements ObjectTag {
         this.map = new LinkedHashMap<>(map);
     }
 
+    public MapTag(MapTag mapTag) {
+        this(mapTag.map);
+    }
+
     @Override
     public MapTag duplicate() {
         MapTag newMap = new MapTag();
