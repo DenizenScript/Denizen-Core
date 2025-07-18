@@ -60,6 +60,8 @@ public class ScriptContainer implements Debuggable {
     //
     // -->
 
+    ScriptLoggingContext loggingContext;
+
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {
             Debug.echoError("Null configuration section while generating a ScriptContainer?!");
@@ -72,6 +74,7 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("speed");
         configurationSection.forceLoweredRootKey("enabled");
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
+        this.loggingContext = ScriptLoggingContext.parseFromConfiguration(this);
     }
 
     public <T extends ObjectTag> T tagObject(String text, Class<T> type) {
@@ -103,6 +106,10 @@ public class ScriptContainer implements Debuggable {
     }
 
     public void postCheck() {
+    }
+
+    public ScriptLoggingContext getLoggingContext() {
+        return loggingContext;
     }
 
     /**
@@ -297,7 +304,7 @@ public class ScriptContainer implements Debuggable {
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
-        if (path.length() == 0) {
+        if (path.isEmpty()) {
             return contents;
         }
         return contents.getConfigurationSection(path);
