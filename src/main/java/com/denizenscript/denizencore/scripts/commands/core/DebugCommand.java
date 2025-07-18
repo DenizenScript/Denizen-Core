@@ -18,7 +18,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     public DebugCommand() {
         setName("debug");
         setSyntax("debug (<type>/{debug}) [<message>] (name:<name>) (format:<format>)");
-        setRequiredArguments(1, 4);
+        setRequiredArguments(1, 3);
         isProcedural = true;
         generateDebug = false;
         autoCompile();
@@ -28,7 +28,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // @Name Debug
     // @Syntax debug (<type>/{debug}) [<message>] (name:<name>) (format:<format>)
     // @Required 1
-    // @Maximum 4
+    // @Maximum 3
     // @Short Shows a debug message.
     // @Group core
     // @Guide https://guide.denizenscript.com/guides/first-steps/problem-solving.html
