@@ -91,7 +91,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgRaw @ArgLinear @ArgName("debug") String debug,
                                    @ArgName("type") @ArgDefaultText("debug") DebugType dbType,
-                                   @ArgPrefixed @ArgName("name") @ArgDefaultText("name") String name,
+                                   @ArgPrefixed @ArgName("name") @ArgDefaultNull String name,
                                    @ArgName("format") @ArgPrefixed @ArgDefaultNull ScriptTag formatScript) {
         ScriptLoggingContext loggingContext = null;
         ScriptContainer scriptContainer = scriptEntry.getScriptContainer();
@@ -104,6 +104,9 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         }
         else if (scriptContainer != null) {
             loggingContext = scriptContainer.getLoggingContext();
+        }
+        if (name == null) {
+            name = scriptContainer != null ? scriptContainer.getOriginalName() : "DebugCommand";
         }
         if (dbType != DebugType.RECORD) {
             scriptEntry.setFinished(true);
@@ -120,7 +123,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             case HEADER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
             case FOOTER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
             case SPACER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
-            case LOG -> Debug.log(name != null ? name : (scriptContainer != null ? scriptContainer.getOriginalName() : scriptEntry.getCommandName()), debug);
+            case LOG -> Debug.log(name, debug);
             case APPROVAL -> Debug.echoApproval(debug);
             case ERROR -> {
                 if (loggingContext != null && loggingContext.hasErrorFormat()) {
