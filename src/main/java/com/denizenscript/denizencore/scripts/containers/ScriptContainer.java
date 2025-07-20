@@ -10,6 +10,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
@@ -386,5 +387,18 @@ public class ScriptContainer implements Debuggable {
     @Override
     public String toString() {
         return "s@" + CoreUtilities.toLowerCase(getName());
+    }
+
+    public void handlePseudoTagBasesDeprecation(String key, String... tags) {
+        String value = getString(key);
+        if (value == null) {
+            return;
+        }
+        for (String tag : tags) {
+            if (value.contains(tag)) {
+                Deprecations.pseudoTagBases.warn(this);
+                return;
+            }
+        }
     }
 }

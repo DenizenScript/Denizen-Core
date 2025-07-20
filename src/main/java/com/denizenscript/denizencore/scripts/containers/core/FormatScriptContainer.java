@@ -39,6 +39,9 @@ public class FormatScriptContainer extends ScriptContainer {
         if (this.formatTag == null) {
             Debug.echoError(this, "Invalid format script: must have a 'format' key.");
         }
+        else {
+            handlePseudoTagBasesDeprecation("format", "<text", "<name");
+        }
     }
 
     final ParseableTag formatTag;

@@ -1,6 +1,9 @@
 package com.denizenscript.denizencore.utilities;
 
-import com.denizenscript.denizencore.utilities.debugging.*;
+import com.denizenscript.denizencore.utilities.debugging.SlowWarning;
+import com.denizenscript.denizencore.utilities.debugging.StrongWarning;
+import com.denizenscript.denizencore.utilities.debugging.VerySlowWarning;
+import com.denizenscript.denizencore.utilities.debugging.Warning;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -163,4 +166,7 @@ public class Deprecations {
 
     // Added on 2021/04/16.
     public static Warning dscriptFileExtension = new StrongWarning("dscriptFileExtension", "'.dscript' extension has never been officially supported. Please use '.dsc'.");
+
+    // Added 2021/11/20, made very-slow 2022/12/31, made slow 2025/01/15, made past 2025/07/19.
+    public static Warning pseudoTagBases = new StrongWarning("pseudoTagBases", "Pseudo-tags like '<text>', '<name>', '<amount>', and '<permission>' are deprecated in favor of definitions: just replace <text> with <[text]> or similar.");
 }
