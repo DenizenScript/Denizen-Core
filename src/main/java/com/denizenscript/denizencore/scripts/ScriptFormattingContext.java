@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public record ScriptLoggingContext(Map<String, ParseableTag> formats, ParseableTag singleFormat) {
+public record ScriptFormattingContext(Map<String, ParseableTag> formats, ParseableTag singleFormat) {
     
     // <--[language]
     // @name Script Logging Format
@@ -53,7 +53,7 @@ public record ScriptLoggingContext(Map<String, ParseableTag> formats, ParseableT
         return nameLower;
     }
 
-    public static ScriptLoggingContext parseFromConfiguration(ScriptContainer script) {
+    public static ScriptFormattingContext parseFromConfiguration(ScriptContainer script) {
         YamlConfiguration formatsConfig = script.getConfigurationSection("formats");
         if (formatsConfig == null) {
             return null;
@@ -84,7 +84,7 @@ public record ScriptLoggingContext(Map<String, ParseableTag> formats, ParseableT
             Debug.echoError(script, "Invalid formats config, must specify at least one valid format.");
             return null;
         }
-        return new ScriptLoggingContext(formats, null);
+        return new ScriptFormattingContext(formats, null);
     }
 
     public boolean hasFormat(String formatType) {

@@ -61,7 +61,7 @@ public class ScriptContainer implements Debuggable {
     //
     // -->
 
-    public ScriptLoggingContext loggingContext;
+    public ScriptFormattingContext formattingContext;
 
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {
@@ -75,7 +75,7 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("speed");
         configurationSection.forceLoweredRootKey("enabled");
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
-        this.loggingContext = ScriptLoggingContext.parseFromConfiguration(this);
+        this.formattingContext = ScriptFormattingContext.parseFromConfiguration(this);
     }
 
     public <T extends ObjectTag> T tagObject(String text, Class<T> type) {
@@ -109,8 +109,8 @@ public class ScriptContainer implements Debuggable {
     public void postCheck() {
     }
 
-    public ScriptLoggingContext getLoggingContext() {
-        return loggingContext;
+    public ScriptFormattingContext getFormattingContext() {
+        return formattingContext;
     }
 
     /**

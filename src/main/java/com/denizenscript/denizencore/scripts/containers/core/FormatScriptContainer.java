@@ -4,7 +4,7 @@ import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.scripts.ScriptLoggingContext;
+import com.denizenscript.denizencore.scripts.ScriptFormattingContext;
 import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -45,17 +45,17 @@ public class FormatScriptContainer extends ScriptContainer {
     }
 
     final ParseableTag formatTag;
-    ScriptLoggingContext asLoggingContext = null;
+    ScriptFormattingContext asFormattingContext = null;
 
     public ParseableTag getFormatTag() {
         return formatTag;
     }
 
-    public ScriptLoggingContext getAsLoggingContext() {
-        if (asLoggingContext == null) {
-            asLoggingContext = new ScriptLoggingContext(null, formatTag);
+    public ScriptFormattingContext getAsFormattingContext() {
+        if (asFormattingContext == null) {
+            asFormattingContext = new ScriptFormattingContext(null, formatTag);
         }
-        return asLoggingContext;
+        return asFormattingContext;
     }
 
     public String getRawFormat() {
