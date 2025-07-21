@@ -20,7 +20,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     public DebugCommand() {
         setName("debug");
-        setSyntax("debug (<type>/{debug}) [<message>] (name:<name>) (format:<format>)");
+        setSyntax("debug (<type>) [<message>] (name:<name>) (format:<format>)");
         setRequiredArguments(1, 3);
         isProcedural = true;
         generateDebug = false;
@@ -29,7 +29,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Debug
-    // @Syntax debug (<type>/{debug}) [<message>] (name:<name>) (format:<format>)
+    // @Syntax debug (<type>) [<message>] (name:<name>) (format:<format>)
     // @Required 1
     // @Maximum 3
     // @Short Shows a debug message.
@@ -39,8 +39,10 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // @Description
     // Use to quickly output debug information to console.
     //
-    // Valid types include:
-    // DEBUG: standard hideable debug. Supports the 'debug' format type, see <@link language Script Logging Formats> (in which case it isn't hideable).
+    // Outputs plain text debug to the console by default, supporting the 'debug' format type (see <@link language Script Logging Formats>).
+    //
+    // Alternatively, specify one of the following debug types:
+    // DEBUG: standard hideable debug.
     // HEADER: standard hideable debug inside a header line.
     // FOOTER: a footer line.
     // SPACER: a spacer line.
@@ -73,6 +75,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // -->
 
     public enum DebugType {
+        OUTPUT,
         DEBUG,
         HEADER,
         FOOTER,
@@ -93,7 +96,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgRaw @ArgLinear @ArgName("debug") String debug,
-                                   @ArgName("type") @ArgDefaultText("debug") DebugType dbType,
+                                   @ArgName("type") @ArgDefaultText("output") DebugType dbType,
                                    @ArgPrefixed @ArgName("name") @ArgDefaultNull String name,
                                    @ArgName("format") @ArgPrefixed @ArgDefaultNull ScriptTag formatScript) {
         ScriptLoggingContext loggingContext = null;
@@ -115,15 +118,8 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
         }
         switch (dbType) {
-            case DEBUG -> {
-                String formatted = loggingContext != null ? loggingContext.formatOrNull(DEBUG_FORMAT, debug, scriptEntry) : null;
-                if (formatted != null) {
-                    Debug.echoDebug(null, formatted);
-                }
-                else {
-                    Debug.echoDebug(scriptEntry, debug);
-                }
-            }
+            case OUTPUT -> Debug.echoDebug(null, loggingContext == null ? debug : loggingContext.format(DEBUG_FORMAT, debug, scriptEntry));
+            case DEBUG -> Debug.echoDebug(scriptEntry, debug);
             case HEADER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
             case FOOTER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
             case SPACER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
