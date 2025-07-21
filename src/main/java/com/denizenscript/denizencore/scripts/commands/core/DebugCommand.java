@@ -15,8 +15,8 @@ import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 
 public class DebugCommand extends AbstractCommand implements Holdable {
 
-    public static final ScriptLoggingContext.Key DEBUG_FORMAT = ScriptLoggingContext.registerFormatType("debug");
-    public static final ScriptLoggingContext.Key ERROR_FORMAT = ScriptLoggingContext.registerFormatType("error");
+    public static final String DEBUG_FORMAT = ScriptLoggingContext.registerFormatType("debug");
+    public static final String ERROR_FORMAT = ScriptLoggingContext.registerFormatType("error");
 
     public DebugCommand() {
         setName("debug");

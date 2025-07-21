@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public record ScriptLoggingContext(Map<Key, ParseableTag> formats, ParseableTag singleFormat) {
+public record ScriptLoggingContext(Map<String, ParseableTag> formats, ParseableTag singleFormat) {
     
     // <--[language]
     // @name Script Logging Format
@@ -38,25 +38,19 @@ public record ScriptLoggingContext(Map<Key, ParseableTag> formats, ParseableTag 
     //         # Will be formatted by the 'my_project_error' format script.
     //         - debug error "The system has been running for over 20 hours! Please restart!"
     //     - else:
-    //         # Will print "[MyProject]: The system does not need a restart yet."
+    //         # Will print "[MyProject] The system does not need a restart yet."
     //         - debug "The system does not need a restart yet."
     // </code>
     // -->
 
-    public static final Set<Key> DEBUG_TYPES = new HashSet<>();
+    public static final Set<String> FORMAT_TYPES = new HashSet<>();
 
-    public record Key(String key) {
-        public Key(String key) {
-            this.key = CoreUtilities.toLowerCase(key);
-        }
-    }
-
-    public static Key registerFormatType(String name) {
-        Key key = new Key(name);
-        if (!DEBUG_TYPES.add(key)) {
+    public static String registerFormatType(String name) {
+        String nameLower = CoreUtilities.toLowerCase(name);
+        if (!FORMAT_TYPES.add(nameLower)) {
             throw new IllegalArgumentException("Tried registering duplicate format type! format '" + name + "' already exists.");
         }
-        return key;
+        return nameLower;
     }
 
     public static ScriptLoggingContext parseFromConfiguration(ScriptContainer script) {
@@ -64,10 +58,10 @@ public record ScriptLoggingContext(Map<Key, ParseableTag> formats, ParseableTag 
         if (formatsConfig == null) {
             return null;
         }
-        Map<Key, ParseableTag> formats = new HashMap<>();
+        Map<String, ParseableTag> formats = new HashMap<>();
         TagContext context = null;
-        for (Key formatType : DEBUG_TYPES) {
-            String rawFormat = formatsConfig.getString(formatType.key);
+        for (String formatType : FORMAT_TYPES) {
+            String rawFormat = formatsConfig.getString(formatType);
             if (rawFormat != null) {
                 if (context == null) {
                     context = DenizenCore.implementation.getTagContext(script);
@@ -75,35 +69,35 @@ public record ScriptLoggingContext(Map<Key, ParseableTag> formats, ParseableTag 
                 formats.put(formatType, TagManager.parseTextToTag(rawFormat, context));
                 continue;
             }
-            String formatScriptInput = formatsConfig.getString(formatType.key + "_script");
+            String formatScriptInput = formatsConfig.getString(formatType + "_script");
             if (formatScriptInput == null) {
                 continue;
             }
             FormatScriptContainer formatScript = ScriptRegistry.getScriptContainerAs(formatScriptInput, FormatScriptContainer.class);
             if (formatScript == null || formatScript.getFormatTag() == null) {
-                Debug.echoError(script, "Invalid format script '" + formatScriptInput + "' specified for debug format '" + formatType.key + "'.");
+                Debug.echoError(script, "Invalid format script '" + formatScriptInput + "' specified for format '" + formatType + "'.");
                 continue;
             }
             formats.put(formatType, formatScript.getFormatTag());
         }
         if (formats.isEmpty()) {
-            Debug.echoError(script, "Invalid logging config, must specify at least one valid debug format.");
+            Debug.echoError(script, "Invalid formats config, must specify at least one valid format.");
             return null;
         }
         return new ScriptLoggingContext(formats, null);
     }
 
-    public boolean hasFormat(Key debugType) {
-        return singleFormat != null || formats.containsKey(debugType);
+    public boolean hasFormat(String formatType) {
+        return singleFormat != null || formats.containsKey(formatType);
     }
 
-    public String formatOrNull(Key debugType, String rawText, ScriptEntry entry) {
-        ParseableTag formatTag = singleFormat == null ? formats.get(debugType) : singleFormat;
+    public String formatOrNull(String formatType, String rawText, ScriptEntry entry) {
+        ParseableTag formatTag = singleFormat == null ? formats.get(formatType) : singleFormat;
         return formatTag != null ? FormatScriptContainer.formatText(formatTag, rawText, entry.getContext(), entry.getScript()) : null;
     }
 
-    public String format(Key debugType, String rawText, ScriptEntry entry) {
-        String formatted = formatOrNull(debugType, rawText, entry);
+    public String format(String formatType, String rawText, ScriptEntry entry) {
+        String formatted = formatOrNull(formatType, rawText, entry);
         return formatted != null ? formatted : rawText;
     }
 }
