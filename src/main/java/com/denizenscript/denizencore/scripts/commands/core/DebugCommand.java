@@ -1,6 +1,8 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
+import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ScriptTag;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.scripts.ScriptLoggingContext;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
@@ -9,11 +11,12 @@ import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
 import com.denizenscript.denizencore.scripts.containers.core.FormatScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 
 public class DebugCommand extends AbstractCommand implements Holdable {
+
+    public static final ScriptLoggingContext.Key DEBUG_FORMAT = ScriptLoggingContext.registerFormatType("debug");
+    public static final ScriptLoggingContext.Key ERROR_FORMAT = ScriptLoggingContext.registerFormatType("error");
 
     public DebugCommand() {
         setName("debug");
@@ -37,13 +40,13 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // Use to quickly output debug information to console.
     //
     // Valid types include:
-    // DEBUG: standard hideable debug, supports <@link language Script Logging Formats> (in which case it isn't hideable).
+    // DEBUG: standard hideable debug. Supports the 'debug' format type, see <@link language Script Logging Formats> (in which case it isn't hideable).
     // HEADER: standard hideable debug inside a header line.
     // FOOTER: a footer line.
     // SPACER: a spacer line.
     // LOG: global output, non-hideable.
     // APPROVAL: "Okay!" output, non-hideable.
-    // ERROR: "Error!" output, non-hideable. Supports <@link language Script Logging Formats>.
+    // ERROR: "Error!" output, non-hideable. Supports the 'error' format type, see <@link language Script Logging Formats>.
     // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
     // EXCEPTION: outputs a full java stacktrace.
     // RECORD: Use message 'start' to start recording, 'submit' to submit a recording, or 'cancel' to cancel a recording.
@@ -113,8 +116,9 @@ public class DebugCommand extends AbstractCommand implements Holdable {
         }
         switch (dbType) {
             case DEBUG -> {
-                if (loggingContext != null && loggingContext.hasDebugFormat()) {
-                    Debug.echoDebug(null, loggingContext.formatDebug(debug, scriptEntry));
+                String formatted = loggingContext != null ? loggingContext.formatOrNull(DEBUG_FORMAT, debug, scriptEntry) : null;
+                if (formatted != null) {
+                    Debug.echoDebug(null, formatted);
                 }
                 else {
                     Debug.echoDebug(scriptEntry, debug);
@@ -126,8 +130,9 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             case LOG -> Debug.log(name, debug);
             case APPROVAL -> Debug.echoApproval(debug);
             case ERROR -> {
-                if (loggingContext != null && loggingContext.hasErrorFormat()) {
-                    Debug.echoDebug(null, loggingContext.formatError(debug, scriptEntry));
+                String formatted = loggingContext != null ? loggingContext.formatOrNull(ERROR_FORMAT, debug, scriptEntry) : null;
+                if (formatted != null) {
+                    Debug.echoDebug(null, formatted);
                 }
                 else {
                     Debug.echoError(scriptEntry, debug);

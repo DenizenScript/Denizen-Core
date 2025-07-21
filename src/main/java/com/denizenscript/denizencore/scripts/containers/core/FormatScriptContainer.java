@@ -53,7 +53,7 @@ public class FormatScriptContainer extends ScriptContainer {
 
     public ScriptLoggingContext getAsLoggingContext() {
         if (asLoggingContext == null) {
-            asLoggingContext = new ScriptLoggingContext(formatTag, formatTag);
+            asLoggingContext = new ScriptLoggingContext(null, formatTag);
         }
         return asLoggingContext;
     }
