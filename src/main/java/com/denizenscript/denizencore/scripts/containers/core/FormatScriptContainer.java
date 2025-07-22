@@ -27,7 +27,7 @@ public class FormatScriptContainer extends ScriptContainer {
     //
     //     # The only key is the format. The format can use '<[text]>' as a special def to contain the message being sent.
     //     # | All format scripts MUST have this key!
-    //     format: [MyProject]: <[text]>
+    //     format: [MyProject] <[text]>
     // </code>
     //
     // -->
@@ -63,7 +63,7 @@ public class FormatScriptContainer extends ScriptContainer {
     }
 
     public String getFormattedText(String text, ScriptEntry entry) {
-        return getFormattedText(text, DenizenCore.implementation.getTagContext(entry));
+        return getFormattedText(text, entry.getContext());
     }
 
     public String getFormattedText(String textToReplace, TagContext context) {
