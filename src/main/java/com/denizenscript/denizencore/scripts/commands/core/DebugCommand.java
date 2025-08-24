@@ -15,8 +15,8 @@ import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 
 public class DebugCommand extends AbstractCommand implements Holdable {
 
-    public static final String DEBUG_FORMAT = ScriptFormattingContext.registerFormatType("debug");
-    public static final String ERROR_FORMAT = ScriptFormattingContext.registerFormatType("error");
+    public static final String DEBUG_FORMAT_TYPE = ScriptFormattingContext.registerFormatType("debug");
+    public static final String ERROR_FORMAT_TYPE = ScriptFormattingContext.registerFormatType("error");
 
     public DebugCommand() {
         setName("debug");
@@ -118,7 +118,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             scriptEntry.setFinished(true);
         }
         switch (dbType) {
-            case OUTPUT -> Debug.echoDebug(null, formattingContext == null ? debug : formattingContext.format(DEBUG_FORMAT, debug, scriptEntry));
+            case OUTPUT -> Debug.echoDebug(null, formattingContext == null ? debug : formattingContext.format(DEBUG_FORMAT_TYPE, debug, scriptEntry));
             case DEBUG -> Debug.echoDebug(scriptEntry, debug);
             case HEADER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
             case FOOTER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
@@ -126,7 +126,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
             case LOG -> Debug.log(name, debug);
             case APPROVAL -> Debug.echoApproval(debug);
             case ERROR -> {
-                String formatted = formattingContext != null ? formattingContext.formatOrNull(ERROR_FORMAT, debug, scriptEntry) : null;
+                String formatted = formattingContext != null ? formattingContext.formatOrNull(ERROR_FORMAT_TYPE, debug, scriptEntry) : null;
                 if (formatted != null) {
                     Debug.echoDebug(null, formatted);
                 }
