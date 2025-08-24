@@ -2,6 +2,7 @@ package com.denizenscript.denizencore.objects.core;
 
 import com.denizenscript.denizencore.events.ScriptEvent;
 import com.denizenscript.denizencore.objects.*;
+import com.denizenscript.denizencore.scripts.containers.core.FormatScriptContainer;
 import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import com.denizenscript.denizencore.utilities.*;
@@ -2286,7 +2287,7 @@ public class ElementTag implements ObjectTag {
         // Returns a BinaryTag holding 8 bytes of this integer number converted to binary format using big-endian 64-bit integer twos-complement encoding.
         // @example
         // # Narrates '00000000000000ff'
-        // - narrate <element[255].to_binary>
+        // - narrate <element[255].integer_to_binary>
         // -->
         tagProcessor.registerStaticTag(BinaryTag.class, "integer_to_binary", (attribute, object) -> {
             ByteBuffer buffer = ByteBuffer.allocate(8);
@@ -2535,6 +2536,21 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "unaccented", (attribute, object) -> {
             return new ElementTag(UNACCENTED_PATTERN.matcher(Normalizer.normalize(object.asString(), Normalizer.Form.NFKD)).replaceAll(""), true);
+        });
+
+        // <--[tag]
+        // @attribute <ElementTag.format[<format_script>]>
+        // @returns ElementTag
+        // @group text manipulation
+        // @description
+        // Returns the text re-formatted according to a <@link language Format Script Containers>.
+        // -->
+        ElementTag.tagProcessor.registerTag(ElementTag.class, ScriptTag.class, "format", (attribute, object, format) -> {
+            if (!(format.getContainer() instanceof FormatScriptContainer formatScript) || formatScript.getFormatTag() == null) {
+                attribute.echoError("Script '" + format + "' is not a format script.");
+                return null;
+            }
+            return new ElementTag(formatScript.getFormattedText(object.asString(), attribute.context));
         });
     }
 

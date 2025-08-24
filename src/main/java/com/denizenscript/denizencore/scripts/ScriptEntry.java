@@ -766,6 +766,10 @@ public class ScriptEntry implements Cloneable, Debuggable, Iterable<Argument> {
         return internal.script;
     }
 
+    public ScriptContainer getScriptContainer() {
+        return getScript() != null ? getScript().getContainer() : null;
+    }
+
     public ScriptEntry setScript(String scriptName) {
         internal.script = ScriptTag.valueOf(scriptName, CoreUtilities.basicContext);
         return this;

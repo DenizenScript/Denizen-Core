@@ -1,20 +1,27 @@
 package com.denizenscript.denizencore.scripts.commands.core;
 
+import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
+import com.denizenscript.denizencore.scripts.ScriptEntry;
+import com.denizenscript.denizencore.scripts.ScriptFormattingContext;
 import com.denizenscript.denizencore.scripts.commands.AbstractCommand;
 import com.denizenscript.denizencore.scripts.commands.Holdable;
 import com.denizenscript.denizencore.scripts.commands.generator.*;
+import com.denizenscript.denizencore.scripts.containers.ScriptContainer;
+import com.denizenscript.denizencore.scripts.containers.core.FormatScriptContainer;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.objects.core.ElementTag;
-import com.denizenscript.denizencore.scripts.ScriptEntry;
 import com.denizenscript.denizencore.utilities.debugging.DebugSubmitter;
 
 public class DebugCommand extends AbstractCommand implements Holdable {
 
+    public static final String DEBUG_FORMAT = ScriptFormattingContext.registerFormatType("debug");
+    public static final String ERROR_FORMAT = ScriptFormattingContext.registerFormatType("error");
+
     public DebugCommand() {
         setName("debug");
-        setSyntax("debug [<type>] [<message>] (name:<name>)");
-        setRequiredArguments(2, 3);
+        setSyntax("debug (<type>) [<message>] (name:<name>) (format:<format>)");
+        setRequiredArguments(1, 3);
         isProcedural = true;
         generateDebug = false;
         autoCompile();
@@ -22,8 +29,8 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     // <--[command]
     // @Name Debug
-    // @Syntax debug [<type>] [<message>] (name:<name>)
-    // @Required 2
+    // @Syntax debug (<type>) [<message>] (name:<name>) (format:<format>)
+    // @Required 1
     // @Maximum 3
     // @Short Shows a debug message.
     // @Group core
@@ -32,19 +39,19 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // @Description
     // Use to quickly output debug information to console.
     //
-    // Valid types include:
+    // Outputs plain text debug to the console by default, supporting the 'debug' format type (see <@link language Script Logging Formats>).
+    //
+    // Alternatively, specify one of the following debug types:
     // DEBUG: standard hideable debug.
     // HEADER: standard hideable debug inside a header line.
     // FOOTER: a footer line.
     // SPACER: a spacer line.
     // LOG: global output, non-hideable.
     // APPROVAL: "Okay!" output, non-hideable.
-    // ERROR: "Error!" output, non-hideable.
+    // ERROR: "Error!" output, non-hideable. Supports the 'error' format type, see <@link language Script Logging Formats>.
     // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
     // EXCEPTION: outputs a full java stacktrace.
     // RECORD: Use message 'start' to start recording, 'submit' to submit a recording, or 'cancel' to cancel a recording.
-    //
-    // TODO: Should [<type>] be required? Perhaps default to 'debug' mode?
     //
     // @Tags
     // <entry[saveName].submitted> returns the submit link (if any).
@@ -55,7 +62,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     //
     // @Usage
     // Use to add some information to help your own ability to read debug output from you script.
-    // - debug debug "Time is currently <[milliseconds].div[1000].round> seconds!"
+    // - debug "Time is currently <[milliseconds].div[1000].round> seconds!"
     //
     // @Usage
     // Use to record a debug log of a certain script.
@@ -68,6 +75,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // -->
 
     public enum DebugType {
+        OUTPUT,
         DEBUG,
         HEADER,
         FOOTER,
@@ -88,42 +96,51 @@ public class DebugCommand extends AbstractCommand implements Holdable {
 
     public static void autoExecute(ScriptEntry scriptEntry,
                                    @ArgRaw @ArgLinear @ArgName("debug") String debug,
-                                   @ArgName("type") DebugType dbType,
-                                   @ArgPrefixed @ArgName("name") @ArgDefaultText("name") String name) {
+                                   @ArgName("type") @ArgDefaultText("output") DebugType dbType,
+                                   @ArgPrefixed @ArgName("name") @ArgDefaultNull String name,
+                                   @ArgName("format") @ArgPrefixed @ArgDefaultNull ScriptTag formatScript) {
+        ScriptFormattingContext formattingContext = null;
+        ScriptContainer scriptContainer = scriptEntry.getScriptContainer();
+        if (formatScript != null) {
+            if (!(formatScript.getContainer() instanceof FormatScriptContainer formatScriptContainer) || formatScriptContainer.getFormatTag() == null) {
+                Debug.echoError("Invalid 'format:' script specified: must be a format script container.");
+                return;
+            }
+            formattingContext = formatScriptContainer.getAsFormattingContext();
+        }
+        else if (scriptContainer != null) {
+            formattingContext = scriptContainer.getFormattingContext();
+        }
+        if (name == null) {
+            name = scriptContainer != null ? scriptContainer.getOriginalName() : "DebugCommand";
+        }
         if (dbType != DebugType.RECORD) {
             scriptEntry.setFinished(true);
         }
         switch (dbType) {
-            case DEBUG:
-                Debug.echoDebug(scriptEntry, debug);
-                break;
-            case HEADER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
-                break;
-            case FOOTER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
-                break;
-            case SPACER:
-                Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
-                break;
-            case LOG:
-                Debug.log(debug);
-                break;
-            case APPROVAL:
-                Debug.echoApproval(debug);
-                break;
-            case ERROR:
-                Debug.echoError(scriptEntry, debug);
-                break;
-            case REPORT:
+            case OUTPUT -> Debug.echoDebug(null, formattingContext == null ? debug : formattingContext.format(DEBUG_FORMAT, debug, scriptEntry));
+            case DEBUG -> Debug.echoDebug(scriptEntry, debug);
+            case HEADER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Header, debug);
+            case FOOTER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Footer, debug);
+            case SPACER -> Debug.echoDebug(scriptEntry, Debug.DebugElement.Spacer, debug);
+            case LOG -> Debug.log(name, debug);
+            case APPROVAL -> Debug.echoApproval(debug);
+            case ERROR -> {
+                String formatted = formattingContext != null ? formattingContext.formatOrNull(ERROR_FORMAT, debug, scriptEntry) : null;
+                if (formatted != null) {
+                    Debug.echoDebug(null, formatted);
+                }
+                else {
+                    Debug.echoError(scriptEntry, debug);
+                }
+            }
+            case REPORT -> {
                 if (scriptEntry.dbCallShouldDebug()) {
                     Debug.report(scriptEntry, name, debug);
                 }
-                break;
-            case EXCEPTION:
-                Debug.echoError(scriptEntry, new RuntimeException(debug));
-                break;
-            case RECORD:
+            }
+            case EXCEPTION -> Debug.echoError(scriptEntry, new RuntimeException(debug));
+            case RECORD -> {
                 String form = CoreUtilities.toLowerCase(debug);
                 switch (form) {
                     case "start":
@@ -156,7 +173,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
                         scriptEntry.setFinished(true);
                         break;
                 }
-                break;
+            }
         }
     }
 }

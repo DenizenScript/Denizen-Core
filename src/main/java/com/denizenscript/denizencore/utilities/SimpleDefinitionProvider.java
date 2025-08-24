@@ -6,7 +6,19 @@ import com.denizenscript.denizencore.objects.core.MapTag;
 
 public class SimpleDefinitionProvider implements DefinitionProvider {
 
-    private final MapTag definitions = new MapTag();
+    private final MapTag definitions;
+
+    public SimpleDefinitionProvider(MapTag map) {
+        this.definitions = new MapTag(map);
+    }
+
+    public SimpleDefinitionProvider() {
+        this.definitions = new MapTag();
+    }
+
+    public SimpleDefinitionProvider(DefinitionProvider definitionProvider) {
+        this(definitionProvider.getAllDefinitions());
+    }
 
     @Override
     public void addDefinition(String definition, ObjectTag value) {

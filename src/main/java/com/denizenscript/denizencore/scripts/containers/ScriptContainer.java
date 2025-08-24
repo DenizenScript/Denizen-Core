@@ -1,18 +1,20 @@
 package com.denizenscript.denizencore.scripts.containers;
 
+import com.denizenscript.denizencore.DenizenCore;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
+import com.denizenscript.denizencore.objects.core.ScriptTag;
 import com.denizenscript.denizencore.scripts.*;
+import com.denizenscript.denizencore.tags.ParseableTag;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.Deprecations;
 import com.denizenscript.denizencore.utilities.YamlConfiguration;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 import com.denizenscript.denizencore.utilities.debugging.Debuggable;
-import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.DenizenCore;
-import com.denizenscript.denizencore.objects.core.ScriptTag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +61,8 @@ public class ScriptContainer implements Debuggable {
     //
     // -->
 
+    public ScriptFormattingContext formattingContext;
+
     public ScriptContainer(YamlConfiguration configurationSection, String scriptContainerName) {
         if (configurationSection == null) {
             Debug.echoError("Null configuration section while generating a ScriptContainer?!");
@@ -71,6 +75,7 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("speed");
         configurationSection.forceLoweredRootKey("enabled");
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
+        this.formattingContext = ScriptFormattingContext.parseFromConfiguration(this);
     }
 
     public <T extends ObjectTag> T tagObject(String text, Class<T> type) {
@@ -80,6 +85,11 @@ public class ScriptContainer implements Debuggable {
 
     public String tag(String text) {
         return TagManager.tag(text, DenizenCore.implementation.getTagContext(this));
+    }
+
+    public ParseableTag getCachedTag(String path) {
+        String rawString = getString(path);
+        return rawString != null ? TagManager.parseTextToTag(rawString, DenizenCore.implementation.getTagContext(this)) : null;
     }
 
     public Boolean enabledCache = null;
@@ -97,6 +107,10 @@ public class ScriptContainer implements Debuggable {
     }
 
     public void postCheck() {
+    }
+
+    public ScriptFormattingContext getFormattingContext() {
+        return formattingContext;
     }
 
     /**
@@ -291,7 +305,7 @@ public class ScriptContainer implements Debuggable {
     }
 
     public YamlConfiguration getConfigurationSection(String path) {
-        if (path.length() == 0) {
+        if (path.isEmpty()) {
             return contents;
         }
         return contents.getConfigurationSection(path);
@@ -373,5 +387,18 @@ public class ScriptContainer implements Debuggable {
     @Override
     public String toString() {
         return "s@" + CoreUtilities.toLowerCase(getName());
+    }
+
+    public void handlePseudoTagBasesDeprecation(String key, String... tags) {
+        String value = getString(key);
+        if (value == null) {
+            return;
+        }
+        for (String tag : tags) {
+            if (value.contains(tag)) {
+                Deprecations.pseudoTagBases.warn(this);
+                return;
+            }
+        }
     }
 }
