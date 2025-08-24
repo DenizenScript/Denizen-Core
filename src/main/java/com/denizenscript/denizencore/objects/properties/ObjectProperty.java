@@ -22,19 +22,19 @@ public abstract class ObjectProperty<TObj extends ObjectTag, TData extends Objec
     @Override
     public TData getPropertyValueNoDefault() {
         TData res = getPropertyValue();
-        return res == null || isDefaultValue(res) ? null : getPropertyValue();
+        return res == null || isDefaultValue(res) ? null : res;
     }
 
     @Override
     public String getPropertySavableValue() {
-        TData res = getPropertyValue();
-        return res == null || isDefaultValue(res) ? null : getPropertyValue().savable();
+        TData res = getPropertyValueNoDefault();
+        return res == null ? null : res.savable();
     }
 
     @Deprecated @Override
     public String getPropertyString() {
-        TData res = getPropertyValue();
-        return res == null || isDefaultValue(res) ? null : getPropertyValue().identify();
+        TData res = getPropertyValueNoDefault();
+        return res == null ? null : res.identify();
     }
 
     public abstract void setPropertyValue(TData data, Mechanism mechanism);
