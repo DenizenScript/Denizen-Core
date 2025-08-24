@@ -18,12 +18,12 @@ import java.util.Set;
 public record ScriptFormattingContext(Map<String, ParseableTag> formats, ParseableTag singleFormat) {
     
     // <--[language]
-    // @name Script Logging Format
+    // @name Script Formats
     // @group Script Container System
     // @description
-    // Script logging contexts provide the format certain commands will use for their texts. Most notably, this includes <@link command debug>.
+    // Script formats provide the formats certain commands within that script will use for their texts. Most notably, this includes <@link command debug>.
     // See specific command's documentation for information on which formats they use (for example, the 'debug' command supports a 'debug' format and an 'error' format).
-    // The formats are specified under a 'formats' key, and can be either a <@link language Format Script Containers> or a direct format with the same syntax as format scripts.
+    // The formats are specified under a 'formats' key, and can be either <@link language Format Script Containers> or a direct format with the same syntax as format scripts.
     // When specifying a direct format, use the format name as the key; When specifying a format script, use '<format>_script' as the key (see example below).
     // <code>
     // my_project_task:
