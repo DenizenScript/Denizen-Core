@@ -75,7 +75,6 @@ public class ScriptContainer implements Debuggable {
         configurationSection.forceLoweredRootKey("speed");
         configurationSection.forceLoweredRootKey("enabled");
         this.name = CoreUtilities.toUpperCase(scriptContainerName);
-        this.formattingContext = ScriptFormattingContext.parseFromConfiguration(this);
     }
 
     public <T extends ObjectTag> T tagObject(String text, Class<T> type) {
@@ -107,6 +106,7 @@ public class ScriptContainer implements Debuggable {
     }
 
     public void postCheck() {
+        this.formattingContext = ScriptFormattingContext.parseFromConfiguration(this);
     }
 
     public ScriptFormattingContext getFormattingContext() {

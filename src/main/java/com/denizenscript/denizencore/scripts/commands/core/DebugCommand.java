@@ -39,7 +39,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // @Description
     // Use to quickly output debug information to console.
     //
-    // Outputs plain text debug to the console by default, supporting the 'debug' format type (see <@link language Script Logging Formats>).
+    // Outputs plain text debug to the console by default, supporting the 'debug' format type (see <@link language Script Formats>).
     //
     // Alternatively, specify one of the following debug types:
     // DEBUG: standard hideable debug.
@@ -48,7 +48,7 @@ public class DebugCommand extends AbstractCommand implements Holdable {
     // SPACER: a spacer line.
     // LOG: global output, non-hideable.
     // APPROVAL: "Okay!" output, non-hideable.
-    // ERROR: "Error!" output, non-hideable. Supports the 'error' format type, see <@link language Script Logging Formats>.
+    // ERROR: "Error!" output, non-hideable. Supports the 'error' format type, see <@link language Script Formats>.
     // REPORT: normally used to describe the arguments of a command, requires a name, hideable.
     // EXCEPTION: outputs a full java stacktrace.
     // RECORD: Use message 'start' to start recording, 'submit' to submit a recording, or 'cancel' to cancel a recording.
