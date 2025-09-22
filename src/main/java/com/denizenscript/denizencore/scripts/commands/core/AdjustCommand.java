@@ -47,10 +47,6 @@ public class AdjustCommand extends AbstractCommand {
     //
     // You can optionally adjust a MapTag of mechanisms to values.
     //
-    // To adjust an item in an inventory, use <@link command inventory>, as '- inventory adjust slot:<#> <mechanism>:<value>'.
-    // Note that that is only for items, not actual inventories.
-    // To adjust an actual InventoryTag mechanism, you should still use the normal 'adjust' command, not 'inventory adjust'.
-    //
     // @Tags
     // <entry[saveName].result> returns the adjusted object.
     // <entry[saveName].result_list> returns a ListTag of adjusted objects.

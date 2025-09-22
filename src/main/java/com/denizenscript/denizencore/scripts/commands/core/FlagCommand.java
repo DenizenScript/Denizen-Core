@@ -56,10 +56,6 @@ public class FlagCommand extends AbstractCommand {
     // Any supported object type, including the 'server' base tag, can use the tags
     // <@link tag FlaggableObject.flag>, <@link tag FlaggableObject.has_flag>, <@link tag FlaggableObject.flag_expiration>, <@link tag FlaggableObject.list_flags>.
     //
-    // Additionally, flags be searched for with tags like <@link tag server.online_players_flagged>, <@link tag server.players_flagged>, <@link tag server.spawned_npcs_flagged>, <@link tag server.npcs_flagged>, ...
-    // Flags can also be required by script event lines, as explained at <@link language Script Event Switches>.
-    // Item flags can also be used as a requirement in <@link command take>.
-    //
     // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
     // This includes:
     // - '__raw' and '__clear' which are part of a fake-flag system used for forcibly setting raw data to a flaggable object,
@@ -109,10 +105,6 @@ public class FlagCommand extends AbstractCommand {
     // <FlaggableObject.has_flag[<flag_name>]>
     // <FlaggableObject.flag_expiration[<flag_name>]>
     // <FlaggableObject.list_flags>
-    // <server.online_players_flagged[<flag_name>]>
-    // <server.players_flagged[<flag_name>]>
-    // <server.spawned_npcs_flagged[<flag_name>]>
-    // <server.npcs_flagged[<flag_name>]>
     //
     // @Usage
     // Use to create or set a flag on a player.
