@@ -56,13 +56,6 @@ public class FlagCommand extends AbstractCommand {
     // Any supported object type, including the 'server' base tag, can use the tags
     // <@link tag FlaggableObject.flag>, <@link tag FlaggableObject.has_flag>, <@link tag FlaggableObject.flag_expiration>, <@link tag FlaggableObject.list_flags>.
     //
-    // Note that some internal flags exist, and are prefixed with '__' to avoid conflict with normal user flags.
-    // This includes:
-    // - '__raw' and '__clear' which are part of a fake-flag system used for forcibly setting raw data to a flaggable object,
-    // - '__scripts', '__time', etc. which is where some object-type flags are stored inside of server flags,
-    // - '__interact_step' which is used for interact script steps, related to <@link command zap>,
-    // - '__interact_cooldown' which is used for interact script cooldowns, related to <@link command cooldown>.
-    //
     // Flags have an expiration system, which is used by specifying a time at which they should expire (or via a duration which internally calculates the date/time of expiration by adding the duration input to the current date/time).
     // Expirations are then *checked for* in flag tags - meaning, the flag tags will internally compare a stored date/time against the real current date/time,
     // and if the flag's expiration time is in the past, the flag tag will return values equivalent to if the flag doesn't exist.
