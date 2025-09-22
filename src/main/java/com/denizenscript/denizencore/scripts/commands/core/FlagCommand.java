@@ -52,7 +52,7 @@ public class FlagCommand extends AbstractCommand {
     //
     // Most unique object types are flaggable - refer to any given object type's language documentation for details.
     //
-    // Most flag sets are handled by <@link command flag>, however items are primarily flagged via <@link command inventory> with the 'flag' argument.
+    // Most flag sets are handled by <@link command flag>, however some non-unique objects (such as items) are flagged with specialty commands or tags unique to the type.
     // Any supported object type, including the 'server' base tag, can use the tags
     // <@link tag FlaggableObject.flag>, <@link tag FlaggableObject.has_flag>, <@link tag FlaggableObject.flag_expiration>, <@link tag FlaggableObject.list_flags>.
     //

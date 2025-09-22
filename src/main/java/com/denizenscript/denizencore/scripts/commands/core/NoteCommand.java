@@ -36,7 +36,7 @@ public class NoteCommand extends AbstractCommand {
     // @Description
     // Add or remove a 'note' to the server, persistently naming an object that can be referenced in events or scripts.
     // Only works for object types that are 'notable'.
-    // Noted objects are "permanent" versions of other ObjectTags. (See: <@link language ObjectTags>)
+    // Noted objects are "permanent" versions of other (usually non-unique) ObjectTags.
     // Noted objects keep their properties when added.
     //
     // @Usage
