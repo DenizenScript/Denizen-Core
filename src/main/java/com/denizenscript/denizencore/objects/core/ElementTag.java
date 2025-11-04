@@ -948,8 +948,7 @@ public class ElementTag implements ObjectTag {
         // Returns whether the element ends with a specified element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "ends_with", (attribute, object, compare) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element).
-                    endsWith(compare.asLowerString()));
+            return new ElementTag(CoreUtilities.toLowerCase(object.element).endsWith(compare.asLowerString()));
         }, "endswith");
 
         // <--[tag]
@@ -985,11 +984,11 @@ public class ElementTag implements ObjectTag {
         // # Narrates "5"
         // - narrate <element[hello5world].regex[.*(\d).*].group[1]>
         // -->
-        tagProcessor.registerTag(ElementTag.class, "regex", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam() || !attribute.hasContext(2)) {
+        tagProcessor.registerTag(ElementTag.class, ElementTag.class, "regex", (attribute, object, param) -> { // non-static due to hacked sub-tag
+            if (!attribute.hasContext(2)) {
                 return null;
             }
-            String regex = attribute.getParam();
+            String regex = param.toString();
             Matcher m = Pattern.compile(regex).matcher(object.element);
             if (!m.matches()) {
                 return null;
@@ -1111,8 +1110,7 @@ public class ElementTag implements ObjectTag {
         // Returns 0 if the element never occurs within the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "index_of", (attribute, object, compare) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .indexOf(compare.asLowerString()) + 1);
+            return new ElementTag(CoreUtilities.toLowerCase(object.element).indexOf(compare.asLowerString()) + 1);
         });
 
         // <--[tag]
@@ -1124,8 +1122,7 @@ public class ElementTag implements ObjectTag {
         // Returns 0 if the element never occurs within the element.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "last_index_of", (attribute, object, compare) -> {
-            return new ElementTag(CoreUtilities.toLowerCase(object.element)
-                    .lastIndexOf(compare.asLowerString()) + 1);
+            return new ElementTag(CoreUtilities.toLowerCase(object.element).lastIndexOf(compare.asLowerString()) + 1);
         });
 
         // <--[tag]
@@ -1167,10 +1164,7 @@ public class ElementTag implements ObjectTag {
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "repeat", (attribute, object, countText) -> {
             int repeatTimes = countText.asInt();
-            if (repeatTimes <= 0) {
-                return new ElementTag("");
-            }
-            return new ElementTag(object.element.repeat(repeatTimes));
+            return new ElementTag(repeatTimes <= 0 ? "" : object.element.repeat(repeatTimes));
         });
 
         // <--[tag]
@@ -1270,12 +1264,8 @@ public class ElementTag implements ObjectTag {
         // Specify regex: at the start of the replace element to use Regex replacement.
         // Specify firstregex: at the start of the replace element to Regex 'replaceFirst'
         // -->
-        tagProcessor.registerTag(ElementTag.class, "replace_text", (attribute, object) -> { // non-static due to hacked sub-tag
-            if (!attribute.hasParam()) {
-                attribute.echoError("The tag ElementTag.replace[...] must have a value.");
-                return null;
-            }
-            String replace = attribute.getParam();
+        tagProcessor.registerTag(ElementTag.class, ElementTag.class, "replace_text", (attribute, object, param) -> { // non-static due to hacked sub-tag
+            String replace = param.toString();
             String replacement = "";
             if (attribute.startsWith("with", 2)) {
                 if (attribute.hasContext(2)) {
@@ -1382,8 +1372,7 @@ public class ElementTag implements ObjectTag {
         // Spaces will be preferred to become newlines, unless a line does not contain any spaces.
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, ElementTag.class, "split_lines", (attribute, object, countText) -> {
-            int characterCount = countText.asInt();
-            return new ElementTag(CoreUtilities.splitLinesByCharacterCount(object.element, characterCount));
+            return new ElementTag(CoreUtilities.splitLinesByCharacterCount(object.element, countText.asInt()));
         });
 
         // <--[tag]
