@@ -51,6 +51,7 @@ public class CommandExecutionGenerator {
     public static final Method HELPER_PREFIX_ENTRY_ARG_METHOD = getArgHelperMethod("helperPrefixEntryArg");
     public static final Method HELPER_BOOLEAN_ARG_METHOD = getArgHelperMethod("helperBooleanArg");
     public static final Method HELPER_ENUM_ARG_METHOD = getArgHelperMethod("helperEnumArg");
+    public static final Method HELPER_PREFIX_UNPARSED_METHOD = getArgHelperMethod("getUnparsedPrefixedArg");
     public static final Method HELPER_PREFIX_LIST_OBJECT_METHOD = getArgHelperMethod("helperPrefixListObject");
     public static final Method HELPER_PREFIX_LIST_ENUM_METHOD = getArgHelperMethod("helperPrefixListEnum");
     public static final Method HELPER_PREFIX_STRING_METHOD = getArgHelperMethod("helperPrefixString");
@@ -311,6 +312,15 @@ public class CommandExecutionGenerator {
         return ArgumentHelper.debugObj(arg.name, value);
     }
 
+    public static String getUnparsedPrefixedArg(ScriptEntry scriptEntry, ArgData arg) {
+        Integer index = scriptEntry.internal.prefixedArgMapper[arg.index];
+        if (index != null) {
+            String fullRawValue = scriptEntry.internal.all_arguments[index].fullOriginalRawValue;
+            return fullRawValue.substring((arg.name + ":").length());
+        }
+        return arg.defaultValue;
+    }
+
     public static CommandExecutor generateExecutorFor(Class<? extends AbstractCommand> cmdClass, AbstractCommand cmd) {
         try {
             Method method = Arrays.stream(cmdClass.getDeclaredMethods()).filter(m -> Modifier.isStatic(m.getModifiers()) && m.getName().equals("autoExecute")).findFirst().orElse(null);
@@ -402,6 +412,9 @@ public class CommandExecutionGenerator {
                         if (argData.isLinear && paramType == List.class && !argData.shouldParse && argData.subType == null) {
                             cmd.generatorInfiniteArgs = true;
                             argMethod = HELPER_GET_UNPARSED_ARG_LIST;
+                        }
+                        else if (paramType == String.class && !argData.isLinear && !argData.shouldParse) {
+                            argMethod = HELPER_PREFIX_UNPARSED_METHOD;
                         }
                         else if (paramType == List.class && argData.subType != null && ObjectTag.class.isAssignableFrom(argData.subType)) {
                             argMethod = HELPER_PREFIX_LIST_OBJECT_METHOD;
