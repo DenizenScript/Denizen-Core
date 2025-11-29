@@ -1,9 +1,9 @@
 package com.denizenscript.denizencore.objects;
 
 import com.denizenscript.denizencore.objects.core.ElementTag;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
-import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
 
 public class Mechanism {
@@ -91,7 +91,7 @@ public class Mechanism {
         return requireDouble("Invalid decimal number specified.");
     }
 
-    public boolean requireEnum(Class<? extends Enum> clazz) {
+    public boolean requireEnum(Class<?> clazz) {
         return requireEnum(null, clazz);
     }
 
@@ -123,20 +123,11 @@ public class Mechanism {
         return false;
     }
 
-    public boolean requireEnum(String error, Class<? extends Enum> clazz) {
-        if (!hasValue()) {
-            return false;
-        }
-        ElementTag value = getValue();
-        if (value.matchesEnum(clazz)) {
+    public boolean requireEnum(String error, Class<?> clazz) {
+        if (hasValue() && getValue().matchesEnum(clazz)) {
             return true;
         }
-        if (error == null) {
-            echoError("Invalid " + DebugInternals.getClassNameOpti(clazz) + ". Must specify a valid name.");
-        }
-        else {
-            echoError(error);
-        }
+        echoError(error != null ? error : "Invalid " + DebugInternals.getClassNameOpti(clazz) + ". Must specify a valid name.");
         return false;
     }
 
@@ -160,12 +151,7 @@ public class Mechanism {
         if (hasValue() && value.canBeType(type)) {
             return true;
         }
-        if (error == null) {
-            echoError("Invalid " + DebugInternals.getClassNameOpti(type) + " specified.");
-        }
-        else {
-            echoError(error);
-        }
+        echoError(error != null ? error : "Invalid " + DebugInternals.getClassNameOpti(type) + " specified.");
         return false;
     }
 
