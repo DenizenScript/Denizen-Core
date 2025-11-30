@@ -988,7 +988,7 @@ public class ElementTag implements ObjectTag {
             if (!attribute.hasContext(2)) {
                 return null;
             }
-            String regex = param.toString();
+            String regex = param.asString();
             Matcher m = Pattern.compile(regex).matcher(object.element);
             if (!m.matches()) {
                 return null;
@@ -1437,8 +1437,9 @@ public class ElementTag implements ObjectTag {
         // @attribute <ElementTag.to_titlecase>
         // @returns ElementTag
         // @group element manipulation
+        // @synonyms ElementTag.first_letter_uppercase
         // @description
-        // Returns The Value Of An ElementTag In Title Case (The First Letter Of Each Word Is Uppercase, Based On Spaces).
+        // Returns The Value Of An ElementTag In Title Case (The First Letter Of Each Word Is Capitalized, Based On Spaces).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_titlecase", (attribute, object) -> {
             if (object.element.isEmpty()) {
@@ -1468,7 +1469,10 @@ public class ElementTag implements ObjectTag {
         // Returns the value in sentence case (the first letter capitalized, the rest lowercase).
         // -->
         tagProcessor.registerStaticTag(ElementTag.class, "to_sentence_case", (attribute, object) -> {
-            return new ElementTag(object.element.isEmpty() ? "" : Character.toUpperCase(object.element.charAt(0)) + object.element.substring(1).toLowerCase());
+            if (object.element.isEmpty()) {
+                return new ElementTag("");
+            }
+            return new ElementTag(Character.toUpperCase(object.element.charAt(0)) + object.element.substring(1).toLowerCase());
         });
 
         // <--[tag]
