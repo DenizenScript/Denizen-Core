@@ -25,7 +25,7 @@ public class Comparable {
     // "Is more than or equal to" is written as ">=" or "or_more".
     // "Is less than or equal to" is written as "<=" or "or_less".
     // "does this list or map contain" is written as "contains". For example, "- if a|b|c contains b:" or "- if [a=1;b=2] contains b:"
-    // "is this in the list or map" is written as "in". For example, "- if b in a|b|c:", or "- if [a=1;b=2] contains b:"
+    // "is this in the list or map" is written as "in". For example, "- if b in a|b|c:", or "- if b in [a=1;b=2]:"
     // "does this object or text match an advanced matcher" is written as "matches". For example, "- if <player.location.below> matches stone:"
     //
     // Note: When using an operator in a tag,
