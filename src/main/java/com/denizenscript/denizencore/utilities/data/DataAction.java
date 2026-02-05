@@ -6,9 +6,9 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class DataAction {
 
@@ -35,80 +35,6 @@ public class DataAction {
         return "(" + keyDebug + ":" + type + ":" + inputValue + ")";
     }
 
-    public ListTag autoList(String key, TagContext context) {
-        ObjectTag obj = provider.getValueAt(key);
-        if (obj == null) {
-            return new ListTag();
-        }
-        else {
-            return autoList(ListTag.getListFor(obj, context));
-        }
-    }
-
-    public ListTag autoList(ListTag list) {
-        return new ListTag(list);
-    }
-
-    public ObjectTag autoDup(ObjectTag object) {
-        if (object == null) {
-            return null;
-        }
-        if (object instanceof ListTag) {
-            return autoList((ListTag) object);
-        }
-        return object.duplicate();
-    }
-
-    public BigDecimal autoNumber(TagContext context) {
-        ObjectTag obj = provider.getValueAt(key);
-        if (index != 0) {
-            ListTag subList = ListTag.getListFor(obj, context);
-            if (index < 0 || index > subList.size()) {
-                if (index == Integer.MAX_VALUE && !subList.isEmpty()) {
-                    obj = subList.getObject(subList.size() - 1);
-                }
-                else {
-                    return BigDecimal.ZERO;
-                }
-            }
-            else {
-                obj = subList.getObject(index - 1);
-            }
-        }
-        try {
-            return autoNumber(obj);
-        }
-        catch (NumberFormatException ex) {
-            return BigDecimal.ZERO;
-        }
-    }
-
-    public BigDecimal autoNumber(ObjectTag obj) {
-        if (obj == null) {
-            return BigDecimal.ZERO;
-        }
-        return new BigDecimal(obj.toString());
-    }
-
-    public ElementTag autoNumber(BigDecimal decimal) {
-        return new ElementTag(decimal);
-    }
-
-    public void autoSet(ObjectTag value, TagContext context) {
-        if (index != 0) {
-            ObjectTag obj = provider.getValueAt(key);
-            ListTag subList = ListTag.getListFor(obj, context);
-            if (index == Integer.MAX_VALUE) {
-                subList.setObject(subList.isEmpty() ? 0 : (subList.size() - 1), value);
-            }
-            else {
-                subList.setObject(index - 1, value);
-            }
-            value = subList;
-        }
-        provider.setValueAt(key, value);
-    }
-
     public void requiresInputValue() {
         if (inputValue == null) {
             throw new DataActionException("Input value required for data action " + type + ".");
@@ -116,60 +42,32 @@ public class DataAction {
     }
 
     public void execute(TagContext context) {
+        // Special operators
         switch (type) {
-            case INCREMENT: {
-                BigDecimal num = autoNumber(context);
+            case INCREMENT -> {
+                BigDecimal num = ElementTag.parseBigDecimal(getBase(context));
                 num = num.add(BigDecimal.ONE);
-                autoSet(autoNumber(num), context);
-                break;
+                setResult(new ElementTag(num), context);
+                return;
             }
-            case DECREMENT: {
-                BigDecimal num = autoNumber(context);
+            case DECREMENT -> {
+                BigDecimal num = ElementTag.parseBigDecimal(getBase(context));
                 num = num.subtract(BigDecimal.ONE);
-                autoSet(autoNumber(num), context);
-                break;
+                setResult(new ElementTag(num), context);
+                return;
             }
-            case ADD: {
-                requiresInputValue();
-                BigDecimal num = autoNumber(context);
-                num = num.add(autoNumber(inputValue));
-                autoSet(autoNumber(num), context);
-                break;
-            }
-            case SUBTRACT: {
-                requiresInputValue();
-                BigDecimal num = autoNumber(context);
-                num = num.subtract(autoNumber(inputValue));
-                autoSet(autoNumber(num), context);
-                break;
-            }
-            case MULTIPLY: {
-                requiresInputValue();
-                BigDecimal num = autoNumber(context);
-                num = num.multiply(autoNumber(inputValue));
-                autoSet(autoNumber(num), context);
-                break;
-            }
-            case DIVIDE: {
-                requiresInputValue();
-                BigDecimal num = autoNumber(context);
-                num = num.setScale(15, RoundingMode.HALF_UP);
-                num = num.divide(autoNumber(inputValue), RoundingMode.HALF_UP);
-                autoSet(autoNumber(num), context);
-                break;
-            }
-            case INSERT: {
+            case INSERT -> {
                 requiresInputValue();
                 ListTag list = autoList(key, context);
                 list.addObject(inputValue);
                 provider.setValueAt(key, list);
-                break;
+                return;
             }
-            case REMOVE: {
+            case REMOVE -> {
                 ListTag list = autoList(key, context);
                 if (index != 0) {
                     if (index == Integer.MAX_VALUE && !list.isEmpty()) {
-                        list.remove(list.size() - 1);
+                        list.removeLast();
                     }
                     else {
                         list.remove(index - 1);
@@ -186,30 +84,80 @@ public class DataAction {
                     }
                 }
                 provider.setValueAt(key, list);
-                break;
+                return;
             }
-            case SPLIT: {
+            case SPLIT -> {
                 requiresInputValue();
                 ListTag list = autoList(key, context);
                 list.addObjects(ListTag.getListFor(inputValue, context).objectForms);
                 provider.setValueAt(key, list);
-                break;
+                return;
             }
-            case SPLIT_NEW:
+            case SPLIT_NEW -> {
                 Deprecations.splitNewDataAction.warn(context);
                 requiresInputValue();
-                provider.setValueAt(key, autoList(ListTag.getListFor(inputValue, context)));
-                break;
-            case SET:
+                provider.setValueAt(key, new ListTag(ListTag.getListFor(inputValue, context)));
+                return;
+            }
+            case SET -> {
                 requiresInputValue();
-                autoSet(autoDup(inputValue), context);
-                break;
-            case AUTO_SET:
-                provider.setValueAt(key, new ElementTag(true));
-                break;
-            case CLEAR:
-                provider.setValueAt(key, null);
-                break;
+                if (inputValue == null) {
+                    setResult(null, context);
+                }
+                else if (inputValue instanceof ListTag listTag) {
+                    setResult(new ListTag(listTag), context);
+                }
+                else {
+                    setResult(inputValue.duplicate(), context);
+                }
+                return;
+            }
+            case AUTO_SET -> {
+                setResult(new ElementTag(true), context);
+                return;
+            }
+            case CLEAR -> {
+                setResult(null, context);
+                return;
+            }
         }
+        // Abstract operators
+        requiresInputValue();
+        ObjectTag base = getBase(context);
+        if (!(base instanceof Actionable<?>)) {
+            Debug.echoError("Cannot perform data action on non-actionable object '" + base.identify() + "'.");
+            return;
+        }
+        Actionable<ObjectTag> actionable = (Actionable<ObjectTag>) base;
+        switch (type) {
+            case ADD -> setResult(actionable.additionOperation(inputValue, context), context);
+            case SUBTRACT -> setResult(actionable.subtractionOperation(inputValue, context), context);
+            case MULTIPLY -> setResult(actionable.multiplicationOperation(inputValue, context), context);
+            case DIVIDE -> setResult(actionable.divisionOperation(inputValue, context), context);
+        }
+    }
+
+    public ListTag autoList(String key, TagContext context) {
+        ObjectTag obj = provider.getValueAt(key);
+        return obj == null ? new ListTag() : new ListTag(ListTag.getListFor(obj, context));
+    }
+
+    public ObjectTag getBase(TagContext context) {
+        return CoreUtilities.fixType(index == 0 ? provider.getValueAt(key) : ListTag.getListFor(provider.getValueAt(key), context).getObject(index - 1), context);
+    }
+
+    public void setResult(ObjectTag result, TagContext context) {
+        if (index != 0) {
+            ObjectTag base = ListTag.getListFor(provider.getValueAt(key), context);
+            ListTag list = ListTag.getListFor(base, context);
+            if (index == Integer.MAX_VALUE) {
+                list.addObject(result);
+            }
+            else {
+                list.setObject(index - 1, result);
+            }
+            result = list;
+        }
+        provider.setValueAt(key, result);
     }
 }
