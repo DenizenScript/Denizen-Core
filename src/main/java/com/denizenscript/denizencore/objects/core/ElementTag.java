@@ -6,6 +6,7 @@ import com.denizenscript.denizencore.scripts.containers.core.FormatScriptContain
 import com.denizenscript.denizencore.tags.*;
 import com.denizenscript.denizencore.tags.core.EscapeTagUtil;
 import com.denizenscript.denizencore.utilities.*;
+import com.denizenscript.denizencore.utilities.data.Actionable;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ElementTag implements ObjectTag {
+public class ElementTag implements ObjectTag, Actionable<ElementTag> {
 
     // NOTE: Explicitly no example value
     // <--[ObjectType]
@@ -2621,6 +2622,41 @@ public class ElementTag implements ObjectTag {
             case "boolean" -> isBoolean();
             default -> ScriptEvent.runGenericCheck(matcher, element);
         };
+    }
+
+    @Override
+    public ElementTag additionOperation(ObjectTag value, TagContext context) {
+        BigDecimal toAdd = parseBigDecimal(value);
+        return new ElementTag(asBigDecimal().add(toAdd));
+    }
+
+    @Override
+    public ElementTag subtractionOperation(ObjectTag value, TagContext context) {
+        BigDecimal toSubtract = parseBigDecimal(value);
+        return new ElementTag(asBigDecimal().subtract(toSubtract));
+    }
+
+    @Override
+    public ElementTag multiplicationOperation(ObjectTag value, TagContext context) {
+        BigDecimal toMultiply = parseBigDecimal(value);
+        return new ElementTag(asBigDecimal().multiply(toMultiply));
+    }
+
+    @Override
+    public ElementTag divisionOperation(ObjectTag value, TagContext context) {
+        BigDecimal toDivide = parseBigDecimal(value).setScale(15, RoundingMode.HALF_UP);
+        return new ElementTag(asBigDecimal().divide(toDivide, RoundingMode.HALF_UP));
+    }
+
+    public static BigDecimal parseBigDecimal(ObjectTag object) {
+        if (object == null) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            return new BigDecimal(object.toString());
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
+        }
     }
 
     public static final Pattern UNACCENTED_PATTERN = Pattern.compile("[\\u0300-\\u036f]");
