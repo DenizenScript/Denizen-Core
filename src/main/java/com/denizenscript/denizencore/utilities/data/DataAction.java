@@ -143,13 +143,18 @@ public class DataAction {
     }
 
     public ObjectTag getBase(TagContext context) {
-        return CoreUtilities.fixType(index == 0 ? provider.getValueAt(key) : ListTag.getListFor(provider.getValueAt(key), context).getObject(index - 1), context);
+        if (index == 0) {
+            return CoreUtilities.fixType(provider.getValueAt(key), context);
+        }
+        ListTag list = ListTag.getListFor(provider.getValueAt(key), context);
+        return list.getObject((index == Integer.MAX_VALUE ? list.size() : index) - 1);
     }
 
     public void setResult(ObjectTag result, TagContext context) {
         if (index != 0) {
             ObjectTag base = ListTag.getListFor(provider.getValueAt(key), context);
             ListTag list = ListTag.getListFor(base, context);
+            //list.setObject((index == Integer.MAX_VALUE ? list.size() : index) - 1, result);
             if (index == Integer.MAX_VALUE) {
                 list.addObject(result);
             }

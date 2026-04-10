@@ -168,7 +168,9 @@ public interface ObjectTag {
         if (objTypeData.typeConverter != null) {
             return (T) objTypeData.typeConverter.convert(this, context);
         }
-        return ObjectFetcher.getObjectFrom(objTypeData, toString(), context);
+        var result = ObjectFetcher.getObjectFrom(objTypeData, toString(), context);
+        System.out.println("result is null? " + (result == null));
+        return result;
     }
 
     /**
