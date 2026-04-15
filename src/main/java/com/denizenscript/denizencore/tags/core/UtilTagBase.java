@@ -19,6 +19,7 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.*;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.utilities.debugging.DebugInternals;
+import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -870,21 +871,23 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // Returns a list of all SQL connections opened by <@link command sql>.
         // -->
         tagProcessor.registerTag(ListTag.class, "sql_connections", (attribute, object) -> {
-            ListTag list = new ListTag();
-            for (Map.Entry<String, Connection> entry : SQLCommand.connections.entrySet()) {
+            ListTag result = new ListTag(SQLCommand.connections.size());
+            Iterator<Map.Entry<String, Connection>> connections = SQLCommand.connections.entrySet().iterator();
+            while (connections.hasNext()) {
                 try {
-                    if (!entry.getValue().isClosed()) {
-                        list.addObject(new ElementTag(entry.getKey(), true));
+                    Map.Entry<String, Connection> connection = connections.next();
+                    if (!connection.getValue().isClosed()) {
+                        result.addObject(new ElementTag(connection.getKey(), true));
                     }
                     else {
-                        SQLCommand.connections.remove(entry.getKey());
+                        connections.remove();
                     }
                 }
                 catch (SQLException e) {
                     Debug.echoError(attribute.getScriptEntry(), e);
                 }
             }
-            return list;
+            return result;
         });
 
         // <--[tag]
@@ -895,7 +898,18 @@ public class UtilTagBase extends PseudoObjectTagBase<UtilTagBase> {
         // -->
         if (CommandRegistry.shouldRegisterByClass("Redis command", "redis.clients.jedis.Jedis")) {
             tagProcessor.registerTag(ListTag.class, "redis_connections", (attribute, object) -> {
-                return new ListTag(RedisHelper.connections.keySet(), true);
+                ListTag result = new ListTag(RedisHelper.connections.size());
+                Iterator<Map.Entry<String, Jedis>> connections = RedisHelper.connections.entrySet().iterator();
+                while (connections.hasNext()) {
+                    Map.Entry<String, Jedis> connection = connections.next();
+                    if (connection.getValue().isConnected()) {
+                        result.addObject(new ElementTag(connection.getKey(), true));
+                    }
+                    else {
+                        connections.remove();
+                    }
+                }
+                return result;
             });
         }
 
