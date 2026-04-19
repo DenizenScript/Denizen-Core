@@ -45,15 +45,13 @@ public class DataAction {
         // Special operators
         switch (type) {
             case INCREMENT -> {
-                BigDecimal num = ElementTag.parseBigDecimal(getBase(context));
-                num = num.add(BigDecimal.ONE);
-                setResult(new ElementTag(num), context);
+                BigDecimal base = ElementTag.parseBigDecimal(getBase(context));
+                setResult(new ElementTag(base.add(BigDecimal.ONE)), context);
                 return;
             }
             case DECREMENT -> {
-                BigDecimal num = ElementTag.parseBigDecimal(getBase(context));
-                num = num.subtract(BigDecimal.ONE);
-                setResult(new ElementTag(num), context);
+                BigDecimal base = ElementTag.parseBigDecimal(getBase(context));
+                setResult(new ElementTag(base.subtract(BigDecimal.ONE)), context);
                 return;
             }
             case INSERT -> {
@@ -113,11 +111,11 @@ public class DataAction {
                 return;
             }
             case AUTO_SET -> {
-                setResult(new ElementTag(true), context);
+                provider.setValueAt(key, new ElementTag(true));
                 return;
             }
             case CLEAR -> {
-                setResult(null, context);
+                provider.setValueAt(key, null);
                 return;
             }
         }
@@ -152,15 +150,8 @@ public class DataAction {
 
     public void setResult(ObjectTag result, TagContext context) {
         if (index != 0) {
-            ObjectTag base = ListTag.getListFor(provider.getValueAt(key), context);
-            ListTag list = ListTag.getListFor(base, context);
-            //list.setObject((index == Integer.MAX_VALUE ? list.size() : index) - 1, result);
-            if (index == Integer.MAX_VALUE) {
-                list.addObject(result);
-            }
-            else {
-                list.setObject(index - 1, result);
-            }
+            ListTag list = ListTag.getListFor(provider.getValueAt(key), context);
+            list.setObject((index == Integer.MAX_VALUE ? list.size() : index) - 1, result);
             result = list;
         }
         provider.setValueAt(key, result);
