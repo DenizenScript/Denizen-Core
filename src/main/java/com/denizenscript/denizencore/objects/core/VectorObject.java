@@ -320,7 +320,7 @@ public interface VectorObject extends ObjectTag, Actionable<VectorObject> {
     }
 
     @Override
-    default VectorObject additionOperation(ObjectTag value, TagContext context) {
+    default VectorObject operationAdd(ObjectTag value, TagContext context) {
         VectorObject toAdd = DenizenCore.implementation.vectorize(value, context);
         VectorObject toReturn = duplicate();
         toReturn.setX(getX() + toAdd.getX());
@@ -330,7 +330,7 @@ public interface VectorObject extends ObjectTag, Actionable<VectorObject> {
     }
 
     @Override
-    default VectorObject subtractionOperation(ObjectTag value, TagContext context) {
+    default VectorObject operationSub(ObjectTag value, TagContext context) {
         VectorObject toSub = DenizenCore.implementation.vectorize(value, context);
         VectorObject toReturn = duplicate();
         toReturn.setX(getX() - toSub.getX());
@@ -340,12 +340,12 @@ public interface VectorObject extends ObjectTag, Actionable<VectorObject> {
     }
 
     @Override
-    default VectorObject multiplicationOperation(ObjectTag value, TagContext context) {
+    default VectorObject operationMul(ObjectTag value, TagContext context) {
         return this.duplicate().multipliedBy(value.asElement().asDouble());
     }
 
     @Override
-    default VectorObject divisionOperation(ObjectTag value, TagContext context) {
+    default VectorObject operationDiv(ObjectTag value, TagContext context) {
         return this.duplicate().multipliedBy(1.0 / value.asElement().asDouble());
     }
 }

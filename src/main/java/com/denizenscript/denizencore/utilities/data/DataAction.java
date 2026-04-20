@@ -128,10 +128,10 @@ public class DataAction {
         }
         Actionable<ObjectTag> actionable = (Actionable<ObjectTag>) base;
         switch (type) {
-            case ADD -> setResult(actionable.additionOperation(inputValue, context), context);
-            case SUBTRACT -> setResult(actionable.subtractionOperation(inputValue, context), context);
-            case MULTIPLY -> setResult(actionable.multiplicationOperation(inputValue, context), context);
-            case DIVIDE -> setResult(actionable.divisionOperation(inputValue, context), context);
+            case ADD -> setResult(actionable.operationAdd(inputValue, context), context);
+            case SUBTRACT -> setResult(actionable.operationSub(inputValue, context), context);
+            case MULTIPLY -> setResult(actionable.operationMul(inputValue, context), context);
+            case DIVIDE -> setResult(actionable.operationDiv(inputValue, context), context);
         }
     }
 

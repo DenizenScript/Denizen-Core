@@ -2625,25 +2625,25 @@ public class ElementTag implements ObjectTag, Actionable<ElementTag> {
     }
 
     @Override
-    public ElementTag additionOperation(ObjectTag value, TagContext context) {
+    public ElementTag operationAdd(ObjectTag value, TagContext context) {
         BigDecimal toAdd = parseBigDecimal(value);
         return new ElementTag(asBigDecimal().add(toAdd));
     }
 
     @Override
-    public ElementTag subtractionOperation(ObjectTag value, TagContext context) {
+    public ElementTag operationSub(ObjectTag value, TagContext context) {
         BigDecimal toSubtract = parseBigDecimal(value);
         return new ElementTag(asBigDecimal().subtract(toSubtract));
     }
 
     @Override
-    public ElementTag multiplicationOperation(ObjectTag value, TagContext context) {
+    public ElementTag operationMul(ObjectTag value, TagContext context) {
         BigDecimal toMultiply = parseBigDecimal(value);
         return new ElementTag(asBigDecimal().multiply(toMultiply));
     }
 
     @Override
-    public ElementTag divisionOperation(ObjectTag value, TagContext context) {
+    public ElementTag operationDiv(ObjectTag value, TagContext context) {
         BigDecimal toDivide = parseBigDecimal(value).setScale(15, RoundingMode.HALF_UP);
         return new ElementTag(asBigDecimal().divide(toDivide, RoundingMode.HALF_UP));
     }

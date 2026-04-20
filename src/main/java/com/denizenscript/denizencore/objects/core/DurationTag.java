@@ -564,7 +564,7 @@ public class DurationTag implements ObjectTag, Actionable<DurationTag> {
     }
 
     @Override
-    public DurationTag additionOperation(ObjectTag value, TagContext context) {
+    public DurationTag operationAdd(ObjectTag value, TagContext context) {
         DurationTag toAdd = value.asType(DurationTag.class, context);
         if (toAdd == null) {
             throw new DataActionException("Cannot add non-duration to duration!");
@@ -573,7 +573,7 @@ public class DurationTag implements ObjectTag, Actionable<DurationTag> {
     }
 
     @Override
-    public DurationTag subtractionOperation(ObjectTag value, TagContext context) {
+    public DurationTag operationSub(ObjectTag value, TagContext context) {
         DurationTag toSub = value.asType(DurationTag.class, context);
         if (toSub == null) {
             throw new DataActionException("Cannot subtract non-duration from duration!");

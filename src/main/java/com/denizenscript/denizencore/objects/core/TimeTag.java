@@ -755,7 +755,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject, Actionab
     }
 
     @Override
-    public TimeTag additionOperation(ObjectTag value, TagContext context) {
+    public TimeTag operationAdd(ObjectTag value, TagContext context) {
         DurationTag toAdd = value.asType(DurationTag.class, context);
         if (toAdd == null) {
             throw new DataActionException("Cannot add non-duration to time!");
@@ -764,7 +764,7 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject, Actionab
     }
 
     @Override
-    public TimeTag subtractionOperation(ObjectTag value, TagContext context) {
+    public TimeTag operationSub(ObjectTag value, TagContext context) {
         DurationTag toSub = value.asType(DurationTag.class, context);
         if (toSub == null) {
             throw new DataActionException("Cannot subtract non-duration from time!");
