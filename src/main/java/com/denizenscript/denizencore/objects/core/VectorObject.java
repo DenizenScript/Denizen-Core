@@ -1,13 +1,20 @@
 package com.denizenscript.denizencore.objects.core;
 
+import com.denizenscript.denizencore.DenizenCore;
+import com.denizenscript.denizencore.DenizenImplementation;
 import com.denizenscript.denizencore.objects.ObjectTag;
 import com.denizenscript.denizencore.tags.ObjectTagProcessor;
+import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
+import com.denizenscript.denizencore.utilities.data.Actionable;
+import com.denizenscript.denizencore.utilities.debugging.Debug;
+
+import java.util.Vector;
 
 /**
  * Represents an object that contains X/Y/Z 3D Vector.
  */
-public interface VectorObject extends ObjectTag {
+public interface VectorObject extends ObjectTag, Actionable<VectorObject> {
 
     // <--[ObjectType]
     // @name VectorObject
@@ -291,29 +298,54 @@ public interface VectorObject extends ObjectTag {
         // -->
         processor.registerTag(QuaternionTag.class, type, "quaternion_between_vectors", (attribute, object, other) -> {
             double dot = object.dot(other);
-            if (dot < -0.9999f)
-            {
+            if (dot < -0.9999f) {
                 double absX = Math.abs(object.getX());
                 double absY = Math.abs(object.getY());
                 double absZ = Math.abs(object.getZ());
-                if (absX < absY && absX < absZ)
-                {
+                if (absX < absY && absX < absZ) {
                     return new QuaternionTag(0, -object.getZ(), object.getY(), 0).normalized();
                 }
-                else if (absY < absZ)
-                {
+                else if (absY < absZ) {
                     return new QuaternionTag(-object.getZ(), 0, object.getX(), 0).normalized();
                 }
-                else
-                {
+                else {
                     return new QuaternionTag(-object.getY(), object.getX(), 0, 0).normalized();
                 }
             }
-            else
-            {
+            else {
                 VectorObject axis = object.crossProduct(other);
                 return new QuaternionTag(axis.getX(), axis.getY(), axis.getZ(), dot + 1).normalized();
             }
         });
+    }
+
+    @Override
+    default VectorObject operationAdd(ObjectTag value, TagContext context) {
+        VectorObject toAdd = DenizenCore.implementation.vectorize(value, context);
+        VectorObject toReturn = duplicate();
+        toReturn.setX(getX() + toAdd.getX());
+        toReturn.setY(getY() + toAdd.getY());
+        toReturn.setZ(getZ() + toAdd.getZ());
+        return toReturn;
+    }
+
+    @Override
+    default VectorObject operationSub(ObjectTag value, TagContext context) {
+        VectorObject toSub = DenizenCore.implementation.vectorize(value, context);
+        VectorObject toReturn = duplicate();
+        toReturn.setX(getX() - toSub.getX());
+        toReturn.setY(getY() - toSub.getY());
+        toReturn.setZ(getZ() - toSub.getZ());
+        return toReturn;
+    }
+
+    @Override
+    default VectorObject operationMul(ObjectTag value, TagContext context) {
+        return this.duplicate().multipliedBy(value.asElement().asDouble());
+    }
+
+    @Override
+    default VectorObject operationDiv(ObjectTag value, TagContext context) {
+        return this.duplicate().multipliedBy(1.0 / value.asElement().asDouble());
     }
 }
