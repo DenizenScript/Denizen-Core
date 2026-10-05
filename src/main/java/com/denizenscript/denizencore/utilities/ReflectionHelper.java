@@ -347,14 +347,61 @@ public class ReflectionHelper {
         }
     }
 
+    @SuppressWarnings("unused")
+    private static class AccessibleObjectLayout {
+
+        boolean override;
+        volatile Object accessCheckCache;
+
+        private static void probe() {
+        }
+    }
+
+    private static boolean isOverrideOffset(Method plain, Method accessible, long offset) {
+        return UNSAFE.getByte(plain, offset) == 0 && UNSAFE.getByte(accessible, offset) == 1;
+    }
+
+    private static long findOverrideOffset() {
+        try {
+            Method plain = AccessibleObjectLayout.class.getDeclaredMethod("probe");
+            Method accessible = AccessibleObjectLayout.class.getDeclaredMethod("probe");
+            accessible.setAccessible(true);
+            long mirrored = UNSAFE.objectFieldOffset(AccessibleObjectLayout.class.getDeclaredField("override"));
+            if (isOverrideOffset(plain, accessible, mirrored)) {
+                return mirrored;
+            }
+            long found = -1;
+            for (long offset = 8; offset < 32; offset++) {
+                if (isOverrideOffset(plain, accessible, offset)) {
+                    if (found != -1) {
+                        return -1;
+                    }
+                    found = offset;
+                }
+            }
+            return found;
+        }
+        catch (Throwable ex) {
+            echoError(ex);
+            return -1;
+        }
+    }
+
     public static void giveReflectiveAccess(Class<?> targetClass, Class<?> ourClass) {
         try {
             if (GET_MODULE == null) {
                 enableUnsafe();
+                long overrideOffset = findOverrideOffset();
+                if (overrideOffset == -1) {
+                    echoError("Unable to locate AccessibleObject.override on this JVM (" + System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
+                            + "), refusing to write to an unverified memory offset. Reflective access to '" + targetClass.getName() + "' cannot be granted.");
+                    return;
+                }
                 Class<?> module = Class.forName("java.lang.Module");
+                Method addOpens = module.getDeclaredMethod("implAddOpens", String.class, module);
+                UNSAFE.putBoolean(addOpens, overrideOffset, true);
+                ADD_OPENS = addOpens;
                 GET_MODULE = Class.class.getMethod("getModule");
-                ADD_OPENS = module.getDeclaredMethod("implAddOpens", String.class, module);
-                UNSAFE.putBoolean(ADD_OPENS, OVERRIDE_OFFSET, true);
             }
             ADD_OPENS.invoke(GET_MODULE.invoke(targetClass), targetClass.getPackage().getName(), GET_MODULE.invoke(ourClass));
         }
@@ -388,7 +435,6 @@ public class ReflectionHelper {
         MODIFIERS_FIELD = getFields(Field.class).getNoCheck("modifiers");
     }
 
-    private static final long OVERRIDE_OFFSET = 12; // Field offset of 'override' AKA 'setAccessible'. May change arbitrarily from JDK updates. Required for reflection, so we can't use reflection to read it.
     private static Method ADD_OPENS;
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
