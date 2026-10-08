@@ -7,6 +7,8 @@ import com.denizenscript.denizencore.tags.TagManager;
 import com.denizenscript.denizencore.utilities.CoreConfiguration;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.data.Actionable;
+import com.denizenscript.denizencore.utilities.data.DataActionException;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 import com.denizenscript.denizencore.tags.Attribute;
 import com.denizenscript.denizencore.tags.TagContext;
@@ -14,7 +16,7 @@ import com.denizenscript.denizencore.tags.TagContext;
 /**
  * Durations are a convenient way to get a 'unit of time' within Denizen.
  */
-public class DurationTag implements ObjectTag {
+public class DurationTag implements ObjectTag, Actionable<DurationTag> {
 
     // <--[ObjectType]
     // @name DurationTag
@@ -559,5 +561,23 @@ public class DurationTag implements ObjectTag {
             }
         }
         return (isNegative ? "negative " : "") + timeString.trim();
+    }
+
+    @Override
+    public DurationTag operationAdd(ObjectTag value, TagContext context) {
+        DurationTag toAdd = value.asType(DurationTag.class, context);
+        if (toAdd == null) {
+            throw new DataActionException("Cannot add non-duration to duration!");
+        }
+        return new DurationTag(this.seconds + toAdd.seconds);
+    }
+
+    @Override
+    public DurationTag operationSub(ObjectTag value, TagContext context) {
+        DurationTag toSub = value.asType(DurationTag.class, context);
+        if (toSub == null) {
+            throw new DataActionException("Cannot subtract non-duration from duration!");
+        }
+        return new DurationTag(this.seconds - toSub.seconds);
     }
 }
