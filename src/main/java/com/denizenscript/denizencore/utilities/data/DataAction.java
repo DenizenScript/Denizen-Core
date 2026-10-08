@@ -65,7 +65,7 @@ public class DataAction {
                 ListTag list = autoList(key, context);
                 if (index != 0) {
                     if (index == Integer.MAX_VALUE && !list.isEmpty()) {
-                        list.removeLast();
+                        list.remove(list.size() - 1);
                     }
                     else {
                         list.remove(index - 1);
