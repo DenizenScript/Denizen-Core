@@ -31,7 +31,7 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
                 if (string.startsWith("map@")) {
                     map = MapTag.valueOf(string, CoreUtilities.noDebugContext);
                 }
-                else {
+                if (map == null) {
                     map = new MapTag();
                     map.putObject(valueString, ObjectFetcher.pickObjectFor(string, CoreUtilities.noDebugContext));
                 }
@@ -107,6 +107,12 @@ public class SavableMapFlagTracker extends MapTagBasedFlagTracker {
             }
             else if (val.string.startsWith("map@")) {
                 MapTag quickMap = MapTag.valueOf(val.string, CoreUtilities.noDebugContext, false);
+                if (quickMap == null) {
+                    val.getMap();
+                    val.string = null;
+                    modified = true;
+                    continue;
+                }
                 if (CoreConfiguration.debugVerbose) {
                     Debug.log("Verbose: MapFlagTracker, quickMap = " + quickMap.debuggable());
                 }
