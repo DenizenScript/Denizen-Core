@@ -10,6 +10,8 @@ import com.denizenscript.denizencore.tags.ObjectTagProcessor;
 import com.denizenscript.denizencore.tags.TagContext;
 import com.denizenscript.denizencore.utilities.CoreUtilities;
 import com.denizenscript.denizencore.utilities.Deprecations;
+import com.denizenscript.denizencore.utilities.data.Actionable;
+import com.denizenscript.denizencore.utilities.data.DataActionException;
 import com.denizenscript.denizencore.utilities.debugging.Debug;
 
 import java.time.*;
@@ -20,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 
-public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
+public class TimeTag implements ObjectTag, Adjustable, FlaggableObject, Actionable<TimeTag> {
 
     // <--[ObjectType]
     // @name TimeTag
@@ -750,5 +752,23 @@ public class TimeTag implements ObjectTag, Adjustable, FlaggableObject {
     @Override
     public void adjust(Mechanism mechanism) {
         tagProcessor.processMechanism(this, mechanism);
+    }
+
+    @Override
+    public TimeTag operationAdd(ObjectTag value, TagContext context) {
+        DurationTag toAdd = value.asType(DurationTag.class, context);
+        if (toAdd == null) {
+            throw new DataActionException("Cannot add non-duration to time!");
+        }
+        return new TimeTag(this.millis() + toAdd.getMillis(), this.instant.getZone());
+    }
+
+    @Override
+    public TimeTag operationSub(ObjectTag value, TagContext context) {
+        DurationTag toSub = value.asType(DurationTag.class, context);
+        if (toSub == null) {
+            throw new DataActionException("Cannot subtract non-duration from time!");
+        }
+        return new TimeTag(this.millis() - toSub.getMillis(), this.instant.getZone());
     }
 }
